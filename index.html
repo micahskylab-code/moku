@@ -497,31 +497,32 @@ const LITE = (() => {
 })();
 
 // ---- 3D map: real satellite + real terrain, all open/free sources ----
+const SAT_SOURCE = {
+  type: "raster",
+  tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+  tileSize: 256, maxzoom: 19, attribution: "Imagery &copy; Esri &amp; contributors"
+};
+const DEM_SOURCE = {
+  type: "raster-dem",
+  tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+  tileSize: 256, encoding: "terrarium", maxzoom: 12, attribution: "Terrain: Mapzen / AWS Open Data"
+};
+const FALLBACK_SAT_STYLE = {
+  version: 8,
+  sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
+  layers: [
+    { id: "bg", type: "background", paint: { "background-color": "#0F2437" } },
+    { id: "sat", type: "raster", source: "sat" }
+  ]
+};
+// Boot on an instant, zero-network obsidian stage — the real style arrives once,
+// so the opening never flashes or double-loads.
 const map = new maplibregl.Map({
   container: "map",
   style: {
     version: 8,
-    sources: {
-      sat: {
-        type: "raster",
-        tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
-        tileSize: 256,
-        maxzoom: 19,
-        attribution: "Imagery &copy; Esri &amp; contributors"
-      },
-      dem: {
-        type: "raster-dem",
-        tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
-        tileSize: 256,
-        encoding: "terrarium",
-        maxzoom: 12,
-        attribution: "Terrain: Mapzen / AWS Open Data"
-      }
-    },
-    layers: [
-      { id: "bg", type: "background", paint: { "background-color": "#0F2437" } },
-      { id: "sat", type: "raster", source: "sat" }
-    ]
+    sources: {},
+    layers: [{ id: "bg", type: "background", paint: { "background-color": "#0B1A2A" } }]
   },
   center: [-159.85, 22.28],
   zoom: 8.9,
@@ -550,17 +551,33 @@ fetch("https://tiles.openfreemap.org/styles/dark")
       tileSize: 256, encoding: "terrarium", maxzoom: 12
     };
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
+    const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
       if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#0B1A2A" });
-      if (l.type === "fill" && /water|ocean/i.test(l.id)) l.paint = Object.assign({}, l.paint, { "fill-color": "#10263C" });
-      if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|rail|bridge|tunnel|link/i.test(l.id)) {
+      if (l.type === "fill" && /water|ocean/i.test(l.id)) {
+        // obsidian for the OCEAN only — lakes and reservoirs stay photographic,
+        // so they never punch flat ink holes into the satellite land
+        l.paint = Object.assign({}, l.paint, { "fill-color": "#10263C" });
+        l.filter = l.filter ? ["all", l.filter, oceanOnly] : oceanOnly;
+      }
+      if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
           "line-color": "#C9BFA5",
           "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.0, 0.65, 12.4, 0.2]
         });
       }
+      if (l.type === "line" && /rail|aeroway|ferry|cable|transit|runway/i.test(l.id)) {
+        l.layout = Object.assign({}, l.layout, { visibility: "none" });
+      }
       if (l.type === "symbol" && /road|street|path|highway|motorway|poi|housenum/i.test(l.id)) {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
+      }
+      if (l.type === "symbol" && /place|city|town|village/i.test(l.id)) {
+        l.paint = Object.assign({}, l.paint, {
+          "text-color": "#F2EAD6",
+          "text-halo-color": "rgba(10,18,26,0.85)",
+          "text-halo-width": 1.2
+        });
       }
     });
     // Satellite sits below vector water: land turns photographic up close,
@@ -574,7 +591,7 @@ fetch("https://tiles.openfreemap.org/styles/dark")
     else st.layers.push(satLayer);
     map.setStyle(st);
   })
-  .catch(() => {});
+  .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
 
 // Some embedded browsers resize the window without the events MapLibre watches —
 // keep the canvas matched to the container no matter what.
@@ -600,18 +617,23 @@ function applyCustomLayers() {
     map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
   }
 }
-map.on("style.load", applyCustomLayers);
-map.on("load", () => {
+let introStarted = false;
+map.on("style.load", () => {
   applyCustomLayers();
-  runIntro();
+  // the curtain rises only when the real stage is set — never over an empty map
+  if (!introStarted && map.getSource("sat")) {
+    introStarted = true;
+    runIntro();
+  }
 });
+setTimeout(() => { if (!introStarted) { introStarted = true; endIntro(true); } }, 6000);
 
 function runIntro() {
   if (introDone) return;
   if (LITE || reducedMotion) { endIntro(true); return; }
   map.flyTo({
-    center: [-159.503, 21.912],
-    zoom: 12.2, pitch: 47, bearing: 8,
+    center: [-159.500, 21.947],
+    zoom: 12.05, pitch: 50, bearing: 6,
     duration: 6500, essential: false, curve: 1.25
   });
   setTimeout(() => { if (!introDone) endIntro(false); }, 6600);
@@ -628,8 +650,8 @@ function endIntro(jump) {
   setTimeout(() => { intro && intro.remove(); skip && skip.remove(); }, 1500);
   if (jump) {
     map.stop();
-    if (LITE) map.jumpTo({ center: [-159.53, 22.06], zoom: 10.1, pitch: 0, bearing: 0 });
-    else map.jumpTo({ center: [-159.503, 21.912], zoom: 12.2, pitch: 47, bearing: 8 });
+    if (LITE) map.jumpTo({ center: [-159.497, 21.928], zoom: 12.35, pitch: 0, bearing: 0 });
+    else map.jumpTo({ center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 });
   }
   render();
   setTimeout(() => toast(`Tap <b>anywhere on the island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
