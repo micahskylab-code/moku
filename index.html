@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moku — Fly the Island. Find Your Home.</title>
+<title>Moku — Fly the Islands. Find Your Home.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
@@ -129,8 +129,30 @@
   .pill-btn.solid { background: #fff; color: var(--ink); border-color: transparent; }
   .pill-btn.solid:hover { transform: scale(1.04); }
 
+  .islandbar {
+    position: absolute; top: 86px; left: 50%; transform: translateX(-50%); z-index: 51;
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .islandbar::-webkit-scrollbar { display: none; }
+  .islandbar button {
+    border: none; background: transparent;
+    color: rgba(255,255,255,0.72);
+    border-radius: 999px; padding: 7px 14px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.25s var(--spring);
+  }
+  .islandbar button:hover { color: #fff; }
+  .islandbar button.active { background: #fff; color: var(--ink); }
   .filterbar {
-    position: absolute; top: 86px; left: 50%; transform: translateX(-50%); z-index: 50;
+    position: absolute; top: 134px; left: 50%; transform: translateX(-50%); z-index: 50;
     display: flex; gap: 6px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
@@ -333,7 +355,8 @@
     #toast { bottom: auto; top: 120px; }
     .logo { font-size: 18px; }
     .pill-btn { padding: 8px 12px; font-size: 11.5px; }
-    .filterbar { top: 72px; }
+    .islandbar { top: 72px; }
+    .filterbar { top: 118px; }
     .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 68vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
     .passport.open { transform: none; }
     .rail { padding-bottom: 12px; }
@@ -398,7 +421,7 @@
 
 <div id="intro">
   <div class="mark">Moku<em>.</em></div>
-  <div class="tag">Fly the island &middot; Find your home</div>
+  <div class="tag">Fly the islands &middot; Find your home</div>
 </div>
 <button id="skip">Skip intro</button>
 
@@ -417,6 +440,15 @@
     <button class="pill-btn solid" id="btn-alerts">Get instant alerts</button>
   </div>
 </header>
+
+<div class="islandbar">
+  <button class="active" data-island="kauai">Kaua&#699;i</button>
+  <button data-island="oahu">O&#699;ahu</button>
+  <button data-island="molokai">Moloka&#699;i</button>
+  <button data-island="lanai">L&#257;na&#699;i</button>
+  <button data-island="maui">Maui</button>
+  <button data-island="hawaii">Hawai&#699;i</button>
+</div>
 
 <div class="filterbar">
   <button class="chip active" data-f="all">All</button>
@@ -442,7 +474,7 @@
     <div class="fine">Goes directly to Micah. No spam, ever.</div>
   </div>
 </div>
-<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS Open Data &middot; Parcels &amp; hazards: State of Hawaii / County of Kauai GIS</div>
+<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS Open Data &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
@@ -660,7 +692,7 @@ function endIntro(jump) {
     else map.jumpTo({ center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 });
   }
   render();
-  setTimeout(() => toast(`Tap <b>anywhere on the island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
+  setTimeout(() => toast(`Tap <b>anywhere on any island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
 }
 
 // ---- Orbit after selecting a property (cancellable, time-based) ----
@@ -683,17 +715,39 @@ function stopOrbit() {
   document.getElementById("map").addEventListener(ev, stopOrbit, { passive: true })
 );
 
-// ---- Live public-data lookups (real State of Hawaii endpoints) ----
-const PARCEL_Q = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/9/query";
-const ZONING_Q = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/29/query";
-const FLOOD_Q  = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/8/query";
-const TSU_Q    = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/2/query";
-async function queryPoint(url, lng, lat, outFields) {
-  const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${url === PARCEL_Q}&outSR=4326&f=geojson`;
+// ---- Live public-data lookups, statewide (real State of Hawaii endpoints) ----
+const GIS_PZ = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/";
+const COUNTIES = {
+  kauai:  { parcels: 9,  zoning: 29 },
+  oahu:   { parcels: 11, zoning: 3 },
+  maui:   { parcels: 30, zoning: 33 },
+  hawaii: { parcels: 5,  zoning: 2 }
+};
+function countyFor(lng, lat) {
+  if (lng < -159.0) return COUNTIES.kauai;
+  if (lng < -157.5) return COUNTIES.oahu;
+  if (lat > 20.45) return COUNTIES.maui;
+  return COUNTIES.hawaii;
+}
+const FLOOD_Q = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/6/query"; // State DFIRM
+const TSU_Q   = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/2/query";
+async function queryPoint(url, lng, lat, outFields, wantGeom) {
+  const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${!!wantGeom}&outSR=4326&f=geojson`;
   const res = await fetch(u);
   if (!res.ok) throw new Error("gis");
   const gj = await res.json();
   return gj.features && gj.features[0] ? gj.features[0] : null;
+}
+// County schemas differ — extract defensively
+const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
+const pickAcres = p => p.gisacres || p.taxacres || null;
+const pickAssessed = p => (p.landvalue != null || p.bldgvalue != null)
+  ? Number(p.landvalue || 0) + Number(p.bldgvalue || 0) : null;
+function pickZoning(p) {
+  const k = Object.keys(p).find(key => /^zon/i.test(key) && p[key]);
+  if (!k) return null;
+  const d = p.description || p.zone_desc || null;
+  return p[k] + (d ? " · " + d : "");
 }
 
 // ---- Filters / search / rail / pins ----
@@ -811,8 +865,8 @@ async function select(id) {
   if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
   try {
     const [parcel, flood] = await Promise.all([
-      queryPoint(PARCEL_Q, l.lng, l.lat, "tmk_txt,gisacres,taxclass"),
-      queryPoint(FLOOD_Q, l.lng, l.lat, "fld_zone,zone_subty")
+      queryPoint(GIS_PZ + countyFor(l.lng, l.lat).parcels + "/query", l.lng, l.lat, "*", true),
+      queryPoint(FLOOD_Q, l.lng, l.lat, "fld_zone,sfha_tf", false)
     ]);
     if (selectedId !== id) return;
     if (parcel) {
@@ -820,13 +874,13 @@ async function select(id) {
       if (srcNow) srcNow.setData({ type: "FeatureCollection", features: [parcel] });
       else pendingParcel = parcel;
       const p = parcel.properties || {};
-      setFact("tmk", "TMK at this map point (county GIS)", p.tmk_txt || "—", "live");
-      setFact("acres", "Parcel size (county GIS)", p.gisacres ? Number(p.gisacres).toFixed(2) + " acres" : "—", "live");
+      setFact("tmk", "TMK at this map point (county GIS)", pickTmk(p) || "—", "live");
+      setFact("acres", "Parcel size (county GIS)", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
       toast(`Parcel outline at this map point — <b>County of Kauai GIS</b> (reference only, not a survey)`);
     }
     const fp = flood && flood.properties ? flood.properties : null;
     setFact("flood", "FEMA flood zone (per state GIS)",
-      fp && fp.fld_zone ? fp.fld_zone + (fp.zone_subty ? " · " + fp.zone_subty : "") : "outside mapped flood zones", "live");
+      fp && fp.fld_zone ? fp.fld_zone : "outside mapped flood zones", "live");
   } catch (e) {
     if (selectedId !== id) return;
     setFact("tmk", "TMK at this map point (county GIS)", "offline — retry", "");
@@ -986,11 +1040,12 @@ async function exploreParcel(lng, lat) {
   const parcelSrc = map.getSource("parcel");
   if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
   try {
+    const county = countyFor(lng, lat);
     const [parcel, zoning, flood, tsu] = await Promise.all([
-      queryPoint(PARCEL_Q, lng, lat, "tmk_txt,gisacres,taxclass,qpub_link"),
-      queryPoint(ZONING_Q, lng, lat, "zoning,description"),
-      queryPoint(FLOOD_Q, lng, lat, "fld_zone,zone_subty"),
-      queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc")
+      queryPoint(GIS_PZ + county.parcels + "/query", lng, lat, "*", true),
+      queryPoint(GIS_PZ + county.zoning + "/query", lng, lat, "*", false),
+      queryPoint(FLOOD_Q, lng, lat, "fld_zone,sfha_tf", false),
+      queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc", false)
     ]);
     if (token !== exploreToken) return;
     if (parcel) {
@@ -1005,20 +1060,23 @@ async function exploreParcel(lng, lat) {
         map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900 });
       } catch (geErr) {}
       const p = parcel.properties || {};
-      setFact("tmk", "TMK (county record)", p.tmk_txt || "—", "live");
-      setFact("acres", "Parcel size (county GIS)", p.gisacres ? Number(p.gisacres).toFixed(2) + " acres" : "—", "live");
-      setFact("taxclass", "Tax class (county)", p.taxclass ? p.taxclass.toLowerCase() : "—", "live");
+      const tmk = pickTmk(p), acres = pickAcres(p), assessed = pickAssessed(p);
+      setFact("tmk", "TMK (county record)", tmk || "—", "live");
+      setFact("acres", "Parcel size (county GIS)", acres ? Number(acres).toFixed(2) + " acres" : "—", "live");
+      if (p.taxclass) setFact("taxclass", "Tax class (county)", p.taxclass.toLowerCase(), "live");
+      else if (assessed) setFact("taxclass", "Assessed value (county)", "$" + assessed.toLocaleString(), "live");
+      else setFact("taxclass", "Tax class (county)", "—", "");
       const qp = document.getElementById("qpub-btn");
       if (qp && p.qpub_link) { qp.href = p.qpub_link; qp.style.display = ""; }
-      toast(`Real parcel — <b>County of Kauai GIS</b> (reference only, not a survey)`);
+      toast(`Real parcel — <b>county GIS record</b> (reference only, not a survey)`);
     } else {
       setFact("tmk", "TMK (county record)", "no parcel here (water / road)", "");
     }
-    const z = zoning && zoning.properties ? zoning.properties : null;
-    setFact("zoning", "County zoning", z && z.zoning ? z.zoning + (z.description ? " · " + z.description : "") : "none mapped here", "live");
+    const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
+    setFact("zoning", "County zoning", z || "none mapped here", "live");
     const fp = flood && flood.properties ? flood.properties : null;
     setFact("flood", "FEMA flood zone (per state GIS)",
-      fp && fp.fld_zone ? fp.fld_zone + (fp.zone_subty ? " · " + fp.zone_subty : "") : "outside mapped flood zones", "live");
+      fp && fp.fld_zone ? fp.fld_zone : "outside mapped flood zones", "live");
     const t = tsu && tsu.properties ? tsu.properties : null;
     setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "outside mapped evacuation zones", "live");
   } catch (err) {
@@ -1059,7 +1117,7 @@ function openParcelPassport(lng, lat) {
         <button class="ghost" onclick="shareParcel(${lng}, ${lat}, (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim())">Share &#8599;</button>
       </div>
     </div>
-    <div class="micro">Every value in this panel is looked up live from County of Kauai and State of Hawaii public records for the tapped location. Parcel boundaries are for reference, not survey-grade. Flood and tsunami zones are informational only — not determinations. The county tax record link opens the county&#8217;s own site.</div>
+    <div class="micro">Every value in this panel is looked up live from county and State of Hawaii public records for the tapped location. Parcel boundaries are for reference, not survey-grade. Flood and tsunami zones are informational only — not determinations. The county tax record link opens the county&#8217;s own site.</div>
     <div class="sec"></div>`;
   pass.classList.add("open");
   document.getElementById("claim-btn").onclick = () => {
@@ -1172,6 +1230,25 @@ let searchTimer = null;
 document.getElementById("search").addEventListener("input", () => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(render, 220);
+});
+
+// ---- Island hopping: the whole archipelago, one map ----
+const ISLAND_VIEWS = {
+  kauai:   { c: [-159.500, 21.947], z: 12.05, p: 50, b: 6 },
+  oahu:    { c: [-157.970, 21.475], z: 10.4, p: 45, b: 0 },
+  molokai: { c: [-157.010, 21.135], z: 10.7, p: 45, b: 0 },
+  lanai:   { c: [-156.920, 20.830], z: 11.0, p: 45, b: 0 },
+  maui:    { c: [-156.320, 20.800], z: 10.0, p: 45, b: 0 },
+  hawaii:  { c: [-155.470, 19.610], z: 9.0,  p: 40, b: 0 }
+};
+document.querySelectorAll(".islandbar button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".islandbar button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    stopOrbit();
+    const v = ISLAND_VIEWS[b.dataset.island];
+    map.flyTo({ center: v.c, zoom: v.z, pitch: LITE ? 0 : v.p, bearing: v.b, duration: 2800, essential: true, curve: 1.3 });
+  };
 });
 
 // ---- Launch mode vs listings preview ----
