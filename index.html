@@ -59,25 +59,31 @@
   }
 
   /* ================= THE ONE BOX — the front door ================= */
+  /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   #veil {
     position: absolute; inset: 0; z-index: 200;
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
-    background: #0E2233;
+    background: transparent;
+    pointer-events: none;
     overflow: hidden;
     transition: opacity 0.5s ease;
   }
-  #veil::before {
-    content: ""; position: absolute; inset: 0;
-    background-image: url('assets/hero-kauai.jpg');
-    background-size: cover; background-position: center;
-    filter: saturate(1.15) brightness(1.03);
-  }
   #veil::after {
     content: ""; position: absolute; inset: 0;
-    background: radial-gradient(90% 80% at 50% 45%, rgba(8,20,30,0.08) 0%, rgba(8,20,30,0.4) 100%);
+    background: radial-gradient(90% 80% at 50% 45%, rgba(8,20,30,0.02) 0%, rgba(8,20,30,0.26) 100%);
   }
-  #veil > * { position: relative; z-index: 1; }
+  #veil > * { position: relative; z-index: 1; pointer-events: auto; }
+  #veil::after { pointer-events: none; }
+  #veil .veilfoot {
+    position: absolute; left: 0; right: 0; bottom: 18px;
+    text-decoration: none;
+    display: flex; justify-content: center; align-items: baseline; gap: 8px 22px; flex-wrap: wrap;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.03em;
+    color: rgba(255,255,255,0.92); text-shadow: 0 1px 8px rgba(8,20,30,0.55);
+  }
+  #veil .veilfoot b { font-family: var(--serif); font-size: 15px; font-weight: 500; }
+  @media (max-width: 760px) { #veil .veilfoot { bottom: 12px; font-size: 11px; gap: 6px 14px; padding: 0 14px; } }
   .veilcard {
     display: flex; flex-direction: column; align-items: center; gap: 20px;
     background: rgba(251,252,253,0.82);
@@ -194,7 +200,7 @@
     cursor: pointer;
   }
   .logo .dot { color: var(--gold-deep); }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #34A853; animation: pulse 1.8s ease-in-out infinite; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
   .beta-chip {
     display: inline-flex; align-items: center;
@@ -289,12 +295,39 @@
   .passport .sec .h { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
   .factrow { display: flex; flex-direction: column; gap: 7px; }
   .fchip {
-    background: rgba(16,16,18,0.045); border-radius: 12px;
-    padding: 9px 13px; font-size: 13px; font-weight: 500; line-height: 1.45;
+    background: none; border-radius: 0;
+    padding: 10px 2px; font-size: 13.5px; font-weight: 500; line-height: 1.45;
+    border-bottom: 1px solid rgba(16,16,18,0.07);
   }
+  .factrow .fchip:last-child { border-bottom: none; }
+  #fact-assessed { font-family: var(--serif); font-size: 21px; font-weight: 500; letter-spacing: -0.01em; }
+  #fact-assessed small, #fact-owner small { font-family: var(--sans); }
+  #fact-owner { font-size: 15px; font-weight: 600; }
+  #fact-flood small::before, #fact-tsu small::before, #fact-lava small::before {
+    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    margin-right: 6px; vertical-align: 1px;
+  }
+  #fact-flood small::before { background: #4A90C4; }
+  #fact-tsu small::before { background: #C4574A; }
+  #fact-lava small::before { background: #C97B2E; }
   .fchip small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 2px; }
   .fchip .subnote { font-size: 11px; color: var(--ink-3); margin-top: 3px; font-weight: 400; }
   .fchip .subnote b { color: var(--accent); cursor: pointer; font-weight: 600; }
+
+  /* ---- Legend: meaning stays pinned while a layer is on ---- */
+  #legend {
+    position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%);
+    z-index: 46; display: none; flex-direction: column; gap: 5px;
+    background: var(--glass); border: 1px solid rgba(255,255,255,0.55); border-radius: 14px;
+    padding: 8px 14px; font-size: 11px; font-weight: 600; color: var(--ink);
+    box-shadow: 0 8px 26px rgba(16,16,18,0.14); pointer-events: none;
+  }
+  body.docked #legend.on { display: flex; }
+  #legend .lrow { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  #legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+  #legend .ramp { width: 110px; height: 7px; border-radius: 4px; flex: none;
+    background: linear-gradient(90deg, #F3E3B8, #E8C87E, #C99A45, #8A5A22); }
+  @media (max-width: 700px) { #legend { bottom: 64px; } }
 
   /* ---- Layer bar: the data ON the map ---- */
   .layerbar {
@@ -332,6 +365,11 @@
   }
   @keyframes shimmer { from { background-position: 180% 0; } to { background-position: -20% 0; } }
   .pass-cta { display: flex; gap: 8px; }
+  .cta-dock {
+    position: sticky; bottom: 0; margin: 14px -18px -16px; padding: 12px 18px 16px;
+    background: rgba(251,252,253,0.92);
+    border-top: 1px solid rgba(16,16,18,0.07);
+  }
   .pass-cta button, .pass-cta a {
     flex: 1; border-radius: 12px; padding: 11px 4px;
     font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
@@ -445,7 +483,8 @@
     header { top: 6px; padding: 8px 10px; gap: 8px; }
     .logo { font-size: 16px; padding: 6px 12px; }
     .beta-chip { display: none; }
-    .hdr-cluster .quiet { padding: 7px 10px; font-size: 12px; }
+    .hdr-cluster { display: none; }
+    .docked-wrap, .dockbox-wrap { flex: 1 1 auto; max-width: none; }
     .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
     .passport.open { transform: none; }
     #toast { bottom: auto; top: 108px; }
@@ -493,25 +532,25 @@
     <button class="try" id="try-here">&#128205; What&#8217;s under me?</button>
   </div>
   <button class="explore-link" id="explore-link">or explore the map — sold prices, rentals, flood zones</button>
-  <a class="veilstats" href="market.html">
-    <div><b id="vs-active">418</b><span>active listings on Kauai</span></div>
-    <div><b id="vs-median">$1.33M</b><span>median home, first half 2026</span></div>
-    <div><b id="vs-sold">$537M</b><span>sold, first half 2026</span></div>
-  </a>
-  <div class="whisper">Live records from all four Hawaii counties &middot; built on Kauai by Micah Hanano &middot; free, no tracking</div>
   </div>
+  <a class="veilfoot" href="market.html">
+    <span><b id="vs-active">418</b> active on Kauai</span>
+    <span><b id="vs-median">$1.33M</b> median, H1 2026</span>
+    <span><b id="vs-sold">$537M</b> sold, H1 2026</span>
+    <span>built on Kauai by Micah Hanano &middot; free, no tracking</span>
+  </a>
 </div>
 
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div id="legend" aria-hidden="true"></div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
   <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
   <button class="lchip" data-lk="tsu"><span class="dot2" style="background:#C4574A"></span>Tsunami</button>
 </div>
-<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <div class="modal-bg" id="lead-modal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lead-title">
@@ -582,15 +621,16 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
   },
-  center: [-157.55, 20.9],
-  zoom: SMALL ? 5.6 : 6.4,
-  pitch: 0,
-  bearing: 0,
+  center: [-159.48, 22.05],
+  zoom: SMALL ? 8.6 : 9.2,
+  pitch: 42,
+  bearing: -18,
   attributionControl: false,
   maxPitch: SMALL ? 64 : 72
 });
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: false }), "bottom-right");
+map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), "bottom-right");
 window.addEventListener("resize", () => map.resize());
 new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 
@@ -890,9 +930,14 @@ async function exploreParcel(lng, lat) {
   const targetZoom = Math.max(map.getZoom(), 15.6);
   if (bootCam) {
     jumpWithOffset(lng, lat, targetZoom, SMALL ? 46 : 55);
+  } else if (map.getZoom() >= 14.5 && map.getBounds().contains([lng, lat])) {
+    // Neighbor hop: one quick ease, no pitch theatrics — browsing lots should feel instant
+    map.easeTo({ center: [lng, lat], duration: 450, essential: true,
+      offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
   } else {
+    // Long flights use the built-in van Wijk arc: fast at altitude, decelerating into the target
     map.flyTo({
-      center: [lng, lat], zoom: targetZoom, pitch: SMALL ? 46 : 55, duration: 2000, essential: true,
+      center: [lng, lat], zoom: targetZoom, pitch: SMALL ? 46 : 55, speed: 1.25, curve: 1.42, maxDuration: 6000, essential: true,
       offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0]
     });
   }
@@ -949,7 +994,7 @@ async function exploreParcel(lng, lat) {
         ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
         cx /= ring.length; cy /= ring.length;
         if (bootCam) jumpWithOffset(cx, cy, targetZoom);
-        else map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
+        else if (!map.isMoving()) map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 600, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
       } catch (geErr) {}
       const p = parcel.properties || {};
       const tmk = pickTmk(p);
@@ -1123,10 +1168,14 @@ async function enrichCounty(county, token, tmkRaw) {
 
 function openRecordCard(lng, lat) {
   const pass = document.getElementById("passport");
+  setTimeout(() => {
+    const d = document.getElementById("dir-btn");
+    if (d) d.href = "https://www.google.com/maps/dir/?api=1&destination=" + lat.toFixed(6) + "," + lng.toFixed(6);
+  }, 0);
   pass.innerHTML = `
-    <div class="hero" style="background-image:url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(lng-0.0022).toFixed(5)},${(lat-0.00083).toFixed(5)},${(lng+0.0022).toFixed(5)},${(lat+0.00083).toFixed(5)}&bboxSR=4326&imageSR=4326&size=784,296&format=jpg&f=image');background-size:cover;background-position:center;">
+    <div class="hero" style="background:linear-gradient(135deg,#16281F 0%,#1E3A2C 55%,#27503A 100%);">
       <div class="scrim"></div>
-      <div class="note">Aerial &middot; this spot</div>
+      <div class="note"><span class="live-dot" style="display:inline-block;margin-right:5px"></span>County record &middot; live</div>
       <button class="x" onclick="closeRecord()" aria-label="Close record">&#10005;</button>
       <div class="hp">
         <div class="tmkline" id="rec-tmk">Parcel record</div>
@@ -1159,12 +1208,15 @@ function openRecordCard(lng, lat) {
       </div>
     </div>
     <div class="sec">
+      <div class="cta-dock">
       <div class="pass-cta">
         <button class="primary" id="copy-record">Copy record link</button>
         <button class="ghost" id="watch-parcel">Watch this parcel</button>
       </div>
       <div class="pass-cta" style="margin-top:8px">
-        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">Open county tax record &rarr;</a>
+        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">County tax record &rarr;</a>
+        <a class="ghost" id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
+      </div>
       </div>
     </div>
     <div class="micro">All values are looked up live from County and State of Hawaii public records for the tapped location. Parcel boundaries are reference only, not survey-grade. Flood and tsunami zones are informational, not determinations — verify with FEMA and your lender.</div>`;
@@ -1397,7 +1449,7 @@ function goFeature(f) {
     dismissVeil();
     closeRecord();
     if (bootCam) map.jumpTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 0 });
-    else map.flyTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 30, duration: 1800, essential: true });
+    else map.flyTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 0, speed: 1.25, curve: 1.42, maxDuration: 6000, essential: true });
     toast(`<b>${esc(f.properties.name)}</b> — tap any lot to open its record`, 4200);
     return;
   }
@@ -1500,9 +1552,23 @@ function wireSearch(inputId, suggestId) {
 }
 
 // ---- Veil lifecycle ----
+let orbiting = false;
+function startOrbit() {
+  if (orbiting || document.getElementById("veil").classList.contains("gone")) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  orbiting = true;
+  const spin = () => {
+    if (!orbiting) return;
+    map.rotateTo(map.getBearing() - 28, { duration: 26000, easing: t => t, essential: false });
+  };
+  map.on("moveend", () => { if (orbiting) spin(); });
+  spin();
+}
+map.once("load", startOrbit);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
+    if (orbiting) { orbiting = false; map.stop(); }
     v.classList.add("gone");
     document.body.classList.add("docked");
     setTimeout(collapseAttribution, 500);
@@ -1514,7 +1580,7 @@ document.getElementById("explore-link").onclick = () => {
 };
 document.getElementById("logo-home").onclick = () => {
   closeRecord();
-  map.flyTo({ center: [-157.55, 20.9], zoom: SMALL ? 5.6 : 6.4, pitch: 0, bearing: 0, duration: 2200, essential: true });
+  map.flyTo({ center: [-157.55, 20.9], zoom: SMALL ? 5.6 : 6.4, pitch: 0, bearing: 0, speed: 1.4, curve: 1.42, maxDuration: 5000, essential: true });
 };
 document.querySelectorAll(".try[data-q]").forEach(b => {
   b.onclick = () => {
@@ -1650,11 +1716,53 @@ async function ensureLayer(key) {
         st.data = gj;
         st.count = (gj.features || []).length;
       }
-      if (!map.getSource("sold-src")) map.addSource("sold-src", { type: "geojson", data: st.data });
+      const hasGlyphs = !!(map.getStyle() && map.getStyle().glyphs);
+      // The white price pill: drawn once on a canvas, stretched to fit each price
+      if (!map.hasImage("pricepill")) {
+        const c = document.createElement("canvas");
+        c.width = 128; c.height = 60;
+        const x = c.getContext("2d");
+        const r2 = 28, w = 128, h = 60;
+        x.beginPath();
+        x.moveTo(r2, 0); x.lineTo(w - r2, 0); x.arc(w - r2, r2, r2, -Math.PI / 2, 0);
+        x.lineTo(w, h - r2); x.arc(w - r2, h - r2, r2, 0, Math.PI / 2);
+        x.lineTo(r2, h); x.arc(r2, h - r2, r2, Math.PI / 2, Math.PI);
+        x.lineTo(0, r2); x.arc(r2, r2, r2, Math.PI, Math.PI * 1.5);
+        x.closePath();
+        x.fillStyle = "rgba(255,255,255,0.98)";
+        x.fill();
+        x.lineWidth = 2;
+        x.strokeStyle = "rgba(29,29,31,0.14)";
+        x.stroke();
+        map.addImage("pricepill", x.getImageData(0, 0, 128, 60),
+          { pixelRatio: 2, stretchX: [[30, 98]], stretchY: [[28, 32]], content: [24, 10, 104, 50] });
+      }
+      if (!map.getSource("sold-src")) map.addSource("sold-src", { type: "geojson", data: st.data, cluster: true, clusterMaxZoom: 11, clusterRadius: 46 });
+      if (!map.getLayer("lyr-sold-cluster")) {
+        map.addLayer({ id: "lyr-sold-cluster", type: "circle", source: "sold-src", filter: ["has", "point_count"],
+          paint: { "circle-color": "#E8C87E", "circle-opacity": 0.92, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+                   "circle-radius": ["step", ["get", "point_count"], 14, 25, 19, 100, 26] } });
+        map.on("click", "lyr-sold-cluster", e => {
+          if (e.originalEvent) e.originalEvent._pinHandled = true;
+          const f = e.features[0];
+          map.getSource("sold-src").getClusterExpansionZoom(f.properties.cluster_id)
+            .then(z => map.easeTo({ center: f.geometry.coordinates, zoom: z + 0.3, duration: 700 }))
+            .catch(() => {});
+        });
+        map.on("mouseenter", "lyr-sold-cluster", () => { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "lyr-sold-cluster", () => { map.getCanvas().style.cursor = ""; });
+      }
+      if (!map.getLayer("lyr-sold-count") && hasGlyphs) {
+        map.addLayer({ id: "lyr-sold-count", type: "symbol", source: "sold-src", filter: ["has", "point_count"],
+          layout: { "text-field": ["get", "point_count_abbreviated"], "text-size": 12, "text-font": ["Noto Sans Regular"], "text-allow-overlap": true },
+          paint: { "text-color": "#4A3A12" } });
+      }
       if (!map.getLayer("lyr-sold-dot")) {
-        map.addLayer({ id: "lyr-sold-dot", type: "circle", source: "sold-src",
-          paint: { "circle-color": "#E8C87E", "circle-radius": ["interpolate", ["linear"], ["zoom"], 7, 2.5, 12, 5, 15, 7.5],
-                   "circle-stroke-color": "#fff", "circle-stroke-width": 1.2, "circle-opacity": 0.92 } });
+        map.addLayer({ id: "lyr-sold-dot", type: "circle", source: "sold-src", filter: ["!", ["has", "point_count"]],
+          maxzoom: hasGlyphs ? 11.5 : 24,
+          paint: { "circle-color": ["interpolate", ["linear"], ["coalesce", ["get", "GIS_SALES_2YEAR_PRICE"], 0],
+                     400000, "#F3E3B8", 1000000, "#E8C87E", 2500000, "#C99A45", 6000000, "#8A5A22"],
+                   "circle-radius": 4.5, "circle-stroke-color": "#fff", "circle-stroke-width": 1.2, "circle-opacity": 0.92 } });
         map.on("click", "lyr-sold-dot", e => {
           if (e.originalEvent) e.originalEvent._pinHandled = true;
           const c = e.features[0].geometry.coordinates;
@@ -1663,24 +1771,41 @@ async function ensureLayer(key) {
         map.on("mouseenter", "lyr-sold-dot", () => { map.getCanvas().style.cursor = "pointer"; });
         map.on("mouseleave", "lyr-sold-dot", () => { map.getCanvas().style.cursor = ""; });
       }
-      if (!map.getLayer("lyr-sold-label") && map.getStyle() && map.getStyle().glyphs) {
-        map.addLayer({ id: "lyr-sold-label", type: "symbol", source: "sold-src", minzoom: 11.5,
-          layout: { "text-field": ["get", "label"], "text-size": 11.5, "text-offset": [0, -1.15], "text-font": ["Noto Sans Regular"], "text-allow-overlap": false },
-          paint: { "text-color": "#6E521B", "text-halo-color": "rgba(255,255,255,0.95)", "text-halo-width": 1.6 } });
+      if (!map.getLayer("lyr-sold-pill") && hasGlyphs) {
+        map.addLayer({ id: "lyr-sold-pill", type: "symbol", source: "sold-src", filter: ["!", ["has", "point_count"]], minzoom: 11.5,
+          layout: { "icon-image": "pricepill", "icon-text-fit": "both", "icon-text-fit-padding": [2, 6, 2, 6],
+                    "text-field": ["get", "label"], "text-size": 11.5, "text-font": ["Noto Sans Regular"] },
+          paint: { "text-color": "#1D1D1F" } });
+        map.on("click", "lyr-sold-pill", e => {
+          if (e.originalEvent) e.originalEvent._pinHandled = true;
+          const c = e.features[0].geometry.coordinates;
+          exploreParcel(c[0], c[1]);
+        });
+        map.on("mouseenter", "lyr-sold-pill", () => { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "lyr-sold-pill", () => { map.getCanvas().style.cursor = ""; });
       }
-      st.ids = ["lyr-sold-dot", "lyr-sold-label"];
+      st.ids = ["lyr-sold-cluster", "lyr-sold-count", "lyr-sold-dot", "lyr-sold-pill"];
     } else if (key === "tvr") {
       if (!st.data) {
         const r = await fetchTimeout("https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0/query?where=1%3D1&outFields=TMK&returnGeometry=true&outSR=4326&geometryPrecision=5&f=geojson&resultRecordCount=2000", 15000);
         st.data = await r.json();
         st.count = (st.data.features || []).length;
       }
-      if (!map.getSource("tvr-src")) map.addSource("tvr-src", { type: "geojson", data: st.data });
-      if (!map.getLayer("lyr-tvr-fill")) {
-        map.addLayer({ id: "lyr-tvr-fill", type: "fill", source: "tvr-src", paint: { "fill-color": "#0E6E63", "fill-opacity": 0.35 } });
-        map.addLayer({ id: "lyr-tvr-line", type: "line", source: "tvr-src", paint: { "line-color": "#0E6E63", "line-width": 1.4 } });
+      if (!st.pts) {
+        st.pts = { type: "FeatureCollection", features: (st.data.features || []).map(f => {
+          try { return { type: "Feature", geometry: { type: "Point", coordinates: interiorPoint(f.geometry) }, properties: {} }; }
+          catch (e) { return null; }
+        }).filter(Boolean) };
       }
-      st.ids = ["lyr-tvr-fill", "lyr-tvr-line"];
+      if (!map.getSource("tvr-src")) map.addSource("tvr-src", { type: "geojson", data: st.data });
+      if (!map.getSource("tvr-pts")) map.addSource("tvr-pts", { type: "geojson", data: st.pts });
+      if (!map.getLayer("lyr-tvr-fill")) {
+        map.addLayer({ id: "lyr-tvr-fill", type: "fill", source: "tvr-src", minzoom: 12.5, paint: { "fill-color": "#0E6E63", "fill-opacity": 0.3 } });
+        map.addLayer({ id: "lyr-tvr-line", type: "line", source: "tvr-src", minzoom: 12.5, paint: { "line-color": "#0E6E63", "line-width": 1.5 } });
+        map.addLayer({ id: "lyr-tvr-dot", type: "circle", source: "tvr-pts", maxzoom: 12.5,
+          paint: { "circle-color": "#14A08F", "circle-radius": 3.5, "circle-stroke-color": "#fff", "circle-stroke-width": 1, "circle-opacity": 0.9 } });
+      }
+      st.ids = ["lyr-tvr-fill", "lyr-tvr-line", "lyr-tvr-dot"];
     } else if (key === "flood" || key === "tsu") {
       const lid = key === "flood" ? 6 : 2;
       const srcId = key + "-src";
@@ -1695,6 +1820,31 @@ async function ensureLayer(key) {
     return true;
   } catch (e) { st.ready = false; toast("Couldn&#8217;t load that layer — try again"); return false; }
 }
+const LAYER_BOUNDS = {
+  sold: [[-157.45, 20.4], [-155.9, 21.4]],   // Maui County
+  tvr:  [[-159.95, 21.8], [-159.2, 22.35]]   // Kauai
+};
+const LEGEND_ROWS = {
+  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui</span></div>`,
+  tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} registered vacation rentals &middot; Kauai</span></div>`,
+  flood: () => `<div class="lrow"><span class="sw" style="background:#4A90C4"></span><span>FEMA high-risk flood zones</span></div>`,
+  tsu: () => `<div class="lrow"><span class="sw" style="background:#C4574A"></span><span>Tsunami evacuation zones</span></div>`
+};
+function refreshLegend() {
+  const el = document.getElementById("legend");
+  const rows = Object.keys(LEGEND_ROWS).filter(k => layerState[k] && layerState[k].on)
+    .map(k => LEGEND_ROWS[k](layerState[k].count));
+  el.innerHTML = rows.join("");
+  el.classList.toggle("on", rows.length > 0);
+  // Data owns the contrast: dim the ground while any layer is on
+  const anyOn = rows.length > 0;
+  try {
+    if (map.getLayer("sat")) {
+      map.setPaintProperty("sat", "raster-saturation", anyOn ? -0.4 : 0);
+      map.setPaintProperty("sat", "raster-brightness-max", anyOn ? 0.9 : 1);
+    }
+  } catch (e) {}
+}
 async function toggleLayer(key, btn) {
   const on = !(layerState[key] && layerState[key].on);
   if (on) {
@@ -1703,16 +1853,24 @@ async function toggleLayer(key, btn) {
     if (!ok) { btn.classList.remove("on"); return; }
     layerState[key].on = true;
     setLayerVis(key, true);
-    if (!layerState[key].noted) {
-      layerState[key].noted = true;
-      const n = layerState[key].count ? ("<b>" + layerState[key].count + "</b> ") : "";
-      toast(n + LAYER_NOTES[key], 5200);
+    if (layerState[key].count && btn && !btn.dataset.baseLabel) {
+      btn.dataset.baseLabel = btn.innerHTML;
+      btn.innerHTML += " &middot; " + layerState[key].count.toLocaleString();
+    }
+    // If the data lives on another island, offer the jump instead of a silent nothing
+    const bb = LAYER_BOUNDS[key];
+    if (bb) {
+      const b = map.getBounds();
+      const off = b.getWest() > bb[1][0] || b.getEast() < bb[0][0] || b.getSouth() > bb[1][1] || b.getNorth() < bb[0][1];
+      if (off) toast(LAYER_NOTES[key] + ` &mdash; <b style="cursor:pointer" onclick="map.fitBounds(${JSON.stringify(bb)},{padding:60})">take me there &rarr;</b>`, 6500);
     }
   } else {
     layerState[key].on = false;
     btn.classList.remove("on");
+    if (btn && btn.dataset.baseLabel) { btn.innerHTML = btn.dataset.baseLabel; delete btn.dataset.baseLabel; }
     setLayerVis(key, false);
   }
+  refreshLegend();
 }
 document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer(b.dataset.lk, b); });
 </script>
