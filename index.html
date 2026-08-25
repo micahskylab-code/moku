@@ -636,7 +636,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#C9D9E4" } },
+    { id: "bg", type: "background", paint: { "background-color": ["interpolate", ["linear"], ["zoom"], 6.5, "#C9D9E4", 8.2, "#122A3C"] } },
     { id: "sat", type: "raster", source: "sat" }
   ]
 };
@@ -669,7 +669,8 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#DFE7EB" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, {
+        "background-color": ["interpolate", ["linear"], ["zoom"], 6.5, "#DFE7EB", 8.2, "#122A3C"] });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
         // Flat vector water only at island-overview zooms; up close the real ocean imagery shows through
         l.paint = Object.assign({}, l.paint, {
@@ -830,7 +831,10 @@ function formatOwner(raw) {
     .join(" ");
 }
 const pickAcres = p => p.gisacres || p.taxacres || null;
-const pickOwner = p => p.owner || (p.majorowner && !/^other$/i.test(p.majorowner) ? p.majorowner : null);
+const pickOwner = p => {
+  const o = p.owner != null && String(p.owner).trim() ? String(p.owner).trim() : null; // counties publish " " for master parcels
+  return o || (p.majorowner && String(p.majorowner).trim() && !/^other$/i.test(p.majorowner) ? p.majorowner : null);
+};
 const pickAssessed = p => (p.landvalue != null || p.bldgvalue != null)
   ? Number(p.landvalue || 0) + Number(p.bldgvalue || 0) : null;
 // County schemas name these differently; prefer real description fields,
