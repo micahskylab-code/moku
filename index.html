@@ -83,7 +83,10 @@
     color: rgba(255,255,255,0.92); text-shadow: 0 1px 8px rgba(8,20,30,0.55);
   }
   #veil .veilfoot b { font-family: var(--serif); font-size: 15px; font-weight: 500; }
-  @media (max-width: 760px) { #veil .veilfoot { bottom: 12px; font-size: 11px; gap: 6px 14px; padding: 0 14px; } }
+  @media (max-width: 760px) { #veil .veilfoot { bottom: 44px; font-size: 11px; gap: 6px 14px; padding: 0 14px; } }
+  /* Map buttons stay off the front door; they belong to the working map */
+  body:not(.docked) .maplibregl-ctrl-group,
+  body:not(.docked) .maplibregl-ctrl button.maplibregl-ctrl-geolocate { opacity: 0; pointer-events: none; }
   .veilcard {
     display: flex; flex-direction: column; align-items: center; gap: 20px;
     background: rgba(251,252,253,0.82);
@@ -485,7 +488,7 @@
     .beta-chip { display: none; }
     .hdr-cluster { display: none; }
     .docked-wrap, .dockbox-wrap { flex: 1 1 auto; max-width: none; }
-    .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
+    .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-radius: 22px 22px 0 0; transform: translateY(110%); background: #FBFBFD; }
     .passport.open { transform: none; }
     #toast { bottom: auto; top: 108px; }
     #hint { bottom: 60px; font-size: 12px; padding: 10px 15px; }
@@ -1565,6 +1568,7 @@ function startOrbit() {
   spin();
 }
 map.once("load", startOrbit);
+map.once("load", collapseAttribution);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
