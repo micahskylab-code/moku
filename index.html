@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moku — Fly the Islands. Find Your Home.</title>
-<meta name="description" content="The Hawaiian Islands, live. Tap any parcel for its real county record — lot lines, zoning, flood zone, value. Built on Kauai.">
+<title>Moku — Look Up Any Parcel in Hawaii</title>
+<meta name="description" content="Every parcel in Hawaii. One search. Live county records — TMK, acreage, zoning, flood zone — on a cinematic map.">
 <meta name="theme-color" content="#EAF0F3">
-<meta property="og:title" content="Moku — Fly the Islands. Find Your Home.">
-<meta property="og:description" content="Tap any parcel in Hawaii and see its real record — lot lines, zoning, flood zones, live county data. Beta.">
+<meta property="og:title" content="Moku — Look Up Any Parcel in Hawaii">
+<meta property="og:description" content="Every parcel in Hawaii. One search. Live county records on a cinematic map.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://micahskylab-code.github.io/moku/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Moku — Fly the Islands. Find Your Home.">
-<meta name="twitter:description" content="Every parcel in Hawaii, explained. Live county data on a cinematic 3D map.">
+<meta name="twitter:title" content="Moku — Look Up Any Parcel in Hawaii">
+<meta name="twitter:description" content="Every parcel in Hawaii. One search. Live county records on a cinematic map.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
-<link rel="preconnect" href="https://s3.amazonaws.com">
 <link rel="preconnect" href="https://geodata.hawaii.gov">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
@@ -27,87 +26,173 @@
     --ink-3: #9C9CA1;
     --paper: rgba(251,251,253,0.82);
     --glass: rgba(255,255,255,0.72);
-    --glass-dark: rgba(255,255,255,0.72);
     --chrome-ink: #1D1D1F;
     --chrome-soft: rgba(29,29,31,0.62);
     --chrome-line: rgba(29,29,31,0.08);
-    --hairline: rgba(16,16,18,0.09);
     --accent: #0E6E63;
     --gold: #E8C87E;
     --gold-deep: #A8894E;
     --red: #C2472F;
-    --shadow-1: 0 4px 24px rgba(0,0,0,0.14);
-    --shadow-2: 0 16px 48px rgba(0,0,0,0.28);
+    --shadow-1: 0 4px 24px rgba(29,29,31,0.10);
+    --shadow-2: 0 16px 48px rgba(29,29,31,0.18);
     --spring: cubic-bezier(0.32, 0.72, 0, 1);
     --serif: "Fraunces", Georgia, serif;
     --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
-  body { font-family: var(--sans); color: var(--ink); background: #EAF0F3; }
-  #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #F2F6F8 0%, #DCE5EA 72%); }
-  .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
+  body { font-family: var(--sans); color: var(--ink); background: #E6EDF1; }
+  #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #EFF5F7 0%, #D5E1E8 72%); }
+  .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 24px; }
   .maplibregl-ctrl-attrib { font-size: 10px; }
   @media (min-width: 761px) {
     .maplibregl-canvas { filter: saturate(1.06) brightness(1.05); }
   }
 
-  /* ---- Cinematic intro ---- */
-  #intro {
+  /* ================= THE ONE BOX — the front door ================= */
+  #veil {
     position: absolute; inset: 0; z-index: 200;
     display: flex; align-items: center; justify-content: center; flex-direction: column;
-    pointer-events: none;
-    background: radial-gradient(120% 100% at 50% 0%, rgba(244,248,250,0) 0%, rgba(234,240,243,0.55) 100%);
-    transition: opacity 1.4s ease;
+    gap: 26px; padding: 24px;
+    background: radial-gradient(120% 100% at 50% 30%, rgba(247,250,251,0.92) 0%, rgba(222,232,238,0.9) 100%);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    transition: opacity 0.5s ease;
   }
-  #intro.gone { opacity: 0; transition: opacity 0.6s ease; }
-  #intro.gone .imask .mark { transform: translateY(-12px); transition: transform 0.6s ease; }
-  #intro .ihair {
-    height: 1px; width: clamp(56px, 8vw, 96px);
-    background: var(--gold);
-    margin-bottom: 22px;
-    transform: scaleX(0); opacity: 0.9;
-    animation: hairDraw 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-               hairSettle 0.6s ease 0.6s forwards;
-  }
-  @keyframes hairDraw { to { transform: scaleX(1); } }
-  @keyframes hairSettle { to { opacity: 0.35; } }
-  #intro .imask { overflow: hidden; padding: 0.08em 0.1em; }
-  #intro .mark {
+  #veil.gone { opacity: 0; pointer-events: none; }
+  #veil .mark {
     font-family: var(--serif); font-weight: 500;
-    font-size: clamp(44px, 9vw, 92px);
-    color: var(--chrome-ink); letter-spacing: -0.03em; line-height: 1.05;
-    text-shadow: 0 2px 24px rgba(255,255,255,0.85);
-    opacity: 0; transform: translateY(105%);
-    animation: markRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
+    font-size: clamp(46px, 8vw, 84px);
+    color: var(--chrome-ink); letter-spacing: -0.03em; line-height: 1;
   }
-  @keyframes markRise { 40% { opacity: 1; } to { opacity: 1; transform: translateY(0); } }
-  #intro .mark em { font-style: normal; color: var(--gold); }
-  #intro .tag {
-    color: var(--chrome-soft); font-size: clamp(13px, 2vw, 16px);
-    letter-spacing: 0.38em; text-transform: uppercase; font-weight: 600;
-    margin-top: 14px; text-shadow: 0 1px 12px rgba(255,255,255,0.8);
-    opacity: 0; transform: translateY(6px);
-    animation: tagIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+  #veil .mark em { font-style: normal; color: var(--gold-deep); }
+  #veil .sub {
+    margin-top: -14px;
+    color: var(--chrome-soft); font-size: clamp(13px, 1.8vw, 15.5px); font-weight: 500;
+    letter-spacing: 0.01em;
   }
-  @keyframes tagIn { to { opacity: 1; transform: translateY(0); letter-spacing: 0.24em; } }
-
-  /* ---- Chrome ---- */
-  .beta-chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-left: 8px; padding: 5px 11px;
-    border-radius: 999px;
-    background: var(--glass-dark);
-    backdrop-filter: blur(16px) saturate(160%);
+  .onebox-wrap { position: relative; width: min(560px, 92vw); }
+  #onebox {
+    width: 100%;
+    border: 1.5px solid var(--chrome-line);
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    padding: 17px 22px 17px 52px;
+    font-family: var(--sans); font-size: 17px; font-weight: 500; color: var(--chrome-ink);
+    outline: none;
+    box-shadow: var(--shadow-1);
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  #onebox:focus { border-color: var(--gold-deep); box-shadow: var(--shadow-2); }
+  #onebox::placeholder { color: rgba(29,29,31,0.35); font-weight: 400; }
+  .onebox-wrap .mag {
+    position: absolute; left: 20px; top: 50%; transform: translateY(-50%) rotate(-45deg);
+    color: rgba(29,29,31,0.45); font-size: 19px; pointer-events: none;
+  }
+  #suggest {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    background: rgba(255,255,255,0.98);
     border: 1px solid var(--chrome-line);
-    font-family: var(--sans); font-size: 11px; font-weight: 500;
-    letter-spacing: 0; text-transform: none;
-    color: var(--chrome-soft);
-    text-shadow: none; white-space: nowrap;
+    border-radius: 16px;
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+    display: none;
   }
+  #suggest.open { display: block; }
+  #suggest .sug {
+    padding: 13px 20px; cursor: pointer;
+    font-size: 14.5px; color: var(--chrome-ink);
+    border-bottom: 1px solid var(--chrome-line);
+    transition: background 0.15s;
+  }
+  #suggest .sug:last-child { border-bottom: none; }
+  #suggest .sug:hover, #suggest .sug.hot { background: rgba(14,110,99,0.07); }
+  #suggest .sug small { display: block; color: var(--ink-3); font-size: 12px; margin-top: 1px; }
+  .trychips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .try {
+    border: 1px solid var(--chrome-line);
+    background: rgba(255,255,255,0.75);
+    color: var(--chrome-soft);
+    border-radius: 999px; padding: 8px 15px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s var(--spring);
+  }
+  .try:hover { color: var(--chrome-ink); background: #fff; box-shadow: var(--shadow-1); }
+  #veil .whisper { font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.04em; }
+  #veil .explore-link {
+    background: none; border: none; cursor: pointer;
+    color: var(--chrome-soft); font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  #veil .explore-link:hover { color: var(--chrome-ink); }
+
+  /* ================= Chrome ================= */
+  header {
+    position: absolute; top: 12px; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 18px;
+    pointer-events: none;
+  }
+  header > * { pointer-events: auto; }
+  .logo {
+    font-family: var(--serif); font-size: 19px; font-weight: 500; letter-spacing: -0.02em;
+    color: var(--chrome-ink);
+    display: flex; align-items: center; gap: 9px;
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
+    border-radius: 999px;
+    padding: 7px 15px;
+    cursor: pointer;
+  }
+  .logo .dot { color: var(--gold-deep); }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #34A853; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  .beta-chip {
+    display: inline-flex; align-items: center;
+    font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+    color: var(--chrome-soft); white-space: nowrap;
+  }
+  .docked-wrap {
+    position: relative; flex: 0 1 430px; margin: 0 auto;
+    display: none;
+  }
+  body.docked .docked-wrap { display: block; }
+  #dockbox {
+    width: 100%;
+    border: 1px solid var(--chrome-line);
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(160%);
+    border-radius: 999px;
+    padding: 10px 18px 10px 38px;
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--chrome-ink);
+    outline: none;
+    transition: border-color 0.25s;
+  }
+  #dockbox:focus { border-color: var(--gold-deep); background: rgba(255,255,255,0.92); }
+  #dockbox::placeholder { color: rgba(29,29,31,0.38); font-weight: 400; }
+  .docked-wrap .mag {
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%) rotate(-45deg);
+    color: rgba(29,29,31,0.45); font-size: 14px; pointer-events: none;
+  }
+  #dock-suggest {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    background: rgba(255,255,255,0.98);
+    border: 1px solid var(--chrome-line);
+    border-radius: 14px; box-shadow: var(--shadow-2);
+    overflow: hidden; display: none; z-index: 60;
+  }
+  #dock-suggest.open { display: block; }
+  #dock-suggest .sug { padding: 11px 16px; cursor: pointer; font-size: 13.5px; color: var(--chrome-ink); border-bottom: 1px solid var(--chrome-line); }
+  #dock-suggest .sug:last-child { border-bottom: none; }
+  #dock-suggest .sug:hover, #dock-suggest .sug.hot { background: rgba(14,110,99,0.07); }
+  #dock-suggest .sug small { display: block; color: var(--ink-3); font-size: 11.5px; margin-top: 1px; }
   .hdr-cluster {
+    margin-left: auto;
     display: flex; gap: 2px; padding: 4px;
-    background: var(--glass-dark);
+    background: var(--glass);
     backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid var(--chrome-line);
     box-shadow: 0 2px 12px rgba(29,29,31,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
@@ -122,139 +207,100 @@
     transition: background-color 0.2s, color 0.2s;
   }
   .hdr-cluster .quiet:hover { background: rgba(29,29,31,0.06); color: var(--chrome-ink); }
-  header {
-    position: absolute; top: 10px; left: 0; right: 0; z-index: 50;
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 18px;
-    pointer-events: none;
-  }
-  header > * { pointer-events: auto; }
-  .logo {
-    font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: -0.02em;
-    color: var(--chrome-ink);
-    display: flex; align-items: center; gap: 10px;
-    background: var(--glass-dark);
-    backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid var(--chrome-line);
-    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
-    border-radius: 999px;
-    padding: 7px 16px;
-  }
-  .logo span { color: var(--gold-deep); }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; animation: pulse 1.8s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
-  .search-wrap { position: relative; width: min(340px, 34vw); }
-  .search-wrap input {
-    width: 100%;
-    border: 1px solid var(--chrome-line);
-    background: var(--glass-dark);
-    backdrop-filter: blur(16px) saturate(160%);
-    border-radius: 999px;
-    padding: 10px 16px 10px 36px;
-    font-family: var(--sans); font-size: 13.5px; color: var(--chrome-ink);
-    outline: none;
-    transition: border-color 0.25s;
-  }
-  .search-wrap input::placeholder { color: rgba(29,29,31,0.38); }
-  .search-wrap input:focus { border-color: var(--gold); }
-  .search-wrap .mag { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: rgba(29,29,31,0.45); font-size: 13px; pointer-events: none; }
-  .hdr-right { margin-left: auto; display: flex; gap: 10px; }
-  .pill-btn {
-    background: var(--glass-dark); color: var(--chrome-ink);
-    border: 1px solid var(--chrome-line);
-    backdrop-filter: blur(16px) saturate(160%);
-    border-radius: 999px; padding: 9px 17px;
-    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
-    cursor: pointer; transition: all 0.25s var(--spring);
-    white-space: nowrap;
-  }
-  .pill-btn:hover { background: rgba(29,29,31,0.06); }
-  .pill-btn.solid { background: var(--chrome-ink); color: #fff; border-color: transparent; }
-  .pill-btn.solid:hover { background: #000; }
 
-  .islandbar {
-    position: absolute; top: 66px; left: 50%; transform: translateX(-50%); z-index: 51;
-    display: flex; gap: 4px; padding: 4px;
-    background: var(--glass-dark);
-    backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid var(--chrome-line);
-    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
-    border-radius: 999px;
-    max-width: calc(100vw - 24px);
-    overflow-x: auto;
-    scrollbar-width: none;
+  /* ================= Record card ================= */
+  .passport {
+    position: absolute; top: 74px; right: 16px; bottom: 24px; z-index: 55;
+    width: min(400px, calc(100vw - 32px));
+    background: var(--paper);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 22px;
+    box-shadow: var(--shadow-2);
+    overflow-y: auto;
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.55s var(--spring);
   }
-  .islandbar::-webkit-scrollbar { display: none; }
-  .islandbar button {
-    border: none; background: transparent;
-    color: var(--chrome-soft);
-    border-radius: 999px; padding: 7px 14px;
-    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-    transition: all 0.25s var(--spring);
+  .passport.open { transform: none; }
+  .passport .hero { position: relative; height: 132px; background: #1a2a21; }
+  .passport .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.08), transparent 40%, rgba(0,0,0,0.52)); }
+  .passport .hero .x {
+    position: absolute; top: 12px; right: 12px;
+    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.78); font-size: 13px; font-weight: 700; color: var(--ink);
+    transition: transform 0.25s var(--spring);
   }
-  .islandbar button:hover { color: var(--chrome-ink); }
-  .islandbar button.active { background: var(--chrome-ink); color: #fff; }
-  .filterbar {
-    position: absolute; top: 114px; left: 50%; transform: translateX(-50%); z-index: 50;
-    display: flex; gap: 6px; padding: 4px;
-    background: var(--glass-dark);
-    backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid var(--chrome-line);
-    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
-    border-radius: 999px;
-    max-width: calc(100vw - 24px);
-    overflow-x: auto;
-    scrollbar-width: none;
+  .passport .hero .x:active { transform: scale(0.88); }
+  .passport .hero .note {
+    position: absolute; right: 12px; bottom: 9px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
   }
-  .filterbar::-webkit-scrollbar { display: none; }
-  .chip {
-    border: none; background: transparent;
-    color: var(--chrome-soft);
-    border-radius: 999px; padding: 7px 15px;
-    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-    transition: all 0.25s var(--spring);
+  .passport .hero .hp { position: absolute; left: 16px; bottom: 10px; color: #fff; }
+  .passport .hero .hp .tmkline { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
+  .passport .hero .hp .addr { font-size: 12.5px; font-weight: 600; opacity: 0.95; margin-top: 1px; }
+  .passport .sec { padding: 14px 16px 0; }
+  .passport .sec .h { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .factrow { display: flex; flex-direction: column; gap: 7px; }
+  .fchip {
+    background: rgba(16,16,18,0.045); border-radius: 12px;
+    padding: 9px 13px; font-size: 13px; font-weight: 500; line-height: 1.45;
   }
-  .chip:hover { color: var(--chrome-ink); }
-  .chip.active { background: var(--chrome-ink); color: #fff; }
+  .fchip small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 2px; }
+  .fchip.live small { color: var(--accent); }
+  .fchip .code { color: var(--ink-3); font-size: 11.5px; }
+  .fchip.resolved { animation: factIn 0.35s var(--spring); }
+  @keyframes factIn { from { opacity: 0; transform: translateY(3px); } }
+  .skel {
+    display: inline-block; height: 11px; width: 74px; border-radius: 6px;
+    margin-top: 2px; vertical-align: middle;
+    background: linear-gradient(90deg, rgba(16,16,18,0.07) 25%, rgba(16,16,18,0.16) 45%, rgba(16,16,18,0.07) 65%);
+    background-size: 200% 100%;
+    animation: shimmer 1.3s linear infinite;
+  }
+  @keyframes shimmer { from { background-position: 180% 0; } to { background-position: -20% 0; } }
+  .pass-cta { display: flex; gap: 8px; }
+  .pass-cta button, .pass-cta a {
+    flex: 1; border-radius: 12px; padding: 11px 4px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
+    text-align: center; text-decoration: none;
+    transition: transform 0.2s var(--spring);
+  }
+  .pass-cta .primary { background: var(--chrome-ink); color: #fff; border: none; }
+  .pass-cta .ghost { background: #fff; color: var(--ink); border: 1px solid rgba(0,0,0,0.12); }
+  .pass-cta button:active, .pass-cta a:active { transform: scale(0.96); }
+  .micro { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; padding: 10px 16px 18px; }
 
-  /* ---- Price pins ---- */
-  .pin {
-    background: rgba(255,255,255,0.96);
-    color: var(--ink);
-    border-radius: 999px;
-    padding: 5px 11px;
-    font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: -0.01em;
-    white-space: nowrap;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-    display: inline-flex; align-items: center; gap: 5px;
-    cursor: pointer;
-    transition: transform 0.25s var(--spring), background 0.25s, color 0.25s;
+  /* ================= Bits ================= */
+  #toast {
+    position: absolute; left: 50%; bottom: 88px; transform: translateX(-50%);
+    z-index: 70;
+    background: rgba(16,16,18,0.85); color: rgba(255,255,255,0.94);
+    border-radius: 999px; padding: 9px 18px;
+    font-size: 12.5px; font-weight: 500;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+    white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
   }
-  .pin:hover { transform: scale(1.12); }
-  /* ---- First-run invitation: one clear action, visible until taken ---- */
+  #toast.show { opacity: 1; }
+  #toast b { color: var(--gold); }
   #hint {
-    position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%);
     z-index: 60;
     display: none; align-items: center; gap: 9px;
-    background: var(--glass-dark);
+    background: var(--glass);
     backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid var(--chrome-line);
     box-shadow: 0 4px 20px rgba(29,29,31,0.12);
     border-radius: 999px;
-    padding: 12px 20px;
-    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--chrome-ink);
+    padding: 11px 19px;
+    font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--chrome-ink);
     white-space: nowrap; pointer-events: none;
   }
   #hint.show { display: flex; animation: hintBreathe 2.6s ease-in-out infinite; }
-  #hint .fingertap { font-size: 16px; }
   @keyframes hintBreathe {
     0%, 100% { transform: translateX(-50%) scale(1); }
     50% { transform: translateX(-50%) scale(1.035); }
   }
-  @media (max-width: 760px) { #hint { bottom: 96px; font-size: 12.5px; padding: 10px 16px; } }
-
   .tapdot {
     width: 16px; height: 16px; border-radius: 50%;
     border: 2.5px solid var(--gold);
@@ -266,206 +312,13 @@
     0% { box-shadow: 0 0 0 0 rgba(232,200,126,0.55); }
     100% { box-shadow: 0 0 0 16px rgba(232,200,126,0); }
   }
-
-  /* ---- Live-data skeletons: loading is choreography, not text ---- */
-  .skel {
-    display: inline-block; height: 11px; width: 74px; border-radius: 6px;
-    margin-top: 2px; vertical-align: middle;
-    background: linear-gradient(90deg, rgba(16,16,18,0.07) 25%, rgba(16,16,18,0.16) 45%, rgba(16,16,18,0.07) 65%);
-    background-size: 200% 100%;
-    animation: shimmer 1.3s linear infinite;
-  }
-  @keyframes shimmer { from { background-position: 180% 0; } to { background-position: -20% 0; } }
-  .fchip.resolved { animation: factIn 0.35s var(--spring); }
-  @keyframes factIn { from { opacity: 0; transform: translateY(3px); } }
-
-  /* ---- Tactile press + visible keyboard focus ---- */
-  .pill-btn:active, .hdr-cluster .quiet:active, .islandbar button:active, .chip:active,
-  .shr:active, .ask button:active, .pass-cta button:active, .modal .go:active {
-    transform: scale(0.96); transition-duration: 0.06s;
-  }
-  .pin:active { transform: scale(1.04); }
-  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .search-wrap input:focus-visible, .ask input:focus-visible, .modal input:focus-visible { outline: none; }
-  .pin { font-variant-numeric: tabular-nums; }
-  .fchip small { text-transform: none; letter-spacing: 0.02em; font-weight: 500; font-size: 10px; }
-  .pin.selected { background: var(--ink); color: #fff; transform: scale(1.14); box-shadow: 0 0 0 2px var(--gold), 0 6px 20px rgba(0,0,0,0.5); }
-  .pin .dot { width: 6px; height: 6px; border-radius: 50%; }
-  .pin .dot.cut { background: var(--red); }
-  .pin .dot.kuk { background: var(--gold-deep); }
-  .pin .dot.land { background: var(--accent); }
-
-  /* ---- Bottom film-strip rail ---- */
-  .rail {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 50;
-    display: flex; gap: 12px;
-    padding: 14px 18px 18px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent);
-  }
-  .rail::-webkit-scrollbar { display: none; }
-  .rcard {
-    flex: 0 0 208px;
-    background: rgba(251,251,253,0.94);
-    border: 1px solid rgba(255,255,255,0.5);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: var(--shadow-1);
-    transition: transform 0.3s var(--spring), box-shadow 0.3s var(--spring);
-    opacity: 0; transform: translateY(14px);
-    animation: rise 0.55s var(--spring) forwards;
-  }
-  @keyframes rise { to { opacity: 1; transform: none; } }
-  .rcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
-  .rcard.selected { outline: 2px solid var(--gold); }
-  .rcard .ph { position: relative; height: 98px; }
-  .shr {
-    position: absolute; top: 8px; left: 9px; z-index: 2;
-    width: 27px; height: 27px; border-radius: 50%;
-    border: none; cursor: pointer;
-    background: rgba(255,255,255,0.92);
-    color: var(--ink);
-    font-size: 13px; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
-    transition: transform 0.2s var(--spring);
-  }
-  .shr:hover { transform: scale(1.12); }
-  .rcard .ph .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.5)); }
-  .rcard .ph .pr { position: absolute; left: 11px; bottom: 7px; color: #fff; font-family: var(--serif); font-size: 17px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
-  .rcard .ph .tag { position: absolute; top: 8px; right: 9px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.9); border-radius: 5px; padding: 2.5px 7px; }
-  .rcard .ph .tag.cut { color: var(--red); }
-  .rcard .bd { padding: 8px 12px 10px; }
-  .rcard .bd .a { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rcard .bd .m { font-size: 11px; color: var(--ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  /* ---- Property Passport ---- */
-  .passport {
-    position: absolute; top: 118px; right: 16px; bottom: 132px; z-index: 55;
-    width: min(392px, calc(100vw - 32px));
-    background: var(--paper);
-    backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.6);
-    border-radius: 22px;
-    box-shadow: var(--shadow-2);
-    overflow-y: auto;
-    transform: translateX(calc(100% + 32px));
-    transition: transform 0.55s var(--spring);
-  }
-  .passport.open { transform: none; }
-  .passport .hero { position: relative; height: 148px; }
-  .passport .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1), transparent 40%, rgba(0,0,0,0.5)); }
-  .passport .hero .x {
-    position: absolute; top: 12px; right: 12px;
-    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
-    background: rgba(255,255,255,0.75); backdrop-filter: blur(8px);
-    font-size: 13px; font-weight: 700; color: var(--ink);
-  }
-  .passport .hero .hp { position: absolute; left: 16px; bottom: 11px; color: #fff; }
-  .passport .hero .hp .p { font-family: var(--serif); font-size: 27px; font-weight: 500; letter-spacing: -0.01em; }
-  .passport .hero .hp .p .old { font-family: var(--sans); font-size: 13px; opacity: 0.8; text-decoration: line-through; margin-left: 8px; vertical-align: 4px; }
-  .passport .hero .hp .a { font-size: 12.5px; font-weight: 600; opacity: 0.95; }
-  .passport .sec { padding: 14px 16px 0; }
-  .passport .sec:last-child { padding-bottom: 18px; }
-  .passport .sec .h { font-size: 10px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
-  .factrow { display: flex; flex-wrap: wrap; gap: 7px; }
-  .fchip {
-    background: #fff; border: 1px solid var(--hairline); border-radius: 10px;
-    padding: 7px 11px; font-size: 12px; font-weight: 600;
-  }
-  .fchip small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 1px; }
-  .fchip.live small { color: var(--accent); }
-  .fchip.warn { color: var(--red); }
-  .fchip.gold { color: var(--gold-deep); }
-  .spark-wrap { background: #fff; border: 1px solid var(--hairline); border-radius: 14px; padding: 12px 14px 8px; }
-  .spark-wrap .cap { font-size: 11px; color: var(--ink-2); display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .spark-wrap .cap b { color: var(--ink); }
-  .demand {
-    background: linear-gradient(120deg, rgba(14,110,99,0.1), rgba(232,200,126,0.14));
-    border: 1px solid rgba(14,110,99,0.25);
-    border-radius: 14px; padding: 11px 14px;
-    font-size: 12.5px; line-height: 1.5;
-  }
-  .demand b { color: var(--accent); }
-  .ask { display: flex; gap: 8px; }
-  .ask input {
-    flex: 1; border: 1px solid var(--hairline); background: #fff; border-radius: 999px;
-    padding: 9px 14px; font-family: var(--sans); font-size: 12.5px; outline: none;
-  }
-  .ask input:focus { border-color: var(--accent); }
-  .ask button {
-    border: none; background: var(--ink); color: #fff; border-radius: 999px;
-    padding: 9px 16px; font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
-  }
-  .answer {
-    margin-top: 9px; background: #fff; border: 1px solid var(--hairline); border-radius: 14px;
-    padding: 11px 14px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
-    display: none;
-  }
-  .answer.show { display: block; animation: rise 0.4s var(--spring); }
-  .answer b { color: var(--ink); }
-  .answer .src { display: block; margin-top: 6px; font-size: 10.5px; color: var(--ink-3); }
-  .pass-cta { display: flex; gap: 8px; margin-top: 4px; }
-  .pass-cta button { flex: 1; border-radius: 12px; padding: 11px 0; font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; }
-  .pass-cta .primary { background: var(--ink); color: #fff; border: none; }
-  .pass-cta .ghost { background: #fff; color: var(--ink); border: 1px solid var(--hairline); }
-  .micro { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; padding: 10px 16px 0; }
-
-  /* ---- Status toast ---- */
-  #toast {
-    position: absolute; left: 50%; bottom: 148px; transform: translateX(-50%);
-    z-index: 70;
-    background: rgba(16,16,18,0.82); color: rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 999px; padding: 8px 18px;
-    font-size: 12px; font-weight: 600;
-    opacity: 0; pointer-events: none; transition: opacity 0.4s;
-    white-space: nowrap;
-  }
-  #toast.show { opacity: 1; }
-  #toast b { color: var(--gold); }
-
   .attr-note {
-    position: absolute; left: 14px; bottom: 132px; z-index: 45;
+    position: absolute; left: 14px; bottom: 10px; z-index: 45;
     color: rgba(29,29,31,0.45); font-size: 10px; letter-spacing: 0.02em;
-    text-shadow: 0 1px 6px rgba(255,255,255,0.6);
     pointer-events: none;
   }
 
-  @media (max-width: 760px) {
-    :root { --glass-dark: rgba(255,255,255,0.94); --paper: rgba(251,251,253,0.97); }
-    .search-wrap { display: none; }
-    header { top: 6px; padding: 10px 12px; }
-    #btn-sell { display: none; }
-    #btn-preview { display: none; }
-    #toast { bottom: auto; top: 112px; }
-    .logo { font-size: 18px; }
-    .beta-chip { font-size: 10px; padding: 4px 9px; }
-    .pill-btn { padding: 8px 12px; font-size: 12px; }
-    .islandbar { top: 56px; }
-    .filterbar { top: 102px; }
-    .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 68vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
-    .passport.open { transform: none; }
-    .rail { padding-bottom: 12px; -webkit-mask-image: none; mask-image: none; }
-    .attr-note { display: none; }
-    /* iOS Safari: backdrop blur over a live WebGL canvas flickers — no blur on phones, anywhere */
-    .pill-btn, .search-wrap input, .filterbar, .islandbar, .hdr-cluster, .beta-chip,
-    #toast, .passport, .modal, .modal-bg {
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
-
-  /* ---- Launch mode: only real data visible; listings preview is opt-in ---- */
-  body.launch .rail, body.launch .filterbar, body.launch .search-wrap { display: none; }
-
-  /* ---- Lead modal ---- */
+  /* ================= Lead modal ================= */
   .modal-bg {
     position: fixed; inset: 0; z-index: 3000;
     background: rgba(29,29,31,0.32);
@@ -481,14 +334,12 @@
     transition: opacity 0.35s ease, backdrop-filter 0.35s ease, visibility 0s;
   }
   .modal {
-    background: var(--paper);
-    backdrop-filter: blur(24px) saturate(180%);
+    background: #FBFBFD;
     border: 1px solid rgba(255,255,255,0.6);
     border-radius: 22px;
     box-shadow: var(--shadow-2);
     width: min(400px, 100%);
     padding: 26px 26px 22px;
-    animation: rise 0.45s var(--spring);
     position: relative;
   }
   .modal .x {
@@ -506,83 +357,91 @@
   .modal input:focus { border-color: var(--accent); }
   .modal .go {
     width: 100%; border: none; border-radius: 12px; cursor: pointer;
-    background: var(--ink); color: #fff;
+    background: var(--chrome-ink); color: #fff;
     font-family: var(--sans); font-size: 14px; font-weight: 600;
     padding: 13px 0; margin-top: 4px;
     transition: transform 0.25s var(--spring);
   }
-  .modal .go:hover { transform: scale(1.02); }
+  .modal .go:active { transform: scale(0.97); }
   .modal .fine { font-size: 11px; color: var(--ink-3); text-align: center; margin-top: 10px; }
+
+  :focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
+  #onebox:focus-visible, #dockbox:focus-visible, .modal input:focus-visible { outline: none; }
+
+  @media (max-width: 760px) {
+    :root { --glass: rgba(255,255,255,0.94); --paper: rgba(251,251,253,0.97); }
+    header { top: 6px; padding: 8px 10px; gap: 8px; }
+    .logo { font-size: 16px; padding: 6px 12px; }
+    .beta-chip { display: none; }
+    .hdr-cluster .quiet { padding: 7px 10px; font-size: 12px; }
+    .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
+    .passport.open { transform: none; }
+    #toast { bottom: auto; top: 108px; }
+    #hint { bottom: 60px; font-size: 12px; padding: 10px 15px; }
+    .attr-note { display: none; }
+    .logo, .hdr-cluster, #dockbox, #hint, .passport, .modal, .modal-bg {
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
 </style>
 </head>
-<body class="launch">
+<body>
 
 <div id="map"></div>
 
-<div id="intro">
-  <div class="ihair"></div>
-  <div class="imask"><div class="mark">Moku<em>.</em></div></div>
-  <div class="tag">Fly the islands &middot; Find your home</div>
-</div>
-
 <header>
-  <div class="logo"><span>Moku<span style="color:var(--gold-deep)">.</span></span>
-    <span class="beta-chip"><span class="live-dot"></span><span id="ribbon">Beta &middot; live state GIS &middot; listings soon</span></span>
-  </div>
-  <div class="search-wrap">
+  <div class="logo" id="logo-home"><span>Moku<span class="dot">.</span></span> <span class="live-dot"></span><span class="beta-chip" id="ribbon">Beta &middot; live county records</span></div>
+  <div class="docked-wrap">
     <span class="mag">&#9906;</span>
-    <input id="search" type="text" placeholder='Try &ldquo;land under $2M&rdquo; or &ldquo;Poipu&rdquo;'>
+    <input id="dockbox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
+    <div id="dock-suggest"></div>
   </div>
-  <div class="hdr-right">
-    <nav class="hdr-cluster">
-      <button class="quiet" id="btn-preview">Preview</button>
-      <a class="quiet" href="market.html">Market</a>
-      <button class="quiet" id="btn-sell">Home value</button>
-    </nav>
-    <button class="pill-btn solid" id="btn-alerts">Get instant alerts</button>
-  </div>
+  <nav class="hdr-cluster">
+    <a class="quiet" href="market.html">Market</a>
+    <button class="quiet" id="btn-sell">Home value</button>
+  </nav>
 </header>
 
-<div class="islandbar">
-  <button class="active" data-island="kauai">Kaua&#699;i</button>
-  <button data-island="oahu">O&#699;ahu</button>
-  <button data-island="molokai">Moloka&#699;i</button>
-  <button data-island="lanai">L&#257;na&#699;i</button>
-  <button data-island="maui">Maui</button>
-  <button data-island="hawaii">Hawai&#699;i</button>
-</div>
-
-<div class="filterbar">
-  <button class="chip active" data-f="all">All</button>
-  <button class="chip" data-f="home">Homes</button>
-  <button class="chip" data-f="condo">Condos</button>
-  <button class="chip" data-f="land">Land</button>
-  <button class="chip" data-f="drops">Price cuts</button>
-  <button class="chip" data-f="kukuiula">Kukui&#699;ula</button>
+<div id="veil">
+  <div class="mark">Moku<em>.</em></div>
+  <div class="sub">Every parcel in Hawaii. One search.</div>
+  <div class="onebox-wrap">
+    <span class="mag">&#9906;</span>
+    <input id="onebox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" autofocus>
+    <div id="suggest"></div>
+  </div>
+  <div class="trychips">
+    <button class="try" data-q="2720 Hoonani Rd, Koloa">2720 Hoonani Rd, Koloa</button>
+    <button class="try" data-q="4260030240000">TMK 4-2-6-003:024</button>
+    <button class="try" id="try-here">&#128205; What&#8217;s under me?</button>
+  </div>
+  <button class="explore-link" id="explore-link">or just explore the map</button>
+  <div class="whisper">Live records from all four Hawaii counties &middot; free</div>
 </div>
 
 <div class="passport" id="passport"></div>
-<div class="rail" id="rail"></div>
 <div id="toast"></div>
-<div id="hint"><span class="fingertap">&#128070;</span> Tap any lot on the island &mdash; its full record, instantly</div>
+<div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <div class="modal-bg" id="lead-modal">
   <div class="modal">
     <button class="x" onclick="closeLead()">&#10005;</button>
-    <div class="mtitle" id="lead-title">Be first. Every time.</div>
-    <p id="lead-sub">Every new listing and price cut on Kauai, minutes after it happens — starting the day listings go live.</p>
+    <div class="mtitle" id="lead-title">Watch this parcel</div>
+    <p id="lead-sub"></p>
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
-    <input id="lead-note" type="text" placeholder="What are you looking for?">
-    <button class="go" id="lead-go">Request first access &rarr;</button>
+    <input id="lead-note" type="text" placeholder="">
+    <button class="go" id="lead-go"></button>
     <div class="fine">Goes directly to Micah. No spam, ever.</div>
   </div>
 </div>
-<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS Open Data &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
-// Diagnostic trap: if anything crashes on any device, say so visibly —
-// a silent black screen is the one failure we never accept.
+// Diagnostic trap: nothing fails silently, ever.
 function showDiag(msg) {
   try {
     if (document.getElementById("diag")) return;
@@ -596,69 +455,21 @@ function showDiag(msg) {
 window.addEventListener("error", e => showDiag((e.message || "script error") + (e.filename ? " @ " + (e.lineno || "?") : "")));
 window.addEventListener("unhandledrejection", e => showDiag("async: " + ((e.reason && (e.reason.message || e.reason)) || "unknown")));
 
-// ============================================================
-// SAMPLE LISTINGS — demo only; the MLS feed replaces this.
-// Coordinates are illustrative points, not real properties.
-// ============================================================
-const LISTINGS = [
-  { id: 1,  type: "home",  kukuiula: true,  tenure: "fee",   price: 4950000, oldPrice: null,    addr: "Sample — Kukui'ula Makai Home",     area: "Kukui'ula / Poipu", beds: 4, baths: 4.5, sqft: 3480, lot: null, lat: 21.8845, lng: -159.4842, days: 3,   hue: [186, 32] },
-  { id: 2,  type: "home",  kukuiula: true,  tenure: "fee",   price: 7200000, oldPrice: 7650000, addr: "Sample — Kukui'ula Club Cottage",   area: "Kukui'ula / Poipu", beds: 3, baths: 3.5, sqft: 2610, lot: null, lat: 21.8867, lng: -159.4791, days: 41,  hue: [204, 40] },
-  { id: 3,  type: "land",  kukuiula: true,  tenure: "fee",   price: 2850000, oldPrice: null,    addr: "Sample — Kukui'ula Homesite",       area: "Kukui'ula / Poipu", beds: null, baths: null, sqft: null, lot: 0.52, lat: 21.8892, lng: -159.4820, days: 5, hue: [104, 26] },
-  { id: 4,  type: "condo", kukuiula: false, tenure: "lease", price: 1395000, oldPrice: 1475000, addr: "Sample — Poipu Shores Condo",       area: "Poipu",       beds: 2, baths: 2,   sqft: 1120, lot: null, lat: 21.8712, lng: -159.4448, days: 63,  hue: [196, 44] },
-  { id: 5,  type: "home",  kukuiula: false, tenure: "fee",   price: 2495000, oldPrice: null,    addr: "Sample — Poipu Beach House",        area: "Poipu",       beds: 3, baths: 2,   sqft: 1840, lot: null, lat: 21.8760, lng: -159.4570, days: 2,   hue: [192, 38] },
-  { id: 6,  type: "home",  kukuiula: false, tenure: "fee",   price: 1650000, oldPrice: null,    addr: "Sample — Old Koloa Town Home",      area: "Koloa",       beds: 3, baths: 2,   sqft: 1560, lot: null, lat: 21.9068, lng: -159.4685, days: 9,   hue: [36, 30] },
-  { id: 7,  type: "land",  kukuiula: false, tenure: "fee",   price: 795000,  oldPrice: 875000,  addr: "Sample — Kalaheo View Acreage",     area: "Kalaheo",     beds: null, baths: null, sqft: null, lot: 1.8,  lat: 21.9265, lng: -159.5240, days: 88, hue: [96, 28] },
-  { id: 8,  type: "home",  kukuiula: false, tenure: "fee",   price: 1175000, oldPrice: null,    addr: "Sample — Lawai Valley Home",        area: "Lawai",       beds: 3, baths: 1.5, sqft: 1290, lot: null, lat: 21.9195, lng: -159.5015, days: 6,   hue: [120, 24] },
-  { id: 9,  type: "condo", kukuiula: false, tenure: "lease", price: 689000,  oldPrice: null,    addr: "Sample — Lihue Townhome",           area: "Lihue",       beds: 2, baths: 1.5, sqft: 940,  lot: null, lat: 21.9788, lng: -159.3695, days: 4,   hue: [210, 22] },
-  { id: 10, type: "home",  kukuiula: false, tenure: "fee",   price: 1425000, oldPrice: null,    addr: "Sample — Wailua Homesteads",        area: "Wailua",      beds: 4, baths: 3,   sqft: 2210, lot: null, lat: 22.0525, lng: -159.3720, days: 12,  hue: [140, 26] },
-  { id: 11, type: "condo", kukuiula: false, tenure: "fee",   price: 875000,  oldPrice: 925000,  addr: "Sample — Kapaa Oceanfront Condo",   area: "Kapaa",       beds: 2, baths: 2,   sqft: 1050, lot: null, lat: 22.0870, lng: -159.3360, days: 55,  hue: [198, 46] },
-  { id: 12, type: "land",  kukuiula: false, tenure: "fee",   price: 1250000, oldPrice: null,    addr: "Sample — Anahola Ag Land",          area: "Anahola",     beds: null, baths: null, sqft: null, lot: 5.4,  lat: 22.1405, lng: -159.3140, days: 7,  hue: [88, 30] },
-  { id: 13, type: "land",  kukuiula: false, tenure: "fee",   price: 1975000, oldPrice: 2200000, addr: "Sample — Kilauea Farm Parcel",      area: "Kilauea",     beds: null, baths: null, sqft: null, lot: 8.2,  lat: 22.2085, lng: -159.4060, days: 97, hue: [110, 32] },
-  { id: 14, type: "home",  kukuiula: false, tenure: "fee",   price: 3850000, oldPrice: null,    addr: "Sample — Princeville Bluff Home",   area: "Princeville", beds: 4, baths: 4,   sqft: 3120, lot: null, lat: 22.2175, lng: -159.4855, days: 1,   hue: [200, 36] },
-  { id: 15, type: "condo", kukuiula: false, tenure: "lease", price: 1150000, oldPrice: null,    addr: "Sample — Princeville Resort Condo", area: "Princeville", beds: 2, baths: 2,   sqft: 1240, lot: null, lat: 22.2225, lng: -159.4790, days: 15,  hue: [174, 28] },
-  { id: 16, type: "home",  kukuiula: false, tenure: "fee",   price: 5750000, oldPrice: 6200000, addr: "Sample — Hanalei Beach House",      area: "Hanalei",     beds: 3, baths: 3,   sqft: 2050, lot: null, lat: 22.2045, lng: -159.5010, days: 120, hue: [188, 42] },
-  { id: 17, type: "home",  kukuiula: false, tenure: "fee",   price: 985000,  oldPrice: null,    addr: "Sample — Waimea Plantation Home",   area: "Waimea",      beds: 3, baths: 2,   sqft: 1380, lot: null, lat: 21.9580, lng: -159.6690, days: 20,  hue: [28, 34] },
-  { id: 18, type: "land",  kukuiula: false, tenure: "fee",   price: 465000,  oldPrice: null,    addr: "Sample — Kekaha Kuleana Lot",       area: "Kekaha",      beds: null, baths: null, sqft: null, lot: 0.35, lat: 21.9690, lng: -159.7110, days: 11, hue: [44, 30] }
-];
-
-const fmtPrice = p => p >= 1000000 ? "$" + (p/1000000).toFixed(2).replace(/\.?0+$/,"") + "M" : "$" + Math.round(p/1000) + "K";
-const fmtFull = p => "$" + p.toLocaleString();
-// Real aerial imagery of the card's map location (Esri export, labeled honestly)
-function aerialUrl(l, d, w, h) {
-  const dy = d * (h / w) * 0.93;
-  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(l.lng-d).toFixed(5)},${(l.lat-dy).toFixed(5)},${(l.lng+d).toFixed(5)},${(l.lat+dy).toFixed(5)}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=jpg&f=image`;
-}
-const aerialLayer = (l, d, w, h) =>
-  `<div style="position:absolute;inset:0;background-image:url('${aerialUrl(l, d, w, h)}');background-size:cover;background-position:center;filter:saturate(1.3) contrast(1.08) brightness(1.07);"></div>`;
-function artStyle(l, shift) {
-  const [h0, s] = l.hue;
-  const h = (h0 + (shift || 0)) % 360;
-  return `background:
-    radial-gradient(120% 90% at 15% 0%, hsl(${h} ${s}% 74%) 0%, transparent 60%),
-    radial-gradient(130% 100% at 100% 100%, hsl(${(h+150)%360} ${Math.max(s-8,14)}% 55%) 0%, transparent 55%),
-    linear-gradient(160deg, hsl(${h} ${s}% 64%) 0%, hsl(${(h+28)%360} ${s}% 38%) 100%);`;
-}
-
-// ---- Adaptive quality, done right: layout adapts to screen size; heavy
-// features are downgraded only by MEASURED slowness, never assumed from
-// screen size (iOS reports points, so every iPhone looks "small").
-const SMALL = Math.min(screen.width, screen.height) < 780; // layout only
-let LITE = false; // set true only if real frames prove the device is struggling
+// ---- Device: layout adapts to size; heavy features only downgrade on MEASURED slowness ----
+const SMALL = Math.min(screen.width, screen.height) < 780;
+let LITE = false;
 function watchPerf() {
   let n = 0, slow = 0, last = performance.now();
   const step = t => {
     const dt = t - last; last = t;
     if (dt > 34) slow++;
     if (++n < 90) requestAnimationFrame(step);
-    else if (slow > 30 && !LITE) {
-      LITE = true;
-      try { map.setTerrain(null); } catch (e) {}
-    }
+    else if (slow > 30 && !LITE) { LITE = true; try { map.setTerrain(null); } catch (e) {} }
   };
   requestAnimationFrame(step);
 }
 
-// ---- 3D map: real satellite + real terrain, all open/free sources ----
+// ---- Map: designed light cartography wide, real satellite land up close ----
 const SAT_SOURCE = {
   type: "raster",
   tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
@@ -673,18 +484,16 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } },
+    { id: "bg", type: "background", paint: { "background-color": "#C9D9E4" } },
     { id: "sat", type: "raster", source: "sat" }
   ]
 };
-// Boot on an instant, zero-network obsidian stage — the real style arrives once,
-// so the opening never flashes or double-loads.
 const map = new maplibregl.Map({
   container: "map",
   style: {
     version: 8,
     sources: {},
-    layers: [{ id: "bg", type: "background", paint: { "background-color": "#0B1A2A" } }]
+    layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
   },
   center: [-157.55, 20.9],
   zoom: SMALL ? 5.6 : 6.4,
@@ -695,32 +504,21 @@ const map = new maplibregl.Map({
 });
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+window.addEventListener("resize", () => map.resize());
+new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 
-// Signature look: designed obsidian cartography at overview; satellite fades in
-// up close, where it's razor sharp. Falls back to pure satellite if the style
-// fetch fails — the site never breaks on a missing resource.
 fetch("https://tiles.openfreemap.org/styles/positron")
   .then(r => r.json())
   .then(st => {
-    st.sources.sat = {
-      type: "raster",
-      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
-      tileSize: 256, maxzoom: 19, attribution: "Imagery &copy; Esri &amp; contributors"
-    };
-    st.sources.dem = {
-      type: "raster-dem",
-      tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
-      tileSize: 256, encoding: "terrarium", maxzoom: 12
-    };
+    st.sources.sat = SAT_SOURCE;
+    st.sources.dem = DEM_SOURCE;
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#E9EEF1" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#DFE7EB" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
-        // obsidian for the OCEAN only — lakes and reservoirs stay photographic,
-        // so they never punch flat ink holes into the satellite land
-        l.paint = Object.assign({}, l.paint, { "fill-color": "#AECBDE" });
-        l.filter = l.filter ? ["all", l.filter, oceanOnly] : oceanOnly;
+        l.paint = Object.assign({}, l.paint, { "fill-color": "#A5C4D8" });
+        l.filter = oceanOnly;
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
@@ -742,17 +540,13 @@ fetch("https://tiles.openfreemap.org/styles/positron")
         });
       }
     });
-    // Satellite sits below vector water: land turns photographic up close,
-    // the ocean stays clean designed obsidian at every zoom (no tile seams).
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 10.6, 0, 11.7, 1] }
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 6.2, 0, 7.9, 1] }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
     if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
     else st.layers.push(satLayer);
-    // nothing painted may sit between the photo and the sky except water,
-    // roads, and labels — hide land-use/building fills stacked above the photo
     const satIdx = st.layers.findIndex(l => l.id === "sat");
     st.layers.forEach((l, i) => {
       if (i > satIdx && (l.type === "fill" || l.type === "fill-extrusion") && !/water|ocean/i.test(l.id)) {
@@ -763,97 +557,26 @@ fetch("https://tiles.openfreemap.org/styles/positron")
   })
   .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
 
-// Some embedded browsers resize the window without the events MapLibre watches —
-// keep the canvas matched to the container no matter what.
-window.addEventListener("resize", () => map.resize());
-new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
-
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-let introDone = false;
-let pendingParcel = null; // parcel fetched before the map style loads — drawn at load time
-
-// Custom layers survive style swaps: re-applied on every style.load
+let pendingParcel = null;
 function applyCustomLayers() {
   if (map.getSource("dem")) {
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
     try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
   }
   if (!map.getSource("parcel")) {
-    // glowing parcel outline layers (fed on selection)
     map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
     map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
     map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55 } });
     map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
   }
 }
-// ---- "The Settle" — the title sequence is pure CSS from first paint; the map
-// boots already at the island and makes one 2.2s settle. Nothing ever waits.
-let settled = false;
+let perfWatched = false;
 map.on("style.load", () => {
   applyCustomLayers();
-  if (!settled && map.getSource("sat") && !parseDeepLink()) {
-    settled = true;
-    // open on the whole archipelago, then dive home to Kauai
-    const tgt = SMALL
-      ? { center: [-159.497, 21.928], zoom: 12.35, pitch: 44, bearing: 0 }
-      : { center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 };
-    if (!reducedMotion) {
-      setTimeout(() => map.flyTo(Object.assign({ duration: 4200, curve: 1.25, essential: false }, tgt)), 1400);
-    } else {
-      map.jumpTo(tgt);
-    }
-    watchPerf();
-  }
+  if (!perfWatched && map.getSource("sat")) { perfWatched = true; watchPerf(); }
 });
-function collapseAttribution() {
-  const at = document.querySelector(".maplibregl-ctrl-attrib");
-  if (at) { at.classList.remove("maplibregl-compact-show"); at.removeAttribute("open"); }
-}
-function exitIntro() {
-  if (introDone) return;
-  introDone = true;
-  const intro = document.getElementById("intro");
-  if (intro) { intro.classList.add("gone"); setTimeout(() => intro.remove(), 700); }
-  setTimeout(collapseAttribution, 400);
-  render();
-  // first-timers get one clear invitation that stays until they take it
-  let used = false;
-  try { used = !!localStorage.getItem("moku_used"); } catch (e) {}
-  if (!used) setTimeout(() => document.getElementById("hint").classList.add("show"), 800);
-  else setTimeout(() => toast(`Welcome back — tap any parcel, on any island`, 3600), 900);
-}
-function firstActionTaken() {
-  try { localStorage.setItem("moku_used", "1"); } catch (e) {}
-  const h = document.getElementById("hint");
-  if (h) h.classList.remove("show");
-}
-const endIntro = exitIntro; // deep links and older callers
-setTimeout(exitIntro, 2500);
-["pointerdown", "wheel", "keydown"].forEach(ev =>
-  window.addEventListener(ev, exitIntro, { once: true, passive: true })
-);
 
-// ---- Orbit after selecting a property (cancellable, time-based) ----
-let orbitRaf = null, orbitLast = 0, orbitArm = null;
-function startOrbit() {
-  if (orbitRaf !== null) return;
-  orbitLast = performance.now();
-  const step = t => {
-    map.setBearing(map.getBearing() + (t - orbitLast) * 0.0027);
-    orbitLast = t;
-    orbitRaf = requestAnimationFrame(step);
-  };
-  orbitRaf = requestAnimationFrame(step);
-}
-function stopOrbit() {
-  if (orbitRaf !== null) cancelAnimationFrame(orbitRaf);
-  orbitRaf = null;
-}
-["mousedown", "wheel", "touchstart"].forEach(ev =>
-  document.getElementById("map").addEventListener(ev, stopOrbit, { passive: true })
-);
-
-// ---- Live public-data lookups, statewide (real State of Hawaii endpoints) ----
+// ---- Live county data, statewide ----
 const GIS_PZ = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/";
 const COUNTIES = {
   kauai:  { parcels: 9,  zoning: 29 },
@@ -867,7 +590,8 @@ function countyFor(lng, lat) {
   if (lat > 20.45) return COUNTIES.maui;
   return COUNTIES.hawaii;
 }
-const FLOOD_Q = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/6/query"; // State DFIRM
+const COUNTY_BY_TMK_DIGIT = { "1": COUNTIES.oahu, "2": COUNTIES.maui, "3": COUNTIES.hawaii, "4": COUNTIES.kauai };
+const FLOOD_Q = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/6/query";
 const TSU_Q   = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/2/query";
 async function queryPoint(url, lng, lat, outFields, wantGeom) {
   const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${!!wantGeom}&outSR=4326&f=geojson`;
@@ -876,255 +600,44 @@ async function queryPoint(url, lng, lat, outFields, wantGeom) {
   const gj = await res.json();
   return gj.features && gj.features[0] ? gj.features[0] : null;
 }
-// County schemas differ — extract defensively
 const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
 const pickAcres = p => p.gisacres || p.taxacres || null;
+const pickOwner = p => p.owner || p.majorowner || null;
 const pickAssessed = p => (p.landvalue != null || p.bldgvalue != null)
   ? Number(p.landvalue || 0) + Number(p.bldgvalue || 0) : null;
 function pickZoning(p) {
   const k = Object.keys(p).find(key => /^zon/i.test(key) && p[key]);
   if (!k) return null;
   const d = p.description || p.zone_desc || null;
-  return p[k] + (d ? " · " + d : "");
+  return { code: String(p[k]), desc: d };
+}
+// Plain-English meanings — the difference between a data dump and an answer
+const FLOOD_MEANING = {
+  X: "Outside the high-risk flood area",
+  D: "Flood risk undetermined for this area",
+  A: "1%-a-year flood chance — lenders usually require flood insurance",
+  AE: "1%-a-year flood chance — lenders usually require flood insurance",
+  AH: "Shallow flooding possible — lenders usually require flood insurance",
+  AO: "Shallow flooding possible — lenders usually require flood insurance",
+  VE: "Coastal high-hazard zone with wave action — highest-risk flood category"
+};
+function zoningMeaning(code, desc) {
+  if (desc) return desc;
+  const c = (code || "").toUpperCase();
+  if (/^R/.test(c)) return "Residential";
+  if (/^A|AG/.test(c)) return "Agricultural";
+  if (/^O/.test(c)) return "Open space";
+  if (/^C/.test(c)) return "Commercial";
+  if (/^I/.test(c)) return "Industrial";
+  return null;
+}
+function fmtTmk(digits) {
+  const d = String(digits).replace(/\D/g, "");
+  if (d.length < 9) return d;
+  return `(${d[0]}) ${d[1]}-${d[2]}-${d.slice(3, 6)}:${d.slice(6, 9)}`;
 }
 
-// ---- Filters / search / rail / pins ----
-let activeFilter = "all";
-let selectedId = null;
-const markers = {};
-
-const AREA_WORDS = ["poipu","kukui","koloa","kalaheo","lawai","lihue","wailua","kapaa","anahola","kilauea","princeville","hanalei","waimea","kekaha"];
-function matchesSearch(l) {
-  const q = (document.getElementById("search").value || "").trim().toLowerCase();
-  if (!q) return true;
-  const m = q.match(/under\s*\$?\s*([\d.]+)\s*(m|k)?/);
-  if (m) { let cap = parseFloat(m[1]) * (m[2] === "k" ? 1e3 : 1e6); if (l.price > cap) return false; }
-  if (/\b(land|lot|acre)/.test(q) && l.type !== "land") return false;
-  if (/\bcondo/.test(q) && l.type !== "condo") return false;
-  if (/\b(home|house)/.test(q) && l.type !== "home") return false;
-  if (/\bfee\b/.test(q) && l.tenure !== "fee") return false;
-  if (/\blease/.test(q) && l.tenure !== "lease") return false;
-  if (/\b(cut|drop|reduced)/.test(q) && !l.oldPrice) return false;
-  const areas = AREA_WORDS.filter(w => q.includes(w));
-  if (areas.length && !areas.some(w => (l.area + l.addr).toLowerCase().includes(w))) return false;
-  return true;
-}
-function passes(l) {
-  if (!matchesSearch(l)) return false;
-  if (activeFilter === "all") return true;
-  if (activeFilter === "drops") return l.oldPrice !== null;
-  if (activeFilter === "kukuiula") return l.kukuiula;
-  return l.type === activeFilter;
-}
-const metaLine = l => l.type === "land"
-  ? `${l.lot} acres · Land · ${l.area}`
-  : `${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft · ${l.area}`;
-
-const cards = {}, pinEls = {};
-// Card aerials load only as they scroll into view — first paint stays instant
-const aerialObs = new IntersectionObserver(entries => entries.forEach(e => {
-  if (e.isIntersecting) {
-    e.target.style.backgroundImage = `url('${e.target.dataset.aerial}')`;
-    aerialObs.unobserve(e.target);
-  }
-}), { rootMargin: "0px 500px 0px 500px" });
-function buildAll() {
-  const rail = document.getElementById("rail");
-  LISTINGS.forEach((l, i) => {
-    const c = document.createElement("div");
-    c.className = "rcard";
-    c.style.animationDelay = (i * 35) + "ms";
-    const tag = l.oldPrice ? `<span class="tag cut">Sample · Price cut</span>` : (l.days <= 7 ? `<span class="tag" style="color:var(--accent)">Sample · New</span>` : `<span class="tag">Sample</span>`);
-    c.innerHTML = `
-      <div class="ph"><div style="position:absolute;inset:0;${artStyle(l)}"></div><div class="aer" data-aerial="${aerialUrl(l, 0.0035, 512, 240)}" style="position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1.3) contrast(1.08) brightness(1.07);"></div><div class="scrim"></div><button class="shr" title="Share">&#8599;</button>${tag}<div class="pr">${fmtPrice(l.price)}</div></div>
-      <div class="bd"><div class="a">${l.addr.replace("Sample — ","")}</div><div class="m">${metaLine(l)}</div></div>`;
-    c.onclick = () => select(l.id);
-    c.querySelector(".shr").onclick = (e) => { e.stopPropagation(); shareListing(l); };
-    aerialObs.observe(c.querySelector(".aer"));
-    rail.appendChild(c);
-    cards[l.id] = c;
-
-    const el = document.createElement("div");
-    let dot = "";
-    if (l.oldPrice) dot = `<span class="dot cut"></span>`;
-    else if (l.kukuiula) dot = `<span class="dot kuk"></span>`;
-    else if (l.type === "land") dot = `<span class="dot land"></span>`;
-    el.innerHTML = `<div class="pin">${dot}${fmtPrice(l.price)}</div>`;
-    const pin = el.firstChild;
-    pin.onclick = (e) => { e.stopPropagation(); select(l.id); };
-    pinEls[l.id] = pin;
-    const m = new maplibregl.Marker({ element: el }).setLngLat([l.lng, l.lat]);
-    m._onMap = false;
-    markers[l.id] = m;
-  });
-}
-function render() {
-  LISTINGS.forEach(l => {
-    const vis = previewOn && passes(l);
-    cards[l.id].hidden = !vis;
-    cards[l.id].classList.toggle("selected", l.id === selectedId);
-    pinEls[l.id].classList.toggle("selected", l.id === selectedId);
-    const m = markers[l.id];
-    const attach = vis && introDone; // keep the camera flight smooth — pins mount after the intro
-    if (attach && !m._onMap) { m.addTo(map); m._onMap = true; }
-    else if (!attach && m._onMap) { m.remove(); m._onMap = false; }
-  });
-}
-
-function toast(html, ms) {
-  const t = document.getElementById("toast");
-  t.innerHTML = html;
-  t.classList.add("show");
-  clearTimeout(t._h);
-  t._h = setTimeout(() => t.classList.remove("show"), ms || 2600);
-}
-
-// ---- Selection: cinematic dive + Property Passport ----
-async function select(id) {
-  firstActionTaken();
-  selectedId = id;
-  stopOrbit();
-  if (tapMarker) tapMarker.remove();
-  const l = LISTINGS.find(x => x.id === id);
-  render();
-  openPassport(l);
-  setHash("l=" + id);
-  const mobile = window.matchMedia("(max-width: 760px)").matches;
-  map.flyTo({
-    center: [l.lng, l.lat], zoom: 16.6, pitch: 62, bearing: map.getBearing() + 40,
-    duration: 2600, essential: true, curve: 1.3,
-    offset: mobile ? [0, -Math.round(window.innerHeight * 0.3)] : [0, 0]
-  });
-  if (orbitArm) map.off("moveend", orbitArm);
-  orbitArm = () => { orbitArm = null; if (selectedId === id && !reducedMotion) startOrbit(); };
-  map.once("moveend", orbitArm);
-
-  // live parcel + flood lookups for this exact point (real public data)
-  const parcelSrc = map.getSource("parcel");
-  if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
-  try {
-    const [parcel, flood] = await Promise.all([
-      queryPoint(GIS_PZ + countyFor(l.lng, l.lat).parcels + "/query", l.lng, l.lat, "*", true),
-      queryPoint(FLOOD_Q, l.lng, l.lat, "fld_zone,sfha_tf", false)
-    ]);
-    if (selectedId !== id) return;
-    if (parcel) {
-      const srcNow = map.getSource("parcel");
-      if (srcNow) srcNow.setData({ type: "FeatureCollection", features: [parcel] });
-      else pendingParcel = parcel;
-      const p = parcel.properties || {};
-      setFact("tmk", "TMK at this map point (county GIS)", pickTmk(p) || "—", "live");
-      setFact("acres", "Parcel size (county GIS)", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
-      toast(`Parcel outline at this map point — <b>County of Kauai GIS</b> (reference only, not a survey)`);
-    }
-    const fp = flood && flood.properties ? flood.properties : null;
-    setFact("flood", "FEMA flood zone (per state GIS)",
-      fp && fp.fld_zone ? fp.fld_zone : "outside mapped flood zones", "live");
-  } catch (e) {
-    if (selectedId !== id) return;
-    setFact("tmk", "TMK at this map point (county GIS)", "offline — retry", "");
-    setFact("acres", "Parcel size (county GIS)", "offline", "");
-    setFact("flood", "FEMA flood zone (per state GIS)", "offline", "");
-  }
-}
-
-function setFact(key, label, value, cls) {
-  const el = document.getElementById("fact-" + key);
-  if (el) el.outerHTML = `<div class="fchip resolved ${cls || ""}" id="fact-${key}"><small>${label}</small>${value}</div>`;
-}
-
-function sparkline(l) {
-  // Deterministic sample history derived from the listing (labeled as sample)
-  const pts = [];
-  const n = 14;
-  for (let i = 0; i < n; i++) {
-    const wob = Math.sin((l.id * 7 + i) * 1.7) * 0.035 + Math.sin(i * 0.9 + l.id) * 0.02;
-    let v = l.price * (1.04 + wob - i * 0.006);
-    if (l.oldPrice && i > n - 5) v = l.price;
-    if (l.oldPrice && i <= n - 5) v = Math.max(v, l.oldPrice * (1 + wob * 0.5));
-    pts.push(v);
-  }
-  pts[n - 1] = l.price;
-  const min = Math.min(...pts) * 0.995, max = Math.max(...pts) * 1.005;
-  const W = 320, H = 64;
-  const xy = pts.map((v, i) => [ (i / (n - 1)) * W, H - ((v - min) / (max - min)) * H ]);
-  const path = xy.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
-  const last = xy[n - 1];
-  return `<svg viewBox="0 0 ${W} ${H + 8}" style="width:100%;height:64px;display:block">
-    <path d="${path} L ${W} ${H + 8} L 0 ${H + 8} Z" fill="rgba(14,110,99,0.09)" stroke="none"/>
-    <path d="${path}" fill="none" stroke="#0E6E63" stroke-width="2"/>
-    <circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="#0E6E63"/>
-  </svg>`;
-}
-
-function demandLine(l) {
-  // Deterministic sample demand derived from the listing (labeled as sample)
-  const buyers = 8 + ((l.id * 13) % 34);
-  const band = l.price >= 3e6 ? "luxury" : l.price >= 1.5e6 ? "mid-market" : "entry";
-  return `<b>${buyers} active buyer profiles</b> match this ${band} price band in ${l.area.split(" /")[0]} — a sample number showing how the planned Demand Ledger will read. Not live data.`;
-}
-
-function openPassport(l) {
-  const pass = document.getElementById("passport");
-  pass.innerHTML = `
-    <div class="hero" style="${artStyle(l)}">
-      ${aerialLayer(l, 0.0022, 784, 296)}
-      <div class="scrim"></div>
-      <div style="position:absolute;right:12px;bottom:9px;font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Aerial view &middot; sample location</div>
-      <button class="x" onclick="closePassport()">&#10005;</button>
-      <div class="hp">
-        <div class="p">${fmtFull(l.price)} <span style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:0.08em;opacity:.85;vertical-align:6px">SAMPLE</span>${l.oldPrice ? `<span class="old">${fmtFull(l.oldPrice)}</span>` : ""}</div>
-        <div class="a">${l.addr} · ${l.area}</div>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="h">Property Passport</div>
-      <div class="factrow">
-        <div class="fchip"><small>Type</small>${l.type === "land" ? "Vacant land" : l.type === "condo" ? "Condo" : "Single family"}</div>
-        <div class="fchip ${l.tenure === 'fee' ? '' : 'gold'}"><small>Tenure</small>${l.tenure === "fee" ? "Fee simple" : "Leasehold"}</div>
-        ${l.type !== "land" ? `<div class="fchip"><small>Size</small>${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft</div>` : ""}
-        <div class="fchip"><small>On market</small>${l.days} day${l.days === 1 ? "" : "s"}</div>
-        <div class="fchip live" id="fact-tmk"><small>TMK at this map point (county GIS)</small><span class="skel" style="width:88px"></span></div>
-        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small><span class="skel" style="width:64px"></span></div>
-        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:44px"></span></div>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="h">Price history · sample data</div>
-      <div class="spark-wrap">
-        <div class="cap"><span>List price, last 14 months</span><b>${fmtPrice(l.price)}${l.oldPrice ? ` · cut ${fmtPrice(l.oldPrice - l.price)}` : ""}</b></div>
-        ${sparkline(l)}
-      </div>
-    </div>
-    <div class="sec">
-      <div class="h">Demand · sample data</div>
-      <div class="demand">${demandLine(l)}</div>
-    </div>
-    <div class="sec">
-      <div class="h">Ask anything about this property</div>
-      <div class="ask">
-        <input id="ask-input" type="text" placeholder="Flood risk? Leasehold? What can I build?">
-        <button onclick="answerAsk(${l.id})">Ask</button>
-      </div>
-      <div class="answer" id="answer"></div>
-    </div>
-    <div class="sec">
-      <div class="pass-cta">
-        <button class="primary" id="contact-btn">Contact Micah</button>
-        <button class="ghost" id="share-listing-btn">Share &#8599;</button>
-        <button class="ghost" id="watch-btn">Watch</button>
-      </div>
-    </div>
-    <div class="micro">Sample listing — not a real property or offering. TMK, parcel size, parcel outline, and flood zone are looked up live from State of Hawaii / County of Kauai public records for this map location. Boundaries are for reference, not survey-grade. Flood zone shown is informational only, from FEMA maps as published by Hawaii state GIS — not a flood zone determination. Verify with FEMA and your lender before relying on it.</div>
-    <div class="sec"></div>`;
-  pass.classList.add("open");
-  const inp = document.getElementById("ask-input");
-  inp.addEventListener("keydown", e => { if (e.key === "Enter") answerAsk(l.id); });
-  document.getElementById("share-listing-btn").onclick = () => shareListing(l);
-  document.getElementById("contact-btn").onclick = () => openLead("buyer", l.addr);
-  document.getElementById("watch-btn").onclick = () => openLead("buyer", l.addr + " — alert me on price or status changes");
-}
-// ---- Share everything: one gesture, see it → text it ----
+// ---- Share / deep links ----
 function deepUrl(hash) { return location.origin + location.pathname + "#" + hash; }
 function setHash(hash) { try { history.replaceState(null, "", hash ? "#" + hash : location.pathname); } catch (e) {} }
 async function shareIt(text, hash) {
@@ -1139,34 +652,50 @@ async function shareIt(text, hash) {
     location.href = "sms:&body=" + encodeURIComponent(text + " " + url);
   }
 }
-const shareListing = l => shareIt(`${l.addr} — ${fmtFull(l.price)} · ${metaLine(l)} · Moku`, "l=" + l.id);
-const shareParcel = (lng, lat, tmk) => shareIt(`Land Intel${tmk ? " · TMK " + tmk : ""} · Moku`, "p=" + lng.toFixed(5) + "," + lat.toFixed(5));
-
-// Deep links (#l=5 or #p=lng,lat) skip the intro and go straight to the property
 function parseDeepLink() {
   const h = location.hash.slice(1);
-  let m = h.match(/^l=(\d+)$/);
-  if (m) return { type: "l", id: +m[1] };
-  m = h.match(/^p=(-?[\d.]+),(-?[\d.]+)$/);
+  let m = h.match(/^p=(-?[\d.]+),(-?[\d.]+)$/);
   if (m) return { type: "p", lng: +m[1], lat: +m[2] };
+  m = h.match(/^tmk=(\d{6,13})$/);
+  if (m) return { type: "tmk", tmk: m[1] };
   return null;
 }
 
-// ---- Land Intel: tap anywhere on the island → real parcel record ----
+// ---- Toast / hint ----
+function toast(html, ms) {
+  const t = document.getElementById("toast");
+  t.innerHTML = html;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), ms || 2600);
+}
+function collapseAttribution() {
+  const at = document.querySelector(".maplibregl-ctrl-attrib");
+  if (at) { at.classList.remove("maplibregl-compact-show"); at.removeAttribute("open"); }
+}
+let hopHintShown = false;
+function showHopHint() {
+  if (hopHintShown) return;
+  hopHintShown = true;
+  const h = document.getElementById("hint");
+  h.classList.add("show");
+  setTimeout(() => h.classList.remove("show"), 6000);
+}
+
+// ---- The record: tap anywhere or land from a search ----
 let exploreToken = 0;
 let tapMarker = null;
+let lastRecord = null;
 map.on("click", (e) => {
-  if (!introDone) return;
+  if (!document.getElementById("veil").classList.contains("gone")) return;
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
 
 async function exploreParcel(lng, lat) {
-  firstActionTaken();
-  selectedId = null;
-  stopOrbit();
-  render();
+  dismissVeil();
   const token = ++exploreToken;
-  openParcelPassport(lng, lat);
+  lastRecord = { lng, lat, tmk: null };
+  openRecordCard(lng, lat);
   setHash("p=" + lng.toFixed(5) + "," + lat.toFixed(5));
   if (!tapMarker) {
     const el = document.createElement("div");
@@ -1176,9 +705,25 @@ async function exploreParcel(lng, lat) {
     tapMarker.setLngLat([lng, lat]).addTo(map);
   }
   const targetZoom = Math.max(map.getZoom(), 15.6);
-  map.flyTo({ center: [lng, lat], zoom: targetZoom, duration: 1400, essential: true });
+  map.flyTo({
+    center: [lng, lat], zoom: targetZoom, pitch: SMALL ? 46 : 55, duration: 2000, essential: true,
+    offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0]
+  });
   const parcelSrc = map.getSource("parcel");
   if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
+
+  // street/city subline (best effort, never blocking)
+  fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`)
+    .then(r => r.json())
+    .then(g => {
+      if (token !== exploreToken) return;
+      const p = g.features && g.features[0] && g.features[0].properties;
+      if (!p) return;
+      const line = [p.name || (p.housenumber ? p.housenumber + " " + (p.street || "") : p.street), p.city || p.county].filter(Boolean).join(", ");
+      const el = document.getElementById("rec-addr");
+      if (el && line) el.textContent = line;
+    }).catch(() => {});
+
   try {
     const county = countyFor(lng, lat);
     const [parcel, zoning, flood, tsu] = await Promise.all([
@@ -1191,130 +736,253 @@ async function exploreParcel(lng, lat) {
     if (parcel) {
       if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [parcel] });
       else pendingParcel = parcel;
-      // snap the camera to the parcel's true center — the click ray on 3D terrain can land short
       try {
         const ring = parcel.geometry.type === "Polygon" ? parcel.geometry.coordinates[0] : parcel.geometry.coordinates[0][0];
         let cx = 0, cy = 0;
         ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
         cx /= ring.length; cy /= ring.length;
-        map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900 });
+        map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
       } catch (geErr) {}
       const p = parcel.properties || {};
-      const tmk = pickTmk(p), acres = pickAcres(p), assessed = pickAssessed(p);
-      setFact("tmk", "TMK (county record)", tmk || "—", "live");
-      setFact("acres", "Parcel size (county GIS)", acres ? Number(acres).toFixed(2) + " acres" : "—", "live");
-      if (p.taxclass) setFact("taxclass", "Tax class (county)", p.taxclass.toLowerCase(), "live");
-      else if (assessed) setFact("taxclass", "Assessed value (county)", "$" + assessed.toLocaleString(), "live");
-      else setFact("taxclass", "Tax class (county)", "—", "");
+      const tmk = pickTmk(p);
+      lastRecord.tmk = tmk;
+      const tmkEl = document.getElementById("rec-tmk");
+      if (tmkEl && tmk) tmkEl.textContent = fmtTmk(tmk);
+      setFact("tmk", "TMK (county record)", tmk ? fmtTmk(tmk) : "—", "live");
+      setFact("acres", "Parcel size", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
+      const owner = pickOwner(p), assessed = pickAssessed(p);
+      if (owner) setFact("owner", "Owner of record (county)", owner, "live");
+      else if (assessed) setFact("owner", "Assessed value (county)", "$" + assessed.toLocaleString(), "live");
+      else setFact("owner", "Owner of record", "not published by this county", "");
       const qp = document.getElementById("qpub-btn");
       if (qp && p.qpub_link) { qp.href = p.qpub_link; qp.style.display = ""; }
-      toast(`Real parcel — <b>county GIS record</b> (reference only, not a survey)`);
+      showHopHint();
     } else {
       setFact("tmk", "TMK (county record)", "no parcel here (water / road)", "");
+      setFact("acres", "Parcel size", "—", "");
+      setFact("owner", "Owner of record", "—", "");
     }
     const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
-    setFact("zoning", "County zoning", z || "none mapped here", "live");
-    const fp = flood && flood.properties ? flood.properties : null;
+    if (z) {
+      const meaning = zoningMeaning(z.code, z.desc);
+      setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>`, "live");
+    } else {
+      setFact("zoning", "County zoning", "none mapped here", "live");
+    }
+    const fz = flood && flood.properties ? flood.properties.fld_zone : null;
     setFact("flood", "FEMA flood zone (per state GIS)",
-      fp && fp.fld_zone ? fp.fld_zone : "outside mapped flood zones", "live");
+      fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones", "live");
     const t = tsu && tsu.properties ? tsu.properties : null;
-    setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "outside mapped evacuation zones", "live");
+    setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "Outside mapped evacuation zones", "live");
   } catch (err) {
     if (token !== exploreToken) return;
     setFact("tmk", "TMK (county record)", "offline — retry", "");
+    setFact("acres", "Parcel size", "offline", "");
+    setFact("owner", "Owner of record", "offline", "");
+    setFact("zoning", "County zoning", "offline", "");
+    setFact("flood", "FEMA flood zone (per state GIS)", "offline", "");
   }
 }
 
-function openParcelPassport(lng, lat) {
+function setFact(key, label, valueHtml, cls) {
+  const el = document.getElementById("fact-" + key);
+  if (el) el.outerHTML = `<div class="fchip resolved ${cls || ""}" id="fact-${key}"><small>${label}</small>${valueHtml}</div>`;
+}
+
+function openRecordCard(lng, lat) {
   const pass = document.getElementById("passport");
-  const pt = { lng, lat };
   pass.innerHTML = `
-    <div class="hero" style="background:#1a2a21">
-      ${aerialLayer(pt, 0.0022, 784, 296)}
+    <div class="hero" style="background-image:url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(lng-0.0022).toFixed(5)},${(lat-0.00083).toFixed(5)},${(lng+0.0022).toFixed(5)},${(lat+0.00083).toFixed(5)}&bboxSR=4326&imageSR=4326&size=784,296&format=jpg&f=image');background-size:cover;background-position:center;">
       <div class="scrim"></div>
-      <div style="position:absolute;right:12px;bottom:9px;font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Aerial view &middot; this spot</div>
-      <button class="x" onclick="closePassport()">&#10005;</button>
+      <div class="note">Aerial &middot; this spot</div>
+      <button class="x" onclick="closeRecord()">&#10005;</button>
       <div class="hp">
-        <div class="p" style="font-size:22px">Land Intel</div>
-        <div class="a">${lat.toFixed(5)}, ${lng.toFixed(5)} &middot; live public records</div>
+        <div class="tmkline" id="rec-tmk">Parcel record</div>
+        <div class="addr" id="rec-addr">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
       </div>
     </div>
     <div class="sec">
-      <div class="h">Parcel Passport &middot; all data live</div>
+      <div class="h">Live county record</div>
       <div class="factrow">
-        <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small><span class="skel" style="width:88px"></span></div>
-        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small><span class="skel" style="width:64px"></span></div>
-        <div class="fchip live" id="fact-taxclass"><small>Tax class (county)</small><span class="skel" style="width:70px"></span></div>
-        <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:96px"></span></div>
-        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:44px"></span></div>
-        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:80px"></span></div>
+        <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small><span class="skel" style="width:110px"></span></div>
+        <div class="fchip live" id="fact-owner"><small>Owner of record (county)</small><span class="skel" style="width:140px"></span></div>
+        <div class="fchip live" id="fact-acres"><small>Parcel size</small><span class="skel" style="width:70px"></span></div>
+        <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:120px"></span></div>
+        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:150px"></span></div>
+        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:130px"></span></div>
       </div>
     </div>
     <div class="sec">
       <div class="pass-cta">
-        <button class="primary" id="claim-btn">This is my property</button>
-        <a id="qpub-btn" style="display:none;flex:1;text-align:center;text-decoration:none;background:#fff;color:var(--ink);border:1px solid rgba(0,0,0,0.12);border-radius:12px;padding:11px 0;font-size:13px;font-weight:600" href="#" target="_blank" rel="noopener">County record &rarr;</a>
-        <button class="ghost" onclick="shareParcel(${lng}, ${lat}, (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim())">Share &#8599;</button>
+        <button class="primary" id="copy-record">Copy record link</button>
+        <button class="ghost" id="watch-parcel">Watch this parcel</button>
+      </div>
+      <div class="pass-cta" style="margin-top:8px">
+        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">Open county tax record &rarr;</a>
       </div>
     </div>
-    <div class="micro">Every value in this panel is looked up live from county and State of Hawaii public records for the tapped location. Parcel boundaries are for reference, not survey-grade. Flood and tsunami zones are informational only — not determinations. The county tax record link opens the county&#8217;s own site.</div>
-    <div class="sec"></div>`;
+    <div class="micro">All values are looked up live from County and State of Hawaii public records for the tapped location. Parcel boundaries are reference only, not survey-grade. Flood and tsunami zones are informational, not determinations — verify with FEMA and your lender.</div>`;
   pass.classList.add("open");
-  document.getElementById("claim-btn").onclick = () => {
-    const tmk = (document.getElementById("fact-tmk") || { textContent: "" }).textContent.replace("TMK (county record)", "").trim();
-    const label = tmk && !/looking|offline|no parcel/.test(tmk) ? "TMK " + tmk : lat.toFixed(5) + ", " + lng.toFixed(5);
-    try { localStorage.setItem("moku_myproperty", JSON.stringify({ tmk: label, lng, lat, at: Date.now() })); } catch (e) {}
+  document.getElementById("copy-record").onclick = async () => {
+    const hash = lastRecord && lastRecord.tmk ? "tmk=" + String(lastRecord.tmk).replace(/\D/g, "") : "p=" + lng.toFixed(5) + "," + lat.toFixed(5);
+    setHash(hash);
+    const label = lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : "This parcel";
+    await shareIt(`${label} — live county record on Moku`, hash);
+  };
+  document.getElementById("watch-parcel").onclick = () => {
+    const label = lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : lat.toFixed(5) + ", " + lng.toFixed(5);
+    try { localStorage.setItem("moku_home", JSON.stringify({ tmk: label, lng, lat, at: Date.now() })); } catch (e) {}
     openLead("owner", label);
   };
 }
-
-function closePassport() {
+function closeRecord() {
   document.getElementById("passport").classList.remove("open");
-  selectedId = null;
   setHash("");
   if (tapMarker) tapMarker.remove();
-  stopOrbit();
-  map.getSource("parcel") && map.getSource("parcel").setData({ type: "FeatureCollection", features: [] });
-  render();
+  const src = map.getSource("parcel");
+  if (src) src.setData({ type: "FeatureCollection", features: [] });
 }
 
-// Demo Q&A — canned, clearly labeled; production is AI grounded in live data
-function answerAsk(id) {
-  const l = LISTINGS.find(x => x.id === id);
-  const q = (document.getElementById("ask-input").value || "").toLowerCase();
-  const a = document.getElementById("answer");
-  let body;
-  const floodEl = document.getElementById("fact-flood");
-  const floodTxt = floodEl ? floodEl.textContent.replace(/FEMA flood zone \(per state GIS\)/, "").trim() : "—";
-  if (/flood|water|tsunami|risk/.test(q)) {
-    body = `This map point shows FEMA flood zone <b>${floodTxt || "—"}</b>, per the FEMA flood map layer published by State of Hawaii GIS — informational only, not a flood determination. Zones starting with A or V usually mean lenders require flood insurance.`;
-  } else if (/lease|fee|tenure|own/.test(q)) {
-    body = l.tenure === "fee"
-      ? `This is a <b>fee simple</b> listing — you own the land outright. That's the standard mainland-style ownership; no lease rent, no expiration.`
-      : `This is a <b>leasehold</b> listing — you own the home but lease the land. That usually means a lower price and monthly lease rent, and the lease term matters a lot. Worth a careful look before offering.`;
-  } else if (/build|adu|zone|zoning/.test(q)) {
-    body = `Buildability depends on county zoning and the parcel's land-use district. In production this answer pulls the live zoning layer for TMK shown above and explains it in plain English.`;
-  } else if (/school|beach|near|area/.test(q)) {
-    body = `${l.area} details — schools, beaches, drive times — ship with the neighborhood guides in production. The AI answers about properties and places, always grounded in data.`;
-  } else if (!q) {
-    body = `Type a question — try &ldquo;flood risk?&rdquo;, &ldquo;is this leasehold?&rdquo; or &ldquo;can I build here?&rdquo;`;
-  } else {
-    body = `In production, this box is a real AI grounded in this property's listing, parcel, hazard, zoning, and price-history data — it answers what agents get asked every day, instantly.`;
+// ---- The One Box: TMK or address → record ----
+function digitsOf(q) { return q.replace(/\D/g, ""); }
+function looksLikeTmk(q) {
+  const d = digitsOf(q);
+  return d.length >= 6 && d.length <= 13 && /^[1-4]/.test(d) && !/\b(st|street|rd|road|ave|hwy|way|dr|pl|loop|lane|ln)\b/i.test(q);
+}
+async function searchTmk(d) {
+  const county = COUNTY_BY_TMK_DIGIT[d[0]];
+  if (!county) throw new Error("bad tmk");
+  const nine = d.slice(0, 9);
+  let f = null;
+  for (const field of ["tmk_txt", "tmk9txt", "tmk"]) {
+    try {
+      const u = `${GIS_PZ}${county.parcels}/query?where=${encodeURIComponent(`${field} LIKE '${nine}%'`)}&outFields=*&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=1`;
+      const res = await fetch(u);
+      const gj = await res.json();
+      if (gj.features && gj.features[0]) { f = gj.features[0]; break; }
+    } catch (e) {}
   }
-  a.innerHTML = body + `<span class="src">Demo answer. Production: AI grounded in live listing + county + state data.</span>`;
-  a.classList.add("show");
+  if (!f) return false;
+  const ring = f.geometry.type === "Polygon" ? f.geometry.coordinates[0] : f.geometry.coordinates[0][0];
+  let cx = 0, cy = 0;
+  ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
+  cx /= ring.length; cy /= ring.length;
+  exploreParcel(cx, cy);
+  return true;
+}
+async function geocode(q) {
+  const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q + " Hawaii")}&limit=5`);
+  const gj = await res.json();
+  return (gj.features || []).filter(f => (f.properties.state || "") === "Hawaii" || (f.properties.country || "") === "United States").slice(0, 5);
+}
+function sugLabel(f) {
+  const p = f.properties;
+  const main = [p.housenumber, p.street].filter(Boolean).join(" ") || p.name || "";
+  const rest = [p.city, p.county].filter(Boolean).join(", ");
+  return { main: main || rest || "Unknown", rest: main ? rest : "" };
+}
+function wireSearch(inputId, suggestId) {
+  const input = document.getElementById(inputId);
+  const sug = document.getElementById(suggestId);
+  let timer = null, items = [];
+  function closeSug() { sug.classList.remove("open"); sug.innerHTML = ""; items = []; }
+  function renderSug(feats) {
+    items = feats;
+    if (!feats.length) { closeSug(); return; }
+    sug.innerHTML = feats.map((f, i) => {
+      const l = sugLabel(f);
+      return `<div class="sug" data-i="${i}">${l.main}${l.rest ? `<small>${l.rest}</small>` : ""}</div>`;
+    }).join("");
+    sug.classList.add("open");
+    sug.querySelectorAll(".sug").forEach(el => {
+      el.onclick = () => {
+        const f = items[+el.dataset.i];
+        closeSug();
+        input.blur();
+        exploreParcel(f.geometry.coordinates[0], f.geometry.coordinates[1]);
+      };
+    });
+  }
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (q.length < 3 || looksLikeTmk(q)) { closeSug(); return; }
+    timer = setTimeout(async () => {
+      try { renderSug(await geocode(q)); } catch (e) { closeSug(); }
+    }, 260);
+  });
+  input.addEventListener("keydown", async e => {
+    if (e.key !== "Enter") return;
+    const q = input.value.trim();
+    if (!q) return;
+    closeSug();
+    if (looksLikeTmk(q)) {
+      toast("Looking up TMK&hellip;");
+      try {
+        const ok = await searchTmk(digitsOf(q));
+        if (!ok) toast("No parcel found for that TMK — check the digits");
+        else input.blur();
+      } catch (err) { toast("TMK lookup failed — try again"); }
+    } else {
+      try {
+        const feats = await geocode(q);
+        if (feats.length) { input.blur(); exploreParcel(feats[0].geometry.coordinates[0], feats[0].geometry.coordinates[1]); }
+        else toast("No Hawaii match — try adding the town name");
+      } catch (err) { toast("Search failed — try again"); }
+    }
+  });
 }
 
-// ---- Lead engine: every CTA lands a real message in Micah's inbox ----
-const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before public launch
-let leadKind = "buyer";
+// ---- Veil lifecycle ----
+function dismissVeil() {
+  const v = document.getElementById("veil");
+  if (!v.classList.contains("gone")) {
+    v.classList.add("gone");
+    document.body.classList.add("docked");
+    setTimeout(collapseAttribution, 500);
+  }
+}
+document.getElementById("explore-link").onclick = () => {
+  dismissVeil();
+  toast(`Tap <b>any lot on any island</b> — its record appears instantly`, 4200);
+};
+document.getElementById("logo-home").onclick = () => {
+  closeRecord();
+  map.flyTo({ center: [-157.55, 20.9], zoom: SMALL ? 5.6 : 6.4, pitch: 0, bearing: 0, duration: 2200, essential: true });
+};
+document.querySelectorAll(".try[data-q]").forEach(b => {
+  b.onclick = () => {
+    const box = document.getElementById("onebox");
+    box.value = b.dataset.q;
+    box.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+  };
+});
+document.getElementById("try-here").onclick = () => {
+  if (!navigator.geolocation) { toast("Location not available on this device"); return; }
+  toast("Finding you&hellip;");
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const { longitude: lng, latitude: lat } = pos.coords;
+      if (lng < -160.4 || lng > -154.5 || lat < 18.7 || lat > 22.4) { toast("You're not in Hawaii right now — try a search instead"); return; }
+      exploreParcel(lng, lat);
+    },
+    () => toast("Couldn't get your location — try a search instead")
+  );
+};
+wireSearch("onebox", "suggest");
+wireSearch("dockbox", "dock-suggest");
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); } });
+
+// ---- Lead engine ----
+const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before wide launch
+let leadKind = "owner";
 const LEAD_COPY = {
-  buyer: {
-    title: "Be first. Every time.",
-    sub: "Every new listing and price cut on Kauai, minutes after it happens — starting the day listings go live.",
-    note: "What are you looking for?",
-    go: "Request first access →",
-    subject: "Moku — first access request"
+  owner: {
+    title: "Watch this parcel",
+    sub: "A free monthly digest for this parcel: assessed-value changes, sales recorded nearby, and what’s being built around it.",
+    note: "Parcel (auto-filled)",
+    go: "Start watching →",
+    subject: "Moku — watch parcel"
   },
   seller: {
     title: "What’s your home worth?",
@@ -1322,13 +990,6 @@ const LEAD_COPY = {
     note: "Your neighborhood or address",
     go: "Ask Micah →",
     subject: "Moku — home value request"
-  },
-  owner: {
-    title: "Watch your property",
-    sub: "A free monthly digest for your parcel: assessed-value changes, sales recorded nearby, and what’s being built around you.",
-    note: "Your TMK (auto-filled)",
-    go: "Start watching →",
-    subject: "Moku — My Property digest"
   }
 };
 function openLead(kind, prefill) {
@@ -1344,7 +1005,6 @@ function openLead(kind, prefill) {
 }
 function closeLead() { document.getElementById("lead-modal").classList.remove("open"); }
 document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeLead(); });
 document.getElementById("lead-go").onclick = () => {
   const c = LEAD_COPY[leadKind];
   const email = document.getElementById("lead-email").value.trim();
@@ -1355,76 +1015,30 @@ document.getElementById("lead-go").onclick = () => {
   toast(`Almost there — just hit send in your mail app &#128232;`, 4200);
 };
 document.getElementById("btn-sell").onclick = () => openLead("seller");
-document.getElementById("btn-alerts").onclick = () => openLead("buyer");
 
-// ---- Wire chrome ----
-document.querySelectorAll(".filterbar .chip").forEach(ch => {
-  ch.onclick = () => {
-    document.querySelectorAll(".filterbar .chip").forEach(c => c.classList.remove("active"));
-    ch.classList.add("active");
-    activeFilter = ch.dataset.f;
-    render();
-  };
-});
-let searchTimer = null;
-document.getElementById("search").addEventListener("input", () => {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(render, 220);
-});
-
-// ---- Island hopping: the whole archipelago, one map ----
-const ISLAND_VIEWS = {
-  kauai:   { c: [-159.500, 21.947], z: 12.05, p: 50, b: 6 },
-  oahu:    { c: [-157.970, 21.475], z: 10.4, p: 45, b: 0 },
-  molokai: { c: [-157.010, 21.135], z: 10.7, p: 45, b: 0 },
-  lanai:   { c: [-156.920, 20.830], z: 11.0, p: 45, b: 0 },
-  maui:    { c: [-156.320, 20.800], z: 10.0, p: 45, b: 0 },
-  hawaii:  { c: [-155.470, 19.610], z: 9.0,  p: 40, b: 0 }
-};
-document.querySelectorAll(".islandbar button").forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll(".islandbar button").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-    stopOrbit();
-    const v = ISLAND_VIEWS[b.dataset.island];
-    map.flyTo({ center: v.c, zoom: v.z, pitch: LITE ? 0 : v.p, bearing: v.b, duration: 2800, essential: true, curve: 1.3 });
-  };
-});
-
-// ---- Launch mode vs listings preview ----
-let previewOn = false;
-const RIBBON_LAUNCH = `Beta &middot; live state GIS &middot; listings soon`;
-const RIBBON_PREVIEW = `Preview &middot; sample listings, not real`;
-function setPreview(on) {
-  previewOn = on;
-  document.body.classList.toggle("launch", !on);
-  document.getElementById("ribbon").innerHTML = on ? RIBBON_PREVIEW : RIBBON_LAUNCH;
-  document.getElementById("btn-preview").textContent = on ? "Exit preview" : "Preview";
-  if (!on && selectedId !== null) closePassport();
-  render();
-}
-document.getElementById("btn-preview").onclick = () => {
-  setPreview(!previewOn);
-  toast(previewOn
-    ? `Listings preview — <b>sample data</b> until the live feed connects`
-    : `Back to launch view — everything on screen is real public data`);
-};
-
-buildAll();
-render();
-
-// Returning owners get their scoreboard moment
-try {
-  const mine = JSON.parse(localStorage.getItem("moku_myproperty") || "null");
-  if (mine && mine.tmk) setTimeout(() => toast(`Watching <b>${mine.tmk}</b> — your monthly digest is on its way`, 4500), 9500);
-} catch (e) {}
-
-// A shared link opens straight on the property — no intro, no waiting
+// ---- Boot: deep link → straight to the record; returning owner → home; else the One Box ----
 const deep = parseDeepLink();
+let bootedHome = false;
 if (deep) {
-  endIntro(true);
-  if (deep.type === "l" && LISTINGS.some(l => l.id === deep.id)) { setPreview(true); select(deep.id); }
-  else if (deep.type === "p") exploreParcel(deep.lng, deep.lat);
+  dismissVeil();
+  if (deep.type === "p") exploreParcel(deep.lng, deep.lat);
+  else if (deep.type === "tmk") {
+    toast("Opening record&hellip;");
+    searchTmk(deep.tmk).then(ok => { if (!ok) toast("Record not found"); }).catch(() => toast("Lookup failed — tap the map instead"));
+  }
+} else {
+  try {
+    const home = JSON.parse(localStorage.getItem("moku_home") || "null");
+    if (home && home.lng) {
+      bootedHome = true;
+      dismissVeil();
+      exploreParcel(home.lng, home.lat);
+      setTimeout(() => toast(`Watching <b>${home.tmk}</b> — checked just now`, 4200), 2600), 100;
+    }
+  } catch (e) {}
+  if (!bootedHome) {
+    setTimeout(() => { try { document.getElementById("onebox").focus(); } catch (e) {} }, 300);
+  }
 }
 </script>
 </body>
