@@ -614,6 +614,12 @@ function countyFor(lng, lat) {
 const COUNTY_BY_TMK_DIGIT = { "1": COUNTIES.oahu, "2": COUNTIES.maui, "3": COUNTIES.hawaii, "4": COUNTIES.kauai };
 const FLOOD_Q = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/6/query";
 const TSU_Q   = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/2/query";
+const SCHOOL_BASE = "https://geodata.hawaii.gov/arcgis/rest/services/AdminBnd/MapServer/";
+const SCHOOL_LAYERS = [
+  { layer: 17, field: "elem_desc" },
+  { layer: 18, field: "int_desc" },
+  { layer: 19, field: "high_desc" }
+];
 async function queryPoint(url, lng, lat, outFields, wantGeom) {
   const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${!!wantGeom}&outSR=4326&f=geojson`;
   const res = await fetch(u);
@@ -622,6 +628,22 @@ async function queryPoint(url, lng, lat, outFields, wantGeom) {
   return gj.features && gj.features[0] ? gj.features[0] : null;
 }
 const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
+// County records arrive as raw ALL-CAPS data dumps — translate to human
+function formatOwner(raw) {
+  if (!raw) return null;
+  const KEEP = new Set(["LLC", "INC", "LP", "LLP", "LLLP", "TRUST", "TR", "EST", "ETAL", "JR", "SR", "II", "III", "IV", "USA", "US", "DHHL", "LTD", "CO", "CORP", "HOA", "AOAO"]);
+  return String(raw)
+    .replace(/\s*,\s*/g, ", ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .map(w => {
+      const bare = w.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+      if (KEEP.has(bare)) return w.toUpperCase();
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
 const pickAcres = p => p.gisacres || p.taxacres || null;
 const pickOwner = p => p.owner || p.majorowner || null;
 const pickAssessed = p => (p.landvalue != null || p.bldgvalue != null)
@@ -645,6 +667,7 @@ const FLOOD_MEANING = {
 function zoningMeaning(code, desc) {
   if (desc) return desc;
   const c = (code || "").toUpperCase();
+  if (/^\d+$/.test(c)) return "County zone code";
   if (/^R/.test(c)) return "Residential";
   if (/^A|AG/.test(c)) return "Agricultural";
   if (/^O/.test(c)) return "Open space";
@@ -747,11 +770,14 @@ async function exploreParcel(lng, lat) {
 
   try {
     const county = countyFor(lng, lat);
-    const [parcel, zoning, flood, tsu] = await Promise.all([
+    const [parcel, zoning, flood, tsu, elem, mid, high] = await Promise.all([
       queryPoint(GIS_PZ + county.parcels + "/query", lng, lat, "*", true),
       queryPoint(GIS_PZ + county.zoning + "/query", lng, lat, "*", false),
       queryPoint(FLOOD_Q, lng, lat, "fld_zone,sfha_tf", false),
-      queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc", false)
+      queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc", false),
+      queryPoint(SCHOOL_BASE + "17/query", lng, lat, "elem_desc", false).catch(() => null),
+      queryPoint(SCHOOL_BASE + "18/query", lng, lat, "int_desc", false).catch(() => null),
+      queryPoint(SCHOOL_BASE + "19/query", lng, lat, "high_desc", false).catch(() => null)
     ]);
     if (token !== exploreToken) return;
     if (parcel) {
@@ -772,7 +798,7 @@ async function exploreParcel(lng, lat) {
       setFact("tmk", "TMK (county record)", tmk ? fmtTmk(tmk) : "—", "live");
       setFact("acres", "Parcel size", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
       const owner = pickOwner(p), assessed = pickAssessed(p);
-      if (owner) setFact("owner", "Owner of record (county)", owner, "live");
+      if (owner) setFact("owner", "Owner of record (county)", formatOwner(owner), "live");
       else if (assessed) setFact("owner", "Assessed value (county)", "$" + assessed.toLocaleString(), "live");
       else setFact("owner", "Owner of record", "not published by this county", "");
       const qp = document.getElementById("qpub-btn");
@@ -795,6 +821,12 @@ async function exploreParcel(lng, lat) {
       fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones", "live");
     const t = tsu && tsu.properties ? tsu.properties : null;
     setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "Outside mapped evacuation zones", "live");
+    const schools = [
+      elem && elem.properties && elem.properties.elem_desc,
+      mid && mid.properties && mid.properties.int_desc,
+      high && high.properties && high.properties.high_desc
+    ].filter(Boolean);
+    setFact("schools", "Public school zones (DOE)", schools.length ? schools.join(" · ") : "not in a mapped attendance area", "live");
   } catch (err) {
     if (token !== exploreToken) return;
     setFact("tmk", "TMK (county record)", "offline — retry", "");
@@ -831,6 +863,7 @@ function openRecordCard(lng, lat) {
         <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:120px"></span></div>
         <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:150px"></span></div>
         <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:130px"></span></div>
+        <div class="fchip live" id="fact-schools"><small>Public school zones (DOE)</small><span class="skel" style="width:160px"></span></div>
       </div>
     </div>
     <div class="sec">
