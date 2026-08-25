@@ -6,6 +6,9 @@
 <title>Moku — Fly the Island. Find Your Home.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com">
+<link rel="preconnect" href="https://s3.amazonaws.com">
+<link rel="preconnect" href="https://geodata.hawaii.gov">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
@@ -33,6 +36,7 @@
   #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #14293C 0%, #0A1520 72%); }
   .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
   .maplibregl-ctrl-attrib { font-size: 10px; }
+  .maplibregl-canvas { filter: saturate(1.14) brightness(1.05) contrast(1.04); }
 
   /* ---- Cinematic intro ---- */
   #intro {
@@ -333,6 +337,7 @@
     .passport.open { transform: none; }
     .rail { padding-bottom: 12px; }
     .attr-note { display: none; }
+    .pill-btn, .search-wrap input, .filterbar { backdrop-filter: none; -webkit-backdrop-filter: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -483,6 +488,14 @@ function artStyle(l, shift) {
     linear-gradient(160deg, hsl(${h} ${s}% 64%) 0%, hsl(${(h+28)%360} ${s}% 38%) 100%);`;
 }
 
+// ---- Adaptive quality: every device gets the smoothest experience it can run ----
+const LITE = (() => {
+  const smallScreen = Math.min(screen.width, screen.height) < 780;
+  const lowMem = navigator.deviceMemory && navigator.deviceMemory <= 4;
+  const fewCores = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+  return smallScreen || lowMem || fewCores;
+})();
+
 // ---- 3D map: real satellite + real terrain, all open/free sources ----
 const map = new maplibregl.Map({
   container: "map",
@@ -501,18 +514,21 @@ const map = new maplibregl.Map({
         tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
         tileSize: 256,
         encoding: "terrarium",
-        maxzoom: 13,
+        maxzoom: 12,
         attribution: "Terrain: Mapzen / AWS Open Data"
       }
     },
-    layers: [{ id: "sat", type: "raster", source: "sat" }]
+    layers: [
+      { id: "bg", type: "background", paint: { "background-color": "#0F2437" } },
+      { id: "sat", type: "raster", source: "sat" }
+    ]
   },
   center: [-159.85, 22.28],
   zoom: 8.9,
   pitch: 0,
   bearing: -34,
   attributionControl: false,
-  maxPitch: 72
+  maxPitch: LITE ? 60 : 72
 });
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
@@ -520,10 +536,7 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bott
 // Some embedded browsers resize the window without the events MapLibre watches —
 // keep the canvas matched to the container no matter what.
 window.addEventListener("resize", () => map.resize());
-setInterval(() => {
-  const c = map.getCanvas(), t = map.getContainer();
-  if (Math.abs(c.clientWidth - t.clientWidth) > 2 || Math.abs(c.clientHeight - t.clientHeight) > 2) map.resize();
-}, 900);
+new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let introDone = false;
@@ -531,8 +544,10 @@ let pendingParcel = null; // parcel fetched before the map style loads — drawn
 document.getElementById("skip").onclick = () => endIntro(true);
 
 map.on("load", () => {
-  map.setTerrain({ source: "dem", exaggeration: 1.0 });
-  try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
+  if (!LITE) {
+    map.setTerrain({ source: "dem", exaggeration: 1.0 });
+    try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
+  }
   // glowing parcel outline layers (fed on selection)
   map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
   map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
@@ -543,7 +558,7 @@ map.on("load", () => {
 
 function runIntro() {
   if (introDone) return;
-  if (reducedMotion) { endIntro(true); return; }
+  if (LITE || reducedMotion) { endIntro(true); return; }
   map.flyTo({
     center: [-159.478, 21.905],
     zoom: 11.6, pitch: 56, bearing: 12,
@@ -561,7 +576,8 @@ function endIntro(jump) {
   if (intro) intro.classList.add("gone");
   if (skip) skip.classList.add("gone");
   setTimeout(() => { intro && intro.remove(); skip && skip.remove(); }, 1500);
-  if (jump) { map.stop(); map.jumpTo({ center: [-159.478, 21.905], zoom: 11.6, pitch: 56, bearing: 12 }); }
+  if (jump) { map.stop(); map.jumpTo({ center: [-159.478, 21.905], zoom: 11.6, pitch: LITE ? 0 : 56, bearing: LITE ? 0 : 12 }); }
+  render();
   setTimeout(() => toast(`Tap <b>anywhere on the island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
 }
 
@@ -631,6 +647,13 @@ const metaLine = l => l.type === "land"
   : `${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft · ${l.area}`;
 
 const cards = {}, pinEls = {};
+// Card aerials load only as they scroll into view — first paint stays instant
+const aerialObs = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) {
+    e.target.style.backgroundImage = `url('${e.target.dataset.aerial}')`;
+    aerialObs.unobserve(e.target);
+  }
+}), { rootMargin: "0px 500px 0px 500px" });
 function buildAll() {
   const rail = document.getElementById("rail");
   LISTINGS.forEach((l, i) => {
@@ -639,10 +662,11 @@ function buildAll() {
     c.style.animationDelay = (i * 35) + "ms";
     const tag = l.oldPrice ? `<span class="tag cut">Sample · Price cut</span>` : (l.days <= 7 ? `<span class="tag" style="color:var(--accent)">Sample · New</span>` : `<span class="tag">Sample</span>`);
     c.innerHTML = `
-      <div class="ph"><div style="position:absolute;inset:0;${artStyle(l)}"></div>${aerialLayer(l, 0.0035, 512, 240)}<div class="scrim"></div><button class="shr" title="Share">&#8599;</button>${tag}<div class="pr">${fmtPrice(l.price)}</div></div>
+      <div class="ph"><div style="position:absolute;inset:0;${artStyle(l)}"></div><div class="aer" data-aerial="${aerialUrl(l, 0.0035, 512, 240)}" style="position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1.3) contrast(1.08) brightness(1.07);"></div><div class="scrim"></div><button class="shr" title="Share">&#8599;</button>${tag}<div class="pr">${fmtPrice(l.price)}</div></div>
       <div class="bd"><div class="a">${l.addr.replace("Sample — ","")}</div><div class="m">${metaLine(l)}</div></div>`;
     c.onclick = () => select(l.id);
     c.querySelector(".shr").onclick = (e) => { e.stopPropagation(); shareListing(l); };
+    aerialObs.observe(c.querySelector(".aer"));
     rail.appendChild(c);
     cards[l.id] = c;
 
@@ -667,8 +691,9 @@ function render() {
     cards[l.id].classList.toggle("selected", l.id === selectedId);
     pinEls[l.id].classList.toggle("selected", l.id === selectedId);
     const m = markers[l.id];
-    if (vis && !m._onMap) { m.addTo(map); m._onMap = true; }
-    else if (!vis && m._onMap) { m.remove(); m._onMap = false; }
+    const attach = vis && introDone; // keep the camera flight smooth — pins mount after the intro
+    if (attach && !m._onMap) { m.addTo(map); m._onMap = true; }
+    else if (!attach && m._onMap) { m.remove(); m._onMap = false; }
   });
 }
 
