@@ -36,7 +36,9 @@
   #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #14293C 0%, #0A1520 72%); }
   .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
   .maplibregl-ctrl-attrib { font-size: 10px; }
-  .maplibregl-canvas { filter: saturate(1.06) brightness(1.05); }
+  @media (min-width: 761px) {
+    .maplibregl-canvas { filter: saturate(1.06) brightness(1.05); }
+  }
 
   /* ---- Cinematic intro ---- */
   #intro {
@@ -46,47 +48,69 @@
     background: radial-gradient(120% 100% at 50% 0%, rgba(6,18,28,0) 0%, rgba(6,18,28,0.42) 100%);
     transition: opacity 1.4s ease;
   }
-  #intro.gone { opacity: 0; }
+  #intro.gone { opacity: 0; transition: opacity 0.6s ease; }
+  #intro.gone .imask .mark { transform: translateY(-12px); transition: transform 0.6s ease; }
+  #intro .ihair {
+    height: 1px; width: clamp(56px, 8vw, 96px);
+    background: var(--gold);
+    margin-bottom: 22px;
+    transform: scaleX(0); opacity: 0.9;
+    animation: hairDraw 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+               hairSettle 0.6s ease 0.6s forwards;
+  }
+  @keyframes hairDraw { to { transform: scaleX(1); } }
+  @keyframes hairSettle { to { opacity: 0.35; } }
+  #intro .imask { overflow: hidden; padding: 0.08em 0.1em; }
   #intro .mark {
     font-family: var(--serif); font-weight: 500;
     font-size: clamp(44px, 9vw, 92px);
-    color: #fff; letter-spacing: -0.03em;
+    color: #fff; letter-spacing: -0.03em; line-height: 1.05;
     text-shadow: 0 4px 40px rgba(0,0,0,0.55);
-    opacity: 0; transform: translateY(16px);
-    animation: introRise 1.6s var(--spring) 0.4s forwards;
+    opacity: 0; transform: translateY(105%);
+    animation: markRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
   }
+  @keyframes markRise { 40% { opacity: 1; } to { opacity: 1; transform: translateY(0); } }
   #intro .mark em { font-style: normal; color: var(--gold); }
   #intro .tag {
     color: rgba(255,255,255,0.92); font-size: clamp(13px, 2vw, 16px);
-    letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600;
+    letter-spacing: 0.38em; text-transform: uppercase; font-weight: 600;
     margin-top: 14px; text-shadow: 0 2px 18px rgba(0,0,0,0.6);
-    opacity: 0; animation: introRise 1.6s var(--spring) 1.1s forwards;
+    opacity: 0; transform: translateY(6px);
+    animation: tagIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
   }
-  @keyframes introRise { to { opacity: 1; transform: none; } }
-  #skip {
-    position: absolute; bottom: 34px; z-index: 210;
-    left: 50%; transform: translateX(-50%);
-    pointer-events: auto;
-    background: var(--glass-dark); color: rgba(255,255,255,0.9);
-    border: 1px solid rgba(255,255,255,0.22);
-    backdrop-filter: blur(14px);
-    border-radius: 999px; padding: 9px 22px;
-    font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.05em;
-    cursor: pointer; transition: opacity 0.6s;
-  }
-  #skip.gone { opacity: 0; pointer-events: none; }
+  @keyframes tagIn { to { opacity: 1; transform: translateY(0); letter-spacing: 0.24em; } }
 
   /* ---- Chrome ---- */
-  .demo-ribbon {
-    position: absolute; top: 0; left: 0; right: 0; z-index: 60;
-    text-align: center; padding: 5px 12px;
-    background: rgba(16,16,18,0.78); backdrop-filter: blur(10px);
-    color: rgba(255,255,255,0.82);
-    font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  .beta-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-left: 8px; padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--glass-dark);
+    border: 1px solid rgba(255,255,255,0.12);
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0; text-transform: none;
+    color: rgba(255,255,255,0.85);
+    text-shadow: none; white-space: nowrap;
   }
-  .demo-ribbon b { color: var(--gold); font-weight: 600; }
+  .hdr-cluster {
+    display: flex; gap: 2px; padding: 4px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    border-radius: 999px;
+  }
+  .hdr-cluster .quiet {
+    border: none; background: transparent;
+    color: rgba(255,255,255,0.78);
+    border-radius: 999px; padding: 7px 13px;
+    font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: -0.01em;
+    cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .hdr-cluster .quiet:hover { background: rgba(255,255,255,0.1); color: #fff; }
   header {
-    position: absolute; top: 26px; left: 0; right: 0; z-index: 50;
+    position: absolute; top: 10px; left: 0; right: 0; z-index: 50;
     display: flex; align-items: center; gap: 12px;
     padding: 12px 18px;
     pointer-events: none;
@@ -125,12 +149,13 @@
     cursor: pointer; transition: all 0.25s var(--spring);
     white-space: nowrap;
   }
-  .pill-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .pill-btn { border-color: rgba(255,255,255,0.12); }
+  .pill-btn:hover { background: rgba(255,255,255,0.12); }
   .pill-btn.solid { background: #fff; color: var(--ink); border-color: transparent; }
-  .pill-btn.solid:hover { transform: scale(1.04); }
+  .pill-btn.solid:hover { background: #F2EFE8; }
 
   .islandbar {
-    position: absolute; top: 86px; left: 50%; transform: translateX(-50%); z-index: 51;
+    position: absolute; top: 66px; left: 50%; transform: translateX(-50%); z-index: 51;
     display: flex; gap: 4px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
@@ -152,7 +177,7 @@
   .islandbar button:hover { color: #fff; }
   .islandbar button.active { background: #fff; color: var(--ink); }
   .filterbar {
-    position: absolute; top: 134px; left: 50%; transform: translateX(-50%); z-index: 50;
+    position: absolute; top: 114px; left: 50%; transform: translateX(-50%); z-index: 50;
     display: flex; gap: 6px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
@@ -199,6 +224,29 @@
     0% { box-shadow: 0 0 0 0 rgba(232,200,126,0.55); }
     100% { box-shadow: 0 0 0 16px rgba(232,200,126,0); }
   }
+
+  /* ---- Live-data skeletons: loading is choreography, not text ---- */
+  .skel {
+    display: inline-block; height: 11px; width: 74px; border-radius: 6px;
+    margin-top: 2px; vertical-align: middle;
+    background: linear-gradient(90deg, rgba(16,16,18,0.07) 25%, rgba(16,16,18,0.16) 45%, rgba(16,16,18,0.07) 65%);
+    background-size: 200% 100%;
+    animation: shimmer 1.3s linear infinite;
+  }
+  @keyframes shimmer { from { background-position: 180% 0; } to { background-position: -20% 0; } }
+  .fchip.resolved { animation: factIn 0.35s var(--spring); }
+  @keyframes factIn { from { opacity: 0; transform: translateY(3px); } }
+
+  /* ---- Tactile press + visible keyboard focus ---- */
+  .pill-btn:active, .hdr-cluster .quiet:active, .islandbar button:active, .chip:active,
+  .shr:active, .ask button:active, .pass-cta button:active, .modal .go:active {
+    transform: scale(0.96); transition-duration: 0.06s;
+  }
+  .pin:active { transform: scale(1.04); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .search-wrap input:focus-visible, .ask input:focus-visible, .modal input:focus-visible { outline: none; }
+  .pin { font-variant-numeric: tabular-nums; }
+  .fchip small { text-transform: none; letter-spacing: 0.02em; font-weight: 500; font-size: 10px; }
   .pin.selected { background: var(--ink); color: #fff; transform: scale(1.14); box-shadow: 0 0 0 2px var(--gold), 0 6px 20px rgba(0,0,0,0.5); }
   .pin .dot { width: 6px; height: 6px; border-radius: 50%; }
   .pin .dot.cut { background: var(--red); }
@@ -347,21 +395,26 @@
   }
 
   @media (max-width: 760px) {
+    :root { --glass-dark: rgba(16,16,18,0.88); --paper: rgba(251,251,253,0.97); }
     .search-wrap { display: none; }
-    .demo-ribbon { font-size: 8.5px; letter-spacing: 0.06em; padding: 4px 8px; }
-    header { top: 24px; padding: 10px 12px; }
+    header { top: 6px; padding: 10px 12px; }
     #btn-sell { display: none; }
     #btn-preview { display: none; }
-    #toast { bottom: auto; top: 120px; }
+    #toast { bottom: auto; top: 112px; }
     .logo { font-size: 18px; }
-    .pill-btn { padding: 8px 12px; font-size: 11.5px; }
-    .islandbar { top: 72px; }
-    .filterbar { top: 118px; }
+    .beta-chip { font-size: 10px; padding: 4px 9px; }
+    .pill-btn { padding: 8px 12px; font-size: 12px; }
+    .islandbar { top: 56px; }
+    .filterbar { top: 102px; }
     .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 68vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
     .passport.open { transform: none; }
-    .rail { padding-bottom: 12px; }
+    .rail { padding-bottom: 12px; -webkit-mask-image: none; mask-image: none; }
     .attr-note { display: none; }
-    .pill-btn, .search-wrap input, .filterbar { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    /* iOS Safari: backdrop blur over a live WebGL canvas flickers — no blur on phones, anywhere */
+    .pill-btn, .search-wrap input, .filterbar, .islandbar, .hdr-cluster, .beta-chip,
+    #toast, .passport, .modal, .modal-bg {
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -374,12 +427,17 @@
   .modal-bg {
     position: fixed; inset: 0; z-index: 3000;
     background: rgba(10,21,32,0.55);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: none; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 5vh 5vw;
+    opacity: 0; pointer-events: none; visibility: hidden;
+    backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+    transition: opacity 0.35s ease, backdrop-filter 0.35s ease, visibility 0s 0.35s;
   }
-  .modal-bg.open { display: flex; }
+  .modal-bg.open {
+    opacity: 1; pointer-events: auto; visibility: visible;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.35s ease, backdrop-filter 0.35s ease, visibility 0s;
+  }
   .modal {
     background: var(--paper);
     backdrop-filter: blur(24px) saturate(180%);
@@ -420,23 +478,25 @@
 <div id="map"></div>
 
 <div id="intro">
-  <div class="mark">Moku<em>.</em></div>
+  <div class="ihair"></div>
+  <div class="imask"><div class="mark">Moku<em>.</em></div></div>
   <div class="tag">Fly the islands &middot; Find your home</div>
 </div>
-<button id="skip">Skip intro</button>
-
-<div class="demo-ribbon" id="ribbon"><b>Beta</b> &nbsp;·&nbsp; parcel, zoning &amp; flood data live from State of Hawaii GIS (reference only, not survey data) &nbsp;·&nbsp; listings coming soon</div>
 
 <header>
-  <div class="logo"><span style="color:#fff">Moku<span style="color:var(--gold)">.</span></span> <span class="live-dot"></span></div>
+  <div class="logo"><span style="color:#fff">Moku<span style="color:var(--gold)">.</span></span>
+    <span class="beta-chip"><span class="live-dot"></span><span id="ribbon">Beta &middot; live state GIS &middot; listings soon</span></span>
+  </div>
   <div class="search-wrap">
     <span class="mag">&#9906;</span>
     <input id="search" type="text" placeholder='Try &ldquo;land under $2M&rdquo; or &ldquo;Poipu&rdquo;'>
   </div>
   <div class="hdr-right">
-    <button class="pill-btn" id="btn-preview">Preview listings</button>
-    <a class="pill-btn" href="market.html" style="text-decoration:none;display:inline-flex;align-items:center">Market</a>
-    <button class="pill-btn" id="btn-sell">What&#8217;s my home worth?</button>
+    <nav class="hdr-cluster">
+      <button class="quiet" id="btn-preview">Preview</button>
+      <a class="quiet" href="market.html">Market</a>
+      <button class="quiet" id="btn-sell">Home value</button>
+    </nav>
     <button class="pill-btn solid" id="btn-alerts">Get instant alerts</button>
   </div>
 </header>
@@ -478,6 +538,21 @@
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
+// Diagnostic trap: if anything crashes on any device, say so visibly —
+// a silent black screen is the one failure we never accept.
+function showDiag(msg) {
+  try {
+    if (document.getElementById("diag")) return;
+    const d = document.createElement("div");
+    d.id = "diag";
+    d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:rgba(16,16,18,0.94);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:12px 16px;font:12px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;";
+    d.innerHTML = "<b>Hmm — something glitched on this device.</b> Screenshot this and send it to Micah:<br><span style='color:#E8C87E;word-break:break-all'>" + String(msg).slice(0, 220) + "</span>";
+    document.body.appendChild(d);
+  } catch (e) {}
+}
+window.addEventListener("error", e => showDiag((e.message || "script error") + (e.filename ? " @ " + (e.lineno || "?") : "")));
+window.addEventListener("unhandledrejection", e => showDiag("async: " + ((e.reason && (e.reason.message || e.reason)) || "unknown")));
+
 // ============================================================
 // SAMPLE LISTINGS — demo only; the MLS feed replaces this.
 // Coordinates are illustrative points, not real properties.
@@ -521,13 +596,24 @@ function artStyle(l, shift) {
     linear-gradient(160deg, hsl(${h} ${s}% 64%) 0%, hsl(${(h+28)%360} ${s}% 38%) 100%);`;
 }
 
-// ---- Adaptive quality: every device gets the smoothest experience it can run ----
-const LITE = (() => {
-  const smallScreen = Math.min(screen.width, screen.height) < 780;
-  const lowMem = navigator.deviceMemory && navigator.deviceMemory <= 4;
-  const fewCores = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
-  return smallScreen || lowMem || fewCores;
-})();
+// ---- Adaptive quality, done right: layout adapts to screen size; heavy
+// features are downgraded only by MEASURED slowness, never assumed from
+// screen size (iOS reports points, so every iPhone looks "small").
+const SMALL = Math.min(screen.width, screen.height) < 780; // layout only
+let LITE = false; // set true only if real frames prove the device is struggling
+function watchPerf() {
+  let n = 0, slow = 0, last = performance.now();
+  const step = t => {
+    const dt = t - last; last = t;
+    if (dt > 34) slow++;
+    if (++n < 90) requestAnimationFrame(step);
+    else if (slow > 30 && !LITE) {
+      LITE = true;
+      try { map.setTerrain(null); } catch (e) {}
+    }
+  };
+  requestAnimationFrame(step);
+}
 
 // ---- 3D map: real satellite + real terrain, all open/free sources ----
 const SAT_SOURCE = {
@@ -557,12 +643,12 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#0B1A2A" } }]
   },
-  center: [-159.85, 22.28],
-  zoom: 8.9,
-  pitch: 0,
-  bearing: -34,
+  center: SMALL ? [-159.497, 21.93] : [-159.492, 21.905],
+  zoom: SMALL ? 11.7 : 11.35,
+  pitch: SMALL ? 26 : 34,
+  bearing: 0,
   attributionControl: false,
-  maxPitch: LITE ? 60 : 72
+  maxPitch: SMALL ? 64 : 72
 });
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
@@ -634,12 +720,11 @@ new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let introDone = false;
 let pendingParcel = null; // parcel fetched before the map style loads — drawn at load time
-document.getElementById("skip").onclick = () => endIntro(true);
 
 // Custom layers survive style swaps: re-applied on every style.load
 function applyCustomLayers() {
-  if (!LITE && map.getSource("dem")) {
-    map.setTerrain({ source: "dem", exaggeration: 1.0 });
+  if (map.getSource("dem")) {
+    map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
     try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
   }
   if (!map.getSource("parcel")) {
@@ -650,50 +735,39 @@ function applyCustomLayers() {
     map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
   }
 }
-let introStarted = false;
+// ---- "The Settle" — the title sequence is pure CSS from first paint; the map
+// boots already at the island and makes one 2.2s settle. Nothing ever waits.
+let settled = false;
 map.on("style.load", () => {
   applyCustomLayers();
-  // the curtain rises only when the real stage is set — never over an empty map
-  if (!introStarted && map.getSource("sat")) {
-    introStarted = true;
-    runIntro();
+  if (!settled && map.getSource("sat") && !parseDeepLink()) {
+    settled = true;
+    const tgt = SMALL
+      ? { center: [-159.497, 21.928], zoom: 12.35, pitch: 44, bearing: 0 }
+      : { center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 };
+    if (!reducedMotion) map.easeTo(Object.assign({ duration: 2200, easing: t => 1 - Math.pow(1 - t, 3), essential: false }, tgt));
+    else map.jumpTo(tgt);
+    watchPerf();
   }
 });
-setTimeout(() => { if (!introStarted) { introStarted = true; endIntro(true); } }, 6000);
-
-function runIntro() {
-  if (introDone) return;
-  if (LITE || reducedMotion) { endIntro(true); return; }
-  map.flyTo({
-    center: [-159.500, 21.947],
-    zoom: 12.05, pitch: 50, bearing: 6,
-    duration: 6500, essential: false, curve: 1.25
-  });
-  setTimeout(() => { if (!introDone) endIntro(false); }, 6600);
-  ["mousedown", "wheel", "touchstart", "keydown"].forEach(ev =>
-    window.addEventListener(ev, () => { if (!introDone) endIntro(true); }, { once: true, passive: true })
-  );
-}
 function collapseAttribution() {
   const at = document.querySelector(".maplibregl-ctrl-attrib");
   if (at) { at.classList.remove("maplibregl-compact-show"); at.removeAttribute("open"); }
 }
-function endIntro(jump) {
+function exitIntro() {
   if (introDone) return;
   introDone = true;
+  const intro = document.getElementById("intro");
+  if (intro) { intro.classList.add("gone"); setTimeout(() => intro.remove(), 700); }
   setTimeout(collapseAttribution, 400);
-  const intro = document.getElementById("intro"), skip = document.getElementById("skip");
-  if (intro) intro.classList.add("gone");
-  if (skip) skip.classList.add("gone");
-  setTimeout(() => { intro && intro.remove(); skip && skip.remove(); }, 1500);
-  if (jump) {
-    map.stop();
-    if (LITE) map.jumpTo({ center: [-159.497, 21.928], zoom: 12.35, pitch: 0, bearing: 0 });
-    else map.jumpTo({ center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 });
-  }
   render();
-  setTimeout(() => toast(`Tap <b>anywhere on any island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
+  setTimeout(() => toast(`Tap <b>anywhere on any island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 900);
 }
+const endIntro = exitIntro; // deep links and older callers
+setTimeout(exitIntro, 2500);
+["pointerdown", "wheel", "keydown"].forEach(ev =>
+  window.addEventListener(ev, exitIntro, { once: true, passive: true })
+);
 
 // ---- Orbit after selecting a property (cancellable, time-based) ----
 let orbitRaf = null, orbitLast = 0, orbitArm = null;
@@ -891,7 +965,7 @@ async function select(id) {
 
 function setFact(key, label, value, cls) {
   const el = document.getElementById("fact-" + key);
-  if (el) el.outerHTML = `<div class="fchip ${cls || ""}" id="fact-${key}"><small>${label}</small>${value}</div>`;
+  if (el) el.outerHTML = `<div class="fchip resolved ${cls || ""}" id="fact-${key}"><small>${label}</small>${value}</div>`;
 }
 
 function sparkline(l) {
@@ -945,9 +1019,9 @@ function openPassport(l) {
         <div class="fchip ${l.tenure === 'fee' ? '' : 'gold'}"><small>Tenure</small>${l.tenure === "fee" ? "Fee simple" : "Leasehold"}</div>
         ${l.type !== "land" ? `<div class="fchip"><small>Size</small>${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft</div>` : ""}
         <div class="fchip"><small>On market</small>${l.days} day${l.days === 1 ? "" : "s"}</div>
-        <div class="fchip live" id="fact-tmk"><small>TMK at this map point (county GIS)</small>looking up&hellip;</div>
-        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small>&hellip;</div>
-        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small>&hellip;</div>
+        <div class="fchip live" id="fact-tmk"><small>TMK at this map point (county GIS)</small><span class="skel" style="width:88px"></span></div>
+        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small><span class="skel" style="width:64px"></span></div>
+        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:44px"></span></div>
       </div>
     </div>
     <div class="sec">
@@ -987,7 +1061,7 @@ function openPassport(l) {
 }
 // ---- Share everything: one gesture, see it → text it ----
 function deepUrl(hash) { return location.origin + location.pathname + "#" + hash; }
-function setHash(hash) { history.replaceState(null, "", hash ? "#" + hash : location.pathname); }
+function setHash(hash) { try { history.replaceState(null, "", hash ? "#" + hash : location.pathname); } catch (e) {} }
 async function shareIt(text, hash) {
   const url = deepUrl(hash);
   if (navigator.share) {
@@ -1102,12 +1176,12 @@ function openParcelPassport(lng, lat) {
     <div class="sec">
       <div class="h">Parcel Passport &middot; all data live</div>
       <div class="factrow">
-        <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small>looking up&hellip;</div>
-        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small>&hellip;</div>
-        <div class="fchip live" id="fact-taxclass"><small>Tax class (county)</small>&hellip;</div>
-        <div class="fchip live" id="fact-zoning"><small>County zoning</small>&hellip;</div>
-        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small>&hellip;</div>
-        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small>&hellip;</div>
+        <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small><span class="skel" style="width:88px"></span></div>
+        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small><span class="skel" style="width:64px"></span></div>
+        <div class="fchip live" id="fact-taxclass"><small>Tax class (county)</small><span class="skel" style="width:70px"></span></div>
+        <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:96px"></span></div>
+        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:44px"></span></div>
+        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:80px"></span></div>
       </div>
     </div>
     <div class="sec">
@@ -1253,13 +1327,13 @@ document.querySelectorAll(".islandbar button").forEach(b => {
 
 // ---- Launch mode vs listings preview ----
 let previewOn = false;
-const RIBBON_LAUNCH = `<b>Beta</b> &nbsp;·&nbsp; parcel, zoning &amp; flood data live from State of Hawaii GIS (reference only, not survey data) &nbsp;·&nbsp; listings coming soon`;
-const RIBBON_PREVIEW = `<b>Preview</b> &nbsp;·&nbsp; sample listings, not real properties &nbsp;·&nbsp; parcel &amp; flood data remain live State of Hawaii GIS`;
+const RIBBON_LAUNCH = `Beta &middot; live state GIS &middot; listings soon`;
+const RIBBON_PREVIEW = `Preview &middot; sample listings, not real`;
 function setPreview(on) {
   previewOn = on;
   document.body.classList.toggle("launch", !on);
   document.getElementById("ribbon").innerHTML = on ? RIBBON_PREVIEW : RIBBON_LAUNCH;
-  document.getElementById("btn-preview").textContent = on ? "Exit preview" : "Preview listings";
+  document.getElementById("btn-preview").textContent = on ? "Exit preview" : "Preview";
   if (!on && selectedId !== null) closePassport();
   render();
 }
