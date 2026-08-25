@@ -36,7 +36,7 @@
   #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #14293C 0%, #0A1520 72%); }
   .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
   .maplibregl-ctrl-attrib { font-size: 10px; }
-  .maplibregl-canvas { filter: saturate(1.14) brightness(1.05) contrast(1.04); }
+  .maplibregl-canvas { filter: saturate(1.06) brightness(1.05); }
 
   /* ---- Cinematic intro ---- */
   #intro {
@@ -560,9 +560,9 @@ function runIntro() {
   if (introDone) return;
   if (LITE || reducedMotion) { endIntro(true); return; }
   map.flyTo({
-    center: [-159.478, 21.905],
-    zoom: 11.6, pitch: 56, bearing: 12,
-    duration: 7000, essential: false, curve: 1.25
+    center: [-159.503, 21.912],
+    zoom: 12.2, pitch: 47, bearing: 8,
+    duration: 6500, essential: false, curve: 1.25
   });
   setTimeout(() => { if (!introDone) endIntro(false); }, 6600);
   ["mousedown", "wheel", "touchstart", "keydown"].forEach(ev =>
@@ -576,7 +576,11 @@ function endIntro(jump) {
   if (intro) intro.classList.add("gone");
   if (skip) skip.classList.add("gone");
   setTimeout(() => { intro && intro.remove(); skip && skip.remove(); }, 1500);
-  if (jump) { map.stop(); map.jumpTo({ center: [-159.478, 21.905], zoom: 11.6, pitch: LITE ? 0 : 56, bearing: LITE ? 0 : 12 }); }
+  if (jump) {
+    map.stop();
+    if (LITE) map.jumpTo({ center: [-159.53, 22.06], zoom: 10.1, pitch: 0, bearing: 0 });
+    else map.jumpTo({ center: [-159.503, 21.912], zoom: 12.2, pitch: 47, bearing: 8 });
+  }
   render();
   setTimeout(() => toast(`Tap <b>anywhere on the island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
 }
