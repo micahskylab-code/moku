@@ -18,7 +18,10 @@
     --ink-3: #9C9CA1;
     --paper: rgba(251,251,253,0.82);
     --glass: rgba(255,255,255,0.72);
-    --glass-dark: rgba(16,16,18,0.62);
+    --glass-dark: rgba(255,255,255,0.72);
+    --chrome-ink: #1D1D1F;
+    --chrome-soft: rgba(29,29,31,0.62);
+    --chrome-line: rgba(29,29,31,0.08);
     --hairline: rgba(16,16,18,0.09);
     --accent: #0E6E63;
     --gold: #E8C87E;
@@ -32,8 +35,8 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
-  body { font-family: var(--sans); color: var(--ink); background: #0A1520; }
-  #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #14293C 0%, #0A1520 72%); }
+  body { font-family: var(--sans); color: var(--ink); background: #EAF0F3; }
+  #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #F2F6F8 0%, #DCE5EA 72%); }
   .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
   .maplibregl-ctrl-attrib { font-size: 10px; }
   @media (min-width: 761px) {
@@ -45,7 +48,7 @@
     position: absolute; inset: 0; z-index: 200;
     display: flex; align-items: center; justify-content: center; flex-direction: column;
     pointer-events: none;
-    background: radial-gradient(120% 100% at 50% 0%, rgba(6,18,28,0) 0%, rgba(6,18,28,0.42) 100%);
+    background: radial-gradient(120% 100% at 50% 0%, rgba(244,248,250,0) 0%, rgba(234,240,243,0.55) 100%);
     transition: opacity 1.4s ease;
   }
   #intro.gone { opacity: 0; transition: opacity 0.6s ease; }
@@ -64,17 +67,17 @@
   #intro .mark {
     font-family: var(--serif); font-weight: 500;
     font-size: clamp(44px, 9vw, 92px);
-    color: #fff; letter-spacing: -0.03em; line-height: 1.05;
-    text-shadow: 0 4px 40px rgba(0,0,0,0.55);
+    color: var(--chrome-ink); letter-spacing: -0.03em; line-height: 1.05;
+    text-shadow: 0 2px 24px rgba(255,255,255,0.85);
     opacity: 0; transform: translateY(105%);
     animation: markRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
   }
   @keyframes markRise { 40% { opacity: 1; } to { opacity: 1; transform: translateY(0); } }
   #intro .mark em { font-style: normal; color: var(--gold); }
   #intro .tag {
-    color: rgba(255,255,255,0.92); font-size: clamp(13px, 2vw, 16px);
+    color: var(--chrome-soft); font-size: clamp(13px, 2vw, 16px);
     letter-spacing: 0.38em; text-transform: uppercase; font-weight: 600;
-    margin-top: 14px; text-shadow: 0 2px 18px rgba(0,0,0,0.6);
+    margin-top: 14px; text-shadow: 0 1px 12px rgba(255,255,255,0.8);
     opacity: 0; transform: translateY(6px);
     animation: tagIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
   }
@@ -86,29 +89,30 @@
     margin-left: 8px; padding: 5px 11px;
     border-radius: 999px;
     background: var(--glass-dark);
-    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid var(--chrome-line);
     font-family: var(--sans); font-size: 11px; font-weight: 500;
     letter-spacing: 0; text-transform: none;
-    color: rgba(255,255,255,0.85);
+    color: var(--chrome-soft);
     text-shadow: none; white-space: nowrap;
   }
   .hdr-cluster {
     display: flex; gap: 2px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 2px 12px rgba(29,29,31,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
     border-radius: 999px;
   }
   .hdr-cluster .quiet {
     border: none; background: transparent;
-    color: rgba(255,255,255,0.78);
+    color: var(--chrome-soft);
     border-radius: 999px; padding: 7px 13px;
     font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: -0.01em;
     cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
     transition: background-color 0.2s, color 0.2s;
   }
-  .hdr-cluster .quiet:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .hdr-cluster .quiet:hover { background: rgba(29,29,31,0.06); color: var(--chrome-ink); }
   header {
     position: absolute; top: 10px; left: 0; right: 0; z-index: 50;
     display: flex; align-items: center; gap: 12px;
@@ -117,49 +121,55 @@
   }
   header > * { pointer-events: auto; }
   .logo {
-    font-family: var(--serif); font-size: 21px; font-weight: 500; letter-spacing: -0.02em;
-    color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,0.5);
+    font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: -0.02em;
+    color: var(--chrome-ink);
     display: flex; align-items: center; gap: 10px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
+    border-radius: 999px;
+    padding: 7px 16px;
   }
-  .logo span { color: var(--gold); }
+  .logo span { color: var(--gold-deep); }
   .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; animation: pulse 1.8s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
   .search-wrap { position: relative; width: min(340px, 34vw); }
   .search-wrap input {
     width: 100%;
-    border: 1px solid rgba(255,255,255,0.25);
+    border: 1px solid var(--chrome-line);
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
     border-radius: 999px;
     padding: 10px 16px 10px 36px;
-    font-family: var(--sans); font-size: 13.5px; color: #fff;
+    font-family: var(--sans); font-size: 13.5px; color: var(--chrome-ink);
     outline: none;
     transition: border-color 0.25s;
   }
-  .search-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+  .search-wrap input::placeholder { color: rgba(29,29,31,0.38); }
   .search-wrap input:focus { border-color: var(--gold); }
-  .search-wrap .mag { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 13px; pointer-events: none; }
+  .search-wrap .mag { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: rgba(29,29,31,0.45); font-size: 13px; pointer-events: none; }
   .hdr-right { margin-left: auto; display: flex; gap: 10px; }
   .pill-btn {
-    background: var(--glass-dark); color: rgba(255,255,255,0.92);
-    border: 1px solid rgba(255,255,255,0.22);
+    background: var(--glass-dark); color: var(--chrome-ink);
+    border: 1px solid var(--chrome-line);
     backdrop-filter: blur(16px) saturate(160%);
     border-radius: 999px; padding: 9px 17px;
     font-family: var(--sans); font-size: 12.5px; font-weight: 600;
     cursor: pointer; transition: all 0.25s var(--spring);
     white-space: nowrap;
   }
-  .pill-btn { border-color: rgba(255,255,255,0.12); }
-  .pill-btn:hover { background: rgba(255,255,255,0.12); }
-  .pill-btn.solid { background: #fff; color: var(--ink); border-color: transparent; }
-  .pill-btn.solid:hover { background: #F2EFE8; }
+  .pill-btn:hover { background: rgba(29,29,31,0.06); }
+  .pill-btn.solid { background: var(--chrome-ink); color: #fff; border-color: transparent; }
+  .pill-btn.solid:hover { background: #000; }
 
   .islandbar {
     position: absolute; top: 66px; left: 50%; transform: translateX(-50%); z-index: 51;
     display: flex; gap: 4px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
     border-radius: 999px;
     max-width: calc(100vw - 24px);
     overflow-x: auto;
@@ -168,20 +178,21 @@
   .islandbar::-webkit-scrollbar { display: none; }
   .islandbar button {
     border: none; background: transparent;
-    color: rgba(255,255,255,0.72);
+    color: var(--chrome-soft);
     border-radius: 999px; padding: 7px 14px;
     font-family: var(--sans); font-size: 12.5px; font-weight: 600;
     cursor: pointer; white-space: nowrap;
     transition: all 0.25s var(--spring);
   }
-  .islandbar button:hover { color: #fff; }
-  .islandbar button.active { background: #fff; color: var(--ink); }
+  .islandbar button:hover { color: var(--chrome-ink); }
+  .islandbar button.active { background: var(--chrome-ink); color: #fff; }
   .filterbar {
     position: absolute; top: 114px; left: 50%; transform: translateX(-50%); z-index: 50;
     display: flex; gap: 6px; padding: 4px;
     background: var(--glass-dark);
     backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 2px 12px rgba(29,29,31,0.06);
     border-radius: 999px;
     max-width: calc(100vw - 24px);
     overflow-x: auto;
@@ -190,14 +201,14 @@
   .filterbar::-webkit-scrollbar { display: none; }
   .chip {
     border: none; background: transparent;
-    color: rgba(255,255,255,0.72);
+    color: var(--chrome-soft);
     border-radius: 999px; padding: 7px 15px;
     font-family: var(--sans); font-size: 12.5px; font-weight: 600;
     cursor: pointer; white-space: nowrap;
     transition: all 0.25s var(--spring);
   }
-  .chip:hover { color: #fff; }
-  .chip.active { background: #fff; color: var(--ink); }
+  .chip:hover { color: var(--chrome-ink); }
+  .chip.active { background: var(--chrome-ink); color: #fff; }
 
   /* ---- Price pins ---- */
   .pin {
@@ -376,7 +387,7 @@
   #toast {
     position: absolute; left: 50%; bottom: 148px; transform: translateX(-50%);
     z-index: 70;
-    background: var(--glass-dark); color: rgba(255,255,255,0.92);
+    background: rgba(16,16,18,0.82); color: rgba(255,255,255,0.92);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 999px; padding: 8px 18px;
@@ -389,13 +400,13 @@
 
   .attr-note {
     position: absolute; left: 14px; bottom: 132px; z-index: 45;
-    color: rgba(255,255,255,0.55); font-size: 10px; letter-spacing: 0.02em;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    color: rgba(29,29,31,0.45); font-size: 10px; letter-spacing: 0.02em;
+    text-shadow: 0 1px 6px rgba(255,255,255,0.6);
     pointer-events: none;
   }
 
   @media (max-width: 760px) {
-    :root { --glass-dark: rgba(16,16,18,0.88); --paper: rgba(251,251,253,0.97); }
+    :root { --glass-dark: rgba(255,255,255,0.94); --paper: rgba(251,251,253,0.97); }
     .search-wrap { display: none; }
     header { top: 6px; padding: 10px 12px; }
     #btn-sell { display: none; }
@@ -426,7 +437,7 @@
   /* ---- Lead modal ---- */
   .modal-bg {
     position: fixed; inset: 0; z-index: 3000;
-    background: rgba(10,21,32,0.55);
+    background: rgba(29,29,31,0.32);
     display: flex; align-items: center; justify-content: center;
     padding: 5vh 5vw;
     opacity: 0; pointer-events: none; visibility: hidden;
@@ -484,7 +495,7 @@
 </div>
 
 <header>
-  <div class="logo"><span style="color:#fff">Moku<span style="color:var(--gold)">.</span></span>
+  <div class="logo"><span>Moku<span style="color:var(--gold-deep)">.</span></span>
     <span class="beta-chip"><span class="live-dot"></span><span id="ribbon">Beta &middot; live state GIS &middot; listings soon</span></span>
   </div>
   <div class="search-wrap">
@@ -630,7 +641,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#0F2437" } },
+    { id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } },
     { id: "sat", type: "raster", source: "sat" }
   ]
 };
@@ -656,7 +667,7 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bott
 // Signature look: designed obsidian cartography at overview; satellite fades in
 // up close, where it's razor sharp. Falls back to pure satellite if the style
 // fetch fails — the site never breaks on a missing resource.
-fetch("https://tiles.openfreemap.org/styles/dark")
+fetch("https://tiles.openfreemap.org/styles/positron")
   .then(r => r.json())
   .then(st => {
     st.sources.sat = {
@@ -672,17 +683,17 @@ fetch("https://tiles.openfreemap.org/styles/dark")
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#0B1A2A" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#E9EEF1" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
         // obsidian for the OCEAN only — lakes and reservoirs stay photographic,
         // so they never punch flat ink holes into the satellite land
-        l.paint = Object.assign({}, l.paint, { "fill-color": "#10263C" });
+        l.paint = Object.assign({}, l.paint, { "fill-color": "#AECBDE" });
         l.filter = l.filter ? ["all", l.filter, oceanOnly] : oceanOnly;
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
-          "line-color": "#C9BFA5",
-          "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.0, 0.65, 12.4, 0.2]
+          "line-color": "#FFFFFF",
+          "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.0, 0.5, 12.4, 0.15]
         });
       }
       if (l.type === "line" && /rail|aeroway|ferry|cable|transit|runway/i.test(l.id)) {
@@ -693,9 +704,9 @@ fetch("https://tiles.openfreemap.org/styles/dark")
       }
       if (l.type === "symbol" && /place|city|town|village/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
-          "text-color": "#F2EAD6",
-          "text-halo-color": "rgba(10,18,26,0.85)",
-          "text-halo-width": 1.2
+          "text-color": "#3C3C43",
+          "text-halo-color": "rgba(255,255,255,0.9)",
+          "text-halo-width": 1.4
         });
       }
     });
@@ -703,11 +714,19 @@ fetch("https://tiles.openfreemap.org/styles/dark")
     // the ocean stays clean designed obsidian at every zoom (no tile seams).
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 11.2, 0, 12.4, 1] }
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 10.6, 0, 11.7, 1] }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
     if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
     else st.layers.push(satLayer);
+    // nothing painted may sit between the photo and the sky except water,
+    // roads, and labels — hide land-use/building fills stacked above the photo
+    const satIdx = st.layers.findIndex(l => l.id === "sat");
+    st.layers.forEach((l, i) => {
+      if (i > satIdx && (l.type === "fill" || l.type === "fill-extrusion") && !/water|ocean/i.test(l.id)) {
+        l.layout = Object.assign({}, l.layout, { visibility: "none" });
+      }
+    });
     map.setStyle(st);
   })
   .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
