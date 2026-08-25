@@ -60,6 +60,10 @@
 
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
+  /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
+  #map { background: url('assets/hero-kauai.jpg') center/cover no-repeat #122A3C; }
+  .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
+  body.mapready .maplibregl-canvas { opacity: 1; }
   #veil {
     position: absolute; inset: 0; z-index: 200;
     display: flex; align-items: center; justify-content: center;
@@ -516,7 +520,7 @@
   </div>
   <nav class="hdr-cluster">
     <a class="quiet" href="market.html">Market</a>
-    <button class="quiet" id="btn-sell">Home value</button>
+    <button class="quiet" id="btn-sell">Updates</button>
   </nav>
 </header>
 
@@ -574,8 +578,8 @@
     <div class="mtitle" id="about-title">About Moku</div>
     <p style="font-size:13.5px; color:var(--ink-2); margin:10px 0 0;">
       Moku is a free lookup of Hawaii&#8217;s official property records, built on Kauai by
-      <b style="color:var(--ink)">Micah Hanano</b>, a licensed Hawaii real&#8209;estate agent.
-      No accounts, no ads, nothing for sale on this site.</p>
+      <b style="color:var(--ink)">Micah Hanano</b>, a local who wanted this to exist and builds it
+      in the open. No accounts, no ads, nothing for sale on this site.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Where the data comes from:</b> the State of Hawaii Statewide GIS Program,
       the counties&#8217; own public map servers (parcels, tax rolls, the vacation&#8209;rental registry,
@@ -648,8 +652,8 @@ const map = new maplibregl.Map({
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
   },
   center: [-159.48, 22.05],
-  zoom: SMALL ? 8.6 : 9.2,
-  pitch: 42,
+  zoom: SMALL ? 8.4 : 8.9,
+  pitch: 0,
   bearing: -18,
   attributionControl: false,
   maxPitch: SMALL ? 64 : 72
@@ -721,11 +725,17 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
   .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
 
 let pendingParcel = null;
-function applyCustomLayers() {
-  if (map.getSource("dem")) {
+function armTerrain() {
+  try {
+    if (!map.getSource("dem") || map.getTerrain()) return;
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
     try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
-  }
+  } catch (e) {}
+}
+function applyCustomLayers() {
+  // 3D terrain waits for the first painted frame — flat tiles arrive twice as fast
+  if (document.body.classList.contains("mapready")) armTerrain();
+  else map.once("idle", armTerrain);
   // Every lot line visible when zoomed in — no more tapping blind on bare satellite
   if (!map.getSource("parcel-lines")) {
     const dl = JSON.stringify([9, 11, 30, 5].map((id, i) => ({
@@ -1127,7 +1137,7 @@ function addFact(rowId, key, label, valueHtml, cls) {
 }
 function assessedHtml(n) {
   return "$" + Number(n).toLocaleString() + (n === 0 ? " — nominal assessment, see county record" : "") +
-    `<div class="subnote">Tax assessment — usually below market. <b onclick="openLead('seller')">Get a market read &rarr;</b></div>`;
+    `<div class="subnote">Tax assessment — usually below what buyers actually pay. <b onclick="openLead('seller')">Get the monthly market brief &rarr;</b></div>`;
 }
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // County-run data the state layer doesn't carry: Kauai values + TVR registry, Maui recorded sales
@@ -1596,6 +1606,9 @@ function startOrbit() {
 }
 map.once("load", startOrbit);
 map.once("load", collapseAttribution);
+const markReady = () => document.body.classList.add("mapready");
+map.once("idle", markReady);
+setTimeout(markReady, 6000);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
@@ -1648,11 +1661,11 @@ const LEAD_COPY = {
     subject: "Moku — watch parcel"
   },
   seller: {
-    title: "What’s your home worth?",
-    sub: "Get Micah’s read on your home’s value — grounded in live island data, answered personally.",
-    note: "Your neighborhood or address",
-    go: "Ask Micah →",
-    subject: "Moku — home value request"
+    title: "The monthly market brief",
+    sub: "Kauai market numbers and new data as it lands on the map — one email a month, written by Micah. Nothing for sale, unsubscribe anytime.",
+    note: "Your island or town (optional)",
+    go: "Sign me up →",
+    subject: "Moku — monthly brief signup"
   }
 };
 function openLead(kind, prefill) {
