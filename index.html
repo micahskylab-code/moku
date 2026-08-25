@@ -92,6 +92,7 @@
   body:not(.docked) .maplibregl-ctrl-group,
   body:not(.docked) .maplibregl-ctrl button.maplibregl-ctrl-geolocate { opacity: 0; pointer-events: none; }
   .veilcard {
+    isolation: isolate; will-change: transform; transform: translateZ(0);
     display: flex; flex-direction: column; align-items: center; gap: 20px;
     background: rgba(251,252,253,0.82);
     backdrop-filter: blur(22px) saturate(160%);
@@ -651,8 +652,8 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
   },
-  center: [-159.48, 22.05],
-  zoom: SMALL ? 8.4 : 8.9,
+  center: [-159.53, 22.06],
+  zoom: SMALL ? 8.7 : 9.4,
   pitch: 0,
   bearing: -18,
   attributionControl: false,
@@ -697,15 +698,19 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
       }
       if (l.type === "symbol" && /place|city|town|village/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
-          "text-color": "#3C3C43",
-          "text-halo-color": "rgba(255,255,255,0.9)",
-          "text-halo-width": 1.4
+          "text-color": ["interpolate", ["linear"], ["zoom"], 6.8, "#3C3C43", 8.2, "#FFFFFF"],
+          "text-halo-color": ["interpolate", ["linear"], ["zoom"], 6.8, "rgba(255,255,255,0.9)", 8.2, "rgba(12,26,36,0.55)"],
+          "text-halo-width": 1.2,
+          "text-halo-blur": 0.6
         });
       }
     });
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 6.2, 0, 7.9, 1] }
+      paint: {
+        "raster-opacity": ["interpolate", ["linear"], ["zoom"], 6.2, 0, 7.9, 1],
+        "raster-saturation": 0.15, "raster-contrast": 0.06
+      }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
     if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
@@ -1592,19 +1597,23 @@ function wireSearch(inputId, suggestId) {
 }
 
 // ---- Veil lifecycle ----
-let orbiting = false;
-function startOrbit() {
-  if (orbiting || document.getElementById("veil").classList.contains("gone")) return;
-  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  orbiting = true;
-  const spin = () => {
-    if (!orbiting) return;
-    map.rotateTo(map.getBearing() - 28, { duration: 26000, easing: t => t, essential: false });
+const KAUAI_CENTER = [-159.53, 22.06];
+// Choreography: instant poster → tiles paint flat → ONE slow tilt into a locked, composed hero.
+// No continuous motion: stillness reads premium, terrain can't walk the camera, and the GPU rests.
+let heroSettled = false;
+map.once("load", () => {
+  const begin = () => {
+    if (heroSettled || document.getElementById("veil").classList.contains("gone")) return;
+    heroSettled = true;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      map.jumpTo({ center: KAUAI_CENTER, pitch: 48 });
+      return;
+    }
+    map.easeTo({ center: KAUAI_CENTER, pitch: 48, bearing: -18, duration: 2600, essential: false });
   };
-  map.on("moveend", () => { if (orbiting) spin(); });
-  spin();
-}
-map.once("load", startOrbit);
+  if (document.body.classList.contains("mapready")) begin();
+  else map.once("idle", () => setTimeout(begin, 200));
+});
 map.once("load", collapseAttribution);
 const markReady = () => document.body.classList.add("mapready");
 map.once("idle", markReady);
@@ -1612,7 +1621,7 @@ setTimeout(markReady, 6000);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
-    if (orbiting) { orbiting = false; map.stop(); }
+    heroSettled = true;
     v.classList.add("gone");
     document.body.classList.add("docked");
     setTimeout(collapseAttribution, 500);
