@@ -569,6 +569,7 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
   .then(st => {
     st.sources.sat = SAT_SOURCE;
     st.sources.dem = DEM_SOURCE;
+    delete st.sprite; // our visible labels are text-only; a stalled sprite fetch would wedge the whole style
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
@@ -611,6 +612,10 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
       }
     });
     map.setStyle(st);
+    // Watchdog: if the vector style's assets stall, a plain satellite map beats a blank screen
+    setTimeout(() => {
+      try { if (!map.isStyleLoaded()) map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {}
+    }, 12000);
   })
   .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
 
