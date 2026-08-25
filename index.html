@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moku — Fly the Island. Find Your Home.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+  :root {
+    --ink: #101012;
+    --ink-2: #55555B;
+    --ink-3: #9C9CA1;
+    --paper: rgba(251,251,253,0.82);
+    --glass: rgba(255,255,255,0.72);
+    --glass-dark: rgba(16,16,18,0.62);
+    --hairline: rgba(16,16,18,0.09);
+    --accent: #0E6E63;
+    --gold: #E8C87E;
+    --gold-deep: #A8894E;
+    --red: #C2472F;
+    --shadow-1: 0 4px 24px rgba(0,0,0,0.14);
+    --shadow-2: 0 16px 48px rgba(0,0,0,0.28);
+    --spring: cubic-bezier(0.32, 0.72, 0, 1);
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: var(--sans); color: var(--ink); background: #0A1520; }
+  #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #14293C 0%, #0A1520 72%); }
+  .maplibregl-ctrl-bottom-right { z-index: 40; bottom: 138px; }
+  .maplibregl-ctrl-attrib { font-size: 10px; }
+
+  /* ---- Cinematic intro ---- */
+  #intro {
+    position: absolute; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    pointer-events: none;
+    background: radial-gradient(120% 100% at 50% 0%, rgba(6,18,28,0) 0%, rgba(6,18,28,0.42) 100%);
+    transition: opacity 1.4s ease;
+  }
+  #intro.gone { opacity: 0; }
+  #intro .mark {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(44px, 9vw, 92px);
+    color: #fff; letter-spacing: -0.03em;
+    text-shadow: 0 4px 40px rgba(0,0,0,0.55);
+    opacity: 0; transform: translateY(16px);
+    animation: introRise 1.6s var(--spring) 0.4s forwards;
+  }
+  #intro .mark em { font-style: normal; color: var(--gold); }
+  #intro .tag {
+    color: rgba(255,255,255,0.92); font-size: clamp(13px, 2vw, 16px);
+    letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600;
+    margin-top: 14px; text-shadow: 0 2px 18px rgba(0,0,0,0.6);
+    opacity: 0; animation: introRise 1.6s var(--spring) 1.1s forwards;
+  }
+  @keyframes introRise { to { opacity: 1; transform: none; } }
+  #skip {
+    position: absolute; bottom: 34px; z-index: 210;
+    left: 50%; transform: translateX(-50%);
+    pointer-events: auto;
+    background: var(--glass-dark); color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(14px);
+    border-radius: 999px; padding: 9px 22px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.05em;
+    cursor: pointer; transition: opacity 0.6s;
+  }
+  #skip.gone { opacity: 0; pointer-events: none; }
+
+  /* ---- Chrome ---- */
+  .demo-ribbon {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 60;
+    text-align: center; padding: 5px 12px;
+    background: rgba(16,16,18,0.78); backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.82);
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .demo-ribbon b { color: var(--gold); font-weight: 600; }
+  header {
+    position: absolute; top: 26px; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px;
+    pointer-events: none;
+  }
+  header > * { pointer-events: auto; }
+  .logo {
+    font-family: var(--serif); font-size: 21px; font-weight: 500; letter-spacing: -0.02em;
+    color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,0.5);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo span { color: var(--gold); }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  .search-wrap { position: relative; width: min(340px, 34vw); }
+  .search-wrap input {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: var(--glass-dark);
+    backdrop-filter: blur(16px) saturate(160%);
+    border-radius: 999px;
+    padding: 10px 16px 10px 36px;
+    font-family: var(--sans); font-size: 13.5px; color: #fff;
+    outline: none;
+    transition: border-color 0.25s;
+  }
+  .search-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap .mag { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 13px; pointer-events: none; }
+  .hdr-right { margin-left: auto; display: flex; gap: 10px; }
+  .pill-btn {
+    background: var(--glass-dark); color: rgba(255,255,255,0.92);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(16px) saturate(160%);
+    border-radius: 999px; padding: 9px 17px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; transition: all 0.25s var(--spring);
+    white-space: nowrap;
+  }
+  .pill-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .pill-btn.solid { background: #fff; color: var(--ink); border-color: transparent; }
+  .pill-btn.solid:hover { transform: scale(1.04); }
+
+  .filterbar {
+    position: absolute; top: 86px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; gap: 6px; padding: 4px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filterbar::-webkit-scrollbar { display: none; }
+  .chip {
+    border: none; background: transparent;
+    color: rgba(255,255,255,0.72);
+    border-radius: 999px; padding: 7px 15px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.25s var(--spring);
+  }
+  .chip:hover { color: #fff; }
+  .chip.active { background: #fff; color: var(--ink); }
+
+  /* ---- Price pins ---- */
+  .pin {
+    background: rgba(255,255,255,0.96);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: -0.01em;
+    white-space: nowrap;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+    display: inline-flex; align-items: center; gap: 5px;
+    cursor: pointer;
+    transition: transform 0.25s var(--spring), background 0.25s, color 0.25s;
+  }
+  .pin:hover { transform: scale(1.12); }
+  .tapdot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2.5px solid var(--gold);
+    background: rgba(232,200,126,0.25);
+    box-shadow: 0 0 0 0 rgba(232,200,126,0.55);
+    animation: tapPulse 1.6s ease-out infinite;
+  }
+  @keyframes tapPulse {
+    0% { box-shadow: 0 0 0 0 rgba(232,200,126,0.55); }
+    100% { box-shadow: 0 0 0 16px rgba(232,200,126,0); }
+  }
+  .pin.selected { background: var(--ink); color: #fff; transform: scale(1.14); box-shadow: 0 0 0 2px var(--gold), 0 6px 20px rgba(0,0,0,0.5); }
+  .pin .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .pin .dot.cut { background: var(--red); }
+  .pin .dot.kuk { background: var(--gold-deep); }
+  .pin .dot.land { background: var(--accent); }
+
+  /* ---- Bottom film-strip rail ---- */
+  .rail {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 50;
+    display: flex; gap: 12px;
+    padding: 14px 18px 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent);
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rcard {
+    flex: 0 0 208px;
+    background: rgba(251,251,253,0.94);
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--shadow-1);
+    transition: transform 0.3s var(--spring), box-shadow 0.3s var(--spring);
+    opacity: 0; transform: translateY(14px);
+    animation: rise 0.55s var(--spring) forwards;
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  .rcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+  .rcard.selected { outline: 2px solid var(--gold); }
+  .rcard .ph { position: relative; height: 98px; }
+  .shr {
+    position: absolute; top: 8px; left: 9px; z-index: 2;
+    width: 27px; height: 27px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: rgba(255,255,255,0.92);
+    color: var(--ink);
+    font-size: 13px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+    transition: transform 0.2s var(--spring);
+  }
+  .shr:hover { transform: scale(1.12); }
+  .rcard .ph .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.5)); }
+  .rcard .ph .pr { position: absolute; left: 11px; bottom: 7px; color: #fff; font-family: var(--serif); font-size: 17px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
+  .rcard .ph .tag { position: absolute; top: 8px; right: 9px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.9); border-radius: 5px; padding: 2.5px 7px; }
+  .rcard .ph .tag.cut { color: var(--red); }
+  .rcard .bd { padding: 8px 12px 10px; }
+  .rcard .bd .a { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rcard .bd .m { font-size: 11px; color: var(--ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---- Property Passport ---- */
+  .passport {
+    position: absolute; top: 118px; right: 16px; bottom: 132px; z-index: 55;
+    width: min(392px, calc(100vw - 32px));
+    background: var(--paper);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 22px;
+    box-shadow: var(--shadow-2);
+    overflow-y: auto;
+    transform: translateX(calc(100% + 32px));
+    transition: transform 0.55s var(--spring);
+  }
+  .passport.open { transform: none; }
+  .passport .hero { position: relative; height: 148px; }
+  .passport .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1), transparent 40%, rgba(0,0,0,0.5)); }
+  .passport .hero .x {
+    position: absolute; top: 12px; right: 12px;
+    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.75); backdrop-filter: blur(8px);
+    font-size: 13px; font-weight: 700; color: var(--ink);
+  }
+  .passport .hero .hp { position: absolute; left: 16px; bottom: 11px; color: #fff; }
+  .passport .hero .hp .p { font-family: var(--serif); font-size: 27px; font-weight: 500; letter-spacing: -0.01em; }
+  .passport .hero .hp .p .old { font-family: var(--sans); font-size: 13px; opacity: 0.8; text-decoration: line-through; margin-left: 8px; vertical-align: 4px; }
+  .passport .hero .hp .a { font-size: 12.5px; font-weight: 600; opacity: 0.95; }
+  .passport .sec { padding: 14px 16px 0; }
+  .passport .sec:last-child { padding-bottom: 18px; }
+  .passport .sec .h { font-size: 10px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .factrow { display: flex; flex-wrap: wrap; gap: 7px; }
+  .fchip {
+    background: #fff; border: 1px solid var(--hairline); border-radius: 10px;
+    padding: 7px 11px; font-size: 12px; font-weight: 600;
+  }
+  .fchip small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 1px; }
+  .fchip.live small { color: var(--accent); }
+  .fchip.warn { color: var(--red); }
+  .fchip.gold { color: var(--gold-deep); }
+  .spark-wrap { background: #fff; border: 1px solid var(--hairline); border-radius: 14px; padding: 12px 14px 8px; }
+  .spark-wrap .cap { font-size: 11px; color: var(--ink-2); display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .spark-wrap .cap b { color: var(--ink); }
+  .demand {
+    background: linear-gradient(120deg, rgba(14,110,99,0.1), rgba(232,200,126,0.14));
+    border: 1px solid rgba(14,110,99,0.25);
+    border-radius: 14px; padding: 11px 14px;
+    font-size: 12.5px; line-height: 1.5;
+  }
+  .demand b { color: var(--accent); }
+  .ask { display: flex; gap: 8px; }
+  .ask input {
+    flex: 1; border: 1px solid var(--hairline); background: #fff; border-radius: 999px;
+    padding: 9px 14px; font-family: var(--sans); font-size: 12.5px; outline: none;
+  }
+  .ask input:focus { border-color: var(--accent); }
+  .ask button {
+    border: none; background: var(--ink); color: #fff; border-radius: 999px;
+    padding: 9px 16px; font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
+  }
+  .answer {
+    margin-top: 9px; background: #fff; border: 1px solid var(--hairline); border-radius: 14px;
+    padding: 11px 14px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
+    display: none;
+  }
+  .answer.show { display: block; animation: rise 0.4s var(--spring); }
+  .answer b { color: var(--ink); }
+  .answer .src { display: block; margin-top: 6px; font-size: 10.5px; color: var(--ink-3); }
+  .pass-cta { display: flex; gap: 8px; margin-top: 4px; }
+  .pass-cta button { flex: 1; border-radius: 12px; padding: 11px 0; font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .pass-cta .primary { background: var(--ink); color: #fff; border: none; }
+  .pass-cta .ghost { background: #fff; color: var(--ink); border: 1px solid var(--hairline); }
+  .micro { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; padding: 10px 16px 0; }
+
+  /* ---- Status toast ---- */
+  #toast {
+    position: absolute; left: 50%; bottom: 148px; transform: translateX(-50%);
+    z-index: 70;
+    background: var(--glass-dark); color: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px; padding: 8px 18px;
+    font-size: 12px; font-weight: 600;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+  #toast b { color: var(--gold); }
+
+  .attr-note {
+    position: absolute; left: 14px; bottom: 132px; z-index: 45;
+    color: rgba(255,255,255,0.55); font-size: 10px; letter-spacing: 0.02em;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .search-wrap { display: none; }
+    .demo-ribbon { font-size: 8.5px; letter-spacing: 0.06em; padding: 4px 8px; }
+    header { top: 24px; padding: 10px 12px; }
+    #btn-sell { display: none; }
+    #toast { bottom: auto; top: 120px; }
+    .logo { font-size: 18px; }
+    .pill-btn { padding: 8px 12px; font-size: 11.5px; }
+    .filterbar { top: 72px; }
+    .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 68vh; border-radius: 22px 22px 0 0; transform: translateY(110%); }
+    .passport.open { transform: none; }
+    .rail { padding-bottom: 12px; }
+    .attr-note { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---- Launch mode: only real data visible; listings preview is opt-in ---- */
+  body.launch .rail, body.launch .filterbar, body.launch .search-wrap { display: none; }
+
+  /* ---- Lead modal ---- */
+  .modal-bg {
+    position: fixed; inset: 0; z-index: 3000;
+    background: rgba(10,21,32,0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center;
+    padding: 5vh 5vw;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--paper);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 22px;
+    box-shadow: var(--shadow-2);
+    width: min(400px, 100%);
+    padding: 26px 26px 22px;
+    animation: rise 0.45s var(--spring);
+    position: relative;
+  }
+  .modal .x {
+    position: absolute; top: 14px; right: 14px;
+    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(0,0,0,0.06); font-size: 13px; font-weight: 700; color: var(--ink);
+  }
+  .modal .mtitle { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
+  .modal p { font-size: 13.5px; color: var(--ink-2); margin: 8px 0 16px; line-height: 1.55; }
+  .modal input {
+    width: 100%; border: 1px solid rgba(0,0,0,0.12); background: #fff;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none;
+  }
+  .modal input:focus { border-color: var(--accent); }
+  .modal .go {
+    width: 100%; border: none; border-radius: 12px; cursor: pointer;
+    background: var(--ink); color: #fff;
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    padding: 13px 0; margin-top: 4px;
+    transition: transform 0.25s var(--spring);
+  }
+  .modal .go:hover { transform: scale(1.02); }
+  .modal .fine { font-size: 11px; color: var(--ink-3); text-align: center; margin-top: 10px; }
+</style>
+</head>
+<body class="launch">
+
+<div id="map"></div>
+
+<div id="intro">
+  <div class="mark">Moku<em>.</em></div>
+  <div class="tag">Fly the island &middot; Find your home</div>
+</div>
+<button id="skip">Skip intro</button>
+
+<div class="demo-ribbon" id="ribbon"><b>Beta</b> &nbsp;·&nbsp; parcel, zoning &amp; flood data live from State of Hawaii GIS (reference only, not survey data) &nbsp;·&nbsp; listings coming soon</div>
+
+<header>
+  <div class="logo"><span style="color:#fff">Moku<span style="color:var(--gold)">.</span></span> <span class="live-dot"></span></div>
+  <div class="search-wrap">
+    <span class="mag">&#9906;</span>
+    <input id="search" type="text" placeholder='Try &ldquo;land under $2M&rdquo; or &ldquo;Poipu&rdquo;'>
+  </div>
+  <div class="hdr-right">
+    <button class="pill-btn" id="btn-preview">Preview listings</button>
+    <a class="pill-btn" href="market.html" style="text-decoration:none;display:inline-flex;align-items:center">Market</a>
+    <button class="pill-btn" id="btn-sell">What&#8217;s my home worth?</button>
+    <button class="pill-btn solid" id="btn-alerts">Get instant alerts</button>
+  </div>
+</header>
+
+<div class="filterbar">
+  <button class="chip active" data-f="all">All</button>
+  <button class="chip" data-f="home">Homes</button>
+  <button class="chip" data-f="condo">Condos</button>
+  <button class="chip" data-f="land">Land</button>
+  <button class="chip" data-f="drops">Price cuts</button>
+  <button class="chip" data-f="kukuiula">Kukui&#699;ula</button>
+</div>
+
+<div class="passport" id="passport"></div>
+<div class="rail" id="rail"></div>
+<div id="toast"></div>
+
+<div class="modal-bg" id="lead-modal">
+  <div class="modal">
+    <button class="x" onclick="closeLead()">&#10005;</button>
+    <div class="mtitle" id="lead-title">Be first. Every time.</div>
+    <p id="lead-sub">Every new listing and price cut on Kauai, minutes after it happens — starting the day listings go live.</p>
+    <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
+    <input id="lead-note" type="text" placeholder="What are you looking for?">
+    <button class="go" id="lead-go">Request first access &rarr;</button>
+    <div class="fine">Goes directly to Micah. No spam, ever.</div>
+  </div>
+</div>
+<div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS Open Data &middot; Parcels &amp; hazards: State of Hawaii / County of Kauai GIS</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+// ============================================================
+// SAMPLE LISTINGS — demo only; the MLS feed replaces this.
+// Coordinates are illustrative points, not real properties.
+// ============================================================
+const LISTINGS = [
+  { id: 1,  type: "home",  kukuiula: true,  tenure: "fee",   price: 4950000, oldPrice: null,    addr: "Sample — Kukui'ula Makai Home",     area: "Kukui'ula / Poipu", beds: 4, baths: 4.5, sqft: 3480, lot: null, lat: 21.8845, lng: -159.4842, days: 3,   hue: [186, 32] },
+  { id: 2,  type: "home",  kukuiula: true,  tenure: "fee",   price: 7200000, oldPrice: 7650000, addr: "Sample — Kukui'ula Club Cottage",   area: "Kukui'ula / Poipu", beds: 3, baths: 3.5, sqft: 2610, lot: null, lat: 21.8867, lng: -159.4791, days: 41,  hue: [204, 40] },
+  { id: 3,  type: "land",  kukuiula: true,  tenure: "fee",   price: 2850000, oldPrice: null,    addr: "Sample — Kukui'ula Homesite",       area: "Kukui'ula / Poipu", beds: null, baths: null, sqft: null, lot: 0.52, lat: 21.8892, lng: -159.4820, days: 5, hue: [104, 26] },
+  { id: 4,  type: "condo", kukuiula: false, tenure: "lease", price: 1395000, oldPrice: 1475000, addr: "Sample — Poipu Shores Condo",       area: "Poipu",       beds: 2, baths: 2,   sqft: 1120, lot: null, lat: 21.8712, lng: -159.4448, days: 63,  hue: [196, 44] },
+  { id: 5,  type: "home",  kukuiula: false, tenure: "fee",   price: 2495000, oldPrice: null,    addr: "Sample — Poipu Beach House",        area: "Poipu",       beds: 3, baths: 2,   sqft: 1840, lot: null, lat: 21.8760, lng: -159.4570, days: 2,   hue: [192, 38] },
+  { id: 6,  type: "home",  kukuiula: false, tenure: "fee",   price: 1650000, oldPrice: null,    addr: "Sample — Old Koloa Town Home",      area: "Koloa",       beds: 3, baths: 2,   sqft: 1560, lot: null, lat: 21.9068, lng: -159.4685, days: 9,   hue: [36, 30] },
+  { id: 7,  type: "land",  kukuiula: false, tenure: "fee",   price: 795000,  oldPrice: 875000,  addr: "Sample — Kalaheo View Acreage",     area: "Kalaheo",     beds: null, baths: null, sqft: null, lot: 1.8,  lat: 21.9265, lng: -159.5240, days: 88, hue: [96, 28] },
+  { id: 8,  type: "home",  kukuiula: false, tenure: "fee",   price: 1175000, oldPrice: null,    addr: "Sample — Lawai Valley Home",        area: "Lawai",       beds: 3, baths: 1.5, sqft: 1290, lot: null, lat: 21.9195, lng: -159.5015, days: 6,   hue: [120, 24] },
+  { id: 9,  type: "condo", kukuiula: false, tenure: "lease", price: 689000,  oldPrice: null,    addr: "Sample — Lihue Townhome",           area: "Lihue",       beds: 2, baths: 1.5, sqft: 940,  lot: null, lat: 21.9788, lng: -159.3695, days: 4,   hue: [210, 22] },
+  { id: 10, type: "home",  kukuiula: false, tenure: "fee",   price: 1425000, oldPrice: null,    addr: "Sample — Wailua Homesteads",        area: "Wailua",      beds: 4, baths: 3,   sqft: 2210, lot: null, lat: 22.0525, lng: -159.3720, days: 12,  hue: [140, 26] },
+  { id: 11, type: "condo", kukuiula: false, tenure: "fee",   price: 875000,  oldPrice: 925000,  addr: "Sample — Kapaa Oceanfront Condo",   area: "Kapaa",       beds: 2, baths: 2,   sqft: 1050, lot: null, lat: 22.0870, lng: -159.3360, days: 55,  hue: [198, 46] },
+  { id: 12, type: "land",  kukuiula: false, tenure: "fee",   price: 1250000, oldPrice: null,    addr: "Sample — Anahola Ag Land",          area: "Anahola",     beds: null, baths: null, sqft: null, lot: 5.4,  lat: 22.1405, lng: -159.3140, days: 7,  hue: [88, 30] },
+  { id: 13, type: "land",  kukuiula: false, tenure: "fee",   price: 1975000, oldPrice: 2200000, addr: "Sample — Kilauea Farm Parcel",      area: "Kilauea",     beds: null, baths: null, sqft: null, lot: 8.2,  lat: 22.2085, lng: -159.4060, days: 97, hue: [110, 32] },
+  { id: 14, type: "home",  kukuiula: false, tenure: "fee",   price: 3850000, oldPrice: null,    addr: "Sample — Princeville Bluff Home",   area: "Princeville", beds: 4, baths: 4,   sqft: 3120, lot: null, lat: 22.2175, lng: -159.4855, days: 1,   hue: [200, 36] },
+  { id: 15, type: "condo", kukuiula: false, tenure: "lease", price: 1150000, oldPrice: null,    addr: "Sample — Princeville Resort Condo", area: "Princeville", beds: 2, baths: 2,   sqft: 1240, lot: null, lat: 22.2225, lng: -159.4790, days: 15,  hue: [174, 28] },
+  { id: 16, type: "home",  kukuiula: false, tenure: "fee",   price: 5750000, oldPrice: 6200000, addr: "Sample — Hanalei Beach House",      area: "Hanalei",     beds: 3, baths: 3,   sqft: 2050, lot: null, lat: 22.2045, lng: -159.5010, days: 120, hue: [188, 42] },
+  { id: 17, type: "home",  kukuiula: false, tenure: "fee",   price: 985000,  oldPrice: null,    addr: "Sample — Waimea Plantation Home",   area: "Waimea",      beds: 3, baths: 2,   sqft: 1380, lot: null, lat: 21.9580, lng: -159.6690, days: 20,  hue: [28, 34] },
+  { id: 18, type: "land",  kukuiula: false, tenure: "fee",   price: 465000,  oldPrice: null,    addr: "Sample — Kekaha Kuleana Lot",       area: "Kekaha",      beds: null, baths: null, sqft: null, lot: 0.35, lat: 21.9690, lng: -159.7110, days: 11, hue: [44, 30] }
+];
+
+const fmtPrice = p => p >= 1000000 ? "$" + (p/1000000).toFixed(2).replace(/\.?0+$/,"") + "M" : "$" + Math.round(p/1000) + "K";
+const fmtFull = p => "$" + p.toLocaleString();
+// Real aerial imagery of the card's map location (Esri export, labeled honestly)
+function aerialUrl(l, d, w, h) {
+  const dy = d * (h / w) * 0.93;
+  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(l.lng-d).toFixed(5)},${(l.lat-dy).toFixed(5)},${(l.lng+d).toFixed(5)},${(l.lat+dy).toFixed(5)}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=jpg&f=image`;
+}
+const aerialLayer = (l, d, w, h) =>
+  `<div style="position:absolute;inset:0;background-image:url('${aerialUrl(l, d, w, h)}');background-size:cover;background-position:center;filter:saturate(1.3) contrast(1.08) brightness(1.07);"></div>`;
+function artStyle(l, shift) {
+  const [h0, s] = l.hue;
+  const h = (h0 + (shift || 0)) % 360;
+  return `background:
+    radial-gradient(120% 90% at 15% 0%, hsl(${h} ${s}% 74%) 0%, transparent 60%),
+    radial-gradient(130% 100% at 100% 100%, hsl(${(h+150)%360} ${Math.max(s-8,14)}% 55%) 0%, transparent 55%),
+    linear-gradient(160deg, hsl(${h} ${s}% 64%) 0%, hsl(${(h+28)%360} ${s}% 38%) 100%);`;
+}
+
+// ---- 3D map: real satellite + real terrain, all open/free sources ----
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    sources: {
+      sat: {
+        type: "raster",
+        tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+        tileSize: 256,
+        maxzoom: 19,
+        attribution: "Imagery &copy; Esri &amp; contributors"
+      },
+      dem: {
+        type: "raster-dem",
+        tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+        tileSize: 256,
+        encoding: "terrarium",
+        maxzoom: 13,
+        attribution: "Terrain: Mapzen / AWS Open Data"
+      }
+    },
+    layers: [{ id: "sat", type: "raster", source: "sat" }]
+  },
+  center: [-159.85, 22.28],
+  zoom: 8.9,
+  pitch: 0,
+  bearing: -34,
+  attributionControl: false,
+  maxPitch: 72
+});
+map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+
+// Some embedded browsers resize the window without the events MapLibre watches —
+// keep the canvas matched to the container no matter what.
+window.addEventListener("resize", () => map.resize());
+setInterval(() => {
+  const c = map.getCanvas(), t = map.getContainer();
+  if (Math.abs(c.clientWidth - t.clientWidth) > 2 || Math.abs(c.clientHeight - t.clientHeight) > 2) map.resize();
+}, 900);
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let introDone = false;
+let pendingParcel = null; // parcel fetched before the map style loads — drawn at load time
+document.getElementById("skip").onclick = () => endIntro(true);
+
+map.on("load", () => {
+  map.setTerrain({ source: "dem", exaggeration: 1.0 });
+  try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
+  // glowing parcel outline layers (fed on selection)
+  map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
+  map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
+  map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55 } });
+  map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
+  runIntro();
+});
+
+function runIntro() {
+  if (introDone) return;
+  if (reducedMotion) { endIntro(true); return; }
+  map.flyTo({
+    center: [-159.478, 21.905],
+    zoom: 11.6, pitch: 56, bearing: 12,
+    duration: 7000, essential: false, curve: 1.25
+  });
+  setTimeout(() => { if (!introDone) endIntro(false); }, 6600);
+  ["mousedown", "wheel", "touchstart", "keydown"].forEach(ev =>
+    window.addEventListener(ev, () => { if (!introDone) endIntro(true); }, { once: true, passive: true })
+  );
+}
+function endIntro(jump) {
+  if (introDone) return;
+  introDone = true;
+  const intro = document.getElementById("intro"), skip = document.getElementById("skip");
+  if (intro) intro.classList.add("gone");
+  if (skip) skip.classList.add("gone");
+  setTimeout(() => { intro && intro.remove(); skip && skip.remove(); }, 1500);
+  if (jump) { map.stop(); map.jumpTo({ center: [-159.478, 21.905], zoom: 11.6, pitch: 56, bearing: 12 }); }
+  setTimeout(() => toast(`Tap <b>anywhere on the island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 1200);
+}
+
+// ---- Orbit after selecting a property (cancellable, time-based) ----
+let orbitRaf = null, orbitLast = 0, orbitArm = null;
+function startOrbit() {
+  if (orbitRaf !== null) return;
+  orbitLast = performance.now();
+  const step = t => {
+    map.setBearing(map.getBearing() + (t - orbitLast) * 0.0027);
+    orbitLast = t;
+    orbitRaf = requestAnimationFrame(step);
+  };
+  orbitRaf = requestAnimationFrame(step);
+}
+function stopOrbit() {
+  if (orbitRaf !== null) cancelAnimationFrame(orbitRaf);
+  orbitRaf = null;
+}
+["mousedown", "wheel", "touchstart"].forEach(ev =>
+  document.getElementById("map").addEventListener(ev, stopOrbit, { passive: true })
+);
+
+// ---- Live public-data lookups (real State of Hawaii endpoints) ----
+const PARCEL_Q = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/9/query";
+const ZONING_Q = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/29/query";
+const FLOOD_Q  = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/8/query";
+const TSU_Q    = "https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/2/query";
+async function queryPoint(url, lng, lat, outFields) {
+  const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${url === PARCEL_Q}&outSR=4326&f=geojson`;
+  const res = await fetch(u);
+  if (!res.ok) throw new Error("gis");
+  const gj = await res.json();
+  return gj.features && gj.features[0] ? gj.features[0] : null;
+}
+
+// ---- Filters / search / rail / pins ----
+let activeFilter = "all";
+let selectedId = null;
+const markers = {};
+
+const AREA_WORDS = ["poipu","kukui","koloa","kalaheo","lawai","lihue","wailua","kapaa","anahola","kilauea","princeville","hanalei","waimea","kekaha"];
+function matchesSearch(l) {
+  const q = (document.getElementById("search").value || "").trim().toLowerCase();
+  if (!q) return true;
+  const m = q.match(/under\s*\$?\s*([\d.]+)\s*(m|k)?/);
+  if (m) { let cap = parseFloat(m[1]) * (m[2] === "k" ? 1e3 : 1e6); if (l.price > cap) return false; }
+  if (/\b(land|lot|acre)/.test(q) && l.type !== "land") return false;
+  if (/\bcondo/.test(q) && l.type !== "condo") return false;
+  if (/\b(home|house)/.test(q) && l.type !== "home") return false;
+  if (/\bfee\b/.test(q) && l.tenure !== "fee") return false;
+  if (/\blease/.test(q) && l.tenure !== "lease") return false;
+  if (/\b(cut|drop|reduced)/.test(q) && !l.oldPrice) return false;
+  const areas = AREA_WORDS.filter(w => q.includes(w));
+  if (areas.length && !areas.some(w => (l.area + l.addr).toLowerCase().includes(w))) return false;
+  return true;
+}
+function passes(l) {
+  if (!matchesSearch(l)) return false;
+  if (activeFilter === "all") return true;
+  if (activeFilter === "drops") return l.oldPrice !== null;
+  if (activeFilter === "kukuiula") return l.kukuiula;
+  return l.type === activeFilter;
+}
+const metaLine = l => l.type === "land"
+  ? `${l.lot} acres · Land · ${l.area}`
+  : `${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft · ${l.area}`;
+
+const cards = {}, pinEls = {};
+function buildAll() {
+  const rail = document.getElementById("rail");
+  LISTINGS.forEach((l, i) => {
+    const c = document.createElement("div");
+    c.className = "rcard";
+    c.style.animationDelay = (i * 35) + "ms";
+    const tag = l.oldPrice ? `<span class="tag cut">Sample · Price cut</span>` : (l.days <= 7 ? `<span class="tag" style="color:var(--accent)">Sample · New</span>` : `<span class="tag">Sample</span>`);
+    c.innerHTML = `
+      <div class="ph"><div style="position:absolute;inset:0;${artStyle(l)}"></div>${aerialLayer(l, 0.0035, 512, 240)}<div class="scrim"></div><button class="shr" title="Share">&#8599;</button>${tag}<div class="pr">${fmtPrice(l.price)}</div></div>
+      <div class="bd"><div class="a">${l.addr.replace("Sample — ","")}</div><div class="m">${metaLine(l)}</div></div>`;
+    c.onclick = () => select(l.id);
+    c.querySelector(".shr").onclick = (e) => { e.stopPropagation(); shareListing(l); };
+    rail.appendChild(c);
+    cards[l.id] = c;
+
+    const el = document.createElement("div");
+    let dot = "";
+    if (l.oldPrice) dot = `<span class="dot cut"></span>`;
+    else if (l.kukuiula) dot = `<span class="dot kuk"></span>`;
+    else if (l.type === "land") dot = `<span class="dot land"></span>`;
+    el.innerHTML = `<div class="pin">${dot}${fmtPrice(l.price)}</div>`;
+    const pin = el.firstChild;
+    pin.onclick = (e) => { e.stopPropagation(); select(l.id); };
+    pinEls[l.id] = pin;
+    const m = new maplibregl.Marker({ element: el }).setLngLat([l.lng, l.lat]);
+    m._onMap = false;
+    markers[l.id] = m;
+  });
+}
+function render() {
+  LISTINGS.forEach(l => {
+    const vis = previewOn && passes(l);
+    cards[l.id].hidden = !vis;
+    cards[l.id].classList.toggle("selected", l.id === selectedId);
+    pinEls[l.id].classList.toggle("selected", l.id === selectedId);
+    const m = markers[l.id];
+    if (vis && !m._onMap) { m.addTo(map); m._onMap = true; }
+    else if (!vis && m._onMap) { m.remove(); m._onMap = false; }
+  });
+}
+
+function toast(html, ms) {
+  const t = document.getElementById("toast");
+  t.innerHTML = html;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), ms || 2600);
+}
+
+// ---- Selection: cinematic dive + Property Passport ----
+async function select(id) {
+  selectedId = id;
+  stopOrbit();
+  if (tapMarker) tapMarker.remove();
+  const l = LISTINGS.find(x => x.id === id);
+  render();
+  openPassport(l);
+  setHash("l=" + id);
+  const mobile = window.matchMedia("(max-width: 760px)").matches;
+  map.flyTo({
+    center: [l.lng, l.lat], zoom: 16.6, pitch: 62, bearing: map.getBearing() + 40,
+    duration: 2600, essential: true, curve: 1.3,
+    offset: mobile ? [0, -Math.round(window.innerHeight * 0.3)] : [0, 0]
+  });
+  if (orbitArm) map.off("moveend", orbitArm);
+  orbitArm = () => { orbitArm = null; if (selectedId === id && !reducedMotion) startOrbit(); };
+  map.once("moveend", orbitArm);
+
+  // live parcel + flood lookups for this exact point (real public data)
+  const parcelSrc = map.getSource("parcel");
+  if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
+  try {
+    const [parcel, flood] = await Promise.all([
+      queryPoint(PARCEL_Q, l.lng, l.lat, "tmk_txt,gisacres,taxclass"),
+      queryPoint(FLOOD_Q, l.lng, l.lat, "fld_zone,zone_subty")
+    ]);
+    if (selectedId !== id) return;
+    if (parcel) {
+      const srcNow = map.getSource("parcel");
+      if (srcNow) srcNow.setData({ type: "FeatureCollection", features: [parcel] });
+      else pendingParcel = parcel;
+      const p = parcel.properties || {};
+      setFact("tmk", "TMK at this map point (county GIS)", p.tmk_txt || "—", "live");
+      setFact("acres", "Parcel size (county GIS)", p.gisacres ? Number(p.gisacres).toFixed(2) + " acres" : "—", "live");
+      toast(`Parcel outline at this map point — <b>County of Kauai GIS</b> (reference only, not a survey)`);
+    }
+    const fp = flood && flood.properties ? flood.properties : null;
+    setFact("flood", "FEMA flood zone (per state GIS)",
+      fp && fp.fld_zone ? fp.fld_zone + (fp.zone_subty ? " · " + fp.zone_subty : "") : "outside mapped flood zones", "live");
+  } catch (e) {
+    if (selectedId !== id) return;
+    setFact("tmk", "TMK at this map point (county GIS)", "offline — retry", "");
+    setFact("acres", "Parcel size (county GIS)", "offline", "");
+    setFact("flood", "FEMA flood zone (per state GIS)", "offline", "");
+  }
+}
+
+function setFact(key, label, value, cls) {
+  const el = document.getElementById("fact-" + key);
+  if (el) el.outerHTML = `<div class="fchip ${cls || ""}" id="fact-${key}"><small>${label}</small>${value}</div>`;
+}
+
+function sparkline(l) {
+  // Deterministic sample history derived from the listing (labeled as sample)
+  const pts = [];
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    const wob = Math.sin((l.id * 7 + i) * 1.7) * 0.035 + Math.sin(i * 0.9 + l.id) * 0.02;
+    let v = l.price * (1.04 + wob - i * 0.006);
+    if (l.oldPrice && i > n - 5) v = l.price;
+    if (l.oldPrice && i <= n - 5) v = Math.max(v, l.oldPrice * (1 + wob * 0.5));
+    pts.push(v);
+  }
+  pts[n - 1] = l.price;
+  const min = Math.min(...pts) * 0.995, max = Math.max(...pts) * 1.005;
+  const W = 320, H = 64;
+  const xy = pts.map((v, i) => [ (i / (n - 1)) * W, H - ((v - min) / (max - min)) * H ]);
+  const path = xy.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const last = xy[n - 1];
+  return `<svg viewBox="0 0 ${W} ${H + 8}" style="width:100%;height:64px;display:block">
+    <path d="${path} L ${W} ${H + 8} L 0 ${H + 8} Z" fill="rgba(14,110,99,0.09)" stroke="none"/>
+    <path d="${path}" fill="none" stroke="#0E6E63" stroke-width="2"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="#0E6E63"/>
+  </svg>`;
+}
+
+function demandLine(l) {
+  // Deterministic sample demand derived from the listing (labeled as sample)
+  const buyers = 8 + ((l.id * 13) % 34);
+  const band = l.price >= 3e6 ? "luxury" : l.price >= 1.5e6 ? "mid-market" : "entry";
+  return `<b>${buyers} active buyer profiles</b> match this ${band} price band in ${l.area.split(" /")[0]} — a sample number showing how the planned Demand Ledger will read. Not live data.`;
+}
+
+function openPassport(l) {
+  const pass = document.getElementById("passport");
+  pass.innerHTML = `
+    <div class="hero" style="${artStyle(l)}">
+      ${aerialLayer(l, 0.0022, 784, 296)}
+      <div class="scrim"></div>
+      <div style="position:absolute;right:12px;bottom:9px;font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Aerial view &middot; sample location</div>
+      <button class="x" onclick="closePassport()">&#10005;</button>
+      <div class="hp">
+        <div class="p">${fmtFull(l.price)} <span style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:0.08em;opacity:.85;vertical-align:6px">SAMPLE</span>${l.oldPrice ? `<span class="old">${fmtFull(l.oldPrice)}</span>` : ""}</div>
+        <div class="a">${l.addr} · ${l.area}</div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Property Passport</div>
+      <div class="factrow">
+        <div class="fchip"><small>Type</small>${l.type === "land" ? "Vacant land" : l.type === "condo" ? "Condo" : "Single family"}</div>
+        <div class="fchip ${l.tenure === 'fee' ? '' : 'gold'}"><small>Tenure</small>${l.tenure === "fee" ? "Fee simple" : "Leasehold"}</div>
+        ${l.type !== "land" ? `<div class="fchip"><small>Size</small>${l.beds} bd · ${l.baths} ba · ${l.sqft.toLocaleString()} sqft</div>` : ""}
+        <div class="fchip"><small>On market</small>${l.days} day${l.days === 1 ? "" : "s"}</div>
+        <div class="fchip live" id="fact-tmk"><small>TMK at this map point (county GIS)</small>looking up&hellip;</div>
+        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small>&hellip;</div>
+        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small>&hellip;</div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Price history · sample data</div>
+      <div class="spark-wrap">
+        <div class="cap"><span>List price, last 14 months</span><b>${fmtPrice(l.price)}${l.oldPrice ? ` · cut ${fmtPrice(l.oldPrice - l.price)}` : ""}</b></div>
+        ${sparkline(l)}
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Demand · sample data</div>
+      <div class="demand">${demandLine(l)}</div>
+    </div>
+    <div class="sec">
+      <div class="h">Ask anything about this property</div>
+      <div class="ask">
+        <input id="ask-input" type="text" placeholder="Flood risk? Leasehold? What can I build?">
+        <button onclick="answerAsk(${l.id})">Ask</button>
+      </div>
+      <div class="answer" id="answer"></div>
+    </div>
+    <div class="sec">
+      <div class="pass-cta">
+        <button class="primary" id="contact-btn">Contact Micah</button>
+        <button class="ghost" id="share-listing-btn">Share &#8599;</button>
+        <button class="ghost" id="watch-btn">Watch</button>
+      </div>
+    </div>
+    <div class="micro">Sample listing — not a real property or offering. TMK, parcel size, parcel outline, and flood zone are looked up live from State of Hawaii / County of Kauai public records for this map location. Boundaries are for reference, not survey-grade. Flood zone shown is informational only, from FEMA maps as published by Hawaii state GIS — not a flood zone determination. Verify with FEMA and your lender before relying on it.</div>
+    <div class="sec"></div>`;
+  pass.classList.add("open");
+  const inp = document.getElementById("ask-input");
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") answerAsk(l.id); });
+  document.getElementById("share-listing-btn").onclick = () => shareListing(l);
+  document.getElementById("contact-btn").onclick = () => openLead("buyer", l.addr);
+  document.getElementById("watch-btn").onclick = () => openLead("buyer", l.addr + " — alert me on price or status changes");
+}
+// ---- Share everything: one gesture, see it → text it ----
+function deepUrl(hash) { return location.origin + location.pathname + "#" + hash; }
+function setHash(hash) { history.replaceState(null, "", hash ? "#" + hash : location.pathname); }
+async function shareIt(text, hash) {
+  const url = deepUrl(hash);
+  if (navigator.share) {
+    try { await navigator.share({ title: "Moku", text, url }); return; } catch (e) { if (e.name === "AbortError") return; }
+  }
+  try {
+    await navigator.clipboard.writeText(text + " " + url);
+    toast(`Copied — paste it into a text &#128242;`);
+  } catch (e) {
+    location.href = "sms:&body=" + encodeURIComponent(text + " " + url);
+  }
+}
+const shareListing = l => shareIt(`${l.addr} — ${fmtFull(l.price)} · ${metaLine(l)} · Moku`, "l=" + l.id);
+const shareParcel = (lng, lat, tmk) => shareIt(`Land Intel${tmk ? " · TMK " + tmk : ""} · Moku`, "p=" + lng.toFixed(5) + "," + lat.toFixed(5));
+
+// Deep links (#l=5 or #p=lng,lat) skip the intro and go straight to the property
+function parseDeepLink() {
+  const h = location.hash.slice(1);
+  let m = h.match(/^l=(\d+)$/);
+  if (m) return { type: "l", id: +m[1] };
+  m = h.match(/^p=(-?[\d.]+),(-?[\d.]+)$/);
+  if (m) return { type: "p", lng: +m[1], lat: +m[2] };
+  return null;
+}
+
+// ---- Land Intel: tap anywhere on the island → real parcel record ----
+let exploreToken = 0;
+let tapMarker = null;
+map.on("click", (e) => {
+  if (!introDone) return;
+  exploreParcel(e.lngLat.lng, e.lngLat.lat);
+});
+
+async function exploreParcel(lng, lat) {
+  selectedId = null;
+  stopOrbit();
+  render();
+  const token = ++exploreToken;
+  openParcelPassport(lng, lat);
+  setHash("p=" + lng.toFixed(5) + "," + lat.toFixed(5));
+  if (!tapMarker) {
+    const el = document.createElement("div");
+    el.className = "tapdot";
+    tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map);
+  } else {
+    tapMarker.setLngLat([lng, lat]).addTo(map);
+  }
+  const targetZoom = Math.max(map.getZoom(), 15.6);
+  map.flyTo({ center: [lng, lat], zoom: targetZoom, duration: 1400, essential: true });
+  const parcelSrc = map.getSource("parcel");
+  if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
+  try {
+    const [parcel, zoning, flood, tsu] = await Promise.all([
+      queryPoint(PARCEL_Q, lng, lat, "tmk_txt,gisacres,taxclass,qpub_link"),
+      queryPoint(ZONING_Q, lng, lat, "zoning,description"),
+      queryPoint(FLOOD_Q, lng, lat, "fld_zone,zone_subty"),
+      queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc")
+    ]);
+    if (token !== exploreToken) return;
+    if (parcel) {
+      if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [parcel] });
+      else pendingParcel = parcel;
+      // snap the camera to the parcel's true center — the click ray on 3D terrain can land short
+      try {
+        const ring = parcel.geometry.type === "Polygon" ? parcel.geometry.coordinates[0] : parcel.geometry.coordinates[0][0];
+        let cx = 0, cy = 0;
+        ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
+        cx /= ring.length; cy /= ring.length;
+        map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900 });
+      } catch (geErr) {}
+      const p = parcel.properties || {};
+      setFact("tmk", "TMK (county record)", p.tmk_txt || "—", "live");
+      setFact("acres", "Parcel size (county GIS)", p.gisacres ? Number(p.gisacres).toFixed(2) + " acres" : "—", "live");
+      setFact("taxclass", "Tax class (county)", p.taxclass ? p.taxclass.toLowerCase() : "—", "live");
+      const qp = document.getElementById("qpub-btn");
+      if (qp && p.qpub_link) { qp.href = p.qpub_link; qp.style.display = ""; }
+      toast(`Real parcel — <b>County of Kauai GIS</b> (reference only, not a survey)`);
+    } else {
+      setFact("tmk", "TMK (county record)", "no parcel here (water / road)", "");
+    }
+    const z = zoning && zoning.properties ? zoning.properties : null;
+    setFact("zoning", "County zoning", z && z.zoning ? z.zoning + (z.description ? " · " + z.description : "") : "none mapped here", "live");
+    const fp = flood && flood.properties ? flood.properties : null;
+    setFact("flood", "FEMA flood zone (per state GIS)",
+      fp && fp.fld_zone ? fp.fld_zone + (fp.zone_subty ? " · " + fp.zone_subty : "") : "outside mapped flood zones", "live");
+    const t = tsu && tsu.properties ? tsu.properties : null;
+    setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "outside mapped evacuation zones", "live");
+  } catch (err) {
+    if (token !== exploreToken) return;
+    setFact("tmk", "TMK (county record)", "offline — retry", "");
+  }
+}
+
+function openParcelPassport(lng, lat) {
+  const pass = document.getElementById("passport");
+  const pt = { lng, lat };
+  pass.innerHTML = `
+    <div class="hero" style="background:#1a2a21">
+      ${aerialLayer(pt, 0.0022, 784, 296)}
+      <div class="scrim"></div>
+      <div style="position:absolute;right:12px;bottom:9px;font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Aerial view &middot; this spot</div>
+      <button class="x" onclick="closePassport()">&#10005;</button>
+      <div class="hp">
+        <div class="p" style="font-size:22px">Land Intel</div>
+        <div class="a">${lat.toFixed(5)}, ${lng.toFixed(5)} &middot; live public records</div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Parcel Passport &middot; all data live</div>
+      <div class="factrow">
+        <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small>looking up&hellip;</div>
+        <div class="fchip live" id="fact-acres"><small>Parcel size (county GIS)</small>&hellip;</div>
+        <div class="fchip live" id="fact-taxclass"><small>Tax class (county)</small>&hellip;</div>
+        <div class="fchip live" id="fact-zoning"><small>County zoning</small>&hellip;</div>
+        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small>&hellip;</div>
+        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small>&hellip;</div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="pass-cta">
+        <a class="primary" id="qpub-btn" style="display:none;flex:1;text-align:center;text-decoration:none;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:11px 0;font-size:13px;font-weight:600" href="#" target="_blank" rel="noopener">County tax record &rarr;</a>
+        <button class="ghost" onclick="shareParcel(${lng}, ${lat}, (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim())">Share &#8599;</button>
+        <button class="ghost" onclick="openLead('buyer', 'Land question — ' + ((document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim() ? 'TMK ' + (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim() : '${lat.toFixed(5)}, ${lng.toFixed(5)}'))">Ask Micah</button>
+      </div>
+    </div>
+    <div class="micro">Every value in this panel is looked up live from County of Kauai and State of Hawaii public records for the tapped location. Parcel boundaries are for reference, not survey-grade. Flood and tsunami zones are informational only — not determinations. The county tax record link opens the county&#8217;s own site.</div>
+    <div class="sec"></div>`;
+  pass.classList.add("open");
+}
+
+function closePassport() {
+  document.getElementById("passport").classList.remove("open");
+  selectedId = null;
+  setHash("");
+  if (tapMarker) tapMarker.remove();
+  stopOrbit();
+  map.getSource("parcel") && map.getSource("parcel").setData({ type: "FeatureCollection", features: [] });
+  render();
+}
+
+// Demo Q&A — canned, clearly labeled; production is AI grounded in live data
+function answerAsk(id) {
+  const l = LISTINGS.find(x => x.id === id);
+  const q = (document.getElementById("ask-input").value || "").toLowerCase();
+  const a = document.getElementById("answer");
+  let body;
+  const floodEl = document.getElementById("fact-flood");
+  const floodTxt = floodEl ? floodEl.textContent.replace(/FEMA flood zone \(per state GIS\)/, "").trim() : "—";
+  if (/flood|water|tsunami|risk/.test(q)) {
+    body = `This map point shows FEMA flood zone <b>${floodTxt || "—"}</b>, per the FEMA flood map layer published by State of Hawaii GIS — informational only, not a flood determination. Zones starting with A or V usually mean lenders require flood insurance.`;
+  } else if (/lease|fee|tenure|own/.test(q)) {
+    body = l.tenure === "fee"
+      ? `This is a <b>fee simple</b> listing — you own the land outright. That's the standard mainland-style ownership; no lease rent, no expiration.`
+      : `This is a <b>leasehold</b> listing — you own the home but lease the land. That usually means a lower price and monthly lease rent, and the lease term matters a lot. Worth a careful look before offering.`;
+  } else if (/build|adu|zone|zoning/.test(q)) {
+    body = `Buildability depends on county zoning and the parcel's land-use district. In production this answer pulls the live zoning layer for TMK shown above and explains it in plain English.`;
+  } else if (/school|beach|near|area/.test(q)) {
+    body = `${l.area} details — schools, beaches, drive times — ship with the neighborhood guides in production. The AI answers about properties and places, always grounded in data.`;
+  } else if (!q) {
+    body = `Type a question — try &ldquo;flood risk?&rdquo;, &ldquo;is this leasehold?&rdquo; or &ldquo;can I build here?&rdquo;`;
+  } else {
+    body = `In production, this box is a real AI grounded in this property's listing, parcel, hazard, zoning, and price-history data — it answers what agents get asked every day, instantly.`;
+  }
+  a.innerHTML = body + `<span class="src">Demo answer. Production: AI grounded in live listing + county + state data.</span>`;
+  a.classList.add("show");
+}
+
+// ---- Lead engine: every CTA lands a real message in Micah's inbox ----
+const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before public launch
+let leadKind = "buyer";
+const LEAD_COPY = {
+  buyer: {
+    title: "Be first. Every time.",
+    sub: "Every new listing and price cut on Kauai, minutes after it happens — starting the day listings go live.",
+    note: "What are you looking for?",
+    go: "Request first access →",
+    subject: "Moku — first access request"
+  },
+  seller: {
+    title: "What’s your home worth?",
+    sub: "Get Micah’s read on your home’s value — grounded in live island data, answered personally.",
+    note: "Your neighborhood or address",
+    go: "Ask Micah →",
+    subject: "Moku — home value request"
+  }
+};
+function openLead(kind, prefill) {
+  leadKind = kind;
+  const c = LEAD_COPY[kind];
+  document.getElementById("lead-title").textContent = c.title;
+  document.getElementById("lead-sub").textContent = c.sub;
+  document.getElementById("lead-note").placeholder = c.note;
+  document.getElementById("lead-note").value = prefill || "";
+  document.getElementById("lead-go").innerHTML = c.go;
+  document.getElementById("lead-modal").classList.add("open");
+  setTimeout(() => document.getElementById("lead-email").focus(), 100);
+}
+function closeLead() { document.getElementById("lead-modal").classList.remove("open"); }
+document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeLead(); });
+document.getElementById("lead-go").onclick = () => {
+  const c = LEAD_COPY[leadKind];
+  const email = document.getElementById("lead-email").value.trim();
+  const note = document.getElementById("lead-note").value.trim();
+  const body = `${c.subject}\n\nReply-to: ${email || "(not given)"}\n${c.note}: ${note || "(not given)"}\nSent from the Moku beta.`;
+  location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
+  closeLead();
+  toast(`Almost there — just hit send in your mail app &#128232;`, 4200);
+};
+document.getElementById("btn-sell").onclick = () => openLead("seller");
+document.getElementById("btn-alerts").onclick = () => openLead("buyer");
+
+// ---- Wire chrome ----
+document.querySelectorAll(".filterbar .chip").forEach(ch => {
+  ch.onclick = () => {
+    document.querySelectorAll(".filterbar .chip").forEach(c => c.classList.remove("active"));
+    ch.classList.add("active");
+    activeFilter = ch.dataset.f;
+    render();
+  };
+});
+let searchTimer = null;
+document.getElementById("search").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(render, 220);
+});
+
+// ---- Launch mode vs listings preview ----
+let previewOn = false;
+const RIBBON_LAUNCH = `<b>Beta</b> &nbsp;·&nbsp; parcel, zoning &amp; flood data live from State of Hawaii GIS (reference only, not survey data) &nbsp;·&nbsp; listings coming soon`;
+const RIBBON_PREVIEW = `<b>Preview</b> &nbsp;·&nbsp; sample listings, not real properties &nbsp;·&nbsp; parcel &amp; flood data remain live State of Hawaii GIS`;
+function setPreview(on) {
+  previewOn = on;
+  document.body.classList.toggle("launch", !on);
+  document.getElementById("ribbon").innerHTML = on ? RIBBON_PREVIEW : RIBBON_LAUNCH;
+  document.getElementById("btn-preview").textContent = on ? "Exit preview" : "Preview listings";
+  if (!on && selectedId !== null) closePassport();
+  render();
+}
+document.getElementById("btn-preview").onclick = () => {
+  setPreview(!previewOn);
+  toast(previewOn
+    ? `Listings preview — <b>sample data</b> until the live feed connects`
+    : `Back to launch view — everything on screen is real public data`);
+};
+
+buildAll();
+render();
+
+// A shared link opens straight on the property — no intro, no waiting
+const deep = parseDeepLink();
+if (deep) {
+  endIntro(true);
+  if (deep.type === "l" && LISTINGS.some(l => l.id === deep.id)) { setPreview(true); select(deep.id); }
+  else if (deep.type === "p") exploreParcel(deep.lng, deep.lat);
+}
+</script>
+</body>
+</html>

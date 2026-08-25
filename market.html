@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moku Market Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBFBFD;
+    --surface: #FFFFFF;
+    --ink: #1D1D1F;
+    --ink-2: #5E5E63;
+    --ink-3: #9C9CA1;
+    --hairline: rgba(29,29,31,0.08);
+    --accent: #0E6E63;
+    --accent-soft: rgba(14,110,99,0.08);
+    --gold: #A8894E;
+    --shadow: 0 4px 24px rgba(29,29,31,0.07);
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15.5px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(251,251,253,0.82);
+    backdrop-filter: blur(18px) saturate(180%);
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 22px;
+  }
+  .topbar a.back { text-decoration: none; color: var(--ink-2); font-size: 13px; font-weight: 600; }
+  .topbar a.back:hover { color: var(--ink); }
+  .topbar .brand { font-family: var(--serif); font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+  .topbar .brand span { color: var(--accent); }
+  .topbar .share {
+    margin-left: auto;
+    border: 1px solid var(--hairline); background: var(--surface);
+    border-radius: 999px; padding: 7px 15px;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: var(--ink);
+    cursor: pointer; transition: box-shadow 0.2s;
+  }
+  .topbar .share:hover { box-shadow: var(--shadow); }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 56px 24px 90px; }
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3); }
+  h1 { font-family: var(--serif); font-size: clamp(34px, 6vw, 52px); font-weight: 500; letter-spacing: -0.02em; margin: 10px 0 6px; text-wrap: balance; }
+  .sub { color: var(--ink-2); max-width: 560px; }
+
+  .hero {
+    margin-top: 40px;
+    background: var(--surface); border-radius: 22px; box-shadow: var(--shadow);
+    padding: 30px 32px 22px;
+    display: grid; grid-template-columns: auto 1fr; gap: 30px; align-items: center;
+  }
+  .hero .big { font-family: var(--serif); font-size: clamp(56px, 10vw, 92px); font-weight: 500; letter-spacing: -0.03em; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .hero .cap { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-top: 10px; }
+  .hero .chart { min-width: 0; }
+  .hero .chart .lbl { font-size: 12px; color: var(--ink-2); display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .hero svg { width: 100%; height: 88px; display: block; }
+
+  section { margin-top: 64px; }
+  .kicker { display: flex; align-items: baseline; gap: 12px; border-top: 1px solid var(--hairline); padding-top: 20px; margin-bottom: 18px; }
+  .kicker h2 { font-family: var(--serif); font-size: 25px; font-weight: 500; letter-spacing: -0.01em; }
+  .kicker .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); }
+
+  .tablewrap { overflow-x: auto; border-radius: 18px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 14px; min-width: 520px; }
+  caption { text-align: left; font-weight: 700; font-size: 13px; letter-spacing: 0.02em; padding: 14px 18px 4px; background: var(--surface); }
+  th { text-align: right; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); padding: 10px 18px 8px; border-bottom: 1px solid var(--hairline); }
+  th:first-child { text-align: left; }
+  td { padding: 12px 18px; border-bottom: 1px solid var(--hairline); text-align: right; font-variant-numeric: tabular-nums; }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  td .part { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--gold); text-transform: uppercase; margin-left: 6px; }
+  .footnote { font-size: 12px; color: var(--ink-3); line-height: 1.6; margin: 6px 2px 0; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 22px 24px; }
+  .card .n { font-family: var(--serif); font-size: 34px; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .card .n.gold { color: var(--gold); }
+  .card .n.teal { color: var(--accent); }
+  .card .l { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+  .card p { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; }
+
+  .coming {
+    background: linear-gradient(120deg, rgba(14,110,99,0.07), rgba(168,137,78,0.09));
+    border: 1px solid rgba(14,110,99,0.2);
+    border-radius: 18px; padding: 22px 24px;
+  }
+  .coming .t { font-weight: 700; font-size: 15px; }
+  .coming p { font-size: 13.5px; color: var(--ink-2); margin-top: 6px; max-width: 640px; }
+
+  footer { margin-top: 70px; border-top: 1px solid var(--hairline); padding-top: 20px; font-size: 12px; color: var(--ink-3); line-height: 1.7; }
+  footer p { margin-bottom: 8px; }
+
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; gap: 18px; }
+    .duo { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="index.html">&larr; Map</a>
+  <div class="brand">Moku<span style="color:var(--gold)">.</span> <span>Market Pulse</span></div>
+  <button class="share" id="share-page">Share &#8599;</button>
+</div>
+
+<div class="wrap">
+  <div class="eyebrow">Every number sourced &middot; updated <span id="updated">—</span></div>
+  <h1>The island&#8217;s market, organized.</h1>
+  <p class="sub">Year by year, segment by segment — with the freshest public data available today, and built to update hourly the day the MLS feed connects.</p>
+
+  <div class="hero">
+    <div>
+      <div class="big" id="inv-now">—</div>
+      <div class="cap">Active listings on Kauai<br><span id="inv-month" style="color:var(--accent)">—</span> &middot; Realtor.com via FRED</div>
+    </div>
+    <div class="chart">
+      <div class="lbl"><span>Active inventory, last 24 months</span><span id="inv-range">—</span></div>
+      <svg id="inv-chart" viewBox="0 0 640 88" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <section>
+    <div class="kicker"><span class="tag">By the numbers</span><h2>Year by year, every segment</h2></div>
+    <div id="tables"></div>
+  </section>
+
+  <section>
+    <div class="kicker"><span class="tag">The high end</span><h2>Luxury &amp; Kukui&#699;ula</h2></div>
+    <div class="duo">
+      <div class="card">
+        <div class="n teal">83</div>
+        <div class="l">Sales above $3M &middot; 2025</div>
+        <p>Median luxury sale $4.31M &middot; top sale $27.6M. Kauai&#8217;s luxury market runs deeper than its size suggests.</p>
+      </div>
+      <div class="card">
+        <div class="n gold">$156.9M</div>
+        <div class="l">Kukui&#699;ula volume &middot; 2025</div>
+        <p>39 sales — 17 homes ($118.8M), 21 land parcels ($33.3M), 1 condo. One community &asymp; 13% of the island&#8217;s most recent published full-year dollar volume (2024: &asymp; $1.18B).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker"><span class="tag">For brokers &amp; agents</span><h2>Founding Partners</h2></div>
+    <div class="card" style="padding:26px 28px">
+      <p style="font-size:14.5px;color:var(--ink-2);max-width:640px;line-height:1.65">Moku is where Kauai&#8217;s buyers will watch the island. The first brokerages to provide their listings directly get <strong style="color:var(--ink)">free featured placement for the first year</strong> — cinematic 3D treatment, parcel and hazard intelligence on every listing, instant-alert distribution, and full attribution with every inquiry routed to you. Limited to the founding group; paid tiers open to everyone else at launch.</p>
+      <a href="mailto:micahskylab@gmail.com?subject=Moku%20Founding%20Partners&body=Interested%20in%20the%20Founding%20Partners%20program%20for%20our%20brokerage%27s%20listings." style="display:inline-block;margin-top:14px;background:var(--ink);color:#fff;text-decoration:none;font-size:13.5px;font-weight:600;border-radius:999px;padding:11px 22px">Become a founding partner &rarr;</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="coming">
+      <div class="t">Coming with the live feed: just-sold, in real time</div>
+      <p>When the MLS connection turns on, this page updates hourly — closed sales as they record, days-on-market by district, price cuts as they happen, and a weekly email version. Every listing&#8217;s full sales history is already available today through its county tax record, one tap from the map.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Sources.</strong> 2024 full-year sales &amp; volume: Ahearn/Karlovsky Kauai Sales Recap 2024 (MLS-based). Medians &amp; 2025 single-family YTD: Hawaii Life market reports. 2025 luxury: Hawaii Life luxury recap. 2026 H1 &amp; Q2: Team Mira / Corcoran Pacific market statistics. Active inventory: Realtor.com research data via FRED (series ACTLISCOU15007), refreshed by Moku&#8217;s update script each time it runs (on demand during this demo; scheduled hourly in production). Kukui&#699;ula: official 2025 Year in Review.</p>
+    <p><strong>Honesty notes.</strong> 2023 volumes and some segment figures were never published — shown as &#8220;—&#8221; rather than estimated. 2025 is a partial year (no full recap was published). Values marked with &#8220;&asymp;&#8221; are summed or derived from published tables. Nothing on this page is estimated or invented; if it isn&#8217;t sourced, it isn&#8217;t shown.</p>
+    <p>Moku &middot; demo preview</p>
+  </footer>
+</div>
+
+<script src="market-data.js"></script>
+<script>
+if (typeof MARKET === "undefined" || !MARKET.inventory || !MARKET.inventory.length) {
+  document.getElementById("tables").innerHTML = '<div class="footnote">Market data failed to load. Refresh to retry.</div>';
+  document.getElementById("share-page").style.display = "none";
+  throw new Error("market data missing");
+}
+const fmtM = v => v == null ? "—" : "$" + (v / 1000000).toFixed(1) + "M";
+const fmtP = v => v == null ? "—" : "$" + v.toLocaleString();
+const fmtN = v => v == null ? "—" : v.toLocaleString();
+
+// hero: latest inventory + 24-month chart
+const inv = MARKET.inventory;
+const last = inv[inv.length - 1];
+const monthName = m => new Date(m + "-15").toLocaleString("en-US", { month: "long", year: "numeric" });
+document.getElementById("updated").textContent = new Date(MARKET.updated + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+document.getElementById("inv-now").textContent = last.count;
+document.getElementById("inv-month").textContent = monthName(last.month);
+document.getElementById("inv-range").textContent = inv[0].month.slice(0, 4) + "–" + last.month.slice(0, 4);
+
+(function drawChart() {
+  const svg = document.getElementById("inv-chart");
+  const W = 640, H = 88, pad = 6;
+  const counts = inv.map(d => d.count);
+  const min = Math.min(...counts) * 0.96, max = Math.max(...counts) * 1.04;
+  const xy = counts.map((c, i) => [
+    pad + (i / (counts.length - 1)) * (W - pad * 2),
+    H - pad - ((c - min) / (max - min)) * (H - pad * 2)
+  ]);
+  const line = xy.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const lastPt = xy[xy.length - 1];
+  svg.innerHTML = `
+    <path d="${line} L ${W - pad} ${H} L ${pad} ${H} Z" fill="rgba(14,110,99,0.08)"/>
+    <path d="${line}" fill="none" stroke="#0E6E63" stroke-width="2.2" stroke-linejoin="round"/>
+    <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="4" fill="#0E6E63"/>`;
+})();
+
+// year-by-year tables per segment
+const SEGMENTS = [
+  { key: "sf", label: "Single-family homes" },
+  { key: "condo", label: "Condominiums" },
+  { key: "land", label: "Vacant land" }
+];
+const YEAR_ORDER = ["2026 H1", "2025", "2024", "2023"];
+const PARTIAL = { "2025": "partial", "2026 H1": "half year" };
+const holder = document.getElementById("tables");
+SEGMENTS.forEach(seg => {
+  const rows = YEAR_ORDER.map(y => {
+    const d = MARKET.years[y][seg.key];
+    const part = PARTIAL[y] ? `<span class="part">${PARTIAL[y]}</span>` : "";
+    return `<tr><td>${y}${part}</td><td>${fmtN(d.sales)}</td><td>${fmtM(d.volume)}</td><td>${fmtP(d.median)}</td></tr>`;
+  }).join("");
+  holder.insertAdjacentHTML("beforeend", `
+    <div class="tablewrap"><table>
+      <caption>${seg.label}</caption>
+      <tr><th>Period</th><th>Sales</th><th>Dollar volume</th><th>Median price</th></tr>
+      ${rows}
+    </table></div>`);
+});
+const notes = YEAR_ORDER.filter(y => MARKET.years[y].note).map(y => `<strong>${y}:</strong> ${MARKET.years[y].note}`).join(" &nbsp; ");
+holder.insertAdjacentHTML("beforeend", `<div class="footnote">${notes}</div>`);
+
+// share
+document.getElementById("share-page").onclick = async () => {
+  const text = `Moku Market Pulse — ${last.count} active listings on Kauai (${monthName(last.month)})`;
+  const url = location.origin + location.pathname;
+  if (navigator.share) { try { await navigator.share({ title: "Moku Market Pulse", text, url }); return; } catch (e) { if (e.name === "AbortError") return; } }
+  try { await navigator.clipboard.writeText(text + " " + url); alert("Copied — paste it into a text 📲"); } catch (e) {}
+};
+</script>
+</body>
+</html>
