@@ -1093,7 +1093,8 @@ async function exploreParcel(lng, lat) {
     } else {
       const fz = flood && flood.properties ? flood.properties.fld_zone : null;
       setFact("flood", "FEMA flood zone (per state GIS)",
-        fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones", "live");
+        (fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones") +
+        `<div class="subnote"><b onclick="showLayer('flood')">See the flood map &#8599;</b></div>`, "live");
     }
     if (tsu === undefined) {
       setFact("tsu", "Tsunami evacuation (state GIS)", "couldn&#8217;t load", "");
@@ -1107,7 +1108,8 @@ async function exploreParcel(lng, lat) {
         else if (/evacuat|warning/i.test(sT)) tsuTxt = "Inside a tsunami evacuation zone";
         else tsuTxt = esc(sT);
       }
-      setFact("tsu", "Tsunami evacuation (state GIS)", tsuTxt, "live");
+      setFact("tsu", "Tsunami evacuation (state GIS)",
+        tsuTxt + `<div class="subnote"><b onclick="showLayer('tsu')">See evacuation zones &#8599;</b></div>`, "live");
     }
     const schools = [
       elem && elem.properties && elem.properties.elem_desc,
@@ -1132,6 +1134,10 @@ async function exploreParcel(lng, lat) {
   }
 }
 
+function showLayer(key) {
+  const chip = document.querySelector('.lchip[data-lk="' + key + '"]');
+  if (!(typeof layerState !== "undefined" && layerState[key] && layerState[key].on)) toggleLayer(key, chip);
+}
 function setHeroVal(n) {
   const el = document.getElementById("hero-val");
   if (el && n != null && n > 0) el.textContent = "$" + Number(n).toLocaleString();
@@ -1201,7 +1207,8 @@ async function enrichCounty(county, token, tmkRaw) {
       }
       if (tvrRows.status === "fulfilled") {
         addFact("row-land", "tvr", "County TVR registry (non-conforming)",
-          tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry", "live");
+          (tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry") +
+          `<div class="subnote"><b onclick="showLayer('tvr')">See all registered rentals &#8599;</b></div>`, "live");
       }
     } else if (county === COUNTIES.maui) {
       const parid8 = tmk9.slice(1);
@@ -1215,7 +1222,7 @@ async function enrichCounty(county, token, tmkRaw) {
         const isUnit = String(s.GIS_SALES_2YEAR_PARID || "").slice(-4) !== "0000";
         addFact("row-record", "sale", isUnit ? "Latest unit sale on this parcel (county roll)" : "Last recorded sale (county roll)",
           "$" + Number(s.GIS_SALES_2YEAR_PRICE).toLocaleString() + " &middot; " + when +
-          `<div class="subnote">County assessment records — updates lag the market by months${isUnit ? "; this parcel holds multiple units" : ""}</div>`, "live");
+          `<div class="subnote">County records — lag the market by months${isUnit ? "; multiple units on this parcel" : ""} &middot; <b onclick="showLayer('sold')">See all sales &#8599;</b></div>`, "live");
       }
     }
   } catch (e) {}
