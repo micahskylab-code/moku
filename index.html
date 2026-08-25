@@ -758,6 +758,21 @@ function showHopHint() {
 let exploreToken = 0;
 let tapMarker = null;
 let lastRecord = null;
+// Camera animations started before the map's first render never finish — until then, land instantly.
+let bootCam = true;
+const clearBootCam = () => { bootCam = false; };
+map.once("load", clearBootCam);
+map.once("idle", clearBootCam);
+setTimeout(clearBootCam, 2000);
+function jumpWithOffset(lng, lat, zoom, pitch) {
+  const cam = { center: [lng, lat], zoom: zoom };
+  if (pitch != null) cam.pitch = pitch;
+  map.jumpTo(cam);
+  if (SMALL) {
+    const pt = map.project([lng, lat]);
+    map.jumpTo({ center: map.unproject([pt.x, pt.y + Math.round(window.innerHeight * 0.28)]) });
+  }
+}
 map.on("click", (e) => {
   if (!document.getElementById("veil").classList.contains("gone")) return;
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
@@ -777,10 +792,14 @@ async function exploreParcel(lng, lat) {
     tapMarker.setLngLat([lng, lat]).addTo(map);
   }
   const targetZoom = Math.max(map.getZoom(), 15.6);
-  map.flyTo({
-    center: [lng, lat], zoom: targetZoom, pitch: SMALL ? 46 : 55, duration: 2000, essential: true,
-    offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0]
-  });
+  if (bootCam) {
+    jumpWithOffset(lng, lat, targetZoom, SMALL ? 46 : 55);
+  } else {
+    map.flyTo({
+      center: [lng, lat], zoom: targetZoom, pitch: SMALL ? 46 : 55, duration: 2000, essential: true,
+      offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0]
+    });
+  }
   const parcelSrc = map.getSource("parcel");
   if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
 
@@ -823,7 +842,8 @@ async function exploreParcel(lng, lat) {
         let cx = 0, cy = 0;
         ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
         cx /= ring.length; cy /= ring.length;
-        map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
+        if (bootCam) jumpWithOffset(cx, cy, targetZoom);
+        else map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 900, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
       } catch (geErr) {}
       const p = parcel.properties || {};
       const tmk = pickTmk(p);
