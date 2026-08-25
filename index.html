@@ -517,6 +517,92 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+
+  /* ============ MOKU DARK — the luxury identity ============ */
+  :root {
+    --lux-glass: rgba(20, 24, 28, 0.82);
+    --lux-glass-solid: #16191D;
+    --lux-line: rgba(255, 255, 255, 0.10);
+    --lux-text: rgba(255, 255, 255, 0.94);
+    --lux-text-2: rgba(255, 255, 255, 0.62);
+    --lux-text-3: rgba(255, 255, 255, 0.40);
+    --lux-gold: #E3C27C;
+  }
+  .hdr-cluster { background: transparent !important; border: none !important; box-shadow: none !important; }
+  .logo, .docked-wrap, .hdr-cluster .quiet {
+    background: var(--lux-glass) !important;
+    border-color: var(--lux-line) !important;
+    color: var(--lux-text) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
+  .logo span, .hdr-cluster .quiet { color: var(--lux-text) !important; }
+  .logo .dot { color: var(--lux-gold) !important; }
+  .hdr-cluster .quiet:hover { background: rgba(255,255,255,0.10) !important; color: #fff !important; }
+  #dockbox { background: transparent !important; color: var(--lux-text) !important; }
+  #dockbox::placeholder { color: var(--lux-text-3) !important; }
+  .docked-wrap .mag { color: var(--lux-text-3) !important; }
+
+  .lchip {
+    background: var(--lux-glass) !important;
+    border: 1px solid var(--lux-line) !important;
+    color: var(--lux-text) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+  .lchip.on { background: rgba(255, 255, 255, 0.96) !important; color: #14171A !important; }
+  #legend {
+    background: var(--lux-glass) !important;
+    border: 1px solid var(--lux-line) !important;
+    color: var(--lux-text) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .passport {
+    background: var(--lux-glass-solid) !important;
+    border: 1px solid var(--lux-line) !important;
+    color: var(--lux-text) !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55) !important;
+  }
+  .passport .sec .h { color: var(--lux-text-3) !important; }
+  .fchip { border-bottom-color: var(--lux-line) !important; color: var(--lux-text) !important; }
+  .fchip small { color: var(--lux-gold) !important; }
+  .fchip .subnote { color: var(--lux-text-3) !important; }
+  .fchip .subnote b { color: var(--lux-gold) !important; }
+  .fchip .code { background: rgba(255,255,255,0.10); color: var(--lux-text-2); }
+  #fact-assessed { color: #fff !important; }
+  .cta-dock { background: rgba(20, 24, 28, 0.92) !important; border-top-color: var(--lux-line) !important; }
+  .pass-cta .primary { background: #fff !important; color: #14171A !important; }
+  .pass-cta .ghost { background: rgba(255,255,255,0.08) !important; color: var(--lux-text) !important; border-color: var(--lux-line) !important; }
+  .passport .x { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
+
+  #suggest, #dock-suggest {
+    background: var(--lux-glass-solid) !important;
+    border: 1px solid var(--lux-line) !important;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5) !important;
+  }
+  .sug { color: var(--lux-text) !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sug small { color: var(--lux-text-3) !important; }
+  .sug:hover, .sug.hot { background: rgba(255,255,255,0.08) !important; }
+
+  .modal {
+    background: var(--lux-glass-solid) !important;
+    color: var(--lux-text) !important;
+    border: 1px solid var(--lux-line) !important;
+  }
+  .modal .mtitle { color: #fff !important; }
+  .modal p, .modal .fine { color: var(--lux-text-2) !important; }
+  .modal input {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid var(--lux-line) !important;
+    color: #fff !important;
+  }
+  .modal input::placeholder { color: var(--lux-text-3) !important; }
+  .modal .go { background: #fff !important; color: #14171A !important; }
+  .modal .x { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
+  .modal a { color: var(--lux-gold) !important; }
+
+  @media (max-width: 760px) {
+    .passport { background: #16191D !important; }
+  }
 </style>
 </head>
 <body>
@@ -564,7 +650,7 @@
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-17</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-18</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
