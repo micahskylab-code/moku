@@ -329,6 +329,7 @@
     .demo-ribbon { font-size: 8.5px; letter-spacing: 0.06em; padding: 4px 8px; }
     header { top: 24px; padding: 10px 12px; }
     #btn-sell { display: none; }
+    #btn-preview { display: none; }
     #toast { bottom: auto; top: 120px; }
     .logo { font-size: 18px; }
     .pill-btn { padding: 8px 12px; font-size: 11.5px; }
@@ -641,9 +642,14 @@ function runIntro() {
     window.addEventListener(ev, () => { if (!introDone) endIntro(true); }, { once: true, passive: true })
   );
 }
+function collapseAttribution() {
+  const at = document.querySelector(".maplibregl-ctrl-attrib");
+  if (at) { at.classList.remove("maplibregl-compact-show"); at.removeAttribute("open"); }
+}
 function endIntro(jump) {
   if (introDone) return;
   introDone = true;
+  setTimeout(collapseAttribution, 400);
   const intro = document.getElementById("intro"), skip = document.getElementById("skip");
   if (intro) intro.classList.add("gone");
   if (skip) skip.classList.add("gone");
