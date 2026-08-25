@@ -321,6 +321,11 @@
   .fchip small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 2px; }
   .fchip .subnote { font-size: 11px; color: var(--ink-3); margin-top: 3px; font-weight: 400; }
   .fchip .subnote b { color: var(--accent); cursor: pointer; font-weight: 600; }
+  .passport .hero-val {
+    font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: -0.01em;
+    color: #fff; margin-top: 7px; text-shadow: 0 1px 10px rgba(0,0,0,0.35);
+    font-variant-numeric: tabular-nums;
+  }
 
   /* ---- Legend: meaning stays pinned while a layer is on ---- */
   #legend {
@@ -1052,7 +1057,7 @@ async function exploreParcel(lng, lat) {
       if (owner) setFact("owner", "Owner of record (county)", formatOwner(owner), "live");
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
-      if (assessed != null) setFact("assessed", "Assessed value (county)", assessedHtml(assessed), "live");
+      if (assessed != null) { setFact("assessed", "Assessed value (county)", assessedHtml(assessed), "live"); setHeroVal(assessed); }
       else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
       else { const av = document.getElementById("fact-assessed"); if (av) av.remove(); }
       if (p.taxclass) setFact("taxclass", "County tax class", formatOwner(p.taxclass), "live");
@@ -1127,6 +1132,10 @@ async function exploreParcel(lng, lat) {
   }
 }
 
+function setHeroVal(n) {
+  const el = document.getElementById("hero-val");
+  if (el && n != null && n > 0) el.textContent = "$" + Number(n).toLocaleString();
+}
 function setFact(key, label, valueHtml, cls) {
   const el = document.getElementById("fact-" + key);
   if (el) el.outerHTML = `<div class="fchip resolved ${cls || ""}" id="fact-${key}"><small>${label}</small>${valueHtml}</div>`;
@@ -1174,6 +1183,7 @@ async function enrichCounty(county, token, tmkRaw) {
         if (fee && fee.ASSDTOT != null) {
           const exempt = Number(fee.TOTEXEMPT || 0) > 0 ? ` <span class="code">home exemption on file</span>` : "";
           putAssessed(assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div"));
+          setHeroVal(fee.ASSDTOT);
         } else if (rows.length > 1) {
           let cnt = rows.length;
           try {
@@ -1225,6 +1235,7 @@ function openRecordCard(lng, lat) {
       <div class="hp">
         <div class="tmkline" id="rec-tmk">Parcel record</div>
         <div class="addr" id="rec-addr">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+        <div class="hero-val" id="hero-val"></div>
       </div>
     </div>
     <div class="sec">
