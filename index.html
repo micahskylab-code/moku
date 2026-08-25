@@ -295,6 +295,30 @@
   .fchip small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 2px; }
   .fchip .subnote { font-size: 11px; color: var(--ink-3); margin-top: 3px; font-weight: 400; }
   .fchip .subnote b { color: var(--accent); cursor: pointer; font-weight: 600; }
+
+  /* ---- Layer bar: the data ON the map ---- */
+  .layerbar {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 46; display: flex; gap: 7px; padding: 7px;
+    background: var(--glass); border: 1px solid rgba(255,255,255,0.55); border-radius: 999px;
+    box-shadow: 0 10px 32px rgba(16,16,18,0.16);
+    opacity: 0; pointer-events: none; transition: opacity 0.45s ease 0.2s;
+    max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none;
+  }
+  .layerbar::-webkit-scrollbar { display: none; }
+  body.docked .layerbar { opacity: 1; pointer-events: auto; }
+  .lchip {
+    border: 0; background: rgba(255,255,255,0.7); color: var(--ink);
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+    padding: 9px 14px; border-radius: 999px; cursor: pointer;
+    display: flex; align-items: center; gap: 7px; white-space: nowrap;
+    transition: transform 0.15s var(--spring), background 0.2s, color 0.2s;
+  }
+  .lchip:active { transform: scale(0.94); }
+  .lchip:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
+  .lchip .dot2 { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .lchip.on { background: var(--chrome-ink); color: #fff; }
+  @media (max-width: 700px) { .layerbar { bottom: 14px; } .lchip { font-size: 12px; padding: 8px 12px; } }
   .fchip.live small { color: var(--accent); }
   .fchip .code { color: var(--ink-3); font-size: 11.5px; }
   .fchip.resolved { animation: factIn 0.35s var(--spring); }
@@ -468,7 +492,7 @@
     <button class="try" data-q="4260030240000">TMK 4-2-6-003:024</button>
     <button class="try" id="try-here">&#128205; What&#8217;s under me?</button>
   </div>
-  <button class="explore-link" id="explore-link">or just explore the map</button>
+  <button class="explore-link" id="explore-link">or explore the map — sold prices, rentals, flood zones</button>
   <a class="veilstats" href="market.html">
     <div><b id="vs-active">418</b><span>active listings on Kauai</span></div>
     <div><b id="vs-median">$1.33M</b><span>median home, first half 2026</span></div>
@@ -481,6 +505,12 @@
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
+  <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
+  <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
+  <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
+  <button class="lchip" data-lk="tsu"><span class="dot2" style="background:#C4574A"></span>Tsunami</button>
+</div>
 <div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <div class="modal-bg" id="lead-modal">
@@ -575,7 +605,11 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     st.layers.forEach(l => {
       if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#DFE7EB" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
-        l.paint = Object.assign({}, l.paint, { "fill-color": "#A5C4D8" });
+        // Flat vector water only at island-overview zooms; up close the real ocean imagery shows through
+        l.paint = Object.assign({}, l.paint, {
+          "fill-color": "#A5C4D8",
+          "fill-opacity": ["interpolate", ["linear"], ["zoom"], 6.5, 1, 7.9, 0]
+        });
         l.filter = oceanOnly;
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
@@ -634,13 +668,13 @@ function applyCustomLayers() {
         outline: { type: "esriSLS", style: "esriSLSSolid", color: [255, 255, 255, 150], width: 1.1 } } } }
     })));
     map.addSource("parcel-lines", {
-      type: "raster", tileSize: 256,
+      type: "raster", tileSize: 512,
       attribution: "Parcels: State of Hawaii county GIS",
-      tiles: ["https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&f=image&dynamicLayers=" + encodeURIComponent(dl)]
+      tiles: ["https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&format=png32&transparent=true&f=image&dynamicLayers=" + encodeURIComponent(dl)]
     });
     map.addLayer({
       id: "parcel-lines", type: "raster", source: "parcel-lines", minzoom: 14.6,
-      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 14.6, 0, 15.4, 0.7] }
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 14.6, 0, 15.4, 0.7], "raster-fade-duration": 150 }
     });
   }
   if (!map.getSource("parcel")) {
@@ -653,6 +687,12 @@ function applyCustomLayers() {
 let perfWatched = false;
 map.on("style.load", () => {
   applyCustomLayers();
+  Object.keys(layerState || {}).forEach(k => {
+    if (layerState[k] && layerState[k].on) {
+      layerState[k].ready = false;
+      ensureLayer(k).then(ok => { if (ok) setLayerVis(k, true); });
+    }
+  });
   if (!perfWatched && map.getSource("sat")) { perfWatched = true; watchPerf(); }
 });
 
@@ -829,6 +869,7 @@ function jumpWithOffset(lng, lat, zoom, pitch) {
   }
 }
 map.on("click", (e) => {
+  if (e.originalEvent && e.originalEvent._pinHandled) return;
   if (!document.getElementById("veil").classList.contains("gone")) return;
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
@@ -963,7 +1004,15 @@ async function exploreParcel(lng, lat) {
       setFact("tsu", "Tsunami evacuation (state GIS)", "couldn&#8217;t load", "");
     } else {
       const t = tsu && tsu.properties ? tsu.properties : null;
-      setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "Outside mapped evacuation zones", "live");
+      const rawTsu = t && (t.zone_desc || t.evac_zone);
+      let tsuTxt = "Outside mapped evacuation zones";
+      if (rawTsu) {
+        const sT = String(rawTsu);
+        if (/extreme/i.test(sT)) tsuTxt = "Extreme evacuation zone — leave for the largest events";
+        else if (/evacuat|warning/i.test(sT)) tsuTxt = "Inside a tsunami evacuation zone";
+        else tsuTxt = esc(sT);
+      }
+      setFact("tsu", "Tsunami evacuation (state GIS)", tsuTxt, "live");
     }
     const schools = [
       elem && elem.properties && elem.properties.elem_desc,
@@ -1571,6 +1620,101 @@ try {
   const sold = ["sf", "condo", "land"].reduce((a, k) => a + ((h1 && h1[k] && h1[k].volume) || 0), 0);
   if (sold) document.getElementById("vs-sold").textContent = "$" + Math.round(sold / 1e6) + "M";
 } catch (e) {}
+
+// ---- Map layers: real data ON the map, one tap each ----
+const LAYER_NOTES = {
+  sold: "county-recorded sales with prices — Maui County publishes these; the other counties don&#8217;t yet",
+  tvr: "Kauai&#8217;s 602 registered non-conforming vacation rentals, from the county registry",
+  flood: "FEMA high-risk flood zones, statewide",
+  tsu: "Tsunami evacuation zones, statewide"
+};
+const layerState = {};
+const fmtPrice = n => n >= 1e6 ? "$" + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + "M" : "$" + Math.round(n / 1e3) + "K";
+function setLayerVis(key, vis) {
+  ((layerState[key] && layerState[key].ids) || []).forEach(id => {
+    if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", vis ? "visible" : "none");
+  });
+}
+async function ensureLayer(key) {
+  const st = layerState[key] = layerState[key] || {};
+  if (st.ready) return true;
+  try {
+    if (key === "sold") {
+      if (!st.data) {
+        const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=1%3D1&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=2000", 15000);
+        const gj = await r.json();
+        (gj.features || []).forEach(f => {
+          const p = f.properties || {};
+          p.label = p.GIS_SALES_2YEAR_PRICE != null ? fmtPrice(p.GIS_SALES_2YEAR_PRICE) : "";
+        });
+        st.data = gj;
+        st.count = (gj.features || []).length;
+      }
+      if (!map.getSource("sold-src")) map.addSource("sold-src", { type: "geojson", data: st.data });
+      if (!map.getLayer("lyr-sold-dot")) {
+        map.addLayer({ id: "lyr-sold-dot", type: "circle", source: "sold-src",
+          paint: { "circle-color": "#E8C87E", "circle-radius": ["interpolate", ["linear"], ["zoom"], 7, 2.5, 12, 5, 15, 7.5],
+                   "circle-stroke-color": "#fff", "circle-stroke-width": 1.2, "circle-opacity": 0.92 } });
+        map.on("click", "lyr-sold-dot", e => {
+          if (e.originalEvent) e.originalEvent._pinHandled = true;
+          const c = e.features[0].geometry.coordinates;
+          exploreParcel(c[0], c[1]);
+        });
+        map.on("mouseenter", "lyr-sold-dot", () => { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "lyr-sold-dot", () => { map.getCanvas().style.cursor = ""; });
+      }
+      if (!map.getLayer("lyr-sold-label") && map.getStyle() && map.getStyle().glyphs) {
+        map.addLayer({ id: "lyr-sold-label", type: "symbol", source: "sold-src", minzoom: 11.5,
+          layout: { "text-field": ["get", "label"], "text-size": 11.5, "text-offset": [0, -1.15], "text-font": ["Noto Sans Regular"], "text-allow-overlap": false },
+          paint: { "text-color": "#6E521B", "text-halo-color": "rgba(255,255,255,0.95)", "text-halo-width": 1.6 } });
+      }
+      st.ids = ["lyr-sold-dot", "lyr-sold-label"];
+    } else if (key === "tvr") {
+      if (!st.data) {
+        const r = await fetchTimeout("https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0/query?where=1%3D1&outFields=TMK&returnGeometry=true&outSR=4326&geometryPrecision=5&f=geojson&resultRecordCount=2000", 15000);
+        st.data = await r.json();
+        st.count = (st.data.features || []).length;
+      }
+      if (!map.getSource("tvr-src")) map.addSource("tvr-src", { type: "geojson", data: st.data });
+      if (!map.getLayer("lyr-tvr-fill")) {
+        map.addLayer({ id: "lyr-tvr-fill", type: "fill", source: "tvr-src", paint: { "fill-color": "#0E6E63", "fill-opacity": 0.35 } });
+        map.addLayer({ id: "lyr-tvr-line", type: "line", source: "tvr-src", paint: { "line-color": "#0E6E63", "line-width": 1.4 } });
+      }
+      st.ids = ["lyr-tvr-fill", "lyr-tvr-line"];
+    } else if (key === "flood" || key === "tsu") {
+      const lid = key === "flood" ? 6 : 2;
+      const srcId = key + "-src";
+      if (!map.getSource(srcId)) {
+        map.addSource(srcId, { type: "raster", tileSize: 256,
+          tiles: ["https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&f=image&layers=show:" + lid] });
+      }
+      if (!map.getLayer("lyr-" + key)) map.addLayer({ id: "lyr-" + key, type: "raster", source: srcId, paint: { "raster-opacity": 0.45 } });
+      st.ids = ["lyr-" + key];
+    }
+    st.ready = true;
+    return true;
+  } catch (e) { st.ready = false; toast("Couldn&#8217;t load that layer — try again"); return false; }
+}
+async function toggleLayer(key, btn) {
+  const on = !(layerState[key] && layerState[key].on);
+  if (on) {
+    btn.classList.add("on");
+    const ok = await ensureLayer(key);
+    if (!ok) { btn.classList.remove("on"); return; }
+    layerState[key].on = true;
+    setLayerVis(key, true);
+    if (!layerState[key].noted) {
+      layerState[key].noted = true;
+      const n = layerState[key].count ? ("<b>" + layerState[key].count + "</b> ") : "";
+      toast(n + LAYER_NOTES[key], 5200);
+    }
+  } else {
+    layerState[key].on = false;
+    btn.classList.remove("on");
+    setLayerVis(key, false);
+  }
+}
+document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer(b.dataset.lk, b); });
 </script>
 </body>
 </html>
