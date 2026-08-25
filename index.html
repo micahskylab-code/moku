@@ -224,6 +224,28 @@
     transition: transform 0.25s var(--spring), background 0.25s, color 0.25s;
   }
   .pin:hover { transform: scale(1.12); }
+  /* ---- First-run invitation: one clear action, visible until taken ---- */
+  #hint {
+    position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%);
+    z-index: 60;
+    display: none; align-items: center; gap: 9px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--chrome-line);
+    box-shadow: 0 4px 20px rgba(29,29,31,0.12);
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--chrome-ink);
+    white-space: nowrap; pointer-events: none;
+  }
+  #hint.show { display: flex; animation: hintBreathe 2.6s ease-in-out infinite; }
+  #hint .fingertap { font-size: 16px; }
+  @keyframes hintBreathe {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.035); }
+  }
+  @media (max-width: 760px) { #hint { bottom: 96px; font-size: 12.5px; padding: 10px 16px; } }
+
   .tapdot {
     width: 16px; height: 16px; border-radius: 50%;
     border: 2.5px solid var(--gold);
@@ -533,6 +555,7 @@
 <div class="passport" id="passport"></div>
 <div class="rail" id="rail"></div>
 <div id="toast"></div>
+<div id="hint"><span class="fingertap">&#128070;</span> Tap any lot on the island &mdash; its full record, instantly</div>
 
 <div class="modal-bg" id="lead-modal">
   <div class="modal">
@@ -780,7 +803,16 @@ function exitIntro() {
   if (intro) { intro.classList.add("gone"); setTimeout(() => intro.remove(), 700); }
   setTimeout(collapseAttribution, 400);
   render();
-  setTimeout(() => toast(`Tap <b>anywhere on any island</b> — parcels, zoning &amp; flood zones are real public data`, 5200), 900);
+  // first-timers get one clear invitation that stays until they take it
+  let used = false;
+  try { used = !!localStorage.getItem("moku_used"); } catch (e) {}
+  if (!used) setTimeout(() => document.getElementById("hint").classList.add("show"), 800);
+  else setTimeout(() => toast(`Welcome back — tap any parcel, on any island`, 3600), 900);
+}
+function firstActionTaken() {
+  try { localStorage.setItem("moku_used", "1"); } catch (e) {}
+  const h = document.getElementById("hint");
+  if (h) h.classList.remove("show");
 }
 const endIntro = exitIntro; // deep links and older callers
 setTimeout(exitIntro, 2500);
@@ -936,6 +968,7 @@ function toast(html, ms) {
 
 // ---- Selection: cinematic dive + Property Passport ----
 async function select(id) {
+  firstActionTaken();
   selectedId = id;
   stopOrbit();
   if (tapMarker) tapMarker.remove();
@@ -1115,6 +1148,7 @@ map.on("click", (e) => {
 });
 
 async function exploreParcel(lng, lat) {
+  firstActionTaken();
   selectedId = null;
   stopOrbit();
   render();
