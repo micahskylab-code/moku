@@ -48,7 +48,8 @@
     --serif: "Fraunces", Georgia, serif;
     --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  button, input, .try, .lchip, .sug, .quiet, .explore-link { touch-action: manipulation; }
   html, body { height: 100%; overflow: hidden; }
   body { font-family: var(--sans); color: var(--ink); background: #E6EDF1; }
   #map { position: absolute; inset: 0; background: radial-gradient(130% 110% at 50% 28%, #EFF5F7 0%, #D5E1E8 72%); }
@@ -364,7 +365,11 @@
   .lchip:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
   .lchip .dot2 { width: 8px; height: 8px; border-radius: 50%; flex: none; }
   .lchip.on { background: var(--chrome-ink); color: #fff; }
-  @media (max-width: 700px) { .layerbar { bottom: 14px; } .lchip { font-size: 12px; padding: 8px 12px; } }
+  @media (max-width: 700px) {
+    .layerbar { bottom: 12px; }
+    .lchip { font-size: 12.5px; padding: 12px 14px; min-height: 44px; }
+    #legend { bottom: 76px; }
+  }
   .fchip.live small { color: var(--accent); }
   .fchip .code { color: var(--ink-3); font-size: 11.5px; }
   .fchip.resolved { animation: factIn 0.35s var(--spring); }
@@ -518,7 +523,7 @@
 <div id="map"></div>
 
 <header>
-  <div class="logo" id="logo-home"><span>Moku<span class="dot">.</span></span> <span class="live-dot"></span><span class="beta-chip" id="ribbon">Beta &middot; live county records</span></div>
+  <div class="logo" id="logo-home" title="Beta &middot; live county records"><span>Moku<span class="dot">.</span></span> <span class="live-dot"></span></div>
   <div class="docked-wrap">
     <span class="mag">&#9906;</span>
     <input id="dockbox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
@@ -550,7 +555,6 @@
     <span><b id="vs-active">418</b> active on Kauai</span>
     <span><b id="vs-median">$1.33M</b> median, H1 2026</span>
     <span><b id="vs-sold">$537M</b> sold, H1 2026</span>
-    <span>built on Kauai by Micah Hanano &middot; free, no tracking</span>
     <span onclick="event.preventDefault(); openAbout()" style="cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.45)">About &amp; privacy</span>
   </a>
 </div>
