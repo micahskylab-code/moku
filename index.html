@@ -62,7 +62,7 @@
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
-  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #0E2233; }
+  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #173754; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
@@ -564,7 +564,7 @@
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-15</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-17</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -652,7 +652,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#122A3C" } },
+    { id: "bg", type: "background", paint: { "background-color": "#173754" } },
     { id: "sat", type: "raster", source: "sat" }
   ]
 };
@@ -685,23 +685,24 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#122A3C" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#173754" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
           "line-color": "#FFFFFF",
-          "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.0, 0.5, 12.4, 0.15]
+          "line-opacity": ["interpolate", ["linear"], ["zoom"], 10.6, 0, 11.4, 0.5, 12.4, 0.15]
         });
       }
-      if (l.type === "line" && /rail|aeroway|ferry|cable|transit|runway/i.test(l.id)) {
+      if (l.type === "line" && /rail|aeroway|ferry|cable|transit|runway|waterway|river|stream/i.test(l.id)) {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
-      if (l.type === "symbol" && /road|street|path|highway|motorway|poi|housenum/i.test(l.id)) {
+      if (l.type === "symbol" && /road|street|path|highway|motorway|poi|housenum|natural|park|water_?name|waterway|marine|island|ocean|label_other/i.test(l.id)) {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
       if (l.type === "symbol" && /place|city|town|village/i.test(l.id)) {
+        l.minzoom = Math.max(l.minzoom || 0, 10.2);
         l.paint = Object.assign({}, l.paint, {
           "text-color": "#FFFFFF",
           "text-halo-color": "rgba(12,26,36,0.55)",
@@ -712,7 +713,7 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     });
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: { "raster-opacity": 1, "raster-saturation": 0.15, "raster-contrast": 0.06 }
+      paint: { "raster-opacity": 1, "raster-saturation": 0.24, "raster-contrast": 0.04, "raster-brightness-min": 0.14 }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
     if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
@@ -744,6 +745,19 @@ function applyCustomLayers() {
   if (document.body.classList.contains("mapready")) armTerrain();
   else map.once("idle", armTerrain);
   // Every lot line visible when zoomed in — no more tapping blind on bare satellite
+  if (!map.getSource("town-labels") && map.getStyle() && map.getStyle().glyphs) {
+    const TIER1 = ["Hanalei","Princeville","Kapaa","Lihue","Koloa","Poipu","Waimea",
+      "Honolulu","Kailua","Kaneohe","Haleiwa","Kapolei",
+      "Lahaina","Kihei","Kahului","Wailea","Hana","Paia","Lanai City","Kaunakakai",
+      "Hilo","Kailua-Kona","Kamuela","Waikoloa","Volcano","Pahoa"];
+    const feats = HI_PLACES.filter(p => TIER1.indexOf(p[0]) !== -1).map(p => ({
+      type: "Feature", geometry: { type: "Point", coordinates: [p[2], p[3]] }, properties: { name: p[0] }
+    }));
+    map.addSource("town-labels", { type: "geojson", data: { type: "FeatureCollection", features: feats } });
+    map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 7.6, maxzoom: 10.2,
+      layout: { "text-field": ["get", "name"], "text-size": 11.5, "text-font": ["Noto Sans Regular"], "text-padding": 6 },
+      paint: { "text-color": "#FFFFFF", "text-halo-color": "rgba(12,26,36,0.6)", "text-halo-width": 1.2, "text-halo-blur": 0.6 } });
+  }
   if (!map.getSource("parcel-lines")) {
     const dl = JSON.stringify([9, 11, 30, 5].map((id, i) => ({
       id: 100 + i,
@@ -1651,7 +1665,8 @@ map.once("load", () => {
     heroSettled = true;
     let isle = "kauai";
     try { isle = localStorage.getItem("moku_isle") || "kauai"; } catch (e) {}
-    const h = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
+    const h0 = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
+    const h = { c: h0.c, z: h0.z + (SMALL ? 0.45 : 0) };
     if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
       map.jumpTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18 });
       return;
