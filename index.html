@@ -1877,6 +1877,27 @@ async function toggleLayer(key, btn) {
   refreshLegend();
 }
 document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer(b.dataset.lk, b); });
+
+// Press links land with the story already glowing: ?layer=sold|tvr|flood|tsu
+const qLayer = new URLSearchParams(location.search).get("layer");
+if (qLayer && LAYER_NOTES[qLayer]) {
+  dismissVeil();
+  let armTries = 0;
+  const armLayer = async () => {
+    if (layerState[qLayer] && layerState[qLayer].on) return;
+    armTries++;
+    const chip = document.querySelector('.lchip[data-lk="' + qLayer + '"]');
+    try {
+      await toggleLayer(qLayer, chip);
+    } catch (e) {}
+    if (layerState[qLayer] && layerState[qLayer].on) {
+      if (!deep && LAYER_BOUNDS[qLayer]) map.fitBounds(LAYER_BOUNDS[qLayer], { padding: 70, duration: 0 });
+    } else if (armTries < 14) {
+      setTimeout(armLayer, 1500);
+    }
+  };
+  setTimeout(armLayer, map.isStyleLoaded() ? 0 : 900);
+}
 </script>
 </body>
 </html>
