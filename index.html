@@ -13,6 +13,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Moku — Look Up Any Parcel in Hawaii">
 <meta name="twitter:description" content="Every parcel in Hawaii. One search. Live county records on a cinematic map.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
@@ -141,13 +142,12 @@
   }
   .try:hover { color: var(--chrome-ink); background: #fff; box-shadow: var(--shadow-1); }
   .veilstats {
-    display: flex; gap: 34px; text-decoration: none;
-    padding: 14px 26px; border-radius: 16px;
-    background: rgba(255,255,255,0.6);
-    border: 1px solid var(--chrome-line);
-    transition: box-shadow 0.25s var(--spring), background 0.25s;
+    display: flex; gap: 40px; text-decoration: none;
+    padding: 18px 10px 0;
+    border-top: 1px solid var(--chrome-line);
+    transition: opacity 0.2s;
   }
-  .veilstats:hover { background: #fff; box-shadow: var(--shadow-1); }
+  .veilstats:hover { opacity: 0.75; }
   .veilstats div { text-align: center; }
   .veilstats b {
     display: block; font-family: var(--serif); font-weight: 500;
@@ -900,18 +900,28 @@ function openRecordCard(lng, lat) {
       </div>
     </div>
     <div class="sec">
-      <div class="h">Live county record</div>
+      <div class="h">Property record &middot; live</div>
       <div class="factrow">
         <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small><span class="skel" style="width:110px"></span></div>
         <div class="fchip live" id="fact-owner"><small>Owner of record (county)</small><span class="skel" style="width:140px"></span></div>
         <div class="fchip live" id="fact-assessed"><small>Assessed value (county)</small><span class="skel" style="width:90px"></span></div>
         <div class="fchip live" id="fact-taxclass"><small>County tax class</small><span class="skel" style="width:110px"></span></div>
         <div class="fchip live" id="fact-acres"><small>Parcel size</small><span class="skel" style="width:70px"></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Land &amp; hazards</div>
+      <div class="factrow">
         <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:120px"></span></div>
         <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:150px"></span></div>
         <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:130px"></span></div>
-        <div class="fchip live" id="fact-schools"><small>Public school zones (DOE)</small><span class="skel" style="width:160px"></span></div>
         <div class="fchip live" id="fact-lava"><small>Lava-flow hazard zone (USGS)</small><span class="skel" style="width:120px"></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="h">Schools</div>
+      <div class="factrow">
+        <div class="fchip live" id="fact-schools"><small>Public school zones (DOE)</small><span class="skel" style="width:160px"></span></div>
       </div>
     </div>
     <div class="sec">
