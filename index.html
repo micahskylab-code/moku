@@ -1054,14 +1054,20 @@ function openParcelPassport(lng, lat) {
     </div>
     <div class="sec">
       <div class="pass-cta">
-        <a class="primary" id="qpub-btn" style="display:none;flex:1;text-align:center;text-decoration:none;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:11px 0;font-size:13px;font-weight:600" href="#" target="_blank" rel="noopener">County tax record &rarr;</a>
+        <button class="primary" id="claim-btn">This is my property</button>
+        <a id="qpub-btn" style="display:none;flex:1;text-align:center;text-decoration:none;background:#fff;color:var(--ink);border:1px solid rgba(0,0,0,0.12);border-radius:12px;padding:11px 0;font-size:13px;font-weight:600" href="#" target="_blank" rel="noopener">County record &rarr;</a>
         <button class="ghost" onclick="shareParcel(${lng}, ${lat}, (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim())">Share &#8599;</button>
-        <button class="ghost" onclick="openLead('buyer', 'Land question — ' + ((document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim() ? 'TMK ' + (document.getElementById('fact-tmk')||{textContent:''}).textContent.replace('TMK (county record)','').trim() : '${lat.toFixed(5)}, ${lng.toFixed(5)}'))">Ask Micah</button>
       </div>
     </div>
     <div class="micro">Every value in this panel is looked up live from County of Kauai and State of Hawaii public records for the tapped location. Parcel boundaries are for reference, not survey-grade. Flood and tsunami zones are informational only — not determinations. The county tax record link opens the county&#8217;s own site.</div>
     <div class="sec"></div>`;
   pass.classList.add("open");
+  document.getElementById("claim-btn").onclick = () => {
+    const tmk = (document.getElementById("fact-tmk") || { textContent: "" }).textContent.replace("TMK (county record)", "").trim();
+    const label = tmk && !/looking|offline|no parcel/.test(tmk) ? "TMK " + tmk : lat.toFixed(5) + ", " + lng.toFixed(5);
+    try { localStorage.setItem("moku_myproperty", JSON.stringify({ tmk: label, lng, lat, at: Date.now() })); } catch (e) {}
+    openLead("owner", label);
+  };
 }
 
 function closePassport() {
@@ -1118,6 +1124,13 @@ const LEAD_COPY = {
     note: "Your neighborhood or address",
     go: "Ask Micah →",
     subject: "Moku — home value request"
+  },
+  owner: {
+    title: "Watch your property",
+    sub: "A free monthly digest for your parcel: assessed-value changes, sales recorded nearby, and what’s being built around you.",
+    note: "Your TMK (auto-filled)",
+    go: "Start watching →",
+    subject: "Moku — My Property digest"
   }
 };
 function openLead(kind, prefill) {
@@ -1182,6 +1195,12 @@ document.getElementById("btn-preview").onclick = () => {
 
 buildAll();
 render();
+
+// Returning owners get their scoreboard moment
+try {
+  const mine = JSON.parse(localStorage.getItem("moku_myproperty") || "null");
+  if (mine && mine.tmk) setTimeout(() => toast(`Watching <b>${mine.tmk}</b> — your monthly digest is on its way`, 4500), 9500);
+} catch (e) {}
 
 // A shared link opens straight on the property — no intro, no waiting
 const deep = parseDeepLink();
