@@ -173,7 +173,7 @@
 
   <footer>
     <p><strong>Sources.</strong> 2024 full-year sales &amp; volume: Ahearn/Karlovsky Kauai Sales Recap 2024 (MLS-based). Medians &amp; 2025 single-family YTD: Hawaii Life market reports. 2025 luxury: Hawaii Life luxury recap. 2026 H1 &amp; Q2: Team Mira / Corcoran Pacific market statistics. Active inventory: Realtor.com research data via FRED (series ACTLISCOU15007), refreshed by Moku&#8217;s update script each time it runs (on demand during this demo; scheduled hourly in production). Kukui&#699;ula: official 2025 Year in Review.</p>
-    <p><strong>Honesty notes.</strong> 2023 volumes and some segment figures were never published — shown as &#8220;—&#8221; rather than estimated. 2025 is a partial year (no full recap was published). Values marked with &#8220;&asymp;&#8221; are summed or derived from published tables. Nothing on this page is estimated or invented; if it isn&#8217;t sourced, it isn&#8217;t shown.</p>
+    <p><strong>Honesty notes.</strong> Figures never published by the source are shown as &#8220;—&#8221; rather than estimated. Yearly figures come from Hawaii Information Service data as published in Hawaii Realtors statewide statistics and MLS-based recaps; 2026 H1 figures were published Aug 7, 2026. Nothing on this page is estimated or invented; if it isn&#8217;t sourced, it isn&#8217;t shown.</p>
     <p>Moku &middot; demo preview</p>
   </footer>
 </div>
@@ -228,7 +228,7 @@ const SEGMENTS = [
   { key: "land", label: "Vacant land" }
 ];
 const YEAR_ORDER = ["2026 H1", "2025", "2024", "2023"];
-const PARTIAL = { "2025": "partial", "2026 H1": "half year" };
+const PARTIAL = { "2026 H1": "half year" };
 const holder = document.getElementById("tables");
 SEGMENTS.forEach(seg => {
   const rows = YEAR_ORDER.map(y => {

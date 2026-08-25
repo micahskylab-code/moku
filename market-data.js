@@ -104,20 +104,20 @@ const MARKET = {
     "2023": {
       "sf": {
         "sales": 286,
-        "volume": null,
-        "median": 1138500
+        "volume": 467000000,
+        "median": 1137500
       },
       "condo": {
         "sales": 294,
-        "volume": null,
-        "median": null
+        "volume": 291400000,
+        "median": 722500
       },
       "land": {
         "sales": 110,
-        "volume": null,
+        "volume": 134000000,
         "median": null
       },
-      "note": "Sales counts from 2024 recap comparisons; 2023 volumes not published."
+      "note": "Full year. Medians per Hawaii Realtors statewide statistics (HIS/Kauai Board data); volumes per HIS-based recap. Island total \u2248 690 sales / \u2248 $892M."
     },
     "2024": {
       "sf": {
@@ -128,7 +128,7 @@ const MARKET = {
       "condo": {
         "sales": 290,
         "volume": 280400000,
-        "median": null
+        "median": 775500
       },
       "land": {
         "sales": 119,
@@ -139,39 +139,39 @@ const MARKET = {
     },
     "2025": {
       "sf": {
-        "sales": 384,
-        "volume": null,
+        "sales": 423,
+        "volume": 825110185,
         "median": 1200000
       },
       "condo": {
-        "sales": null,
-        "volume": null,
-        "median": null
+        "sales": 276,
+        "volume": 275276124,
+        "median": 815000
       },
       "land": {
-        "sales": null,
-        "volume": null,
-        "median": null
+        "sales": 92,
+        "volume": 190028425,
+        "median": 950000
       },
-      "note": "Partial year: single-family figures are Jan\u2013Nov YTD; no full-year all-type recap was published. Luxury: 83 sales above $3M (median $4.31M, top sale $27.6M)."
+      "note": "Full year, Hawaii Information Service. Island total 791 sales / $1.29B. Luxury: 83 sales above $3M reported (median $4.31M, top sale $27.6M \u2014 brokerage-reported)."
     },
     "2026 H1": {
       "sf": {
-        "sales": "\u2248199",
-        "volume": 364700000,
-        "median": 1300000
+        "sales": 175,
+        "volume": 364703149,
+        "median": 1325000
       },
       "condo": {
-        "sales": "\u2248150",
-        "volume": 119300000,
-        "median": 905000
+        "sales": 118,
+        "volume": 119318025,
+        "median": 839500
       },
       "land": {
-        "sales": "\u224854",
-        "volume": 53200000,
-        "median": 948500
+        "sales": 36,
+        "volume": 53231608,
+        "median": 841000
       },
-      "note": "First half 2026; sales counts summed from district tables (\u2248). Medians are Q2 2026. Half-year volume all types \u2248 $537M. Q2 sales: 98 single-family, 64 condo, 22 land."
+      "note": "First half 2026, Hawaii Information Service (published Aug 7, 2026). Half-year volume all types $537.3M. Q2 sales: 98 single-family, 64 condo, 22 land."
     }
   }
 };
