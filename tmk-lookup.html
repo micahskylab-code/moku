@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hawaii TMK Lookup — Free Parcel Search for All Four Counties</title>
+<meta name="description" content="Look up any Hawaii TMK (Tax Map Key) free: owner of record, acreage, zoning, flood zone, tsunami zone and school district for every parcel in Kauai, Oahu, Maui and Hawaii counties.">
+<link rel="canonical" href="https://micahskylab-code.github.io/moku/tmk-lookup.html">
+<meta property="og:title" content="Hawaii TMK Lookup — Free Parcel Search for All Four Counties">
+<meta property="og:description" content="Look up any Hawaii TMK (Tax Map Key) free: owner of record, acreage, zoning, flood zone, tsunami zone and school district for every parcel in Kauai, Oahu, Maui and Hawaii counties.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://micahskylab-code.github.io/moku/tmk-lookup.html">
+<meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FBFBFD; --ink:#1D1D1F; --ink2:#5E5E63; --ink3:#8A8A90; --accent:#0E6E63; --gold:#A8894E; --line:rgba(29,29,31,0.09); }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font:15.5px/1.65 "Inter",-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  .top { position:sticky; top:0; background:rgba(251,251,253,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top a { text-decoration:none; color:var(--ink); }
+  .brand { font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:500; }
+  .brand em { font-style:normal; color:var(--gold); }
+  .top .to-map { margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
+  .wrap { max-width:680px; margin:0 auto; padding:52px 22px 90px; }
+  .eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); }
+  h1 { font-family:"Fraunces",Georgia,serif; font-size:clamp(30px,5.5vw,42px); font-weight:500; letter-spacing:-0.015em; margin:10px 0 14px; text-wrap:balance; }
+  .lede { font-size:17px; color:var(--ink2); margin-bottom:28px; }
+  h2 { font-family:"Fraunces",Georgia,serif; font-size:22px; font-weight:500; margin:34px 0 10px; }
+  p { margin:0 0 14px; }
+  ul { margin:0 0 14px 20px; }
+  li { margin:5px 0; }
+  .cta { display:inline-block; background:var(--ink); color:#fff; text-decoration:none; font-weight:600; font-size:14.5px; padding:13px 22px; border-radius:999px; margin:8px 0 4px; }
+  .cta:active { transform:scale(0.97); }
+  .note { font-size:12.5px; color:var(--ink3); margin-top:6px; }
+  code { background:rgba(29,29,31,0.05); border-radius:6px; padding:1px 6px; font-size:13.5px; }
+  .links { border-top:1px solid var(--line); margin-top:44px; padding-top:18px; font-size:13.5px; }
+  .links a { color:var(--accent); text-decoration:none; margin-right:16px; }
+  footer { border-top:1px solid var(--line); margin-top:36px; padding-top:16px; font-size:12px; color:var(--ink3); }
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html" class="brand">Moku<em>.</em></a><a class="to-map" href="index.html">Open the map &rarr;</a></div>
+<div class="wrap">
+  <div class="eyebrow">Free statewide lookup</div>
+  <h1>Hawaii TMK lookup, made simple</h1>
+  <p class="lede">Every property in Hawaii has a Tax Map Key — the ID the counties use for all official records. Moku lets you look up any TMK, or find a parcel's TMK from its address, in seconds. Free, all four counties, straight from official government servers.</p>
+  <a class="cta" href="index.html">Look up a TMK now</a>
+  <div class="note">Free &middot; no signup &middot; no ads &middot; official government data</div>
+  
+  <h2>How to read a TMK</h2>
+  <p>A full TMK like <code>(4) 2-6-003:024</code> reads left to right: the island code in parentheses
+  (1&nbsp;Oahu, 2&nbsp;Maui County, 3&nbsp;Hawaii Island, 4&nbsp;Kauai), then zone, section, plat, and parcel.
+  Condo units add a four-digit CPR number on the end. Locals often drop the island digit — Moku
+  understands both forms, with or without dashes.</p>
+  <h2>What you'll see for any parcel</h2>
+  <ul>
+    <li>Owner of record and parcel acreage, as the county publishes them</li>
+    <li>County zoning, FEMA flood zone, and tsunami evacuation status</li>
+    <li>Public school zones (elementary, middle, high)</li>
+    <li>On Kauai: the county's current tax-year assessed value; on Maui: county-recorded sale prices</li>
+  </ul>
+  <p>Tap any lot on the 3D map, type an address, or paste a TMK — the record card opens with a
+  shareable link you can text to anyone.</p>
+  <div class="links"><strong>More free lookups:</strong><br><a href="kauai-flood-zones.html">Kauai flood zones</a> <a href="maui-sold-prices.html">Maui sold prices</a> <a href="kauai-vacation-rentals.html">Kauai vacation rental registry</a> <a href="market.html">Kauai Market Pulse</a></div>
+  <footer>Moku &middot; built on Kauai by Micah Hanano, a local building it in the open &middot; data shown exactly as published by the State of Hawaii and county governments — verify with the source before relying on it for a transaction &middot; micahskylab@gmail.com</footer>
+</div>
+</body>
+</html>
