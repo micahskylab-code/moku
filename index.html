@@ -65,7 +65,8 @@
   #map { background: url('assets/hero-kauai.jpg') center/cover no-repeat #122A3C; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
-  #veil {
+  #veil { display: none !important; }
+  #veil-unused {
     position: absolute; inset: 0; z-index: 200;
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
@@ -964,7 +965,6 @@ function jumpWithOffset(lng, lat, zoom, pitch) {
 }
 map.on("click", (e) => {
   if (e.originalEvent && e.originalEvent._pinHandled) return;
-  if (!document.getElementById("veil").classList.contains("gone")) return;
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
 
@@ -1566,6 +1566,25 @@ function wireSearch(inputId, suggestId) {
     }, 400);
   });
   input.addEventListener("blur", () => setTimeout(closeSug, 150));
+  function renderDemoSug() {
+    items = []; hot = -1;
+    sug.innerHTML = `
+      <div class="sug" data-demo="addr">2720 Hoonani Rd, Koloa<small>try an address</small></div>
+      <div class="sug" data-demo="tmk">TMK 4-2-6-003:024<small>try a TMK</small></div>
+      <div class="sug" data-demo="here">&#128205; What&#8217;s under me?<small>use my location</small></div>`;
+    sug.classList.add("open");
+    input.setAttribute("aria-expanded", "true");
+    sug.querySelectorAll(".sug").forEach(el => {
+      el.onclick = () => {
+        closeSug();
+        const d = el.dataset.demo;
+        if (d === "here") { useMyLocation(); return; }
+        input.value = d === "addr" ? "2720 Hoonani Rd, Koloa" : "4260030240000";
+        input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+      };
+    });
+  }
+  input.addEventListener("focus", () => { if (!input.value.trim()) renderDemoSug(); });
   input.addEventListener("keydown", async e => {
     if (sug.classList.contains("open") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
       e.preventDefault();
@@ -1625,7 +1644,7 @@ const KAUAI_CENTER = [-159.53, 22.06];
 let heroSettled = false;
 map.once("load", () => {
   const begin = () => {
-    if (heroSettled || document.getElementById("veil").classList.contains("gone")) return;
+    if (heroSettled) return;
     heroSettled = true;
     if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
       map.jumpTo({ center: KAUAI_CENTER, pitch: 48 });
@@ -1664,7 +1683,7 @@ document.querySelectorAll(".try[data-q]").forEach(b => {
     box.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
   };
 });
-document.getElementById("try-here").onclick = () => {
+function useMyLocation() {
   if (!navigator.geolocation) { toast("Location not available on this device"); return; }
   toast("Finding you&hellip;");
   navigator.geolocation.getCurrentPosition(
@@ -1675,7 +1694,8 @@ document.getElementById("try-here").onclick = () => {
     },
     () => toast("Couldn't get your location — try a search instead")
   );
-};
+}
+document.getElementById("try-here").onclick = useMyLocation;
 wireSearch("onebox", "suggest");
 wireSearch("dockbox", "dock-suggest");
 document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); } });
@@ -1731,7 +1751,9 @@ document.getElementById("lead-go").onclick = () => {
 };
 document.getElementById("btn-sell").onclick = () => openLead("seller");
 
-// ---- Boot: deep link → straight to the record; returning owner → home; else the One Box ----
+// ---- Boot: the map IS the front door. Deep link → record; returning owner → home; else Kauai hero ----
+document.body.classList.add("docked");
+document.getElementById("veil").classList.add("gone");
 const deep = parseDeepLink();
 let bootedHome = false;
 if (deep) {
@@ -1751,8 +1773,15 @@ if (deep) {
       setTimeout(() => toast(`Your saved parcel — <b>${esc(home.tmk)}</b>. <b style="cursor:pointer" onclick="closeRecord();document.getElementById('dockbox').focus()">Search something else &rarr;</b>`, 5200), 2600);
     }
   } catch (e) {}
-  if (!bootedHome) {
-    setTimeout(() => { try { document.getElementById("onebox").focus(); } catch (e) {} }, 300);
+  if (!bootedHome && !deep) {
+    try {
+      if (!localStorage.getItem("moku_seen")) {
+        localStorage.setItem("moku_seen", "1");
+        const coach = () => setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 900);
+        if (document.body.classList.contains("mapready")) coach();
+        else map.once("idle", coach);
+      }
+    } catch (e) {}
   }
 }
 
