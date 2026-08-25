@@ -533,6 +533,49 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
 
+// Signature look: designed obsidian cartography at overview; satellite fades in
+// up close, where it's razor sharp. Falls back to pure satellite if the style
+// fetch fails — the site never breaks on a missing resource.
+fetch("https://tiles.openfreemap.org/styles/dark")
+  .then(r => r.json())
+  .then(st => {
+    st.sources.sat = {
+      type: "raster",
+      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+      tileSize: 256, maxzoom: 19, attribution: "Imagery &copy; Esri &amp; contributors"
+    };
+    st.sources.dem = {
+      type: "raster-dem",
+      tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+      tileSize: 256, encoding: "terrarium", maxzoom: 12
+    };
+    st.layers = st.layers.filter(l => !/casing/i.test(l.id));
+    st.layers.forEach(l => {
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#0B1A2A" });
+      if (l.type === "fill" && /water|ocean/i.test(l.id)) l.paint = Object.assign({}, l.paint, { "fill-color": "#10263C" });
+      if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|rail|bridge|tunnel|link/i.test(l.id)) {
+        l.paint = Object.assign({}, l.paint, {
+          "line-color": "#C9BFA5",
+          "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.0, 0.65, 12.4, 0.2]
+        });
+      }
+      if (l.type === "symbol" && /road|street|path|highway|motorway|poi|housenum/i.test(l.id)) {
+        l.layout = Object.assign({}, l.layout, { visibility: "none" });
+      }
+    });
+    // Satellite sits below vector water: land turns photographic up close,
+    // the ocean stays clean designed obsidian at every zoom (no tile seams).
+    const satLayer = {
+      id: "sat", type: "raster", source: "sat",
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 11.2, 0, 12.4, 1] }
+    };
+    const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
+    if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
+    else st.layers.push(satLayer);
+    map.setStyle(st);
+  })
+  .catch(() => {});
+
 // Some embedded browsers resize the window without the events MapLibre watches —
 // keep the canvas matched to the container no matter what.
 window.addEventListener("resize", () => map.resize());
@@ -543,16 +586,23 @@ let introDone = false;
 let pendingParcel = null; // parcel fetched before the map style loads — drawn at load time
 document.getElementById("skip").onclick = () => endIntro(true);
 
-map.on("load", () => {
-  if (!LITE) {
+// Custom layers survive style swaps: re-applied on every style.load
+function applyCustomLayers() {
+  if (!LITE && map.getSource("dem")) {
     map.setTerrain({ source: "dem", exaggeration: 1.0 });
     try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
   }
-  // glowing parcel outline layers (fed on selection)
-  map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
-  map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
-  map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55 } });
-  map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
+  if (!map.getSource("parcel")) {
+    // glowing parcel outline layers (fed on selection)
+    map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
+    map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
+    map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55 } });
+    map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
+  }
+}
+map.on("style.load", applyCustomLayers);
+map.on("load", () => {
+  applyCustomLayers();
   runIntro();
 });
 
