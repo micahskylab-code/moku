@@ -686,9 +686,9 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#0B1A2A" } }]
   },
-  center: SMALL ? [-159.497, 21.93] : [-159.492, 21.905],
-  zoom: SMALL ? 11.7 : 11.35,
-  pitch: SMALL ? 26 : 34,
+  center: [-157.55, 20.9],
+  zoom: SMALL ? 5.6 : 6.4,
+  pitch: 0,
   bearing: 0,
   attributionControl: false,
   maxPitch: SMALL ? 64 : 72
@@ -793,11 +793,15 @@ map.on("style.load", () => {
   applyCustomLayers();
   if (!settled && map.getSource("sat") && !parseDeepLink()) {
     settled = true;
+    // open on the whole archipelago, then dive home to Kauai
     const tgt = SMALL
       ? { center: [-159.497, 21.928], zoom: 12.35, pitch: 44, bearing: 0 }
       : { center: [-159.500, 21.947], zoom: 12.05, pitch: 50, bearing: 6 };
-    if (!reducedMotion) map.easeTo(Object.assign({ duration: 2200, easing: t => 1 - Math.pow(1 - t, 3), essential: false }, tgt));
-    else map.jumpTo(tgt);
+    if (!reducedMotion) {
+      setTimeout(() => map.flyTo(Object.assign({ duration: 4200, curve: 1.25, essential: false }, tgt)), 1400);
+    } else {
+      map.jumpTo(tgt);
+    }
     watchPerf();
   }
 });
