@@ -541,6 +541,7 @@
     <span><b id="vs-median">$1.33M</b> median, H1 2026</span>
     <span><b id="vs-sold">$537M</b> sold, H1 2026</span>
     <span>built on Kauai by Micah Hanano &middot; free, no tracking</span>
+    <span onclick="event.preventDefault(); openAbout()" style="cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.45)">About &amp; privacy</span>
   </a>
 </div>
 
@@ -563,10 +564,32 @@
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
     <input id="lead-note" type="text" placeholder="">
     <button class="go" id="lead-go"></button>
-    <div class="fine">Goes directly to Micah. No spam, ever.</div>
+    <div class="fine">Goes directly to Micah. No spam, ever. &middot; <span onclick="closeLead(); openAbout()" style="cursor:pointer; text-decoration:underline">About &amp; privacy</span></div>
   </div>
 </div>
 
+<div class="modal-bg" id="about-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <button class="x" onclick="closeAbout()" aria-label="Close">&#10005;</button>
+    <div class="mtitle" id="about-title">About Moku</div>
+    <p style="font-size:13.5px; color:var(--ink-2); margin:10px 0 0;">
+      Moku is a free lookup of Hawaii&#8217;s official property records, built on Kauai by
+      <b style="color:var(--ink)">Micah Hanano</b>, a licensed Hawaii real&#8209;estate agent.
+      No accounts, no ads, nothing for sale on this site.</p>
+    <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
+      <b style="color:var(--ink)">Where the data comes from:</b> the State of Hawaii Statewide GIS Program,
+      the counties&#8217; own public map servers (parcels, tax rolls, the vacation&#8209;rental registry,
+      recorded sales where a county publishes them), FEMA flood zones via the state, and Realtor.com
+      inventory via the St.&nbsp;Louis Fed. Records appear exactly as the government publishes them —
+      verify with the county before relying on them for any transaction.</p>
+    <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
+      <b style="color:var(--ink)">Privacy, in plain words:</b> no tracking, no analytics cookies, no ad
+      pixels. Your searches go straight to government map servers. If you tap
+      &#8220;What&#8217;s under me?&#8221;, your location is used on your device and never stored or sent
+      to us. If you write to Micah, your email is used only to reply.</p>
+    <div class="fine" style="margin-top:14px">Questions? micahskylab@gmail.com</div>
+  </div>
+</div>
 <script src="vendor/maplibre-gl.js"></script>
 <script src="market-data.js"></script>
 <script>
@@ -1607,7 +1630,7 @@ document.getElementById("try-here").onclick = () => {
 };
 wireSearch("onebox", "suggest");
 wireSearch("dockbox", "dock-suggest");
-document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); } });
 
 // ---- Lead engine ----
 const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before wide launch
@@ -1640,6 +1663,9 @@ function openLead(kind, prefill) {
   setTimeout(() => document.getElementById("lead-email").focus(), 100);
 }
 function closeLead() { document.getElementById("lead-modal").classList.remove("open"); }
+function openAbout() { document.getElementById("about-modal").classList.add("open"); }
+function closeAbout() { document.getElementById("about-modal").classList.remove("open"); }
+document.getElementById("about-modal").addEventListener("click", e => { if (e.target.id === "about-modal") closeAbout(); });
 document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
 document.getElementById("lead-go").onclick = () => {
   const c = LEAD_COPY[leadKind];
