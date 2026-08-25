@@ -10,21 +10,29 @@
 <meta property="og:description" content="Every parcel in Hawaii. One search. Live county records on a cinematic map.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://micahskylab-code.github.io/moku/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Moku — Look Up Any Parcel in Hawaii">
 <meta name="twitter:description" content="Every parcel in Hawaii. One search. Live county records on a cinematic map.">
+<meta name="twitter:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<link rel="canonical" href="https://micahskylab-code.github.io/moku/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Moku","url":"https://micahskylab-code.github.io/moku/","description":"Free statewide Hawaii parcel lookup: TMK, owner of record, zoning, flood zone, tsunami evacuation, and school zones from official county and state sources.","applicationCategory":"Real estate","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
 <link rel="preconnect" href="https://geodata.hawaii.gov">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
 <style>
   :root {
     --ink: #101012;
     --ink-2: #55555B;
-    --ink-3: #9C9CA1;
+    --ink-3: #6E6E73;
     --paper: rgba(251,251,253,0.82);
     --glass: rgba(255,255,255,0.72);
     --chrome-ink: #1D1D1F;
@@ -61,7 +69,7 @@
   }
   #veil::before {
     content: ""; position: absolute; inset: 0;
-    background-image: url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=-159.78,22.04,-159.47,22.25&bboxSR=4326&imageSR=4326&size=1600,1084&format=jpg&f=image');
+    background-image: url('assets/hero-kauai.jpg');
     background-size: cover; background-position: center;
     filter: saturate(1.15) brightness(1.03);
   }
@@ -86,6 +94,7 @@
     font-family: var(--serif); font-weight: 500;
     font-size: clamp(46px, 8vw, 84px);
     color: var(--chrome-ink); letter-spacing: -0.03em; line-height: 1;
+    margin: 0;
   }
   #veil .mark em { font-style: normal; color: var(--gold-deep); }
   #veil .sub {
@@ -284,6 +293,8 @@
     padding: 9px 13px; font-size: 13px; font-weight: 500; line-height: 1.45;
   }
   .fchip small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 2px; }
+  .fchip .subnote { font-size: 11px; color: var(--ink-3); margin-top: 3px; font-weight: 400; }
+  .fchip .subnote b { color: var(--accent); cursor: pointer; font-weight: 600; }
   .fchip.live small { color: var(--accent); }
   .fchip .code { color: var(--ink-3); font-size: 11.5px; }
   .fchip.resolved { animation: factIn 0.35s var(--spring); }
@@ -445,7 +456,7 @@
 
 <div id="veil">
   <div class="veilcard">
-  <div class="mark">Moku<em>.</em></div>
+  <h1 class="mark">Moku<em>.</em></h1>
   <div class="sub">Every parcel in Hawaii. One search.</div>
   <div class="onebox-wrap">
     <span class="mag">&#9906;</span>
@@ -459,11 +470,11 @@
   </div>
   <button class="explore-link" id="explore-link">or just explore the map</button>
   <a class="veilstats" href="market.html">
-    <div><b>418</b><span>homes for sale on Kauai</span></div>
-    <div><b>$1.30M</b><span>median single-family</span></div>
-    <div><b>$537M</b><span>sold, first half 2026</span></div>
+    <div><b id="vs-active">418</b><span>active listings on Kauai</span></div>
+    <div><b id="vs-median">$1.33M</b><span>median home, first half 2026</span></div>
+    <div><b id="vs-sold">$537M</b><span>sold, first half 2026</span></div>
   </a>
-  <div class="whisper">Live records from all four Hawaii counties &middot; sourced market data &middot; free</div>
+  <div class="whisper">Live records from all four Hawaii counties &middot; built on Kauai by Micah Hanano &middot; free, no tracking</div>
   </div>
 </div>
 
@@ -473,8 +484,8 @@
 <div class="attr-note">Imagery: Esri &middot; Terrain: Mapzen/AWS &middot; Parcels &amp; hazards: State of Hawaii county GIS</div>
 
 <div class="modal-bg" id="lead-modal">
-  <div class="modal">
-    <button class="x" onclick="closeLead()">&#10005;</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lead-title">
+    <button class="x" onclick="closeLead()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="lead-title">Watch this parcel</div>
     <p id="lead-sub"></p>
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
@@ -484,7 +495,8 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="vendor/maplibre-gl.js"></script>
+<script src="market-data.js"></script>
 <script>
 // Diagnostic trap: nothing fails silently, ever.
 function showDiag(msg) {
@@ -608,6 +620,24 @@ function applyCustomLayers() {
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
     try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
   }
+  // Every lot line visible when zoomed in — no more tapping blind on bare satellite
+  if (!map.getSource("parcel-lines")) {
+    const dl = JSON.stringify([9, 11, 30, 5].map((id, i) => ({
+      id: 100 + i,
+      source: { type: "mapLayer", mapLayerId: id },
+      drawingInfo: { renderer: { type: "simple", symbol: { type: "esriSFS", style: "esriSFSNull",
+        outline: { type: "esriSLS", style: "esriSLSSolid", color: [255, 255, 255, 150], width: 1.1 } } } }
+    })));
+    map.addSource("parcel-lines", {
+      type: "raster", tileSize: 256,
+      attribution: "Parcels: State of Hawaii county GIS",
+      tiles: ["https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&f=image&dynamicLayers=" + encodeURIComponent(dl)]
+    });
+    map.addLayer({
+      id: "parcel-lines", type: "raster", source: "parcel-lines", minzoom: 14.6,
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 14.6, 0, 15.4, 0.7] }
+    });
+  }
   if (!map.getSource("parcel")) {
     map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
     map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
@@ -644,13 +674,33 @@ const SCHOOL_LAYERS = [
   { layer: 18, field: "int_desc" },
   { layer: 19, field: "high_desc" }
 ];
+// A hung government server should cost 10 seconds, never an infinite skeleton
+function fetchTimeout(url, ms) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms || 10000);
+  return fetch(url, { signal: ctl.signal }).finally(() => clearTimeout(t));
+}
 async function queryPoint(url, lng, lat, outFields, wantGeom) {
   const u = `${url}?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${outFields}&returnGeometry=${!!wantGeom}&outSR=4326&f=geojson`;
-  const res = await fetch(u);
+  const res = await fetchTimeout(u);
   if (!res.ok) throw new Error("gis");
   const gj = await res.json();
   return gj.features && gj.features[0] ? gj.features[0] : null;
 }
+// County enrichment: attribute queries against county-run feature services
+async function queryWhere(url, where, outFields, orderBy, count) {
+  const u = `${url}/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(outFields)}` +
+    (orderBy ? `&orderByFields=${encodeURIComponent(orderBy)}` : "") +
+    `&resultRecordCount=${count || 5}&returnGeometry=false&f=json`;
+  const res = await fetchTimeout(u);
+  if (!res.ok) throw new Error("gis");
+  const j = await res.json();
+  if (j.error) throw new Error("gis");
+  return (j.features || []).map(f => f.attributes);
+}
+const KAUAI_TAX_URL = "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/TY26_PropertyTaxData/FeatureServer/0";
+const KAUAI_TVR_URL = "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0";
+const MAUI_SALES_URL = "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_2_Year/FeatureServer/23";
 const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
 // County records arrive as raw ALL-CAPS data dumps — translate to human
 function formatOwner(raw) {
@@ -823,7 +873,8 @@ async function exploreParcel(lng, lat) {
     const county = countyFor(lng, lat);
     const isBigIsland = county === COUNTIES.hawaii;
     if (!isBigIsland) { const lv = document.getElementById("fact-lava"); if (lv) lv.remove(); }
-    const [parcel, zoning, flood, tsu, elem, mid, high, lava] = await Promise.all([
+    // Each fact stands alone: one slow or failed server never blanks the card
+    const settled = await Promise.allSettled([
       queryPoint(GIS_PZ + county.parcels + "/query", lng, lat, "*", true),
       queryPoint(GIS_PZ + county.zoning + "/query", lng, lat, "*", false),
       queryPoint(FLOOD_Q, lng, lat, "fld_zone,sfha_tf", false),
@@ -834,6 +885,13 @@ async function exploreParcel(lng, lat) {
       isBigIsland ? queryPoint("https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/3/query", lng, lat, "hzone", false).catch(() => null) : Promise.resolve(null)
     ]);
     if (token !== exploreToken) return;
+    // undefined = server unreachable; null = server answered "nothing here"
+    const gv = r => r.status === "fulfilled" ? r.value : undefined;
+    const [parcel, zoning, flood, tsu, elem, mid, high, lava] = settled.map(gv);
+    const failed = settled.slice(0, 4).some(r => r.status === "rejected");
+    if (failed) {
+      toast(`Some county data didn&#8217;t load &mdash; <b style="cursor:pointer" onclick="exploreParcel(${lng},${lat})">tap to retry</b>`, 8000);
+    }
     if (parcel) {
       if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [parcel] });
       else pendingParcel = parcel;
@@ -856,31 +914,50 @@ async function exploreParcel(lng, lat) {
       if (owner) setFact("owner", "Owner of record (county)", formatOwner(owner), "live");
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
-      if (assessed != null) setFact("assessed", "Assessed value (county)", "$" + assessed.toLocaleString() + (assessed === 0 ? " — nominal assessment, see county record" : ""), "live");
+      if (assessed != null) setFact("assessed", "Assessed value (county)", assessedHtml(assessed), "live");
+      else if (county === COUNTIES.kauai) { /* filled by Kauai county enrichment below */ }
       else { const av = document.getElementById("fact-assessed"); if (av) av.remove(); }
       if (p.taxclass) setFact("taxclass", "County tax class", formatOwner(p.taxclass), "live");
       else { const tc = document.getElementById("fact-taxclass"); if (tc) tc.remove(); }
       const qp = document.getElementById("qpub-btn");
       if (qp && p.qpub_link) { qp.href = p.qpub_link; qp.style.display = ""; }
       showHopHint();
+      enrichCounty(county, token, tmk);
+    } else if (parcel === undefined) {
+      setFact("tmk", "TMK (county record)", "couldn&#8217;t reach the county server", "");
+      setFact("acres", "Parcel size", "—", "");
+      setFact("owner", "Owner of record", "—", "");
+      ["fact-assessed", "fact-taxclass", "fact-lava"].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     } else {
       setFact("tmk", "TMK (county record)", "no parcel mapped at this point", "");
       setFact("acres", "Parcel size", "—", "");
       setFact("owner", "Owner of record", "—", "");
       ["fact-assessed", "fact-taxclass", "fact-lava"].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     }
-    const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
-    if (z) {
-      const meaning = zoningMeaning(z.code, z.desc);
-      setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>`, "live");
+    if (zoning === undefined) {
+      setFact("zoning", "County zoning", "couldn&#8217;t load", "");
     } else {
-      setFact("zoning", "County zoning", "none mapped here", "live");
+      const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
+      if (z) {
+        const meaning = zoningMeaning(z.code, z.desc);
+        setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>`, "live");
+      } else {
+        setFact("zoning", "County zoning", "none mapped here", "live");
+      }
     }
-    const fz = flood && flood.properties ? flood.properties.fld_zone : null;
-    setFact("flood", "FEMA flood zone (per state GIS)",
-      fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones", "live");
-    const t = tsu && tsu.properties ? tsu.properties : null;
-    setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "Outside mapped evacuation zones", "live");
+    if (flood === undefined) {
+      setFact("flood", "FEMA flood zone (per state GIS)", "couldn&#8217;t load", "");
+    } else {
+      const fz = flood && flood.properties ? flood.properties.fld_zone : null;
+      setFact("flood", "FEMA flood zone (per state GIS)",
+        fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones", "live");
+    }
+    if (tsu === undefined) {
+      setFact("tsu", "Tsunami evacuation (state GIS)", "couldn&#8217;t load", "");
+    } else {
+      const t = tsu && tsu.properties ? tsu.properties : null;
+      setFact("tsu", "Tsunami evacuation (state GIS)", t && (t.zone_desc || t.evac_zone) ? (t.zone_desc || t.evac_zone) : "Outside mapped evacuation zones", "live");
+    }
     const schools = [
       elem && elem.properties && elem.properties.elem_desc,
       mid && mid.properties && mid.properties.int_desc,
@@ -894,17 +971,75 @@ async function exploreParcel(lng, lat) {
     }
   } catch (err) {
     if (token !== exploreToken) return;
-    setFact("tmk", "TMK (county record)", "offline — retry", "");
-    setFact("acres", "Parcel size", "offline", "");
-    setFact("owner", "Owner of record", "offline", "");
-    setFact("zoning", "County zoning", "offline", "");
-    setFact("flood", "FEMA flood zone (per state GIS)", "offline", "");
+    toast(`Something glitched loading this record &mdash; <b style="cursor:pointer" onclick="exploreParcel(${lng},${lat})">tap to retry</b>`, 8000);
   }
 }
 
 function setFact(key, label, valueHtml, cls) {
   const el = document.getElementById("fact-" + key);
   if (el) el.outerHTML = `<div class="fchip resolved ${cls || ""}" id="fact-${key}"><small>${label}</small>${valueHtml}</div>`;
+}
+function addFact(rowId, key, label, valueHtml, cls) {
+  const row = document.getElementById(rowId);
+  if (!row || document.getElementById("fact-" + key)) return;
+  const d = document.createElement("div");
+  d.className = `fchip resolved ${cls || ""}`;
+  d.id = "fact-" + key;
+  d.innerHTML = `<small>${label}</small>${valueHtml}`;
+  row.appendChild(d);
+}
+function assessedHtml(n) {
+  return "$" + Number(n).toLocaleString() + (n === 0 ? " — nominal assessment, see county record" : "") +
+    `<div class="subnote">Tax assessment — usually below market. <b onclick="openLead('seller')">Get a market read &rarr;</b></div>`;
+}
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+// County-run data the state layer doesn't carry: Kauai values + TVR registry, Maui recorded sales
+async function enrichCounty(county, token, tmkRaw) {
+  const digits = String(tmkRaw || "").replace(/\D/g, "");
+  if (digits.length < 9) return;
+  const tmk9 = digits.slice(0, 9);
+  try {
+    if (county === COUNTIES.kauai) {
+      const [taxRows, tvrRows] = await Promise.allSettled([
+        queryWhere(KAUAI_TAX_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT,ASSDTOT,TOTEXEMPT,TAXCLASS", null, 60),
+        queryWhere(KAUAI_TVR_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT", null, 1)
+      ]);
+      if (token !== exploreToken) return;
+      if (taxRows.status === "fulfilled" && taxRows.value.length) {
+        const rows = taxRows.value;
+        const fee = rows.find(r => r.CPR_UNIT === "0000") || (rows.length === 1 ? rows[0] : null);
+        if (fee && fee.ASSDTOT != null) {
+          const exempt = Number(fee.TOTEXEMPT || 0) > 0 ? ` <span class="code">home exemption on file</span>` : "";
+          const html = assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div");
+          if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
+          else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+        } else if (rows.length > 1) {
+          const html = `${rows.length} condo units on this parcel — values are per unit in the county record`;
+          if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
+          else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+        }
+      } else if (document.getElementById("fact-assessed")) {
+        const av = document.getElementById("fact-assessed"); if (av) av.remove();
+      }
+      if (tvrRows.status === "fulfilled") {
+        addFact("row-land", "tvr", "County TVR registry (non-conforming)",
+          tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry", "live");
+      }
+    } else if (county === COUNTIES.maui) {
+      const parid8 = tmk9.slice(1);
+      const sales = await queryWhere(MAUI_SALES_URL, `GIS_SALES_2YEAR_PARID LIKE '${parid8}%'`,
+        "GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT,GIS_SALES_2YEAR_SALETYPE", "GIS_SALES_2YEAR_SALEDT DESC", 1);
+      if (token !== exploreToken || !sales.length) return;
+      const s = sales[0];
+      if (s.GIS_SALES_2YEAR_PRICE != null && s.GIS_SALES_2YEAR_SALEDT) {
+        const d = new Date(s.GIS_SALES_2YEAR_SALEDT + "T12:00:00");
+        const when = isNaN(d) ? esc(s.GIS_SALES_2YEAR_SALEDT) : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+        addFact("row-record", "sale", "Last recorded sale (county roll)",
+          "$" + Number(s.GIS_SALES_2YEAR_PRICE).toLocaleString() + " &middot; " + when +
+          `<div class="subnote">County assessment records — updates lag the market by months</div>`, "live");
+      }
+    }
+  } catch (e) {}
 }
 
 function openRecordCard(lng, lat) {
@@ -913,7 +1048,7 @@ function openRecordCard(lng, lat) {
     <div class="hero" style="background-image:url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(lng-0.0022).toFixed(5)},${(lat-0.00083).toFixed(5)},${(lng+0.0022).toFixed(5)},${(lat+0.00083).toFixed(5)}&bboxSR=4326&imageSR=4326&size=784,296&format=jpg&f=image');background-size:cover;background-position:center;">
       <div class="scrim"></div>
       <div class="note">Aerial &middot; this spot</div>
-      <button class="x" onclick="closeRecord()">&#10005;</button>
+      <button class="x" onclick="closeRecord()" aria-label="Close record">&#10005;</button>
       <div class="hp">
         <div class="tmkline" id="rec-tmk">Parcel record</div>
         <div class="addr" id="rec-addr">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
@@ -921,7 +1056,7 @@ function openRecordCard(lng, lat) {
     </div>
     <div class="sec">
       <div class="h">Property record &middot; live</div>
-      <div class="factrow">
+      <div class="factrow" id="row-record">
         <div class="fchip live" id="fact-tmk"><small>TMK (county record)</small><span class="skel" style="width:110px"></span></div>
         <div class="fchip live" id="fact-owner"><small>Owner of record (county)</small><span class="skel" style="width:140px"></span></div>
         <div class="fchip live" id="fact-assessed"><small>Assessed value (county)</small><span class="skel" style="width:90px"></span></div>
@@ -931,7 +1066,7 @@ function openRecordCard(lng, lat) {
     </div>
     <div class="sec">
       <div class="h">Land &amp; hazards</div>
-      <div class="factrow">
+      <div class="factrow" id="row-land">
         <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:120px"></span></div>
         <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:150px"></span></div>
         <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:130px"></span></div>
@@ -940,7 +1075,7 @@ function openRecordCard(lng, lat) {
     </div>
     <div class="sec">
       <div class="h">Schools</div>
-      <div class="factrow">
+      <div class="factrow" id="row-schools">
         <div class="fchip live" id="fact-schools"><small>Public school zones (DOE)</small><span class="skel" style="width:160px"></span></div>
       </div>
     </div>
@@ -1041,18 +1176,101 @@ function normalizeAddr(q) {
     .replace(/\bCir\b\.?/gi, "Circle");
 }
 async function geocodeOnce(q) {
-  const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q + " Hawaii")}&limit=5&bbox=${HI_BBOX.w},${HI_BBOX.s},${HI_BBOX.e},${HI_BBOX.n}`);
+  const res = await fetchTimeout(`https://photon.komoot.io/api/?q=${encodeURIComponent(q + " Hawaii")}&limit=5&bbox=${HI_BBOX.w},${HI_BBOX.s},${HI_BBOX.e},${HI_BBOX.n}`, 6000);
   const gj = await res.json();
   return (gj.features || [])
     .filter(f => ["Hawaii", "HI"].includes(f.properties.state || "") || inHawaii(f.geometry && f.geometry.coordinates))
     .filter(f => inHawaii(f.geometry && f.geometry.coordinates))
     .slice(0, 5);
 }
+// Built-in gazetteer: town searches answer instantly with no third party at all
+const HI_PLACES = [
+  ["Hanalei","Kauai",-159.501,22.203],["Princeville","Kauai",-159.479,22.216],["Kilauea","Kauai",-159.404,22.212],
+  ["Anahola","Kauai",-159.313,22.141],["Kapaa","Kauai",-159.338,22.075],["Wailua","Kauai",-159.336,22.037],
+  ["Lihue","Kauai",-159.369,21.981],["Puhi","Kauai",-159.400,21.965],["Koloa","Kauai",-159.469,21.907],
+  ["Poipu","Kauai",-159.452,21.878],["Kukuiula","Kauai",-159.478,21.882],["Kalaheo","Kauai",-159.527,21.924],
+  ["Eleele","Kauai",-159.583,21.907],["Hanapepe","Kauai",-159.590,21.914],["Waimea","Kauai",-159.669,21.957],
+  ["Kekaha","Kauai",-159.719,21.970],
+  ["Honolulu","Oahu",-157.858,21.307],["Waikiki","Oahu",-157.828,21.277],["Kailua","Oahu",-157.739,21.393],
+  ["Kaneohe","Oahu",-157.798,21.400],["Pearl City","Oahu",-157.969,21.397],["Kapolei","Oahu",-158.058,21.335],
+  ["Ewa Beach","Oahu",-158.007,21.316],["Mililani","Oahu",-158.015,21.451],["Wahiawa","Oahu",-158.024,21.503],
+  ["Haleiwa","Oahu",-158.103,21.593],["Waianae","Oahu",-158.185,21.447],["Hawaii Kai","Oahu",-157.702,21.279],
+  ["Aiea","Oahu",-157.934,21.382],["Waipahu","Oahu",-158.009,21.387],["Laie","Oahu",-157.923,21.646],
+  ["Waimanalo","Oahu",-157.712,21.336],
+  ["Kahului","Maui",-156.470,20.889],["Wailuku","Maui",-156.505,20.891],["Kihei","Maui",-156.446,20.765],
+  ["Wailea","Maui",-156.441,20.690],["Makena","Maui",-156.444,20.650],["Lahaina","Maui",-156.674,20.878],
+  ["Kaanapali","Maui",-156.692,20.928],["Kapalua","Maui",-156.667,20.999],["Napili","Maui",-156.678,20.994],
+  ["Paia","Maui",-156.371,20.903],["Makawao","Maui",-156.313,20.857],["Pukalani","Maui",-156.339,20.836],
+  ["Kula","Maui",-156.327,20.791],["Haiku","Maui",-156.324,20.921],["Hana","Maui",-155.990,20.758],
+  ["Lanai City","Lanai",-156.920,20.828],["Kaunakakai","Molokai",-157.023,21.093],
+  ["Hilo","Big Island",-155.089,19.725],["Kailua-Kona","Big Island",-155.993,19.640],["Kamuela","Big Island",-155.667,20.023],
+  ["Waikoloa","Big Island",-155.786,19.939],["Hawi","Big Island",-155.833,20.241],["Honokaa","Big Island",-155.467,20.078],
+  ["Pahoa","Big Island",-154.945,19.494],["Keaau","Big Island",-155.033,19.623],["Volcano","Big Island",-155.234,19.442],
+  ["Captain Cook","Big Island",-155.919,19.497],["Kealakekua","Big Island",-155.922,19.526],["Naalehu","Big Island",-155.585,19.064],
+  ["Ocean View","Big Island",-155.765,19.107],["Leilani Estates","Big Island",-154.918,19.472]
+];
+function placeMatches(q) {
+  const s = q.toLowerCase().replace(/[^a-z\s-]/g, "").trim();
+  if (s.length < 3) return [];
+  return HI_PLACES
+    .filter(p => p[0].toLowerCase().startsWith(s))
+    .slice(0, 5)
+    .map(p => ({
+      geometry: { coordinates: [p[2], p[3]] },
+      properties: { name: p[0], county: p[1], state: "HI", osm_key: "place", locality: true }
+    }));
+}
+// Census Bureau geocoder resolves the "4-1461 Kuhio Highway" style addresses Photon can't.
+// It has no CORS headers, so it is called JSONP-style (its documented usage).
+let censusSeq = 0;
+function censusGeocode(q) {
+  return new Promise(resolve => {
+    const cb = "__censusCb" + (++censusSeq);
+    const s = document.createElement("script");
+    const done = v => { window[cb] = undefined; s.remove(); resolve(v); };
+    const t = setTimeout(() => done([]), 8000);
+    window[cb] = data => {
+      clearTimeout(t);
+      const m = (data && data.result && data.result.addressMatches) || [];
+      done(m.filter(x => x.coordinates && inHawaii([x.coordinates.x, x.coordinates.y])).map(x => {
+        const seg = String(x.matchedAddress || "").split(",");
+        const first = (seg[0] || "").trim();
+        const hm = first.match(/^(\S+)\s+(.*)$/);
+        return {
+          geometry: { coordinates: [x.coordinates.x, x.coordinates.y] },
+          properties: {
+            housenumber: hm ? hm[1] : "",
+            street: formatOwner(hm ? hm[2] : first) || "",
+            city: formatOwner((seg[1] || "").trim()) || "",
+            state: "HI", osm_key: "building"
+          }
+        };
+      }));
+    };
+    s.src = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=" +
+      encodeURIComponent(q + ", HI") + "&benchmark=Public_AR_Current&format=jsonp&callback=" + cb;
+    s.onerror = () => { clearTimeout(t); done([]); };
+    document.head.appendChild(s);
+  });
+}
+const geoCache = new Map();
 async function geocode(qRaw) {
   const q = normalizeAddr(qRaw);
-  let feats = await geocodeOnce(q);
-  if (!feats.length) feats = await geocodeOnce(q.replace(/\b\d-(?=\d)/, "")); // strip Kauai district prefix: "4-831" → "831"
-  if (!feats.length) feats = await geocodeOnce(q.replace(/,/g, " "));
+  const key = q.toLowerCase();
+  if (geoCache.has(key)) return geoCache.get(key);
+  let feats = [];
+  const places = placeMatches(q);
+  if (/^\s*\d[\d-]*\s+\S/.test(q)) feats = await censusGeocode(q);
+  try {
+    if (!feats.length && !places.length) feats = await geocodeOnce(q);
+    if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/\b\d-(?=\d)/, "")); // strip Kauai district prefix: "4-831" → "831"
+    if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/,/g, " "));
+  } catch (e) { /* geocoder down — the gazetteer and Census still answer */ }
+  if (!feats.length) feats = places;
+  if (feats.length) { // don't cache failures
+    if (geoCache.size > 80) geoCache.delete(geoCache.keys().next().value);
+    geoCache.set(key, feats);
+  }
   return feats;
 }
 // Does this feature actually match the house number the user typed?
@@ -1070,26 +1288,47 @@ function sugLabel(f) {
   const rest = [p.city, p.county].filter(Boolean).join(", ");
   return { main: main || rest || "Unknown", rest: main ? rest : "" };
 }
+// A town search should land ON the town, not open a record for a random point in it
+function goFeature(f) {
+  if (f.properties && f.properties.locality) {
+    dismissVeil();
+    closeRecord();
+    if (bootCam) map.jumpTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 0 });
+    else map.flyTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 30, duration: 1800, essential: true });
+    toast(`<b>${esc(f.properties.name)}</b> — tap any lot to open its record`, 4200);
+    return;
+  }
+  exploreParcel(f.geometry.coordinates[0], f.geometry.coordinates[1]);
+}
 function wireSearch(inputId, suggestId) {
   const input = document.getElementById(inputId);
   const sug = document.getElementById(suggestId);
-  let timer = null, items = [];
-  function closeSug() { sug.classList.remove("open"); sug.innerHTML = ""; items = []; }
+  let timer = null, items = [], hot = -1;
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "false");
+  sug.setAttribute("role", "listbox");
+  function closeSug() { sug.classList.remove("open"); sug.innerHTML = ""; items = []; hot = -1; input.setAttribute("aria-expanded", "false"); }
+  function pickSug(f) {
+    closeSug();
+    input.blur();
+    goFeature(f);
+  }
+  function highlight() {
+    sug.querySelectorAll(".sug").forEach((el, i) => el.classList.toggle("hot", i === hot));
+  }
   function renderSug(feats) {
     items = feats;
+    hot = -1;
     if (!feats.length) { closeSug(); return; }
     sug.innerHTML = feats.map((f, i) => {
       const l = sugLabel(f);
-      return `<div class="sug" data-i="${i}">${l.main}${l.rest ? `<small>${l.rest}</small>` : ""}</div>`;
+      return `<div class="sug" role="option" data-i="${i}">${esc(l.main)}${l.rest ? `<small>${esc(l.rest)}</small>` : ""}</div>`;
     }).join("");
     sug.classList.add("open");
+    input.setAttribute("aria-expanded", "true");
     sug.querySelectorAll(".sug").forEach(el => {
-      el.onclick = () => {
-        const f = items[+el.dataset.i];
-        closeSug();
-        input.blur();
-        exploreParcel(f.geometry.coordinates[0], f.geometry.coordinates[1]);
-      };
+      el.onclick = () => pickSug(items[+el.dataset.i]);
     });
   }
   input.addEventListener("input", () => {
@@ -1098,9 +1337,17 @@ function wireSearch(inputId, suggestId) {
     if (q.length < 3 || looksLikeTmk(q)) { closeSug(); return; }
     timer = setTimeout(async () => {
       try { renderSug(await geocode(q)); } catch (e) { closeSug(); }
-    }, 260);
+    }, 400);
   });
   input.addEventListener("keydown", async e => {
+    if (sug.classList.contains("open") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      hot = e.key === "ArrowDown" ? Math.min(hot + 1, items.length - 1) : Math.max(hot - 1, 0);
+      highlight();
+      return;
+    }
+    if (e.key === "Escape") { closeSug(); return; }
+    if (e.key === "Enter" && hot >= 0 && items[hot]) { pickSug(items[hot]); return; }
     if (e.key !== "Enter") return;
     const q = input.value.trim();
     if (!q) return;
@@ -1119,7 +1366,7 @@ function wireSearch(inputId, suggestId) {
         const exact = feats.find(f => matchesHouseNumber(q, f));
         if (exact) {
           input.blur();
-          exploreParcel(exact.geometry.coordinates[0], exact.geometry.coordinates[1]);
+          goFeature(exact);
         } else {
           // never silently hand back a record for the wrong building
           renderSug(feats);
@@ -1176,9 +1423,9 @@ let leadKind = "owner";
 const LEAD_COPY = {
   owner: {
     title: "Watch this parcel",
-    sub: "A free monthly digest for this parcel: assessed-value changes, sales recorded nearby, and what’s being built around it.",
+    sub: "Ask Micah to keep an eye on this parcel — assessment changes, county filings, and what he hears on the ground. He replies personally.",
     note: "Parcel (auto-filled)",
-    go: "Start watching →",
+    go: "Ask Micah →",
     subject: "Moku — watch parcel"
   },
   seller: {
@@ -1206,7 +1453,12 @@ document.getElementById("lead-go").onclick = () => {
   const c = LEAD_COPY[leadKind];
   const email = document.getElementById("lead-email").value.trim();
   const note = document.getElementById("lead-note").value.trim();
-  const body = `${c.subject}\n\nReply-to: ${email || "(not given)"}\n${c.note}: ${note || "(not given)"}\nSent from the Moku beta.`;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    toast("Add your email so Micah can reply");
+    document.getElementById("lead-email").focus();
+    return;
+  }
+  const body = `${c.subject}\n\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from the Moku beta.`;
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
   closeLead();
   toast(`Almost there — just hit send in your mail app &#128232;`, 4200);
@@ -1230,13 +1482,22 @@ if (deep) {
       bootedHome = true;
       dismissVeil();
       exploreParcel(home.lng, home.lat);
-      setTimeout(() => toast(`Watching <b>${home.tmk}</b> — checked just now`, 4200), 2600), 100;
+      setTimeout(() => toast(`Your saved parcel — <b>${esc(home.tmk)}</b>. <b style="cursor:pointer" onclick="closeRecord();document.getElementById('dockbox').focus()">Search something else &rarr;</b>`, 5200), 2600);
     }
   } catch (e) {}
   if (!bootedHome) {
     setTimeout(() => { try { document.getElementById("onebox").focus(); } catch (e) {} }, 300);
   }
 }
+
+// Front-door stats come from the same data file as Market Pulse — one source of truth
+try {
+  const inv = MARKET.inventory, h1 = MARKET.years["2026 H1"];
+  if (inv && inv.length) document.getElementById("vs-active").textContent = inv[inv.length - 1].count;
+  if (h1 && h1.sf && h1.sf.median) document.getElementById("vs-median").textContent = "$" + (Math.round(h1.sf.median / 1e4) / 100).toFixed(2) + "M";
+  const sold = ["sf", "condo", "land"].reduce((a, k) => a + ((h1 && h1[k] && h1[k].volume) || 0), 0);
+  if (sold) document.getElementById("vs-sold").textContent = "$" + Math.round(sold / 1e6) + "M";
+} catch (e) {}
 </script>
 </body>
 </html>
