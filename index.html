@@ -175,7 +175,7 @@
 
   /* ================= Chrome ================= */
   header {
-    position: absolute; top: 12px; left: 0; right: 0; z-index: 50;
+    position: absolute; top: 12px; left: 0; right: 0; z-index: 56;
     display: flex; align-items: center; gap: 12px;
     padding: 10px 18px;
     pointer-events: none;
@@ -322,7 +322,7 @@
   /* ================= Bits ================= */
   #toast {
     position: absolute; left: 50%; bottom: 88px; transform: translateX(-50%);
-    z-index: 70;
+    z-index: 300;
     background: rgba(16,16,18,0.85); color: rgba(255,255,255,0.94);
     border-radius: 999px; padding: 9px 18px;
     font-size: 12.5px; font-weight: 500;
@@ -564,7 +564,7 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bott
 window.addEventListener("resize", () => map.resize());
 new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 
-fetch("https://tiles.openfreemap.org/styles/positron")
+fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
   .then(r => r.json())
   .then(st => {
     st.sources.sat = SAT_SOURCE;
@@ -850,8 +850,9 @@ async function exploreParcel(lng, lat) {
       offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0]
     });
   }
-  const parcelSrc = map.getSource("parcel");
-  if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [] });
+  pendingParcel = null;
+  const clearSrc = map.getSource("parcel");
+  if (clearSrc) clearSrc.setData({ type: "FeatureCollection", features: [] });
 
   // street/city subline (best effort, never blocking)
   fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`)
@@ -879,10 +880,10 @@ async function exploreParcel(lng, lat) {
       queryPoint(GIS_PZ + county.zoning + "/query", lng, lat, "*", false),
       queryPoint(FLOOD_Q, lng, lat, "fld_zone,sfha_tf", false),
       queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc", false),
-      queryPoint(SCHOOL_BASE + "17/query", lng, lat, "elem_desc", false).catch(() => null),
-      queryPoint(SCHOOL_BASE + "18/query", lng, lat, "int_desc", false).catch(() => null),
-      queryPoint(SCHOOL_BASE + "19/query", lng, lat, "high_desc", false).catch(() => null),
-      isBigIsland ? queryPoint("https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/3/query", lng, lat, "hzone", false).catch(() => null) : Promise.resolve(null)
+      queryPoint(SCHOOL_BASE + "17/query", lng, lat, "elem_desc", false),
+      queryPoint(SCHOOL_BASE + "18/query", lng, lat, "int_desc", false),
+      queryPoint(SCHOOL_BASE + "19/query", lng, lat, "high_desc", false),
+      isBigIsland ? queryPoint("https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/3/query", lng, lat, "hzone", false) : Promise.resolve(null)
     ]);
     if (token !== exploreToken) return;
     // undefined = server unreachable; null = server answered "nothing here"
@@ -893,8 +894,9 @@ async function exploreParcel(lng, lat) {
       toast(`Some county data didn&#8217;t load &mdash; <b style="cursor:pointer" onclick="exploreParcel(${lng},${lat})">tap to retry</b>`, 8000);
     }
     if (parcel) {
-      if (parcelSrc) parcelSrc.setData({ type: "FeatureCollection", features: [parcel] });
-      else pendingParcel = parcel;
+      pendingParcel = parcel; // style swaps re-add the source from this
+      const liveSrc = map.getSource("parcel");
+      if (liveSrc) liveSrc.setData({ type: "FeatureCollection", features: [parcel] });
       try {
         const ring = parcel.geometry.type === "Polygon" ? parcel.geometry.coordinates[0] : parcel.geometry.coordinates[0][0];
         let cx = 0, cy = 0;
@@ -915,7 +917,7 @@ async function exploreParcel(lng, lat) {
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
       if (assessed != null) setFact("assessed", "Assessed value (county)", assessedHtml(assessed), "live");
-      else if (county === COUNTIES.kauai) { /* filled by Kauai county enrichment below */ }
+      else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
       else { const av = document.getElementById("fact-assessed"); if (av) av.remove(); }
       if (p.taxclass) setFact("taxclass", "County tax class", formatOwner(p.taxclass), "live");
       else { const tc = document.getElementById("fact-taxclass"); if (tc) tc.remove(); }
@@ -963,8 +965,14 @@ async function exploreParcel(lng, lat) {
       mid && mid.properties && mid.properties.int_desc,
       high && high.properties && high.properties.high_desc
     ].filter(Boolean);
-    setFact("schools", "Public school zones (DOE)", schools.length ? schools.join(" · ") : "not in a mapped attendance area", "live");
-    if (isBigIsland) {
+    if (elem === undefined && mid === undefined && high === undefined) {
+      setFact("schools", "Public school zones (DOE)", "couldn&#8217;t load", "");
+    } else {
+      setFact("schools", "Public school zones (DOE)", schools.length ? schools.join(" · ") : "not in a mapped attendance area", "live");
+    }
+    if (isBigIsland && lava === undefined) {
+      setFact("lava", "Lava-flow hazard zone (USGS)", "couldn&#8217;t load", "");
+    } else if (isBigIsland) {
       const hz = lava && lava.properties ? String(lava.properties.hzone || "") : "";
       const lavaMeaning = { "1": "Highest lava-flow risk — insurance is difficult", "2": "Very high lava-flow risk — insurance is difficult", "3": "High lava-flow risk", "4": "Moderate lava-flow risk", "5": "Lower lava-flow risk", "6": "Lower lava-flow risk", "7": "Low lava-flow risk", "8": "Very low lava-flow risk", "9": "Lowest lava-flow risk" };
       setFact("lava", "Lava-flow hazard zone (USGS)", hz ? ((lavaMeaning[hz] || "See USGS map") + ` <span class="code">Zone ${hz}</span>`) : "not in a mapped lava zone", "live");
@@ -996,7 +1004,11 @@ const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g,
 // County-run data the state layer doesn't carry: Kauai values + TVR registry, Maui recorded sales
 async function enrichCounty(county, token, tmkRaw) {
   const digits = String(tmkRaw || "").replace(/\D/g, "");
-  if (digits.length < 9) return;
+  if (digits.length < 9) {
+    const av = document.getElementById("fact-assessed");
+    if (av && av.querySelector(".skel")) av.remove();
+    return;
+  }
   const tmk9 = digits.slice(0, 9);
   try {
     if (county === COUNTIES.kauai) {
@@ -1005,21 +1017,33 @@ async function enrichCounty(county, token, tmkRaw) {
         queryWhere(KAUAI_TVR_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT", null, 1)
       ]);
       if (token !== exploreToken) return;
+      let assessedSet = false;
+      const putAssessed = html => {
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
+        else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+        assessedSet = true;
+      };
       if (taxRows.status === "fulfilled" && taxRows.value.length) {
         const rows = taxRows.value;
-        const fee = rows.find(r => r.CPR_UNIT === "0000") || (rows.length === 1 ? rows[0] : null);
+        // The fee (whole-parcel) row carries a blank CPR unit; "0000" does not exist in this layer
+        const fee = rows.find(r => !String(r.CPR_UNIT == null ? "" : r.CPR_UNIT).trim()) || (rows.length === 1 ? rows[0] : null);
         if (fee && fee.ASSDTOT != null) {
           const exempt = Number(fee.TOTEXEMPT || 0) > 0 ? ` <span class="code">home exemption on file</span>` : "";
-          const html = assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div");
-          if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
-          else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+          putAssessed(assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div"));
         } else if (rows.length > 1) {
-          const html = `${rows.length} condo units on this parcel — values are per unit in the county record`;
-          if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
-          else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+          let cnt = rows.length;
+          try {
+            const r = await fetchTimeout(`${KAUAI_TAX_URL}/query?where=${encodeURIComponent(`TMK = ${Number(tmk9)}`)}&returnCountOnly=true&f=json`);
+            const j = await r.json();
+            if (j && typeof j.count === "number") cnt = j.count;
+          } catch (e) {}
+          if (token !== exploreToken) return;
+          putAssessed(`${cnt} unit records on this parcel — each assessed individually in the county roll`);
         }
-      } else if (document.getElementById("fact-assessed")) {
-        const av = document.getElementById("fact-assessed"); if (av) av.remove();
+      }
+      if (!assessedSet) {
+        const av = document.getElementById("fact-assessed");
+        if (av && av.querySelector(".skel")) av.remove();
       }
       if (tvrRows.status === "fulfilled") {
         addFact("row-land", "tvr", "County TVR registry (non-conforming)",
@@ -1028,15 +1052,16 @@ async function enrichCounty(county, token, tmkRaw) {
     } else if (county === COUNTIES.maui) {
       const parid8 = tmk9.slice(1);
       const sales = await queryWhere(MAUI_SALES_URL, `GIS_SALES_2YEAR_PARID LIKE '${parid8}%'`,
-        "GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT,GIS_SALES_2YEAR_SALETYPE", "GIS_SALES_2YEAR_SALEDT DESC", 1);
+        "GIS_SALES_2YEAR_PARID,GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT,GIS_SALES_2YEAR_SALETYPE", "GIS_SALES_2YEAR_SALEDT DESC", 1);
       if (token !== exploreToken || !sales.length) return;
       const s = sales[0];
       if (s.GIS_SALES_2YEAR_PRICE != null && s.GIS_SALES_2YEAR_SALEDT) {
         const d = new Date(s.GIS_SALES_2YEAR_SALEDT + "T12:00:00");
         const when = isNaN(d) ? esc(s.GIS_SALES_2YEAR_SALEDT) : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-        addFact("row-record", "sale", "Last recorded sale (county roll)",
+        const isUnit = String(s.GIS_SALES_2YEAR_PARID || "").slice(-4) !== "0000";
+        addFact("row-record", "sale", isUnit ? "Latest unit sale on this parcel (county roll)" : "Last recorded sale (county roll)",
           "$" + Number(s.GIS_SALES_2YEAR_PRICE).toLocaleString() + " &middot; " + when +
-          `<div class="subnote">County assessment records — updates lag the market by months</div>`, "live");
+          `<div class="subnote">County assessment records — updates lag the market by months${isUnit ? "; this parcel holds multiple units" : ""}</div>`, "live");
       }
     }
   } catch (e) {}
@@ -1103,6 +1128,8 @@ function openRecordCard(lng, lat) {
   };
 }
 function closeRecord() {
+  exploreToken++; // a closed card must stay closed — drop any in-flight responses
+  pendingParcel = null;
   document.getElementById("passport").classList.remove("open");
   setHash("");
   if (tapMarker) tapMarker.remove();
@@ -1131,7 +1158,7 @@ function parseTmkInput(q) {
 async function tmkHit(county, field, like) {
   try {
     const u = `${GIS_PZ}${county.parcels}/query?where=${encodeURIComponent(`${field} LIKE '${like}%'`)}&outFields=*&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=1`;
-    const res = await fetch(u);
+    const res = await fetchTimeout(u, 10000);
     const gj = await res.json();
     return (gj.features && gj.features[0]) || null;
   } catch (e) { return null; }
@@ -1157,12 +1184,30 @@ async function searchTmk(d) {
     if (f) break;
   }
   if (!f) return false;
-  const ring = f.geometry.type === "Polygon" ? f.geometry.coordinates[0] : f.geometry.coordinates[0][0];
-  let cx = 0, cy = 0;
-  ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
-  cx /= ring.length; cy /= ring.length;
-  exploreParcel(cx, cy);
+  const pt = interiorPoint(f.geometry);
+  exploreParcel(pt[0], pt[1]);
   return true;
+}
+// A point guaranteed inside the parcel — a vertex average lands outside concave/holed lots
+function inRing(pt, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if (((yi > pt[1]) !== (yj > pt[1])) && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function interiorPoint(geom) {
+  const polys = geom.type === "Polygon" ? [geom.coordinates] : geom.coordinates;
+  const outer = polys[0][0];
+  let cx = 0, cy = 0, minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+  outer.forEach(p => { cx += p[0]; cy += p[1]; minx = Math.min(minx, p[0]); miny = Math.min(miny, p[1]); maxx = Math.max(maxx, p[0]); maxy = Math.max(maxy, p[1]); });
+  cx /= outer.length; cy /= outer.length;
+  const inPoly = p => inRing(p, outer) && polys[0].slice(1).every(hole => !inRing(p, hole));
+  const candidates = [[cx, cy], [(minx + maxx) / 2, (miny + maxy) / 2]];
+  for (let f = 0.25; f < 1; f += 0.25) for (const y of [miny + (maxy - miny) * f]) candidates.push([(minx + maxx) / 2, y], [minx + (maxx - minx) * f, cy]);
+  for (const c of candidates) if (inPoly(c)) return c;
+  return [cx, cy];
 }
 const HI_BBOX = { w: -160.6, s: 18.8, e: -154.5, n: 22.4 };
 const inHawaii = c => c && c[0] >= HI_BBOX.w && c[0] <= HI_BBOX.e && c[1] >= HI_BBOX.s && c[1] <= HI_BBOX.n;
@@ -1214,6 +1259,7 @@ function placeMatches(q) {
   if (s.length < 3) return [];
   return HI_PLACES
     .filter(p => p[0].toLowerCase().startsWith(s))
+    .sort((a, b) => (b[0].toLowerCase() === s) - (a[0].toLowerCase() === s))
     .slice(0, 5)
     .map(p => ({
       geometry: { coordinates: [p[2], p[3]] },
@@ -1227,7 +1273,7 @@ function censusGeocode(q) {
   return new Promise(resolve => {
     const cb = "__censusCb" + (++censusSeq);
     const s = document.createElement("script");
-    const done = v => { window[cb] = undefined; s.remove(); resolve(v); };
+    const done = v => { window[cb] = function () {}; s.remove(); resolve(v); };
     const t = setTimeout(() => done([]), 8000);
     window[cb] = data => {
       clearTimeout(t);
@@ -1279,8 +1325,11 @@ function matchesHouseNumber(q, f) {
   if (!m) return true; // no number typed — any locality match is fine
   const want = m[1], got = String(f.properties.housenumber || "");
   if (!got) return false;
+  if (got === want) return true;
+  // Kauai district prefixes: "4-831" vs "831" may match, but "4-831" vs "5-831" must not
   const tail = s => s.includes("-") ? s.split("-").pop() : s;
-  return got === want || tail(got) === tail(want);
+  if (want.includes("-") && got.includes("-")) return false;
+  return tail(got) === tail(want);
 }
 function sugLabel(f) {
   const p = f.properties;
@@ -1303,7 +1352,7 @@ function goFeature(f) {
 function wireSearch(inputId, suggestId) {
   const input = document.getElementById(inputId);
   const sug = document.getElementById(suggestId);
-  let timer = null, items = [], hot = -1;
+  let timer = null, items = [], hot = -1, searchSeq = 0;
   input.setAttribute("role", "combobox");
   input.setAttribute("aria-autocomplete", "list");
   input.setAttribute("aria-expanded", "false");
@@ -1335,10 +1384,15 @@ function wireSearch(inputId, suggestId) {
     clearTimeout(timer);
     const q = input.value.trim();
     if (q.length < 3 || looksLikeTmk(q)) { closeSug(); return; }
+    const seq = ++searchSeq;
     timer = setTimeout(async () => {
-      try { renderSug(await geocode(q)); } catch (e) { closeSug(); }
+      try {
+        const feats = await geocode(q);
+        if (seq === searchSeq && input.value.trim() === q) renderSug(feats);
+      } catch (e) { if (seq === searchSeq) closeSug(); }
     }, 400);
   });
+  input.addEventListener("blur", () => setTimeout(closeSug, 150));
   input.addEventListener("keydown", async e => {
     if (sug.classList.contains("open") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
       e.preventDefault();
@@ -1346,9 +1400,15 @@ function wireSearch(inputId, suggestId) {
       highlight();
       return;
     }
-    if (e.key === "Escape") { closeSug(); return; }
+    if (e.key === "Escape") {
+      if (sug.classList.contains("open")) e.stopPropagation(); // Escape here means "close the dropdown", not the record
+      closeSug();
+      return;
+    }
     if (e.key === "Enter" && hot >= 0 && items[hot]) { pickSug(items[hot]); return; }
     if (e.key !== "Enter") return;
+    searchSeq++;
+    clearTimeout(timer);
     const q = input.value.trim();
     if (!q) return;
     closeSug();
@@ -1363,6 +1423,14 @@ function wireSearch(inputId, suggestId) {
       try {
         const feats = await geocode(q);
         if (!feats.length) { toast("No match — try spelling out Road / Highway, or add the town"); return; }
+        const sLow = q.toLowerCase().replace(/[^a-z\s-]/g, "").trim();
+        const exactPlace = feats.find(f => f.properties.locality && f.properties.name.toLowerCase() === sLow);
+        if (exactPlace) { input.blur(); goFeature(exactPlace); return; }
+        if (feats.length > 1 && feats.every(f => f.properties.locality)) {
+          renderSug(feats);
+          toast("A few places match — pick one");
+          return;
+        }
         const exact = feats.find(f => matchesHouseNumber(q, f));
         if (exact) {
           input.blur();
