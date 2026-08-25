@@ -157,21 +157,21 @@ const MARKET = {
     },
     "2026 H1": {
       "sf": {
-        "sales": null,
+        "sales": "\u2248199",
         "volume": 364700000,
         "median": 1300000
       },
       "condo": {
-        "sales": null,
+        "sales": "\u2248150",
         "volume": 119300000,
         "median": 905000
       },
       "land": {
-        "sales": null,
+        "sales": "\u224854",
         "volume": 53200000,
         "median": 948500
       },
-      "note": "First half 2026. Medians are Q2 2026. Half-year volume all types \u2248 $537M. Q2 sales: 98 single-family, 64 condo, 22 land."
+      "note": "First half 2026; sales counts summed from district tables (\u2248). Medians are Q2 2026. Half-year volume all types \u2248 $537M. Q2 sales: 98 single-family, 64 condo, 22 land."
     }
   }
 };

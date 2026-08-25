@@ -115,7 +115,7 @@
 <div class="wrap">
   <div class="eyebrow">Every number sourced &middot; updated <span id="updated">—</span></div>
   <h1>The island&#8217;s market, organized.</h1>
-  <p class="sub">Year by year, segment by segment — with the freshest public data available today, and built to update hourly the day the MLS feed connects.</p>
+  <p class="sub">Year by year, segment by segment — every number sourced, nothing estimated. Kauai first; statewide as county data lands.</p>
 
   <div class="hero">
     <div>
@@ -180,7 +180,7 @@ if (typeof MARKET === "undefined" || !MARKET.inventory || !MARKET.inventory.leng
 }
 const fmtM = v => v == null ? "—" : "$" + (v / 1000000).toFixed(1) + "M";
 const fmtP = v => v == null ? "—" : "$" + v.toLocaleString();
-const fmtN = v => v == null ? "—" : v.toLocaleString();
+const fmtN = v => v == null ? "—" : (typeof v === "string" ? v : v.toLocaleString());
 
 // hero: latest inventory + 24-month chart
 const inv = MARKET.inventory;
@@ -189,6 +189,12 @@ const monthName = m => new Date(m + "-15").toLocaleString("en-US", { month: "lon
 document.getElementById("updated").textContent = new Date(MARKET.updated + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 document.getElementById("inv-now").textContent = last.count;
 document.getElementById("inv-month").textContent = monthName(last.month);
+const yearAgo = inv[inv.length - 13];
+if (yearAgo && yearAgo.count) {
+  const pct = Math.round((last.count - yearAgo.count) / yearAgo.count * 100);
+  document.getElementById("inv-month").insertAdjacentHTML("afterend",
+    ` &middot; <span style="color:${pct >= 0 ? 'var(--accent)' : 'var(--red, #B3402E)'}">${pct >= 0 ? '+' : ''}${pct}% vs a year ago</span>`);
+}
 document.getElementById("inv-range").textContent = inv[0].month.slice(0, 4) + "–" + last.month.slice(0, 4);
 
 (function drawChart() {
