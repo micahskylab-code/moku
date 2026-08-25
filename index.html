@@ -62,7 +62,7 @@
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
-  #map { background: url('assets/hero-kauai.jpg') center/cover no-repeat #122A3C; }
+  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #0E2233; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
@@ -651,7 +651,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": ["interpolate", ["linear"], ["zoom"], 6.5, "#C9D9E4", 8.2, "#122A3C"] } },
+    { id: "bg", type: "background", paint: { "background-color": "#122A3C" } },
     { id: "sat", type: "raster", source: "sat" }
   ]
 };
@@ -662,10 +662,10 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
   },
-  center: [-159.53, 22.06],
-  zoom: SMALL ? 8.7 : 9.4,
+  center: [-157.5, 20.9],
+  zoom: SMALL ? 5.3 : 6.2,
   pitch: 0,
-  bearing: -18,
+  bearing: 0,
   attributionControl: false,
   maxPitch: SMALL ? 64 : 72
 });
@@ -684,15 +684,9 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, {
-        "background-color": ["interpolate", ["linear"], ["zoom"], 6.5, "#DFE7EB", 8.2, "#122A3C"] });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#122A3C" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
-        // Flat vector water only at island-overview zooms; up close the real ocean imagery shows through
-        l.paint = Object.assign({}, l.paint, {
-          "fill-color": "#A5C4D8",
-          "fill-opacity": ["interpolate", ["linear"], ["zoom"], 6.5, 1, 7.9, 0]
-        });
-        l.filter = oceanOnly;
+        l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
@@ -708,8 +702,8 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
       }
       if (l.type === "symbol" && /place|city|town|village/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
-          "text-color": ["interpolate", ["linear"], ["zoom"], 6.8, "#3C3C43", 8.2, "#FFFFFF"],
-          "text-halo-color": ["interpolate", ["linear"], ["zoom"], 6.8, "rgba(255,255,255,0.9)", 8.2, "rgba(12,26,36,0.55)"],
+          "text-color": "#FFFFFF",
+          "text-halo-color": "rgba(12,26,36,0.55)",
           "text-halo-width": 1.2,
           "text-halo-blur": 0.6
         });
@@ -717,10 +711,7 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     });
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: {
-        "raster-opacity": ["interpolate", ["linear"], ["zoom"], 6.2, 0, 7.9, 1],
-        "raster-saturation": 0.15, "raster-contrast": 0.06
-      }
+      paint: { "raster-opacity": 1, "raster-saturation": 0.15, "raster-contrast": 0.06 }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
     if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
@@ -981,6 +972,7 @@ async function exploreParcel(lng, lat) {
   } else {
     tapMarker.setLngLat([lng, lat]).addTo(map);
   }
+  try { localStorage.setItem("moku_isle", islandKeyFor(lng, lat)); } catch (e) {}
   const targetZoom = Math.max(map.getZoom(), 15.6);
   if (bootCam) {
     jumpWithOffset(lng, lat, targetZoom, SMALL ? 46 : 55);
@@ -1638,19 +1630,34 @@ function wireSearch(inputId, suggestId) {
 }
 
 // ---- Veil lifecycle ----
-const KAUAI_CENTER = [-159.53, 22.06];
-// Choreography: instant poster → tiles paint flat → ONE slow tilt into a locked, composed hero.
-// No continuous motion: stillness reads premium, terrain can't walk the camera, and the GPU rests.
+const ISLAND_HEROES = {
+  kauai:  { c: [-159.53, 22.06], z: 9.4 },
+  oahu:   { c: [-157.97, 21.47], z: 9.6 },
+  maui:   { c: [-156.34, 20.80], z: 9.0 },
+  hawaii: { c: [-155.44, 19.60], z: 8.5 }
+};
+function islandKeyFor(lng, lat) {
+  if (lng < -159.0) return "kauai";
+  if (lng < -157.5) return "oahu";
+  if (lat > 20.45) return "maui";
+  return "hawaii";
+}
+// Opening: the whole chain holds for a beat, then a Google-Earth dive into your island
 let heroSettled = false;
 map.once("load", () => {
   const begin = () => {
     if (heroSettled) return;
     heroSettled = true;
+    let isle = "kauai";
+    try { isle = localStorage.getItem("moku_isle") || "kauai"; } catch (e) {}
+    const h = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
     if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      map.jumpTo({ center: KAUAI_CENTER, pitch: 48 });
+      map.jumpTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18 });
       return;
     }
-    map.easeTo({ center: KAUAI_CENTER, pitch: 48, bearing: -18, duration: 2600, essential: false });
+    setTimeout(() => {
+      map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: 0.85, curve: 1.42, maxDuration: 7000, essential: false });
+    }, 1000);
   };
   if (document.body.classList.contains("mapready")) begin();
   else map.once("idle", () => setTimeout(begin, 200));
