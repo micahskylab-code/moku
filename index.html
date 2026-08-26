@@ -694,7 +694,7 @@
   <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-20</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-21</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -1859,7 +1859,10 @@ setTimeout(() => begin(), 11000);
   window.begin = _begin;
 }
 map.once("load", collapseAttribution);
-const markReady = () => document.body.classList.add("mapready");
+const markReady = () => {
+  document.body.classList.add("mapready");
+  if (heroSettled) setTimeout(armTerrain, 600);
+};
 // Ready = the REAL style's imagery has painted — never the empty placeholder's idle
 function armReady() {
   if (map.getSource("sat")) map.once("idle", markReady);
@@ -2172,6 +2175,10 @@ function rainSales() {
     map.setLayoutProperty("lyr-sold-rain", "visibility", "visible");
     const start = performance.now(), DUR = 2600;
     const step = now => {
+      if (!layerState.sold || !layerState.sold.on) {
+        if (map.getLayer("lyr-sold-rain")) map.setLayoutProperty("lyr-sold-rain", "visibility", "none");
+        return;
+      }
       const k = Math.min(1, (now - start) / DUR);
       map.setFilter("lyr-sold-rain", ["<=", ["get", "ts"], t0 + (t1 - t0) * k]);
       if (k < 1) requestAnimationFrame(step);
