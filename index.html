@@ -707,6 +707,23 @@
     .cta-dock { padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important; }
   }
 
+  #mode-toggle {
+    position: absolute; top: 74px; left: 50%; transform: translateX(-50%); z-index: 47;
+    display: inline-flex; background: #FBF9F5; border-radius: 999px; padding: 3px;
+    border: 1px solid rgba(23,21,15,0.12); box-shadow: 0 6px 20px rgba(23,21,15,0.14);
+  }
+  #mode-toggle button {
+    border: none; background: none; cursor: pointer; font-family: var(--sans); font-size: 12px;
+    font-weight: 600; color: #8C867A; padding: 5px 14px; border-radius: 999px; transition: all 0.2s;
+  }
+  #mode-toggle button.on { background: #17150F; color: #FBF9F5; }
+  body.simple #draw-btn,
+  body.simple .lchip[data-lk="tvr"],
+  body.simple .lchip[data-lk="tsu"],
+  body.simple #nearby-sec { display: none !important; }
+  @media (max-width: 760px) {
+    #mode-toggle { top: auto; bottom: calc(150px + env(safe-area-inset-bottom)); }
+  }
   #draw-btn {
     position: absolute; top: 76px; right: 26px; z-index: 49; cursor: pointer;
     background: #FBF9F5; border: 1px solid rgba(23,21,15,0.16); border-radius: 999px;
@@ -791,6 +808,9 @@
     <input id="dockbox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
     <div id="dock-suggest"></div>
   </div>
+  <div id="mode-toggle" title="Simple keeps it clean. Pro unlocks every layer, the draw tool, and deep intelligence.">
+    <button data-mode="simple" class="on">Simple</button><button data-mode="pro">Pro</button>
+  </div>
   <nav class="hdr-cluster">
     <a class="quiet" href="market.html">Market</a>
     <button class="quiet" id="btn-sell">Updates</button>
@@ -859,7 +879,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-56</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-57</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2689,6 +2709,20 @@ function openMe() {
 }
 function closeMe() { document.getElementById("me-modal").classList.remove("open"); }
 document.getElementById("btn-me").onclick = openMe;
+(function initMode() {
+  let mode = "simple";
+  try { mode = localStorage.getItem("moku_mode") || "simple"; } catch (e) {}
+  const apply = m => {
+    document.body.classList.toggle("simple", m === "simple");
+    document.body.classList.toggle("pro", m === "pro");
+    document.querySelectorAll("#mode-toggle button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+    try { localStorage.setItem("moku_mode", m); } catch (e) {}
+  };
+  document.querySelectorAll("#mode-toggle button").forEach(b => {
+    b.onclick = () => { apply(b.dataset.mode); if (b.dataset.mode === "pro") toast("Pro tools on — all layers, the draw tool, and deep intelligence", 3500); };
+  });
+  apply(mode);
+})();
 document.getElementById("me-modal").addEventListener("click", e => { if (e.target.id === "me-modal") closeMe(); });
 document.getElementById("me-save").onclick = () => {
   saveProfile(document.getElementById("me-name").value.trim(), document.getElementById("me-email").value.trim());
