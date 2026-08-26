@@ -63,7 +63,7 @@
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
-  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #173754; }
+  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #1C4A66; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
@@ -350,10 +350,11 @@
   @keyframes shimmer { from { background-position: 180% 0; } to { background-position: -20% 0; } }
   .pass-cta { display: flex; gap: 8px; }
   .cta-dock {
-    position: sticky; bottom: 0; margin: 14px -18px -16px; padding: 12px 18px 16px;
-    background: rgba(251,252,253,0.92);
+    position: sticky; bottom: 0; margin: 10px 0 0; padding: 12px 16px 14px;
+    background: rgba(251,252,253,0.96);
     border-top: 1px solid rgba(16,16,18,0.07);
   }
+  .passport > .finenote { padding: 12px 16px 4px; }
   .pass-cta button, .pass-cta a {
     flex: 1; border-radius: 12px; padding: 11px 4px;
     font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
@@ -363,6 +364,20 @@
   .pass-cta .primary { background: var(--chrome-ink); color: #fff; border: none; }
   .pass-cta .ghost { background: #fff; color: var(--ink); border: 1px solid rgba(0,0,0,0.12); }
   .pass-cta button:active, .pass-cta a:active { transform: scale(0.96); }
+  .pass-cta .primary { min-height: 44px; }
+  .dock-quiet {
+    display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; min-height: 32px;
+  }
+  .dock-quiet button, .dock-quiet a {
+    background: none; border: none; cursor: pointer; text-decoration: none;
+    font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--ink-2); padding: 6px 2px;
+  }
+  .dock-quiet button:hover, .dock-quiet a:hover { color: var(--ink); }
+  .dock-quiet span { color: var(--ink-3); }
+  .finenote {
+    font: 400 10.5px/1.55 var(--sans); color: var(--ink-3);
+    text-transform: none; letter-spacing: 0; padding: 12px 2px 4px;
+  }
   .micro { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; padding: 10px 16px 18px; }
 
   /* ================= Bits ================= */
@@ -390,7 +405,7 @@
     font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--chrome-ink);
     white-space: nowrap; pointer-events: none;
   }
-  #hint.show { display: flex; animation: hintBreathe 2.6s ease-in-out infinite; }
+  #hint.show { display: flex; }
   @keyframes hintBreathe {
     0%, 100% { transform: translateX(-50%) scale(1); }
     50% { transform: translateX(-50%) scale(1.035); }
@@ -789,7 +804,8 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-30</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-31</div>
+<script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -802,6 +818,7 @@
     <button class="x" onclick="closeLead()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="lead-title">Watch this parcel</div>
     <p id="lead-sub"></p>
+    <input id="lead-name" type="text" placeholder="Your name" autocomplete="name">
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
     <input id="lead-note" type="text" placeholder="">
     <button class="go" id="lead-go"></button>
@@ -877,8 +894,12 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#173754" } },
-    { id: "sat", type: "raster", source: "sat" }
+    { id: "bg", type: "background", paint: { "background-color": "#1C4A66" } },
+    { id: "sat", type: "raster", source: "sat" },
+    { id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
+      paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
+        "hillshade-highlight-color": "rgba(255,250,235,0.30)", "hillshade-accent-color": "rgba(26,42,32,0.25)",
+        "hillshade-illumination-direction": 315 } }
   ]
 };
 const map = new maplibregl.Map({
@@ -886,7 +907,7 @@ const map = new maplibregl.Map({
   style: {
     version: 8,
     sources: {},
-    layers: [{ id: "bg", type: "background", paint: { "background-color": "#173754" } }]
+    layers: [{ id: "bg", type: "background", paint: { "background-color": "#1C4A66" } }]
   },
   center: [-157.5, 20.9],
   zoom: SMALL ? 5.3 : 6.2,
@@ -910,7 +931,7 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#173754" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#1C4A66" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
@@ -938,11 +959,21 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
     });
     const satLayer = {
       id: "sat", type: "raster", source: "sat",
-      paint: { "raster-opacity": 1, "raster-saturation": 0.24, "raster-contrast": 0.04, "raster-brightness-min": 0.14 }
+      paint: { "raster-opacity": 1, "raster-saturation": 0.24, "raster-contrast": 0.04 }
+    };
+    const hillLayer = {
+      id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
+      paint: {
+        "hillshade-exaggeration": 0.32,
+        "hillshade-shadow-color": "rgba(26,42,32,0.55)",
+        "hillshade-highlight-color": "rgba(255,250,235,0.30)",
+        "hillshade-accent-color": "rgba(26,42,32,0.25)",
+        "hillshade-illumination-direction": 315
+      }
     };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
-    if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
-    else st.layers.push(satLayer);
+    if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer, hillLayer);
+    else st.layers.push(satLayer, hillLayer);
     const satIdx = st.layers.findIndex(l => l.id === "sat");
     st.layers.forEach((l, i) => {
       if (i > satIdx && (l.type === "fill" || l.type === "fill-extrusion") && !/water|ocean/i.test(l.id)) {
@@ -989,7 +1020,7 @@ function applyCustomLayers() {
       type: "Feature", geometry: { type: "Point", coordinates: [p[2], p[3]] }, properties: { name: p[0] }
     }));
     map.addSource("town-labels", { type: "geojson", data: { type: "FeatureCollection", features: feats } });
-    map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 7.6, maxzoom: 10.2,
+    map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 5.8, maxzoom: 10.2,
       layout: { "text-field": ["upcase", ["get", "name"]], "text-size": 11, "text-font": ["Noto Sans Regular"], "text-letter-spacing": 0.22, "text-padding": 6 },
       paint: { "text-color": "#FFFFFF", "text-halo-color": "rgba(12,26,36,0.6)", "text-halo-width": 1.2, "text-halo-blur": 0.6 } });
   }
@@ -1302,16 +1333,21 @@ async function exploreParcel(lng, lat) {
       lastRecord.tmk = tmk;
       const tmkEl = document.getElementById("rec-tmk");
       if (tmkEl && tmk) tmkEl.textContent = fmtTmk(tmk);
-      setFact("tmk", "TMK (county record)", tmk ? fmtTmk(tmk) : "—", "live");
+      const dupTmk = document.getElementById("fact-tmk"); if (dupTmk) dupTmk.remove();
       lastRecord.acres = Number(pickAcres(p)) || null;
       setFact("acres", "Parcel size", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
       const owner = pickOwner(p), assessed = pickAssessed(p);
-      if (owner) setFact("owner", "Owner of record (county)", formatOwner(owner), "live");
+      if (owner) setFact("owner", "Owner of record", formatOwner(owner), "live");
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
-      if (assessed != null) { setFact("assessed", "Assessed value (county)", assessedHtml(assessed), "live"); setHeroVal(assessed); }
+      if (assessed != null) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); }
       else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
-      else { const av = document.getElementById("fact-assessed"); if (av) av.remove(); }
+      else {
+        const av = document.getElementById("fact-assessed"); if (av) av.remove();
+        const ac = Number(pickAcres(p));
+        if (ac > 0 && county !== COUNTIES.maui)
+          setHeroText("PARCEL SIZE · COUNTY RECORD", ac >= 1 ? ac.toFixed(ac >= 100 ? 0 : 1) + " acres" : Math.round(ac * 43560).toLocaleString() + " sq ft");
+      }
       if (p.taxclass) setFact("taxclass", "County tax class", formatOwner(p.taxclass), "live");
       else { const tc = document.getElementById("fact-taxclass"); if (tc) tc.remove(); }
       const qp = document.getElementById("qpub-btn");
@@ -1320,12 +1356,12 @@ async function exploreParcel(lng, lat) {
       refreshSaveBtn();
       enrichCounty(county, token, tmk);
     } else if (parcel === undefined) {
-      setFact("tmk", "TMK (county record)", "couldn&#8217;t reach the county server", "");
+      setFact("tmk", "TMK", "couldn&#8217;t reach the county server", "");
       setFact("acres", "Parcel size", "—", "");
       setFact("owner", "Owner of record", "—", "");
       ["fact-assessed", "fact-taxclass", "fact-lava"].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     } else {
-      setFact("tmk", "TMK (county record)", "no parcel mapped at this point", "");
+      setFact("tmk", "TMK", "no parcel mapped at this point", "");
       setFact("acres", "Parcel size", "—", "");
       setFact("owner", "Owner of record", "—", "");
       ["fact-assessed", "fact-taxclass", "fact-lava"].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
@@ -1342,15 +1378,15 @@ async function exploreParcel(lng, lat) {
       }
     }
     if (flood === undefined) {
-      setFact("flood", "FEMA flood zone (per state GIS)", "couldn&#8217;t load", "");
+      setFact("flood", "Flood zone", "couldn&#8217;t load", "");
     } else {
       const fz = flood && flood.properties ? flood.properties.fld_zone : null;
-      setFact("flood", "FEMA flood zone (per state GIS)",
+      setFact("flood", "Flood zone",
         (fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones") +
         `<div class="subnote"><b onclick="showLayer('flood')">See the flood map &#8599;</b></div>`, "live");
     }
     if (tsu === undefined) {
-      setFact("tsu", "Tsunami evacuation (state GIS)", "couldn&#8217;t load", "");
+      setFact("tsu", "Tsunami evacuation", "couldn&#8217;t load", "");
     } else {
       const t = tsu && tsu.properties ? tsu.properties : null;
       const rawTsu = t && (t.zone_desc || t.evac_zone);
@@ -1361,7 +1397,7 @@ async function exploreParcel(lng, lat) {
         else if (/evacuat|warning/i.test(sT)) tsuTxt = "Inside a tsunami evacuation zone";
         else tsuTxt = esc(sT);
       }
-      setFact("tsu", "Tsunami evacuation (state GIS)",
+      setFact("tsu", "Tsunami evacuation",
         tsuTxt + `<div class="subnote"><b onclick="showLayer('tsu')">See evacuation zones &#8599;</b></div>`, "live");
     }
     const schools = [
@@ -1370,16 +1406,16 @@ async function exploreParcel(lng, lat) {
       high && high.properties && high.properties.high_desc
     ].filter(Boolean);
     if (elem === undefined && mid === undefined && high === undefined) {
-      setFact("schools", "Public school zones (DOE)", "couldn&#8217;t load", "");
+      setFact("schools", "School zones", "couldn&#8217;t load", "");
     } else {
-      setFact("schools", "Public school zones (DOE)", schools.length ? schools.join(" · ") : "not in a mapped attendance area", "live");
+      setFact("schools", "School zones", schools.length ? schools.join(" · ") : "not in a mapped attendance area", "live");
     }
     if (isBigIsland && lava === undefined) {
-      setFact("lava", "Lava-flow hazard zone (USGS)", "couldn&#8217;t load", "");
+      setFact("lava", "Lava-flow hazard", "couldn&#8217;t load", "");
     } else if (isBigIsland) {
       const hz = lava && lava.properties ? String(lava.properties.hzone || "") : "";
       const lavaMeaning = { "1": "Highest lava-flow risk — insurance is difficult", "2": "Very high lava-flow risk — insurance is difficult", "3": "High lava-flow risk", "4": "Moderate lava-flow risk", "5": "Lower lava-flow risk", "6": "Lower lava-flow risk", "7": "Low lava-flow risk", "8": "Very low lava-flow risk", "9": "Lowest lava-flow risk" };
-      setFact("lava", "Lava-flow hazard zone (USGS)", hz ? ((lavaMeaning[hz] || "See USGS map") + ` <span class="code">Zone ${hz}</span>`) : "not in a mapped lava zone", "live");
+      setFact("lava", "Lava-flow hazard", hz ? ((lavaMeaning[hz] || "See USGS map") + ` <span class="code">Zone ${hz}</span>`) : "not in a mapped lava zone", "live");
     }
   } catch (err) {
     if (token !== exploreToken) return;
@@ -1438,14 +1474,23 @@ function copyTmk() {
   if (!t) return;
   try { navigator.clipboard.writeText(t); toast("TMK copied"); } catch (e) {}
 }
-function setHeroVal(n) {
+function setHeroText(label, text) {
+  // Non-dollar hero (acreage, sq ft): the brochure masthead is never empty
+  const lbl = document.getElementById("hero-val-label");
+  const el = document.getElementById("hero-val");
+  if (!lbl || !el) return;
+  lbl.style.display = ""; lbl.textContent = label;
+  el.textContent = text;
+}
+function setHeroVal(n, label) {
   const lbl = document.getElementById("hero-val-label");
   if (lbl && n > 0) {
     lbl.style.display = "";
+    if (label) lbl.textContent = label;
     try {
       const isle = localStorage.getItem("moku_isle");
       const med = MARKET.years["2026 H1"].sf.median;
-      if (isle === "kauai" && med && n > 0) {
+      if (!label && isle === "kauai" && med && n > 0) {
         const pct = Math.round((n / med) * 100);
         lbl.textContent = "COUNTY ASSESSED · TY2026 · " + pct + "% OF KAUAʻI MEDIAN";
       }
@@ -1504,8 +1549,8 @@ async function enrichCounty(county, token, tmkRaw) {
       if (token !== exploreToken) return;
       let assessedSet = false;
       const putAssessed = html => {
-        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value (county, TY2026)", html, "live");
-        else addFact("row-record", "assessed", "Assessed value (county, TY2026)", html, "live");
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; TY2026", html, "live");
+        else addFact("row-record", "assessed", "Assessed value &middot; TY2026", html, "live");
         assessedSet = true;
       };
       if (taxRows.status === "fulfilled" && taxRows.value.length) {
@@ -1546,7 +1591,8 @@ async function enrichCounty(county, token, tmkRaw) {
         const d = new Date(s.GIS_SALES_2YEAR_SALEDT + "T12:00:00");
         const when = isNaN(d) ? esc(s.GIS_SALES_2YEAR_SALEDT) : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
         const isUnit = String(s.GIS_SALES_2YEAR_PARID || "").slice(-4) !== "0000";
-        addFact("row-record", "sale", isUnit ? "Latest unit sale on this parcel (county roll)" : "Last recorded sale (county roll)",
+        setHeroVal(Number(s.GIS_SALES_2YEAR_PRICE), (isUnit ? "LATEST UNIT SALE · " : "LAST RECORDED SALE · ") + when.toUpperCase());
+        addFact("row-record", "sale", isUnit ? "Latest unit sale on this parcel" : "Last recorded sale",
           "$" + Number(s.GIS_SALES_2YEAR_PRICE).toLocaleString() + " &middot; " + when +
           `<div class="subnote">County records — lag the market by months${isUnit ? "; multiple units on this parcel" : ""} &middot; <b onclick="showLayer('sold')">See all sales &#8599;</b></div>`, "live");
       }
@@ -1590,31 +1636,30 @@ function openRecordCard(lng, lat) {
       <div class="h">Land &amp; hazards</div>
       <div class="factrow" id="row-land">
         <div class="fchip live" id="fact-zoning"><small>County zoning</small><span class="skel" style="width:120px"></span></div>
-        <div class="fchip live" id="fact-flood"><small>FEMA flood zone (per state GIS)</small><span class="skel" style="width:150px"></span></div>
-        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation (state GIS)</small><span class="skel" style="width:130px"></span></div>
-        <div class="fchip live" id="fact-lava"><small>Lava-flow hazard zone (USGS)</small><span class="skel" style="width:120px"></span></div>
+        <div class="fchip live" id="fact-flood"><small>Flood zone</small><span class="skel" style="width:150px"></span></div>
+        <div class="fchip live" id="fact-tsu"><small>Tsunami evacuation</small><span class="skel" style="width:130px"></span></div>
+        <div class="fchip live" id="fact-lava"><small>Lava-flow hazard</small><span class="skel" style="width:120px"></span></div>
       </div>
     </div>
     <div class="sec">
       <div class="h">Schools</div>
       <div class="factrow" id="row-schools">
-        <div class="fchip live" id="fact-schools"><small>Public school zones (DOE)</small><span class="skel" style="width:160px"></span></div>
+        <div class="fchip live" id="fact-schools"><small>School zones</small><span class="skel" style="width:160px"></span></div>
       </div>
     </div>
-    <div class="sec">
-      <div class="cta-dock">
+    <div class="finenote">Live County &amp; State of Hawai&#699;i records &middot; boundaries and zones are reference only, not survey-grade determinations &middot; verify flood &amp; tsunami with FEMA and your lender.</div>
+    <div class="cta-dock">
       <div class="pass-cta">
         <button class="primary" id="watch-parcel">Ask Micah about this parcel</button>
-        <button class="ghost" id="copy-record">Copy link</button>
       </div>
-      <div class="pass-cta" style="margin-top:8px">
-        <button class="ghost" id="save-btn" onclick="toggleSave()">&#9734; Save</button>
-        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">County record &rarr;</a>
-        <a class="ghost" id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
+      <div class="dock-quiet">
+        <button id="save-btn" onclick="toggleSave()">&#9734; Save</button>
+        <span>&middot;</span>
+        <button id="copy-record">Copy link</button>
+        <span>&middot;</span>
+        <a id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
       </div>
-      </div>
-    </div>
-    <div class="micro">All values are looked up live from County and State of Hawaii public records for the tapped location. Parcel boundaries are reference only, not survey-grade. Flood and tsunami zones are informational, not determinations — verify with FEMA and your lender.</div>`;
+    </div>`;
   pass.classList.add("open");
   document.getElementById("copy-record").onclick = async () => {
     const hash = lastRecord && lastRecord.tmk ? "tmk=" + String(lastRecord.tmk).replace(/\D/g, "") : "p=" + lng.toFixed(5) + "," + lat.toFixed(5);
@@ -2015,29 +2060,30 @@ setTimeout(() => begin(), 11000);
           if (k < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-        setTimeout(() => { ov.classList.add("fade"); }, 2900);
-        setTimeout(() => { ov.classList.remove("on", "fade"); }, 3700);
+        setTimeout(() => { ov.classList.add("fade"); }, 1900);
+        setTimeout(() => { ov.classList.remove("on", "fade"); }, 2600);
         ovDone = true;
       }
     } catch (e) {}
     setTimeout(() => {
-      map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: 0.85, curve: 1.42, maxDuration: 7000, essential: false });
+      map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 2500 : 4500, essential: false });
       map.once("moveend", () => {
         setTimeout(armTerrain, 500);
         if (window.showDiscover) setTimeout(window.showDiscover, 600);
-        const autoLayer = ({ kauai: "tvr", maui: "sold", oahu: "flood", hawaii: "tsu" })[isle] || "tvr";
-        setTimeout(() => {
+        // Market layers may welcome; hazards are opt-in only — never open on a disaster map
+        const autoLayer = ({ kauai: "tvr", maui: "sold" })[isle] || null;
+        if (autoLayer) setTimeout(() => {
           if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
             toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
         }, 900);
         try {
           if (!localStorage.getItem("moku_seen")) {
             localStorage.setItem("moku_seen", "1");
-            setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 1600);
+            setTimeout(() => toast("Tap any parcel — <b>owner, value, flood, sales</b>", 6500), 1600);
           }
         } catch (e) {}
       });
-    }, ovDone ? 3100 : 400);
+    }, ovDone ? 2000 : 400);
   };
   window.begin = _begin;
 }
@@ -2045,6 +2091,7 @@ map.once("load", collapseAttribution);
 const markReady = () => {
   document.body.classList.add("mapready");
   if (heroSettled) setTimeout(armTerrain, 600);
+  if (window.showDiscover) setTimeout(window.showDiscover, 1200);
 };
 // Ready = the REAL style's imagery has painted — never the empty placeholder's idle
 function armReady() {
@@ -2099,7 +2146,7 @@ let leadKind = "owner";
 const LEAD_COPY = {
   owner: {
     title: "Ask about this parcel",
-    sub: "Question about this property — its records, the area, what it might take to get it? Ask Micah directly. He's on Kauai and replies personally.",
+    sub: "Question about this property — its records, its history, the data behind it? Ask Micah directly. He's on Kauai and replies personally.",
     note: "Parcel (auto-filled) — add your question",
     go: "Send to Micah →",
     subject: "Moku — parcel question"
@@ -2120,6 +2167,7 @@ function openLead(kind, prefill) {
   document.getElementById("lead-note").placeholder = c.note;
   document.getElementById("lead-note").value = prefill || "";
   document.getElementById("lead-go").innerHTML = c.go;
+  document.getElementById("lead-go").onclick = submitLead;
   document.getElementById("lead-modal").classList.add("open");
   setTimeout(() => document.getElementById("lead-email").focus(), 100);
 }
@@ -2128,7 +2176,7 @@ function openAbout() { document.getElementById("about-modal").classList.add("ope
 function closeAbout() { document.getElementById("about-modal").classList.remove("open"); }
 document.getElementById("about-modal").addEventListener("click", e => { if (e.target.id === "about-modal") closeAbout(); });
 document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
-document.getElementById("lead-go").onclick = () => {
+function submitLead() {
   const c = LEAD_COPY[leadKind];
   const email = document.getElementById("lead-email").value.trim();
   const note = document.getElementById("lead-note").value.trim();
@@ -2137,11 +2185,18 @@ document.getElementById("lead-go").onclick = () => {
     document.getElementById("lead-email").focus();
     return;
   }
-  const body = `${c.subject}\n\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from the Moku beta.`;
+  const name = (document.getElementById("lead-name") || {}).value || "";
+  const body = `${c.subject}\n\nFrom: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
+  // Safety net first: the typed lead survives even when no mail app is set up
+  try { navigator.clipboard.writeText(body + "\n\nTo: " + LEAD_INBOX); } catch (e) {}
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
-  closeLead();
-  toast(`Almost there — just hit send in your mail app &#128232;`, 4200);
-};
+  const sub = document.getElementById("lead-sub");
+  if (sub) sub.innerHTML = `Your message is <b>copied to your clipboard</b>. If your mail app didn&#8217;t open, paste it in an email to <b style="cursor:pointer" onclick="navigator.clipboard.writeText('${LEAD_INBOX}');toast('Address copied')">${LEAD_INBOX}</b> — Micah replies personally.`;
+  const go = document.getElementById("lead-go");
+  go.innerHTML = "Done — close";
+  go.onclick = () => { closeLead(); go.onclick = submitLead; };
+}
+document.getElementById("lead-go").onclick = submitLead;
 document.getElementById("btn-sell").onclick = () => openLead("seller");
 
 // ---- Boot: the map IS the front door. Deep link → record; returning owner → home; else Kauai hero ----
@@ -2363,8 +2418,8 @@ function refreshLegend() {
   const anyOn = rows.length > 0;
   try {
     if (map.getLayer("sat")) {
-      map.setPaintProperty("sat", "raster-saturation", anyOn ? -0.4 : 0);
-      map.setPaintProperty("sat", "raster-brightness-max", anyOn ? 0.9 : 1);
+      map.setPaintProperty("sat", "raster-saturation", anyOn ? -0.25 : 0.24);
+      map.setPaintProperty("sat", "raster-brightness-max", anyOn ? 0.94 : 1);
     }
   } catch (e) {}
 }
@@ -2514,7 +2569,11 @@ if (qLayer && LAYER_NOTES[qLayer]) {
       await toggleLayer(qLayer, chip);
     } catch (e) {}
     if (layerState[qLayer] && layerState[qLayer].on) {
-      if (!deep && LAYER_BOUNDS[qLayer]) map.fitBounds(LAYER_BOUNDS[qLayer], { padding: 70, duration: 0 });
+      if (qTown) {
+        // The town page's promise wins: re-assert the town camera after the layer lands
+        const tm = HI_PLACES.find(p => p[0].toLowerCase() === qTown.toLowerCase());
+        if (tm) map.jumpTo({ center: [tm[2], tm[3]], zoom: 13.4, pitch: 0 });
+      } else if (!deep && LAYER_BOUNDS[qLayer]) map.fitBounds(LAYER_BOUNDS[qLayer], { padding: 70, duration: 0 });
     } else if (armTries < 14) {
       setTimeout(armLayer, 1500);
     }
