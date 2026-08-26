@@ -926,6 +926,35 @@
   .passport .hero-val { font-size: clamp(52px, 11vw, 74px) !important; font-weight: 400 !important; margin-top: 2px !important; letter-spacing: -0.03em !important; }
   #buildtag { color: rgba(255,255,255,0.5) !important; }
   @media (max-width: 760px) { .passport { background: var(--paper) !important; } }
+  /* ---- Island Intelligence: the place experience (tourist / local lane; real estate stays quiet) ---- */
+  .placecard {
+    position: fixed; z-index: 55; right: 24px; top: 84px; width: 372px; max-height: calc(100vh - 118px);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--paper); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.5); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    padding: 22px 22px 20px; opacity: 0; pointer-events: none; transform: translateY(10px) scale(0.985);
+    transition: opacity 0.3s ease, transform 0.34s var(--spring);
+  }
+  .placecard.open { opacity: 1; pointer-events: auto; transform: none; }
+  .pc-grip { display: none; }
+  .pc-x { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer; background: rgba(0,0,0,0.06); font-size: 13px; font-weight: 700; color: var(--ink); }
+  .pc-kick { font-family: var(--sans); font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .pc-name { font-family: var(--serif); font-weight: 500; font-size: 28px; letter-spacing: -0.01em; color: var(--ink); margin-top: 5px; line-height: 1.05; }
+  .pc-where { font-family: var(--sans); font-size: 13px; color: var(--ink-2); margin-top: 7px; line-height: 1.5; }
+  .pc-edu { font-family: var(--sans); font-size: 12.5px; color: var(--ink-3); margin-top: 9px; line-height: 1.55; }
+  .pc-sec-t { font-family: var(--sans); font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 18px 0 4px; }
+  .pc-nb .pc-row { padding: 9px 0; border-bottom: 1px solid rgba(23,21,15,0.07); }
+  .pc-nb .pc-row a { font-weight: 600; font-size: 13.5px; color: var(--ink); text-decoration: none; }
+  .pc-nb .pc-dist { font-size: 11px; color: var(--ink-3); float: right; margin-left: 8px; }
+  .pc-nb .pc-x2 { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-top: 3px; }
+  .pc-mut { color: var(--ink-3); font-size: 12.5px; padding: 6px 0; }
+  .pc-foot { margin-top: 16px; }
+  .pc-re { display: inline-block; font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: var(--accent); cursor: pointer; }
+  @media (max-width: 760px) {
+    .placecard { right: 0; left: 0; top: auto; bottom: 0; width: 100%; max-height: 82vh; border-radius: 22px 22px 0 0; transform: translateY(110%); padding-top: 24px; background: var(--paper); }
+    .placecard.open { transform: none; }
+    .placecard .pc-grip { display: block; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 2px; background: rgba(23,21,15,0.18); }
+  }
 </style>
 </head>
 <body>
@@ -974,6 +1003,17 @@
 </div>
 
 <div class="passport" id="passport"></div>
+<div class="placecard" id="placecard">
+  <div class="pc-grip"></div>
+  <button class="pc-x" onclick="closePlace()" aria-label="Close">&#10005;</button>
+  <div class="pc-kick">ISLAND INTELLIGENCE</div>
+  <div class="pc-name" id="pc-name">This place</div>
+  <div class="pc-where" id="pc-where"></div>
+  <div class="pc-edu" id="pc-edu"></div>
+  <div class="pc-sec-t">Nearby &mdash; beaches, landmarks &amp; the island&#8217;s story</div>
+  <div class="pc-nb" id="pc-nb"><div class="pc-mut">Reading the island&#8217;s intelligence&hellip;</div></div>
+  <div class="pc-foot" id="pc-foot"></div>
+</div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
 <div id="hero-line">
@@ -981,7 +1021,7 @@
   <div class="hl-big">The islands,<br>by the numbers.</div>
   <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
 </div>
-<div id="m-search"><span class="mmag">&#9906;</span><input id="m-search-input" type="text" placeholder="Search any address or TMK" autocomplete="off" enterkeyhint="search"><div id="m-suggest"></div></div>
+<div id="m-search"><span class="mmag">&#9906;</span><input id="m-search-input" type="text" placeholder="Search a place, a beach, or an address" autocomplete="off" enterkeyhint="search"><div id="m-suggest"></div></div>
 <div id="ledger">
   <div id="ledger-handle"></div>
   <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; every island&#8217;s sales inside</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
@@ -1052,7 +1092,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-78</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-79</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2506,18 +2546,87 @@ function sugLabel(f) {
   const rest = [p.city, p.county].filter(Boolean).join(", ");
   return { main: main || rest || "Unknown", rest: main ? rest : "" };
 }
-// A town search should land ON the town, not open a record for a random point in it
+// A place search opens Island Intelligence for that place; an address opens the parcel record.
 function goFeature(f) {
   if (f.properties && f.properties.locality) {
     dismissVeil();
-    closeRecord();
-    if (bootCam) map.jumpTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 0 });
-    else map.flyTo({ center: f.geometry.coordinates, zoom: 13.4, pitch: 0, speed: 1.25, curve: 1.42, maxDuration: 6000, essential: true });
-    toast(`<b>${esc(f.properties.name)}</b> — tap any lot to open its record`, 4200);
+    const c = f.geometry.coordinates;
+    openPlace(c[0], c[1], f.properties.name || "This place", [f.properties.city, f.properties.county].filter(Boolean).join(", "));
     return;
   }
   exploreParcel(f.geometry.coordinates[0], f.geometry.coordinates[1]);
 }
+// ===== Island Intelligence — the place experience (tourists & locals; real estate stays quiet) =====
+let placeToken = 0;
+function closePlace() { document.getElementById("placecard").classList.remove("open"); }
+async function openPlace(lng, lat, name, sub) {
+  dismissVeil(); document.body.classList.add("engaged");
+  try { closeRecord(); } catch (e) {}
+  const tok = ++placeToken;
+  document.getElementById("pc-name").textContent = name || "This place";
+  document.getElementById("pc-where").textContent = sub || "";
+  document.getElementById("pc-edu").innerHTML = "";
+  document.getElementById("pc-nb").innerHTML = '<div class="pc-mut">Reading the island’s intelligence…</div>';
+  document.getElementById("pc-foot").innerHTML = '<span class="pc-re" onclick="closePlace(); toast(\'Tap any lot for its county record\', 3500)">Property &amp; land records here →</span>';
+  document.getElementById("placecard").classList.add("open");
+  try { map.flyTo({ center: [lng, lat], zoom: 12.8, pitch: 0, speed: 1.2, curve: 1.42, essential: true }); } catch (e) {}
+  // Land intelligence: ahupua'a / moku / island — the deep local education
+  (async () => {
+    try {
+      const q = id => fetchTimeout(`https://geodata.hawaii.gov/arcgis/rest/services/HistoricCultural/MapServer/${id}/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=false&f=json`, 9000).then(r => r.json());
+      const [ahu, moku] = await Promise.allSettled([q(1), q(3)]);
+      if (tok !== placeToken) return;
+      const a = ahu.status === "fulfilled" && ahu.value.features && ahu.value.features[0] ? ahu.value.features[0].attributes : null;
+      const m = moku.status === "fulfilled" && moku.value.features && moku.value.features[0] ? moku.value.features[0].attributes : null;
+      const ahupuaa = a && a.ahupuaa && a.ahupuaa.trim() ? a.ahupuaa.trim() : null;
+      const mokuName = (a && a.moku && a.moku.trim()) || (m && m.moku && m.moku.trim()) || null;
+      const island = (a && a.mokupuni && a.mokupuni.trim()) || (m && m.mokupuni && m.mokupuni.trim()) || null;
+      if (tok !== placeToken) return;
+      if (ahupuaa || mokuName || island) {
+        const bits = [];
+        if (ahupuaa) bits.push(`the ahupuaʻa of <b>${esc(ahupuaa)}</b>`);
+        if (mokuName) bits.push(`the moku of <b>${esc(mokuName)}</b>`);
+        if (island) bits.push(`the island of <b>${esc(island)}</b>`);
+        document.getElementById("pc-where").innerHTML = "In " + bits.join(", ") + ".";
+        document.getElementById("pc-edu").innerHTML = "An <b>ahupuaʻa</b> is a traditional Hawaiian land division running mauka to makai — mountains to the sea — so a community held everything it needed to live. Boundaries from the State of Hawaiʻi GIS.";
+      }
+    } catch (e) {}
+  })();
+  // Nearby: beaches, landmarks, history (Wikipedia, CC BY-SA)
+  (async () => {
+    try {
+      const r = await fetchTimeout(`https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}%7C${lng}&gsradius=10000&gslimit=7&format=json&origin=*`, 9000);
+      const j = await r.json();
+      if (tok !== placeToken) return;
+      const places = (j.query && j.query.geosearch) || [];
+      const nb = document.getElementById("pc-nb");
+      if (!nb) return;
+      if (!places.length) { nb.innerHTML = '<div class="pc-mut">No landmarks indexed nearby yet.</div>'; return; }
+      nb.innerHTML = places.map(p => {
+        const mi = (p.dist / 1609).toFixed(1);
+        const url = "https://en.wikipedia.org/wiki/" + encodeURIComponent(p.title.replace(/ /g, "_"));
+        return `<div class="pc-row" data-t="${encodeURIComponent(p.title)}"><span class="pc-dist">${mi} mi</span><a href="${url}" target="_blank" rel="noopener">${esc(p.title)}</a><div class="pc-x2">&hellip;</div></div>`;
+      }).join("") + '<div class="subnote" style="margin-top:8px">Encyclopedic context from Wikipedia (CC BY-SA).</div>';
+      places.forEach(async p => {
+        try {
+          const sr = await fetchTimeout("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(p.title.replace(/ /g, "_")), 8000);
+          const sj = await sr.json();
+          if (tok !== placeToken) return;
+          const row = nb.querySelector(`.pc-row[data-t="${encodeURIComponent(p.title)}"] .pc-x2`);
+          if (row && sj.extract) row.textContent = sj.extract.length > 150 ? sj.extract.slice(0, 148) + "…" : sj.extract;
+        } catch (e) {}
+      });
+    } catch (e) {}
+  })();
+}
+// Place card is a bottom sheet on phones — swipe down to dismiss.
+(function placeSwipe() {
+  const p = document.getElementById("placecard");
+  if (!p) return;
+  let py = null;
+  p.addEventListener("touchstart", e => { py = (p.scrollTop <= 0) ? e.touches[0].clientY : null; }, { passive: true });
+  p.addEventListener("touchend", e => { if (py == null) return; const dy = e.changedTouches[0].clientY - py; if (dy > 55) closePlace(); py = null; }, { passive: true });
+})();
 function wireSearch(inputId, suggestId) {
   const input = document.getElementById(inputId);
   const sug = document.getElementById(suggestId);
@@ -2884,7 +2993,7 @@ try { wireSearch("m-search-input", "m-suggest"); } catch (e) {}
   const meBtn = document.getElementById("lg-me-btn"); if (meBtn) meBtn.onclick = openMe;
   const brBtn = document.getElementById("lg-brief-btn"); if (brBtn) brBtn.onclick = () => openLead("seller");
 })();
-document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); closeForSale(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); closeForSale(); closePlace(); } });
 
 // ---- Lead engine ----
 const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before wide launch
