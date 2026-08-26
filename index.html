@@ -67,7 +67,7 @@
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
-  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #2E7396; }
+  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #357FA4; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
@@ -804,7 +804,7 @@
     body.has-ledger #draw-btn { right: 466px; top: 20px; }
     body.has-ledger .passport { top: 0 !important; bottom: 0 !important; right: 0 !important; width: 440px !important; max-height: none !important; height: 100vh !important; border-radius: 0 !important; z-index: 56; }
   }
-  @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(1.14) brightness(1.05) contrast(1.04); } }
+  @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(1.22) brightness(1.1) contrast(1.05); } }
   @media (max-width: 760px) {
     #ledger { top: 42vh; right: 0; left: 0; bottom: 0; width: auto; height: auto; border-left: none; border-top: 1px solid #9A7B3F; padding: 20px 18px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -20px 40px rgba(0,0,0,0.12); }
     body.has-ledger #map { position: absolute; top: 0; left: 0; right: 0; height: 42vh; bottom: auto; }
@@ -988,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-61</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-62</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1106,7 +1106,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#2E7396" } },
+    { id: "bg", type: "background", paint: { "background-color": "#357FA4" } },
     { id: "sat", type: "raster", source: "sat" },
     { id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
       paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
@@ -1139,7 +1139,7 @@ new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#2E7396" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#357FA4" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
         // Daylight ocean: a translucent tropical lift over the imagery water
         l.paint = Object.assign({}, l.paint, { "fill-color": "#4FA8D0", "fill-opacity": 0.22 });
