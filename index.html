@@ -810,7 +810,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-42</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-43</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -1295,14 +1295,14 @@ function jumpWithOffset(lng, lat, zoom, pitch) {
 map.on("click", (e) => {
   if (e.originalEvent && e.originalEvent._pinHandled) return;
   const z = map.getZoom();
-  if (z < 13) {
-    // You can't aim at a house from the sky — step down toward the point instead
-    map.flyTo({ center: e.lngLat, zoom: Math.min(z + (z < 9 ? 3.2 : 2.4), 14.6), speed: 1.6, curve: 1.35, essential: true });
+  if (z < 11.5) {
+    // From true altitude you can't aim at a lot — step down toward the point instead
+    map.flyTo({ center: e.lngLat, zoom: Math.min(z + (z < 9 ? 3.4 : 2.6), 13.6), speed: 1.7, curve: 1.35, essential: true });
     return;
   }
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
-map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 13 ? "pointer" : ""; } catch (e) {} });
+map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 11.5 ? "pointer" : ""; } catch (e) {} });
 
 async function exploreParcel(lng, lat) {
   dismissVeil();
