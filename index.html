@@ -49,6 +49,7 @@
     --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
   button, input, .try, .lchip, .sug, .quiet, .explore-link { touch-action: manipulation; }
   html, body { height: 100%; overflow: hidden; }
   body { font-family: var(--sans); color: var(--ink); background: #E6EDF1; }
@@ -772,7 +773,7 @@
   <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-23</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-24</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -1369,7 +1370,17 @@ function copyTmk() {
 }
 function setHeroVal(n) {
   const lbl = document.getElementById("hero-val-label");
-  if (lbl && n > 0) lbl.style.display = "";
+  if (lbl && n > 0) {
+    lbl.style.display = "";
+    try {
+      const isle = localStorage.getItem("moku_isle");
+      const med = MARKET.years["2026 H1"].sf.median;
+      if (isle === "kauai" && med && n > 0) {
+        const pct = Math.round((n / med) * 100);
+        lbl.textContent = "COUNTY ASSESSED · TY2026 · " + pct + "% OF KAUAʻI MEDIAN";
+      }
+    } catch (e) {}
+  }
   const el = document.getElementById("hero-val");
   if (!el || n == null || !(n > 0)) return;
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
