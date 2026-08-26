@@ -988,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-64</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-65</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1598,10 +1598,13 @@ async function exploreParcel(lng, lat) {
       const f0 = g.features && g.features[0];
       const p = f0 && f0.properties;
       if (!p) return;
-      // street address first; a neighboring shop's name is not this parcel's name
-      const street = [p.housenumber, p.street].filter(Boolean).join(" ");
-      const placeName = ["place", "highway", "building"].includes(p.osm_key) ? p.name : null;
-      const line = [street || placeName, p.city || p.county].filter(Boolean).join(", ");
+      // Only assert a street address when the county/OSM has a real house number.
+      // A bare nearby road on a large/rural parcel is NOT this parcel's address — show the town instead.
+      const town = p.city || p.district || p.locality || p.county;
+      let line;
+      if (p.housenumber && p.street) line = [p.housenumber + " " + p.street, town].filter(Boolean).join(", ");
+      else if (town) line = town + (/kaua/i.test(town) || /honolulu|oahu/i.test(town) ? "" : "");
+      else line = null;
       const el = document.getElementById("rec-addr");
       if (el && line) el.textContent = line;
     }).catch(() => {});
