@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moku Market Pulse</title>
+<title>Moku Market Intelligence</title>
 <meta name="description" content="Kauai real estate by the numbers — sales, volume, medians, live inventory. Every number sourced.">
-<meta property="og:title" content="Moku Market Pulse">
+<meta property="og:title" content="Moku Market Intelligence">
 <meta property="og:description" content="Kauai real estate by the numbers — every number sourced, updated continuously.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://micahskylab-code.github.io/moku/market.html">
@@ -13,7 +13,7 @@
 <link rel="canonical" href="https://micahskylab-code.github.io/moku/market.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
-<meta name="twitter:title" content="Moku Market Pulse">
+<meta name="twitter:title" content="Moku Market Intelligence">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -119,7 +119,24 @@
 
 <div class="topbar">
   <a class="back" href="index.html">&larr; Map</a>
-  <div class="brand">Moku<span style="color:var(--gold)">.</span> <span>Market Pulse</span></div>
+  <div class="brand">Moku<span style="color:var(--gold)">.</span> <span>Market Intelligence</span></div>
+  <div id="all-islands" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0 6px"></div>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    try {
+      if (typeof MARKET === "undefined" || !MARKET.statewide) return;
+      const N = { kauai: "Kaua\u02BBi", oahu: "O\u02BBahu", maui: "Maui", hawaii: "Hawai\u02BBi" };
+      const el = document.getElementById("all-islands");
+      el.innerHTML = Object.entries(MARKET.statewide.counties).map(([k, v]) =>
+        `<div style="border:1px solid rgba(23,21,15,0.12);border-radius:12px;padding:12px 14px;background:#fff">
+          <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#8C867A">${N[k] || k}</div>
+          <div style="font-family:Fraunces,Georgia,serif;font-size:22px;color:#17150F;margin-top:2px">${v.active.toLocaleString()}</div>
+          <div style="font-size:11.5px;color:#57534A">active &middot; median list ${v.median_list >= 1e6 ? "$" + (v.median_list/1e6).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(v.median_list/1e3) + "K"}</div>
+        </div>`).join("") +
+        `<div style="grid-column:1/-1;font-size:11px;color:#8C867A">${MARKET.statewide.active_total.toLocaleString()} active statewide &middot; Realtor.com via the St. Louis Fed &middot; ${MARKET.statewide.asof}</div>`;
+    } catch (e) {}
+  });
+  </script>
   <button class="share" id="share-page">Share &#8599;</button>
 </div>
 
@@ -145,7 +162,7 @@
   </section>
 
   <section>
-    <div class="kicker"><span class="tag">The high end</span><h2>Luxury &amp; Kukui&#699;ula</h2></div>
+    <div class="kicker"><span class="tag">The high end</span><h2>The luxury market</h2></div>
     <div class="duo">
       <div class="card">
         <div class="n teal">83</div>
@@ -154,7 +171,7 @@
       </div>
       <div class="card">
         <div class="n gold">$156.9M</div>
-        <div class="l">Kukui&#699;ula volume &middot; 2025</div>
+        <div class="l">Top luxury community volume &middot; 2025</div>
         <p>39 sales — 17 homes ($118.8M), 21 land parcels ($33.3M), 1 condo. One community &asymp; 13% of the island&#8217;s most recent published full-year dollar volume (2024: &asymp; $1.18B).</p>
       </div>
     </div>
@@ -176,7 +193,7 @@
   </section>
 
   <footer>
-    <p><strong>Sources.</strong> 2024 full-year sales &amp; volume: Ahearn/Karlovsky Kauai Sales Recap 2024 (MLS-based). Medians &amp; 2025 single-family YTD: Hawaii Life market reports. 2025 luxury: Hawaii Life luxury recap. 2026 H1 &amp; Q2: Team Mira / Corcoran Pacific market statistics. Active inventory: Realtor.com research data via FRED (series ACTLISCOU15007), refreshed by Moku&#8217;s update script each time it runs (on demand during this demo; scheduled hourly in production). Kukui&#699;ula: official 2025 Year in Review.</p>
+    <p><strong>Sources.</strong> 2024 full-year sales &amp; volume: Ahearn/Karlovsky Kauai Sales Recap 2024 (MLS-based). Medians &amp; 2025 single-family YTD: Hawaii Life market reports. 2025 luxury: Hawaii Life luxury recap. 2026 H1 &amp; Q2: Team Mira / Corcoran Pacific market statistics. Active inventory: Realtor.com research data via FRED (series ACTLISCOU15007), refreshed by Moku&#8217;s update script each time it runs (on demand during this demo; scheduled hourly in production). Luxury community volume: the community&#8217;s official 2025 Year in Review.</p>
     <p><strong>Honesty notes.</strong> Figures never published by the source are shown as &#8220;—&#8221; rather than estimated. Yearly figures come from Hawaii Information Service data as published in Hawaii Realtors statewide statistics and MLS-based recaps; 2026 H1 figures were published Aug 7, 2026. Nothing on this page is estimated or invented; if it isn&#8217;t sourced, it isn&#8217;t shown.</p>
     <p>Moku &middot; built on Kauai by <strong>Moku</strong>, a local building it in the open &middot; no tracking, no analytics cookies, no ads &middot; questions: micahskylab@gmail.com</p>
 <p>Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="hawaii-tsunami-zones.html" style="color:var(--accent)">tsunami zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a> &middot; <a href="kauai-assessed-value.html" style="color:var(--accent)">assessed values</a></p>
@@ -254,9 +271,9 @@ holder.insertAdjacentHTML("beforeend", `<div class="footnote">${notes}</div>`);
 
 // share
 document.getElementById("share-page").onclick = async () => {
-  const text = `Moku Market Pulse — ${last.count} active listings on Kauai (${monthName(last.month)})`;
+  const text = `Moku Market Intelligence — ${last.count} active listings on Kauai (${monthName(last.month)})`;
   const url = location.origin + location.pathname;
-  if (navigator.share) { try { await navigator.share({ title: "Moku Market Pulse", text, url }); return; } catch (e) { if (e.name === "AbortError") return; } }
+  if (navigator.share) { try { await navigator.share({ title: "Moku Market Intelligence", text, url }); return; } catch (e) { if (e.name === "AbortError") return; } }
   try { await navigator.clipboard.writeText(text + " " + url); alert("Copied — paste it into a text 📲"); } catch (e) {}
 };
 </script>
