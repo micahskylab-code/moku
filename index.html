@@ -742,10 +742,20 @@
     #draw-panel { top: auto; bottom: calc(150px + env(safe-area-inset-bottom)); right: 12px; left: 12px; width: auto; }
   }
 
+  /* ============ CINEMATIC HERO ============ */
+  #hero-line {
+    position: absolute; left: 56px; bottom: 72px; z-index: 44; max-width: 460px;
+    animation: heroUp 0.9s cubic-bezier(.32,.72,0,1) both;
+  }
+  @keyframes heroUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .hl-kick { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; opacity: 0.9; text-shadow: 0 1px 12px rgba(0,0,0,0.6); }
+  .hl-big { font-family: var(--serif); font-size: clamp(40px, 5vw, 62px); font-weight: 400; line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 12px 0 14px; text-shadow: 0 2px 30px rgba(0,0,0,0.55); }
+  .hl-sub { font-family: var(--sans); font-size: 15px; font-weight: 500; line-height: 1.55; color: #fff; opacity: 0.92; max-width: 380px; text-shadow: 0 1px 14px rgba(0,0,0,0.6); }
+  @media (max-width: 760px) { #hero-line { display: none; } }
   /* ============ THE STANDING LEDGER ============ */
   #ledger {
     position: absolute; top: 0; right: 0; height: 100vh; width: 440px; z-index: 46;
-    background: #FBF9F5; border-left: 1px solid #9A7B3F;
+    background: rgba(251,249,245,0.97); border-left: 1px solid #9A7B3F; box-shadow: -30px 0 60px rgba(0,0,0,0.18);
     padding: 26px 30px 20px; display: flex; flex-direction: column; gap: 18px;
     overflow-y: auto; overscroll-behavior: contain;
     animation: lgIn 0.55s cubic-bezier(.32,.72,0,1) both;
@@ -786,7 +796,7 @@
   body.has-ledger header, body.has-ledger #discover, body.has-ledger #mode-toggle { display: none !important; }
   body.has-ledger .layerbar { left: 26px; right: auto; transform: none; bottom: 20px; }
   body.has-ledger #draw-btn { right: 466px; top: 20px; }
-  @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(0.94) brightness(0.99) contrast(1.02); } }
+  @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(1.14) brightness(1.05) contrast(1.04); } }
   @media (max-width: 760px) {
     #ledger { top: 42vh; right: 0; left: 0; bottom: 0; width: auto; height: auto; border-left: none; border-top: 1px solid #9A7B3F; padding: 20px 18px; }
     body.has-ledger #map { position: absolute; top: 0; left: 0; right: 0; height: 42vh; bottom: auto; }
@@ -896,6 +906,11 @@
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div id="hero-line">
+  <div class="hl-kick">HAWAI&#699;I &middot; EVERY PARCEL, EVERY ISLAND</div>
+  <div class="hl-big">The islands,<br>by the numbers.</div>
+  <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
+</div>
 <div id="ledger">
   <div class="lg-mast">
     <div class="lg-wm">Moku<span class="lg-dot-p">.</span> <span class="live-dot"></span></div>
@@ -958,7 +973,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-58</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-59</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
