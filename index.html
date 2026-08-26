@@ -1013,7 +1013,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-70</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-71</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1602,6 +1602,7 @@ async function exploreParcel(lng, lat) {
   const token = ++exploreToken;
   noteRecent(lng, lat);
   setTimeout(() => loadNearby(lng, lat), 60);
+  setTimeout(composeRead, 1600);
   setTimeout(() => loadLandHistory(lng, lat), 80);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
@@ -2069,6 +2070,39 @@ async function enrichCounty(county, token, tmkRaw) {
 }
 
 let intelBag = {};
+function composeRead() {
+  const rt = document.getElementById("read-text"), sec = document.getElementById("read-sec");
+  if (!rt || !sec || !lastRecord) return;
+  // Only speak when there's a real record — never for empty/ocean clicks
+  if (!(lastRecord.assessed > 0) && !lastRecord.acres) return;
+  let town = (document.getElementById("rec-addr") || {}).textContent || "";
+  if (/^-?\d+\.?\d*,?\s*-?\d*\.?\d*$/.test(town.trim())) town = ""; // it's raw coordinates, not a place
+  const acres = lastRecord.acres;
+  const assessed = lastRecord.assessed;
+  const zoneEl = document.getElementById("fact-zoning");
+  const zone = zoneEl ? (zoneEl.textContent || "").replace(/see the .*|What can be built.*/is, "").trim() : "";
+  const ahu = (document.querySelector("#land-list .ld-v") || {}).textContent || "";
+  const flags = Object.values(intelBag || {});
+  const risks = flags.filter(f => f.kind === "flag");
+  const parts = [];
+  // size + type
+  let lead = "This is a";
+  if (acres) lead += ` ${acres >= 1 ? acres.toFixed(acres >= 100 ? 0 : 1) + "-acre" : Math.round(acres*43560).toLocaleString() + "-sq-ft"}`;
+  if (/residential/i.test(zone)) lead += " residential";
+  else if (/agricultur/i.test(zone)) lead += " agricultural";
+  else if (/commercial/i.test(zone)) lead += " commercial";
+  lead += " parcel" + (town ? " in " + town.split(",")[0].trim() : "") + ".";
+  parts.push(lead);
+  // value
+  if (assessed > 10000) parts.push(`The county assesses it at <b>$${Number(assessed).toLocaleString()}</b> for TY2026 (assessed values usually run below what buyers pay).`);
+  // risk read
+  if (risks.length) parts.push("Worth knowing: " + risks.map(r => r.html.replace(/<[^>]+>/g, "")).join("; ") + ".");
+  else parts.push("It sits outside the mapped FEMA flood and tsunami zones.");
+  // history
+  if (ahu) parts.push(`Historically it lies in the ahupua\u02BBa of <b>${ahu}</b> \u2014 a traditional mountain-to-sea land division.`);
+  rt.innerHTML = parts.join(" ") + `<div class="subnote" style="margin-top:8px">Summarized from the official records on this card \u2014 informational, not advice.</div>`;
+  sec.style.display = "";
+}
 function noteIntel(key, kind, html) {
   intelBag[key] = { kind, html };
   const list = document.getElementById("intel-list");
@@ -2108,6 +2142,10 @@ function openRecordCard(lng, lat) {
         <div class="rule-h"></div>
         <div class="micro" id="hero-val-label" style="display:none">COUNTY ASSESSED</div>
         <div class="hero-val" id="hero-val"></div>
+    </div>
+    <div class="sec" id="read-sec" style="display:none">
+      <div class="h">Moku&#8217;s read <span style="font-weight:400;color:var(--ink-3);font-size:10px;letter-spacing:0.1em">&middot; PLAIN ENGLISH</span></div>
+      <div id="read-text" style="font-size:14.5px;line-height:1.55;color:var(--ink)"></div>
     </div>
     <div class="sec" id="intel-sec" style="display:none">
       <div class="h">Parcel intel</div>
