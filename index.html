@@ -546,6 +546,34 @@
   }
 
   /* ============ GALLERY WHITE — dark serif on white paper; the map is the art ============ */
+  /* THE MASTHEAD: a real paper bar, not floating chrome */
+  body { background: #FBF9F5; }
+  header {
+    position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 60px; padding: 0 20px !important; gap: 16px !important;
+    display: flex; align-items: center;
+    background: #FBF9F5 !important;
+    border-bottom: 1px solid rgba(23,21,15,0.14) !important;
+    z-index: 60 !important;
+  }
+  header .logo { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+  header .hdr-cluster .quiet { background: none !important; border: none !important; box-shadow: none !important; color: #57534A !important; font-weight: 500 !important; }
+  header .hdr-cluster .quiet:hover { color: #17150F !important; background: none !important; }
+  header .docked-wrap { box-shadow: none !important; background: #FFFFFF !important; border: 1px solid rgba(23,21,15,0.14) !important; }
+  header .docked-wrap:focus-within { border-color: #9C7A3C !important; }
+
+  /* THE MAT: the living map, mounted like a print in warm paper */
+  @media (min-width: 761px) {
+    #map {
+      top: 60px !important; left: 14px !important; right: 14px !important; bottom: 14px !important;
+      inset: 60px 14px 14px 14px;
+      border-radius: 18px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(23,21,15,0.13);
+      outline: 1px solid rgba(23,21,15,0.10); outline-offset: -1px;
+    }
+    .maplibregl-canvas { filter: saturate(1.12) brightness(1.03); }
+  }
+
   /* Rule: accent (brass) means live data, never decoration. Only data may animate. */
   :root {
     --paper: #FDFCF9;
@@ -640,6 +668,25 @@
   .modal .x { background: rgba(22,24,26,0.07) !important; color: var(--g-ink) !important; }
   .modal a { color: var(--brass) !important; }
 
+  .passport .brass-rule { width: 48px; height: 2px; background: #9C7A3C; margin-bottom: 14px; }
+  .passport .micro {
+    font-family: var(--sans); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: #9C7A3C; margin-bottom: 8px;
+  }
+  .passport .addr {
+    font-family: var(--serif) !important; font-size: 26px !important; font-weight: 500 !important;
+    line-height: 1.15 !important; letter-spacing: -0.01em; color: #17150F !important;
+    margin-bottom: 6px; text-wrap: balance;
+  }
+  .passport .tmkline {
+    font-family: var(--sans) !important; font-size: 12px !important; font-weight: 500 !important;
+    font-variant-numeric: tabular-nums; color: #8C867A !important; cursor: pointer;
+    letter-spacing: 0.02em !important; text-transform: none !important;
+  }
+  .passport .tmkline:hover { color: #9C7A3C !important; }
+  .passport .rule-h { height: 1px; background: rgba(23,21,15,0.14); margin: 16px 0 12px; }
+  .passport .hero { border-bottom: 1px solid rgba(23,21,15,0.14) !important; }
+  .passport .hero-val { font-size: clamp(44px, 9vw, 56px) !important; font-weight: 400 !important; margin-top: 2px !important; }
   #buildtag { color: rgba(255,255,255,0.5) !important; }
   @media (max-width: 760px) { .passport { background: var(--paper) !important; } }
 </style>
@@ -694,7 +741,7 @@
   <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-21</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-22</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -884,7 +931,7 @@ function applyCustomLayers() {
     }));
     map.addSource("town-labels", { type: "geojson", data: { type: "FeatureCollection", features: feats } });
     map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 7.6, maxzoom: 10.2,
-      layout: { "text-field": ["get", "name"], "text-size": 11.5, "text-font": ["Noto Sans Regular"], "text-padding": 6 },
+      layout: { "text-field": ["upcase", ["get", "name"]], "text-size": 11, "text-font": ["Noto Sans Regular"], "text-letter-spacing": 0.22, "text-padding": 6 },
       paint: { "text-color": "#FFFFFF", "text-halo-color": "rgba(12,26,36,0.6)", "text-halo-width": 1.2, "text-halo-blur": 0.6 } });
   }
   if (!map.getSource("parcel-lines")) {
@@ -1116,7 +1163,12 @@ async function exploreParcel(lng, lat) {
   } else {
     tapMarker.setLngLat([lng, lat]).addTo(map);
   }
-  try { localStorage.setItem("moku_isle", islandKeyFor(lng, lat)); } catch (e) {}
+  try {
+    const isleKey = islandKeyFor(lng, lat);
+    localStorage.setItem("moku_isle", isleKey);
+    const micro = document.getElementById("rec-micro");
+    if (micro) micro.textContent = "PARCEL RECORD · " + ({kauai:"KAUAʻI",oahu:"OʻAHU",maui:"MAUI COUNTY",hawaii:"HAWAIʻI ISLAND"})[isleKey];
+  } catch (e) {}
   const targetZoom = Math.max(map.getZoom(), 15.6);
   if (bootCam) {
     jumpWithOffset(lng, lat, targetZoom, SMALL ? 46 : 55);
@@ -1279,7 +1331,14 @@ function showLayer(key) {
   const chip = document.querySelector('.lchip[data-lk="' + key + '"]');
   if (!(typeof layerState !== "undefined" && layerState[key] && layerState[key].on)) toggleLayer(key, chip);
 }
+function copyTmk() {
+  const t = lastRecord && lastRecord.tmk ? fmtTmk(lastRecord.tmk) : "";
+  if (!t) return;
+  try { navigator.clipboard.writeText(t); toast("TMK copied"); } catch (e) {}
+}
 function setHeroVal(n) {
+  const lbl = document.getElementById("hero-val-label");
+  if (lbl && n > 0) lbl.style.display = "";
   const el = document.getElementById("hero-val");
   if (!el || n == null || !(n > 0)) return;
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -1395,8 +1454,12 @@ function openRecordCard(lng, lat) {
       <div class="note"><span class="live-dot" style="display:inline-block;margin-right:5px"></span>County record &middot; live</div>
       <button class="x" onclick="closeRecord()" aria-label="Close record">&#10005;</button>
       <div class="hp">
-        <div class="tmkline" id="rec-tmk">Parcel record</div>
+        <div class="brass-rule"></div>
+        <div class="micro" id="rec-micro">PARCEL RECORD &middot; HAWAI&#699;I</div>
         <div class="addr" id="rec-addr">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+        <div class="tmkline" id="rec-tmk" title="Tap to copy TMK" onclick="copyTmk()">Parcel record</div>
+        <div class="rule-h"></div>
+        <div class="micro" id="hero-val-label" style="display:none">COUNTY ASSESSED</div>
         <div class="hero-val" id="hero-val"></div>
       </div>
     </div>
