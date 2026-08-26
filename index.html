@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Moku — Look Up Any Parcel in Hawaii</title>
 <meta name="description" content="Every parcel in Hawaii. One search. Live county records — TMK, acreage, zoning, flood zone — on a cinematic map.">
 <meta name="theme-color" content="#EAF0F3">
@@ -679,10 +679,32 @@
   .dis-t { font-size: 11.5px; color: #57534A; margin-top: 2px; line-height: 1.45; }
   .dis-a { font-size: 11px; font-weight: 600; color: #9C7A3C; margin-top: 6px; }
   @media (max-width: 760px) {
-    #discover { top: auto; bottom: 76px; left: 10px; right: 10px; width: auto; flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 8px; }
+    #discover {
+      top: auto; bottom: calc(60px + env(safe-area-inset-bottom)); left: 0; right: 0; width: auto;
+      flex-direction: row; gap: 8px; overflow-x: auto; scrollbar-width: none;
+      -webkit-overflow-scrolling: touch; padding: 0 12px; scroll-snap-type: x proximity;
+      -webkit-mask-image: linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent);
+      mask-image: linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent);
+    }
     #discover::-webkit-scrollbar { display: none; }
-    .dis-card { flex: 0 0 200px; }
     .dis-head { display: none; }
+    .dis-card {
+      flex: 0 0 auto; scroll-snap-align: start; min-height: 38px; padding: 0 15px; border-radius: 999px;
+      display: flex; align-items: center; box-shadow: 0 2px 10px rgba(23,21,15,0.14);
+    }
+    .dis-card > * { display: none; }
+    .dis-card::before { content: attr(data-chip); font: 600 13px/1 var(--sans); color: #17150F; white-space: nowrap; }
+    .layerbar { bottom: calc(12px + env(safe-area-inset-bottom)); }
+    #legend { bottom: calc(108px + env(safe-area-inset-bottom)); }
+    header { top: calc(6px + env(safe-area-inset-top)); }
+    #dockbox { min-height: 46px; font-size: 16px; padding: 12px 16px 12px 40px; border-radius: 14px; }
+    .docked-wrap .mag { left: 16px; font-size: 16px; }
+    .passport { padding-bottom: env(safe-area-inset-bottom); }
+    .passport::before {
+      content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 38px; height: 5px; border-radius: 3px; background: rgba(22,24,26,0.20); z-index: 10; pointer-events: none;
+    }
+    .cta-dock { padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important; }
   }
 
   /* ============ APPLE MOTION — everything springs, settles, assembles ============ */
@@ -787,27 +809,27 @@
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
 <div id="discover">
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
-  <div class="dis-card" data-go="latest">
+  <div class="dis-card" data-go="latest" data-chip="Latest closings">
     <div class="dis-big">Latest closings</div>
     <div class="dis-t">the newest recorded sales, with photos, straight off the county books</div>
     <div class="dis-a">Browse them &rarr;</div>
   </div>
-  <div class="dis-card" data-go="sold">
+  <div class="dis-card" data-go="sold" data-chip="1,500 solds">
     <div class="dis-big" id="dis-sold-n">1,500</div>
     <div class="dis-t">real recorded sale prices, straight from county deed records</div>
     <div class="dis-a">See every sale &rarr;</div>
   </div>
-  <div class="dis-card" data-go="tvr">
+  <div class="dis-card" data-go="tvr" data-chip="1,354 rentals">
     <div class="dis-big">1,354</div>
     <div class="dis-t">licensed vacation rentals, from the official county registries</div>
     <div class="dis-a">Check any street &rarr;</div>
   </div>
-  <div class="dis-card" data-go="flood">
+  <div class="dis-card" data-go="flood" data-chip="Flood &amp; tsunami">
     <div class="dis-big">Flood &amp; tsunami</div>
     <div class="dis-t">every parcel&#8217;s risk zones, statewide</div>
     <div class="dis-a">Check your home &rarr;</div>
   </div>
-  <div class="dis-card" data-go="market">
+  <div class="dis-card" data-go="market" data-chip="Market">
     <div class="dis-big" id="dis-mkt">6,711 active &middot; statewide</div>
     <div class="dis-t">Market Intelligence &middot; live from published data, every island</div>
     <div class="dis-a">Market Intelligence &rarr;</div>
@@ -819,7 +841,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-53</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-54</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -2271,11 +2293,14 @@ setTimeout(() => begin(), 6000);
     const firstVisit = true; // owner's law: every visit, every device, opens on ALL of Hawaii
     // First visit: the whole state IS the hero — every island in frame, Kaua\u02BBi to Hawai\u02BBi
     let h0 = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
-    if (firstVisit) {
-      h0 = { c: [-157.35, 20.6], z: SMALL ? 5.2 : 6.0 };
+    if (firstVisit && SMALL) {
+      // Phone: a full-bleed island beats five specks in ocean — Kauai fills the frame
+      h0 = { c: [-159.52, 22.03], z: 9.1 };
+    } else if (firstVisit) {
+      h0 = { c: [-157.35, 20.6], z: 6.0 };
       try {
         const cam = map.cameraForBounds([[-159.95, 18.80], [-154.70, 22.40]],
-          { padding: SMALL ? { top: 70, left: 24, right: 24, bottom: 150 } : { top: 80, left: 265, right: 50, bottom: 110 } });
+          { padding: { top: 80, left: 265, right: 50, bottom: 110 } });
         if (cam) h0 = { c: cam.center, z: cam.zoom };
       } catch (e) {}
     }
@@ -2341,7 +2366,7 @@ function armReady() {
   map.on("sourcedata", h);
 }
 map.on("style.load", armReady);
-setTimeout(markReady, 3000);
+setTimeout(markReady, 8000);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
