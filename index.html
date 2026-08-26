@@ -787,6 +787,11 @@
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
 <div id="discover">
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
+  <div class="dis-card" data-go="latest">
+    <div class="dis-big">Latest closings</div>
+    <div class="dis-t">the newest recorded sales, with photos, straight off the county books</div>
+    <div class="dis-a">Browse them &rarr;</div>
+  </div>
   <div class="dis-card" data-go="sold">
     <div class="dis-big" id="dis-sold-n">1,500</div>
     <div class="dis-t">real recorded sale prices, straight from county deed records</div>
@@ -814,7 +819,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-48</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-49</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -836,6 +841,13 @@
   </div>
 </div>
 
+<div class="modal-bg" id="latest-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="latest-title" style="max-height:80vh;overflow-y:auto">
+    <button class="x" onclick="document.getElementById('latest-modal').classList.remove('open')" aria-label="Close">&#10005;</button>
+    <div class="mtitle" id="latest-title">Latest closings</div>
+    <div id="latest-list"></div>
+  </div>
+</div>
 <div class="modal-bg" id="me-modal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="me-title">
     <button class="x" onclick="closeMe()" aria-label="Close">&#10005;</button>
@@ -878,7 +890,7 @@
 </div>
 <script>window.__styleP = fetch("https://tiles.openfreemap.org/styles/positron").then(r => r.json()).catch(() => null);</script>
 <script src="vendor/maplibre-gl.js"></script>
-<script src="market-data.js"></script>
+<script src="market-data.js?v=49"></script>
 <script>
 // Diagnostic trap: nothing fails silently, ever.
 function showDiag(msg) {
@@ -2393,6 +2405,41 @@ function openLead(kind, prefill) {
   document.getElementById("lead-modal").classList.add("open");
   setTimeout(() => document.getElementById("lead-email").focus(), 100);
 }
+async function openLatest() {
+  const bg = document.getElementById("latest-modal");
+  bg.classList.add("open");
+  const list = document.getElementById("latest-list");
+  if (!list.dataset.loaded) {
+    list.innerHTML = '<div style="padding:20px;color:var(--ink-3);font-size:13px">Pulling the newest recordings&hellip;</div>';
+    try {
+      const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E50000&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&orderByFields=GIS_SALES_2YEAR_SALEDT%20DESC&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=14", 12000);
+      const gj = await r.json();
+      if (!gj.features || !gj.features.length) throw new Error("empty");
+      list.innerHTML = gj.features.map(f => {
+        const [x, y] = f.geometry.coordinates;
+        const p = f.properties.GIS_SALES_2YEAR_PRICE, dt = f.properties.GIS_SALES_2YEAR_SALEDT;
+        const dd = new Date(dt + "T12:00:00");
+        const when = isNaN(dd) ? "" : dd.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        const d2 = 0.0011;
+        const img = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=" +
+          (x - d2 * 1.5) + "," + (y - d2) + "," + (x + d2 * 1.5) + "," + (y + d2) + "&bboxSR=4326&imageSR=4326&size=120,80&format=jpg&f=image";
+        return `<div onclick="document.getElementById('latest-modal').classList.remove('open');exploreParcel(${x.toFixed(6)},${y.toFixed(6)})" style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(23,21,15,0.07);cursor:pointer">
+          <img src="${img}" alt="" loading="lazy" style="width:86px;height:58px;object-fit:cover;border-radius:8px;background:#22303a;flex:none">
+          <div style="flex:1;min-width:0">
+            <div style="font-family:var(--serif);font-size:18px;color:var(--ink)">${fmtPrice(p)}</div>
+            <div style="font-size:12px;color:var(--ink-3)">recorded ${when} &middot; Maui County</div>
+          </div>
+          <span style="color:#9C7A3C;font-size:13px;flex:none">open &rarr;</span>
+        </div>`;
+      }).join("") +
+      '<div style="font-size:11px;color:var(--ink-3);padding:12px 0 2px;line-height:1.5">Official county recordings, newest first. Escrows and active listings are MLS data &mdash; they join the day licensing allows. No other county publishes closings yet.</div>';
+      list.dataset.loaded = "1";
+    } catch (e) {
+      list.innerHTML = '<div style="padding:20px;color:var(--ink-3);font-size:13px">Couldn&#8217;t reach the county server &mdash; tap to retry.</div>';
+      list.onclick = () => { list.dataset.loaded = ""; list.onclick = null; openLatest(); };
+    }
+  }
+}
 function closeLead() { document.getElementById("lead-modal").classList.remove("open"); }
 function getProfile() { try { return JSON.parse(localStorage.getItem("moku_profile") || "{}"); } catch (e) { return {}; } }
 function saveProfile(name, email) {
@@ -2420,6 +2467,7 @@ function openAbout() { document.getElementById("about-modal").classList.add("ope
 function closeAbout() { document.getElementById("about-modal").classList.remove("open"); }
 document.getElementById("about-modal").addEventListener("click", e => { if (e.target.id === "about-modal") closeAbout(); });
 document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
+document.getElementById("latest-modal").addEventListener("click", e => { if (e.target.id === "latest-modal") document.getElementById("latest-modal").classList.remove("open"); });
 function submitLead() {
   const c = LEAD_COPY[leadKind];
   const email = document.getElementById("lead-email").value.trim();
@@ -2761,6 +2809,7 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer
     c.onclick = () => {
       const go = c.dataset.go;
       if (go === "market") { location.href = "market.html"; return; }
+      if (go === "latest") { openLatest(); return; }
       const chip = document.querySelector('.lchip[data-lk="' + go + '"]');
       if (!(layerState[go] && layerState[go].on)) toggleLayer(go, chip).then(() => {
         if (LAYER_BOUNDS[go]) map.fitBounds(LAYER_BOUNDS[go], { padding: 70 });
