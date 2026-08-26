@@ -1017,7 +1017,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-72</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-73</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1851,7 +1851,7 @@ function toggleSave() {
   const i = saves.findIndex(p => Math.abs(p.lng - lastRecord.lng) < 1e-6 && Math.abs(p.lat - lastRecord.lat) < 1e-6);
   if (i >= 0) { saves.splice(i, 1); toast("Removed from your saved parcels"); }
   else {
-    saves.push({ lng: lastRecord.lng, lat: lastRecord.lat, tmk: lastRecord.tmk || "" });
+    saves.push({ lng: lastRecord.lng, lat: lastRecord.lat, tmk: lastRecord.tmk || "", assessed: Number(lastRecord.assessed) || 0, addr: ((document.getElementById("rec-addr")||{}).textContent || "").replace(/^-?\d.*/, "").trim() });
     toast("Saved — it stays marked in gold on <b>your</b> map, every visit");
   }
   try { localStorage.setItem("moku_saved", JSON.stringify(saves.slice(0, 200))); } catch (e) {}
@@ -3026,12 +3026,25 @@ function openMe() {
   const saves = getSaves();
   let recent = [];
   try { recent = JSON.parse(localStorage.getItem("moku_recent") || "[]"); } catch (e) {}
-  document.getElementById("me-parcels").innerHTML =
-    `<div class="micro" style="margin:14px 0 4px">&#9734; SAVED &middot; ${saves.length}</div>` +
-      rowsFor(saves.slice(0, 8), "Nothing saved yet — tap Save on any parcel to watch it.") +
+  const total = saves.reduce((n, v) => n + (Number(v.assessed) || 0), 0);
+  const withVal = saves.filter(v => Number(v.assessed) > 0).length;
+  const port = saves.length
+    ? `<div style="background:#F3EFE7;border-radius:14px;padding:16px 18px;margin:14px 0 8px">
+         <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9C7A3C">Your portfolio &middot; county-assessed</div>
+         <div style="font-family:var(--serif);font-size:34px;color:var(--ink);letter-spacing:-0.02em;margin-top:2px">$${total.toLocaleString()}</div>
+         <div style="font-size:12px;color:var(--ink-2)">${saves.length} parcel${saves.length>1?"s":""} watched${withVal<saves.length?` \u00b7 ${saves.length-withVal} pending value`:""} \u00b7 total of the county\u2019s assessed values, not market price</div>
+       </div>`
+    : "";
+  document.getElementById("me-parcels").innerHTML = port +
+    `<div class="micro" style="margin:14px 0 4px">&#9734; HOLDINGS &amp; WATCHLIST &middot; ${saves.length}</div>` +
+      (saves.length ? saves.slice(0, 12).map(v =>
+        `<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(23,21,15,0.07);cursor:pointer" onclick="closeMe();exploreParcel(${v.lng},${v.lat})">
+           <span style="font-size:13px;color:var(--ink)">${v.addr || (v.tmk ? "TMK " + v.tmk : v.lat.toFixed(4)+", "+v.lng.toFixed(4))}</span>
+           <span style="font-family:var(--serif);font-size:14px;color:${Number(v.assessed)>0?"#9C7A3C":"var(--ink-3)"};white-space:nowrap">${Number(v.assessed)>0?"$"+Number(v.assessed).toLocaleString():"\u2014"}</span>
+         </div>`).join("") : `<div style="font-size:12.5px;color:var(--ink-3);padding:4px 0">Tap &#9734; Save on any parcel to add it to your portfolio.</div>`) +
     `<div class="micro" style="margin:16px 0 4px">RECENTLY VIEWED</div>` +
       rowsFor(recent.slice(0, 6), "Parcels you open show up here.") +
-    (saves.length ? `<div style="font-size:12px;color:var(--ink-3);margin-top:14px;padding-top:10px;border-top:1px solid rgba(23,21,15,0.07)">Moku watches your saved parcels\u2019 county records and can email you when they change. Add your email above to turn that on.</div>` : "");
+    (saves.length ? `<div style="font-size:12px;color:var(--ink-3);margin-top:14px;padding-top:10px;border-top:1px solid rgba(23,21,15,0.07)">Moku watches your parcels\u2019 county records and can email you when they change. Add your email above to turn that on.</div>` : "");
   document.getElementById("me-modal").classList.add("open");
 }
 function closeMe() { document.getElementById("me-modal").classList.remove("open"); }
