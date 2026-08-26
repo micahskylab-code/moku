@@ -311,7 +311,7 @@
   #legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
   #legend .ramp { width: 110px; height: 7px; border-radius: 4px; flex: none;
     background: linear-gradient(90deg, #F3E3B8, #E8C87E, #C99A45, #8A5A22); }
-  @media (max-width: 700px) { #legend { bottom: 64px; } }
+  @media (max-width: 700px) { body.has-ledger.sheet-collapsed #legend { bottom: 192px; } body.has-ledger:not(.sheet-collapsed) #legend { display: none !important; } }
 
   /* ---- Layer bar: the data ON the map ---- */
   .layerbar {
@@ -832,8 +832,12 @@
   }
   /* desktop: lift controls above the bottom sheet too */
   @media (min-width: 761px) {
-    body.has-ledger .layerbar { bottom: calc(24px); }
-    body.sheet-collapsed .layerbar { bottom: 24px; }
+    body.has-ledger.sheet-collapsed .layerbar { bottom: 140px; }
+    body.has-ledger.sheet-collapsed #legend { bottom: 190px; }
+    body.has-ledger.sheet-collapsed #draw-btn { top: auto; bottom: 190px; right: 24px; }
+    body.has-ledger:not(.sheet-collapsed) .layerbar,
+    body.has-ledger:not(.sheet-collapsed) #legend,
+    body.has-ledger:not(.sheet-collapsed) #draw-btn { opacity: 0; pointer-events: none; }
   }
   /* ============ APPLE MOTION — everything springs, settles, assembles ============ */
   @media (prefers-reduced-motion: no-preference) {
@@ -1013,7 +1017,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-71</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-72</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2638,8 +2642,8 @@ setTimeout(() => begin(), 6000);
       map.once("moveend", () => {
         setTimeout(armTerrain, 500);
         if (window.showDiscover) setTimeout(window.showDiscover, 600);
-        // Market layers may welcome; hazards are opt-in only — never open on a disaster map
-        const autoLayer = firstVisit ? null : ({ kauai: "tvr", maui: "sold", oahu: "tvr" })[isle] || null;
+        // The map is NEVER empty: recorded sales (real homes + prices) light up on load
+        const autoLayer = "sold";
         if (autoLayer) (window.requestIdleCallback || (f => setTimeout(f, 2500)))(() => {
           if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
             toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
