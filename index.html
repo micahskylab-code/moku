@@ -511,7 +511,7 @@
     .passport.open { transform: none; }
     .passport::before { content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.8); z-index: 6; pointer-events: none; }
     #toast { bottom: auto; top: 108px; }
-    #hint { bottom: 60px; font-size: 12px; padding: 10px 15px; }
+    #hint { top: calc(66px + env(safe-area-inset-top)); bottom: auto; font-size: 12px; padding: 10px 15px; }
     .attr-note { display: none; }
     .logo, .hdr-cluster, #dockbox, #hint, .passport, .modal, .modal-bg, .veilcard {
       backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -1092,7 +1092,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-81</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-82</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
