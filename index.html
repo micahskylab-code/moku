@@ -859,7 +859,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-55</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-56</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1383,6 +1383,40 @@ function structureRead(land, bldg) {
   else read = `County value splits <b>${pct}% building / ${100 - pct}% land</b> \u2014 a balanced improved property.`;
   noteIntel("structure", "plus", read + `<div class="subnote">Land $${land.toLocaleString()} &middot; building $${bldg.toLocaleString()}, per the county roll. A negotiation reference, not an appraisal.</div>`);
 }
+async function loadNearby(lng, lat) {
+  const myToken = exploreToken;
+  try {
+    const r = await fetchTimeout(`https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}%7C${lng}&gsradius=8000&gslimit=6&format=json&origin=*`, 9000);
+    const j = await r.json();
+    if (myToken !== exploreToken) return;
+    const places = (j.query && j.query.geosearch) || [];
+    if (!places.length) return;
+    const sec = document.getElementById("nearby-sec"), list = document.getElementById("nearby-list");
+    if (!sec || !list) return;
+    sec.style.display = "";
+    list.innerHTML = places.map(p => {
+      const mi = (p.dist / 1609).toFixed(1);
+      const url = "https://en.wikipedia.org/wiki/" + encodeURIComponent(p.title.replace(/ /g, "_"));
+      return `<div class="nb-row" data-title="${encodeURIComponent(p.title)}" style="padding:8px 0;border-bottom:1px solid rgba(23,21,15,0.06)">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+          <a href="${url}" target="_blank" rel="noopener" style="font-weight:600;font-size:13.5px;color:var(--ink);text-decoration:none">${esc(p.title)}</a>
+          <span style="font-size:11px;color:var(--ink-3);flex:none">${mi} mi</span>
+        </div>
+        <div class="nb-x" style="font-size:12px;color:var(--ink-2);line-height:1.5;margin-top:3px">&hellip;</div>
+      </div>`;
+    }).join("") + `<div class="subnote">Encyclopedic context from Wikipedia (CC BY-SA) &middot; beaches, landmarks &amp; history near this parcel.</div>`;
+    // pull a one-line summary for each, in parallel, best-effort
+    places.forEach(async p => {
+      try {
+        const sr = await fetchTimeout("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(p.title.replace(/ /g, "_")), 8000);
+        const sj = await sr.json();
+        if (myToken !== exploreToken) return;
+        const row = list.querySelector(`.nb-row[data-title="${encodeURIComponent(p.title)}"] .nb-x`);
+        if (row && sj.extract) row.textContent = sj.extract.length > 160 ? sj.extract.slice(0, 158) + "\u2026" : sj.extract;
+      } catch (e) {}
+    });
+  } catch (e) {}
+}
 function noteRecent(lng, lat, tmk, addr) {
   try {
     let r = JSON.parse(localStorage.getItem("moku_recent") || "[]");
@@ -1395,6 +1429,7 @@ async function exploreParcel(lng, lat) {
   dismissVeil();
   const token = ++exploreToken;
   noteRecent(lng, lat);
+  setTimeout(() => loadNearby(lng, lat), 60);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
   lastRecord = { lng, lat, tmk: null };
@@ -1877,6 +1912,10 @@ function openRecordCard(lng, lat) {
     <div class="sec" id="intel-sec" style="display:none">
       <div class="h">Parcel intel</div>
       <div id="intel-list"></div>
+    </div>
+    <div class="sec" id="nearby-sec" style="display:none">
+      <div class="h">Nearby &amp; notable</div>
+      <div id="nearby-list"></div>
     </div>
     <div class="sec">
       <div class="h">Property record &middot; live</div>
