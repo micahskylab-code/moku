@@ -750,6 +750,7 @@
   <nav class="hdr-cluster">
     <a class="quiet" href="market.html">Market</a>
     <button class="quiet" id="btn-sell">Updates</button>
+    <button class="quiet" id="btn-me">My Moku</button>
   </nav>
 </header>
 
@@ -809,7 +810,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-39</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-40</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -831,14 +832,25 @@
   </div>
 </div>
 
+<div class="modal-bg" id="me-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="me-title">
+    <button class="x" onclick="closeMe()" aria-label="Close">&#10005;</button>
+    <div class="mtitle" id="me-title">My Moku</div>
+    <p style="font-size:13px;color:var(--ink-2);margin:8px 0 0">Your saved parcels and briefs, remembered on this device. One tap to ask about any parcel — no account, no password.</p>
+    <input id="me-name" type="text" placeholder="Your name" autocomplete="name">
+    <input id="me-email" type="email" placeholder="you@email.com" autocomplete="email">
+    <button class="go" id="me-save">Save my profile</button>
+    <div id="me-parcels" style="margin-top:14px"></div>
+    <div class="fine">Stored only in your browser. Used to prefill your messages &middot; never sold, never shared.</div>
+  </div>
+</div>
 <div class="modal-bg" id="about-modal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
     <button class="x" onclick="closeAbout()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="about-title">About Moku</div>
     <p style="font-size:13.5px; color:var(--ink-2); margin:10px 0 0;">
       Moku is a free lookup of Hawaii&#8217;s official property records, built on Kauai by
-      <b style="color:var(--ink)">Micah Hanano</b>, a local who wanted this to exist and builds it
-      in the open. No accounts, no ads, nothing for sale on this site.</p>
+      <b style="color:var(--ink)">Moku</b> — built on Kaua&#699;i, independently and in the open. No accounts, no ads, nothing for sale on this site.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Where the data comes from:</b> the State of Hawaii Statewide GIS Program,
       the counties&#8217; own public map servers (parcels, tax rolls, the vacation&#8209;rental registry,
@@ -853,11 +865,11 @@
       where the county publishes them. Free to cite, always.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Privacy, in plain words:</b> no tracking, no analytics cookies, no ad
-      pixels. Your searches go straight to government map servers. If you send Micah a message, it
+      pixels. Your searches go straight to government map servers. If you send a message, it
       travels over a private notification channel and your email is used only to reply to you. If you tap
       &#8220;What&#8217;s under me?&#8221;, your location is used on your device and never stored or sent
-      to us. If you write to Micah, your email is used only to reply.</p>
-    <div class="fine" style="margin-top:14px">Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a><br>Questions? micahskylab@gmail.com</div>
+      to us. If you write in, your email is used only to reply.</p>
+    <div class="fine" style="margin-top:14px">Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a><br>Questions? Use &#8220;Ask about this parcel&#8217;s records&#8221; on any parcel.</div>
   </div>
 </div>
 <script src="vendor/maplibre-gl.js"></script>
@@ -870,7 +882,7 @@ function showDiag(msg) {
     const d = document.createElement("div");
     d.id = "diag";
     d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:rgba(16,16,18,0.94);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:12px 16px;font:12px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;";
-    d.innerHTML = "<b>Hmm — something glitched on this device.</b> Screenshot this and send it to Micah:<br><span style='color:#E8C87E;word-break:break-all'>" + String(msg).slice(0, 220) + "</span>";
+    d.innerHTML = "<b>Hmm — something glitched on this device.</b> Screenshot this and send it to Moku:<br><span style='color:#E8C87E;word-break:break-all'>" + String(msg).slice(0, 220) + "</span>";
     document.body.appendChild(d);
   } catch (e) {}
 }
@@ -1261,8 +1273,15 @@ function jumpWithOffset(lng, lat, zoom, pitch) {
 }
 map.on("click", (e) => {
   if (e.originalEvent && e.originalEvent._pinHandled) return;
+  const z = map.getZoom();
+  if (z < 13) {
+    // You can't aim at a house from the sky — step down toward the point instead
+    map.flyTo({ center: e.lngLat, zoom: Math.min(z + (z < 9 ? 3.2 : 2.4), 14.6), speed: 1.6, curve: 1.35, essential: true });
+    return;
+  }
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
+map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 13 ? "pointer" : ""; } catch (e) {} });
 
 async function exploreParcel(lng, lat) {
   dismissVeil();
@@ -2288,7 +2307,7 @@ const LEAD_COPY = {
     title: "Ask about this parcel",
     sub: "Question about this parcel's public records — what they say, where they come from, what they mean? You'll get an answer drawn from the official county data. Moku is a records site, not a brokerage — no services, no advice, just the data.",
     note: "Parcel (auto-filled) — add your question",
-    go: "Send to Micah →",
+    go: "Send to Moku →",
     subject: "QUESTION — Moku parcel"
   },
   watch: {
@@ -2300,14 +2319,14 @@ const LEAD_COPY = {
   },
   own: {
     title: "Own this parcel? Get your free Owner&#8217;s Report",
-    sub: "Your parcel's assessment history, registry status, and your area's recorded sales — from official county records, in Micah's monthly brief. Free.",
+    sub: "Your parcel's assessment history, registry status, and your area's recorded sales — from official county records, in the Moku monthly brief. Free.",
     note: "Parcel (auto-filled)",
     go: "Send my report →",
     subject: "OWNER REPORT — Moku parcel"
   },
   seller: {
     title: "The monthly market brief",
-    sub: "Kauai market numbers and new data as it lands on the map — one email a month, written by Micah. Nothing for sale, unsubscribe anytime.",
+    sub: "Kauai market numbers and new data as it lands on the map — one email a month from Moku. Nothing for sale, unsubscribe anytime.",
     note: "Your island or town (optional)",
     go: "Sign me up →",
     subject: "Moku — monthly brief signup"
@@ -2322,10 +2341,35 @@ function openLead(kind, prefill) {
   document.getElementById("lead-note").value = prefill || "";
   document.getElementById("lead-go").innerHTML = c.go;
   document.getElementById("lead-go").onclick = submitLead;
+  const prof = getProfile();
+  if (prof.name && !document.getElementById("lead-name").value) document.getElementById("lead-name").value = prof.name;
+  if (prof.email && !document.getElementById("lead-email").value) document.getElementById("lead-email").value = prof.email;
   document.getElementById("lead-modal").classList.add("open");
   setTimeout(() => document.getElementById("lead-email").focus(), 100);
 }
 function closeLead() { document.getElementById("lead-modal").classList.remove("open"); }
+function getProfile() { try { return JSON.parse(localStorage.getItem("moku_profile") || "{}"); } catch (e) { return {}; } }
+function saveProfile(name, email) {
+  try { localStorage.setItem("moku_profile", JSON.stringify({ name: name || "", email: email || "", at: Date.now() })); } catch (e) {}
+}
+function openMe() {
+  const p = getProfile();
+  document.getElementById("me-name").value = p.name || "";
+  document.getElementById("me-email").value = p.email || "";
+  const saves = getSaves();
+  document.getElementById("me-parcels").innerHTML = saves.length
+    ? `<div class="micro" style="margin-bottom:6px">SAVED PARCELS &middot; ${saves.length}</div>` + saves.slice(0, 8).map(v =>
+        `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid rgba(23,21,15,0.07);cursor:pointer;font-size:13px" onclick="closeMe();exploreParcel(${v.lng},${v.lat})"><span>${v.tmk ? "TMK " + v.tmk : v.lat.toFixed(4) + ", " + v.lng.toFixed(4)}</span><span style="color:var(--ink-3)">open &rarr;</span></div>`).join("")
+    : `<div style="font-size:13px;color:var(--ink-3)">No saved parcels yet — tap &#9734; Save on any record.</div>`;
+  document.getElementById("me-modal").classList.add("open");
+}
+function closeMe() { document.getElementById("me-modal").classList.remove("open"); }
+document.getElementById("btn-me").onclick = openMe;
+document.getElementById("me-modal").addEventListener("click", e => { if (e.target.id === "me-modal") closeMe(); });
+document.getElementById("me-save").onclick = () => {
+  saveProfile(document.getElementById("me-name").value.trim(), document.getElementById("me-email").value.trim());
+  closeMe(); toast("Saved — Moku remembers you on this device");
+};
 function openAbout() { document.getElementById("about-modal").classList.add("open"); }
 function closeAbout() { document.getElementById("about-modal").classList.remove("open"); }
 document.getElementById("about-modal").addEventListener("click", e => { if (e.target.id === "about-modal") closeAbout(); });
@@ -2335,12 +2379,13 @@ function submitLead() {
   const email = document.getElementById("lead-email").value.trim();
   const note = document.getElementById("lead-note").value.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    toast("Add your email so Micah can reply");
+    toast("Add your email so Moku can reply");
     document.getElementById("lead-email").focus();
     return;
   }
   const name = (document.getElementById("lead-name") || {}).value || "";
   const body = `${c.subject}\n\nFrom: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
+  saveProfile(name.trim(), email); // one message in = a remembered profile, zero friction
   // Instant channel first — the lead reaches Micah the second the button is pressed
   try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST",
     headers: { "Title": c.subject }, body: body }); } catch (e) {}
