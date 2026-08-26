@@ -669,6 +669,36 @@
   .modal .x { background: rgba(22,24,26,0.07) !important; color: var(--g-ink) !important; }
   .modal a { color: var(--brass) !important; }
 
+  /* ---- The Discover rail: nothing lands blank ---- */
+  #discover {
+    position: absolute; top: 76px; left: 26px; z-index: 48; width: 248px;
+    display: none; flex-direction: column; gap: 10px;
+  }
+  body.docked #discover.on { display: flex; }
+  .dis-head {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em; color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center;
+    padding: 0 2px;
+  }
+  #dis-x { cursor: pointer; pointer-events: auto; font-size: 11px; opacity: 0.7; }
+  .dis-card {
+    background: #FBF9F5; border: 1px solid rgba(23,21,15,0.14); border-radius: 14px;
+    padding: 12px 14px; cursor: pointer;
+    box-shadow: 0 6px 22px rgba(23,21,15,0.16);
+    transition: transform 0.2s var(--spring), box-shadow 0.2s ease;
+  }
+  .dis-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,21,15,0.2); }
+  .dis-card:active { transform: scale(0.97); }
+  .dis-big { font-family: var(--serif); font-size: 21px; font-weight: 500; color: #17150F; font-variant-numeric: tabular-nums; }
+  .dis-t { font-size: 11.5px; color: #57534A; margin-top: 2px; line-height: 1.45; }
+  .dis-a { font-size: 11px; font-weight: 600; color: #9C7A3C; margin-top: 6px; }
+  @media (max-width: 760px) {
+    #discover { top: auto; bottom: 76px; left: 10px; right: 10px; width: auto; flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 8px; }
+    #discover::-webkit-scrollbar { display: none; }
+    .dis-card { flex: 0 0 200px; }
+    .dis-head { display: none; }
+  }
+
   /* ============ APPLE MOTION — everything springs, settles, assembles ============ */
   @media (prefers-reduced-motion: no-preference) {
     .passport {
@@ -767,13 +797,36 @@
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div id="discover">
+  <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
+  <div class="dis-card" data-go="sold">
+    <div class="dis-big" id="dis-sold-n">1,500</div>
+    <div class="dis-t">homes sold on Maui &middot; real recorded prices</div>
+    <div class="dis-a">See every sale &rarr;</div>
+  </div>
+  <div class="dis-card" data-go="tvr">
+    <div class="dis-big">602</div>
+    <div class="dis-t">registered vacation rentals on Kaua&#699;i</div>
+    <div class="dis-a">Check any street &rarr;</div>
+  </div>
+  <div class="dis-card" data-go="flood">
+    <div class="dis-big">Flood &amp; tsunami</div>
+    <div class="dis-t">every parcel&#8217;s risk zones, statewide</div>
+    <div class="dis-a">Check your home &rarr;</div>
+  </div>
+  <div class="dis-card" data-go="market">
+    <div class="dis-big" id="dis-mkt">418 active &middot; $1.33M</div>
+    <div class="dis-t">the Kaua&#699;i market right now, every number sourced</div>
+    <div class="dis-a">Market Pulse &rarr;</div>
+  </div>
+</div>
 <div id="ovation" aria-hidden="true">
   <div class="ov-kicker">HAWAI&#699;I&#8217;S PROPERTY MARKET</div>
   <div class="ov-big" id="ov-num">$0</div>
   <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-24</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-25</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -1485,6 +1538,7 @@ async function enrichCounty(county, token, tmkRaw) {
 }
 
 function openRecordCard(lng, lat) {
+  try { document.getElementById("discover").classList.remove("on"); } catch (e) {}
   const pass = document.getElementById("passport");
   setTimeout(() => {
     const d = document.getElementById("dir-btn");
@@ -1952,10 +2006,16 @@ setTimeout(() => begin(), 11000);
       map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: 0.85, curve: 1.42, maxDuration: 7000, essential: false });
       map.once("moveend", () => {
         setTimeout(armTerrain, 500);
+        if (window.showDiscover) setTimeout(window.showDiscover, 600);
+        const autoLayer = ({ kauai: "tvr", maui: "sold", oahu: "flood", hawaii: "tsu" })[isle] || "tvr";
+        setTimeout(() => {
+          if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
+            toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
+        }, 900);
         try {
           if (!localStorage.getItem("moku_seen")) {
             localStorage.setItem("moku_seen", "1");
-            setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 900);
+            setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 1600);
           }
         } catch (e) {}
       });
@@ -2326,6 +2386,32 @@ async function toggleLayer(key, btn) {
   refreshLegend();
 }
 document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer(b.dataset.lk, b); });
+
+// The Discover rail: every card is a leading point into real data
+(() => {
+  const d = document.getElementById("discover");
+  try {
+    const inv = MARKET.inventory, med = MARKET.years["2026 H1"].sf.median;
+    if (inv && inv.length) document.getElementById("dis-mkt").textContent =
+      inv[inv.length - 1].count + " active · $" + (Math.round(med / 1e4) / 100).toFixed(2) + "M";
+  } catch (e) {}
+  d.querySelectorAll(".dis-card").forEach(c => {
+    c.onclick = () => {
+      const go = c.dataset.go;
+      if (go === "market") { location.href = "market.html"; return; }
+      const chip = document.querySelector('.lchip[data-lk="' + go + '"]');
+      if (!(layerState[go] && layerState[go].on)) toggleLayer(go, chip).then(() => {
+        if (LAYER_BOUNDS[go]) map.fitBounds(LAYER_BOUNDS[go], { padding: 70 });
+      });
+      else if (LAYER_BOUNDS[go]) map.fitBounds(LAYER_BOUNDS[go], { padding: 70 });
+    };
+  });
+  document.getElementById("dis-x").onclick = e => { e.stopPropagation(); d.classList.remove("on"); try { localStorage.setItem("moku_rail_off", "1"); } catch (er) {} };
+  window.showDiscover = () => {
+    try { if (localStorage.getItem("moku_rail_off")) return; } catch (e) {}
+    if (!document.getElementById("passport").classList.contains("open")) d.classList.add("on");
+  };
+})();
 
 // The search bar teaches by itself — placeholder rotates like Apple's search hints
 (() => {
