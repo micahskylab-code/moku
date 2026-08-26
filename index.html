@@ -775,7 +775,7 @@
   <button class="explore-link" id="explore-link">or explore the map — sold prices, rentals, flood zones</button>
   </div>
   <a class="veilfoot" href="market.html">
-    <span><b id="vs-active">418</b> active on Kauai</span>
+    <span><b id="vs-active">6,711</b> active statewide</span>
     <span><b id="vs-median">$1.33M</b> median, H1 2026</span>
     <span><b id="vs-sold">$537M</b> sold, H1 2026</span>
     <span onclick="event.preventDefault(); openAbout()" style="cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.45)">About &amp; privacy</span>
@@ -803,7 +803,7 @@
     <div class="dis-a">Check your home &rarr;</div>
   </div>
   <div class="dis-card" data-go="market">
-    <div class="dis-big" id="dis-mkt">418 active &middot; $1.33M</div>
+    <div class="dis-big" id="dis-mkt">6,711 active &middot; statewide</div>
     <div class="dis-t">Market Pulse &middot; live from published market data</div>
     <div class="dis-a">Market Pulse &rarr;</div>
   </div>
@@ -814,7 +814,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-44</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-45</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -2477,7 +2477,8 @@ if (deep) {
 // Front-door stats come from the same data file as Market Pulse — one source of truth
 try {
   const inv = MARKET.inventory, h1 = MARKET.years["2026 H1"];
-  if (inv && inv.length) document.getElementById("vs-active").textContent = inv[inv.length - 1].count;
+  if (window.MARKET && MARKET.statewide) document.getElementById("vs-active").textContent = MARKET.statewide.active_total.toLocaleString();
+  else if (inv && inv.length) document.getElementById("vs-active").textContent = inv[inv.length - 1].count;
   if (h1 && h1.sf && h1.sf.median) document.getElementById("vs-median").textContent = "$" + (Math.round(h1.sf.median / 1e4) / 100).toFixed(2) + "M";
   const sold = ["sf", "condo", "land"].reduce((a, k) => a + ((h1 && h1[k] && h1[k].volume) || 0), 0);
   if (sold) document.getElementById("vs-sold").textContent = "$" + Math.round(sold / 1e6) + "M";
@@ -2756,7 +2757,8 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer
   try {
     const inv = MARKET.inventory, med = MARKET.years["2026 H1"].sf.median;
     if (inv && inv.length) document.getElementById("dis-mkt").textContent =
-      inv[inv.length - 1].count + " active · $" + (Math.round(med / 1e4) / 100).toFixed(2) + "M";
+      (window.MARKET && MARKET.statewide ? MARKET.statewide.active_total.toLocaleString() + " active · statewide" :
+        inv[inv.length - 1].count + " active · $" + (Math.round(med / 1e4) / 100).toFixed(2) + "M");
   } catch (e) {}
   d.querySelectorAll(".dis-card").forEach(c => {
     c.onclick = () => {
