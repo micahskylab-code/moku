@@ -814,7 +814,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-46</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-47</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -933,11 +933,7 @@ const FALLBACK_SAT_STYLE = {
 };
 const map = new maplibregl.Map({
   container: "map",
-  style: {
-    version: 8,
-    sources: {},
-    layers: [{ id: "bg", type: "background", paint: { "background-color": "#1C4A66" } }]
-  },
+  style: FALLBACK_SAT_STYLE,
   center: [-157.5, 20.9],
   zoom: SMALL ? 5.3 : 6.2,
   pitch: 0,
@@ -999,13 +995,14 @@ new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
     });
-    map.setStyle(st);
-    // Watchdog: if the vector style's assets stall, a plain satellite map beats a blank screen
+    // Roads, towns, and labels arrive as a quiet upgrade after the landing — never before first paint
+    const applyPositron = () => { try { map.setStyle(st); } catch (e) {} };
     setTimeout(() => {
-      try { if (!map.isStyleLoaded()) map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {}
-    }, 12000);
+      if (map.isMoving()) map.once("moveend", () => setTimeout(applyPositron, 400));
+      else applyPositron();
+    }, SMALL ? 5200 : 4200);
   })
-  .catch(() => { try { map.setStyle(FALLBACK_SAT_STYLE); } catch (e) {} });
+  .catch(() => {});
 
 let pendingParcel = null;
 function armTerrain() {
@@ -2254,7 +2251,7 @@ setTimeout(() => begin(), 6000);
     try {
       const y = MARKET.years["2025"];
       const total = (y.sf.volume || 0) + (y.condo.volume || 0) + (y.land.volume || 0);
-      if (total > 1e8) {
+      if (total > 1e8 && !SMALL) {
         const ov = document.getElementById("ovation");
         const num = document.getElementById("ov-num");
         ov.classList.add("on");
@@ -2477,7 +2474,7 @@ if (deep) {
 // Front-door stats come from the same data file as Market Pulse — one source of truth
 try {
   const inv = MARKET.inventory, h1 = MARKET.years["2026 H1"];
-  if (window.MARKET && MARKET.statewide) document.getElementById("vs-active").textContent = MARKET.statewide.active_total.toLocaleString();
+  if (typeof MARKET !== "undefined" && MARKET.statewide) document.getElementById("vs-active").textContent = MARKET.statewide.active_total.toLocaleString();
   else if (inv && inv.length) document.getElementById("vs-active").textContent = inv[inv.length - 1].count;
   if (h1 && h1.sf && h1.sf.median) document.getElementById("vs-median").textContent = "$" + (Math.round(h1.sf.median / 1e4) / 100).toFixed(2) + "M";
   const sold = ["sf", "condo", "land"].reduce((a, k) => a + ((h1 && h1[k] && h1[k].volume) || 0), 0);
@@ -2757,7 +2754,7 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer
   try {
     const inv = MARKET.inventory, med = MARKET.years["2026 H1"].sf.median;
     if (inv && inv.length) document.getElementById("dis-mkt").textContent =
-      (window.MARKET && MARKET.statewide ? MARKET.statewide.active_total.toLocaleString() + " active · statewide" :
+      (typeof MARKET !== "undefined" && MARKET.statewide ? MARKET.statewide.active_total.toLocaleString() + " active · statewide" :
         inv[inv.length - 1].count + " active · $" + (Math.round(med / 1e4) / 100).toFixed(2) + "M");
   } catch (e) {}
   d.querySelectorAll(".dis-card").forEach(c => {
