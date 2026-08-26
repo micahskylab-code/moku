@@ -804,7 +804,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-33</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-34</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -1589,6 +1589,30 @@ async function enrichCounty(county, token, tmkRaw) {
         addFact("row-land", "tvr", "County TVR registry (non-conforming)",
           (tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry") +
           `<div class="subnote"><b onclick="showLayer('tvr')">See all registered rentals &#8599;</b></div>`, "live");
+      }
+    } else if (county === COUNTIES.oahu) {
+      // City & County of Honolulu assessment table (TY2026); fee parcel = suffix 0000
+      const tmk8 = tmk9.slice(1);
+      const rows = await queryWhere("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10",
+        `tmk = '${tmk8}' AND suffix = '0000' AND taxyr = 2026`, "landvalue,buildingvalue,taxyr,seq", "seq DESC", 1);
+      if (token !== exploreToken || !rows.length) return;
+      const total = Number(rows[0].landvalue || 0) + Number(rows[0].buildingvalue || 0);
+      if (total > 0) {
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
+        else addFact("row-record", "assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
+        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 TY2026");
+      }
+    } else if (county === COUNTIES.hawaii) {
+      // Hawai'i County certified roll: land + building
+      const rows = await queryWhere("https://services1.arcgis.com/C2LPusZs5OXNGFDn/arcgis/rest/services/cohRPT/FeatureServer/0",
+        `TMK = ${Number(tmk9)}`, "LandValue,BldgValue,TaxAcres,Homeowner", null, 1);
+      if (token !== exploreToken || !rows.length) return;
+      const total = Number(rows[0].LandValue || 0) + Number(rows[0].BldgValue || 0);
+      if (total > 0) {
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
+        else addFact("row-record", "assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
+        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 CERTIFIED ROLL");
+        if (rows[0].Homeowner === "Y") addFact("row-record", "hexempt", "Homeowner status", "Homeowner class on file with the county", "live");
       }
     } else if (county === COUNTIES.maui) {
       const parid8 = tmk9.slice(1);
