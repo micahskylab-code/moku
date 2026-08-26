@@ -180,11 +180,13 @@ const MARKET = {
 // Refreshed by the ops cycle when FRED publishes a new month. As of July 2026:
 MARKET.statewide = {
   asof: "July 2026",
+  sold_asof: "Q1 2026",
   active_total: 6711,
   counties: {
-    kauai:  { active: 418,  median_list: 1550000 },
-    oahu:   { active: 3506, median_list: 675000 },
-    maui:   { active: 1437, median_list: 1000000 },
-    hawaii: { active: 1350, median_list: 609950 }
-  }
+    kauai:  { active: 418,  median_list: 1550000, sf_n: 75,  sf_med: 1388000, sf_yoy: 15.7,  condo_n: 51,  condo_med: 750000, condo_yoy: -14.5 },
+    oahu:   { active: 3506, median_list: 675000,  sf_n: 631, sf_med: 1180000, sf_yoy: 2.6,   condo_n: 939, condo_med: 510000, condo_yoy: 0 },
+    maui:   { active: 1437, median_list: 1000000, sf_n: 176, sf_med: 1300000, sf_yoy: 0.4,   condo_n: 183, condo_med: 699000, condo_yoy: -12.1 },
+    hawaii: { active: 1350, median_list: 609950,  sf_n: 451, sf_med: 595000,  sf_yoy: -0.8,  condo_n: 135, condo_med: 700000, condo_yoy: 4.2 }
+  },
+  sold_source: "DBEDT Quarterly Statistical & Economic Report, county tables (single-family and condo resales)"
 };
