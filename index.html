@@ -752,6 +752,7 @@
   .hl-big { font-family: var(--serif); font-size: clamp(40px, 5vw, 62px); font-weight: 400; line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 12px 0 14px; text-shadow: 0 2px 30px rgba(0,0,0,0.55); }
   .hl-sub { font-family: var(--sans); font-size: 15px; font-weight: 500; line-height: 1.55; color: #fff; opacity: 0.92; max-width: 380px; text-shadow: 0 1px 14px rgba(0,0,0,0.6); }
   @media (max-width: 760px) { #hero-line { display: none; } }
+  body.engaged #hero-line { animation: none !important; opacity: 0 !important; transform: translateY(10px); pointer-events: none; transition: opacity 0.55s ease, transform 0.55s ease; }
   /* ============ THE STANDING LEDGER ============ */
   #ledger {
     position: absolute; top: 0; right: 0; height: 100vh; width: 440px; z-index: 46;
@@ -987,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-60</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-61</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1488,11 +1489,13 @@ map.on("click", (e) => {
   if (nT - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24) return;
   lastTap = { t: nT, x: e.point.x, y: e.point.y };
   const z = map.getZoom();
+  document.body.classList.add("engaged");
   if (z < 10.5) {
     // From true altitude you can't aim at a lot — acknowledge the tap, step down toward it
     if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat(e.lngLat).addTo(map); }
     else tapMarker.setLngLat(e.lngLat).addTo(map);
-    map.flyTo({ center: e.lngLat, zoom: z < 8.5 ? z + 3.4 : 14.2, speed: 1.7, curve: 1.35, essential: true });
+    map.flyTo({ center: e.lngLat, zoom: z < 8.5 ? Math.min(z + 3.2, 11.8) : 12.6, speed: 1.6, curve: 1.35, essential: true });
+    if (window.toast) toast("Zooming in \u2014 tap again on a lot to open its record", 2600);
     return;
   }
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
@@ -1555,6 +1558,7 @@ function noteRecent(lng, lat, tmk, addr) {
 }
 async function exploreParcel(lng, lat) {
   dismissVeil();
+  document.body.classList.add("engaged");
   const token = ++exploreToken;
   noteRecent(lng, lat);
   setTimeout(() => loadNearby(lng, lat), 60);
@@ -2641,7 +2645,7 @@ wireSearch("dockbox", "dock-suggest");
     document.querySelectorAll("#lg-board-rows .lg-row").forEach(r => {
       r.onclick = () => {
         const h = ISLAND_HEROES[r.dataset.isle]; if (!h) return;
-        dismissVeil();
+        dismissVeil(); document.body.classList.add("engaged");
         map.flyTo({ center: h.c, zoom: h.z, pitch: 0, speed: 1.15, curve: 1.42, essential: true });
         document.querySelectorAll("#lg-board-rows .lg-row").forEach(x => x.style.borderLeft = "");
         r.style.borderLeft = "2px solid #9A7B3F"; r.style.paddingLeft = "8px";
@@ -2892,8 +2896,9 @@ function openMe() {
 function closeMe() { document.getElementById("me-modal").classList.remove("open"); }
 document.getElementById("btn-me").onclick = openMe;
 (function initMode() {
-  let mode = document.body.classList.contains("has-ledger") ? "pro" : "simple";
-  try { mode = localStorage.getItem("moku_mode") || "simple"; } catch (e) {}
+  let mode = "simple";
+  if (document.body.classList.contains("has-ledger")) { mode = "pro"; try { localStorage.setItem("moku_mode","pro"); } catch(e){} }
+  else try { mode = localStorage.getItem("moku_mode") || "simple"; } catch(e){}
   const apply = m => {
     document.body.classList.toggle("simple", m === "simple");
     document.body.classList.toggle("pro", m === "pro");
