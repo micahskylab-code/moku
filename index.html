@@ -758,12 +758,24 @@
   body.engaged #hero-line { animation: none !important; opacity: 0 !important; transform: translateY(10px); pointer-events: none; transition: opacity 0.55s ease, transform 0.55s ease; }
   /* ============ THE STANDING LEDGER ============ */
   #ledger {
-    position: absolute; top: 0; right: 0; height: 100vh; width: 440px; z-index: 46;
-    background: rgba(251,249,245,0.97); border-left: 1px solid #9A7B3F; box-shadow: -30px 0 60px rgba(0,0,0,0.18);
-    padding: 26px 30px 20px; display: flex; flex-direction: column; gap: 18px;
-    overflow-y: auto; overscroll-behavior: contain;
-    animation: lgIn 0.55s cubic-bezier(.32,.72,0,1) both;
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 46;
+    width: auto; max-width: 480px; margin: 0 auto; max-height: 84vh;
+    background: #FBF9F5; border: 1px solid #9A7B3F; border-bottom: none; border-radius: 22px 22px 0 0;
+    box-shadow: 0 -18px 50px rgba(0,0,0,0.22);
+    padding: 8px 26px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px;
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    transition: transform 0.42s cubic-bezier(.32,.72,0,1);
   }
+  #ledger-handle { position: sticky; top: 0; align-self: center; width: 40px; height: 5px; border-radius: 3px; background: rgba(22,24,26,0.22); margin: 4px 0 6px; flex: none; cursor: grab; }
+  #ledger-peek { display: none; }
+  /* COLLAPSED: only the handle + a one-line peek show; map fills the screen */
+  body.sheet-collapsed #ledger { transform: translateY(calc(100% - 118px)); }
+  body.sheet-collapsed #ledger-peek { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 2px 0 6px; }
+  body.sheet-collapsed #ledger > *:not(#ledger-handle):not(#ledger-peek):not(.lg-cmd) { display: none; }
+  body.sheet-collapsed #ledger .lg-cmd { margin-top: 4px; }
+  .lg-peek-n { font-family: var(--serif); font-size: 26px; color: #16181A; font-variant-numeric: tabular-nums; }
+  .lg-peek-l { font-family: var(--sans); font-size: 12px; color: #6B6E73; }
+  .lg-peek-up { font-family: var(--sans); font-size: 12px; font-weight: 600; color: #9A7B3F; }
   @keyframes lgIn { from { transform: translateX(26px); opacity: 0; } to { transform: none; opacity: 1; } }
   .lg-rule { height: 1px; background: rgba(22,24,26,0.10); margin: 2px 0; }
   .lg-kick { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #9C9EA3; }
@@ -810,14 +822,18 @@
   @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(1.22) brightness(1.1) contrast(1.05); } }
   @media (max-width: 760px) {
     /* MOBILE = a normal scrolling page: map band on top, data flows below, the whole page scrolls */
-    html, body { height: auto !important; min-height: 100%; overflow-x: hidden !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
-    body.has-ledger #map { position: sticky !important; top: 0; left: 0; right: 0; inset: auto; width: 100%; height: 44vh !important; z-index: 1; }
-    #ledger { position: static !important; top: auto; left: auto; right: auto; bottom: auto; width: auto; height: auto; max-height: none; overflow: visible; border-left: none; border-top: 1px solid #9A7B3F; padding: 22px 18px calc(30px + env(safe-area-inset-bottom)); animation: none; box-shadow: 0 -16px 30px rgba(0,0,0,0.10); }
-    /* the tiny map strip stays clean: floating controls off — layers reachable by tapping parcels + Layers button */
-    body.has-ledger .layerbar, body.has-ledger #draw-btn, body.has-ledger #hero-line { display: none !important; }
-    .lg-big { font-size: clamp(46px, 15vw, 60px); }
-    .lg-cmd { position: static; margin-top: 20px; }
+    #ledger { max-width: none; }
+    body.has-ledger #hero-line { display: none !important; }
+    .lg-big { font-size: clamp(44px, 12vw, 56px); }
     .passport { max-height: 88vh !important; }
+    body.has-ledger .layerbar { bottom: calc(132px + env(safe-area-inset-bottom)) !important; left: 8px; right: 8px; transform: none; justify-content: flex-start; overflow-x: auto; }
+    body.has-ledger #draw-btn { bottom: calc(180px + env(safe-area-inset-bottom)) !important; right: 12px; top: auto; }
+    body:not(.sheet-collapsed) .layerbar, body:not(.sheet-collapsed) #draw-btn { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  }
+  /* desktop: lift controls above the bottom sheet too */
+  @media (min-width: 761px) {
+    body.has-ledger .layerbar { bottom: calc(24px); }
+    body.sheet-collapsed .layerbar { bottom: 24px; }
   }
   /* ============ APPLE MOTION — everything springs, settles, assembles ============ */
   @media (prefers-reduced-motion: no-preference) {
@@ -928,6 +944,8 @@
   <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
 </div>
 <div id="ledger">
+  <div id="ledger-handle"></div>
+  <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; Hawai&#699;i market</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
   <div class="lg-mast">
     <div class="lg-wm">Moku<span class="lg-dot-p">.</span> <span class="live-dot"></span></div>
     <div class="lg-kick">THE HAWAI&#699;I LEDGER</div>
@@ -995,7 +1013,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-69</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-70</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1714,6 +1732,9 @@ async function exploreParcel(lng, lat) {
       setFact("owner", "Owner of record", "—", "");
       ["fact-assessed", "fact-taxclass", "fact-lava"].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     } else {
+      // Clicked water / unmapped ground — don't ruin it with an empty card. Quietly dismiss.
+      if (token === exploreToken) { closeRecord(); try { if (tapMarker) { tapMarker.remove(); tapMarker = null; } } catch (e) {} }
+      return;
       setFact("tmk", "TMK", "no parcel mapped at this point", "");
       setFact("acres", "Parcel size", "—", "");
       setFact("owner", "Owner of record", "—", "");
@@ -2671,6 +2692,15 @@ wireSearch("dockbox", "dock-suggest");
   const L = document.getElementById("ledger");
   if (!L) return;
   document.body.classList.add("has-ledger");
+  document.body.classList.add("sheet-collapsed");
+  const sheet = document.getElementById("ledger");
+  const setSheet = (open) => document.body.classList.toggle("sheet-collapsed", !open);
+  document.getElementById("ledger-handle").onclick = () => setSheet(document.body.classList.contains("sheet-collapsed"));
+  document.getElementById("ledger-peek").onclick = () => setSheet(true);
+  // simple swipe: drag the handle down to dismiss, up to open
+  let sy = null;
+  sheet.addEventListener("touchstart", e => { if (e.target.id === "ledger-handle" || e.target.id === "ledger-peek") sy = e.touches[0].clientY; }, {passive:true});
+  sheet.addEventListener("touchend", e => { if (sy == null) return; const dy = e.changedTouches[0].clientY - sy; if (dy > 40) setSheet(false); else if (dy < -40) setSheet(true); sy = null; }, {passive:true});
   // add a suggest dropdown for the ledger search + wire it like the others
   if (!document.getElementById("lg-suggest")) {
     const d = document.createElement("div"); d.id = "lg-suggest"; d.className = "dock-suggest-el";
@@ -2686,6 +2716,7 @@ wireSearch("dockbox", "dock-suggest");
   const target = (typeof MARKET !== "undefined" && MARKET.statewide) ? MARKET.statewide.active_total : 6711;
   const el = document.getElementById("lg-active");
   el.textContent = target.toLocaleString(); // resting value is ALWAYS correct
+  const pk = document.getElementById("peek-n"); if (pk) pk.textContent = target.toLocaleString();
   const reduce = (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) || document.hidden;
   if (!reduce) {
     let start = null; const dur = 750;
