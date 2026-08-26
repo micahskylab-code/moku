@@ -67,7 +67,7 @@
   /* ================= THE ONE BOX — the front door ================= */
   /* The front door is the LIVE map, breathing behind frosted glass — never a photo of itself */
   /* First frame is never blank: cached aerial under the canvas, live map fades in over it */
-  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #1C4A66; }
+  #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #2E7396; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
@@ -819,7 +819,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-50</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-51</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -935,7 +935,7 @@ const FALLBACK_SAT_STYLE = {
   version: 8,
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#1C4A66" } },
+    { id: "bg", type: "background", paint: { "background-color": "#2E7396" } },
     { id: "sat", type: "raster", source: "sat" },
     { id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
       paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
@@ -968,9 +968,11 @@ new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
     st.layers = st.layers.filter(l => !/casing/i.test(l.id));
     const oceanOnly = ["in", ["get", "class"], ["literal", ["ocean", "sea"]]];
     st.layers.forEach(l => {
-      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#1C4A66" });
+      if (l.type === "background") l.paint = Object.assign({}, l.paint, { "background-color": "#2E7396" });
       if (l.type === "fill" && /water|ocean/i.test(l.id)) {
-        l.layout = Object.assign({}, l.layout, { visibility: "none" });
+        // Daylight ocean: a translucent tropical lift over the imagery water
+        l.paint = Object.assign({}, l.paint, { "fill-color": "#4FA8D0", "fill-opacity": 0.22 });
+        delete (l.layout || {}).visibility;
       }
       if (l.type === "line" && /road|highway|motorway|trunk|street|minor|major|path|bridge|tunnel|link/i.test(l.id)) {
         l.paint = Object.assign({}, l.paint, {
