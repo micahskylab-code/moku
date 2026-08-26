@@ -988,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-62</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-63</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1488,19 +1488,11 @@ map.on("click", (e) => {
   const nT = performance.now();
   if (nT - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24) return;
   lastTap = { t: nT, x: e.point.x, y: e.point.y };
-  const z = map.getZoom();
   document.body.classList.add("engaged");
-  if (z < 10.5) {
-    // From true altitude you can't aim at a lot — acknowledge the tap, step down toward it
-    if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat(e.lngLat).addTo(map); }
-    else tapMarker.setLngLat(e.lngLat).addTo(map);
-    map.flyTo({ center: e.lngLat, zoom: z < 8.5 ? Math.min(z + 3.2, 11.8) : 12.6, speed: 1.6, curve: 1.35, essential: true });
-    if (window.toast) toast("Zooming in \u2014 tap again on a lot to open its record", 2600);
-    return;
-  }
+  // One click = the record for the parcel you tapped. No "tap twice" — it opens and flies you there.
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
-map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 10.5 ? "pointer" : ""; } catch (e) {} });
+try { map.getCanvas().style.cursor = "pointer"; } catch (e) {}
 
 function structureRead(land, bldg) {
   land = Number(land) || 0; bldg = Number(bldg) || 0;
