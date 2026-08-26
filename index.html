@@ -311,7 +311,7 @@
   #legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
   #legend .ramp { width: 110px; height: 7px; border-radius: 4px; flex: none;
     background: linear-gradient(90deg, #F3E3B8, #E8C87E, #C99A45, #8A5A22); }
-  @media (max-width: 700px) { body.has-ledger.sheet-collapsed #legend { bottom: 192px; } body.has-ledger:not(.sheet-collapsed) #legend { display: none !important; } }
+  @media (max-width: 700px) { #legend { display: none !important; } #draw-btn { display: none !important; } }
 
   /* ---- Layer bar: the data ON the map ---- */
   .layerbar {
@@ -485,6 +485,10 @@
   }
   .modal .go:active { transform: scale(0.97); }
   .modal .fine { font-size: 11px; color: var(--ink-3); text-align: center; margin-top: 10px; }
+  #lead-cats { display: flex; }
+  .catchip { border: 1px solid rgba(0,0,0,0.14); background: #fff; border-radius: 999px; padding: 8px 14px; font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; transition: all 0.15s ease; }
+  .catchip:active { transform: scale(0.95); }
+  .catchip.on { background: var(--chrome-ink); color: #fff; border-color: var(--chrome-ink); }
 
   :focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
   #onebox:focus-visible, #dockbox:focus-visible, .modal input:focus-visible { outline: none; }
@@ -498,6 +502,7 @@
     .docked-wrap, .dockbox-wrap { flex: 1 1 auto; max-width: none; }
     .passport { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-radius: 22px 22px 0 0; transform: translateY(110%); background: #FBFBFD; }
     .passport.open { transform: none; }
+    .passport::before { content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.8); z-index: 6; pointer-events: none; }
     #toast { bottom: auto; top: 108px; }
     #hint { bottom: 60px; font-size: 12px; padding: 10px 15px; }
     .attr-note { display: none; }
@@ -816,6 +821,14 @@
     }
     body.has-ledger.reading #m-search { display: none; }
     #m-search .mmag { font-size: 16px; color: #9A7B3F; flex: none; }
+    #m-search-input { flex: 1 1 auto; min-width: 0; border: none; background: transparent; outline: none; font-family: var(--sans); font-size: 16px; font-weight: 500; color: var(--ink); padding: 0; }
+    #m-search-input::placeholder { color: rgba(29,29,31,0.5); font-weight: 500; }
+    #m-suggest { position: absolute; top: calc(100% + 7px); left: 0; right: 0; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 15px; box-shadow: 0 12px 34px rgba(0,0,0,0.20); overflow: hidden; overflow-y: auto; max-height: 56vh; display: none; z-index: 47; -webkit-overflow-scrolling: touch; }
+    #m-suggest.open { display: block; }
+    #m-suggest .sug { padding: 13px 16px; cursor: pointer; font-family: var(--sans); font-size: 15px; color: var(--ink); border-bottom: 1px solid rgba(0,0,0,0.06); }
+    #m-suggest .sug:last-child { border-bottom: none; }
+    #m-suggest .sug small { display: block; color: var(--ink-3); font-size: 12.5px; margin-top: 1px; }
+    #m-suggest .sug.hot, #m-suggest .sug:active { background: rgba(14,110,99,0.08); }
   }
   .lg-mag { position: absolute; left: 15px; top: 26px; color: #9A7B3F; font-size: 15px; }
   .lg-tools { margin-top: 9px; text-align: center; }
@@ -961,7 +974,7 @@
   <div class="hl-big">The islands,<br>by the numbers.</div>
   <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
 </div>
-<div id="m-search" role="button" tabindex="0" aria-label="Search any Hawaii address or TMK" onclick="document.body.classList.remove('sheet-collapsed'); var s=document.getElementById('lg-search'); if(s){try{s.scrollIntoView({block:'center'});}catch(e){} setTimeout(function(){s.focus();},60);}"><span class="mmag">&#9906;</span><span>Search any address or TMK</span></div>
+<div id="m-search"><span class="mmag">&#9906;</span><input id="m-search-input" type="text" placeholder="Search any address or TMK" autocomplete="off" enterkeyhint="search"><div id="m-suggest"></div></div>
 <div id="ledger">
   <div id="ledger-handle"></div>
   <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; every island&#8217;s sales inside</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
@@ -1032,7 +1045,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-75</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-77</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1049,6 +1062,12 @@
     <button class="x" onclick="closeLead()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="lead-title">Watch this parcel</div>
     <p id="lead-sub"></p>
+    <div id="lead-cats" style="display:none; gap:7px; flex-wrap:wrap; margin:0 0 12px;">
+      <button type="button" class="catchip" data-cat="Home">Home</button>
+      <button type="button" class="catchip" data-cat="Land / lot">Land / lot</button>
+      <button type="button" class="catchip" data-cat="Commercial">Commercial</button>
+      <button type="button" class="catchip" data-cat="Business">Business</button>
+    </div>
     <input id="lead-name" type="text" placeholder="Your name" autocomplete="name">
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
     <input id="lead-note" type="text" placeholder="">
@@ -1107,11 +1126,11 @@
 <div class="modal-bg" id="forsale-modal" onclick="if(event.target===this)closeForSale()">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fs-title">
     <button class="x" onclick="closeForSale()" aria-label="Close">&#10005;</button>
-    <div class="mtitle" id="fs-title">Homes for sale</div>
+    <div class="mtitle" id="fs-title">For sale in Hawai&#699;i</div>
     <div style="border:1px solid rgba(62,124,177,0.32); background:rgba(62,124,177,0.07); border-radius:14px; padding:15px; margin:15px 0 0;">
-      <div style="font-family:var(--serif); font-weight:500; color:var(--ink); font-size:18px;">Selling your place? List it here.</div>
-      <p style="margin:6px 0 12px; font-size:13px; color:var(--ink-2); line-height:1.5;">Put your home on Moku and let Hawai&#699;i&#8217;s buyers and licensed brokers come to you &mdash; your place, your photos, your price. Free, no obligation. You stay in control of who you talk to.</p>
-      <button class="go" style="margin-top:0" onclick="closeForSale(); openLead('list');">List my home &rarr;</button>
+      <div style="font-family:var(--serif); font-weight:500; color:var(--ink); font-size:18px;">Selling? List it here.</div>
+      <p style="margin:6px 0 12px; font-size:13px; color:var(--ink-2); line-height:1.5;">A home, land, a commercial building, or a whole business &mdash; put it on Moku and let Hawai&#699;i&#8217;s buyers and licensed brokers come to you. Your place, your photos, your price. Free, no obligation &mdash; you stay in control of who you talk to.</p>
+      <button class="go" style="margin-top:0" onclick="closeForSale(); openLead('list');">List it &rarr;</button>
     </div>
     <p style="margin:17px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">The full live market &mdash; connecting soon.</b> Every active listing and price reduction, on this map, updated in real time. That data flows through a licensed MLS feed &mdash; Moku is built and ready for the day it connects. Until then we show no listings we can&#8217;t stand behind: real data only, never a guess.</p>
     <p style="margin:11px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">Already done &mdash; the hard 99%.</b> Every parcel, owner, value, risk zone and recorded sale in Hawai&#699;i is already on this map &mdash; the part no listings site has. Listings are the last 1%, and they switch on with one connection.</p>
@@ -2256,7 +2275,7 @@ function openRecordCard(lng, lat) {
   try {
     const n = (Number(sessionStorage.getItem("moku_depth")) || 0) + 1;
     sessionStorage.setItem("moku_depth", String(n));
-    if (n === 3 && !localStorage.getItem("moku_brief_asked")) {
+    if (n === 3 && !SMALL && !localStorage.getItem("moku_brief_asked")) {
       localStorage.setItem("moku_brief_asked", "1");
       setTimeout(() => toast(`Everything here stays free. Want the <b>monthly recorded-sales brief</b>? <b style="cursor:pointer" onclick="openLead('seller')">Sign up &rarr;</b>`, 8000), 1200);
     }
@@ -2271,6 +2290,14 @@ function closeRecord() {
   const src = map.getSource("parcel");
   if (src) src.setData({ type: "FeatureCollection", features: [] });
 }
+// The record card is a bottom sheet on phones — swipe it down to dismiss, so it always goes away.
+(function passportSwipe() {
+  const p = document.getElementById("passport");
+  if (!p) return;
+  let py = null;
+  p.addEventListener("touchstart", e => { py = (p.scrollTop <= 0) ? e.touches[0].clientY : null; }, { passive: true });
+  p.addEventListener("touchend", e => { if (py == null) return; const dy = e.changedTouches[0].clientY - py; if (dy > 55) closeRecord(); py = null; }, { passive: true });
+})();
 
 // ---- The One Box: TMK or address → record ----
 function digitsOf(q) { return q.replace(/\D/g, ""); }
@@ -2759,6 +2786,7 @@ function useMyLocation() {
 document.getElementById("try-here").onclick = useMyLocation;
 wireSearch("onebox", "suggest");
 wireSearch("dockbox", "dock-suggest");
+try { wireSearch("m-search-input", "m-suggest"); } catch (e) {}
 // ===== THE STANDING LEDGER — bring the terminal column to life =====
 (function ledger() {
   const L = document.getElementById("ledger");
@@ -2769,9 +2797,14 @@ wireSearch("dockbox", "dock-suggest");
   const setSheet = (open) => document.body.classList.toggle("sheet-collapsed", !open);
   document.getElementById("ledger-handle").onclick = () => setSheet(document.body.classList.contains("sheet-collapsed"));
   document.getElementById("ledger-peek").onclick = () => setSheet(true);
-  // simple swipe: drag the handle down to dismiss, up to open
+  // Browsing the map should always drop the sheet out of the way — the moment you pan, it collapses.
+  try { map.on("dragstart", () => { if (!document.body.classList.contains("sheet-collapsed")) setSheet(false); }); } catch (e) {}
+  // Swipe: drag down to dismiss / up to open. Works from the whole header, or from anywhere when scrolled to the top.
   let sy = null;
-  sheet.addEventListener("touchstart", e => { if (e.target.id === "ledger-handle" || e.target.id === "ledger-peek") sy = e.touches[0].clientY; }, {passive:true});
+  sheet.addEventListener("touchstart", e => {
+    const onGrip = e.target.id === "ledger-handle" || e.target.id === "ledger-peek" || (e.target.closest && e.target.closest(".lg-mast, #ledger-handle, #ledger-peek"));
+    sy = (onGrip || sheet.scrollTop <= 0) ? e.touches[0].clientY : null;
+  }, {passive:true});
   sheet.addEventListener("touchend", e => { if (sy == null) return; const dy = e.changedTouches[0].clientY - sy; if (dy > 40) setSheet(false); else if (dy < -40) setSheet(true); sy = null; }, {passive:true});
   // add a suggest dropdown for the ledger search + wire it like the others
   if (!document.getElementById("lg-suggest")) {
@@ -2878,11 +2911,11 @@ const LEAD_COPY = {
     subject: "Moku — monthly brief signup"
   },
   list: {
-    title: "List your home on Moku",
-    sub: "Tell us about your place — the address, your asking price, and anything worth knowing. It goes to Moku, and we connect you with buyers and licensed local brokers who reach out to you directly, and help you add photos. Free, no obligation — you choose who you talk to. Moku is a listings platform, not a brokerage.",
-    note: "Your home — address or TMK, asking price, details",
-    go: "List my home →",
-    subject: "LIST MY HOME — Moku seller"
+    title: "List it on Moku",
+    sub: "A home, land, a commercial building, or a whole business — pick what you're selling below, then add the address, your asking price, and the details. It goes to Moku, and we connect you with buyers and licensed local brokers who reach out to you directly, and help you add photos. Free, no obligation — you choose who you talk to. Moku is a listings platform, not a brokerage.",
+    note: "Address or TMK, asking price, details",
+    go: "List it →",
+    subject: "NEW LISTING — Moku seller"
   }
 };
 function openLead(kind, prefill) {
@@ -2894,6 +2927,21 @@ function openLead(kind, prefill) {
   document.getElementById("lead-note").value = prefill || "";
   document.getElementById("lead-go").innerHTML = c.go;
   document.getElementById("lead-go").onclick = submitLead;
+  const cats = document.getElementById("lead-cats");
+  if (cats) {
+    if (kind === "list") {
+      cats.style.display = "flex";
+      window.listCategory = "";
+      cats.querySelectorAll(".catchip").forEach(ch => {
+        ch.classList.remove("on");
+        ch.onclick = () => {
+          cats.querySelectorAll(".catchip").forEach(x => x.classList.remove("on"));
+          ch.classList.add("on");
+          window.listCategory = ch.dataset.cat;
+        };
+      });
+    } else { cats.style.display = "none"; }
+  }
   const prof = getProfile();
   if (prof.name && !document.getElementById("lead-name").value) document.getElementById("lead-name").value = prof.name;
   if (prof.email && !document.getElementById("lead-email").value) document.getElementById("lead-email").value = prof.email;
@@ -3123,7 +3171,8 @@ function submitLead() {
     return;
   }
   const name = (document.getElementById("lead-name") || {}).value || "";
-  const body = `${c.subject}\n\nFrom: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
+  const catLine = (leadKind === "list" && window.listCategory) ? `Listing type: ${window.listCategory}\n` : "";
+  const body = `${c.subject}\n\n${catLine}From: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
   saveProfile(name.trim(), email); // one message in = a remembered profile, zero friction
   // Instant channel first — the lead reaches Micah the second the button is pressed
   try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST",
