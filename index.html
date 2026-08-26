@@ -949,7 +949,7 @@
 </div>
 <div id="ledger">
   <div id="ledger-handle"></div>
-  <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; Hawai&#699;i market</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
+  <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; every island&#8217;s sales inside</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
   <div class="lg-mast">
     <div class="lg-wm">Moku<span class="lg-dot-p">.</span> <span class="live-dot"></span></div>
     <div class="lg-kick">THE HAWAI&#699;I LEDGER</div>
@@ -963,12 +963,12 @@
   </div>
   <div class="lg-rule"></div>
   <div class="lg-board">
-    <div class="lg-kick brass">BY ISLAND &middot; MEDIAN, YoY &amp; SHARE OF LISTINGS</div>
+    <div class="lg-kick brass">EVERY ISLAND, LIKE A STOCK &middot; SOLD, MEDIAN &amp; YoY &middot; Q1 2026</div>
     <div id="lg-board-rows"></div>
   </div>
   <div class="lg-rule"></div>
   <div class="lg-closings">
-    <div class="lg-kick brass">RECORDED SALES &middot; MAUI &middot; THROUGH JUN 2025</div>
+    <div class="lg-kick brass">LATEST ADDRESS-LEVEL SALES &middot; MAUI COUNTY</div>
     <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
   </div>
   <div class="lg-cmd">
@@ -987,7 +987,7 @@
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
   <div class="dis-card" data-go="latest" data-chip="Latest closings">
     <div class="dis-big">Latest closings</div>
-    <div class="dis-t">recorded Maui sales through Jun 2025, with photos, straight off the county books</div>
+    <div class="dis-t">the newest address-level sales Maui County publishes &mdash; with photos, straight off the county books</div>
     <div class="dis-a">Browse them &rarr;</div>
   </div>
   <div class="dis-card" data-go="sold" data-chip="1,500 solds">
@@ -1017,7 +1017,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-73</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-74</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2778,7 +2778,7 @@ wireSearch("dockbox", "dock-suggest");
       const up = v.sf_yoy >= 0;
       const share = Math.max(3, Math.round((v.active / totalA) * 100));
       return `<div class="lg-row" data-isle="${k}">
-        <div><div class="isl">${name}</div><div class="sub">${v.active.toLocaleString()} active</div></div>
+        <div><div class="isl">${name}</div><div class="sub">${v.sf_n} sold &middot; ${v.active.toLocaleString()} active</div></div>
         <div style="text-align:right"><div class="med">${fp(v.sf_med)}</div><div class="yoy ${up?'up':'dn'}">${up?'\u25B2':'\u25BC'} ${Math.abs(v.sf_yoy).toFixed(1)}%</div></div>
         <div class="lg-spark"><i style="width:${share}%"></i></div>
       </div>`;
