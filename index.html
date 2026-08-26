@@ -375,6 +375,10 @@
   .dock-quiet button:hover, .dock-quiet a:hover { color: var(--ink); }
   .dock-quiet span { color: var(--ink-3); }
   .dock-sub { text-align: center; font: 400 10.5px/1.4 var(--sans); color: var(--ink-3); margin-top: 5px; }
+  .intel-row { display: flex; gap: 9px; align-items: flex-start; padding: 6px 0; font: 500 13.5px/1.45 var(--sans); color: var(--ink); }
+  .intel-row .idot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
+  .intel-row.flag .idot { background: #A5442E; }
+  .intel-row.plus .idot { background: #0E6E63; }
   .finenote {
     font: 400 10.5px/1.55 var(--sans); color: var(--ink-3);
     text-transform: none; letter-spacing: 0; padding: 12px 2px 4px;
@@ -805,7 +809,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-38</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-39</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -1360,7 +1364,7 @@ async function exploreParcel(lng, lat) {
       if (owner) setFact("owner", "Owner of record", formatOwner(owner), "live");
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
-      if (assessed != null) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); }
+      if (assessed != null) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); lastRecord.assessed = Number(assessed); }
       else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
       else {
         const av = document.getElementById("fact-assessed"); if (av) av.remove();
@@ -1392,6 +1396,7 @@ async function exploreParcel(lng, lat) {
       const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
       if (z) {
         const meaning = zoningMeaning(z.code, z.desc);
+        if (/^(P|CON)/i.test(String(z.code)) || /preservation|conservation/i.test(String(meaning || ""))) noteIntel("zoning", "flag", `Restricted-use district <span class="code">${z.code}</span> &mdash; building and use are limited; verify with county planning`);
         setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>`, "live");
       } else {
         setFact("zoning", "County zoning", "none mapped here", "live");
@@ -1401,6 +1406,8 @@ async function exploreParcel(lng, lat) {
       setFact("flood", "Flood zone", "couldn&#8217;t load", "");
     } else {
       const fz = flood && flood.properties ? flood.properties.fld_zone : null;
+      if (fz && /^(A|V)/i.test(String(fz))) noteIntel("flood", "flag", `In a FEMA high-risk flood zone <span class="code">${fz}</span> &mdash; flood insurance typically required by lenders`);
+      else if (flood !== undefined) noteIntel("flood", "plus", "Outside FEMA high-risk flood zones");
       setFact("flood", "Flood zone",
         (fz ? ((FLOOD_MEANING[fz] || "See FEMA map") + ` <span class="code">${fz}</span>`) : "Outside mapped flood zones") +
         `<div class="subnote"><b onclick="showLayer('flood')">See the flood map &#8599;</b></div>`, "live");
@@ -1417,6 +1424,8 @@ async function exploreParcel(lng, lat) {
         else if (/evacuat|warning/i.test(sT)) tsuTxt = "Inside a tsunami evacuation zone";
         else tsuTxt = esc(sT);
       }
+      if (rawTsu) noteIntel("tsu", "flag", "Inside a mapped tsunami evacuation zone");
+      else noteIntel("tsu", "plus", "Outside mapped tsunami evacuation zones");
       setFact("tsu", "Tsunami evacuation",
         tsuTxt + `<div class="subnote"><b onclick="showLayer('tsu')">See evacuation zones &#8599;</b></div>`, "live");
     }
@@ -1435,6 +1444,7 @@ async function exploreParcel(lng, lat) {
     } else if (isBigIsland) {
       const hz = lava && lava.properties ? String(lava.properties.hzone || "") : "";
       const lavaMeaning = { "1": "Highest lava-flow risk — insurance is difficult", "2": "Very high lava-flow risk — insurance is difficult", "3": "High lava-flow risk", "4": "Moderate lava-flow risk", "5": "Lower lava-flow risk", "6": "Lower lava-flow risk", "7": "Low lava-flow risk", "8": "Very low lava-flow risk", "9": "Lowest lava-flow risk" };
+      if (hz === "1" || hz === "2") noteIntel("lava", "flag", `USGS lava-flow hazard zone ${hz} &mdash; property insurance is difficult here`);
       setFact("lava", "Lava-flow hazard", hz ? ((lavaMeaning[hz] || "See USGS map") + ` <span class="code">Zone ${hz}</span>`) : "not in a mapped lava zone", "live");
     }
   } catch (err) {
@@ -1579,8 +1589,10 @@ async function enrichCounty(county, token, tmkRaw) {
         const fee = rows.find(r => !String(r.CPR_UNIT == null ? "" : r.CPR_UNIT).trim()) || (rows.length === 1 ? rows[0] : null);
         if (fee && fee.ASSDTOT != null) {
           const exempt = Number(fee.TOTEXEMPT || 0) > 0 ? ` <span class="code">home exemption on file</span>` : "";
+          if (Number(fee.TOTEXEMPT || 0) > 0) noteIntel("exempt", "plus", "Home exemption on file &mdash; the county records this as an owner-occupied property");
           putAssessed(assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div"));
           setHeroVal(fee.ASSDTOT);
+          lastRecord.assessed = Number(fee.ASSDTOT);
         } else if (rows.length > 1) {
           let cnt = rows.length;
           try {
@@ -1597,6 +1609,7 @@ async function enrichCounty(county, token, tmkRaw) {
         if (av && av.querySelector(".skel")) av.remove();
       }
       if (tvrRows.status === "fulfilled") {
+        if (tvrRows.value.length) noteIntel("tvr", "plus", "On Kaua&#699;i&#8217;s registered vacation-rental list &mdash; a permitted-use record most parcels don&#8217;t have");
         addFact("row-land", "tvr", "County TVR registry (non-conforming)",
           (tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry") +
           `<div class="subnote"><b onclick="showLayer('tvr')">See all registered rentals &#8599;</b></div>`, "live");
@@ -1657,6 +1670,8 @@ async function enrichCounty(county, token, tmkRaw) {
               `<span style="font-family:var(--serif);font-size:15px;color:var(--ink)">${fmtPrice(v.p)}</span>` +
               `<span style="color:var(--ink-3);font-size:11.5px">${when} &middot; ${v.mi.toFixed(1)} mi &rarr;</span></div>`;
           }).join("");
+          if (lastRecord && lastRecord.assessed > 0 && med > 0 && lastRecord.assessed < med)
+            noteIntel("comps", "plus", `County-assessed (${fmtPrice(lastRecord.assessed)}) sits below the ${fmtPrice(med)} median of recorded sales within a mile`);
           addFact("row-record", "comps", `Recorded sales within a mile &middot; median ${fmtPrice(med)}`,
             rows + `<div class="subnote">County of Maui recorded sales &middot; <b onclick="showLayer('sold')">see all &#8599;</b></div>`, "live");
         } catch (e) {}
@@ -1679,7 +1694,21 @@ async function enrichCounty(county, token, tmkRaw) {
   } catch (e) {}
 }
 
+let intelBag = {};
+function noteIntel(key, kind, html) {
+  intelBag[key] = { kind, html };
+  const list = document.getElementById("intel-list");
+  if (!list) return;
+  const all = Object.values(intelBag);
+  const flags = all.filter(i => i.kind === "flag"), plus = all.filter(i => i.kind === "plus");
+  list.innerHTML = [...flags, ...plus].map(i =>
+    `<div class="intel-row ${i.kind}"><span class="idot"></span><span>${i.html}</span></div>`).join("") +
+    `<div class="subnote">Computed from the county &amp; state records on this card &mdash; informational, not an inspection, valuation, or advice.</div>`;
+  const sec = document.getElementById("intel-sec");
+  if (sec) sec.style.display = "";
+}
 function openRecordCard(lng, lat) {
+  intelBag = {};
   try { document.getElementById("discover").classList.remove("on"); } catch (e) {}
   const pass = document.getElementById("passport");
   setTimeout(() => {
@@ -1700,6 +1729,10 @@ function openRecordCard(lng, lat) {
         <div class="micro" id="hero-val-label" style="display:none">COUNTY ASSESSED</div>
         <div class="hero-val" id="hero-val"></div>
       </div>
+    </div>
+    <div class="sec" id="intel-sec" style="display:none">
+      <div class="h">Parcel intel</div>
+      <div id="intel-list"></div>
     </div>
     <div class="sec">
       <div class="h">Property record &middot; live</div>
