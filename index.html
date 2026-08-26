@@ -336,8 +336,14 @@
     z-index: 46; display: none; flex-direction: column; gap: 5px;
     background: rgba(255,255,255,0.96); border: 1px solid rgba(16,16,18,0.07); border-radius: 14px;
     padding: 8px 14px; font-size: 11px; font-weight: 600; color: var(--ink);
-    box-shadow: 0 4px 16px rgba(16,16,18,0.16); pointer-events: none;
+    box-shadow: 0 4px 16px rgba(16,16,18,0.16); pointer-events: auto;
   }
+  #legend .fbtn {
+    display: inline-block; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(23,21,15,0.14); background: #fff; color: #57534A;
+    font-size: 10px; font-weight: 600; margin: 4px 3px 0 0;
+  }
+  #legend .fbtn.hot2 { background: #17150F; color: #FBF9F5; border-color: #17150F; }
   body.docked #legend.on { display: flex; }
   #legend .lrow { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
   #legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
@@ -826,7 +832,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-28</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-29</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -2353,11 +2359,43 @@ const LAYER_BOUNDS = {
   tvr:  [[-159.95, 21.8], [-159.2, 22.35]]   // Kauai
 };
 const LEGEND_ROWS = {
-  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui</span></div>`,
+  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui</span></div>
+    <div class="lrow" style="flex-wrap:wrap; max-width:280px;">
+      <span style="opacity:0.6">PRICE</span>
+      <span class="fbtn ${soldFilter.minP===0?'hot2':''}" data-p="0">Any</span>
+      <span class="fbtn ${soldFilter.minP===1000000?'hot2':''}" data-p="1000000">$1M+</span>
+      <span class="fbtn ${soldFilter.minP===2000000?'hot2':''}" data-p="2000000">$2M+</span>
+      <span class="fbtn ${soldFilter.minP===5000000?'hot2':''}" data-p="5000000">$5M+</span>
+      <span style="opacity:0.6; margin-left:6px">DATE</span>
+      <span class="fbtn ${soldFilter.minT===0?'hot2':''}" data-t="0">All</span>
+      <span class="fbtn ${soldFilter.minT>0?'hot2':''}" data-t="1735689600000">2025+</span>
+    </div>`,
   tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} registered vacation rentals &middot; Kauai</span></div>`,
   flood: () => `<div class="lrow"><span class="sw" style="background:#4A90C4"></span><span>FEMA high-risk flood zones</span></div>`,
   tsu: () => `<div class="lrow"><span class="sw" style="background:#C4574A"></span><span>Tsunami evacuation zones</span></div>`
 };
+let soldFilter = { minP: 0, minT: 0 };
+function applySoldFilter() {
+  try {
+    const f = ["all", ["!", ["has", "point_count"]],
+      [">=", ["coalesce", ["get", "GIS_SALES_2YEAR_PRICE"], 0], soldFilter.minP],
+      [">=", ["coalesce", ["get", "ts"], 0], soldFilter.minT]];
+    const active = soldFilter.minP > 0 || soldFilter.minT > 0;
+    ["lyr-sold-dot", "lyr-sold-pill"].forEach(id => { if (map.getLayer(id)) map.setFilter(id, f); });
+    if (map.getLayer("lyr-sold-dot")) map.setLayerZoomRange("lyr-sold-dot", 0, active ? 24 : 11.5);
+    ["lyr-sold-cluster", "lyr-sold-count"].forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", (!active && layerState.sold && layerState.sold.on) ? "visible" : "none");
+    });
+  } catch (e) {}
+}
+document.getElementById("legend").addEventListener("click", e => {
+  const b = e.target.closest("[data-p],[data-t]");
+  if (!b) return;
+  if (b.dataset.p !== undefined) soldFilter.minP = +b.dataset.p;
+  if (b.dataset.t !== undefined) soldFilter.minT = +b.dataset.t;
+  applySoldFilter();
+  refreshLegend();
+});
 function refreshLegend() {
   const el = document.getElementById("legend");
   const rows = Object.keys(LEGEND_ROWS).filter(k => layerState[k] && layerState[k].on)
