@@ -25,8 +25,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
+<link rel="preconnect" href="https://tiles.openfreemap.org">
+<link rel="dns-prefetch" href="https://s3.amazonaws.com">
+<link rel="preconnect" href="https://server.arcgisonline.com">
 <link rel="preconnect" href="https://geodata.hawaii.gov">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="vendor/maplibre-gl.css">
 <style>
   :root {
@@ -810,7 +814,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-43</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-44</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -872,6 +876,7 @@
     <div class="fine" style="margin-top:14px">Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a><br>Questions? Use &#8220;Ask about this parcel&#8217;s records&#8221; on any parcel.</div>
   </div>
 </div>
+<script>window.__styleP = fetch("https://tiles.openfreemap.org/styles/positron").then(r => r.json()).catch(() => null);</script>
 <script src="vendor/maplibre-gl.js"></script>
 <script src="market-data.js"></script>
 <script>
@@ -938,6 +943,7 @@ const map = new maplibregl.Map({
   pitch: 0,
   bearing: 0,
   attributionControl: false,
+  clickTolerance: 8,
   maxPitch: SMALL ? 64 : 72
 });
 map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
@@ -946,8 +952,7 @@ map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAc
 window.addEventListener("resize", () => map.resize());
 new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
 
-fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
-  .then(r => r.json())
+(window.__styleP ? window.__styleP.then(j => j || fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000).then(r => r.json())) : fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000).then(r => r.json()))
   .then(st => {
     st.sources.sat = SAT_SOURCE;
     st.sources.dem = DEM_SOURCE;
@@ -985,19 +990,9 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
       id: "sat", type: "raster", source: "sat",
       paint: { "raster-opacity": 1, "raster-saturation": 0.24, "raster-contrast": 0.04 }
     };
-    const hillLayer = {
-      id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
-      paint: {
-        "hillshade-exaggeration": 0.32,
-        "hillshade-shadow-color": "rgba(26,42,32,0.55)",
-        "hillshade-highlight-color": "rgba(255,250,235,0.30)",
-        "hillshade-accent-color": "rgba(26,42,32,0.25)",
-        "hillshade-illumination-direction": 315
-      }
-    };
     const waterIdx = st.layers.findIndex(l => l.type === "fill" && /water|ocean/i.test(l.id));
-    if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer, hillLayer);
-    else st.layers.push(satLayer, hillLayer);
+    if (waterIdx > 0) st.layers.splice(waterIdx, 0, satLayer);
+    else st.layers.push(satLayer);
     const satIdx = st.layers.findIndex(l => l.id === "sat");
     st.layers.forEach((l, i) => {
       if (i > satIdx && (l.type === "fill" || l.type === "fill-extrusion") && !/water|ocean/i.test(l.id)) {
@@ -1017,6 +1012,16 @@ function armTerrain() {
   try {
     if (LITE || !map.getSource("dem") || map.getTerrain()) return;
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
+    // The sun-sculpt light arrives with the terrain, never at boot — boot stays light
+    try {
+      if (!map.getLayer("hills")) {
+        const ls = map.getStyle().layers, si = ls.findIndex(l => l.id === "sat");
+        map.addLayer({ id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
+          paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
+            "hillshade-highlight-color": "rgba(255,250,235,0.30)", "hillshade-accent-color": "rgba(26,42,32,0.25)",
+            "hillshade-illumination-direction": 315 } }, si >= 0 && ls[si + 1] ? ls[si + 1].id : undefined);
+      }
+    } catch (e) {}
     // Terrain pays rent: if frames drop after it arms, it goes — permanently this session
     setTimeout(() => {
       let n = 0, slow = 0, last = performance.now();
@@ -1070,8 +1075,8 @@ function applyCustomLayers() {
       tiles: ["https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&format=png32&transparent=true&f=image&dynamicLayers=" + encodeURIComponent(dl)]
     });
     map.addLayer({
-      id: "parcel-lines", type: "raster", source: "parcel-lines", minzoom: 14.6,
-      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 14.6, 0, 15.4, 0.7], "raster-fade-duration": 150 }
+      id: "parcel-lines", type: "raster", source: "parcel-lines", minzoom: 13.2,
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 13.2, 0, 14.0, 0.55, 15.2, 0.75], "raster-fade-duration": 150 }
     });
   }
   if (!map.getSource("parcel")) {
@@ -1292,21 +1297,31 @@ function jumpWithOffset(lng, lat, zoom, pitch) {
     map.jumpTo({ center: map.unproject([pt.x, pt.y + Math.round(window.innerHeight * 0.28)]) });
   }
 }
+let lastTap = { t: 0, x: 0, y: 0 };
 map.on("click", (e) => {
   if (e.originalEvent && e.originalEvent._pinHandled) return;
+  const pinLayers = ["lyr-saves", "lyr-sold-dot", "lyr-sold-pill", "lyr-sold-cluster"].filter(id => map.getLayer(id));
+  if (pinLayers.length && map.queryRenderedFeatures(e.point, { layers: pinLayers }).length) return;
+  const nT = performance.now();
+  if (nT - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24) return;
+  lastTap = { t: nT, x: e.point.x, y: e.point.y };
   const z = map.getZoom();
-  if (z < 11.5) {
-    // From true altitude you can't aim at a lot — step down toward the point instead
-    map.flyTo({ center: e.lngLat, zoom: Math.min(z + (z < 9 ? 3.4 : 2.6), 13.6), speed: 1.7, curve: 1.35, essential: true });
+  if (z < 10.5) {
+    // From true altitude you can't aim at a lot — acknowledge the tap, step down toward it
+    if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat(e.lngLat).addTo(map); }
+    else tapMarker.setLngLat(e.lngLat).addTo(map);
+    map.flyTo({ center: e.lngLat, zoom: z < 8.5 ? z + 3.4 : 14.2, speed: 1.7, curve: 1.35, essential: true });
     return;
   }
   exploreParcel(e.lngLat.lng, e.lngLat.lat);
 });
-map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 11.5 ? "pointer" : ""; } catch (e) {} });
+map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 10.5 ? "pointer" : ""; } catch (e) {} });
 
 async function exploreParcel(lng, lat) {
   dismissVeil();
   const token = ++exploreToken;
+  if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
+  else tapMarker.setLngLat([lng, lat]).addTo(map);
   lastRecord = { lng, lat, tmk: null };
   openRecordCard(lng, lat);
   setHash("p=" + lng.toFixed(5) + "," + lat.toFixed(5));
@@ -1390,7 +1405,11 @@ async function exploreParcel(lng, lat) {
         ring.forEach(pt => { cx += pt[0]; cy += pt[1]; });
         cx /= ring.length; cy /= ring.length;
         if (bootCam) jumpWithOffset(cx, cy, targetZoom);
-        else if (!map.isMoving()) map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 600, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
+        else if (!map.isMoving()) {
+          const a = map.project([cx, cy]), b = map.project([lng, lat]);
+          if (map.getZoom() < 14.8 || Math.hypot(a.x - b.x, a.y - b.y) > 120)
+            map.easeTo({ center: [cx, cy], zoom: targetZoom, duration: 600, offset: SMALL ? [0, -Math.round(window.innerHeight * 0.28)] : [0, 0] });
+        }
       } catch (geErr) {}
       const p = parcel.properties || {};
       const tmk = pickTmk(p);
@@ -1757,12 +1776,18 @@ function openRecordCard(lng, lat) {
     const d = document.getElementById("dir-btn");
     if (d) d.href = "https://www.google.com/maps/dir/?api=1&destination=" + lat.toFixed(6) + "," + lng.toFixed(6);
   }, 0);
+  const d = 0.0016;
+  const aerial = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=" +
+    (lng - d * 1.9) + "," + (lat - d) + "," + (lng + d * 1.9) + "," + (lat + d) +
+    "&bboxSR=4326&imageSR=4326&size=440,132&format=jpg&f=image";
   pass.innerHTML = `
     <div class="hero" style="background:linear-gradient(135deg,#16281F 0%,#1E3A2C 55%,#27503A 100%);">
+      <img src="${aerial}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()">
       <div class="scrim"></div>
       <div class="note"><span class="live-dot" style="display:inline-block;margin-right:5px"></span>County record &middot; live</div>
       <button class="x" onclick="closeRecord()" aria-label="Close record">&#10005;</button>
-      <div class="hp">
+    </div>
+    <div class="hp" style="padding: 16px 16px 0;">
         <div class="brass-rule"></div>
         <div class="micro" id="rec-micro">PARCEL RECORD &middot; HAWAI&#699;I</div>
         <div class="addr" id="rec-addr">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
@@ -1770,7 +1795,6 @@ function openRecordCard(lng, lat) {
         <div class="rule-h"></div>
         <div class="micro" id="hero-val-label" style="display:none">COUNTY ASSESSED</div>
         <div class="hero-val" id="hero-val"></div>
-      </div>
     </div>
     <div class="sec" id="intel-sec" style="display:none">
       <div class="h">Parcel intel</div>
@@ -2199,10 +2223,10 @@ function islandKeyFor(lng, lat) {
 let heroSettled = false;
 function armChoreo() {
   if (!map.getSource("sat")) return;
-  map.once("idle", () => setTimeout(begin, 1100));
+  map.once("idle", () => setTimeout(begin, 250));
 }
 map.on("style.load", armChoreo);
-setTimeout(() => begin(), 11000);
+setTimeout(() => begin(), 6000);
 {
   const _begin = () => {
     if (heroSettled) return;
@@ -2234,7 +2258,7 @@ setTimeout(() => begin(), 11000);
         const ov = document.getElementById("ovation");
         const num = document.getElementById("ov-num");
         ov.classList.add("on");
-        const t0 = performance.now(), DUR = 1500;
+        const t0 = performance.now(), DUR = 900;
         const tick = t => {
           const k = Math.min(1, (t - t0) / DUR);
           const ease = 1 - Math.pow(1 - k, 3);
@@ -2242,22 +2266,22 @@ setTimeout(() => begin(), 11000);
           if (k < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-        setTimeout(() => { ov.classList.add("fade"); }, 1900);
-        setTimeout(() => { ov.classList.remove("on", "fade"); }, 2600);
+        setTimeout(() => { ov.classList.add("fade"); }, 1200);
+        setTimeout(() => { ov.classList.remove("on", "fade"); }, 1800);
         ovDone = true;
       }
     } catch (e) {}
     setTimeout(() => {
-      map.flyTo({ center: h.c, zoom: h.z, pitch: firstVisit ? 28 : 48, bearing: firstVisit ? 0 : -18, speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 2500 : 4500, essential: false });
+      map.flyTo({ center: h.c, zoom: h.z, pitch: firstVisit ? 28 : 48, bearing: firstVisit ? 0 : -18, speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 1800 : 2400, essential: false });
       map.once("moveend", () => {
         setTimeout(armTerrain, 500);
         if (window.showDiscover) setTimeout(window.showDiscover, 600);
         // Market layers may welcome; hazards are opt-in only — never open on a disaster map
         const autoLayer = firstVisit ? null : ({ kauai: "tvr", maui: "sold", oahu: "tvr" })[isle] || null;
-        if (autoLayer) setTimeout(() => {
+        if (autoLayer) (window.requestIdleCallback || (f => setTimeout(f, 2500)))(() => {
           if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
             toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
-        }, 900);
+        }, { timeout: 5000 });
         try {
           if (!localStorage.getItem("moku_seen")) {
             localStorage.setItem("moku_seen", "1");
@@ -2265,7 +2289,7 @@ setTimeout(() => begin(), 11000);
           }
         } catch (e) {}
       });
-    }, ovDone ? 2000 : 400);
+    }, ovDone ? 1300 : 250);
   };
   window.begin = _begin;
 }
@@ -2277,10 +2301,12 @@ const markReady = () => {
 };
 // Ready = the REAL style's imagery has painted — never the empty placeholder's idle
 function armReady() {
-  if (map.getSource("sat")) map.once("idle", markReady);
+  if (!map.getSource("sat")) return;
+  const h = e => { if (e.sourceId === "sat" && e.tile) { map.off("sourcedata", h); markReady(); } };
+  map.on("sourcedata", h);
 }
 map.on("style.load", armReady);
-setTimeout(markReady, 9000);
+setTimeout(markReady, 3000);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
