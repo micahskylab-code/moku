@@ -1,0 +1,310 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moku — Ten Designs</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",sans-serif; background:#101112; }
+.intro { color:#fff; text-align:center; padding:48px 20px 34px; }
+.intro h1 { font-family:"Fraunces",serif; font-weight:500; font-size:clamp(30px,6vw,44px); }
+.intro p { color:rgba(255,255,255,0.6); font-size:14px; margin-top:10px; }
+.design { padding:44px 20px 54px; }
+.dhead { display:flex; gap:16px; align-items:baseline; max-width:960px; margin:0 auto 24px; }
+.dnum { font-family:"Fraunces",serif; font-size:44px; font-weight:500; line-height:1; }
+.dname { font-size:22px; font-weight:700; }
+.dref { font-size:12.5px; margin-top:3px; }
+.stage { display:flex; gap:24px; max-width:960px; margin:0 auto; align-items:stretch; flex-wrap:wrap; }
+.mapmock { flex:1 1 340px; min-height:320px; position:relative; }
+.mockchip { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-size:11.5px; font-weight:600; padding:9px 14px; box-shadow:0 4px 14px rgba(0,0,0,0.25); white-space:nowrap; }
+.cardmock { flex:0 1 340px; padding:24px 22px; }
+.mrule { width:44px; height:2px; margin-bottom:12px; }
+.mmicro { font-size:9.5px; font-weight:600; letter-spacing:0.15em; margin-bottom:6px; }
+.mtitle2 { font-size:26px; font-weight:500; line-height:1.1; }
+.mtmk { font-size:11px; font-variant-numeric:tabular-nums; margin-top:4px; }
+.mhair { height:1px; margin:14px 0 10px; }
+.mval { font-size:42px; font-weight:400; letter-spacing:-0.02em; line-height:1; font-variant-numeric:tabular-nums; }
+.msub { font-size:11px; margin-top:7px; }
+.mrow { display:flex; justify-content:space-between; align-items:baseline; padding:9px 0; font-size:12px; }
+.mrow span:first-child { font-size:9px; font-weight:600; letter-spacing:0.13em; }
+.mrow span:last-child { font-weight:500; }
+.mbtn { text-align:center; font-size:12.5px; font-weight:600; padding:12px; margin-top:14px; }
+@media (max-width:740px){ .stage{gap:16px;} .mapmock{min-height:220px;} }
+</style></head><body>
+<div class="intro"><h1>Moku &middot; Ten Designs</h1>
+<p>Same parcel, same data, ten identities. Tell me the number &mdash; or the pieces you love from each.</p></div>
+
+<section class="design" style="background:#FBF9F5;">
+  <div class="dhead">
+    <div class="dnum" style="color:#9C7A3C">01</div>
+    <div><div class="dname" style="color:#17150F">Gallery White</div>
+    <div class="dref" style="color:#57534A">Sotheby's brochure · the current build</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:18px; box-shadow:0 24px 60px rgba(23,21,15,0.13); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#FBF9F5; color:#17150F; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#FBF9F5; border-radius:18px; box-shadow:0 16px 44px rgba(23,21,15,0.10); border:1px solid rgba(23,21,15,0.14);">
+      <div class="mrule" style="background:#9C7A3C;"></div>
+      <div class="mmicro" style="color:#9C7A3C">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#17150F; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:#57534A">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(23,21,15,0.14)"></div>
+      <div class="mmicro" style="color:#9C7A3C">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#17150F; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:#57534A">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(23,21,15,0.14)"></div>
+      <div class="mrow"><span style="color:#9C7A3C">OWNER OF RECORD</span><span style="color:#17150F">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#9C7A3C">FEMA FLOOD ZONE</span><span style="color:#17150F">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#9C7A3C">TVR REGISTRY</span><span style="color:#17150F">Not listed</span></div>
+      <div class="mbtn" style="background:#17150F; color:#FBF9F5; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#101315;">
+  <div class="dhead">
+    <div class="dnum" style="color:#E3C27C">02</div>
+    <div><div class="dname" style="color:#F4F2ED">Obsidian</div>
+    <div class="dref" style="color:rgba(255,255,255,0.6)">Aman at night · dark luxury</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:18px; box-shadow:0 24px 70px rgba(0,0,0,0.6); outline:1px solid rgba(255,255,255,0.08); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#16191D; color:#F4F2ED; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#16191D; border-radius:18px; box-shadow:0 24px 60px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.12);">
+      <div class="mrule" style="background:#E3C27C;"></div>
+      <div class="mmicro" style="color:#E3C27C">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#F4F2ED; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:rgba(255,255,255,0.6)">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(255,255,255,0.12)"></div>
+      <div class="mmicro" style="color:#E3C27C">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#F4F2ED; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:rgba(255,255,255,0.6)">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(255,255,255,0.12)"></div>
+      <div class="mrow"><span style="color:#E3C27C">OWNER OF RECORD</span><span style="color:#F4F2ED">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#E3C27C">FEMA FLOOD ZONE</span><span style="color:#F4F2ED">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#E3C27C">TVR REGISTRY</span><span style="color:#F4F2ED">Not listed</span></div>
+      <div class="mbtn" style="background:#F4F2ED; color:#101315; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#FFFFFF;">
+  <div class="dhead">
+    <div class="dnum" style="color:#0B7A3E">03</div>
+    <div><div class="dname" style="color:#0A0C0E">The Instrument</div>
+    <div class="dref" style="color:#5E666B">Bloomberg terminal × Apple Pro</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:6px; box-shadow:0 8px 28px rgba(10,12,14,0.14); outline:1px solid rgba(10,12,14,0.2); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#FFFFFF; color:#0A0C0E; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#FFFFFF; border-radius:6px; box-shadow:0 8px 28px rgba(10,12,14,0.10); border:1px solid rgba(10,12,14,0.16);">
+      <div class="mrule" style="background:#0A0C0E;"></div>
+      <div class="mmicro" style="color:#0A0C0E">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#0A0C0E; font-family:"Inter", sans-serif;">Koloa</div>
+      <div class="mtmk" style="color:#5E666B">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(10,12,14,0.16)"></div>
+      <div class="mmicro" style="color:#0A0C0E">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#0A0C0E; font-family:"Inter", sans-serif;">$1,363,000</div>
+      <div class="msub" style="color:#5E666B">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(10,12,14,0.16)"></div>
+      <div class="mrow"><span style="color:#0A0C0E">OWNER OF RECORD</span><span style="color:#0A0C0E">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#0A0C0E">FEMA FLOOD ZONE</span><span style="color:#0A0C0E">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#0A0C0E">TVR REGISTRY</span><span style="color:#0A0C0E">Not listed</span></div>
+      <div class="mbtn" style="background:#0A0C0E; color:#FFFFFF; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#F6F2E8;">
+  <div class="dhead">
+    <div class="dnum" style="color:#1F4D34">04</div>
+    <div><div class="dname" style="color:#1E2A22">Estate</div>
+    <div class="dref" style="color:#4E5A50">Christie's country-house catalog</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:10px; box-shadow:0 14px 40px rgba(30,42,34,0.18); outline:3px double rgba(31,77,52,0.35); outline-offset:-8px; background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#F9F6EE; color:#1E2A22; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#F9F6EE; border-radius:10px; box-shadow:0 14px 40px rgba(30,42,34,0.12); border:1px solid rgba(30,42,34,0.18);">
+      <div class="mrule" style="background:#1F4D34;"></div>
+      <div class="mmicro" style="color:#1F4D34">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#1E2A22; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:#4E5A50">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(30,42,34,0.18)"></div>
+      <div class="mmicro" style="color:#1F4D34">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#1E2A22; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:#4E5A50">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(30,42,34,0.18)"></div>
+      <div class="mrow"><span style="color:#1F4D34">OWNER OF RECORD</span><span style="color:#1E2A22">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#1F4D34">FEMA FLOOD ZONE</span><span style="color:#1E2A22">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#1F4D34">TVR REGISTRY</span><span style="color:#1E2A22">Not listed</span></div>
+      <div class="mbtn" style="background:#1F4D34; color:#F6F2E8; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#F7F5F1;">
+  <div class="dhead">
+    <div class="dnum" style="color:#7E9088">05</div>
+    <div><div class="dname" style="color:#33393B">Pacific Editorial</div>
+    <div class="dref" style="color:#7A8184">Cereal magazine · quiet luxury</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:22px; box-shadow:0 10px 36px rgba(51,57,59,0.10); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#F7F5F1; color:#33393B; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#F7F5F1; border-radius:22px; box-shadow:0 10px 36px rgba(51,57,59,0.08); border:1px solid rgba(51,57,59,0.10);">
+      <div class="mrule" style="background:#C9CFC9;"></div>
+      <div class="mmicro" style="color:#9AA6A0">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#33393B; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:#7A8184">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(51,57,59,0.10)"></div>
+      <div class="mmicro" style="color:#9AA6A0">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#33393B; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:#7A8184">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(51,57,59,0.10)"></div>
+      <div class="mrow"><span style="color:#9AA6A0">OWNER OF RECORD</span><span style="color:#33393B">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#9AA6A0">FEMA FLOOD ZONE</span><span style="color:#33393B">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#9AA6A0">TVR REGISTRY</span><span style="color:#33393B">Not listed</span></div>
+      <div class="mbtn" style="background:#33393B; color:#F7F5F1; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#0C1B2A;">
+  <div class="dhead">
+    <div class="dnum" style="color:#FF7A59">06</div>
+    <div><div class="dname" style="color:#F2F7FA">Midnight Tropic</div>
+    <div class="dref" style="color:rgba(242,247,250,0.62)">modern resort · W Hotels</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:20px; box-shadow:0 20px 55px rgba(0,0,0,0.55); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#122536; color:#F2F7FA; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#122536; border-radius:20px; box-shadow:0 20px 55px rgba(0,0,0,0.5); border:1px solid rgba(242,247,250,0.14);">
+      <div class="mrule" style="background:#FF7A59;"></div>
+      <div class="mmicro" style="color:#FF7A59">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#F2F7FA; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:rgba(242,247,250,0.62)">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(242,247,250,0.14)"></div>
+      <div class="mmicro" style="color:#FF7A59">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#F2F7FA; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:rgba(242,247,250,0.62)">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(242,247,250,0.14)"></div>
+      <div class="mrow"><span style="color:#FF7A59">OWNER OF RECORD</span><span style="color:#F2F7FA">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#FF7A59">FEMA FLOOD ZONE</span><span style="color:#F2F7FA">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#FF7A59">TVR REGISTRY</span><span style="color:#F2F7FA">Not listed</span></div>
+      <div class="mbtn" style="background:#FF7A59; color:#0C1B2A; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#F5EFE4;">
+  <div class="dhead">
+    <div class="dnum" style="color:#B08A3E">07</div>
+    <div><div class="dname" style="color:#3B2A1A">Koa & Ivory</div>
+    <div class="dref" style="color:#75604A">Hawaiian craft · koa wood and lei gold</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:16px; box-shadow:0 14px 40px rgba(59,42,26,0.2); border:6px solid #3B2A1A; background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#FAF6ED; color:#3B2A1A; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#FAF6ED; border-radius:16px; box-shadow:0 14px 40px rgba(59,42,26,0.14); border:1px solid rgba(59,42,26,0.16);">
+      <div class="mrule" style="background:#B08A3E;"></div>
+      <div class="mmicro" style="color:#B08A3E">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#3B2A1A; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:#75604A">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(59,42,26,0.16)"></div>
+      <div class="mmicro" style="color:#B08A3E">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#3B2A1A; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:#75604A">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(59,42,26,0.16)"></div>
+      <div class="mrow"><span style="color:#B08A3E">OWNER OF RECORD</span><span style="color:#3B2A1A">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#B08A3E">FEMA FLOOD ZONE</span><span style="color:#3B2A1A">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#B08A3E">TVR REGISTRY</span><span style="color:#3B2A1A">Not listed</span></div>
+      <div class="mbtn" style="background:#3B2A1A; color:#F5EFE4; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#FFFFFF;">
+  <div class="dhead">
+    <div class="dnum" style="color:#D02E1F">08</div>
+    <div><div class="dname" style="color:#111111">Swiss Atlas</div>
+    <div class="dref" style="color:#666666">National Geographic · Swiss cartography</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:0; box-shadow:none; outline:2px solid #111; background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#FFFFFF; color:#111111; border-radius:0;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#FFFFFF; border-radius:0px; box-shadow:0 6px 24px rgba(17,17,17,0.12); border:1px solid rgba(17,17,17,0.15);">
+      <div class="mrule" style="background:#111111;"></div>
+      <div class="mmicro" style="color:#D02E1F">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#111111; font-family:"Inter", sans-serif;">Koloa</div>
+      <div class="mtmk" style="color:#666666">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(17,17,17,0.15)"></div>
+      <div class="mmicro" style="color:#D02E1F">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#111111; font-family:"Inter", sans-serif;">$1,363,000</div>
+      <div class="msub" style="color:#666666">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(17,17,17,0.15)"></div>
+      <div class="mrow"><span style="color:#D02E1F">OWNER OF RECORD</span><span style="color:#111111">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#D02E1F">FEMA FLOOD ZONE</span><span style="color:#111111">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#D02E1F">TVR REGISTRY</span><span style="color:#111111">Not listed</span></div>
+      <div class="mbtn" style="background:#D02E1F; color:#FFFFFF; border-radius:0;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#F4F1EA;">
+  <div class="dhead">
+    <div class="dnum" style="color:#6E1E2B">09</div>
+    <div><div class="dname" style="color:#20211F">Vellum</div>
+    <div class="dref" style="color:#5C5C57">Forbes print · private banking</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:12px; box-shadow:0 12px 38px rgba(32,33,31,0.16); outline:1px solid rgba(110,30,43,0.3); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#FAF8F3; color:#20211F; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#FAF8F3; border-radius:12px; box-shadow:0 12px 38px rgba(32,33,31,0.10); border:1px solid rgba(32,33,31,0.15);">
+      <div class="mrule" style="background:#6E1E2B;"></div>
+      <div class="mmicro" style="color:#6E1E2B">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#20211F; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:#5C5C57">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(32,33,31,0.15)"></div>
+      <div class="mmicro" style="color:#6E1E2B">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#20211F; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:#5C5C57">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(32,33,31,0.15)"></div>
+      <div class="mrow"><span style="color:#6E1E2B">OWNER OF RECORD</span><span style="color:#20211F">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#6E1E2B">FEMA FLOOD ZONE</span><span style="color:#20211F">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#6E1E2B">TVR REGISTRY</span><span style="color:#20211F">Not listed</span></div>
+      <div class="mbtn" style="background:#6E1E2B; color:#F4F1EA; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<section class="design" style="background:#0B0B0C;">
+  <div class="dhead">
+    <div class="dnum" style="color:#FF5A2D">10</div>
+    <div><div class="dname" style="color:#F5F5F6">Volcanic Glass</div>
+    <div class="dref" style="color:rgba(245,245,246,0.6)">Apple Pro hardware · dramatic</div></div>
+  </div>
+  <div class="stage">
+    <div class="mapmock" style="border-radius:20px; box-shadow:0 26px 70px rgba(0,0,0,0.75); outline:1px solid rgba(255,90,45,0.35); background:url('assets/og-moku.jpg') center/cover;">
+      <div class="mockchip" style="background:#141416; color:#F5F5F6; border-radius:999px;">Sold &middot; Maui &middot; 1,500</div>
+    </div>
+    <div class="cardmock" style="background:#141416; border-radius:20px; box-shadow:0 26px 70px rgba(0,0,0,0.7); border:1px solid rgba(245,245,246,0.12);">
+      <div class="mrule" style="background:linear-gradient(90deg,#FF5A2D,#FFB13D);"></div>
+      <div class="mmicro" style="color:#FF5A2D">PARCEL RECORD &middot; KAUA&#699;I</div>
+      <div class="mtitle2" style="color:#F5F5F6; font-family:"Fraunces", Georgia, serif;">Koloa</div>
+      <div class="mtmk" style="color:rgba(245,245,246,0.6)">(4) 2-7-003:016</div>
+      <div class="mhair" style="background:rgba(245,245,246,0.12)"></div>
+      <div class="mmicro" style="color:#FF5A2D">COUNTY ASSESSED &middot; TY2026</div>
+      <div class="mval" style="color:#F5F5F6; font-family:"Fraunces", Georgia, serif;">$1,363,000</div>
+      <div class="msub" style="color:rgba(245,245,246,0.6)">$173,812 / acre &middot; 7.84 acres &middot; Agricultural</div>
+      <div class="mhair" style="background:rgba(245,245,246,0.12)"></div>
+      <div class="mrow"><span style="color:#FF5A2D">OWNER OF RECORD</span><span style="color:#F5F5F6">Libre, Floyd L</span></div>
+      <div class="mrow"><span style="color:#FF5A2D">FEMA FLOOD ZONE</span><span style="color:#F5F5F6">Outside high-risk &middot; X</span></div>
+      <div class="mrow"><span style="color:#FF5A2D">TVR REGISTRY</span><span style="color:#F5F5F6">Not listed</span></div>
+      <div class="mbtn" style="background:#FF5A2D; color:#0B0B0C; border-radius:999px;">Ask Micah about this parcel</div>
+    </div>
+  </div>
+</section>
+<div class="intro" style="padding:40px 20px 70px"><p>Reply with a number (or "7 card + 2 map"). The winner ships the same day.</p></div>
+</body></html>
