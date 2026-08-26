@@ -803,6 +803,20 @@
   .lg-cmd { margin-top: auto; position: relative; padding-top: 14px; }
   #lg-search { width: 100%; box-sizing: border-box; min-height: 48px; background: #fff; border: 1px solid rgba(22,24,26,0.14); border-radius: 14px; padding: 12px 16px 12px 42px; font-family: var(--sans); font-size: 16px; color: #16181A; }
   #lg-search:focus { outline: none; border-color: #9A7B3F; }
+  #m-search { display: none; }
+  @media (max-width: 760px) {
+    body.has-ledger #m-search {
+      display: flex; align-items: center; gap: 9px;
+      position: fixed; top: calc(9px + env(safe-area-inset-top)); left: 11px; right: 11px; z-index: 46;
+      height: 48px; padding: 0 15px;
+      background: rgba(255,255,255,0.95); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,0,0,0.07); border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.14);
+      font-family: var(--sans); font-size: 15px; font-weight: 500; color: rgba(29,29,31,0.5);
+      cursor: text; -webkit-tap-highlight-color: transparent;
+    }
+    body.has-ledger.reading #m-search { display: none; }
+    #m-search .mmag { font-size: 16px; color: #9A7B3F; flex: none; }
+  }
   .lg-mag { position: absolute; left: 15px; top: 26px; color: #9A7B3F; font-size: 15px; }
   .lg-tools { margin-top: 9px; text-align: center; }
   #lg-suggest { position: absolute; left: 0; right: 0; bottom: 60px; z-index: 5; }
@@ -947,6 +961,7 @@
   <div class="hl-big">The islands,<br>by the numbers.</div>
   <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
 </div>
+<div id="m-search" role="button" tabindex="0" aria-label="Search any Hawaii address or TMK" onclick="document.body.classList.remove('sheet-collapsed'); var s=document.getElementById('lg-search'); if(s){try{s.scrollIntoView({block:'center'});}catch(e){} setTimeout(function(){s.focus();},60);}"><span class="mmag">&#9906;</span><span>Search any address or TMK</span></div>
 <div id="ledger">
   <div id="ledger-handle"></div>
   <div id="ledger-peek"><span><span class="lg-peek-n" id="peek-n">6,711</span> <span class="lg-peek-l">active &middot; every island&#8217;s sales inside</span></span><span class="lg-peek-up">Pull up &#8593;</span></div>
@@ -1017,11 +1032,12 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-74</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-75</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
+  <button class="lchip" data-lk="forsale"><span class="dot2" style="background:#3E7CB1"></span>For sale</button>
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals</button>
   <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
@@ -1086,6 +1102,20 @@
       &#8220;What&#8217;s under me?&#8221;, your location is used on your device and never stored or sent
       to us. If you write in, your email is used only to reply.</p>
     <div class="fine" style="margin-top:14px">Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a><br>Questions? Use &#8220;Ask about this parcel&#8217;s records&#8221; on any parcel.</div>
+  </div>
+</div>
+<div class="modal-bg" id="forsale-modal" onclick="if(event.target===this)closeForSale()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fs-title">
+    <button class="x" onclick="closeForSale()" aria-label="Close">&#10005;</button>
+    <div class="mtitle" id="fs-title">Homes for sale</div>
+    <div style="border:1px solid rgba(62,124,177,0.32); background:rgba(62,124,177,0.07); border-radius:14px; padding:15px; margin:15px 0 0;">
+      <div style="font-family:var(--serif); font-weight:500; color:var(--ink); font-size:18px;">Selling your place? List it here.</div>
+      <p style="margin:6px 0 12px; font-size:13px; color:var(--ink-2); line-height:1.5;">Put your home on Moku and let Hawai&#699;i&#8217;s buyers and licensed brokers come to you &mdash; your place, your photos, your price. Free, no obligation. You stay in control of who you talk to.</p>
+      <button class="go" style="margin-top:0" onclick="closeForSale(); openLead('list');">List my home &rarr;</button>
+    </div>
+    <p style="margin:17px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">The full live market &mdash; connecting soon.</b> Every active listing and price reduction, on this map, updated in real time. That data flows through a licensed MLS feed &mdash; Moku is built and ready for the day it connects. Until then we show no listings we can&#8217;t stand behind: real data only, never a guess.</p>
+    <p style="margin:11px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">Already done &mdash; the hard 99%.</b> Every parcel, owner, value, risk zone and recorded sale in Hawai&#699;i is already on this map &mdash; the part no listings site has. Listings are the last 1%, and they switch on with one connection.</p>
+    <div class="fine" style="margin-top:15px">Moku is a public-records and listings platform that connects people directly &mdash; not a brokerage, no advice, nothing for sale on this site.</div>
   </div>
 </div>
 <script>window.__styleP = fetch("https://tiles.openfreemap.org/styles/positron").then(r => r.json()).catch(() => null);</script>
@@ -2813,7 +2843,7 @@ wireSearch("dockbox", "dock-suggest");
   const meBtn = document.getElementById("lg-me-btn"); if (meBtn) meBtn.onclick = openMe;
   const brBtn = document.getElementById("lg-brief-btn"); if (brBtn) brBtn.onclick = () => openLead("seller");
 })();
-document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); closeForSale(); } });
 
 // ---- Lead engine ----
 const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before wide launch
@@ -2846,6 +2876,13 @@ const LEAD_COPY = {
     note: "Your island or town (optional)",
     go: "Sign me up →",
     subject: "Moku — monthly brief signup"
+  },
+  list: {
+    title: "List your home on Moku",
+    sub: "Tell us about your place — the address, your asking price, and anything worth knowing. It goes to Moku, and we connect you with buyers and licensed local brokers who reach out to you directly, and help you add photos. Free, no obligation — you choose who you talk to. Moku is a listings platform, not a brokerage.",
+    note: "Your home — address or TMK, asking price, details",
+    go: "List my home →",
+    subject: "LIST MY HOME — Moku seller"
   }
 };
 function openLead(kind, prefill) {
@@ -3071,6 +3108,8 @@ document.getElementById("me-save").onclick = () => {
 };
 function openAbout() { document.getElementById("about-modal").classList.add("open"); }
 function closeAbout() { document.getElementById("about-modal").classList.remove("open"); }
+function openForSale() { document.getElementById("forsale-modal").classList.add("open"); }
+function closeForSale() { document.getElementById("forsale-modal").classList.remove("open"); }
 document.getElementById("about-modal").addEventListener("click", e => { if (e.target.id === "about-modal") closeAbout(); });
 document.getElementById("lead-modal").addEventListener("click", e => { if (e.target.id === "lead-modal") closeLead(); });
 document.getElementById("latest-modal").addEventListener("click", e => { if (e.target.id === "latest-modal") document.getElementById("latest-modal").classList.remove("open"); });
@@ -3400,7 +3439,7 @@ async function toggleLayer(key, btn) {
   }
   refreshLegend();
 }
-document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer(b.dataset.lk, b); });
+document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => { if (b.dataset.lk === "forsale") { openForSale(); return; } toggleLayer(b.dataset.lk, b); }; });
 
 // The Discover rail: every card is a leading point into real data
 (() => {
