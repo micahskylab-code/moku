@@ -383,6 +383,9 @@
   .intel-row .idot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
   .intel-row.flag .idot { background: #A5442E; }
   .intel-row.plus .idot { background: #0E6E63; }
+  .ld-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(23,21,15,0.06); }
+  .ld-k { font-family: var(--sans); font-size: 12.5px; color: var(--ink-2); }
+  .ld-v { font-family: var(--serif); font-size: 15px; color: var(--ink); }
   .finenote {
     font: 400 10.5px/1.55 var(--sans); color: var(--ink-3);
     text-transform: none; letter-spacing: 0; padding: 12px 2px 4px;
@@ -988,7 +991,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-66</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-67</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1506,6 +1509,29 @@ function structureRead(land, bldg) {
   else read = `County value splits <b>${pct}% building / ${100 - pct}% land</b> \u2014 a balanced improved property.`;
   noteIntel("structure", "plus", read + `<div class="subnote">Land $${land.toLocaleString()} &middot; building $${bldg.toLocaleString()}, per the county roll. A negotiation reference, not an appraisal.</div>`);
 }
+async function loadLandHistory(lng, lat) {
+  const myToken = exploreToken;
+  try {
+    const q = (layerId) => fetchTimeout(`https://geodata.hawaii.gov/arcgis/rest/services/HistoricCultural/MapServer/${layerId}/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=false&f=json`, 9000).then(r => r.json());
+    const [ahu, moku] = await Promise.allSettled([q(1), q(3)]);
+    if (myToken !== exploreToken) return;
+    const a = ahu.status === "fulfilled" && ahu.value.features && ahu.value.features[0] ? ahu.value.features[0].attributes : null;
+    const m = moku.status === "fulfilled" && moku.value.features && moku.value.features[0] ? moku.value.features[0].attributes : null;
+    if (!a && !m) return;
+    const sec = document.getElementById("land-sec"), list = document.getElementById("land-list");
+    if (!sec || !list) return;
+    const ahupuaa = a && a.ahupuaa && a.ahupuaa.trim() ? a.ahupuaa.trim() : null;
+    const mokuName = (a && a.moku && a.moku.trim()) || (m && m.moku && m.moku.trim()) || null;
+    const island = (a && a.mokupuni && a.mokupuni.trim()) || (m && m.mokupuni && m.mokupuni.trim()) || null;
+    let rows = "";
+    if (ahupuaa) rows += `<div class="ld-row"><span class="ld-k">Ahupua\u02BBa</span><span class="ld-v">${esc(ahupuaa)}</span></div>`;
+    if (mokuName) rows += `<div class="ld-row"><span class="ld-k">Moku (district)</span><span class="ld-v">${esc(mokuName)}</span></div>`;
+    if (island) rows += `<div class="ld-row"><span class="ld-k">Mokupuni (island)</span><span class="ld-v">${esc(island)}</span></div>`;
+    list.innerHTML = rows +
+      `<div class="subnote" style="margin-top:8px">An <b>ahupua\u02BBa</b> is a traditional Hawaiian land division &mdash; typically running mauka to makai, from the mountains to the sea, so a community held everything it needed to live. It sits within a <b>moku</b> (district) on a <b>mokupuni</b> (island). Boundaries from the State of Hawai\u02BBi GIS.</div>`;
+    sec.style.display = "";
+  } catch (e) {}
+}
 async function loadNearby(lng, lat) {
   const myToken = exploreToken;
   try {
@@ -1554,6 +1580,7 @@ async function exploreParcel(lng, lat) {
   const token = ++exploreToken;
   noteRecent(lng, lat);
   setTimeout(() => loadNearby(lng, lat), 60);
+  setTimeout(() => loadLandHistory(lng, lat), 80);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
   lastRecord = { lng, lat, tmk: null };
@@ -2060,6 +2087,10 @@ function openRecordCard(lng, lat) {
     <div class="sec" id="intel-sec" style="display:none">
       <div class="h">Parcel intel</div>
       <div id="intel-list"></div>
+    </div>
+    <div class="sec" id="land-sec" style="display:none">
+      <div class="h">The land &middot; traditional divisions</div>
+      <div id="land-list"></div>
     </div>
     <div class="sec" id="nearby-sec" style="display:none">
       <div class="h">Nearby &amp; notable</div>
