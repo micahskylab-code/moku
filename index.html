@@ -518,91 +518,130 @@
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 
-  /* ============ MOKU DARK — the luxury identity ============ */
+  /* ---- The opening: market numbers as theater ---- */
+  #ovation {
+    position: absolute; inset: 0; z-index: 150;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; pointer-events: none;
+    background: radial-gradient(80% 70% at 50% 46%, rgba(6,12,18,0.0) 0%, rgba(6,12,18,0.42) 100%);
+    opacity: 0; transition: opacity 0.7s ease;
+  }
+  #ovation.on { display: flex; opacity: 1; }
+  #ovation.fade { opacity: 0; }
+  .ov-kicker {
+    font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 0.34em;
+    color: rgba(255,255,255,0.75); margin-bottom: 18px;
+    text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+  }
+  .ov-big {
+    font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em;
+    font-size: clamp(64px, 12vw, 128px); line-height: 1; color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.65);
+  }
+  .ov-sub {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--lux-gold, #E3C27C); margin-top: 16px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+  }
+
+  /* ============ GALLERY WHITE — dark serif on white paper; the map is the art ============ */
+  /* Rule: accent (brass) means live data, never decoration. Only data may animate. */
   :root {
-    --lux-glass: rgba(20, 24, 28, 0.82);
-    --lux-glass-solid: #16191D;
-    --lux-line: rgba(255, 255, 255, 0.10);
-    --lux-text: rgba(255, 255, 255, 0.94);
-    --lux-text-2: rgba(255, 255, 255, 0.62);
-    --lux-text-3: rgba(255, 255, 255, 0.40);
-    --lux-gold: #E3C27C;
+    --paper: #FDFCF9;
+    --paper-glass: rgba(253, 252, 249, 0.94);
+    --g-ink: #16181A;
+    --g-ink2: #6B6E73;
+    --g-ink3: #9C9EA3;
+    --g-line: rgba(22, 24, 26, 0.10);
+    --brass: #9A7B3F;
+    --lux-gold: #E3C27C; /* over-imagery gold (ovation, parcel ignite) */
+  }
+  .logo, .docked-wrap, .hdr-cluster .quiet {
+    background: var(--paper-glass) !important;
+    border: 1px solid var(--g-line) !important;
+    color: var(--g-ink) !important;
+    box-shadow: 0 2px 14px rgba(16, 18, 20, 0.10);
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
   }
   .hdr-cluster { background: transparent !important; border: none !important; box-shadow: none !important; }
-  .logo, .docked-wrap, .hdr-cluster .quiet {
-    background: var(--lux-glass) !important;
-    border-color: var(--lux-line) !important;
-    color: var(--lux-text) !important;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-  }
-  .logo span, .hdr-cluster .quiet { color: var(--lux-text) !important; }
-  .logo .dot { color: var(--lux-gold) !important; }
-  .hdr-cluster .quiet:hover { background: rgba(255,255,255,0.10) !important; color: #fff !important; }
-  #dockbox { background: transparent !important; color: var(--lux-text) !important; }
-  #dockbox::placeholder { color: var(--lux-text-3) !important; }
-  .docked-wrap .mag { color: var(--lux-text-3) !important; }
+  .logo span { color: var(--g-ink) !important; }
+  .logo .dot { color: var(--brass) !important; }
+  .hdr-cluster .quiet:hover { background: #fff !important; }
+  #dockbox { background: transparent !important; color: var(--g-ink) !important; }
+  #dockbox::placeholder { color: var(--g-ink3) !important; }
+  .docked-wrap .mag { color: var(--g-ink3) !important; }
 
   .lchip {
-    background: var(--lux-glass) !important;
-    border: 1px solid var(--lux-line) !important;
-    color: var(--lux-text) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+    background: var(--paper-glass) !important;
+    border: 1px solid var(--g-line) !important;
+    color: var(--g-ink) !important;
+    box-shadow: 0 2px 14px rgba(16, 18, 20, 0.12) !important;
   }
-  .lchip.on { background: rgba(255, 255, 255, 0.96) !important; color: #14171A !important; }
+  .lchip.on { background: var(--g-ink) !important; color: #fff !important; }
   #legend {
-    background: var(--lux-glass) !important;
-    border: 1px solid var(--lux-line) !important;
-    color: var(--lux-text) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+    background: var(--paper-glass) !important;
+    border: 1px solid var(--g-line) !important;
+    color: var(--g-ink) !important;
+    box-shadow: 0 2px 14px rgba(16, 18, 20, 0.12) !important;
   }
 
   .passport {
-    background: var(--lux-glass-solid) !important;
-    border: 1px solid var(--lux-line) !important;
-    color: var(--lux-text) !important;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55) !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--g-line) !important;
+    color: var(--g-ink) !important;
+    box-shadow: 0 24px 60px rgba(16, 18, 20, 0.22) !important;
   }
-  .passport .sec .h { color: var(--lux-text-3) !important; }
-  .fchip { border-bottom-color: var(--lux-line) !important; color: var(--lux-text) !important; }
-  .fchip small { color: var(--lux-gold) !important; }
-  .fchip .subnote { color: var(--lux-text-3) !important; }
-  .fchip .subnote b { color: var(--lux-gold) !important; }
-  .fchip .code { background: rgba(255,255,255,0.10); color: var(--lux-text-2); }
-  #fact-assessed { color: #fff !important; }
-  .cta-dock { background: rgba(20, 24, 28, 0.92) !important; border-top-color: var(--lux-line) !important; }
-  .pass-cta .primary { background: #fff !important; color: #14171A !important; }
-  .pass-cta .ghost { background: rgba(255,255,255,0.08) !important; color: var(--lux-text) !important; border-color: var(--lux-line) !important; }
-  .passport .x { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
+  /* The masthead: paper, not a photo band — the number IS the hero */
+  .passport .hero {
+    background: var(--paper) !important;
+    border-bottom: 2px solid var(--brass);
+    min-height: 0 !important; height: auto !important;
+    padding: 22px 18px 16px !important;
+  }
+  .passport .hero .scrim { display: none !important; }
+  .passport .hero .note { position: static !important; color: var(--g-ink3) !important; font-size: 10px !important; margin-bottom: 8px; }
+  .passport .hero .note .live-dot { background: var(--brass) !important; }
+  .passport .hero .hp { position: static !important; padding: 0 !important; }
+  .passport .tmkline { color: var(--g-ink) !important; text-shadow: none !important; }
+  .passport .addr { color: var(--g-ink2) !important; text-shadow: none !important; }
+  .passport .hero-val {
+    color: var(--g-ink) !important; text-shadow: none !important;
+    font-size: clamp(40px, 9vw, 54px) !important; margin-top: 10px !important;
+    letter-spacing: -0.02em !important;
+  }
+  .passport .x { background: rgba(22,24,26,0.07) !important; color: var(--g-ink) !important; }
+  .passport .sec .h { color: var(--g-ink3) !important; }
+  .fchip { border-bottom-color: var(--g-line) !important; color: var(--g-ink) !important; }
+  .fchip small { color: var(--brass) !important; }
+  .fchip .subnote { color: var(--g-ink3) !important; }
+  .fchip .subnote b { color: var(--brass) !important; }
+  .fchip .code { background: rgba(22,24,26,0.06); color: var(--g-ink2); }
+  #fact-assessed { color: var(--g-ink) !important; }
+  .cta-dock { background: var(--paper-glass) !important; border-top: 1px solid var(--g-line) !important; }
+  .pass-cta .primary { background: var(--g-ink) !important; color: #fff !important; }
+  .pass-cta .ghost { background: #fff !important; color: var(--g-ink) !important; border: 1px solid var(--g-line) !important; }
 
   #suggest, #dock-suggest {
-    background: var(--lux-glass-solid) !important;
-    border: 1px solid var(--lux-line) !important;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5) !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--g-line) !important;
+    box-shadow: 0 18px 44px rgba(16, 18, 20, 0.18) !important;
   }
-  .sug { color: var(--lux-text) !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .sug small { color: var(--lux-text-3) !important; }
-  .sug:hover, .sug.hot { background: rgba(255,255,255,0.08) !important; }
+  .sug { color: var(--g-ink) !important; border-bottom: 1px solid rgba(22,24,26,0.05); }
+  .sug small { color: var(--g-ink3) !important; }
+  .sug:hover, .sug.hot { background: rgba(22,24,26,0.05) !important; }
 
-  .modal {
-    background: var(--lux-glass-solid) !important;
-    color: var(--lux-text) !important;
-    border: 1px solid var(--lux-line) !important;
-  }
-  .modal .mtitle { color: #fff !important; }
-  .modal p, .modal .fine { color: var(--lux-text-2) !important; }
-  .modal input {
-    background: rgba(255,255,255,0.07) !important;
-    border: 1px solid var(--lux-line) !important;
-    color: #fff !important;
-  }
-  .modal input::placeholder { color: var(--lux-text-3) !important; }
-  .modal .go { background: #fff !important; color: #14171A !important; }
-  .modal .x { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
-  .modal a { color: var(--lux-gold) !important; }
+  .modal { background: var(--paper) !important; color: var(--g-ink) !important; border: 1px solid var(--g-line) !important; }
+  .modal .mtitle { color: var(--g-ink) !important; }
+  .modal p, .modal .fine { color: var(--g-ink2) !important; }
+  .modal input { background: #fff !important; border: 1px solid var(--g-line) !important; color: var(--g-ink) !important; }
+  .modal input::placeholder { color: var(--g-ink3) !important; }
+  .modal .go { background: var(--g-ink) !important; color: #fff !important; }
+  .modal .x { background: rgba(22,24,26,0.07) !important; color: var(--g-ink) !important; }
+  .modal a { color: var(--brass) !important; }
 
-  @media (max-width: 760px) {
-    .passport { background: #16191D !important; }
-  }
+  #buildtag { color: rgba(255,255,255,0.5) !important; }
+  @media (max-width: 760px) { .passport { background: var(--paper) !important; } }
 </style>
 </head>
 <body>
@@ -649,8 +688,13 @@
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div id="ovation" aria-hidden="true">
+  <div class="ov-kicker">HAWAI&#699;I&#8217;S PROPERTY MARKET</div>
+  <div class="ov-big" id="ov-num">$0</div>
+  <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
+</div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-18</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-20</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -747,7 +791,7 @@ const map = new maplibregl.Map({
   style: {
     version: 8,
     sources: {},
-    layers: [{ id: "bg", type: "background", paint: { "background-color": "#DCE5EA" } }]
+    layers: [{ id: "bg", type: "background", paint: { "background-color": "#173754" } }]
   },
   center: [-157.5, 20.9],
   zoom: SMALL ? 5.3 : 6.2,
@@ -823,13 +867,12 @@ function armTerrain() {
   try {
     if (!map.getSource("dem") || map.getTerrain()) return;
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
-    try { map.setSky({ "sky-color": "#8FBFDE", "horizon-color": "#DCEBF2", "fog-color": "#E9F1F4", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.7 }); } catch (e) {}
+    try { map.setSky({ "sky-color": "#0E1C2A", "horizon-color": "#27435E", "fog-color": "#16273A", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.6 }); } catch (e) {}
   } catch (e) {}
 }
 function applyCustomLayers() {
-  // 3D terrain waits for the first painted frame — flat tiles arrive twice as fast
-  if (document.body.classList.contains("mapready")) armTerrain();
-  else map.once("idle", armTerrain);
+  // Terrain arms only after the dive completes (or for deep links, after their landing)
+  if (heroSettled && document.body.classList.contains("mapready")) setTimeout(armTerrain, 400);
   // Every lot line visible when zoomed in — no more tapping blind on bare satellite
   if (!map.getSource("town-labels") && map.getStyle() && map.getStyle().glyphs) {
     const TIER1 = ["Hanalei","Princeville","Kapaa","Lihue","Koloa","Poipu","Waimea",
@@ -864,8 +907,8 @@ function applyCustomLayers() {
   if (!map.getSource("parcel")) {
     map.addSource("parcel", { type: "geojson", data: pendingParcel ? { type: "FeatureCollection", features: [pendingParcel] } : { type: "FeatureCollection", features: [] } });
     map.addLayer({ id: "parcel-fill", type: "fill", source: "parcel", paint: { "fill-color": "#E8C87E", "fill-opacity": 0.14 } });
-    map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55 } });
-    map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2 } });
+    map.addLayer({ id: "parcel-glow", type: "line", source: "parcel", paint: { "line-color": "#E8C87E", "line-width": 7, "line-blur": 6, "line-opacity": 0.55, "line-opacity-transition": { duration: 600 } } });
+    map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2, "line-opacity": 1, "line-opacity-transition": { duration: 600 } } });
   }
 }
 let perfWatched = false;
@@ -1149,6 +1192,7 @@ async function exploreParcel(lng, lat) {
       const tmkEl = document.getElementById("rec-tmk");
       if (tmkEl && tmk) tmkEl.textContent = fmtTmk(tmk);
       setFact("tmk", "TMK (county record)", tmk ? fmtTmk(tmk) : "—", "live");
+      lastRecord.acres = Number(pickAcres(p)) || null;
       setFact("acres", "Parcel size", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
       const owner = pickOwner(p), assessed = pickAssessed(p);
       if (owner) setFact("owner", "Owner of record (county)", formatOwner(owner), "live");
@@ -1237,7 +1281,19 @@ function showLayer(key) {
 }
 function setHeroVal(n) {
   const el = document.getElementById("hero-val");
-  if (el && n != null && n > 0) el.textContent = "$" + Number(n).toLocaleString();
+  if (!el || n == null || !(n > 0)) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    el.textContent = "$" + Number(n).toLocaleString();
+    return;
+  }
+  const t0 = performance.now(), DUR = 700;
+  const tick = t => {
+    const k = Math.min(1, (t - t0) / DUR);
+    const ease = 1 - Math.pow(1 - k, 3);
+    el.textContent = "$" + Math.round(n * ease).toLocaleString();
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 }
 function setFact(key, label, valueHtml, cls) {
   const el = document.getElementById("fact-" + key);
@@ -1253,7 +1309,9 @@ function addFact(rowId, key, label, valueHtml, cls) {
   row.appendChild(d);
 }
 function assessedHtml(n) {
-  return "$" + Number(n).toLocaleString() + (n === 0 ? " — nominal assessment, see county record" : "") +
+  const acres = lastRecord && lastRecord.acres;
+  const perAcre = (acres && acres > 0.01 && n > 0) ? ` &middot; $${Math.round(n / acres).toLocaleString()}/acre` : "";
+  return "$" + Number(n).toLocaleString() + (n === 0 ? " — nominal assessment, see county record" : "") + perAcre +
     `<div class="subnote">Tax assessment — usually below what buyers actually pay. <b onclick="openLead('seller')">Get the monthly market brief &rarr;</b></div>`;
 }
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -1370,8 +1428,8 @@ function openRecordCard(lng, lat) {
     <div class="sec">
       <div class="cta-dock">
       <div class="pass-cta">
-        <button class="primary" id="copy-record">Copy record link</button>
-        <button class="ghost" id="watch-parcel">Watch this parcel</button>
+        <button class="primary" id="watch-parcel">Ask Micah about this parcel</button>
+        <button class="ghost" id="copy-record">Copy link</button>
       </div>
       <div class="pass-cta" style="margin-top:8px">
         <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">County tax record &rarr;</a>
@@ -1745,8 +1803,14 @@ function islandKeyFor(lng, lat) {
 }
 // Opening: the whole chain holds for a beat, then a Google-Earth dive into your island
 let heroSettled = false;
-map.once("load", () => {
-  const begin = () => {
+function armChoreo() {
+  if (!map.getSource("sat")) return;
+  map.once("idle", () => setTimeout(begin, 1100));
+}
+map.on("style.load", armChoreo);
+setTimeout(() => begin(), 11000);
+{
+  const _begin = () => {
     if (heroSettled) return;
     heroSettled = true;
     let isle = "kauai";
@@ -1757,17 +1821,51 @@ map.once("load", () => {
       map.jumpTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18 });
       return;
     }
+    // The opening: the year's real dollars count up over the island chain, then the dive
+    let ovDone = false;
+    try {
+      const y = MARKET.years["2025"];
+      const total = (y.sf.volume || 0) + (y.condo.volume || 0) + (y.land.volume || 0);
+      if (total > 1e8) {
+        const ov = document.getElementById("ovation");
+        const num = document.getElementById("ov-num");
+        ov.classList.add("on");
+        const t0 = performance.now(), DUR = 1500;
+        const tick = t => {
+          const k = Math.min(1, (t - t0) / DUR);
+          const ease = 1 - Math.pow(1 - k, 3);
+          num.textContent = "$" + (total * ease / 1e9).toFixed(2) + "B";
+          if (k < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        setTimeout(() => { ov.classList.add("fade"); }, 2900);
+        setTimeout(() => { ov.classList.remove("on", "fade"); }, 3700);
+        ovDone = true;
+      }
+    } catch (e) {}
     setTimeout(() => {
       map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: 0.85, curve: 1.42, maxDuration: 7000, essential: false });
-    }, 1000);
+      map.once("moveend", () => {
+        setTimeout(armTerrain, 500);
+        try {
+          if (!localStorage.getItem("moku_seen")) {
+            localStorage.setItem("moku_seen", "1");
+            setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 900);
+          }
+        } catch (e) {}
+      });
+    }, ovDone ? 3100 : 400);
   };
-  if (document.body.classList.contains("mapready")) begin();
-  else map.once("idle", () => setTimeout(begin, 200));
-});
+  window.begin = _begin;
+}
 map.once("load", collapseAttribution);
 const markReady = () => document.body.classList.add("mapready");
-map.once("idle", markReady);
-setTimeout(markReady, 6000);
+// Ready = the REAL style's imagery has painted — never the empty placeholder's idle
+function armReady() {
+  if (map.getSource("sat")) map.once("idle", markReady);
+}
+map.on("style.load", armReady);
+setTimeout(markReady, 9000);
 function dismissVeil() {
   const v = document.getElementById("veil");
   if (!v.classList.contains("gone")) {
@@ -1814,11 +1912,11 @@ const LEAD_INBOX = "micahskylab@gmail.com"; // confirm before wide launch
 let leadKind = "owner";
 const LEAD_COPY = {
   owner: {
-    title: "Watch this parcel",
-    sub: "Ask Micah to keep an eye on this parcel — assessment changes, county filings, and what he hears on the ground. He replies personally.",
-    note: "Parcel (auto-filled)",
-    go: "Ask Micah →",
-    subject: "Moku — watch parcel"
+    title: "Ask about this parcel",
+    sub: "Question about this property — its records, the area, what it might take to get it? Ask Micah directly. He's on Kauai and replies personally.",
+    note: "Parcel (auto-filled) — add your question",
+    go: "Send to Micah →",
+    subject: "Moku — parcel question"
   },
   seller: {
     title: "The monthly market brief",
@@ -1882,16 +1980,6 @@ if (deep) {
       setTimeout(() => toast(`Your saved parcel — <b>${esc(home.tmk)}</b>. <b style="cursor:pointer" onclick="closeRecord();document.getElementById('dockbox').focus()">Search something else &rarr;</b>`, 5200), 2600);
     }
   } catch (e) {}
-  if (!bootedHome && !deep) {
-    try {
-      if (!localStorage.getItem("moku_seen")) {
-        localStorage.setItem("moku_seen", "1");
-        const coach = () => setTimeout(() => toast("Tap <b>any lot on any island</b> — owner, value, flood, sales &middot; free", 6500), 900);
-        if (document.body.classList.contains("mapready")) coach();
-        else map.once("idle", coach);
-      }
-    } catch (e) {}
-  }
 }
 
 // Front-door stats come from the same data file as Market Pulse — one source of truth
@@ -1928,6 +2016,7 @@ async function ensureLayer(key) {
         (gj.features || []).forEach(f => {
           const p = f.properties || {};
           p.label = p.GIS_SALES_2YEAR_PRICE != null ? fmtPrice(p.GIS_SALES_2YEAR_PRICE) : "";
+          p.ts = p.GIS_SALES_2YEAR_SALEDT ? Date.parse(p.GIS_SALES_2YEAR_SALEDT) : 0;
         });
         st.data = gj;
         st.count = (gj.features || []).length;
@@ -2061,6 +2150,41 @@ function refreshLegend() {
     }
   } catch (e) {}
 }
+function rainSales() {
+  try {
+    const st = layerState.sold;
+    if (!st || !st.data || !map.isStyleLoaded()) return;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ts = st.data.features.map(f => f.properties.ts).filter(Boolean);
+    if (ts.length < 100) return;
+    const t0 = Math.min.apply(null, ts), t1 = Math.max.apply(null, ts);
+    if (!map.getSource("sold-rain-src")) map.addSource("sold-rain-src", { type: "geojson", data: st.data });
+    if (!map.getLayer("lyr-sold-rain")) {
+      map.addLayer({ id: "lyr-sold-rain", type: "circle", source: "sold-rain-src",
+        filter: ["<=", ["get", "ts"], 0],
+        paint: { "circle-color": "#E3C27C", "circle-radius": 3.5, "circle-stroke-color": "#fff",
+                 "circle-stroke-width": 0.8, "circle-opacity": 0.95 } });
+    }
+    // Hide the real layers while the storm builds
+    ["lyr-sold-cluster", "lyr-sold-count", "lyr-sold-dot", "lyr-sold-pill"].forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", "none");
+    });
+    map.setLayoutProperty("lyr-sold-rain", "visibility", "visible");
+    const start = performance.now(), DUR = 2600;
+    const step = now => {
+      const k = Math.min(1, (now - start) / DUR);
+      map.setFilter("lyr-sold-rain", ["<=", ["get", "ts"], t0 + (t1 - t0) * k]);
+      if (k < 1) requestAnimationFrame(step);
+      else setTimeout(() => {
+        if (map.getLayer("lyr-sold-rain")) map.setLayoutProperty("lyr-sold-rain", "visibility", "none");
+        ["lyr-sold-cluster", "lyr-sold-count", "lyr-sold-dot", "lyr-sold-pill"].forEach(id => {
+          if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", "visible");
+        });
+      }, 350);
+    };
+    requestAnimationFrame(step);
+  } catch (e) {}
+}
 async function toggleLayer(key, btn) {
   const on = !(layerState[key] && layerState[key].on);
   if (on) {
@@ -2069,6 +2193,7 @@ async function toggleLayer(key, btn) {
     if (!ok) { btn.classList.remove("on"); return; }
     layerState[key].on = true;
     setLayerVis(key, true);
+    if (key === "sold" && !layerState.sold.rained) { layerState.sold.rained = true; rainSales(); }
     if (layerState[key].count && btn && !btn.dataset.baseLabel) {
       btn.dataset.baseLabel = btn.innerHTML;
       btn.innerHTML += " &middot; " + layerState[key].count.toLocaleString();
