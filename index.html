@@ -804,11 +804,11 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-31</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-32</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
-  <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
-  <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
+  <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
+  <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals</button>
   <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
   <button class="lchip" data-lk="tsu"><span class="dot2" style="background:#C4574A"></span>Tsunami</button>
 </div>
@@ -1020,9 +1020,18 @@ function applyCustomLayers() {
       type: "Feature", geometry: { type: "Point", coordinates: [p[2], p[3]] }, properties: { name: p[0] }
     }));
     map.addSource("town-labels", { type: "geojson", data: { type: "FeatureCollection", features: feats } });
-    map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 5.8, maxzoom: 10.2,
+    map.addLayer({ id: "town-labels", type: "symbol", source: "town-labels", minzoom: 7.4, maxzoom: 10.2,
       layout: { "text-field": ["upcase", ["get", "name"]], "text-size": 11, "text-font": ["Noto Sans Regular"], "text-letter-spacing": 0.22, "text-padding": 6 },
       paint: { "text-color": "#FFFFFF", "text-halo-color": "rgba(12,26,36,0.6)", "text-halo-width": 1.2, "text-halo-blur": 0.6 } });
+  }
+  if (!map.getSource("isle-labels") && map.getStyle() && map.getStyle().glyphs) {
+    const ISLES = [["KAUA\u02BBI",-159.53,22.06],["O\u02BBAHU",-157.98,21.46],["MOLOKA\u02BBI",-157.02,21.14],
+      ["L\u0100NA\u02BBI",-156.93,20.82],["MAUI",-156.33,20.80],["HAWAI\u02BBI",-155.45,19.60]];
+    map.addSource("isle-labels", { type: "geojson", data: { type: "FeatureCollection",
+      features: ISLES.map(p => ({ type: "Feature", geometry: { type: "Point", coordinates: [p[1], p[2]] }, properties: { name: p[0] } })) } });
+    map.addLayer({ id: "isle-labels", type: "symbol", source: "isle-labels", maxzoom: 7.4,
+      layout: { "text-field": ["get", "name"], "text-size": ["interpolate", ["linear"], ["zoom"], 4.5, 11, 6.5, 14], "text-font": ["Noto Sans Regular"], "text-letter-spacing": 0.3, "text-padding": 4, "text-allow-overlap": true },
+      paint: { "text-color": "#FFFFFF", "text-halo-color": "rgba(12,26,36,0.6)", "text-halo-width": 1.3, "text-halo-blur": 0.6 } });
   }
   if (!map.getSource("parcel-lines")) {
     const dl = JSON.stringify([9, 11, 30, 5].map((id, i) => ({
@@ -1050,7 +1059,7 @@ function applyCustomLayers() {
 }
 let perfWatched = false;
 map.on("style.load", () => {
-  applyCustomLayers();
+  try { applyCustomLayers(); } catch (e) { console.error("customLayers:", e); setTimeout(() => { try { applyCustomLayers(); } catch (e2) {} }, 1500); }
   Object.keys(layerState || {}).forEach(k => {
     if (layerState[k] && layerState[k].on) {
       layerState[k].ready = false;
@@ -2035,12 +2044,22 @@ setTimeout(() => begin(), 11000);
   const _begin = () => {
     if (heroSettled) return;
     heroSettled = true;
-    let isle = "kauai";
-    try { isle = localStorage.getItem("moku_isle") || "kauai"; } catch (e) {}
-    const h0 = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
-    const h = { c: h0.c, z: h0.z + (SMALL ? 0.45 : 0) };
+    let isle = null;
+    try { isle = localStorage.getItem("moku_isle"); } catch (e) {}
+    const firstVisit = !isle;
+    // First visit: the whole state IS the hero — every island in frame, Kaua\u02BBi to Hawai\u02BBi
+    let h0 = ISLAND_HEROES[isle] || ISLAND_HEROES.kauai;
+    if (firstVisit) {
+      h0 = { c: [-157.35, 20.6], z: SMALL ? 5.2 : 6.0 };
+      try {
+        const cam = map.cameraForBounds([[-159.95, 18.80], [-154.70, 22.40]],
+          { padding: SMALL ? { top: 70, left: 24, right: 24, bottom: 150 } : { top: 80, left: 265, right: 50, bottom: 110 } });
+        if (cam) h0 = { c: cam.center, z: cam.zoom };
+      } catch (e) {}
+    }
+    const h = { c: h0.c, z: h0.z + (firstVisit ? 0 : (SMALL ? 0.45 : 0)) };
     if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      map.jumpTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18 });
+      map.jumpTo({ center: h.c, zoom: h.z, pitch: firstVisit ? 28 : 48, bearing: 0 * 1 || (firstVisit ? 0 : -18) });
       return;
     }
     // The opening: the year's real dollars count up over the island chain, then the dive
@@ -2066,12 +2085,12 @@ setTimeout(() => begin(), 11000);
       }
     } catch (e) {}
     setTimeout(() => {
-      map.flyTo({ center: h.c, zoom: h.z, pitch: 48, bearing: -18, speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 2500 : 4500, essential: false });
+      map.flyTo({ center: h.c, zoom: h.z, pitch: firstVisit ? 28 : 48, bearing: firstVisit ? 0 : -18, speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 2500 : 4500, essential: false });
       map.once("moveend", () => {
         setTimeout(armTerrain, 500);
         if (window.showDiscover) setTimeout(window.showDiscover, 600);
         // Market layers may welcome; hazards are opt-in only — never open on a disaster map
-        const autoLayer = ({ kauai: "tvr", maui: "sold" })[isle] || null;
+        const autoLayer = firstVisit ? null : ({ kauai: "tvr", maui: "sold" })[isle] || null;
         if (autoLayer) setTimeout(() => {
           if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
             toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
@@ -2525,7 +2544,7 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer
     "Any Hawaii address or TMK",
     "Try: 2720 Hoonani Rd, Koloa",
     "Try a TMK: 4-2-6-003:024",
-    "Search a town: Poipu, Lahaina, Hanalei",
+    "Search a town: Kailua, Hilo, Lahaina, Poipu",
     "Tap any lot on the map — free records"
   ];
   let hi = 0;
