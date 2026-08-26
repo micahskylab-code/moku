@@ -67,58 +67,16 @@
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
   #veil { display: none !important; }
-  #veil-unused {
-    position: absolute; inset: 0; z-index: 200;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    background: transparent;
-    pointer-events: none;
-    overflow: hidden;
-    transition: opacity 0.5s ease;
-  }
   #veil::after {
     content: ""; position: absolute; inset: 0;
     background: radial-gradient(90% 80% at 50% 45%, rgba(8,20,30,0.02) 0%, rgba(8,20,30,0.26) 100%);
   }
   #veil > * { position: relative; z-index: 1; pointer-events: auto; }
   #veil::after { pointer-events: none; }
-  #veil .veilfoot {
-    position: absolute; left: 0; right: 0; bottom: 18px;
-    text-decoration: none;
-    display: flex; justify-content: center; align-items: baseline; gap: 8px 22px; flex-wrap: wrap;
-    font-size: 12px; font-weight: 500; letter-spacing: 0.03em;
-    color: rgba(255,255,255,0.92); text-shadow: 0 1px 8px rgba(8,20,30,0.55);
-  }
-  #veil .veilfoot b { font-family: var(--serif); font-size: 15px; font-weight: 500; }
-  @media (max-width: 760px) { #veil .veilfoot { bottom: 44px; font-size: 11px; gap: 6px 14px; padding: 0 14px; } }
   /* Map buttons stay off the front door; they belong to the working map */
   body:not(.docked) .maplibregl-ctrl-group,
   body:not(.docked) .maplibregl-ctrl button.maplibregl-ctrl-geolocate { opacity: 0; pointer-events: none; }
-  .veilcard {
-    isolation: isolate; will-change: transform; transform: translateZ(0);
-    display: flex; flex-direction: column; align-items: center; gap: 20px;
-    background: rgba(251,252,253,0.82);
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.65);
-    border-radius: 30px;
-    padding: 44px 52px 34px;
-    box-shadow: 0 24px 70px rgba(8,20,30,0.35);
-    max-width: min(680px, 94vw);
-  }
   #veil.gone { opacity: 0; pointer-events: none; }
-  #veil .mark {
-    font-family: var(--serif); font-weight: 500;
-    font-size: clamp(46px, 8vw, 84px);
-    color: var(--chrome-ink); letter-spacing: -0.03em; line-height: 1;
-    margin: 0;
-  }
-  #veil .mark em { font-style: normal; color: var(--gold-deep); }
-  #veil .sub {
-    margin-top: -14px;
-    color: var(--chrome-soft); font-size: clamp(13px, 1.8vw, 15.5px); font-weight: 500;
-    letter-spacing: 0.01em;
-  }
   .onebox-wrap { position: relative; width: min(560px, 92vw); }
   #onebox {
     width: 100%;
@@ -519,8 +477,7 @@
     .logo, .hdr-cluster, #dockbox, #hint, .passport, .modal, .modal-bg, .veilcard {
       backdrop-filter: none; -webkit-backdrop-filter: none;
     }
-    .veilcard { background: rgba(251,252,253,0.96); padding: 30px 20px 26px; gap: 16px; }
-  }
+    }
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
@@ -832,7 +789,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-29</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-30</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -2526,6 +2483,23 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => toggleLayer
     setTimeout(() => { box.placeholder = hints[hi]; box.style.opacity = "1"; }, 350);
   }, 4200);
 })();
+
+// Town pages land on their town: ?town=Name
+const qTown = new URLSearchParams(location.search).get("town");
+if (qTown && !deep) {
+  heroSettled = true; // skip the default dive; the town IS the destination
+  let townTries = 0;
+  const armTown = () => {
+    const m = HI_PLACES.find(p => p[0].toLowerCase() === qTown.toLowerCase());
+    if (!m) return;
+    if (!map.isStyleLoaded() && ++townTries < 20) { setTimeout(armTown, 700); return; }
+    try {
+      map.jumpTo({ center: [m[2], m[3]], zoom: 13.4, pitch: 0 });
+      map.once("idle", () => { setTimeout(armTerrain, 500); if (window.showDiscover) window.showDiscover(); });
+    } catch (e) {}
+  };
+  setTimeout(armTown, 300);
+}
 
 // Press links land with the story already glowing: ?layer=sold|tvr|flood|tsu
 const qLayer = new URLSearchParams(location.search).get("layer");
