@@ -769,7 +769,7 @@
   .lg-dot-p { color: #9A7B3F; }
   .lg-date { font-family: var(--sans); font-size: 11px; font-weight: 500; color: #9C9EA3; font-variant-numeric: tabular-nums; margin-top: 5px; }
   .lg-mast .lg-kick { margin-top: 8px; }
-  .lg-big { font-family: var(--serif); font-size: clamp(52px, 6.5vw, 70px); font-weight: 400; color: #16181A; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; margin: 4px 0 2px; }
+  .lg-big { font-family: var(--serif); font-size: clamp(64px, 8vw, 92px); font-weight: 400; color: #16181A; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 0.98; margin: 6px 0 2px; }
   .lg-flow { font-family: var(--sans); font-size: 12px; font-weight: 500; color: #6B6E73; }
   .lg-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 8px; padding: 11px 0 8px; cursor: pointer; border-bottom: 1px solid rgba(22,24,26,0.08); transition: all 0.2s; }
   .lg-row:hover { padding-left: 6px; }
@@ -863,7 +863,7 @@
   .passport .tmkline:hover { color: #9C7A3C !important; }
   .passport .rule-h { height: 1px; background: rgba(23,21,15,0.14); margin: 16px 0 12px; }
   .passport .hero { border-bottom: 1px solid rgba(23,21,15,0.14) !important; }
-  .passport .hero-val { font-size: clamp(44px, 9vw, 56px) !important; font-weight: 400 !important; margin-top: 2px !important; }
+  .passport .hero-val { font-size: clamp(52px, 11vw, 74px) !important; font-weight: 400 !important; margin-top: 2px !important; letter-spacing: -0.03em !important; }
   #buildtag { color: rgba(255,255,255,0.5) !important; }
   @media (max-width: 760px) { .passport { background: var(--paper) !important; } }
 </style>
@@ -988,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-63</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-64</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1550,7 +1550,7 @@ function noteRecent(lng, lat, tmk, addr) {
 }
 async function exploreParcel(lng, lat) {
   dismissVeil();
-  document.body.classList.add("engaged");
+  document.body.classList.add("engaged"); if (cineRAF) { cancelAnimationFrame(cineRAF); cineRAF = null; }
   const token = ++exploreToken;
   noteRecent(lng, lat);
   setTimeout(() => loadNearby(lng, lat), 60);
@@ -2542,7 +2542,23 @@ const markReady = () => {
   document.body.classList.add("mapready");
   if (heroSettled) setTimeout(armTerrain, 600);
   if (window.showDiscover) setTimeout(window.showDiscover, 1200);
+  if (document.body.classList.contains("has-ledger")) setTimeout(startCinematic, 1400);
 };
+let cineRAF = null;
+function startCinematic() {
+  if (document.body.classList.contains("engaged")) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c0 = map.getCenter(); let t0 = null;
+  const drift = ts => {
+    if (document.body.classList.contains("engaged") || map.isMoving()) { cineRAF = null; return; }
+    if (!t0) t0 = ts;
+    const p = (ts - t0) / 1000; // seconds
+    // a slow lateral push across the chain + a barely-there zoom breath — cinematic, not spinny
+    map.setCenter([c0.lng + Math.sin(p * 0.06) * 0.09, c0.lat + Math.cos(p * 0.05) * 0.03]);
+    cineRAF = requestAnimationFrame(drift);
+  };
+  cineRAF = requestAnimationFrame(drift);
+}
 // Ready = the REAL style's imagery has painted — never the empty placeholder's idle
 function armReady() {
   if (!map.getSource("sat")) return;
