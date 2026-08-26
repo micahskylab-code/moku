@@ -907,7 +907,7 @@
   </div>
   <a class="veilfoot" href="market.html">
     <span><b id="vs-active">6,711</b> active statewide</span>
-    <span><b id="vs-median">$1.33M</b> median, H1 2026</span>
+    <span><b id="vs-median">$1.33M</b> Kaua&#699;i median, H1 2026</span>
     <span><b id="vs-sold">$537M</b> Kaua&#699;i sold, H1 2026</span>
     <span onclick="event.preventDefault(); openAbout()" style="cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.45)">About &amp; privacy</span>
   </a>
@@ -940,7 +940,7 @@
   </div>
   <div class="lg-rule"></div>
   <div class="lg-closings">
-    <div class="lg-kick brass">LATEST RECORDED &middot; MAUI</div>
+    <div class="lg-kick brass">RECORDED SALES &middot; MAUI &middot; THROUGH JUN 2025</div>
     <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
   </div>
   <div class="lg-cmd">
@@ -958,7 +958,7 @@
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
   <div class="dis-card" data-go="latest" data-chip="Latest closings">
     <div class="dis-big">Latest closings</div>
-    <div class="dis-t">the newest recorded sales, with photos, straight off the county books</div>
+    <div class="dis-t">recorded Maui sales through Jun 2025, with photos, straight off the county books</div>
     <div class="dis-a">Browse them &rarr;</div>
   </div>
   <div class="dis-card" data-go="sold" data-chip="1,500 solds">
@@ -988,7 +988,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-65</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-66</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1347,7 +1347,7 @@ function formatOwner(raw) {
     })
     .join(" ");
 }
-const pickAcres = p => p.gisacres || p.taxacres || null;
+const pickAcres = p => p.taxacres || p.gisacres || p.rec_area_ac || null;
 const pickOwner = p => {
   const o = p.owner != null && String(p.owner).trim() ? String(p.owner).trim() : null; // counties publish " " for master parcels
   return o || (p.majorowner && String(p.majorowner).trim() && !/^other$/i.test(p.majorowner) ? p.majorowner : null);
@@ -1660,6 +1660,7 @@ async function exploreParcel(lng, lat) {
       const owner = pickOwner(p), assessed = pickAssessed(p);
       if (owner) setFact("owner", "Owner of record", formatOwner(owner), "live");
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
+      else if (county === COUNTIES.hawaii) setFact("owner", "Owner of record", "Hawai&#699;i County doesn&#8217;t publish parcel-level owner names in its open GIS &mdash; open the county record for the vested owner", "");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
       if (assessed != null) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); lastRecord.assessed = Number(assessed); }
       else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
@@ -1691,7 +1692,9 @@ async function exploreParcel(lng, lat) {
       setFact("zoning", "County zoning", "couldn&#8217;t load", "");
     } else {
       const z = zoning && zoning.properties ? pickZoning(zoning.properties) : null;
-      if (z) {
+      if (z && /see\s*planning/i.test(String(z.code) + " " + String(z.desc || ""))) {
+        setFact("zoning", "County zoning", "Not zoned in the county GIS layer &mdash; check County Planning", "live");
+      } else if (z) {
         const meaning = zoningMeaning(z.code, z.desc);
         if (/^(P|CON)/i.test(String(z.code)) || /preservation|conservation/i.test(String(meaning || ""))) noteIntel("zoning", "flag", `Restricted-use district <span class="code">${z.code}</span> &mdash; building and use are limited; verify with county planning`);
         const edu = zoningEdu(z.code);
@@ -1742,7 +1745,7 @@ async function exploreParcel(lng, lat) {
       setFact("lava", "Lava-flow hazard", "couldn&#8217;t load", "");
     } else if (isBigIsland) {
       const hz = lava && lava.properties ? String(lava.properties.hzone || "") : "";
-      const lavaMeaning = { "1": "Highest lava-flow risk — insurance is difficult", "2": "Very high lava-flow risk — insurance is difficult", "3": "High lava-flow risk", "4": "Moderate lava-flow risk", "5": "Lower lava-flow risk", "6": "Lower lava-flow risk", "7": "Low lava-flow risk", "8": "Very low lava-flow risk", "9": "Lowest lava-flow risk" };
+      const lavaMeaning = { "1": "Highest lava-flow risk — insurance is difficult", "2": "Very high lava-flow risk — insurance is difficult", "3": "High lava-flow risk", "4": "High lava-flow risk — USGS rates it comparable to Zone 3", "5": "Lower lava-flow risk", "6": "Lower lava-flow risk", "7": "Low lava-flow risk", "8": "Very low lava-flow risk", "9": "Lowest lava-flow risk" };
       if (hz === "1" || hz === "2") noteIntel("lava", "flag", `USGS lava-flow hazard zone ${hz} &mdash; property insurance is difficult here`);
       setFact("lava", "Lava-flow hazard", hz ? ((lavaMeaning[hz] || "See USGS map") + ` <span class="code">Zone ${hz}</span>`) : "not in a mapped lava zone", "live");
     }
@@ -1817,12 +1820,7 @@ function setHeroVal(n, label) {
     lbl.style.display = "";
     if (label) lbl.textContent = label;
     try {
-      const isle = localStorage.getItem("moku_isle");
-      const med = MARKET.years["2026 H1"].sf.median;
-      if (!label && isle === "kauai" && med && n > 0) {
-        const pct = Math.round((n / med) * 100);
-        lbl.textContent = "COUNTY ASSESSED · TY2026 · " + pct + "% OF KAUAʻI MEDIAN";
-      }
+      if (!label) lbl.textContent = "COUNTY ASSESSED · TY2026";
     } catch (e) {}
   }
   const el = document.getElementById("hero-val");
@@ -1872,7 +1870,7 @@ async function enrichCounty(county, token, tmkRaw) {
   try {
     if (county === COUNTIES.kauai) {
       const [taxRows, tvrRows] = await Promise.allSettled([
-        queryWhere(KAUAI_TAX_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT,ASSDTOT,TOTEXEMPT,TAXCLASS", null, 60),
+        queryWhere(KAUAI_TAX_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT,ASSDTOT,TOTEXEMPT,TAXCLASS,OWN1", null, 60),
         queryWhere(KAUAI_TVR_URL, `TMK = ${Number(tmk9)}`, "CPR_UNIT", null, 1)
       ]);
       if (token !== exploreToken) return;
@@ -1884,14 +1882,27 @@ async function enrichCounty(county, token, tmkRaw) {
       };
       if (taxRows.status === "fulfilled" && taxRows.value.length) {
         const rows = taxRows.value;
-        // The fee (whole-parcel) row carries a blank CPR unit; "0000" does not exist in this layer
+        // Real per-unit rows carry a non-blank CPR unit. If ANY exist, this is a condo/CPR —
+        // the blank "fee" row's total is unreliable (sometimes 0, sometimes the whole building), so never show it as one unit's value.
+        const unitRows = rows.filter(r => String(r.CPR_UNIT == null ? "" : r.CPR_UNIT).trim());
         const fee = rows.find(r => !String(r.CPR_UNIT == null ? "" : r.CPR_UNIT).trim()) || (rows.length === 1 ? rows[0] : null);
-        if (fee && fee.ASSDTOT != null) {
+        if (unitRows.length) {
+          let cnt = rows.length;
+          try {
+            const r = await fetchTimeout(`${KAUAI_TAX_URL}/query?where=${encodeURIComponent(`TMK = ${Number(tmk9)}`)}&returnCountOnly=true&f=json`);
+            const j = await r.json();
+            if (j && typeof j.count === "number") cnt = j.count;
+          } catch (e) {}
+          if (token !== exploreToken) return;
+          putAssessed(`${cnt} unit records on this parcel — each assessed individually in the county roll`);
+          if (fee && fee.OWN1 && String(fee.OWN1).trim()) { const oe = document.getElementById("fact-owner"); if (!oe || /not published|—/.test(oe.textContent)) setFact("owner", "Owner of record (tax roll)", formatOwner(fee.OWN1), "live"); }
+        } else if (fee && fee.ASSDTOT != null) {
           const exempt = Number(fee.TOTEXEMPT || 0) > 0 ? ` <span class="code">home exemption on file</span>` : "";
           if (Number(fee.TOTEXEMPT || 0) > 0) noteIntel("exempt", "plus", "Home exemption on file &mdash; the county records this as an owner-occupied property");
           putAssessed(assessedHtml(fee.ASSDTOT).replace("<div", exempt + "<div"));
           setHeroVal(fee.ASSDTOT);
           lastRecord.assessed = Number(fee.ASSDTOT);
+          if (fee.OWN1 && String(fee.OWN1).trim()) { const oe = document.getElementById("fact-owner"); if (!oe || /not published|—/.test(oe.textContent)) setFact("owner", "Owner of record (tax roll)", formatOwner(fee.OWN1), "live"); }
         } else if (rows.length > 1) {
           let cnt = rows.length;
           try {
@@ -1916,23 +1927,33 @@ async function enrichCounty(county, token, tmkRaw) {
     } else if (county === COUNTIES.oahu) {
       // City & County of Honolulu: assessment (TY2026) + owner of record, in parallel
       const tmk8 = tmk9.slice(1);
-      const [asmt, own] = await Promise.allSettled([
+      const [asmt, own, cntR] = await Promise.allSettled([
         queryWhere("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10",
-          `tmk = '${tmk8}' AND suffix = '0000' AND taxyr = 2026`, "landvalue,buildingvalue,taxyr,seq", "seq DESC", 1),
+          `tmk = '${tmk8}' AND suffix = '0000'`, "landvalue,buildingvalue,taxyr,seq", "taxyr DESC, seq DESC", 1),
         queryWhere("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/6",
-          `tmk = '${tmk8}' AND suffix = '0000' AND taxbillowner IS NOT NULL`, "taxbillowner,taxyr", "taxyr DESC", 1)
+          `tmk = '${tmk8}' AND suffix = '0000' AND taxbillowner IS NOT NULL`, "taxbillowner,taxyr", "taxyr DESC", 1),
+        fetchTimeout("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10/query?where=" + encodeURIComponent("tmk = '" + tmk8 + "'") + "&returnCountOnly=true&f=json").then(r => r.json()).catch(() => null)
       ]);
       if (token !== exploreToken) return;
+      const unitCount = (cntR.status === "fulfilled" && cntR.value && typeof cntR.value.count === "number") ? cntR.value.count : 1;
+      if (unitCount > 1) {
+        // Condo/CPR tower: the suffix-0000 ground parcel is NOT one unit's value or owner
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value", `${unitCount} unit records on this parcel — each assessed individually in the county roll`, "live");
+        else addFact("row-record", "assessed", "Assessed value", `${unitCount} unit records on this parcel — each assessed individually in the county roll`, "live");
+        setFact("owner", "Owner of record", "Individually owned units — open the county record for a specific unit&#8217;s owner", "");
+        return;
+      }
       if (own.status === "fulfilled" && own.value.length && own.value[0].taxbillowner)
         setFact("owner", "Owner of record", formatOwner(own.value[0].taxbillowner), "live");
       if (asmt.status !== "fulfilled" || !asmt.value.length) return;
       const rows = asmt.value;
+      const ty = rows[0].taxyr ? ("TY" + rows[0].taxyr) : "county roll";
       const total = Number(rows[0].landvalue || 0) + Number(rows[0].buildingvalue || 0);
       structureRead(rows[0].landvalue, rows[0].buildingvalue);
       if (total > 0) {
-        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
-        else addFact("row-record", "assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
-        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 TY2026");
+        if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; " + ty, assessedHtml(total), "live");
+        else addFact("row-record", "assessed", "Assessed value &middot; " + ty, assessedHtml(total), "live");
+        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 " + ty.toUpperCase());
       }
     } else if (county === COUNTIES.hawaii) {
       // Hawai'i County certified roll: land + building
