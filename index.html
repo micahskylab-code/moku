@@ -819,7 +819,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-51</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-52</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -2414,10 +2414,22 @@ async function openLatest() {
   if (!list.dataset.loaded) {
     list.innerHTML = '<div style="padding:20px;color:var(--ink-3);font-size:13px">Pulling the newest recordings&hellip;</div>';
     try {
+      let strip = "";
+      if (typeof MARKET !== "undefined" && MARKET.statewide && MARKET.statewide.counties) {
+        const N = { kauai: "Kaua\u02BBi", oahu: "O\u02BBahu", maui: "Maui", hawaii: "Hawai\u02BBi" };
+        strip = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">' +
+          Object.entries(MARKET.statewide.counties).map(([k, v]) =>
+            `<div style="border:1px solid rgba(23,21,15,0.1);border-radius:10px;padding:8px 11px">
+              <div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)">${N[k] || k}</div>
+              <div style="font-family:var(--serif);font-size:17px;color:var(--ink)">${v.sf_n} closed</div>
+              <div style="font-size:11px;color:var(--ink-2)">median ${fmtPrice(v.sf_med)} <span style="color:${v.sf_yoy >= 0 ? "#0F6E56" : "#A5442E"}">${v.sf_yoy >= 0 ? "&#9650;" : "&#9660;"}${Math.abs(v.sf_yoy).toFixed(1)}%</span></div>
+            </div>`).join("") +
+          `</div><div style="font-size:10.5px;color:var(--ink-3);margin-bottom:10px">Homes closed ${MARKET.statewide.sold_asof}, every island, vs a year ago &middot; DBEDT quarterly report. Below: individual recordings &mdash; Maui County is the only county that publishes them (records requests to the other counties are drafted).</div>`;
+      }
       const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E50000&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&orderByFields=GIS_SALES_2YEAR_SALEDT%20DESC&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=14", 12000);
       const gj = await r.json();
       if (!gj.features || !gj.features.length) throw new Error("empty");
-      list.innerHTML = gj.features.map(f => {
+      list.innerHTML = strip + gj.features.map(f => {
         const [x, y] = f.geometry.coordinates;
         const p = f.properties.GIS_SALES_2YEAR_PRICE, dt = f.properties.GIS_SALES_2YEAR_SALEDT;
         const dd = new Date(dt + "T12:00:00");
