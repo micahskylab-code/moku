@@ -785,12 +785,12 @@
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
   <div class="dis-card" data-go="sold">
     <div class="dis-big" id="dis-sold-n">1,500</div>
-    <div class="dis-t">real recorded sale prices &middot; Maui County publishes them first</div>
+    <div class="dis-t">real recorded sale prices, straight from county deed records</div>
     <div class="dis-a">See every sale &rarr;</div>
   </div>
   <div class="dis-card" data-go="tvr">
     <div class="dis-big">1,354</div>
-    <div class="dis-t">licensed vacation rentals &middot; Kaua&#699;i &amp; O&#699;ahu</div>
+    <div class="dis-t">licensed vacation rentals, from the official county registries</div>
     <div class="dis-a">Check any street &rarr;</div>
   </div>
   <div class="dis-card" data-go="flood">
@@ -800,7 +800,7 @@
   </div>
   <div class="dis-card" data-go="market">
     <div class="dis-big" id="dis-mkt">418 active &middot; $1.33M</div>
-    <div class="dis-t">Kaua&#699;i Market Pulse &middot; more islands as counties publish</div>
+    <div class="dis-t">Market Pulse &middot; live from published market data</div>
     <div class="dis-a">Market Pulse &rarr;</div>
   </div>
 </div>
@@ -810,7 +810,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-41</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-42</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -2459,8 +2459,8 @@ try {
 
 // ---- Map layers: real data ON the map, one tap each ----
 const LAYER_NOTES = {
-  sold: "county-recorded sales with prices — Maui County publishes these; the other counties don&#8217;t yet",
-  tvr: "Licensed vacation rentals from the county rolls — Kaua&#8217;i&#8217;s registry + O&#8217;ahu&#8217;s STR licenses; Maui &amp; Big Island don&#8217;t publish theirs",
+  sold: "recorded sale prices from county deed records — counties publish at different speeds; coverage grows as they open their rolls",
+  tvr: "Licensed vacation rentals from the official county registries — coverage grows as counties publish",
   flood: "FEMA high-risk flood zones, statewide",
   tsu: "Tsunami evacuation zones, statewide"
 };
@@ -2603,7 +2603,7 @@ const LAYER_BOUNDS = {
   tvr:  [[-159.95, 21.2], [-157.55, 22.35]]  // Kauai + O'ahu
 };
 const LEGEND_ROWS = {
-  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui (county last refresh: Jun 2025)</span></div>
+  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} recorded sales &middot; county deed records through Jun 2025 (counties publish at different speeds)</span></div>
     <div class="lrow" style="flex-wrap:wrap; max-width:280px;">
       <span style="opacity:0.6">PRICE</span>
       <span class="fbtn ${soldFilter.minP===0?'hot2':''}" data-p="0">Any</span>
@@ -2614,7 +2614,7 @@ const LEGEND_ROWS = {
       <span class="fbtn ${soldFilter.minT===0?'hot2':''}" data-t="0">All</span>
       <span class="fbtn ${soldFilter.minT>0?'hot2':''}" data-t="1735689600000">2025+</span>
     </div>`,
-  tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} licensed vacation rentals &middot; Kaua&#699;i &amp; O&#699;ahu &middot; other counties don&#8217;t publish</span></div>`,
+  tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} licensed vacation rentals &middot; county registries (coverage grows as counties publish)</span></div>`,
   flood: () => `<div class="lrow"><span class="sw" style="background:#4A90C4"></span><span>FEMA high-risk flood zones</span></div>`,
   tsu: () => `<div class="lrow"><span class="sw" style="background:#C4574A"></span><span>Tsunami evacuation zones</span></div>`
 };
