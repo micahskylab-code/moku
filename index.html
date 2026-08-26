@@ -887,7 +887,7 @@
   </div>
   <nav class="hdr-cluster">
     <a class="quiet" href="market.html">Market</a>
-    <button class="quiet" id="btn-sell">Updates</button>
+    <a class="quiet" href="updates.html">Updates</a>
     <button class="quiet" id="btn-me">My Moku</button>
   </nav>
 </header>
@@ -953,6 +953,7 @@
       <button id="lg-tools-btn">Layers &amp; tools</button>
       <button id="lg-me-btn">My Moku</button>
       <button id="lg-brief-btn">Monthly brief</button>
+      <a href="updates.html" style="color:#6B6E73;text-decoration:none;font:600 12px var(--sans)">What&#8217;s new</a>
     </div>
     <div class="lg-fine">Official public records &middot; not a brokerage, no advice &middot; <span onclick="openAbout()">About &amp; privacy</span></div>
   </div>
@@ -991,7 +992,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-67</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-68</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3008,7 +3009,7 @@ function submitLead() {
   go.onclick = () => { closeLead(); go.onclick = submitLead; };
 }
 document.getElementById("lead-go").onclick = submitLead;
-document.getElementById("btn-sell").onclick = () => openLead("seller");
+const _bs=document.getElementById("btn-sell"); if(_bs) _bs.onclick = () => openLead("seller");
 
 // ---- Boot: the map IS the front door. Deep link → record; returning owner → home; else Kauai hero ----
 document.body.classList.add("docked");
