@@ -366,14 +366,15 @@
   .pass-cta button:active, .pass-cta a:active { transform: scale(0.96); }
   .pass-cta .primary { min-height: 44px; }
   .dock-quiet {
-    display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; min-height: 32px;
+    display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 7px; min-height: 30px; white-space: nowrap;
   }
   .dock-quiet button, .dock-quiet a {
-    background: none; border: none; cursor: pointer; text-decoration: none;
-    font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--ink-2); padding: 6px 2px;
+    background: none; border: none; cursor: pointer; text-decoration: none; white-space: nowrap;
+    font-family: var(--sans); font-size: 11.5px; font-weight: 500; color: var(--ink-2); padding: 6px 1px;
   }
   .dock-quiet button:hover, .dock-quiet a:hover { color: var(--ink); }
   .dock-quiet span { color: var(--ink-3); }
+  .dock-sub { text-align: center; font: 400 10.5px/1.4 var(--sans); color: var(--ink-3); margin-top: 5px; }
   .finenote {
     font: 400 10.5px/1.55 var(--sans); color: var(--ink-3);
     text-transform: none; letter-spacing: 0; padding: 12px 2px 4px;
@@ -804,7 +805,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-34</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-35</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -840,6 +841,12 @@
       recorded sales where a county publishes them), FEMA flood zones via the state, and Realtor.com
       inventory via the St.&nbsp;Louis Fed. Records appear exactly as the government publishes them —
       verify with the county before relying on them for any transaction.</p>
+    <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
+      <b style="color:var(--ink)">Agents &amp; writers:</b> link any parcel by its TMK — paste the TMK from
+      your listing sheet after a <b>#</b> in Moku&#8217;s address
+      (e.g.&nbsp;<span style="font-family:monospace">&#8230;/moku/#4260160200000</span>) and the link opens
+      that parcel&#8217;s full record: assessed value, flood &amp; tsunami zones, zoning, and recorded sales
+      where the county publishes them. Free to cite, always.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Privacy, in plain words:</b> no tracking, no analytics cookies, no ad
       pixels. Your searches go straight to government map servers. If you tap
@@ -1201,6 +1208,9 @@ function parseDeepLink() {
   if (m) return { type: "p", lng: +m[1], lat: +m[2] };
   m = h.match(/^tmk=(\d{6,13})$/);
   if (m) return { type: "tmk", tmk: m[1] };
+  // Raw MLS-format TMK pasted as the hash: strip separators, take the parcel digits
+  const raw = decodeURIComponent(h).replace(/[^\d]/g, "");
+  if (/^\d{9,13}$/.test(raw) && /^[1-4]/.test(raw)) return { type: "tmk", tmk: raw.slice(0, 9) };
   return null;
 }
 
@@ -1615,6 +1625,33 @@ async function enrichCounty(county, token, tmkRaw) {
         if (rows[0].Homeowner === "Y") addFact("row-record", "hexempt", "Homeowner status", "Homeowner class on file with the county", "live");
       }
     } else if (county === COUNTIES.maui) {
+      // The dwell loop: real recorded sales within a mile, tappable
+      (async () => {
+        try {
+          const d = 0.0145; // ~1 mile in degrees at Hawaii latitudes
+          const { lng, lat } = lastRecord || {};
+          if (lng == null) return;
+          const env = `${lng - d},${lat - d},${lng + d},${lat + d}`;
+          const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E0&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&returnGeometry=true&outSR=4326&f=geojson&geometry=" + encodeURIComponent(env) + "&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&resultRecordCount=60", 12000);
+          const gj = await r.json();
+          if (token !== exploreToken || !gj.features || !gj.features.length) return;
+          const withD = gj.features.map(f => {
+            const [x, y] = f.geometry.coordinates;
+            const mi = Math.sqrt(Math.pow((x - lng) * 60.3, 2) + Math.pow((y - lat) * 69.05, 2));
+            return { p: f.properties.GIS_SALES_2YEAR_PRICE, dt: f.properties.GIS_SALES_2YEAR_SALEDT, x, y, mi };
+          }).filter(v => v.p > 0 && v.mi > 0.005).sort((a, b) => a.mi - b.mi).slice(0, 5);
+          if (!withD.length) return;
+          const med = withD.map(v => v.p).sort((a, b) => a - b)[Math.floor(withD.length / 2)];
+          const rows = withD.map(v => {
+            const when = (() => { const dd = new Date(v.dt + "T12:00:00"); return isNaN(dd) ? "" : dd.toLocaleDateString("en-US", { month: "short", year: "numeric" }); })();
+            return `<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid rgba(23,21,15,0.06);cursor:pointer" onclick="exploreParcel(${v.x.toFixed(6)},${v.y.toFixed(6)})">` +
+              `<span style="font-family:var(--serif);font-size:15px;color:var(--ink)">${fmtPrice(v.p)}</span>` +
+              `<span style="color:var(--ink-3);font-size:11.5px">${when} &middot; ${v.mi.toFixed(1)} mi &rarr;</span></div>`;
+          }).join("");
+          addFact("row-record", "comps", `Recorded sales within a mile &middot; median ${fmtPrice(med)}`,
+            rows + `<div class="subnote">County of Maui recorded sales &middot; <b onclick="showLayer('sold')">see all &#8599;</b></div>`, "live");
+        } catch (e) {}
+      })();
       const parid8 = tmk9.slice(1);
       const sales = await queryWhere(MAUI_SALES_URL, `GIS_SALES_2YEAR_PARID LIKE '${parid8}%'`,
         "GIS_SALES_2YEAR_PARID,GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT,GIS_SALES_2YEAR_SALETYPE", "GIS_SALES_2YEAR_SALEDT DESC", 1);
@@ -1685,7 +1722,12 @@ function openRecordCard(lng, lat) {
       <div class="pass-cta">
         <button class="primary" id="watch-parcel">Ask Micah about this parcel</button>
       </div>
+      <div class="dock-sub">Goes directly to Micah &middot; no spam, no signup walls</div>
       <div class="dock-quiet">
+        <button id="watch-btn">Watch</button>
+        <span>&middot;</span>
+        <button id="own-btn">I own this</button>
+        <span>&middot;</span>
         <button id="save-btn" onclick="toggleSave()">&#9734; Save</button>
         <span>&middot;</span>
         <button id="copy-record">Copy link</button>
@@ -1700,11 +1742,24 @@ function openRecordCard(lng, lat) {
     const label = lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : "This parcel";
     await shareIt(`${label} — live county record on Moku`, hash);
   };
-  document.getElementById("watch-parcel").onclick = () => {
-    const label = lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : lat.toFixed(5) + ", " + lng.toFixed(5);
-    try { localStorage.setItem("moku_home", JSON.stringify({ tmk: label, lng, lat, at: Date.now() })); } catch (e) {}
-    openLead("owner", label);
+  const parcelLabel = () => lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : lat.toFixed(5) + ", " + lng.toFixed(5);
+  document.getElementById("watch-parcel").onclick = () => openLead("owner", parcelLabel());
+  const wb = document.getElementById("watch-btn");
+  if (wb) wb.onclick = () => openLead("watch", parcelLabel());
+  const ob = document.getElementById("own-btn");
+  if (ob) ob.onclick = () => {
+    try { localStorage.setItem("moku_home", JSON.stringify({ tmk: parcelLabel(), lng, lat, at: Date.now() })); } catch (e) {}
+    openLead("own", parcelLabel());
   };
+  // Third deep look this session → one quiet, dismissible brief offer
+  try {
+    const n = (Number(sessionStorage.getItem("moku_depth")) || 0) + 1;
+    sessionStorage.setItem("moku_depth", String(n));
+    if (n === 3 && !localStorage.getItem("moku_brief_asked")) {
+      localStorage.setItem("moku_brief_asked", "1");
+      setTimeout(() => toast(`Everything here stays free. Want the <b>monthly recorded-sales brief</b>? <b style="cursor:pointer" onclick="openLead('seller')">Sign up &rarr;</b>`, 8000), 1200);
+    }
+  } catch (e) {}
 }
 function closeRecord() {
   exploreToken++; // a closed card must stay closed — drop any in-flight responses
@@ -2192,7 +2247,21 @@ const LEAD_COPY = {
     sub: "Question about this property — its records, its history, the data behind it? Ask Micah directly. He's on Kauai and replies personally.",
     note: "Parcel (auto-filled) — add your question",
     go: "Send to Micah →",
-    subject: "Moku — parcel question"
+    subject: "QUESTION — Moku parcel"
+  },
+  watch: {
+    title: "Watch this parcel",
+    sub: "Micah emails you when this parcel's county records change — assessment, registry status, nearby recorded sales. Free, no spam, unsubscribe anytime.",
+    note: "Parcel (auto-filled)",
+    go: "Watch it →",
+    subject: "WATCH — Moku parcel"
+  },
+  own: {
+    title: "Own this parcel? Get your free Owner&#8217;s Report",
+    sub: "Your parcel's assessment history, registry status, and your area's recorded sales — from official county records, in Micah's monthly brief. Free.",
+    note: "Parcel (auto-filled)",
+    go: "Send my report →",
+    subject: "OWNER REPORT — Moku parcel"
   },
   seller: {
     title: "The monthly market brief",
