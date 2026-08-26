@@ -64,7 +64,27 @@
   <p>Tap any lot on the 3D map, or search an address or TMK. Records load live from official
   government servers — free, no signup.</p>
   <div class="links"><strong>More free lookups:</strong><br><a href="tmk-lookup.html">Hawaii TMK lookup</a> <a href="kauai-flood-zones.html">Kauai flood zones</a> <a href="maui-sold-prices.html">Maui sold prices</a> <a href="kauai-vacation-rentals.html">Kauai vacation rentals</a> <a href="hawaii-tsunami-zones.html">Tsunami zones</a></div>
-  <footer>Moku &middot; built on Kauai by Micah Hanano, a local building it in the open &middot; data shown exactly as published by the State of Hawaii and county governments — verify with the source before relying on it for a transaction &middot; micahskylab@gmail.com</footer>
+  
+<div class="brief" style="border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:26px 0 6px;background:#fff">
+  <div style="font-family:Fraunces,Georgia,serif;font-size:19px;color:var(--ink);margin-bottom:4px">Get the monthly Kahului parcel brief</div>
+  <div style="font-size:12.5px;color:var(--ink3);margin-bottom:10px">Free, written by Micah from official county records. No spam, unsubscribe anytime.</div>
+  <form onsubmit="return sendBrief(this)" style="display:flex;gap:8px;flex-wrap:wrap">
+    <input type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:13.5px">
+    <button class="cta" style="border:none;cursor:pointer;margin:0">Sign me up &rarr;</button>
+  </form>
+  <div class="brief-ok" style="display:none;font-size:13px;color:var(--ink);padding:6px 0 0">Done — you&#8217;re on the list. Micah replies from his own address.</div>
+</div>
+<script>
+function sendBrief(f) {
+  var e = f.querySelector("input").value.trim();
+  if (!e) return false;
+  try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST", headers: { "Title": "BRIEF - Kahului" }, body: "BRIEF SIGNUP\nReply-to: " + e + "\nPage: " + location.pathname }); } catch (err) {}
+  f.style.display = "none";
+  f.parentNode.querySelector(".brief-ok").style.display = "block";
+  return false;
+}
+</script>
+<footer>Moku &middot; built on Kauai by Micah Hanano, a local building it in the open &middot; data shown exactly as published by the State of Hawaii and county governments — verify with the source before relying on it for a transaction &middot; micahskylab@gmail.com</footer>
 </div>
 </body>
 </html>
