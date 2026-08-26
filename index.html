@@ -805,7 +805,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-35</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-36</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -849,7 +849,8 @@
       where the county publishes them. Free to cite, always.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Privacy, in plain words:</b> no tracking, no analytics cookies, no ad
-      pixels. Your searches go straight to government map servers. If you tap
+      pixels. Your searches go straight to government map servers. If you send Micah a message, it
+      travels over a private notification channel and your email is used only to reply to you. If you tap
       &#8220;What&#8217;s under me?&#8221;, your location is used on your device and never stored or sent
       to us. If you write to Micah, your email is used only to reply.</p>
     <div class="fine" style="margin-top:14px">Free guides: <a href="tmk-lookup.html" style="color:var(--accent)">TMK lookup</a> &middot; <a href="kauai-flood-zones.html" style="color:var(--accent)">flood zones</a> &middot; <a href="maui-sold-prices.html" style="color:var(--accent)">Maui solds</a> &middot; <a href="kauai-vacation-rentals.html" style="color:var(--accent)">rental registry</a><br>Questions? micahskylab@gmail.com</div>
@@ -2299,7 +2300,10 @@ function submitLead() {
   }
   const name = (document.getElementById("lead-name") || {}).value || "";
   const body = `${c.subject}\n\nFrom: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
-  // Safety net first: the typed lead survives even when no mail app is set up
+  // Instant channel first — the lead reaches Micah the second the button is pressed
+  try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST",
+    headers: { "Title": c.subject }, body: body }); } catch (e) {}
+  // Safety net second: the typed lead survives even when no mail app is set up
   try { navigator.clipboard.writeText(body + "\n\nTo: " + LEAD_INBOX); } catch (e) {}
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
   const sub = document.getElementById("lead-sub");
