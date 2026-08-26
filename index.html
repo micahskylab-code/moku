@@ -819,7 +819,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-52</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-53</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -1328,9 +1328,30 @@ map.on("click", (e) => {
 });
 map.on("zoomend", () => { try { map.getCanvas().style.cursor = map.getZoom() >= 10.5 ? "pointer" : ""; } catch (e) {} });
 
+function structureRead(land, bldg) {
+  land = Number(land) || 0; bldg = Number(bldg) || 0;
+  const total = land + bldg;
+  if (total <= 0) return;
+  const pct = Math.round((bldg / total) * 100);
+  let read;
+  if (bldg <= 0) read = "County assesses <b>no structure value</b> \u2014 this is valued as land. Vacant, or improvements the county hasn\u2019t valued.";
+  else if (pct < 25) read = `The county puts <b>${pct}%</b> of value in the building \u2014 mostly <b>land value</b>. Buyers here pay for the lot; the structure is a smaller part of the price.`;
+  else if (pct > 70) read = `The county puts <b>${pct}%</b> of value in the building \u2014 this is a <b>structure-heavy</b> property. Condition and age matter most to the number.`;
+  else read = `County value splits <b>${pct}% building / ${100 - pct}% land</b> \u2014 a balanced improved property.`;
+  noteIntel("structure", "plus", read + `<div class="subnote">Land $${land.toLocaleString()} &middot; building $${bldg.toLocaleString()}, per the county roll. A negotiation reference, not an appraisal.</div>`);
+}
+function noteRecent(lng, lat, tmk, addr) {
+  try {
+    let r = JSON.parse(localStorage.getItem("moku_recent") || "[]");
+    r = r.filter(x => Math.abs(x.lng - lng) > 1e-5 || Math.abs(x.lat - lat) > 1e-5);
+    r.unshift({ lng, lat, tmk: tmk || null, addr: addr || null, at: Date.now() });
+    localStorage.setItem("moku_recent", JSON.stringify(r.slice(0, 12)));
+  } catch (e) {}
+}
 async function exploreParcel(lng, lat) {
   dismissVeil();
   const token = ++exploreToken;
+  noteRecent(lng, lat);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
   lastRecord = { lng, lat, tmk: null };
@@ -1427,6 +1448,7 @@ async function exploreParcel(lng, lat) {
       lastRecord.tmk = tmk;
       const tmkEl = document.getElementById("rec-tmk");
       if (tmkEl && tmk) tmkEl.textContent = fmtTmk(tmk);
+      if (tmk) noteRecent(lng, lat, fmtTmk(tmk));
       const dupTmk = document.getElementById("fact-tmk"); if (dupTmk) dupTmk.remove();
       lastRecord.acres = Number(pickAcres(p)) || null;
       setFact("acres", "Parcel size", pickAcres(p) ? Number(pickAcres(p)).toFixed(2) + " acres" : "—", "live");
@@ -1701,6 +1723,7 @@ async function enrichCounty(county, token, tmkRaw) {
       if (asmt.status !== "fulfilled" || !asmt.value.length) return;
       const rows = asmt.value;
       const total = Number(rows[0].landvalue || 0) + Number(rows[0].buildingvalue || 0);
+      structureRead(rows[0].landvalue, rows[0].buildingvalue);
       if (total > 0) {
         if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
         else addFact("row-record", "assessed", "Assessed value &middot; TY2026", assessedHtml(total), "live");
@@ -1712,6 +1735,7 @@ async function enrichCounty(county, token, tmkRaw) {
         `TMK = ${Number(tmk9)}`, "LandValue,BldgValue,TaxAcres,Homeowner", null, 1);
       if (token !== exploreToken || !rows.length) return;
       const total = Number(rows[0].LandValue || 0) + Number(rows[0].BldgValue || 0);
+      structureRead(rows[0].LandValue, rows[0].BldgValue);
       if (total > 0) {
         if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
         else addFact("row-record", "assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
@@ -2459,15 +2483,26 @@ function getProfile() { try { return JSON.parse(localStorage.getItem("moku_profi
 function saveProfile(name, email) {
   try { localStorage.setItem("moku_profile", JSON.stringify({ name: name || "", email: email || "", at: Date.now() })); } catch (e) {}
 }
+function rowsFor(arr, empty) {
+  return arr.length
+    ? arr.map(v => `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid rgba(23,21,15,0.07);cursor:pointer;font-size:13px" onclick="closeMe();exploreParcel(${v.lng},${v.lat})"><span style="color:var(--ink)">${v.addr || (v.tmk ? "TMK " + v.tmk : v.lat.toFixed(4) + ", " + v.lng.toFixed(4))}</span><span style="color:#9C7A3C">open &rarr;</span></div>`).join("")
+    : `<div style="font-size:12.5px;color:var(--ink-3);padding:4px 0">${empty}</div>`;
+}
 function openMe() {
   const p = getProfile();
   document.getElementById("me-name").value = p.name || "";
   document.getElementById("me-email").value = p.email || "";
+  const t = document.getElementById("me-title");
+  if (t) t.textContent = p.name ? "Aloha, " + p.name.split(" ")[0] : "My Moku";
   const saves = getSaves();
-  document.getElementById("me-parcels").innerHTML = saves.length
-    ? `<div class="micro" style="margin-bottom:6px">SAVED PARCELS &middot; ${saves.length}</div>` + saves.slice(0, 8).map(v =>
-        `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid rgba(23,21,15,0.07);cursor:pointer;font-size:13px" onclick="closeMe();exploreParcel(${v.lng},${v.lat})"><span>${v.tmk ? "TMK " + v.tmk : v.lat.toFixed(4) + ", " + v.lng.toFixed(4)}</span><span style="color:var(--ink-3)">open &rarr;</span></div>`).join("")
-    : `<div style="font-size:13px;color:var(--ink-3)">No saved parcels yet — tap &#9734; Save on any record.</div>`;
+  let recent = [];
+  try { recent = JSON.parse(localStorage.getItem("moku_recent") || "[]"); } catch (e) {}
+  document.getElementById("me-parcels").innerHTML =
+    `<div class="micro" style="margin:14px 0 4px">&#9734; SAVED &middot; ${saves.length}</div>` +
+      rowsFor(saves.slice(0, 8), "Nothing saved yet — tap Save on any parcel to watch it.") +
+    `<div class="micro" style="margin:16px 0 4px">RECENTLY VIEWED</div>` +
+      rowsFor(recent.slice(0, 6), "Parcels you open show up here.") +
+    (saves.length ? `<div style="font-size:12px;color:var(--ink-3);margin-top:14px;padding-top:10px;border-top:1px solid rgba(23,21,15,0.07)">Moku watches your saved parcels\u2019 county records and can email you when they change. Add your email above to turn that on.</div>` : "");
   document.getElementById("me-modal").classList.add("open");
 }
 function closeMe() { document.getElementById("me-modal").classList.remove("open"); }
