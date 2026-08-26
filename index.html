@@ -810,7 +810,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-40</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-41</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -1198,6 +1198,27 @@ function zoningMeaning(code, desc) {
   if (/^I/.test(c)) return "Industrial";
   return null;
 }
+function zoningEdu(code) {
+  const c = (code || "").toUpperCase();
+  const F = (qas) => qas.map(([q, a]) => `<div style="padding:6px 0;border-bottom:1px solid rgba(23,21,15,0.06)"><div style="font-weight:600;font-size:13px;color:var(--ink)">${q}</div><div style="font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:2px">${a}</div></div>`).join("");
+  if (/^R/.test(c) && !/^RR/.test(c)) return F([
+    ["Can a home be built here?", "Residential districts exist for homes. The number after the R is the density the county allows &mdash; lot size, height, and setbacks come from the county zoning code for this exact district."],
+    ["Can it be rented?", "Long-term rental is generally a residential use. Short-term (under 180 days) is tightly regulated in Hawaii &mdash; check the registries and county rules on this card."],
+    ["First step if you&#8217;re serious?", "Pull this parcel&#8217;s district rules from county planning, then ask about water meter and sewer/septic availability &mdash; in Hawaii those often decide what&#8217;s buildable."]]);
+  if (/^AG/.test(c) || c === "A" || /AGRICULT/.test(c)) return F([
+    ["Can you live on ag land?", "Hawaii ag districts generally allow farm dwellings tied to agricultural use &mdash; each county sets what qualifies and how many dwellings a lot can carry. It is NOT automatic."],
+    ["What&#8217;s the catch with ag land?", "Cheaper per acre for a reason: building rights, water, and access are the whole game. Some ag condos (CPRs) carry extra private restrictions on top of county rules."],
+    ["First step if you&#8217;re serious?", "Ask county planning what dwellings this specific lot qualifies for, and confirm water. Never assume a house is allowed because a neighbor has one."]]);
+  if (/^(P|CON)/.test(c) || /PRESERV|CONSERV/.test(c)) return F([
+    ["Can you build here?", "Preservation/conservation districts exist to stay unbuilt. Uses are heavily restricted and often need state-level approval &mdash; most building is simply not allowed."],
+    ["Why does it sell so cheap?", "Because you&#8217;re mostly buying land to hold, not to build on. The record above shows exactly how the county classes and values it."]]);
+  if (/^C/.test(c)) return F([
+    ["What goes here?", "Commercial districts allow business uses &mdash; retail, offices, services &mdash; per the district&#8217;s specific list. Mixed residential is sometimes allowed; the county code says exactly what."],
+    ["First step if you&#8217;re serious?", "Get the district&#8217;s permitted-use table from county planning and check parking requirements &mdash; they make or break small commercial lots."]]);
+  if (/^O/.test(c)) return F([
+    ["What does open-space zoning mean?", "Land the county intends to keep open &mdash; parks, golf, buffers. Building is very limited; treat it like preservation unless planning says otherwise."]]);
+  return null;
+}
 function fmtTmk(digits) {
   const d = String(digits).replace(/\D/g, "");
   if (d.length < 9) return d;
@@ -1416,7 +1437,9 @@ async function exploreParcel(lng, lat) {
       if (z) {
         const meaning = zoningMeaning(z.code, z.desc);
         if (/^(P|CON)/i.test(String(z.code)) || /preservation|conservation/i.test(String(meaning || ""))) noteIntel("zoning", "flag", `Restricted-use district <span class="code">${z.code}</span> &mdash; building and use are limited; verify with county planning`);
-        setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>`, "live");
+        const edu = zoningEdu(z.code);
+        setFact("zoning", "County zoning", (meaning ? meaning + " " : "") + `<span class="code">${z.code}</span>` +
+          (edu ? `<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12.5px;font-weight:600;color:#9C7A3C">What can be built here? &mdash; the basics</summary><div style="margin-top:4px">${edu}<div class="subnote">General education on Hawai&#699;i zoning &mdash; the county&#8217;s code for this exact district governs. Always verify with county planning before buying or building.</div></div></details>` : ""), "live");
       } else {
         setFact("zoning", "County zoning", "none mapped here", "live");
       }
