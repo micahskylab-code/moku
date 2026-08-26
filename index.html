@@ -805,7 +805,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-36</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-37</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -823,7 +823,7 @@
     <input id="lead-email" type="email" placeholder="you@email.com" autocomplete="email">
     <input id="lead-note" type="text" placeholder="">
     <button class="go" id="lead-go"></button>
-    <div class="fine">Goes directly to Micah. No spam, ever. &middot; <span onclick="closeLead(); openAbout()" style="cursor:pointer; text-decoration:underline">About &amp; privacy</span></div>
+    <div class="fine">No spam, ever. Moku is a public-records site — not a real-estate brokerage, and nothing here is brokerage services or advice. &middot; <span onclick="closeLead(); openAbout()" style="cursor:pointer; text-decoration:underline">About &amp; privacy</span></div>
   </div>
 </div>
 
@@ -1721,9 +1721,9 @@ function openRecordCard(lng, lat) {
     <div class="finenote">Live County &amp; State of Hawai&#699;i records &middot; boundaries and zones are reference only, not survey-grade determinations &middot; verify flood &amp; tsunami with FEMA and your lender.</div>
     <div class="cta-dock">
       <div class="pass-cta">
-        <button class="primary" id="watch-parcel">Ask Micah about this parcel</button>
+        <button class="primary" id="watch-parcel">Ask about this parcel&#8217;s records</button>
       </div>
-      <div class="dock-sub">Goes directly to Micah &middot; no spam, no signup walls</div>
+      <div class="dock-sub">Public-records questions, answered from official county data &middot; no spam</div>
       <div class="dock-quiet">
         <button id="watch-btn">Watch</button>
         <span>&middot;</span>
@@ -2245,14 +2245,14 @@ let leadKind = "owner";
 const LEAD_COPY = {
   owner: {
     title: "Ask about this parcel",
-    sub: "Question about this property — its records, its history, the data behind it? Ask Micah directly. He's on Kauai and replies personally.",
+    sub: "Question about this parcel's public records — what they say, where they come from, what they mean? You'll get an answer drawn from the official county data. Moku is a records site, not a brokerage — no services, no advice, just the data.",
     note: "Parcel (auto-filled) — add your question",
     go: "Send to Micah →",
     subject: "QUESTION — Moku parcel"
   },
   watch: {
     title: "Watch this parcel",
-    sub: "Micah emails you when this parcel's county records change — assessment, registry status, nearby recorded sales. Free, no spam, unsubscribe anytime.",
+    sub: "Get an email when this parcel's public county records change — assessment, registry status, nearby recorded sales. A records service, free, unsubscribe anytime.",
     note: "Parcel (auto-filled)",
     go: "Watch it →",
     subject: "WATCH — Moku parcel"
@@ -2307,7 +2307,7 @@ function submitLead() {
   try { navigator.clipboard.writeText(body + "\n\nTo: " + LEAD_INBOX); } catch (e) {}
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
   const sub = document.getElementById("lead-sub");
-  if (sub) sub.innerHTML = `Your message is <b>copied to your clipboard</b>. If your mail app didn&#8217;t open, paste it in an email to <b style="cursor:pointer" onclick="navigator.clipboard.writeText('${LEAD_INBOX}');toast('Address copied')">${LEAD_INBOX}</b> — Micah replies personally.`;
+  if (sub) sub.innerHTML = `Your message is <b>copied to your clipboard</b>. If your mail app didn&#8217;t open, paste it in an email to <b style="cursor:pointer" onclick="navigator.clipboard.writeText('${LEAD_INBOX}');toast('Address copied')">${LEAD_INBOX}</b> — you&#8217;ll get a reply about the records.`;
   const go = document.getElementById("lead-go");
   go.innerHTML = "Done — close";
   go.onclick = () => { closeLead(); go.onclick = submitLead; };
