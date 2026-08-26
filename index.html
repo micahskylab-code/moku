@@ -742,6 +742,57 @@
     #draw-panel { top: auto; bottom: calc(150px + env(safe-area-inset-bottom)); right: 12px; left: 12px; width: auto; }
   }
 
+  /* ============ THE STANDING LEDGER ============ */
+  #ledger {
+    position: absolute; top: 0; right: 0; height: 100vh; width: 440px; z-index: 46;
+    background: #FBF9F5; border-left: 1px solid #9A7B3F;
+    padding: 26px 30px 20px; display: flex; flex-direction: column; gap: 18px;
+    overflow-y: auto; overscroll-behavior: contain;
+    animation: lgIn 0.55s cubic-bezier(.32,.72,0,1) both;
+  }
+  @keyframes lgIn { from { transform: translateX(26px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .lg-rule { height: 1px; background: rgba(22,24,26,0.10); margin: 2px 0; }
+  .lg-kick { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #9C9EA3; }
+  .lg-kick.brass { color: #9A7B3F; }
+  .lg-wm { font-family: var(--serif); font-size: 22px; font-weight: 500; color: #16181A; display: flex; align-items: center; gap: 7px; }
+  .lg-dot-p { color: #9A7B3F; }
+  .lg-date { font-family: var(--sans); font-size: 11px; font-weight: 500; color: #9C9EA3; font-variant-numeric: tabular-nums; margin-top: 5px; }
+  .lg-mast .lg-kick { margin-top: 8px; }
+  .lg-big { font-family: var(--serif); font-size: clamp(52px, 6.5vw, 70px); font-weight: 400; color: #16181A; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; margin: 4px 0 2px; }
+  .lg-flow { font-family: var(--sans); font-size: 12px; font-weight: 500; color: #6B6E73; }
+  .lg-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 8px; padding: 11px 0 8px; cursor: pointer; border-bottom: 1px solid rgba(22,24,26,0.08); transition: all 0.2s; }
+  .lg-row:hover { padding-left: 6px; }
+  .lg-row .isl { font-family: var(--serif); font-size: 16px; font-weight: 500; color: #16181A; }
+  .lg-row .med { font-family: var(--sans); font-size: 13px; font-weight: 600; color: #16181A; font-variant-numeric: tabular-nums; }
+  .lg-row .sub { font-family: var(--sans); font-size: 11.5px; color: #6B6E73; font-variant-numeric: tabular-nums; }
+  .lg-row .yoy { font-family: var(--sans); font-size: 12px; font-weight: 600; }
+  .lg-row .up { color: #0F6E56; } .lg-row .dn { color: #6B6E73; }
+  .lg-spark { height: 2px; background: rgba(154,123,63,0.16); border-radius: 2px; margin-top: 7px; grid-column: 1 / -1; }
+  .lg-spark > i { display: block; height: 100%; background: #9A7B3F; border-radius: 2px; }
+  .lg-crow { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid rgba(22,24,26,0.06); cursor: pointer; }
+  .lg-crow .addr { font-family: var(--serif); font-size: 13px; color: #16181A; }
+  .lg-crow .pr { font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: #9A7B3F; font-variant-numeric: tabular-nums; }
+  .lg-crow .dt { font-family: var(--sans); font-size: 10px; color: #9C9EA3; grid-column: 1; }
+  .lg-mut { font-family: var(--sans); font-size: 12px; color: #9C9EA3; }
+  .lg-cmd { margin-top: auto; position: relative; padding-top: 14px; }
+  #lg-search { width: 100%; box-sizing: border-box; min-height: 48px; background: #fff; border: 1px solid rgba(22,24,26,0.14); border-radius: 14px; padding: 12px 16px 12px 42px; font-family: var(--sans); font-size: 16px; color: #16181A; }
+  #lg-search:focus { outline: none; border-color: #9A7B3F; }
+  .lg-mag { position: absolute; left: 15px; top: 26px; color: #9A7B3F; font-size: 15px; }
+  .lg-tools { margin-top: 9px; text-align: center; }
+  #lg-suggest { position: absolute; left: 0; right: 0; bottom: 60px; z-index: 5; }
+  #lg-tools-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 12px; font-weight: 600; color: #6B6E73; }
+  #lg-tools-btn:hover { color: #16181A; }
+  /* Ledger takes over the landing: retire the old floating chrome on desktop */
+  body.has-ledger header, body.has-ledger #discover, body.has-ledger #mode-toggle { display: none !important; }
+  body.has-ledger .layerbar { left: 26px; right: auto; transform: none; bottom: 20px; }
+  body.has-ledger #draw-btn { right: 466px; top: 20px; }
+  @media (min-width: 761px) { body.has-ledger .maplibregl-canvas { filter: saturate(0.94) brightness(0.99) contrast(1.02); } }
+  @media (max-width: 760px) {
+    #ledger { top: 42vh; right: 0; left: 0; bottom: 0; width: auto; height: auto; border-left: none; border-top: 1px solid #9A7B3F; padding: 20px 18px; }
+    body.has-ledger #map { position: absolute; top: 0; left: 0; right: 0; height: 42vh; bottom: auto; }
+    body.has-ledger .layerbar { display: none !important; }
+    .lg-big { font-size: clamp(42px, 13vw, 54px); }
+  }
   /* ============ APPLE MOTION — everything springs, settles, assembles ============ */
   @media (prefers-reduced-motion: no-preference) {
     .passport {
@@ -845,6 +896,34 @@
 <div class="passport" id="passport"></div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
+<div id="ledger">
+  <div class="lg-mast">
+    <div class="lg-wm">Moku<span class="lg-dot-p">.</span> <span class="live-dot"></span></div>
+    <div class="lg-kick">THE HAWAI&#699;I LEDGER</div>
+    <div class="lg-date" id="lg-date">RECORDS AS PUBLISHED</div>
+  </div>
+  <div class="lg-rule"></div>
+  <div class="lg-hero">
+    <div class="lg-kick brass">ACTIVE STATEWIDE &middot; ALL ISLANDS</div>
+    <div class="lg-big" id="lg-active">0</div>
+    <div class="lg-flow">$537.3M closed &middot; H1 2026 &middot; every number sourced</div>
+  </div>
+  <div class="lg-rule"></div>
+  <div class="lg-board">
+    <div class="lg-kick brass">BY ISLAND &middot; SINGLE-FAMILY MEDIAN</div>
+    <div id="lg-board-rows"></div>
+  </div>
+  <div class="lg-rule"></div>
+  <div class="lg-closings">
+    <div class="lg-kick brass">LATEST RECORDED &middot; MAUI</div>
+    <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
+  </div>
+  <div class="lg-cmd">
+    <span class="lg-mag">&#9906;</span>
+    <input id="lg-search" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
+    <div class="lg-tools"><button id="lg-tools-btn">Layers &amp; tools &rarr;</button></div>
+  </div>
+</div>
 <div id="discover">
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
   <div class="dis-card" data-go="latest" data-chip="Latest closings">
@@ -879,7 +958,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-57</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-58</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2486,6 +2565,77 @@ function useMyLocation() {
 document.getElementById("try-here").onclick = useMyLocation;
 wireSearch("onebox", "suggest");
 wireSearch("dockbox", "dock-suggest");
+// ===== THE STANDING LEDGER — bring the terminal column to life =====
+(function ledger() {
+  const L = document.getElementById("ledger");
+  if (!L) return;
+  document.body.classList.add("has-ledger");
+  // add a suggest dropdown for the ledger search + wire it like the others
+  if (!document.getElementById("lg-suggest")) {
+    const d = document.createElement("div"); d.id = "lg-suggest"; d.className = "dock-suggest-el";
+    document.querySelector(".lg-cmd").appendChild(d);
+  }
+  try { wireSearch("lg-search", "lg-suggest"); } catch (e) {}
+  // dateline
+  const dl = document.getElementById("lg-date");
+  const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"], mons = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  try { const t = MOKU_NOW ? new Date(MOKU_NOW) : null; } catch(e) {}
+  dl.textContent = "RECORDS AS PUBLISHED \u00B7 LIVE COUNTY DATA";
+  // hero count-up to statewide active
+  const target = (typeof MARKET !== "undefined" && MARKET.statewide) ? MARKET.statewide.active_total : 6711;
+  const el = document.getElementById("lg-active");
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) { el.textContent = target.toLocaleString(); }
+  else {
+    let start = null; const dur = 750;
+    const tick = ts => { if (!start) start = ts; const k = Math.min(1, (ts - start) / dur); const e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(target * e).toLocaleString(); if (k < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+  // island board
+  const C = (typeof MARKET !== "undefined" && MARKET.statewide) ? MARKET.statewide.counties : null;
+  if (C) {
+    const order = [["kauai","Kaua\u02BBi"],["oahu","O\u02BBahu"],["maui","Maui"],["hawaii","Hawai\u02BBi Island"]];
+    const totalA = MARKET.statewide.active_total || 6711;
+    const fp = n => n >= 1e6 ? "$" + (n/1e6).toFixed(2).replace(/\.?0+$/,"") + "M" : "$" + Math.round(n/1e3) + "K";
+    document.getElementById("lg-board-rows").innerHTML = order.map(([k, name]) => {
+      const v = C[k]; if (!v) return "";
+      const up = v.sf_yoy >= 0;
+      const share = Math.max(3, Math.round((v.active / totalA) * 100));
+      return `<div class="lg-row" data-isle="${k}">
+        <div><div class="isl">${name}</div><div class="sub">${v.active.toLocaleString()} active</div></div>
+        <div style="text-align:right"><div class="med">${fp(v.sf_med)}</div><div class="yoy ${up?'up':'dn'}">${up?'\u25B2':'\u25BC'} ${Math.abs(v.sf_yoy).toFixed(1)}%</div></div>
+        <div class="lg-spark"><i style="width:${share}%"></i></div>
+      </div>`;
+    }).join("");
+    document.querySelectorAll("#lg-board-rows .lg-row").forEach(r => {
+      r.onclick = () => {
+        const h = ISLAND_HEROES[r.dataset.isle]; if (!h) return;
+        dismissVeil();
+        map.flyTo({ center: h.c, zoom: h.z, pitch: 0, speed: 1.15, curve: 1.42, essential: true });
+        document.querySelectorAll("#lg-board-rows .lg-row").forEach(x => x.style.borderLeft = "");
+        r.style.borderLeft = "2px solid #9A7B3F"; r.style.paddingLeft = "8px";
+      };
+    });
+  }
+  // latest closings (reuse Maui recorded sales)
+  (async () => {
+    try {
+      const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E50000&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&orderByFields=GIS_SALES_2YEAR_SALEDT%20DESC&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=3", 12000);
+      const gj = await r.json();
+      const rows = (gj.features || []).map(f => {
+        const [x, y] = f.geometry.coordinates, p = f.properties.GIS_SALES_2YEAR_PRICE, dt = f.properties.GIS_SALES_2YEAR_SALEDT;
+        const d = new Date(dt + "T12:00:00"); const when = isNaN(d) ? "" : d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+        return `<div class="lg-crow" onclick="exploreParcel(${x.toFixed(6)},${y.toFixed(6)})">
+          <div class="addr">Maui recorded sale</div><div class="pr">${fmtPrice(p)}</div><div class="dt">${when}</div></div>`;
+      }).join("");
+      document.getElementById("lg-closings-rows").innerHTML = rows || '<div class="lg-mut">No recent recordings.</div>';
+    } catch (e) { document.getElementById("lg-closings-rows").innerHTML = '<div class="lg-mut">County server busy \u2014 reload.</div>'; }
+  })();
+  // tools button reveals the layer chips (kept at bottom-left on desktop)
+  const tb = document.getElementById("lg-tools-btn");
+  if (tb) tb.onclick = () => { const lb = document.getElementById("layerbar"); if (lb) lb.scrollIntoView(); toast("Layer toggles are at the bottom-left of the map", 3000); };
+})();
 document.addEventListener("keydown", e => { if (e.key === "Escape") { closeRecord(); closeLead(); closeAbout(); } });
 
 // ---- Lead engine ----
