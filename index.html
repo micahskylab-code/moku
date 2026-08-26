@@ -783,8 +783,8 @@
     <div class="dis-a">See every sale &rarr;</div>
   </div>
   <div class="dis-card" data-go="tvr">
-    <div class="dis-big">602</div>
-    <div class="dis-t">registered vacation rentals on Kaua&#699;i</div>
+    <div class="dis-big">1,354</div>
+    <div class="dis-t">licensed vacation rentals &middot; Kaua&#699;i &amp; O&#699;ahu</div>
     <div class="dis-a">Check any street &rarr;</div>
   </div>
   <div class="dis-card" data-go="flood">
@@ -804,7 +804,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-32</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-33</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
@@ -2090,7 +2090,7 @@ setTimeout(() => begin(), 11000);
         setTimeout(armTerrain, 500);
         if (window.showDiscover) setTimeout(window.showDiscover, 600);
         // Market layers may welcome; hazards are opt-in only — never open on a disaster map
-        const autoLayer = firstVisit ? null : ({ kauai: "tvr", maui: "sold" })[isle] || null;
+        const autoLayer = firstVisit ? null : ({ kauai: "tvr", maui: "sold", oahu: "tvr" })[isle] || null;
         if (autoLayer) setTimeout(() => {
           if (!(layerState[autoLayer] && layerState[autoLayer].on) && !document.getElementById("passport").classList.contains("open"))
             toggleLayer(autoLayer, document.querySelector('.lchip[data-lk="' + autoLayer + '"]'));
@@ -2254,7 +2254,7 @@ try {
 // ---- Map layers: real data ON the map, one tap each ----
 const LAYER_NOTES = {
   sold: "county-recorded sales with prices — Maui County publishes these; the other counties don&#8217;t yet",
-  tvr: "Kauai&#8217;s 602 registered non-conforming vacation rentals, from the county registry",
+  tvr: "Licensed vacation rentals from the county rolls — Kaua&#8217;i&#8217;s registry + O&#8217;ahu&#8217;s STR licenses; Maui &amp; Big Island don&#8217;t publish theirs",
   flood: "FEMA high-risk flood zones, statewide",
   tsu: "Tsunami evacuation zones, statewide"
 };
@@ -2352,9 +2352,16 @@ async function ensureLayer(key) {
       st.ids = ["lyr-sold-cluster", "lyr-sold-count", "lyr-sold-dot", "lyr-sold-pill"];
     } else if (key === "tvr") {
       if (!st.data) {
-        const r = await fetchTimeout("https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0/query?where=1%3D1&outFields=TMK&returnGeometry=true&outSR=4326&geometryPrecision=5&f=geojson&resultRecordCount=2000", 15000);
-        st.data = await r.json();
-        st.count = (st.data.features || []).length;
+        // Two official county sources: Kauai's NCTVR registry + O'ahu's licensed STR NUCs
+        const srcs = await Promise.allSettled([
+          fetchTimeout("https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0/query?where=1%3D1&outFields=TMK&returnGeometry=true&outSR=4326&geometryPrecision=5&f=geojson&resultRecordCount=2000", 15000).then(r => r.json()),
+          fetchTimeout("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/NUC_Tax_11_22_2022/FeatureServer/175/query?where=1%3D1&outFields=Type_of_STR&returnGeometry=true&outSR=4326&geometryPrecision=5&f=geojson&resultRecordCount=1000", 15000).then(r => r.json())
+        ]);
+        const feats = [];
+        srcs.forEach(x => { if (x.status === "fulfilled" && x.value && x.value.features) feats.push(...x.value.features); });
+        if (!feats.length) throw new Error("tvr sources down");
+        st.data = { type: "FeatureCollection", features: feats };
+        st.count = feats.length;
       }
       if (!st.pts) {
         st.pts = { type: "FeatureCollection", features: (st.data.features || []).map(f => {
@@ -2387,10 +2394,10 @@ async function ensureLayer(key) {
 }
 const LAYER_BOUNDS = {
   sold: [[-157.45, 20.4], [-155.9, 21.4]],   // Maui County
-  tvr:  [[-159.95, 21.8], [-159.2, 22.35]]   // Kauai
+  tvr:  [[-159.95, 21.2], [-157.55, 22.35]]  // Kauai + O'ahu
 };
 const LEGEND_ROWS = {
-  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui</span></div>
+  sold: c => `<div class="lrow"><span class="ramp"></span><span>$400K &rarr; $5M+ &middot; ${c ? c.toLocaleString() : ""} county-recorded sales &middot; Maui (county last refresh: Jun 2025)</span></div>
     <div class="lrow" style="flex-wrap:wrap; max-width:280px;">
       <span style="opacity:0.6">PRICE</span>
       <span class="fbtn ${soldFilter.minP===0?'hot2':''}" data-p="0">Any</span>
@@ -2401,7 +2408,7 @@ const LEGEND_ROWS = {
       <span class="fbtn ${soldFilter.minT===0?'hot2':''}" data-t="0">All</span>
       <span class="fbtn ${soldFilter.minT>0?'hot2':''}" data-t="1735689600000">2025+</span>
     </div>`,
-  tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} registered vacation rentals &middot; Kauai</span></div>`,
+  tvr: c => `<div class="lrow"><span class="sw" style="background:#14A08F"></span><span>${c ? c.toLocaleString() : ""} licensed vacation rentals &middot; Kaua&#699;i &amp; O&#699;ahu &middot; other counties don&#8217;t publish</span></div>`,
   flood: () => `<div class="lrow"><span class="sw" style="background:#4A90C4"></span><span>FEMA high-risk flood zones</span></div>`,
   tsu: () => `<div class="lrow"><span class="sw" style="background:#C4574A"></span><span>Tsunami evacuation zones</span></div>`
 };
