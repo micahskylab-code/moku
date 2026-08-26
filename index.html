@@ -572,7 +572,6 @@
       box-shadow: 0 24px 60px rgba(23,21,15,0.13);
       outline: 1px solid rgba(23,21,15,0.10); outline-offset: -1px;
     }
-    .maplibregl-canvas { filter: saturate(1.12) brightness(1.03); }
   }
 
   /* Rule: accent (brass) means live data, never decoration. Only data may animate. */
@@ -730,6 +729,7 @@
   @keyframes podOpen { from { opacity: 0; transform: translateY(-5px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
   @keyframes chipPop { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
 
+  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   .passport .brass-rule { width: 48px; height: 2px; background: #9C7A3C; margin-bottom: 14px; }
   .passport .micro {
     font-family: var(--sans); font-size: 10.5px; font-weight: 600;
@@ -801,7 +801,7 @@
   <div class="dis-head">EXPLORE HAWAI&#699;I&#8217;S RECORDS <span id="dis-x" title="Hide">&#10005;</span></div>
   <div class="dis-card" data-go="sold">
     <div class="dis-big" id="dis-sold-n">1,500</div>
-    <div class="dis-t">homes sold on Maui &middot; real recorded prices</div>
+    <div class="dis-t">real recorded sale prices &middot; Maui County publishes them first</div>
     <div class="dis-a">See every sale &rarr;</div>
   </div>
   <div class="dis-card" data-go="tvr">
@@ -816,17 +816,17 @@
   </div>
   <div class="dis-card" data-go="market">
     <div class="dis-big" id="dis-mkt">418 active &middot; $1.33M</div>
-    <div class="dis-t">the Kaua&#699;i market right now, every number sourced</div>
+    <div class="dis-t">Kaua&#699;i Market Pulse &middot; more islands as counties publish</div>
     <div class="dis-a">Market Pulse &rarr;</div>
   </div>
 </div>
 <div id="ovation" aria-hidden="true">
   <div class="ov-kicker">HAWAI&#699;I&#8217;S PROPERTY MARKET</div>
   <div class="ov-big" id="ov-num">$0</div>
-  <div class="ov-sub" id="ov-sub">Kauai sales, 2025 &middot; county-recorded</div>
+  <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-25</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-28</div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold &middot; Maui</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals &middot; Kauai</button>
@@ -997,8 +997,19 @@ fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000)
 let pendingParcel = null;
 function armTerrain() {
   try {
-    if (!map.getSource("dem") || map.getTerrain()) return;
+    if (LITE || !map.getSource("dem") || map.getTerrain()) return;
     map.setTerrain({ source: "dem", exaggeration: SMALL ? 0.85 : 1.0 });
+    // Terrain pays rent: if frames drop after it arms, it goes — permanently this session
+    setTimeout(() => {
+      let n = 0, slow = 0, last = performance.now();
+      const probe = t => {
+        const dt = t - last; last = t;
+        if (dt > 34) slow++;
+        if (++n < 60) requestAnimationFrame(probe);
+        else if (slow > 22) { LITE = true; try { map.setTerrain(null); } catch (e) {} }
+      };
+      requestAnimationFrame(probe);
+    }, 800);
     try { map.setSky({ "sky-color": "#0E1C2A", "horizon-color": "#27435E", "fog-color": "#16273A", "sky-horizon-blend": 0.5, "horizon-fog-blend": 0.6 }); } catch (e) {}
   } catch (e) {}
 }
@@ -1343,6 +1354,7 @@ async function exploreParcel(lng, lat) {
       const qp = document.getElementById("qpub-btn");
       if (qp && p.qpub_link) { qp.href = p.qpub_link; qp.style.display = ""; }
       showHopHint();
+      refreshSaveBtn();
       enrichCounty(county, token, tmk);
     } else if (parcel === undefined) {
       setFact("tmk", "TMK (county record)", "couldn&#8217;t reach the county server", "");
@@ -1415,6 +1427,48 @@ async function exploreParcel(lng, lat) {
 function showLayer(key) {
   const chip = document.querySelector('.lchip[data-lk="' + key + '"]');
   if (!(typeof layerState !== "undefined" && layerState[key] && layerState[key].on)) toggleLayer(key, chip);
+}
+function getSaves() { try { return JSON.parse(localStorage.getItem("moku_saved") || "[]"); } catch (e) { return []; } }
+function renderSaves() {
+  try {
+    const feats = getSaves().map(p => ({ type: "Feature", geometry: { type: "Point", coordinates: [p.lng, p.lat] }, properties: { tmk: p.tmk || "" } }));
+    const data = { type: "FeatureCollection", features: feats };
+    const src = map.getSource("saves-src");
+    if (src) src.setData(data);
+    else if (map.isStyleLoaded()) {
+      map.addSource("saves-src", { type: "geojson", data: data });
+      map.addLayer({ id: "lyr-saves", type: "circle", source: "saves-src",
+        paint: { "circle-color": "#9C7A3C", "circle-radius": 6.5, "circle-stroke-color": "#FFFFFF", "circle-stroke-width": 2 } });
+      map.on("click", "lyr-saves", e => {
+        if (e.originalEvent) e.originalEvent._pinHandled = true;
+        const c = e.features[0].geometry.coordinates;
+        exploreParcel(c[0], c[1]);
+      });
+      map.on("mouseenter", "lyr-saves", () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", "lyr-saves", () => { map.getCanvas().style.cursor = ""; });
+    }
+  } catch (e) {}
+}
+map.on("style.load", () => setTimeout(renderSaves, 400));
+function refreshSaveBtn() {
+  const b = document.getElementById("save-btn");
+  if (!b || !lastRecord) return;
+  const saved = getSaves().some(p => Math.abs(p.lng - lastRecord.lng) < 1e-6 && Math.abs(p.lat - lastRecord.lat) < 1e-6);
+  b.innerHTML = saved ? "&#9733; Saved" : "&#9734; Save";
+  b.style.color = saved ? "#9C7A3C" : "";
+}
+function toggleSave() {
+  if (!lastRecord) return;
+  let saves = getSaves();
+  const i = saves.findIndex(p => Math.abs(p.lng - lastRecord.lng) < 1e-6 && Math.abs(p.lat - lastRecord.lat) < 1e-6);
+  if (i >= 0) { saves.splice(i, 1); toast("Removed from your saved parcels"); }
+  else {
+    saves.push({ lng: lastRecord.lng, lat: lastRecord.lat, tmk: lastRecord.tmk || "" });
+    toast("Saved — it stays marked in gold on <b>your</b> map, every visit");
+  }
+  try { localStorage.setItem("moku_saved", JSON.stringify(saves.slice(0, 200))); } catch (e) {}
+  renderSaves();
+  refreshSaveBtn();
 }
 function copyTmk() {
   const t = lastRecord && lastRecord.tmk ? fmtTmk(lastRecord.tmk) : "";
@@ -1591,7 +1645,8 @@ function openRecordCard(lng, lat) {
         <button class="ghost" id="copy-record">Copy link</button>
       </div>
       <div class="pass-cta" style="margin-top:8px">
-        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">County tax record &rarr;</a>
+        <button class="ghost" id="save-btn" onclick="toggleSave()">&#9734; Save</button>
+        <a class="ghost" id="qpub-btn" style="display:none" href="#" target="_blank" rel="noopener">County record &rarr;</a>
         <a class="ghost" id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
       </div>
       </div>
