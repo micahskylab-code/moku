@@ -396,6 +396,13 @@
   .ms-l { font-family: var(--sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; white-space: nowrap; }
   .ms-v { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.08; font-variant-numeric: tabular-nums; }
   .ms-v small { display: block; font-family: var(--sans); font-size: 10.5px; font-weight: 500; color: var(--ink-2); margin-top: 2px; letter-spacing: 0; }
+  @media (max-width: 480px) {
+    .msnap { gap: 6px; }
+    .ms-tile { padding: 9px 9px; }
+    .ms-l { white-space: normal; font-size: 8.5px; line-height: 1.25; }
+    .ms-v { font-size: 15px; }
+    .ms-v small { font-size: 9.5px; }
+  }
   .ld-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(23,21,15,0.06); }
   .ld-k { font-family: var(--sans); font-size: 12.5px; color: var(--ink-2); }
   .ld-v { font-family: var(--serif); font-size: 15px; color: var(--ink); }
@@ -1099,7 +1106,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-96</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-97</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
