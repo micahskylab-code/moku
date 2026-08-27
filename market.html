@@ -224,7 +224,7 @@ const yearAgo = inv[inv.length - 13];
 if (yearAgo && yearAgo.count) {
   const pct = Math.round((last.count - yearAgo.count) / yearAgo.count * 100);
   document.getElementById("inv-month").insertAdjacentHTML("afterend",
-    ` &middot; <span style="color:${pct >= 0 ? 'var(--accent)' : 'var(--red, #B3402E)'}">${pct >= 0 ? '+' : ''}${pct}% vs a year ago</span>`);
+    ` &middot; <span style="color:${pct >= 0 ? 'var(--accent)' : 'var(--red, #A5442E)'}">${pct >= 0 ? '+' : ''}${pct}% vs a year ago</span>`);
 }
 document.getElementById("inv-range").textContent = inv[0].month.slice(0, 4) + "–" + last.month.slice(0, 4);
 
