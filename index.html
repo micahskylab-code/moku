@@ -1107,7 +1107,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-107</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-108</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2226,15 +2226,21 @@ async function enrichCounty(county, token, tmkRaw) {
           if (token !== exploreToken || !sales) return;
           const hpr = (digits.length >= 13 ? digits.slice(9, 13) : "0000");
           const rec = sales[tmk9 + hpr] || (hpr !== "0000" ? sales[tmk9 + "0000"] : null);
-          if (!rec) return;
-          const price = Number(rec[0]);
-          const dt = new Date(rec[1] + "T12:00:00");
-          const when = isNaN(dt) ? esc(rec[1]) : dt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          if (!rec || !rec.length) return;
+          const price = Number(rec[0][0]);
+          const dt = new Date(rec[0][1] + "T12:00:00");
+          const when = isNaN(dt) ? esc(rec[0][1]) : dt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          // prior recorded sale on the same parcel — a factual price trajectory, no editorializing
+          let prior = null, priorLine = "";
+          if (rec[1] && Number(rec[1][0]) >= 10000) {
+            prior = { price: Number(rec[1][0]), year: String(rec[1][1]).slice(0, 4) };
+            priorLine = " &middot; previously $" + prior.price.toLocaleString() + " (" + prior.year + ")";
+          }
           if (price >= 10000) setHeroVal(price, "LAST RECORDED SALE · " + when.toUpperCase());
           addFact("row-record", "sale", "Last recorded sale",
-            "$" + price.toLocaleString() + " &middot; " + when +
-            `<div class="subnote">City &amp; County of Honolulu recorded sales (public records) — an arm&#8217;s-length conveyance; may lag the market.</div>`, "live");
-          if (lastRecord) { lastRecord.sale = { price: price, when: when }; try { composeRead(); } catch (e2) {} }
+            "$" + price.toLocaleString() + " &middot; " + when + priorLine +
+            `<div class="subnote">City &amp; County of Honolulu recorded sales (public records) — arm&#8217;s-length conveyances; may lag the market.</div>`, "live");
+          if (lastRecord) { lastRecord.sale = { price: price, when: when, prior: prior }; try { composeRead(); } catch (e2) {} }
         } catch (e) {}
       })();
       if (own.status === "fulfilled" && own.value.length && own.value[0].taxbillowner)
@@ -2377,7 +2383,9 @@ function composeRead() {
   }
   // last recorded sale — the transaction on record (Maui + Oahu today)
   if (lastRecord.sale && lastRecord.sale.price >= 10000) {
-    parts.push(`Public records show it last sold for <b>$${Number(lastRecord.sale.price).toLocaleString()}</b> in ${esc(lastRecord.sale.when)}.`);
+    let sline = `Public records show it last sold for <b>$${Number(lastRecord.sale.price).toLocaleString()}</b> in ${esc(lastRecord.sale.when)}`;
+    if (lastRecord.sale.prior) sline += `, and previously for <b>$${Number(lastRecord.sale.prior.price).toLocaleString()}</b> in ${esc(lastRecord.sale.prior.year)}`;
+    parts.push(sline + ".");
   }
   // risk read
   if (risks.length) parts.push("Worth knowing: " + risks.map(r => r.html.replace(/<[^>]+>/g, "").replace(/\.\s*$/, "").trim()).join("; ") + ".");
