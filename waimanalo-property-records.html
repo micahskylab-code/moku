@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waimanalo, Hawaii — Property Records, Owners & Risk Map (Free)</title>
-<meta name="description" content="Free property records for Waimanalo, Oahu: owner of record, acreage, zoning, flood and tsunami zones for any parcel — straight from official Hawaii county data.">
+<title>Waimanalo, Oʻahu — Property Tax, Rent, Vacation-Rental & Risk Map (Free) · Moku</title>
+<meta name="description" content="What it really costs to own in Waimanalo, Oʻahu: property tax rates, long-term rent, registered vacation rentals, flood, sea-level-rise and wildfire risk — plus a free live lookup for any parcel. Official government data.">
 <link rel="canonical" href="https://micahskylab-code.github.io/moku/waimanalo-property-records.html">
-<meta property="og:title" content="Waimanalo, Hawaii — Property Records, Owners & Risk Map (Free)">
-<meta property="og:description" content="Free property records for Waimanalo, Oahu: owner of record, acreage, zoning, flood and tsunami zones for any parcel — straight from official Hawaii county data.">
+<meta property="og:title" content="Waimanalo, Oʻahu — Property Tax, Rent, Vacation-Rental & Risk Map">
+<meta property="og:description" content="What it really costs to own in Waimanalo: tax, rent, vacation rentals, and the risks — free, from official Hawaiʻi government data.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://micahskylab-code.github.io/moku/waimanalo-property-records.html">
 <meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
@@ -16,69 +16,104 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#FBFBFD; --ink:#1D1D1F; --ink2:#5E5E63; --ink3:#8A8A90; --accent:#0E6E63; --gold:#A8894E; --line:rgba(29,29,31,0.09); }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); color:var(--ink); font:15.5px/1.65 "Inter",-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
-  .top { position:sticky; top:0; background:rgba(251,251,253,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
-  .top a { text-decoration:none; color:var(--ink); }
-  .brand { font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:500; }
-  .brand em { font-style:normal; color:var(--gold); }
-  .top .to-map { margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
-  .wrap { max-width:680px; margin:0 auto; padding:52px 22px 90px; }
-  .eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); }
-  h1 { font-family:"Fraunces",Georgia,serif; font-size:clamp(30px,5.5vw,42px); font-weight:500; letter-spacing:-0.015em; margin:10px 0 14px; text-wrap:balance; }
-  .lede { font-size:17px; color:var(--ink2); margin-bottom:28px; }
-  h2 { font-family:"Fraunces",Georgia,serif; font-size:22px; font-weight:500; margin:34px 0 10px; }
-  p { margin:0 0 14px; }
-  ul { margin:0 0 14px 20px; }
-  li { margin:5px 0; }
-  .cta { display:inline-block; background:var(--ink); color:#fff; text-decoration:none; font-weight:600; font-size:14.5px; padding:13px 22px; border-radius:999px; margin:8px 0 4px; }
-  .cta:active { transform:scale(0.97); }
-  .note { font-size:12.5px; color:var(--ink3); margin-top:6px; }
-  code { background:rgba(29,29,31,0.05); border-radius:6px; padding:1px 6px; font-size:13.5px; }
-  .links { border-top:1px solid var(--line); margin-top:44px; padding-top:18px; font-size:13.5px; }
-  .links a { color:var(--accent); text-decoration:none; margin-right:16px; }
-  footer { border-top:1px solid var(--line); margin-top:36px; padding-top:16px; font-size:12px; color:var(--ink3); }
+  :root{ --bg:#FBF9F5; --card:#FFFFFF; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A; --accent:#0E6E56; --gold:#9C7A3C; --line:rgba(23,21,15,0.10); --line2:rgba(23,21,15,0.16); --wash:#F3ECDD; --flag:#A5442E; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; --flag:#E08A6E; } }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--ink); font:16px/1.65 "Inter",-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; }
+  .top{ position:sticky; top:0; z-index:10; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top a{ text-decoration:none; color:var(--ink); }
+  .brand{ font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:600; }
+  .brand em{ font-style:normal; color:var(--gold); }
+  .top .to-map{ margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
+  .wrap{ max-width:720px; margin:0 auto; padding:46px 22px 90px; }
+  .eyebrow{ font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); }
+  h1{ font-family:"Fraunces",Georgia,serif; font-size:clamp(32px,6.5vw,50px); font-weight:500; letter-spacing:-0.022em; line-height:1.03; margin:12px 0 16px; text-wrap:balance; }
+  .lede{ font-size:18px; color:var(--ink2); margin-bottom:26px; max-width:56ch; }
+  .cta{ display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:600; font-size:15px; padding:14px 24px; border-radius:12px; transition:transform .15s ease; }
+  .cta:active{ transform:scale(0.97); }
+  .cta.ghost{ background:transparent; color:var(--accent); border:1px solid var(--line2); }
+  .note{ font-size:12.5px; color:var(--ink3); margin-top:10px; }
+  .tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:34px 0 8px; }
+  .tile{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .tile .n{ font-family:"Fraunces",Georgia,serif; font-size:27px; font-weight:500; color:var(--ink); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .tile .n.risk{ color:var(--flag); }
+  .tile .l{ font-size:12.5px; color:var(--ink2); margin-top:6px; line-height:1.4; }
+  h2{ font-family:"Fraunces",Georgia,serif; font-size:clamp(22px,4vw,27px); font-weight:500; letter-spacing:-0.01em; margin:40px 0 10px; text-wrap:balance; }
+  p{ margin:0 0 14px; color:var(--ink2); }
+  b, strong{ color:var(--ink); font-weight:600; }
+  .row{ display:flex; gap:12px; padding:13px 0; border-top:1px solid var(--line); align-items:baseline; }
+  .row:first-of-type{ border-top:none; }
+  .row .k{ flex:none; width:150px; font-size:13px; font-weight:600; color:var(--ink); }
+  .row .v{ flex:1; font-size:14.5px; color:var(--ink2); }
+  .brief{ border:1px solid var(--line2); border-radius:16px; padding:20px 22px; margin:38px 0 6px; background:var(--card); }
+  .brief .bt{ font-family:"Fraunces",Georgia,serif; font-size:20px; color:var(--ink); margin-bottom:4px; }
+  .brief .bs{ font-size:13px; color:var(--ink3); margin-bottom:12px; }
+  .brief form{ display:flex; gap:8px; flex-wrap:wrap; }
+  .brief input{ flex:1; min-width:190px; border:1px solid var(--line2); border-radius:12px; padding:12px 15px; font-size:14px; background:var(--bg); color:var(--ink); }
+  .brief button{ border:none; cursor:pointer; }
+  .brief-ok{ display:none; font-size:14px; color:var(--ink); padding:8px 0 0; }
+  .links{ border-top:1px solid var(--line); margin-top:46px; padding-top:20px; font-size:13.5px; }
+  .links a{ color:var(--accent); text-decoration:none; margin-right:16px; line-height:2; }
+  footer{ border-top:1px solid var(--line); margin-top:34px; padding-top:18px; font-size:12px; color:var(--ink3); line-height:1.6; }
 </style>
 </head>
 <body>
 <div class="top"><a href="index.html" class="brand">Moku<em>.</em></a><a class="to-map" href="index.html?town=Waimanalo">Open the map &rarr;</a></div>
 <div class="wrap">
-  <div class="eyebrow">Oahu &middot; official county data</div>
-  <h1>Waimanalo property records, on one map</h1>
-  <p class="lede">Every parcel in Waimanalo — who owns it, what it&#8217;s zoned, whether it floods, and more — free, from the State of Hawaii and county governments&#8217; own servers.</p>
-  <a class="cta" href="index.html?town=Waimanalo">Open the Waimanalo map</a>
-  <div class="note">Free &middot; no signup &middot; no ads &middot; official government data</div>
-  <h2>Look up any Waimanalo parcel</h2>
-  <ul>
-    <li>Owner of record, acreage, and county zoning</li>
-    <li>FEMA flood zone and tsunami evacuation status</li>
-    <li>Public school zones</li>
+  <div class="eyebrow">Waimanalo · Oʻahu · official government data</div>
+  <h1>What it really costs to own in Waimanalo</h1>
+  <p class="lede">Not just who owns what — the numbers that decide a purchase. Property tax, rent, vacation-rental rules and the risks other sites won't show you, for any Waimanalo parcel. Free, sourced, and live.</p>
+  <a class="cta" href="index.html?town=Waimanalo">Look up any Waimanalo property &rarr;</a>
+  <div class="note">Free · no signup · official State of Hawaiʻi &amp; county data</div>
+
+  <div class="tiles">
+    <div class="tile"><div class="n">$2,687<span style="font-size:15px">/mo</span></div><div class="l">Long-term rent, 2-bed — HUD Fair Market Rent, Oʻahu (FY2025)</div></div>
+    <div class="tile"><div class="n">$3.50</div><div class="l">Property tax per $1,000, owner-occupied · Oʻahu FY2026-27 (higher for investors)</div></div>
+  </div>
+
+  <h2>Vacation rentals &amp; short-term rules</h2><p>Short-term-rental rules in Oʻahu are strict and parcel-specific. Moku maps the county's registered vacation rentals where the county publishes them, so you can see the short-term-rental landscape around any Waimanalo address before you buy.</p>
+
+  <h2>What you'd pay, and earn</h2>
+  <div class="row"><div class="k">Property tax</div><div class="v"><b>$3.50 per $1,000</b> of assessed value if it's your home (owner-occupied, Oʻahu FY2026-27). A second home or rental is taxed on a higher tiered schedule (up to $11.40). Moku estimates the exact yearly figure for any parcel.</div></div>
+  <div class="row"><div class="k">Long-term rent</div><div class="v"><b>~$2,687/mo</b> for a 2-bed, <b>~$3,765</b> for a 3-bed — the federal HUD Fair Market Rent benchmark for Oʻahu.</div></div>
+  <div class="row"><div class="k">The market</div><div class="v">Oʻahu's single-family median is about <b>$1.18M</b> (2026 Q1, DBEDT). Look up any Waimanalo home for its exact assessed value and estimated tax.</div></div>
+
+  <h2>The risks other sites hide</h2>
+  <p>Moku shows every parcel's real hazard picture, sourced from the State of Hawaiʻi:</p>
+  <ul style="margin:0 0 14px 20px; color:var(--ink2)">
+    <li style="margin:5px 0"><b>Flood &amp; tsunami</b> — FEMA flood zones and tsunami evacuation, flagged per parcel.</li>
+    <li style="margin:5px 0"><b>Wildfire &amp; lava</b> — the State's wildfire rating and (on Hawaiʻi Island) USGS lava zones, per parcel.</li>
   </ul>
-  <p>Tap any lot on the 3D map, or search an address or TMK. Records load live from official
-  government servers — free, no signup.</p>
-  <div class="links"><strong>More free lookups:</strong><br><a href="tmk-lookup.html">Hawaii TMK lookup</a> <a href="kauai-flood-zones.html">Kauai flood zones</a> <a href="maui-sold-prices.html">Maui sold prices</a> <a href="kauai-vacation-rentals.html">Kauai vacation rentals</a> <a href="hawaii-tsunami-zones.html">Tsunami zones</a></div>
-  
-<div class="brief" style="border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:26px 0 6px;background:#fff">
-  <div style="font-family:Fraunces,Georgia,serif;font-size:19px;color:var(--ink);margin-bottom:4px">Get the monthly Waimanalo parcel brief</div>
-  <div style="font-size:12.5px;color:var(--ink3);margin-bottom:10px">Free, from official county records. No spam, unsubscribe anytime.</div>
-  <form onsubmit="return sendBrief(this)" style="display:flex;gap:8px;flex-wrap:wrap">
-    <input type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:13.5px">
-    <button class="cta" style="border:none;cursor:pointer;margin:0">Sign me up &rarr;</button>
-  </form>
-  <div class="brief-ok" style="display:none;font-size:13px;color:var(--ink);padding:6px 0 0">Done — you&#8217;re on the list. replies come from Moku.</div>
+  <p><a class="cta" href="index.html?town=Waimanalo">Check any Waimanalo parcel &rarr;</a></p>
+
+  <h2>Every Waimanalo parcel, one map</h2>
+  <p>Tap any lot or search an address or TMK. Instantly: assessed value, estimated property tax, rent, vacation-rental status, flood/tsunami/sea-level/wildfire risk, owner of record, zoning, land history and schools — loaded live from official government servers, free, no signup.</p>
+
+  <div class="brief">
+    <div class="bt">Get the monthly Waimanalo brief</div>
+    <div class="bs">New recorded sales, assessment changes and market data for Waimanalo — free, from official county records. No spam, unsubscribe anytime.</div>
+    <form onsubmit="return sendBrief(this)">
+      <input type="email" required placeholder="you@email.com" aria-label="Your email">
+      <button class="cta" style="margin:0">Sign me up &rarr;</button>
+    </form>
+    <div class="brief-ok">Done — you're on the list. Replies come from Moku.</div>
+  </div>
+
+  <div class="links"><strong>More free Hawaiʻi lookups:</strong><br>
+    <a href="index.html">The live map</a> <a href="market.html">Market intelligence</a> <a href="tmk-lookup.html">TMK lookup</a> <a href="kauai-flood-zones.html">Kauaʻi flood zones</a> <a href="kauai-vacation-rentals.html">Kauaʻi vacation rentals</a> <a href="hawaii-tsunami-zones.html">Tsunami zones</a></div>
+
+  <footer>Moku · built on Kauaʻi, independently and in the open. A free public-records intelligence platform — not a brokerage. Figures are drawn from official State of Hawaiʻi and county data and published benchmarks (HUD, DBEDT); verify with the source before relying on them for a transaction.</footer>
 </div>
 <script>
-function sendBrief(f) {
+function sendBrief(f){
   var e = f.querySelector("input").value.trim();
   if (!e) return false;
-  try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST", headers: { "Title": "BRIEF - Waimanalo" }, body: "BRIEF SIGNUP\nReply-to: " + e + "\nPage: " + location.pathname }); } catch (err) {}
+  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method:"POST", headers:{ "Title":"Brief signup · Waimanalo" }, body:"A brief signup came in from the Waimanalo page — check your inbox." }); } catch(err){}
+  try { location.href = "mailto:micahskylab@gmail.com?subject=" + encodeURIComponent("Moku brief signup — Waimanalo") + "&body=" + encodeURIComponent("Please add me to the monthly Waimanalo brief.\n\nMy email: " + e); } catch(err){}
   f.style.display = "none";
   f.parentNode.querySelector(".brief-ok").style.display = "block";
   return false;
 }
 </script>
-<footer>Moku &middot; built on Kaua&#699;i, independently and in the open &middot; data shown exactly as published by the State of Hawaii and county governments — verify with the source before relying on it for a transaction</footer>
-</div>
 </body>
 </html>

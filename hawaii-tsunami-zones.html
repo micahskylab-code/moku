@@ -81,7 +81,7 @@
 function sendBrief(f) {
   var e = f.querySelector("input").value.trim();
   if (!e) return false;
-  try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST", headers: { "Title": "BRIEF - tsunami zones" }, body: "BRIEF SIGNUP\nReply-to: " + e + "\nPage: " + location.pathname }); } catch (err) {}
+  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method: "POST", headers: { "Title": "BRIEF - tsunami zones" }, body: "A brief signup came in — open your email for the details." }); } catch (err) {}
   f.style.display = "none";
   f.parentNode.querySelector(".brief-ok").style.display = "block";
   return false;
