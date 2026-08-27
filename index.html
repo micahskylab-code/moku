@@ -768,6 +768,7 @@
   .hl-sub { font-family: var(--sans); font-size: 15px; font-weight: 500; line-height: 1.55; color: #fff; opacity: 0.92; max-width: 380px; text-shadow: 0 1px 14px rgba(0,0,0,0.6); }
   @media (max-width: 760px) { #hero-line { display: none; } }
   body.engaged #hero-line { animation: none !important; opacity: 0 !important; transform: translateY(10px); pointer-events: none; transition: opacity 0.55s ease, transform 0.55s ease; }
+  body.has-ledger #hero-line { display: none !important; } /* once the ledger is up, the hero must never collide with the layer chips (desktop included) */
   /* ============ THE STANDING LEDGER ============ */
   #ledger {
     position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 46;
@@ -1043,7 +1044,7 @@
   </div>
   <div class="lg-rule"></div>
   <div class="lg-closings">
-    <div class="lg-kick brass">LATEST ADDRESS-LEVEL SALES &middot; MAUI COUNTY</div>
+    <div class="lg-kick brass">LATEST RECORDED SALES &middot; MAUI COUNTY</div>
     <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
   </div>
   <div class="lg-cmd">
@@ -1092,7 +1093,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-82</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-88</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1175,13 +1176,13 @@
     <button class="x" onclick="closeForSale()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="fs-title">For sale in Hawai&#699;i</div>
     <div style="border:1px solid rgba(62,124,177,0.32); background:rgba(62,124,177,0.07); border-radius:14px; padding:15px; margin:15px 0 0;">
-      <div style="font-family:var(--serif); font-weight:500; color:var(--ink); font-size:18px;">Selling? List it here.</div>
-      <p style="margin:6px 0 12px; font-size:13px; color:var(--ink-2); line-height:1.5;">A home, land, a commercial building, or a whole business &mdash; put it on Moku and let Hawai&#699;i&#8217;s buyers and licensed brokers come to you. Your place, your photos, your price. Free, no obligation &mdash; you stay in control of who you talk to.</p>
-      <button class="go" style="margin-top:0" onclick="closeForSale(); openLead('list');">List it &rarr;</button>
+      <div style="font-family:var(--serif); font-weight:500; color:var(--ink); font-size:18px;">Thinking of selling? Get early access.</div>
+      <p style="margin:6px 0 12px; font-size:13px; color:var(--ink-2); line-height:1.5;">Moku is building direct listing tools for Hawai&#699;i owners &mdash; home, land, or commercial. Leave your email and we&#8217;ll let you know the moment they go live. No obligation, no calls &mdash; just first access.</p>
+      <button class="go" style="margin-top:0" onclick="closeForSale(); openLead('list');">Notify me &rarr;</button>
     </div>
     <p style="margin:17px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">The full live market &mdash; connecting soon.</b> Every active listing and price reduction, on this map, updated in real time. That data flows through a licensed MLS feed &mdash; Moku is built and ready for the day it connects. Until then we show no listings we can&#8217;t stand behind: real data only, never a guess.</p>
     <p style="margin:11px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.55;"><b style="color:var(--ink)">Already done &mdash; the hard 99%.</b> Every parcel, owner, value, risk zone and recorded sale in Hawai&#699;i is already on this map &mdash; the part no listings site has. Listings are the last 1%, and they switch on with one connection.</p>
-    <div class="fine" style="margin-top:15px">Moku is a public-records and listings platform that connects people directly &mdash; not a brokerage, no advice, nothing for sale on this site.</div>
+    <div class="fine" style="margin-top:15px">Moku is a public-records platform &mdash; not a brokerage, no advice, and nothing is for sale or advertised on this site.</div>
   </div>
 </div>
 <script>window.__styleP = fetch("https://tiles.openfreemap.org/styles/positron").then(r => r.json()).catch(() => null);</script>
@@ -1409,11 +1410,43 @@ map.on("style.load", () => {
 // ---- Live county data, statewide ----
 const GIS_PZ = "https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/";
 const COUNTIES = {
-  kauai:  { parcels: 9,  zoning: 29, tmkFields: ["tmk_txt", "cty_tmk"] },
-  oahu:   { parcels: 11, zoning: 3,  tmkFields: ["tmk9txt"] },
-  maui:   { parcels: 30, zoning: 33, tmkFields: ["tmk_txt", "cty_tmk"] },
-  hawaii: { parcels: 5,  zoning: 2,  tmkFields: ["tmk_txt", "cty_tmk"] }
+  // fmr = HUD Fair Market Rent FY2025 ($/mo by bedrooms). tax = FY2026-27 real property tax, per $1,000
+  // net assessed, MARGINAL tiers [cap, rate]; ex = owner-occupant home exemption. Rates from each county's
+  // adopted FY2026-27 ordinance, cross-checked. Oʻahu non-owner is handled specially (class flips at $1M).
+  kauai:  { parcels: 9,  zoning: 29, tmkFields: ["tmk_txt", "cty_tmk"], fmr: { br1: 1625, br2: 2135, br3: 2810 },
+            tax: { ex: 220000, owner: [[Infinity, 2.59]], investor: [[1300000, 5.45], [2000000, 6.05], [Infinity, 9.40]] } },
+  oahu:   { parcels: 11, zoning: 3,  tmkFields: ["tmk9txt"],            fmr: { br1: 2052, br2: 2687, br3: 3765 },
+            tax: { ex: 120000, owner: [[Infinity, 3.50]], oahuFlip: true } },
+  maui:   { parcels: 30, zoning: 33, tmkFields: ["tmk_txt", "cty_tmk"], fmr: { br1: 1762, br2: 2309, br3: 3103 },
+            tax: { ex: 300000, owner: [[1500000, 1.65], [4500000, 1.80], [Infinity, 5.00]], investor: [[1000000, 6.25], [2500000, 9.00], [Infinity, 17.00]] } },
+  hawaii: { parcels: 5,  zoning: 2,  tmkFields: ["tmk_txt", "cty_tmk"], fmr: { br1: 1612, br2: 2075, br3: 2703 },
+            tax: { ex: 50000,  owner: [[Infinity, 5.75]], investor: [[2000000, 11.10], [4000000, 14.50], [Infinity, 17.00]] } }
 };
+// Long-term rent benchmark for the parcel's county — the federal HUD figure, plainly sourced.
+function noteLongTermRent(county) {
+  try {
+    if (!county || !county.fmr) return;
+    const f = county.fmr;
+    noteIntel("ltr", "plus",
+      `<b>Long-term rent here runs about ${"$" + f.br2.toLocaleString()}/mo for a 2-bed, ${"$" + f.br3.toLocaleString()} for a 3-bed</b> &mdash; the federal HUD Fair Market Rent benchmark for this county (FY2025). A yardstick for what a standard long-term rental brings in; an actual home varies with size, condition and location.`);
+  } catch (e) {}
+}
+// Marginal-tier tax: each rate applies only to the portion of value in its band.
+function taxTiers(base, tiers) { let tax = 0, prev = 0; for (const [cap, rate] of tiers) { const band = Math.max(0, Math.min(base, cap) - prev); tax += band / 1000 * rate; prev = cap; if (base <= cap) break; } return tax; }
+// Estimated annual property tax — the yearly-bill number, at published FY2026-27 county rates. An estimate, not a bill.
+function noteAnnualTax(county, assessed) {
+  try {
+    if (!county || !county.tax || !(assessed > 10000)) return;
+    const t = county.tax;
+    const ownerTax = taxTiers(Math.max(0, assessed - (t.ex || 0)), t.owner);
+    const investorTax = t.oahuFlip
+      ? (assessed < 1000000 ? assessed / 1000 * 3.50 : taxTiers(assessed, [[1000000, 4.00], [Infinity, 11.40]]))
+      : taxTiers(assessed, t.investor);
+    const fmt = n => "$" + Math.round(n).toLocaleString();
+    noteIntel("tax", "plus",
+      `<b>Estimated property tax: ${fmt(ownerTax)}/yr</b> as a primary home, or about ${fmt(investorTax)}/yr as a second home or rental &mdash; at this county&#8217;s FY2026&ndash;27 rates. An estimate from published rates, not a bill; the home exemption, class and value tiers set the real figure.`);
+  } catch (e) {}
+}
 function countyFor(lng, lat) {
   if (lng < -159.0) return COUNTIES.kauai;
   if (lng < -157.5) return COUNTIES.oahu;
@@ -1699,6 +1732,7 @@ function noteRecent(lng, lat, tmk, addr) {
 }
 async function exploreParcel(lng, lat) {
   dismissVeil();
+  try { closePlace(); } catch (e) {} // a parcel and the place card must never sit open at once
   document.body.classList.add("engaged"); if (cineRAF) { cancelAnimationFrame(cineRAF); cineRAF = null; }
   const token = ++exploreToken;
   noteRecent(lng, lat);
@@ -1764,6 +1798,16 @@ async function exploreParcel(lng, lat) {
     const county = countyFor(lng, lat);
     const isBigIsland = county === COUNTIES.hawaii;
     if (!isBigIsland) { const lv = document.getElementById("fact-lava"); if (lv) lv.remove(); }
+    setTimeout(() => { if (token === exploreToken) noteLongTermRent(county); }, 300);
+    // Estimated annual property tax — fire once the assessed value has settled (county override may correct it).
+    let taxTries = 0;
+    const taxPoll = () => {
+      if (token !== exploreToken) return;
+      const a = lastRecord && Number(lastRecord.assessed);
+      if (a > 10000) { noteAnnualTax(county, a); return; }
+      if (taxTries++ < 10) setTimeout(taxPoll, 500);
+    };
+    setTimeout(taxPoll, 1800);
     // Each fact stands alone: one slow or failed server never blanks the card
     const settled = await Promise.allSettled([
       queryPoint(GIS_PZ + county.parcels + "/query", lng, lat, "*", true),
@@ -2073,9 +2117,29 @@ async function enrichCounty(county, token, tmkRaw) {
         if (av && av.querySelector(".skel")) av.remove();
       }
       if (tvrRows.status === "fulfilled") {
-        if (tvrRows.value.length) noteIntel("tvr", "plus", "On Kaua&#699;i&#8217;s registered vacation-rental list &mdash; a permitted-use record most parcels don&#8217;t have");
-        addFact("row-land", "tvr", "County TVR registry (non-conforming)",
-          (tvrRows.value.length ? "Listed on Kauai&#8217;s non-conforming vacation-rental registry" : "Not on the non-conforming registry") +
+        const strRegistered = tvrRows.value.length > 0;
+        // The #1 Hawai'i buyer question: can this be a vacation rental? Answer from the county registry —
+        // this parcel's own status, plus the licensed-STR density around it (the real signal of an STR area).
+        (async () => {
+          let near = null;
+          try {
+            const d = 0.008; // ~0.5 mi box around the parcel
+            const env = `${lastRecord.lng - d},${lastRecord.lat - d},${lastRecord.lng + d},${lastRecord.lat + d}`;
+            const rr = await fetchTimeout(`${KAUAI_TVR_URL}/query?geometry=${env}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&returnCountOnly=true&f=json`, 9000);
+            const jj = await rr.json();
+            if (jj && typeof jj.count === "number") near = jj.count;
+          } catch (e) {}
+          if (token !== exploreToken) return;
+          if (strRegistered) {
+            noteIntel("tvr", "plus", "<b>This is a licensed vacation rental.</b> It&#8217;s on Kaua&#699;i&#8217;s county TVR registry &mdash; a permitted short-term-rental use most parcels can&#8217;t get, and one that typically carries real value at resale.");
+          } else if (near != null && near > 0) {
+            noteIntel("tvr", "plus", `<b>${near} licensed vacation rental${near > 1 ? "s" : ""} within about a half-mile</b> &mdash; a recognized short-term-rental area. This parcel isn&#8217;t itself on the registry; whether a new STR is allowed comes down to its zoning and current county rules.`);
+          } else if (near === 0) {
+            noteIntel("tvr", "flag", "No licensed vacation rentals within about a half-mile &mdash; not an established short-term-rental area, and a new STR here would be tightly restricted by county rules.");
+          }
+        })();
+        addFact("row-land", "tvr", "County TVR registry",
+          (strRegistered ? "Listed on Kaua&#699;i&#8217;s non-conforming vacation-rental registry" : "Not on the registry") +
           `<div class="subnote"><b onclick="showLayer('tvr')">See all registered rentals &#8599;</b></div>`, "live");
       }
     } else if (county === COUNTIES.oahu) {
@@ -2123,6 +2187,29 @@ async function enrichCounty(county, token, tmkRaw) {
         if (rows[0].Homeowner === "Y") addFact("row-record", "hexempt", "Homeowner status", "Homeowner class on file with the county", "live");
       }
     } else if (county === COUNTIES.maui) {
+      // Maui County's authoritative assessed value + owner. The state geodata mirror runs stale by
+      // thousands and gets mislabeled "TY2026"; the county's own PARCELINFO is correct to the dollar.
+      (async () => {
+        try {
+          const parid = tmk9.slice(1) + "0000";
+          const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/PARCELINFO/FeatureServer/0/query?where=" + encodeURIComponent("GIS_PARCELINFO_PARID='" + parid + "'") + "&outFields=GIS_PARCELINFO_TOTAL_ASSESSED,GIS_PARCELINFO_OWNER&returnGeometry=false&f=json", 9000);
+          const j = await r.json();
+          if (token !== exploreToken) return;
+          const a = j.features && j.features[0] && j.features[0].attributes;
+          if (!a) return;
+          const total = Number(a.GIS_PARCELINFO_TOTAL_ASSESSED || 0);
+          if (total > 0) {
+            if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; Maui County", assessedHtml(total), "live");
+            else addFact("row-record", "assessed", "Assessed value &middot; Maui County", assessedHtml(total), "live");
+            if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED · MAUI");
+            if (lastRecord) lastRecord.assessed = total;
+          }
+          if (a.GIS_PARCELINFO_OWNER && String(a.GIS_PARCELINFO_OWNER).trim()) {
+            const oe = document.getElementById("fact-owner");
+            if (!oe || /not published|—|View in the county/.test(oe.textContent)) setFact("owner", "Owner of record (tax roll)", formatOwner(a.GIS_PARCELINFO_OWNER), "live");
+          }
+        } catch (e) {}
+      })();
       // The dwell loop: real recorded sales within a mile, tappable
       (async () => {
         try {
@@ -2192,7 +2279,8 @@ function composeRead() {
   if (/residential/i.test(zone)) lead += " residential";
   else if (/agricultur/i.test(zone)) lead += " agricultural";
   else if (/commercial/i.test(zone)) lead += " commercial";
-  lead += " parcel" + (town ? " in " + town.split(",")[0].trim() : "") + ".";
+  const placeTok = town ? town.split(",")[0].trim() : "";
+  lead += " parcel" + (placeTok ? (/^\d/.test(placeTok) ? " at " : " in ") + placeTok : "") + ".";
   parts.push(lead);
   // value
   if (assessed > 10000) parts.push(`The county assesses it at <b>$${Number(assessed).toLocaleString()}</b> for TY2026 (assessed values usually run below what buyers pay).`);
@@ -2436,7 +2524,16 @@ async function geocodeOnce(q) {
   return (gj.features || [])
     .filter(f => ["Hawaii", "HI"].includes(f.properties.state || "") || inHawaii(f.geometry && f.geometry.coordinates))
     .filter(f => inHawaii(f.geometry && f.geometry.coordinates))
-    .slice(0, 5);
+    .slice(0, 5)
+    .map(f => {
+      // A beach, bay, landmark or town (no house number) is a PLACE — route it to Island Intelligence,
+      // not a random tax parcel. This is the "search a place, a beach" promise.
+      const p = f.properties || {};
+      const placeKey = ["place", "natural", "leisure", "tourism", "waterway", "landuse", "boundary"].indexOf(p.osm_key) !== -1;
+      const placeType = ["locality", "city", "town", "village", "district", "suburb", "neighbourhood", "hamlet"].indexOf(p.type) !== -1;
+      if (!p.housenumber && (placeKey || placeType)) p.locality = true;
+      return f;
+    });
 }
 // Built-in gazetteer: town searches answer instantly with no third party at all
 const HI_PLACES = [
@@ -2522,6 +2619,10 @@ async function geocode(qRaw) {
     if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/\b\d-(?=\d)/, "")); // strip Kauai district prefix: "4-831" → "831"
     if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/,/g, " "));
   } catch (e) { /* geocoder down — the gazetteer and Census still answer */ }
+  // No house number typed? A place/beach/town should outrank a lone street or POI (so "Kona" isn't a temple).
+  if (feats.length && !/^\s*\d/.test(q)) {
+    feats = feats.slice().sort((a, b) => ((b.properties && b.properties.locality ? 1 : 0) - (a.properties && a.properties.locality ? 1 : 0)));
+  }
   if (!feats.length) feats = places;
   if (feats.length) { // don't cache failures
     if (geoCache.size > 80) geoCache.delete(geoCache.keys().next().value);
@@ -2981,7 +3082,7 @@ try { wireSearch("m-search-input", "m-suggest"); } catch (e) {}
       const gj = await r.json();
       const rows = (gj.features || []).map(f => {
         const [x, y] = f.geometry.coordinates, p = f.properties.GIS_SALES_2YEAR_PRICE, dt = f.properties.GIS_SALES_2YEAR_SALEDT;
-        const d = new Date(dt + "T12:00:00"); const when = isNaN(d) ? "" : d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+        const d = new Date(dt + "T12:00:00"); const when = isNaN(d) ? "" : d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
         return `<div class="lg-crow" onclick="exploreParcel(${x.toFixed(6)},${y.toFixed(6)})">
           <div class="addr">Maui recorded sale</div><div class="pr">${fmtPrice(p)}</div><div class="dt">${when}</div></div>`;
       }).join("");
@@ -3029,11 +3130,11 @@ const LEAD_COPY = {
     subject: "Moku — monthly brief signup"
   },
   list: {
-    title: "List it on Moku",
-    sub: "A home, land, a commercial building, or a whole business — pick what you're selling below, then add the address, your asking price, and the details. It goes to Moku, and we connect you with buyers and licensed local brokers who reach out to you directly, and help you add photos. Free, no obligation — you choose who you talk to. Moku is a listings platform, not a brokerage.",
-    note: "Address or TMK, asking price, details",
-    go: "List it →",
-    subject: "NEW LISTING — Moku seller"
+    title: "Early access — when listing tools launch",
+    sub: "Moku is building tools for Hawaiʻi owners to list directly. Leave your email and we'll let you know the moment they go live — no obligation, no calls. Moku is a public-records platform, not a brokerage.",
+    note: "Your island or town (optional)",
+    go: "Notify me →",
+    subject: "Moku — listing early-access signup"
   }
 };
 function openLead(kind, prefill) {
@@ -3293,10 +3394,11 @@ function submitLead() {
   const catLine = (leadKind === "list" && window.listCategory) ? `Listing type: ${window.listCategory}\n` : "";
   const body = `${c.subject}\n\n${catLine}From: ${name.trim() || "(no name)"}\nReply-to: ${email}\n${c.note}: ${note || "(not given)"}\nSent from Moku.`;
   saveProfile(name.trim(), email); // one message in = a remembered profile, zero friction
-  // Instant channel first — the lead reaches Micah the second the button is pressed
-  try { fetch("https://ntfy.sh/moku-leads-bd0187c15f6350d3682c340f", { method: "POST",
-    headers: { "Title": c.subject }, body: body }); } catch (e) {}
-  // Safety net second: the typed lead survives even when no mail app is set up
+  // Real-time ping ONLY — never put a prospect's name/email/message on a public channel (PII + wire-fraud risk).
+  // The lead's actual details travel privately through the email below; this just says "a lead arrived."
+  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method: "POST",
+    headers: { "Title": "New Moku lead" }, body: "A new lead just came in — open your email for the details." }); } catch (e) {}
+  // Safety net: the typed lead survives on the sender's own device even if no mail app is set up
   try { navigator.clipboard.writeText(body + "\n\nTo: " + LEAD_INBOX); } catch (e) {}
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;
   const sub = document.getElementById("lead-sub");
