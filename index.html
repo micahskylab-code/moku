@@ -390,6 +390,12 @@
   .intel-row .idot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
   .intel-row.flag .idot { background: #A5442E; }
   .intel-row.plus .idot { background: #0E6E63; }
+  /* Investment snapshot — the money math, one glance, right under the assessed value */
+  .msnap { display: flex; gap: 8px; margin: 14px 0 2px; }
+  .ms-tile { flex: 1 1 0; min-width: 0; background: rgba(14,110,99,0.06); border: 1px solid rgba(14,110,99,0.16); border-radius: 12px; padding: 10px 11px; }
+  .ms-l { font-family: var(--sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; white-space: nowrap; }
+  .ms-v { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.08; font-variant-numeric: tabular-nums; }
+  .ms-v small { display: block; font-family: var(--sans); font-size: 10.5px; font-weight: 500; color: var(--ink-2); margin-top: 2px; letter-spacing: 0; }
   .ld-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(23,21,15,0.06); }
   .ld-k { font-family: var(--sans); font-size: 12.5px; color: var(--ink-2); }
   .ld-v { font-family: var(--serif); font-size: 15px; color: var(--ink); }
@@ -1093,7 +1099,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-89</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-91</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1427,12 +1433,20 @@ function noteLongTermRent(county) {
   try {
     if (!county || !county.fmr) return;
     const f = county.fmr;
+    setSnap("ms-rent", "snap-rent", "$" + f.br2.toLocaleString(), "2-bed · HUD");
     noteIntel("ltr", "plus",
       `<b>Long-term rent here runs about ${"$" + f.br2.toLocaleString()}/mo for a 2-bed, ${"$" + f.br3.toLocaleString()} for a 3-bed</b> &mdash; the federal HUD Fair Market Rent benchmark for this county (FY2025). A yardstick for what a standard long-term rental brings in; an actual home varies with size, condition and location.`);
   } catch (e) {}
 }
 // Marginal-tier tax: each rate applies only to the portion of value in its band.
 function taxTiers(base, tiers) { let tax = 0, prev = 0; for (const [cap, rate] of tiers) { const band = Math.max(0, Math.min(base, cap) - prev); tax += band / 1000 * rate; prev = cap; if (base <= cap) break; } return tax; }
+// Investment snapshot: fill one stat tile and reveal the panel.
+function setSnap(tileId, valId, big, sub) {
+  const v = document.getElementById(valId); if (!v) return;
+  v.innerHTML = esc(big) + (sub ? `<small>${esc(sub)}</small>` : "");
+  const t = document.getElementById(tileId); if (t) t.style.display = "";
+  const p = document.getElementById("money-snap"); if (p) p.style.display = "flex";
+}
 // Estimated annual property tax — the yearly-bill number, at published FY2026-27 county rates. An estimate, not a bill.
 function noteAnnualTax(county, assessed) {
   try {
@@ -1443,8 +1457,12 @@ function noteAnnualTax(county, assessed) {
       ? (assessed < 1000000 ? assessed / 1000 * 3.50 : taxTiers(assessed, [[1000000, 4.00], [Infinity, 11.40]]))
       : taxTiers(assessed, t.investor);
     const fmt = n => "$" + Math.round(n).toLocaleString();
+    // Below ~$1 the owner-occupant home exemption has fully covered the assessed value (small lots/condos);
+    // a real bill still carries a small county minimum, so show "≈$0" rather than a misleading flat $0.
+    const fmtOwner = n => n < 1 ? "≈$0" : fmt(n);
+    setSnap("ms-tax", "snap-tax", fmtOwner(ownerTax), "you · " + fmt(investorTax) + " rental");
     noteIntel("tax", "plus",
-      `<b>Estimated property tax: ${fmt(ownerTax)}/yr</b> as a primary home, or about ${fmt(investorTax)}/yr as a second home or rental &mdash; at this county&#8217;s FY2026&ndash;27 rates. An estimate from published rates, not a bill; the home exemption, class and value tiers set the real figure.`);
+      `<b>Estimated property tax: ${fmtOwner(ownerTax)}/yr</b> as a primary home, or about ${fmt(investorTax)}/yr as a second home or rental &mdash; at this county&#8217;s FY2026&ndash;27 rates. An estimate from published rates, not a bill; the home exemption, class and value tiers set the real figure.`);
   } catch (e) {}
 }
 function countyFor(lng, lat) {
@@ -2131,10 +2149,13 @@ async function enrichCounty(county, token, tmkRaw) {
           } catch (e) {}
           if (token !== exploreToken) return;
           if (strRegistered) {
+            setSnap("ms-str", "snap-str", "Licensed", "on the county registry");
             noteIntel("tvr", "plus", "<b>This is a licensed vacation rental.</b> It&#8217;s on Kaua&#699;i&#8217;s county TVR registry &mdash; a permitted short-term-rental use most parcels can&#8217;t get, and one that typically carries real value at resale.");
           } else if (near != null && near > 0) {
+            setSnap("ms-str", "snap-str", String(near), "within ½ mi");
             noteIntel("tvr", "plus", `<b>${near} licensed vacation rental${near > 1 ? "s" : ""} within about a half-mile</b> &mdash; a recognized short-term-rental area. This parcel isn&#8217;t itself on the registry; whether a new STR is allowed comes down to its zoning and current county rules.`);
           } else if (near === 0) {
+            setSnap("ms-str", "snap-str", "None", "within ½ mi");
             noteIntel("tvr", "flag", "No licensed vacation rentals within about a half-mile &mdash; not an established short-term-rental area, and a new STR here would be tightly restricted by county rules.");
           }
         })();
@@ -2334,6 +2355,11 @@ function openRecordCard(lng, lat) {
         <div class="rule-h"></div>
         <div class="micro" id="hero-val-label" style="display:none">COUNTY ASSESSED</div>
         <div class="hero-val" id="hero-val"></div>
+        <div id="money-snap" class="msnap" style="display:none">
+          <div class="ms-tile" id="ms-tax" style="display:none"><div class="ms-l">Est. tax / yr</div><div class="ms-v" id="snap-tax"></div></div>
+          <div class="ms-tile" id="ms-rent" style="display:none"><div class="ms-l">Rent / mo</div><div class="ms-v" id="snap-rent"></div></div>
+          <div class="ms-tile" id="ms-str" style="display:none"><div class="ms-l">Vacation rentals</div><div class="ms-v" id="snap-str"></div></div>
+        </div>
     </div>
     <div class="sec" id="read-sec" style="display:none">
       <div class="h">Moku&#8217;s read <span style="font-weight:400;color:var(--ink-3);font-size:10px;letter-spacing:0.1em">&middot; PLAIN ENGLISH</span></div>
