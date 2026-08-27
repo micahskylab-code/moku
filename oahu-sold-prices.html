@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oʻahu Sold Home Prices — Free Lookup of Honolulu-County Recorded Sales · Moku</title>
+<meta name="description" content="See what Oʻahu homes actually sold for: the last recorded sale — price and date — for 110,000+ Honolulu-county parcels, free. Straight from the City &amp; County of Honolulu's public sales records.">
+<link rel="canonical" href="https://micahskylab-code.github.io/moku/oahu-sold-prices.html">
+<meta property="og:title" content="Oʻahu Sold Home Prices — Free, from Honolulu County Records">
+<meta property="og:description" content="The last recorded sale for 110,000+ Oʻahu parcels — price and date, free. From official Honolulu-county records.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://micahskylab-code.github.io/moku/oahu-sold-prices.html">
+<meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2317150F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBF9F5" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23E8C87E"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FBF9F5; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A; --accent:#0E6E56; --gold:#9C7A3C; --line:rgba(23,21,15,0.10); }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); } }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font:15.5px/1.65 "Inter",-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  .top { position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top a { text-decoration:none; color:var(--ink); }
+  .brand { font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:500; }
+  .brand em { font-style:normal; color:var(--gold); }
+  .top .to-map { margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
+  .wrap { max-width:680px; margin:0 auto; padding:52px 22px 90px; }
+  .eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); }
+  h1 { font-family:"Fraunces",Georgia,serif; font-size:clamp(30px,5.5vw,42px); font-weight:500; letter-spacing:-0.015em; margin:10px 0 14px; text-wrap:balance; }
+  .lede { font-size:17px; color:var(--ink2); margin-bottom:28px; }
+  h2 { font-family:"Fraunces",Georgia,serif; font-size:22px; font-weight:500; margin:34px 0 10px; }
+  p { margin:0 0 14px; color:var(--ink2); }
+  b, strong { color:var(--ink); font-weight:600; }
+  ul { margin:0 0 14px 20px; color:var(--ink2); }
+  li { margin:5px 0; }
+  .cta { display:inline-block; background:var(--ink); color:var(--bg); text-decoration:none; font-weight:600; font-size:14.5px; padding:13px 22px; border-radius:999px; margin:8px 0 4px; }
+  .cta:active { transform:scale(0.97); }
+  .note { font-size:12.5px; color:var(--ink3); margin-top:6px; }
+  code { background:rgba(23,21,15,0.05); border-radius:6px; padding:1px 6px; font-size:13.5px; }
+  .links { border-top:1px solid var(--line); margin-top:44px; padding-top:18px; font-size:13.5px; }
+  .links a { color:var(--accent); text-decoration:none; margin-right:16px; }
+  footer { border-top:1px solid var(--line); margin-top:36px; padding-top:16px; font-size:12px; color:var(--ink3); }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Moku", "item": "https://micahskylab-code.github.io/moku/" },
+      { "@type": "ListItem", "position": 2, "name": "Oʻahu sold home prices", "item": "https://micahskylab-code.github.io/moku/oahu-sold-prices.html" } ] },
+    { "@type": "Article", "headline": "What Oʻahu homes actually sold for",
+      "description": "The last recorded sale for 110,000+ Oʻahu parcels, from the City & County of Honolulu public sales records.",
+      "url": "https://micahskylab-code.github.io/moku/oahu-sold-prices.html",
+      "isPartOf": { "@type": "WebSite", "name": "Moku", "url": "https://micahskylab-code.github.io/moku/" } }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="top"><a href="index.html" class="brand">Moku<em>.</em></a><a class="to-map" href="index.html">Open the map &rarr;</a></div>
+<div class="wrap">
+  <div class="eyebrow">County-recorded sales</div>
+  <h1>What Oʻahu homes actually sold for</h1>
+  <p class="lede">Sold prices in Hawaiʻi usually hide behind an agent login. Moku obtained the City &amp; County of Honolulu's recorded-sales file through a public-records request — so you can look up the <strong>last recorded sale</strong> for just about any Oʻahu home, free.</p>
+  <a class="cta" href="index.html">Look up any Oʻahu parcel</a>
+  <div class="note">Free · no signup · no ads · official government records</div>
+
+  <h2>What you can look up</h2>
+  <p>Search any Honolulu-county address or TMK, or tap a parcel on the map, and Moku shows its <strong>last recorded arm's-length sale — the price and the month</strong> — right on the record, next to the county-assessed value, estimated property tax, rent benchmark and hazard zones.</p>
+  <ul>
+    <li><b>110,000+ Oʻahu parcels</b> with a recorded arm's-length sale on file.</li>
+    <li>Recorded sales <b>through September 2025</b> (the county's most recent full extract).</li>
+    <li>Whole island — Honolulu, Kailua, Kāneʻohe, ʻEwa, Kapolei, the North Shore and West side.</li>
+  </ul>
+
+  <h2>The island's market number</h2>
+  <p>For the overall benchmark, the State (DBEDT) puts Oʻahu's single-family median at about <b>$1.18M</b> (Q1 2026). That's the county-wide figure; the per-parcel sales above are what a <em>specific</em> home last traded for — which is usually the number that actually matters.</p>
+
+  <h2>Honest fine print</h2>
+  <p>These are <strong>recorded fee-simple conveyances</strong> from the county's public sales extract — real transactions, not listings and not estimates, the same records title companies and appraisers pull. Moku filters to arm's-length sales (dropping $1 family transfers, leases and non-market deals) and shows the most recent one per parcel. County records lag the live market by months, and the extract is current through September 2025 — always confirm with the county before relying on a figure for a transaction.</p>
+  <p>Maui recorded sales are on the map too. Kauaʻi and Hawaiʻi Island go on the same way, as their records come available.</p>
+
+  <div class="links"><strong>More free lookups:</strong><br><a href="maui-sold-prices.html">Maui sold prices</a> <a href="hawaii-property-records.html">Records by town</a> <a href="hawaii-property-tax-calculator.html">Property tax calculator</a> <a href="tmk-lookup.html">Hawaiʻi TMK lookup</a> <a href="market.html">Market intelligence</a></div>
+
+  <div class="brief" style="border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:26px 0 6px;background:#fff">
+    <div style="font-family:Fraunces,Georgia,serif;font-size:19px;color:var(--ink);margin-bottom:4px">Get the monthly recorded-solds brief</div>
+    <div style="font-size:12.5px;color:var(--ink3);margin-bottom:10px">Free, from official county records. No spam, unsubscribe anytime.</div>
+    <form onsubmit="return sendBrief(this)" style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:13.5px;background:var(--bg);color:var(--ink)">
+      <button class="cta" style="border:none;cursor:pointer;margin:0">Sign me up &rarr;</button>
+    </form>
+    <div class="brief-ok" style="display:none;font-size:13px;color:var(--ink);padding:6px 0 0">Done — you&#8217;re on the list. Replies come from Moku.</div>
+  </div>
+
+  <footer>Moku · built on Kauaʻi, independently and in the open · data shown as published by the State of Hawaiʻi and county governments — verify with the source before relying on it for a transaction.</footer>
+</div>
+<script>
+function sendBrief(f) {
+  var e = f.querySelector("input").value.trim();
+  if (!e) return false;
+  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method: "POST", headers: { "Title": "BRIEF - Oahu solds" }, body: "A brief signup came in — open your email for the details." }); } catch (err) {}
+  try { location.href = "mailto:micahskylab@gmail.com?subject=" + encodeURIComponent("Moku recorded-solds brief signup") + "&body=" + encodeURIComponent("Please add me to the monthly recorded-solds brief.\n\nMy email: " + e); } catch (err) {}
+  f.style.display = "none";
+  f.parentNode.querySelector(".brief-ok").style.display = "block";
+  return false;
+}
+</script>
+</body>
+</html>
