@@ -420,10 +420,11 @@
     border-radius: 999px; padding: 9px 18px;
     font-size: 12.5px; font-weight: 500;
     opacity: 0; pointer-events: none; transition: opacity 0.4s;
-    white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
+    white-space: normal; max-width: 92vw; text-align: center; line-height: 1.4;
   }
   #toast.show { opacity: 1; }
   #toast b { color: var(--gold); }
+  #toast.show b { pointer-events: auto; cursor: pointer; }
   #hint {
     position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%);
     z-index: 60;
@@ -833,7 +834,7 @@
   @media (max-width: 760px) {
     body.has-ledger #m-search {
       display: flex; align-items: center; gap: 9px;
-      position: fixed; top: calc(9px + env(safe-area-inset-top)); left: 11px; right: 11px; z-index: 46;
+      position: fixed; top: calc(9px + env(safe-area-inset-top)); left: 11px; right: 11px; z-index: 70;
       height: 48px; padding: 0 15px;
       background: rgba(255,255,255,0.95); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
       border: 1px solid rgba(0,0,0,0.07); border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.14);
@@ -1106,7 +1107,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-99</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-100</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2099,7 +2100,7 @@ function assessedHtml(n) {
   const acres = lastRecord && lastRecord.acres;
   const perAcre = (acres && acres > 0.01 && n > 0) ? ` &middot; $${Math.round(n / acres).toLocaleString()}/acre` : "";
   return "$" + Number(n).toLocaleString() + (n === 0 ? " — nominal assessment, see county record" : "") + perAcre +
-    `<div class="subnote">Tax assessment — usually below what buyers actually pay. <b onclick="openLead('seller')">Get the monthly market brief &rarr;</b></div>`;
+    `<div class="subnote">Assessed for taxation — may differ from market price.</div>`;
 }
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // County-run data the state layer doesn't carry: Kauai values + TVR registry, Maui recorded sales
@@ -2282,8 +2283,6 @@ async function enrichCounty(county, token, tmkRaw) {
               `<span style="font-family:var(--serif);font-size:15px;color:var(--ink)">${fmtPrice(v.p)}</span>` +
               `<span style="color:var(--ink-3);font-size:11.5px">${when} &middot; ${v.mi.toFixed(1)} mi &rarr;</span></div>`;
           }).join("");
-          if (lastRecord && lastRecord.assessed > 0 && med > 0 && lastRecord.assessed < med)
-            noteIntel("comps", "plus", `County-assessed (${fmtPrice(lastRecord.assessed)}) sits below the ${fmtPrice(med)} median of recorded sales within a mile`);
           addFact("row-record", "comps", `Recorded sales within a mile &middot; median ${fmtPrice(med)}`,
             rows + `<div class="subnote">County of Maui recorded sales &middot; <b onclick="showLayer('sold')">see all &#8599;</b></div>`, "live");
         } catch (e) {}
@@ -2333,7 +2332,19 @@ function composeRead() {
   parts.push(lead);
   // value
   if (assessed > 10000) {
-    let vline = `The county assesses it at <b>$${Number(assessed).toLocaleString()}</b> (assessed values usually run below what buyers pay).`;
+    let vline = `The county assesses it at <b>$${Number(assessed).toLocaleString()}</b> (an assessed value for taxation, which can differ from market price).`;
+    // County single-family median for scale — a published DBEDT statistic, not this parcel's value or type
+    try {
+      if (lastRecord.lng != null && lastRecord.lat != null && typeof countyFor === "function" && typeof MARKET !== "undefined" && MARKET.statewide && MARKET.statewide.counties) {
+        const _co = countyFor(lastRecord.lng, lastRecord.lat);
+        const _key = Object.keys(COUNTIES).find(k => COUNTIES[k] === _co);
+        const _cm = _key ? MARKET.statewide.counties[_key] : null;
+        if (_cm && _cm.sf_med) {
+          const _disp = { kauai: "Kauaʻi", oahu: "Oʻahu", maui: "Maui", hawaii: "Hawaiʻi Island" }[_key] || "the county";
+          vline += ` For scale, ${_disp} single-family homes recorded a <b>$${(_cm.sf_med / 1e6).toFixed(2)}M</b> median (DBEDT, ${MARKET.statewide.sold_asof}).`;
+        }
+      }
+    } catch (e) {}
     if (lastRecord.taxOwner != null && lastRecord.taxOwner >= 1) vline += ` Property tax runs about <b>$${Math.round(lastRecord.taxOwner).toLocaleString()}/yr</b> as a primary home &mdash; more as a rental.`;
     parts.push(vline);
   }

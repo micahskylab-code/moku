@@ -17,7 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{ --bg:#FBF9F5; --card:#FFFFFF; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A; --accent:#0E6E56; --gold:#9C7A3C; --line:rgba(23,21,15,0.10); --line2:rgba(23,21,15,0.16); --wash:#F3ECDD; }
-  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; } }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; } :root:not([data-theme="light"]) .cta:not(.ghost){ color:#0C1B15; } }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ background:var(--bg); color:var(--ink); font:16px/1.65 "Inter",-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; }
   .top{ position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
