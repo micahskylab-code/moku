@@ -21,7 +21,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"Moku","url":"https://micahskylab-code.github.io/moku/","description":"Free statewide Hawaii parcel lookup: TMK, owner of record, zoning, flood zone, tsunami evacuation, and school zones from official county and state sources.","applicationCategory":"Real estate","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2317150F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBF9F5" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23E8C87E"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://server.arcgisonline.com">
@@ -42,7 +42,7 @@
     --chrome-ink: #1D1D1F;
     --chrome-soft: rgba(29,29,31,0.62);
     --chrome-line: rgba(29,29,31,0.08);
-    --accent: #0E6E63;
+    --accent: #0E6E56;
     --gold: #E8C87E;
     --gold-deep: #A8894E;
     --red: #C2472F;
@@ -389,7 +389,7 @@
   .intel-row { display: flex; gap: 9px; align-items: flex-start; padding: 6px 0; font: 500 13.5px/1.45 var(--sans); color: var(--ink); }
   .intel-row .idot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
   .intel-row.flag .idot { background: #A5442E; }
-  .intel-row.plus .idot { background: #0E6E63; }
+  .intel-row.plus .idot { background: #0E6E56; }
   /* Investment snapshot — the money math, one glance, right under the assessed value */
   .msnap { display: flex; gap: 8px; margin: 14px 0 2px; }
   .ms-tile { flex: 1 1 0; min-width: 0; background: rgba(14,110,99,0.06); border: 1px solid rgba(14,110,99,0.16); border-radius: 12px; padding: 10px 11px; }
@@ -1107,14 +1107,14 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-105</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-106</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
   <button class="lchip" data-lk="forsale"><span class="dot2" style="background:#3E7CB1"></span>For sale</button>
   <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices</button>
-  <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E63"></span>Vacation rentals</button>
+  <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E56"></span>Vacation rentals</button>
   <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
   <button class="lchip" data-lk="tsu"><span class="dot2" style="background:#C4574A"></span>Tsunami</button>
 </div>
@@ -1704,7 +1704,7 @@ function structureRead(land, bldg) {
   else if (pct < 25) read = `The county puts <b>${pct}%</b> of value in the building \u2014 mostly <b>land value</b>. Buyers here pay for the lot; the structure is a smaller part of the price.`;
   else if (pct > 70) read = `The county puts <b>${pct}%</b> of value in the building \u2014 this is a <b>structure-heavy</b> property. Condition and age matter most to the number.`;
   else read = `County value splits <b>${pct}% building / ${100 - pct}% land</b> \u2014 a balanced improved property.`;
-  noteIntel("structure", "plus", read + `<div class="subnote">Land $${land.toLocaleString()} &middot; building $${bldg.toLocaleString()}, per the county roll. A negotiation reference, not an appraisal.</div>`);
+  noteIntel("structure", "plus", read + `<div class="subnote">Land $${land.toLocaleString()} &middot; building $${bldg.toLocaleString()}, per the county roll. A market reference, not an appraisal.</div>`);
 }
 async function loadLandHistory(lng, lat) {
   const myToken = exploreToken;
@@ -3668,8 +3668,8 @@ async function ensureLayer(key) {
       if (!map.getSource("tvr-src")) map.addSource("tvr-src", { type: "geojson", data: st.data });
       if (!map.getSource("tvr-pts")) map.addSource("tvr-pts", { type: "geojson", data: st.pts });
       if (!map.getLayer("lyr-tvr-fill")) {
-        map.addLayer({ id: "lyr-tvr-fill", type: "fill", source: "tvr-src", minzoom: 12.5, paint: { "fill-color": "#0E6E63", "fill-opacity": 0.3 } });
-        map.addLayer({ id: "lyr-tvr-line", type: "line", source: "tvr-src", minzoom: 12.5, paint: { "line-color": "#0E6E63", "line-width": 1.5 } });
+        map.addLayer({ id: "lyr-tvr-fill", type: "fill", source: "tvr-src", minzoom: 12.5, paint: { "fill-color": "#0E6E56", "fill-opacity": 0.3 } });
+        map.addLayer({ id: "lyr-tvr-line", type: "line", source: "tvr-src", minzoom: 12.5, paint: { "line-color": "#0E6E56", "line-width": 1.5 } });
         map.addLayer({ id: "lyr-tvr-dot", type: "circle", source: "tvr-pts", maxzoom: 12.5,
           paint: { "circle-color": "#14A08F", "circle-radius": 3.5, "circle-stroke-color": "#fff", "circle-stroke-width": 1, "circle-opacity": 0.9 } });
       }
