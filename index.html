@@ -1099,7 +1099,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-93</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-94</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1879,7 +1879,7 @@ async function exploreParcel(lng, lat) {
       else if (p.qpub_link) setFact("owner", "Owner of record", `<a href="${p.qpub_link}" target="_blank" rel="noopener" style="color:var(--accent)">View in the county record &rarr;</a>`, "live");
       else if (county === COUNTIES.hawaii) setFact("owner", "Owner of record", "Hawai&#699;i County doesn&#8217;t publish parcel-level owner names in its open GIS &mdash; open the county record for the vested owner", "");
       else setFact("owner", "Owner of record", "not published in this county's map data", "");
-      if (assessed != null) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); lastRecord.assessed = Number(assessed); }
+      if (assessed != null && Number(assessed) >= 1000) { setFact("assessed", "Assessed value", assessedHtml(assessed), "live"); setHeroVal(assessed); lastRecord.assessed = Number(assessed); } // ≥$1000 guard: skip placeholder/garbage mirror values ("100")
       else if (county === COUNTIES.kauai && tmk) { /* filled by Kauai county enrichment below */ }
       else {
         const av = document.getElementById("fact-assessed"); if (av) av.remove();
@@ -2208,7 +2208,7 @@ async function enrichCounty(county, token, tmkRaw) {
       if (total > 0) {
         if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; " + ty, assessedHtml(total), "live");
         else addFact("row-record", "assessed", "Assessed value &middot; " + ty, assessedHtml(total), "live");
-        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 " + ty.toUpperCase());
+        if (total >= 10000) { setHeroVal(total, "COUNTY ASSESSED \u00B7 " + ty.toUpperCase()); if (lastRecord) lastRecord.assessed = total; }
       }
     } else if (county === COUNTIES.hawaii) {
       // Hawai'i County certified roll: land + building
@@ -2220,7 +2220,7 @@ async function enrichCounty(county, token, tmkRaw) {
       if (total > 0) {
         if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
         else addFact("row-record", "assessed", "Assessed value &middot; certified roll", assessedHtml(total), "live");
-        if (total >= 10000) setHeroVal(total, "COUNTY ASSESSED \u00B7 CERTIFIED ROLL");
+        if (total >= 10000) { setHeroVal(total, "COUNTY ASSESSED \u00B7 CERTIFIED ROLL"); if (lastRecord) lastRecord.assessed = total; }
         if (rows[0].Homeowner === "Y") addFact("row-record", "hexempt", "Homeowner status", "Homeowner class on file with the county", "live");
       }
     } else if (county === COUNTIES.maui) {
