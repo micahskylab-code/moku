@@ -52,6 +52,9 @@
   .brief input{ flex:1; min-width:190px; border:1px solid var(--line2); border-radius:12px; padding:12px 15px; font-size:14px; background:var(--bg); color:var(--ink); }
   .brief button{ border:none; cursor:pointer; }
   .brief-ok{ display:none; font-size:14px; color:var(--ink); padding:8px 0 0; }
+  .nearby{ display:flex; flex-wrap:wrap; gap:9px; margin:4px 0 6px; }
+  .nearby a{ text-decoration:none; color:var(--ink); background:var(--card); border:1px solid var(--line2); border-radius:999px; padding:8px 15px; font-size:14px; font-weight:500; transition:border-color .15s ease; }
+  .nearby a:hover{ border-color:var(--accent); color:var(--accent); }
   .links{ border-top:1px solid var(--line); margin-top:46px; padding-top:20px; font-size:13.5px; }
   .links a{ color:var(--accent); text-decoration:none; margin-right:16px; line-height:2; }
   footer{ border-top:1px solid var(--line); margin-top:34px; padding-top:18px; font-size:12px; color:var(--ink3); line-height:1.6; }
@@ -89,6 +92,12 @@
 
   <h2>Every Kihei parcel, one map</h2>
   <p>Tap any lot or search an address or TMK. Instantly: assessed value, estimated property tax, rent, vacation-rental status, flood/tsunami/sea-level/wildfire risk, owner of record, zoning, land history and schools — loaded live from official government servers, free, no signup.</p>
+
+  <h2>Nearby towns</h2>
+  <div class="nearby"><a href="wailea-property-records.html">Wailea</a>
+    <a href="makena-property-records.html">Makena</a>
+    <a href="kula-property-records.html">Kula</a>
+    <a href="kahului-property-records.html">Kahului</a></div>
 
   <div class="brief">
     <div class="bt">Get the monthly Kihei brief</div>
