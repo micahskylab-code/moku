@@ -1107,7 +1107,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-103</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-104</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2234,6 +2234,7 @@ async function enrichCounty(county, token, tmkRaw) {
           addFact("row-record", "sale", "Last recorded sale",
             "$" + price.toLocaleString() + " &middot; " + when +
             `<div class="subnote">City &amp; County of Honolulu recorded sales (public records) — an arm&#8217;s-length conveyance; may lag the market.</div>`, "live");
+          if (lastRecord) { lastRecord.sale = { price: price, when: when }; try { composeRead(); } catch (e2) {} }
         } catch (e) {}
       })();
       if (own.status === "fulfilled" && own.value.length && own.value[0].taxbillowner)
@@ -2325,6 +2326,7 @@ async function enrichCounty(county, token, tmkRaw) {
         addFact("row-record", "sale", isUnit ? "Latest unit sale on this parcel" : "Last recorded sale",
           "$" + Number(s.GIS_SALES_2YEAR_PRICE).toLocaleString() + " &middot; " + when +
           `<div class="subnote">County records — lag the market by months${isUnit ? "; multiple units on this parcel" : ""} &middot; <b onclick="showLayer('sold')">See all sales &#8599;</b></div>`, "live");
+        if (lastRecord && !isUnit) { lastRecord.sale = { price: Number(s.GIS_SALES_2YEAR_PRICE), when: when }; try { composeRead(); } catch (e2) {} }
       }
     }
   } catch (e) {}
@@ -2372,6 +2374,10 @@ function composeRead() {
     } catch (e) {}
     if (lastRecord.taxOwner != null && lastRecord.taxOwner >= 1) vline += ` Property tax runs about <b>$${Math.round(lastRecord.taxOwner).toLocaleString()}/yr</b> as a primary home &mdash; more as a rental.`;
     parts.push(vline);
+  }
+  // last recorded sale — the transaction on record (Maui + Oahu today)
+  if (lastRecord.sale && lastRecord.sale.price >= 10000) {
+    parts.push(`Public records show it last sold for <b>$${Number(lastRecord.sale.price).toLocaleString()}</b> in ${esc(lastRecord.sale.when)}.`);
   }
   // risk read
   if (risks.length) parts.push("Worth knowing: " + risks.map(r => r.html.replace(/<[^>]+>/g, "").replace(/\.\s*$/, "").trim()).join("; ") + ".");
