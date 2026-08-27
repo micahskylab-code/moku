@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hawaiʻi Property Tax Calculator (FY2026-27) — Kauaʻi, Oʻahu, Maui & Big Island · Moku</title>
+<meta name="description" content="Estimate the annual property tax on any Hawaiʻi home at the current FY2026-27 county rates — owner-occupant or second-home/rental, with the home exemption built in. Free, from each county's adopted rates.">
+<link rel="canonical" href="https://micahskylab-code.github.io/moku/hawaii-property-tax-calculator.html">
+<meta property="og:title" content="Hawaiʻi Property Tax Calculator (FY2026-27)">
+<meta property="og:description" content="What you'll actually pay in property tax on a Hawaiʻi home — by county, at current rates. Free.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://micahskylab-code.github.io/moku/hawaii-property-tax-calculator.html">
+<meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#FBF9F5; --card:#FFFFFF; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A; --accent:#0E6E56; --gold:#9C7A3C; --line:rgba(23,21,15,0.10); --line2:rgba(23,21,15,0.16); --wash:#F3ECDD; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; } :root:not([data-theme="light"]) .cta:not(.ghost){ color:#0C1B15; } }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--ink); font:16px/1.65 "Inter",-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; }
+  .top{ position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top a{ text-decoration:none; color:var(--ink); }
+  .brand{ font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:600; }
+  .brand em{ font-style:normal; color:var(--gold); }
+  .top .to-map{ margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
+  .wrap{ max-width:720px; margin:0 auto; padding:44px 22px 90px; }
+  .eyebrow{ font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); }
+  h1{ font-family:"Fraunces",Georgia,serif; font-size:clamp(31px,6vw,46px); font-weight:500; letter-spacing:-0.022em; line-height:1.04; margin:12px 0 14px; text-wrap:balance; }
+  .lede{ font-size:17.5px; color:var(--ink2); margin-bottom:26px; max-width:56ch; }
+  .calc{ background:var(--card); border:1px solid var(--line2); border-radius:18px; padding:22px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink2); margin-bottom:7px; }
+  .amt{ position:relative; }
+  .amt span{ position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--ink3); font-size:18px; }
+  input[type=text]{ width:100%; border:1px solid var(--line2); border-radius:12px; padding:13px 15px 13px 30px; font-size:19px; font-weight:600; font-family:"Fraunces",Georgia,serif; background:var(--bg); color:var(--ink); font-variant-numeric:tabular-nums; }
+  input[type=text]:focus{ outline:none; border-color:var(--accent); }
+  select{ width:100%; border:1px solid var(--line2); border-radius:12px; padding:13px 15px; font-size:15px; font-weight:600; background:var(--bg); color:var(--ink); }
+  .seg{ display:flex; gap:8px; }
+  .seg button{ flex:1; border:1px solid var(--line2); background:var(--bg); color:var(--ink2); border-radius:12px; padding:11px 10px; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .12s ease; font-family:inherit; }
+  .seg button.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .seg button.on{ color:#0C1B15; } }
+  .result{ margin-top:20px; border-top:1px solid var(--line); padding-top:20px; text-align:center; }
+  .result .big{ font-family:"Fraunces",Georgia,serif; font-size:clamp(40px,10vw,62px); font-weight:500; line-height:1; color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:-0.02em; }
+  .result .yr{ font-size:18px; color:var(--ink3); }
+  .result .sub{ font-size:14px; color:var(--ink2); margin-top:10px; }
+  .result .sub b{ color:var(--ink); }
+  h2{ font-family:"Fraunces",Georgia,serif; font-size:clamp(22px,4vw,27px); font-weight:500; letter-spacing:-0.01em; margin:44px 0 12px; text-wrap:balance; }
+  p{ margin:0 0 14px; color:var(--ink2); }
+  b, strong{ color:var(--ink); font-weight:600; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; margin:8px 0 6px; }
+  th, td{ text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink3); font-weight:700; }
+  td:first-child{ font-weight:600; color:var(--ink); }
+  .tblwrap{ overflow-x:auto; }
+  .cta{ display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:600; font-size:15px; padding:14px 24px; border-radius:12px; margin-top:8px; }
+  .links{ border-top:1px solid var(--line); margin-top:48px; padding-top:20px; font-size:13.5px; }
+  .links a{ color:var(--accent); text-decoration:none; margin-right:16px; line-height:2; }
+  footer{ border-top:1px solid var(--line); margin-top:34px; padding-top:18px; font-size:12px; color:var(--ink3); line-height:1.6; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Moku", "item": "https://micahskylab-code.github.io/moku/" },
+      { "@type": "ListItem", "position": 2, "name": "Property tax calculator", "item": "https://micahskylab-code.github.io/moku/hawaii-property-tax-calculator.html" } ] },
+    { "@type": "WebApplication", "name": "Hawaiʻi Property Tax Calculator", "applicationCategory": "FinanceApplication", "operatingSystem": "Web",
+      "description": "Estimate annual Hawaiʻi property tax by county at FY2026-27 rates.", "url": "https://micahskylab-code.github.io/moku/hawaii-property-tax-calculator.html",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }, "isPartOf": { "@type": "WebSite", "name": "Moku", "url": "https://micahskylab-code.github.io/moku/" } }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="top"><a href="index.html" class="brand">Moku<em>.</em></a><a class="to-map" href="index.html">Open the map &rarr;</a></div>
+<div class="wrap">
+  <div class="eyebrow">FY2026-27 · adopted county rates</div>
+  <h1>Hawaiʻi property tax calculator</h1>
+  <p class="lede">What you'll actually pay in annual property tax on a Hawaiʻi home — at each county's current FY2026-27 rates, with the owner-occupant home exemption built in. Enter a value; the number updates as you type.</p>
+
+  <div class="calc">
+    <div class="field">
+      <label for="assessed">Assessed value</label>
+      <div class="amt"><span>$</span><input type="text" id="assessed" inputmode="numeric" value="1,000,000" aria-label="Assessed value in dollars"></div>
+    </div>
+    <div class="field">
+      <label for="county">County</label>
+      <select id="county" aria-label="County">
+        <option value="kauai">Kauaʻi County</option>
+        <option value="oahu">Honolulu / Oʻahu</option>
+        <option value="maui">Maui County</option>
+        <option value="hawaii">Hawaiʻi County (Big Island)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Who lives there</label>
+      <div class="seg" id="use">
+        <button data-use="owner" class="on">It's my home (owner-occupant)</button>
+        <button data-use="investor">Second home / rental</button>
+      </div>
+    </div>
+    <div class="result">
+      <div><span class="big" id="out">$0</span> <span class="yr">/ year</span></div>
+      <div class="sub" id="sub"></div>
+    </div>
+  </div>
+  <div class="note" style="font-size:12.5px;color:var(--ink3);margin-top:10px">An estimate from published county rates — not a tax bill. The home exemption, property class and value tiers set the real figure; confirm with your county.</div>
+
+  <h2>The FY2026-27 rates, by county</h2>
+  <p>Rates are dollars per $1,000 of net assessed value (after the owner-occupant home exemption). Investor / non-owner rates are tiered — each rate applies only to the portion of value in its band.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>County</th><th>Home (owner-occ)</th><th>Second home / rental</th><th>Home exemption</th></tr></thead>
+    <tbody>
+      <tr><td>Kauaʻi</td><td>$2.59</td><td>$5.45 → $6.05 → $9.40</td><td>$220,000</td></tr>
+      <tr><td>Oʻahu</td><td>$3.50</td><td>$3.50 under $1M, then $4.00 → $11.40 (Residential A)</td><td>$120,000</td></tr>
+      <tr><td>Maui</td><td>$1.65 → $1.80 → $5.00</td><td>$6.25 → $9.00 → $17.00</td><td>$300,000</td></tr>
+      <tr><td>Hawaiʻi Island</td><td>$5.75</td><td>$11.10 → $14.50 → $17.00</td><td>$50,000</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:13px;color:var(--ink3)">Tiers by value: Kauaʻi investor $1.3M / $2M; Maui home $1.5M / $4.5M, investor $1M / $2.5M; Hawaiʻi investor $2M / $4M. Rates from each county's adopted FY2026-27 real-property-tax ordinance.</p>
+
+  <h2>See your parcel's exact assessed value</h2>
+  <p>This calculator works off a value you enter. Moku pulls the <b>real county-assessed value</b> for any Hawaiʻi parcel — plus its estimated tax, rent, vacation-rental status and risk — free, no signup.</p>
+  <p><a class="cta" href="index.html">Look up any parcel &rarr;</a></p>
+
+  <div class="links"><strong>More free Hawaiʻi lookups:</strong><br>
+    <a href="hawaii-property-records.html">Records by town</a> <a href="hawaii-short-term-rental-rules.html">Short-term rental rules</a> <a href="index.html">The live map</a> <a href="market.html">Market intelligence</a> <a href="tmk-lookup.html">TMK lookup</a></div>
+
+  <footer>Moku · built on Kauaʻi, independently and in the open. A free public-records intelligence platform — not a brokerage, not a tax advisor. Figures are estimates computed from each county's adopted FY2026-27 real-property-tax rates and are not a tax bill; the home exemption, property classification and value tiers determine the actual amount. Confirm with your county's real property tax office before relying on any figure.</footer>
+</div>
+<script>
+// FY2026-27 adopted county rates — identical to the Moku app's engine, so this matches the map to the dollar.
+var COUNTIES = {
+  kauai:  { name:"Kauaʻi",         ex:220000, owner:[[Infinity,2.59]], investor:[[1300000,5.45],[2000000,6.05],[Infinity,9.40]] },
+  oahu:   { name:"Oʻahu",          ex:120000, owner:[[Infinity,3.50]], oahuFlip:true },
+  maui:   { name:"Maui",           ex:300000, owner:[[1500000,1.65],[4500000,1.80],[Infinity,5.00]], investor:[[1000000,6.25],[2500000,9.00],[Infinity,17.00]] },
+  hawaii: { name:"Hawaiʻi Island", ex:50000,  owner:[[Infinity,5.75]], investor:[[2000000,11.10],[4000000,14.50],[Infinity,17.00]] }
+};
+function taxTiers(base, tiers){ var tax=0, prev=0; for (var i=0;i<tiers.length;i++){ var cap=tiers[i][0], rate=tiers[i][1]; var band=Math.max(0, Math.min(base,cap)-prev); tax+=band/1000*rate; prev=cap; if (base<=cap) break; } return tax; }
+var el = function(id){ return document.getElementById(id); };
+var useKind = "owner";
+function money(n){ return "$" + Math.round(n).toLocaleString(); }
+function recalc(){
+  var raw = (el("assessed").value || "").replace(/[^0-9]/g,"");
+  var assessed = raw ? parseInt(raw,10) : 0;
+  var c = COUNTIES[el("county").value];
+  var owner = taxTiers(Math.max(0, assessed-(c.ex||0)), c.owner);
+  var investor = c.oahuFlip
+    ? (assessed < 1000000 ? assessed/1000*3.50 : taxTiers(assessed, [[1000000,4.00],[Infinity,11.40]]))
+    : taxTiers(assessed, c.investor);
+  var pick = useKind === "owner" ? owner : investor;
+  var other = useKind === "owner" ? investor : owner;
+  var otherLabel = useKind === "owner" ? "as a second home or rental" : "as an owner-occupant home";
+  el("out").textContent = (pick < 1 && useKind === "owner") ? "≈$0" : money(pick);
+  var eff = assessed > 0 ? (pick/assessed*100) : 0;
+  var perMo = pick/12;
+  el("sub").innerHTML = assessed > 0
+    ? "About <b>" + money(perMo) + "/mo</b> · effective rate <b>" + eff.toFixed(2) + "%</b> of assessed value.<br>The same home would run about <b>" + money(other) + "/yr</b> " + otherLabel + "."
+    : "Enter an assessed value above.";
+}
+// group the typed number with commas as the user types
+el("assessed").addEventListener("input", function(){
+  var raw = this.value.replace(/[^0-9]/g,"");
+  this.value = raw ? parseInt(raw,10).toLocaleString() : "";
+  recalc();
+});
+el("county").addEventListener("change", recalc);
+Array.prototype.forEach.call(document.querySelectorAll("#use button"), function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll("#use button").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on"); useKind = b.getAttribute("data-use"); recalc();
+  });
+});
+recalc();
+</script>
+</body>
+</html>
