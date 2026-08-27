@@ -20,7 +20,7 @@
   @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; --flag:#E08A6E; } }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ background:var(--bg); color:var(--ink); font:16px/1.65 "Inter",-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; }
-  .top{ position:sticky; top:0; z-index:10; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top{ position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
   .top a{ text-decoration:none; color:var(--ink); }
   .brand{ font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:600; }
   .brand em{ font-style:normal; color:var(--gold); }
@@ -71,7 +71,7 @@
 
   <div class="tiles">
     <div class="tile"><div class="n">$2,135<span style="font-size:15px">/mo</span></div><div class="l">Long-term rent, 2-bed — HUD Fair Market Rent, Kauaʻi (FY2025)</div></div>
-    <div class="tile"><div class="n">$2.59</div><div class="l">Property tax per $1,000, owner-occupied · Kauaʻi FY2026-27 (higher for investors)</div></div>
+    <div class="tile"><div class="n">$2.59</div><div class="l">Property tax per $1,000, owner-occupied · Kauaʻi FY2026-27 — higher for investors</div></div>
     <div class="tile"><div class="n risk">Medium</div><div class="l">The State rates the Eleele area's wildfire hazard Medium</div></div>
   </div>
 

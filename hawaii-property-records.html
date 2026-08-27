@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hawaiʻi Property Records by Town — Tax, Rent, Vacation-Rental &amp; Risk · Moku</title>
+<meta name="description" content="Free property-records intelligence for every Hawaiʻi town: property tax, long-term rent, registered vacation rentals, flood, sea-level-rise and wildfire risk. Pick your town — 63 across all islands. Official government data.">
+<link rel="canonical" href="https://micahskylab-code.github.io/moku/hawaii-property-records.html">
+<meta property="og:title" content="Hawaiʻi Property Records by Town · Moku">
+<meta property="og:description" content="Tax, rent, vacation-rental rules and risk for every Hawaiʻi town — free, from official government data.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://micahskylab-code.github.io/moku/hawaii-property-records.html">
+<meta property="og:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231D1D1F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBFBFD" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23C9A86A"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#FBF9F5; --card:#FFFFFF; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A; --accent:#0E6E56; --gold:#9C7A3C; --line:rgba(23,21,15,0.10); --line2:rgba(23,21,15,0.16); --wash:#F3ECDD; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#131210; --card:#1C1A16; --ink:#F4F1EA; --ink2:#C7C1B4; --ink3:#8C867A; --accent:#5DCAA5; --gold:#D6B26B; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.20); --wash:#241E12; } }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--ink); font:16px/1.65 "Inter",-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; }
+  .top{ position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); padding:13px 22px; display:flex; gap:14px; align-items:baseline; }
+  .top a{ text-decoration:none; color:var(--ink); }
+  .brand{ font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:600; }
+  .brand em{ font-style:normal; color:var(--gold); }
+  .top .to-map{ margin-left:auto; font-size:13px; font-weight:600; color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding:46px 22px 90px; }
+  .eyebrow{ font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); }
+  h1{ font-family:"Fraunces",Georgia,serif; font-size:clamp(32px,6.5vw,50px); font-weight:500; letter-spacing:-0.022em; line-height:1.03; margin:12px 0 16px; text-wrap:balance; }
+  .lede{ font-size:18px; color:var(--ink2); margin-bottom:26px; max-width:58ch; }
+  .cta{ display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:600; font-size:15px; padding:14px 24px; border-radius:12px; transition:transform .15s ease; }
+  .cta:active{ transform:scale(0.97); }
+  .note{ font-size:12.5px; color:var(--ink3); margin-top:10px; }
+  .island{ margin:44px 0 0; }
+  .ihead{ display:flex; align-items:baseline; gap:12px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+  h2{ font-family:"Fraunces",Georgia,serif; font-size:clamp(22px,4vw,28px); font-weight:500; letter-spacing:-0.01em; }
+  .cnt{ font-size:12.5px; color:var(--ink3); font-weight:600; margin-left:auto; }
+  .iblurb{ font-size:14.5px; color:var(--ink2); margin:12px 0 16px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:9px; }
+  .chips a{ text-decoration:none; color:var(--ink); background:var(--card); border:1px solid var(--line2); border-radius:999px; padding:9px 16px; font-size:14.5px; font-weight:500; transition:border-color .15s ease, color .15s ease; }
+  .chips a:hover{ border-color:var(--accent); color:var(--accent); }
+  .links{ border-top:1px solid var(--line); margin-top:50px; padding-top:20px; font-size:13.5px; }
+  .links a{ color:var(--accent); text-decoration:none; margin-right:16px; line-height:2; }
+  footer{ border-top:1px solid var(--line); margin-top:34px; padding-top:18px; font-size:12px; color:var(--ink3); line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html" class="brand">Moku<em>.</em></a><a class="to-map" href="index.html">Open the map &rarr;</a></div>
+<div class="wrap">
+  <div class="eyebrow">Every island · official government data</div>
+  <h1>Hawaiʻi property records, by town</h1>
+  <p class="lede">Pick a town and see what it really costs to own there — property tax, long-term rent, registered vacation rentals, and the flood, sea-level and wildfire risk other sites hide. Free, sourced, and live for 63 towns across every island.</p>
+  <a class="cta" href="index.html">Or search any parcel on the map &rarr;</a>
+  <div class="note">Free · no signup · official State of Hawaiʻi &amp; county data</div>
+
+  <section class="island">
+    <div class="ihead"><h2>Kauaʻi</h2><span class="cnt">16 towns</span></div>
+    <p class="iblurb">The Garden Isle — Poʻipū, Hanalei, Princeville and the towns of the south and north shores.</p>
+    <div class="chips">
+      <a href="anahola-property-records.html">Anahola</a>
+      <a href="eleele-property-records.html">Eleele</a>
+      <a href="hanalei-property-records.html">Hanalei</a>
+      <a href="hanapepe-property-records.html">Hanapepe</a>
+      <a href="kalaheo-property-records.html">Kalaheo</a>
+      <a href="kapaa-property-records.html">Kapaa</a>
+      <a href="kekaha-property-records.html">Kekaha</a>
+      <a href="kilauea-property-records.html">Kilauea</a>
+      <a href="koloa-property-records.html">Koloa</a>
+      <a href="kukuiula-property-records.html">Kukuiula</a>
+      <a href="lihue-property-records.html">Lihue</a>
+      <a href="poipu-property-records.html">Poipu</a>
+      <a href="princeville-property-records.html">Princeville</a>
+      <a href="puhi-property-records.html">Puhi</a>
+      <a href="wailua-property-records.html">Wailua</a>
+      <a href="waimea-property-records.html">Waimea</a>
+    </div>
+  </section>
+  <section class="island">
+    <div class="ihead"><h2>Oʻahu</h2><span class="cnt">16 towns</span></div>
+    <p class="iblurb">From Honolulu and Waikīkī to the Windward side and the West — the state's most-traded market.</p>
+    <div class="chips">
+      <a href="aiea-property-records.html">Aiea</a>
+      <a href="ewa-beach-property-records.html">Ewa Beach</a>
+      <a href="haleiwa-property-records.html">Haleiwa</a>
+      <a href="hawaii-kai-property-records.html">Hawaii Kai</a>
+      <a href="honolulu-property-records.html">Honolulu</a>
+      <a href="kailua-property-records.html">Kailua</a>
+      <a href="kaneohe-property-records.html">Kaneohe</a>
+      <a href="kapolei-property-records.html">Kapolei</a>
+      <a href="laie-property-records.html">Laie</a>
+      <a href="mililani-property-records.html">Mililani</a>
+      <a href="pearl-city-property-records.html">Pearl City</a>
+      <a href="wahiawa-property-records.html">Wahiawa</a>
+      <a href="waianae-property-records.html">Waianae</a>
+      <a href="waikiki-property-records.html">Waikiki</a>
+      <a href="waimanalo-property-records.html">Waimanalo</a>
+      <a href="waipahu-property-records.html">Waipahu</a>
+    </div>
+  </section>
+  <section class="island">
+    <div class="ihead"><h2>Maui</h2><span class="cnt">15 towns</span></div>
+    <p class="iblurb">The Valley Isle — Kīhei, Wailea, Lahaina and Upcountry, coast to coast.</p>
+    <div class="chips">
+      <a href="haiku-property-records.html">Haiku</a>
+      <a href="hana-property-records.html">Hana</a>
+      <a href="kaanapali-property-records.html">Kaanapali</a>
+      <a href="kahului-property-records.html">Kahului</a>
+      <a href="kapalua-property-records.html">Kapalua</a>
+      <a href="kihei-property-records.html">Kihei</a>
+      <a href="kula-property-records.html">Kula</a>
+      <a href="lahaina-property-records.html">Lahaina</a>
+      <a href="makawao-property-records.html">Makawao</a>
+      <a href="makena-property-records.html">Makena</a>
+      <a href="napili-property-records.html">Napili</a>
+      <a href="paia-property-records.html">Paia</a>
+      <a href="pukalani-property-records.html">Pukalani</a>
+      <a href="wailea-property-records.html">Wailea</a>
+      <a href="wailuku-property-records.html">Wailuku</a>
+    </div>
+  </section>
+  <section class="island">
+    <div class="ihead"><h2>Molokaʻi</h2><span class="cnt">1 town</span></div>
+    <p class="iblurb">The most Hawaiian island — Kaunakakai and the homestead lands.</p>
+    <div class="chips">
+      <a href="kaunakakai-property-records.html">Kaunakakai</a>
+    </div>
+  </section>
+  <section class="island">
+    <div class="ihead"><h2>Lānaʻi</h2><span class="cnt">1 town</span></div>
+    <p class="iblurb">The Pineapple Isle — Lānaʻi City and the surrounding lands.</p>
+    <div class="chips">
+      <a href="lanai-city-property-records.html">Lanai City</a>
+    </div>
+  </section>
+  <section class="island">
+    <div class="ihead"><h2>Hawaiʻi Island</h2><span class="cnt">14 towns</span></div>
+    <p class="iblurb">Hawaiʻi Island — Kona, Hilo, Waikōloa and the volcano districts.</p>
+    <div class="chips">
+      <a href="captain-cook-property-records.html">Captain Cook</a>
+      <a href="hawi-property-records.html">Hawi</a>
+      <a href="hilo-property-records.html">Hilo</a>
+      <a href="honokaa-property-records.html">Honokaa</a>
+      <a href="kailua-kona-property-records.html">Kailua-Kona</a>
+      <a href="kamuela-property-records.html">Kamuela</a>
+      <a href="keaau-property-records.html">Keaau</a>
+      <a href="kealakekua-property-records.html">Kealakekua</a>
+      <a href="leilani-estates-property-records.html">Leilani Estates</a>
+      <a href="naalehu-property-records.html">Naalehu</a>
+      <a href="ocean-view-property-records.html">Ocean View</a>
+      <a href="pahoa-property-records.html">Pahoa</a>
+      <a href="volcano-property-records.html">Volcano</a>
+      <a href="waikoloa-property-records.html">Waikoloa</a>
+    </div>
+  </section>
+
+  <div class="links"><strong>More free Hawaiʻi lookups:</strong><br>
+    <a href="index.html">The live map</a> <a href="market.html">Market intelligence</a> <a href="tmk-lookup.html">TMK lookup</a> <a href="kauai-flood-zones.html">Kauaʻi flood zones</a> <a href="kauai-vacation-rentals.html">Kauaʻi vacation rentals</a> <a href="hawaii-tsunami-zones.html">Tsunami zones</a></div>
+
+  <footer>Moku · built on Kauaʻi, independently and in the open. A free public-records intelligence platform — not a brokerage. Figures are drawn from official State of Hawaiʻi and county data and published benchmarks (HUD, DBEDT); verify with the source before relying on them for a transaction.</footer>
+</div>
+</body>
+</html>
