@@ -1093,7 +1093,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-88</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-89</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2296,9 +2296,12 @@ function noteIntel(key, kind, html) {
   intelBag[key] = { kind, html };
   const list = document.getElementById("intel-list");
   if (!list) return;
-  const all = Object.values(intelBag);
-  const flags = all.filter(i => i.kind === "flag"), plus = all.filter(i => i.kind === "plus");
-  list.innerHTML = [...flags, ...plus].map(i =>
+  const MONEY = ["tax", "ltr", "tvr"]; // the money read (tax, long-term rent, short-term rental) leads the positives
+  const entries = Object.entries(intelBag);
+  const flags = entries.filter(([, i]) => i.kind === "flag");
+  const plus = entries.filter(([, i]) => i.kind === "plus")
+    .sort((a, b) => (MONEY.indexOf(a[0]) === -1 ? 99 : MONEY.indexOf(a[0])) - (MONEY.indexOf(b[0]) === -1 ? 99 : MONEY.indexOf(b[0])));
+  list.innerHTML = [...flags, ...plus].map(([, i]) =>
     `<div class="intel-row ${i.kind}"><span class="idot"></span><span>${i.html}</span></div>`).join("") +
     `<div class="subnote">Computed from the county &amp; state records on this card &mdash; informational, not an inspection, valuation, or advice.</div>`;
   const sec = document.getElementById("intel-sec");
@@ -2337,7 +2340,7 @@ function openRecordCard(lng, lat) {
       <div id="read-text" style="font-size:14.5px;line-height:1.55;color:var(--ink)"></div>
     </div>
     <div class="sec" id="intel-sec" style="display:none">
-      <div class="h">Parcel intel</div>
+      <div class="h">The numbers &amp; the risks</div>
       <div id="intel-list"></div>
     </div>
     <div class="sec" id="land-sec" style="display:none">
