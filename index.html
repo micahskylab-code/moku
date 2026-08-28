@@ -1159,7 +1159,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-135</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-136</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1550,6 +1550,20 @@ function applyCustomLayers() {
     map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2, "line-opacity": 1, "line-opacity-transition": { duration: 600 } } });
   }
 }
+// An overlay whose tiles fail renders as EMPTY — which reads as "no flood zone here" instead of
+// "we couldn't load it". Say so once per source rather than letting silence pass for an answer.
+const _tileWarned = {};
+map.on("error", e => {
+  try {
+    const src = e && e.sourceId; if (!src) return;
+    const NAME = { flood: "flood-zone", tsu: "tsunami-evacuation", tsunami: "tsunami-evacuation", parcels: "parcel-line", sat: "satellite" };
+    const label = NAME[src]; if (!label || _tileWarned[src]) return;
+    _tileWarned[src] = true;
+    journalError("tile source failed: " + src);
+    if (layerState[src] && layerState[src].on)
+      toast(`The ${label} overlay isn&#8217;t loading right now &mdash; an empty map here doesn&#8217;t mean no risk.`, 7000);
+  } catch (err) {}
+});
 map.on("style.load", () => {
   try { applyCustomLayers(); } catch (e) { console.error("customLayers:", e); setTimeout(() => { try { applyCustomLayers(); } catch (e2) {} }, 1500); }
   Object.keys(layerState || {}).forEach(k => {
@@ -2252,6 +2266,13 @@ async function exploreParcel(lng, lat) {
         tsuTxt + `<div class="subnote"><b onclick="showLayer('tsu')">See evacuation zones &#8599;</b></div>`, "live");
     }
     // Sea-level rise — the climate risk most sites hide. Only flag when the parcel is actually exposed.
+    // undefined = the server never answered; that must NOT render the same as "not exposed".
+    if (slr === undefined || fire === undefined) {
+      const which = (slr === undefined && fire === undefined) ? "Sea-level-rise and wildfire layers"
+                  : (slr === undefined ? "The sea-level-rise layer" : "The wildfire-rating layer");
+      noteIntel("hazgap", "flag", `${which} didn&#8217;t answer just now &mdash; this card can&#8217;t speak to that risk. Reopen the parcel to try again.`);
+      if (lastRecord) lastRecord.hazardsKnown = false;
+    }
     if (slr && slr.properties) {
       noteIntel("slr", "flag", "In the State&#8217;s <b>sea-level-rise exposure area</b> (3.2 ft scenario) &mdash; projected coastal flooding this century that can affect insurance, lending and long-term value. From the Hawai&#699;i Sea Level Rise Viewer.");
     }
@@ -3018,15 +3039,17 @@ function parseTmkInput(q) {
   }
   return digitsOf(q);
 }
+let tmkOutage = false; // a down county server must never be reported as "that TMK doesn't exist"
 async function tmkHit(county, field, like) {
   try {
     const u = `${GIS_PZ}${county.parcels}/query?where=${encodeURIComponent(`${field} LIKE '${like}%'`)}&outFields=*&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=1`;
     const res = await fetchTimeout(u, 10000);
     const gj = await res.json();
     return (gj.features && gj.features[0]) || null;
-  } catch (e) { return null; }
+  } catch (e) { tmkOutage = true; return null; }
 }
 async function searchTmk(d) {
+  tmkOutage = false;
   const attempts = [];
   if (d.length >= 9) {
     const county = COUNTY_BY_TMK_DIGIT[d[0]];
@@ -3374,7 +3397,9 @@ function wireSearch(inputId, suggestId) {
       toast("Looking up TMK&hellip;");
       try {
         const ok = await searchTmk(parseTmkInput(q));
-        if (!ok) toast("No parcel found for that TMK — check the digits");
+        if (!ok) toast(tmkOutage
+          ? "The county parcel server didn&#8217;t answer — try again shortly, or tap the lot on the map"
+          : "No parcel found for that TMK — check the digits");
         else input.blur();
       } catch (err) { toast("TMK lookup failed — try again"); }
     } else {
