@@ -392,8 +392,6 @@
   @media (max-width: 700px) {
     #legend { display: none !important; }
     #draw-btn { display: none !important; }
-    /* One search on phones — the top bar. Hide the duplicate search buried in the sheet. */
-    #lg-search, .lg-cmd .lg-mag, #lg-suggest { display: none !important; }
     /* Zoom buttons MUST exist on phones (pinch alone fails too many people) — lift them above the
        bottom sheet and chip row instead of hiding them. */
     .maplibregl-ctrl-bottom-right { bottom: calc(196px + env(safe-area-inset-bottom)) !important; right: 10px; }
@@ -743,7 +741,7 @@
   .pass-cta .primary { background: var(--g-ink) !important; color: #fff !important; }
   .pass-cta .ghost { background: #fff !important; color: var(--g-ink) !important; border: 1px solid var(--g-line) !important; }
 
-  #suggest, #dock-suggest, #lg-suggest {
+  #suggest, #dock-suggest {
     background: var(--paper) !important;
     border: 1px solid var(--g-line) !important;
     box-shadow: 0 18px 44px rgba(16, 18, 20, 0.18) !important;
@@ -893,8 +891,6 @@
   .lg-crow .dt { font-family: var(--sans); font-size: 10px; color: #9C9EA3; grid-column: 1; }
   .lg-mut { font-family: var(--sans); font-size: 12px; color: #9C9EA3; }
   .lg-cmd { margin-top: auto; position: relative; padding-top: 14px; }
-  #lg-search { width: 100%; box-sizing: border-box; min-height: 48px; background: #fff; border: 1px solid rgba(22,24,26,0.14); border-radius: 14px; padding: 12px 16px 12px 42px; font-family: var(--sans); font-size: 16px; color: #16181A; }
-  #lg-search:focus { outline: none; border-color: #9A7B3F; }
   #m-search { display: none; }
   @media (max-width: 760px) {
     body.has-ledger #m-search {
@@ -917,9 +913,7 @@
     #m-suggest .sug small { display: block; color: var(--ink-3); font-size: 12.5px; margin-top: 1px; }
     #m-suggest .sug.hot, #m-suggest .sug:active { background: rgba(14,110,99,0.08); }
   }
-  .lg-mag { position: absolute; left: 15px; top: 26px; color: #9A7B3F; font-size: 15px; }
   .lg-tools { margin-top: 9px; text-align: center; }
-  #lg-suggest { position: absolute; left: 0; right: 0; bottom: 60px; z-index: 5; }
   .lg-tools { display: flex; gap: 14px; justify-content: center; }
   .lg-tools button { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 12px; font-weight: 600; color: #6B6E73; padding: 4px 2px; }
   .lg-tools button:hover { color: #16181A; }
@@ -1124,8 +1118,9 @@
     <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
   </div>
   <div class="lg-cmd">
-    <span class="lg-mag">&#9906;</span>
-    <input id="lg-search" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" enterkeyhint="search">
+    <!-- One search per context. The ledger used to carry its own copy, which sat on screen at the
+         same time as the header search on desktop. The header (desktop) and the floating bar
+         (mobile) are the search; this panel keeps only its tools. -->
     <div class="lg-tools">
       <button id="lg-tools-btn">Layers &amp; tools</button>
       <button id="lg-me-btn">My Moku</button>
@@ -1164,7 +1159,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-133</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-134</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3524,6 +3519,10 @@ function dismissVeil() {
     v.classList.add("gone");
     document.body.classList.add("docked");
     setTimeout(collapseAttribution, 500);
+    // Never let the front door depend on a CSS transition finishing. If the tab is backgrounded or
+    // the device throttles animations, the veil can stay fully painted over the map — and its search
+    // box stays in the keyboard tab order. Take it out of the layout for good; nothing re-shows it.
+    setTimeout(() => { try { v.style.display = "none"; } catch (e) {} }, 620);
   }
 }
 document.getElementById("explore-link").onclick = () => {
@@ -3576,12 +3575,7 @@ try { wireSearch("m-search-input", "m-suggest"); } catch (e) {}
     sy = (onGrip || sheet.scrollTop <= 0) ? e.touches[0].clientY : null;
   }, {passive:true});
   sheet.addEventListener("touchend", e => { if (sy == null) return; const dy = e.changedTouches[0].clientY - sy; if (dy > 40) setSheet(false); else if (dy < -40) setSheet(true); sy = null; }, {passive:true});
-  // add a suggest dropdown for the ledger search + wire it like the others
-  if (!document.getElementById("lg-suggest")) {
-    const d = document.createElement("div"); d.id = "lg-suggest"; d.className = "dock-suggest-el";
-    document.querySelector(".lg-cmd").appendChild(d);
-  }
-  try { wireSearch("lg-search", "lg-suggest"); } catch (e) {}
+  // (the ledger's duplicate search and its suggest dropdown were removed — see .lg-cmd)
   // dateline
   const dl = document.getElementById("lg-date");
   const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"], mons = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
