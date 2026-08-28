@@ -70,11 +70,39 @@
   #map { background: url('assets/hero-hawaii.jpg') center/cover no-repeat #357FA4; }
   .maplibregl-canvas { opacity: 0; transition: opacity 0.9s ease; }
   body.mapready .maplibregl-canvas { opacity: 1; }
-  #veil { display: none !important; }
-  #veil::after {
-    content: ""; position: absolute; inset: 0;
-    background: radial-gradient(90% 80% at 50% 45%, rgba(8,20,30,0.02) 0%, rgba(8,20,30,0.26) 100%);
+  /* The front door: a clean, premium entry that says what Moku is and hands you the search. */
+  #veil {
+    position: fixed; inset: 0; z-index: 60;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; padding: 26px 22px;
+    background: radial-gradient(125% 100% at 50% 26%, #FFFFFF 0%, #FBF9F5 58%, #F1E9D9 100%);
+    transition: opacity 0.5s ease;
   }
+  .veilcard {
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
+    width: 100%; max-width: 600px; text-align: center;
+  }
+  .veilcard .mark {
+    font-family: var(--serif); font-weight: 500; letter-spacing: -0.03em;
+    font-size: clamp(42px, 8.5vw, 64px); line-height: 1; color: var(--ink); margin: 0;
+  }
+  .veilcard .mark em { font-style: normal; color: #9C7A3C; }
+  .veilcard .sub {
+    font-size: clamp(15px, 2.3vw, 18px); color: var(--ink-2); font-weight: 500; margin: -2px 0 6px;
+  }
+  #veil::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(100% 90% at 50% 40%, rgba(23,21,15,0) 60%, rgba(23,21,15,0.05) 100%);
+  }
+  .veilfoot {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center;
+    gap: 5px 20px; text-decoration: none; max-width: 540px; margin-top: 4px;
+    font-size: 12px; color: var(--ink-3); line-height: 1.5;
+  }
+  .veilfoot span { white-space: nowrap; }
+  .veilfoot b { font-weight: 600; color: var(--ink-2); }
+  /* The floating mobile search belongs to the working map — never on top of the front door */
+  body:not(.docked) #m-search { display: none !important; }
   #veil > * { position: relative; z-index: 1; pointer-events: auto; }
   #veil::after { pointer-events: none; }
   /* Map buttons stay off the front door; they belong to the working map */
@@ -1126,7 +1154,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-114</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-115</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3637,9 +3665,7 @@ function submitLead() {
 document.getElementById("lead-go").onclick = submitLead;
 const _bs=document.getElementById("btn-sell"); if(_bs) _bs.onclick = () => openLead("seller");
 
-// ---- Boot: the map IS the front door. Deep link → record; returning owner → home; else Kauai hero ----
-document.body.classList.add("docked");
-document.getElementById("veil").classList.add("gone");
+// ---- Boot: the front door greets fresh visitors; deep link → record; returning owner → home ----
 const deep = parseDeepLink();
 let bootedHome = false;
 if (deep) {
