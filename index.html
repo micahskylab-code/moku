@@ -1144,7 +1144,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-128</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-129</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1255,8 +1255,28 @@ function showDiag(msg) {
     setTimeout(kill, 5000);
   } catch (e) {}
 }
-window.addEventListener("error", e => showDiag((e.message || "script error") + (e.filename ? " @ " + (e.lineno || "?") : "")));
-window.addEventListener("unhandledrejection", e => showDiag("async: " + ((e.reason && (e.reason.message || e.reason)) || "unknown")));
+// On-device error journal: real-phone failures leave evidence that never leaves the phone
+// (the no-tracking promise holds — nothing is sent anywhere; read it by opening ?debug).
+function journalError(msg) {
+  try {
+    const a = JSON.parse(localStorage.getItem("moku_err") || "[]");
+    a.unshift({ t: new Date().toISOString().slice(0, 16), m: String(msg).slice(0, 240) });
+    localStorage.setItem("moku_err", JSON.stringify(a.slice(0, 20)));
+  } catch (e) {}
+}
+window.addEventListener("error", e => { const m = (e.message || "script error") + (e.filename ? " @ " + (e.lineno || "?") : ""); journalError(m); showDiag(m); });
+window.addEventListener("unhandledrejection", e => { const m = "async: " + ((e.reason && (e.reason.message || e.reason)) || "unknown"); journalError(m); showDiag(m); });
+// ?debug: show the journal — hand Micah (or any tester) the last errors this exact device hit
+if (location.search.includes("debug")) {
+  try {
+    const errs = JSON.parse(localStorage.getItem("moku_err") || "[]");
+    const p = document.createElement("div");
+    p.style.cssText = "position:fixed;left:6px;bottom:18px;z-index:9998;max-width:78vw;background:rgba(16,16,18,0.88);color:#cfd3d8;border-radius:10px;padding:8px 12px;font:10px/1.5 monospace;pointer-events:none";
+    p.textContent = errs.length ? "Device error journal:\n" + errs.slice(0, 5).map(x => x.t + " " + x.m).join("\n") : "Device error journal: clean";
+    p.style.whiteSpace = "pre-wrap";
+    document.body.appendChild(p);
+  } catch (e) {}
+}
 
 // ---- Device: layout adapts to size; heavy features only downgrade on MEASURED slowness ----
 const SMALL = Math.min(screen.width, screen.height) < 780 || (window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
@@ -1295,22 +1315,60 @@ const FALLBACK_SAT_STYLE = {
         "hillshade-illumination-direction": 315 } }
   ]
 };
-const map = new maplibregl.Map({
-  container: "map",
-  style: FALLBACK_SAT_STYLE,
-  center: [-157.5, 20.9],
-  zoom: SMALL ? 5.3 : 6.2,
-  pitch: 0,
-  bearing: 0,
-  attributionControl: false,
-  clickTolerance: 8,
-  maxPitch: SMALL ? 0 : 72
+// ---- THE MAP IS OPTIONAL. If the map library fails to load or WebGL can't start on this
+// device (old phones, iOS Lockdown Mode, GPU crashes, a dropped connection mid-load), the
+// product must still work: search → record card → every number. A dead map may never again
+// kill the whole app — before this guard, one throw here silenced all 3,000 lines below it.
+let MAP_DEAD = false;
+// A "black hole" stand-in: absorbs every map call, property, construction and comparison
+// without ever throwing, so all existing map code degrades to a harmless no-op.
+const __hole = new Proxy(function () {}, {
+  get(t, p) {
+    if (p === Symbol.toPrimitive) return () => 0;
+    if (p === "then") return undefined; // never thenable — awaits must pass straight through
+    if (p === Symbol.iterator) return function* () {};
+    return __hole;
+  },
+  set() { return true; },
+  apply() { return __hole; },
+  construct() { return __hole; }
 });
-map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true }), "bottom-right");
-map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), "bottom-right");
-window.addEventListener("resize", () => map.resize());
-new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
+if (typeof maplibregl === "undefined") { window.maplibregl = __hole; MAP_DEAD = true; journalError("maplibre-gl.js failed to load"); }
+let map;
+try {
+  if (MAP_DEAD || /[?&]nomap\b/.test(location.search)) throw new Error("map unavailable");
+  map = new maplibregl.Map({
+    container: "map",
+    style: FALLBACK_SAT_STYLE,
+    center: [-157.5, 20.9],
+    zoom: SMALL ? 5.3 : 6.2,
+    pitch: 0,
+    bearing: 0,
+    attributionControl: false,
+    clickTolerance: 8,
+    maxPitch: SMALL ? 0 : 72
+  });
+  map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true }), "bottom-right");
+  map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), "bottom-right");
+  window.addEventListener("resize", () => map.resize());
+  new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
+} catch (mapErr) {
+  MAP_DEAD = true;
+  map = __hole;
+  if (!/map unavailable/.test(String(mapErr && mapErr.message))) journalError("map boot: " + (mapErr && mapErr.message));
+  try {
+    // Honest, quiet degradation: a light ground instead of a dark void, and one dismissible line.
+    const m = document.getElementById("map");
+    if (m) m.style.background = "radial-gradient(130% 110% at 50% 28%, #EFF5F7 0%, #D5E1E8 72%)";
+    const n = document.createElement("div");
+    n.id = "map-dead-note";
+    n.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:3500;background:rgba(16,16,18,0.92);color:#fff;border-radius:14px;padding:11px 15px;font:12.5px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;display:flex;gap:12px;align-items:center";
+    n.innerHTML = "<span style='flex:1'>The interactive map couldn&#8217;t start on this device &mdash; <b>search still works</b>: every parcel&#8217;s full record opens as a card.</span><span style='cursor:pointer;font-size:15px;opacity:0.7;padding:0 4px'>&#10005;</span>";
+    n.lastElementChild.onclick = () => n.remove();
+    document.body.appendChild(n);
+  } catch (e) {}
+}
 
 (window.__styleP ? window.__styleP.then(j => j || fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000).then(r => r.json())) : fetchTimeout("https://tiles.openfreemap.org/styles/positron", 8000).then(r => r.json()))
   .then(st => {
@@ -1565,7 +1623,18 @@ let OAHU_SALES = null, oahuSalesLoading = null;
 function loadOahuSales() {
   if (OAHU_SALES) return Promise.resolve(OAHU_SALES);
   if (oahuSalesLoading) return oahuSalesLoading;
-  oahuSalesLoading = fetch("oahu-sales.json").then(r => r.ok ? r.json() : {}).then(j => (OAHU_SALES = j)).catch(() => (OAHU_SALES = {}));
+  oahuSalesLoading = fetch("oahu-sales.json").then(r => r.ok ? r.json() : {}).then(j => {
+    // Format guard: this file's schema changed once already (v8.25-108). If a cached page and a
+    // fresh file ever disagree again, fail safe (no sale shown) — never silently misread prices.
+    try {
+      const k = j && Object.keys(j)[0];
+      if (k && !(Array.isArray(j[k]) && (!j[k].length || Array.isArray(j[k][0])))) {
+        journalError("oahu-sales.json format mismatch — records suppressed");
+        j = {};
+      }
+    } catch (e) { j = {}; }
+    return (OAHU_SALES = j);
+  }).catch(() => (OAHU_SALES = {}));
   return oahuSalesLoading;
 }
 const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
@@ -1889,7 +1958,7 @@ async function exploreParcel(lng, lat) {
   if (clearSrc) clearSrc.setData({ type: "FeatureCollection", features: [] });
 
   // street/city subline (best effort, never blocking)
-  fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`)
+  fetchTimeout(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`, 8000)
     .then(r => r.json())
     .then(g => {
       if (token !== exploreToken) return;
@@ -1941,7 +2010,36 @@ async function exploreParcel(lng, lat) {
     // Geocoders drop address pins on the STREET — and the street is its own parcel (#999, the county's
     // road/remnant number) with no tax record. When the pin lands there, snap to the nearest real lot,
     // or every address search "doesn't work."
-    if (parcel) { parcel = await snapOffRoad(county, lng, lat, parcel); if (token !== exploreToken) return; }
+    if (parcel) {
+      const preSnapTmk = pickTmk(parcel.properties || {});
+      parcel = await snapOffRoad(county, lng, lat, parcel);
+      if (token !== exploreToken) return;
+      const postSnapTmk = parcel && pickTmk(parcel.properties || {});
+      if (postSnapTmk && postSnapTmk !== preSnapTmk) {
+        // The pin was on the road. Every point-based fact above (flood, tsunami, zoning, schools,
+        // hazards) was queried at the STREET — re-anchor them to the real lot, or the card shows
+        // the road's flood zone as the property's. Same for the coords everything downstream uses.
+        try {
+          const sp = interiorPoint(parcel.geometry);
+          lng = sp[0]; lat = sp[1];
+          lastRecord.lng = lng; lastRecord.lat = lat;
+          if (tapMarker) tapMarker.setLngLat([lng, lat]);
+          const re = await Promise.allSettled([
+            queryPoint(GIS_PZ + county.zoning + "/query", lng, lat, "*", false),
+            queryPoint(FLOOD_Q, lng, lat, "fld_zone,sfha_tf", false),
+            queryPoint(TSU_Q, lng, lat, "evac_zone,zone_desc", false),
+            queryPoint(SCHOOL_BASE + "17/query", lng, lat, "elem_desc", false),
+            queryPoint(SCHOOL_BASE + "18/query", lng, lat, "int_desc", false),
+            queryPoint(SCHOOL_BASE + "19/query", lng, lat, "high_desc", false),
+            isBigIsland ? queryPoint("https://geodata.hawaii.gov/arcgis/rest/services/Hazards/MapServer/3/query", lng, lat, "hzone", false) : Promise.resolve(null),
+            queryPoint(SLR_Q, lng, lat, "OBJECTID", false),
+            queryPoint(FIRE_Q, lng, lat, "risk_rating,commu_name", false)
+          ]);
+          if (token !== exploreToken) return;
+          [zoning, flood, tsu, elem, mid, high, lava, slr, fire] = re.map(gv);
+        } catch (snapErr) {}
+      }
+    }
     const failed = settled.slice(0, 4).some(r => r.status === "rejected");
     if (failed) {
       toast(`Some county data didn&#8217;t load &mdash; <b style="cursor:pointer" onclick="exploreParcel(${lng},${lat})">tap to retry</b>`, 8000);
@@ -3255,7 +3353,7 @@ const markReady = () => {
 };
 let cineRAF = null;
 function startCinematic() {
-  if (SMALL) return; // no constant animation loop on phones — perf
+  if (SMALL || MAP_DEAD) return; // no constant animation loop on phones (perf) or without a live map
   if (document.body.classList.contains("engaged")) return;
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const c0 = map.getCenter(); let t0 = null;
