@@ -380,8 +380,10 @@
     #draw-btn { display: none !important; }
     /* One search on phones — the top bar. Hide the duplicate search buried in the sheet. */
     #lg-search, .lg-cmd .lg-mag, #lg-suggest { display: none !important; }
-    /* Native map buttons collided with the chip row — remove them on phones (pinch to zoom). */
-    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group { display: none !important; }
+    /* Zoom buttons MUST exist on phones (pinch alone fails too many people) — lift them above the
+       bottom sheet and chip row instead of hiding them. */
+    .maplibregl-ctrl-bottom-right { bottom: calc(196px + env(safe-area-inset-bottom)) !important; right: 10px; }
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group button { width: 40px; height: 40px; }
   }
 
   /* ---- Layer bar: the data ON the map ---- */
@@ -1142,7 +1144,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-127</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-128</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
