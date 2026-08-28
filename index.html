@@ -78,11 +78,16 @@
   /* The front door: a clean, premium entry that says what Moku is and hands you the search. */
   #veil {
     position: fixed; inset: 0; z-index: 60;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 18px; padding: 26px 22px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    gap: 18px; padding: 26px 22px calc(26px + env(safe-area-inset-bottom));
     background: radial-gradient(125% 100% at 50% 26%, #FFFFFF 0%, #FBF9F5 58%, #F1E9D9 100%);
     transition: opacity 0.5s ease;
+    /* Centered WHEN it fits, scrollable when it doesn't. On an iPhone SE the brand was clipped off
+       the top and the "not a brokerage" line off the bottom, with no way to reach either. */
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
+  #veil > .veilcard { margin-top: auto; }
+  #veil > .veilfoot { margin-bottom: auto; }
   .veilcard {
     display: flex; flex-direction: column; align-items: center; gap: 15px;
     width: 100%; max-width: 600px; text-align: center;
@@ -317,9 +322,11 @@
   .passport .hero { position: relative; height: 132px; background: #1a2a21; }
   .passport .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.08), transparent 40%, rgba(0,0,0,0.52)); }
   .passport .hero .x {
-    position: absolute; top: 12px; right: 12px;
-    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
-    background: rgba(255,255,255,0.78); font-size: 13px; font-weight: 700; color: var(--ink);
+    position: absolute; top: 10px; right: 10px;
+    /* 40px, not 30: a near-miss used to tap the MAP behind the card and fly you to a different
+       parcel — the app looked like it did something random. */
+    width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.78); font-size: 14px; font-weight: 700; color: var(--ink);
     transition: transform 0.25s var(--spring);
   }
   .passport .hero .x:active { transform: scale(0.88); }
@@ -446,11 +453,15 @@
   .pass-cta button:active, .pass-cta a:active { transform: scale(0.96); }
   .pass-cta .primary { min-height: 44px; }
   .dock-quiet {
-    display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 7px; min-height: 30px; white-space: nowrap;
+    /* Wraps instead of running off the screen: on a 320pt iPhone "Watch" used to sit half
+       off-screen and untappable, and the end actions hugged the iOS edge-swipe zone. */
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+    gap: 2px 10px; margin-top: 7px; min-height: 30px; padding: 0 6px;
   }
   .dock-quiet button, .dock-quiet a {
     background: none; border: none; cursor: pointer; text-decoration: none; white-space: nowrap;
-    font-family: var(--sans); font-size: 11.5px; font-weight: 500; color: var(--ink-2); padding: 6px 1px;
+    font-family: var(--sans); font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+    padding: 9px 4px; min-height: 34px; /* a real thumb target, not a 26px sliver */
   }
   .dock-quiet button:hover, .dock-quiet a:hover { color: var(--ink); }
   .dock-quiet span { color: var(--ink-3); }
@@ -581,7 +592,9 @@
   .modal input {
     width: 100%; border: 1px solid rgba(0,0,0,0.12); background: #fff;
     border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
-    font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none;
+    /* 16px is not a style choice: below it, iOS Safari auto-zooms the whole app on focus and
+       never zooms back — the user's last memory of the site is a cropped, broken-looking screen. */
+    font-family: var(--sans); font-size: 16px; color: var(--ink); outline: none;
   }
   .modal input:focus { border-color: var(--accent); }
   .modal .go {
@@ -1147,7 +1160,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-131</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-132</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1521,7 +1534,6 @@ function applyCustomLayers() {
     map.addLayer({ id: "parcel-line", type: "line", source: "parcel", paint: { "line-color": "#FFE9B8", "line-width": 2.2, "line-opacity": 1, "line-opacity-transition": { duration: 600 } } });
   }
 }
-let perfWatched = false;
 map.on("style.load", () => {
   try { applyCustomLayers(); } catch (e) { console.error("customLayers:", e); setTimeout(() => { try { applyCustomLayers(); } catch (e2) {} }, 1500); }
   Object.keys(layerState || {}).forEach(k => {
@@ -1530,7 +1542,9 @@ map.on("style.load", () => {
       ensureLayer(k).then(ok => { if (ok) setLayerVis(k, true); });
     }
   });
-  if (!perfWatched && map.getSource("sat")) { perfWatched = true; watchPerf(); }
+  // (A call to a long-deleted watchPerf() lived here and threw on every style.load, killing every
+  //  listener registered after it — including the one that fades the map in. That is why phones sat
+  //  on a dark rectangle for ~8s. Removed.)
 });
 
 // ---- Live county data, statewide ----
