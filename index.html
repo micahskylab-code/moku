@@ -1130,7 +1130,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-123</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-124</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2307,7 +2307,11 @@ async function enrichCounty(county, token, tmkRaw) {
         if (total >= 10000) { setHeroVal(total, "COUNTY ASSESSED \u00B7 " + ty.toUpperCase()); if (lastRecord) lastRecord.assessed = total; }
       }
     } else if (county === COUNTIES.hawaii) {
-      // Hawai'i County certified roll: land + building
+      // Hawai'i County: the short-term-rental rule that applies here, stated as fact with its source
+      addFact("row-land", "strrules", "Short-term rental rules",
+        "Hawai&#699;i County requires REGISTRATION of short-term vacation rentals (Bill 47, 2025) &mdash; whether a specific home qualifies comes down to its zoning and registration status." +
+        `<div class="subnote"><b onclick="location.href='hawaii-short-term-rental-rules.html#hawaii'">The full Hawai&#699;i Island rules &#8599;</b></div>`, "live");
+      // Certified roll: land + building
       const rows = await queryWhere("https://services1.arcgis.com/C2LPusZs5OXNGFDn/arcgis/rest/services/cohRPT/FeatureServer/0",
         `TMK = ${Number(tmk9)}`, "LandValue,BldgValue,TaxAcres,Homeowner", null, 1);
       if (token !== exploreToken || !rows.length) return;
@@ -2320,6 +2324,10 @@ async function enrichCounty(county, token, tmkRaw) {
         if (rows[0].Homeowner === "Y") addFact("row-record", "hexempt", "Homeowner status", "Homeowner class on file with the county", "live");
       }
     } else if (county === COUNTIES.maui) {
+      // Maui: the most consequential rule in Hawaiʻi real estate right now, stated as fact with its source
+      addFact("row-land", "strrules", "Short-term rental rules",
+        "Maui County is PHASING OUT vacation rentals in apartment-zoned districts (Bill 9, adopted 2025): West Maui by <b>Jan 1, 2029</b>, the rest of the county by <b>Jan 1, 2031</b>. Whether a specific home can rent short-term comes down to its district and permits." +
+        `<div class="subnote"><b onclick="location.href='hawaii-short-term-rental-rules.html#maui'">The full Maui rules &amp; dates &#8599;</b></div>`, "live");
       // Maui County's authoritative assessed value + owner. The state geodata mirror runs stale by
       // thousands and gets mislabeled "TY2026"; the county's own PARCELINFO is correct to the dollar.
       (async () => {
