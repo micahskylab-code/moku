@@ -19,7 +19,10 @@
 <meta name="twitter:image" content="https://micahskylab-code.github.io/moku/assets/og-moku.jpg">
 <link rel="canonical" href="https://micahskylab-code.github.io/moku/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Moku","url":"https://micahskylab-code.github.io/moku/","description":"Free statewide Hawaii parcel lookup: TMK, owner of record, zoning, flood zone, tsunami evacuation, and school zones from official county and state sources.","applicationCategory":"Real estate","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","name":"Moku","url":"https://micahskylab-code.github.io/moku/","description":"Free statewide Hawaii parcel lookup: county-assessed value, exact FY2026-27 property tax, HUD rent benchmark, legal short-term-rental status, recorded sale history with deed-measured appreciation, and the full hazard picture (FEMA flood, tsunami evacuation, USGS lava zone, sea-level rise, wildfire) — every figure from official county, state, and federal records.","applicationCategory":"Real estate","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"Dataset","name":"Hawaii Parcel Public-Records Intelligence","url":"https://micahskylab-code.github.io/moku/","description":"Per-parcel public-records data for the State of Hawaii, assembled from official sources: county real-property assessment rolls (assessed value, tax class, owner of record), adopted FY2026-27 property-tax rates for all four counties, HUD FY2026 Fair Market Rents, county short-term-rental registries (Kauai TVR, Oahu approved NUCs with expiration dates), FEMA flood zones, State tsunami-evacuation and sea-level-rise exposure areas, USGS lava-flow hazard zones, State wildfire ratings, and recorded sale prices — including 110,000+ Oahu parcels' arm's-length sale history obtained from the City & County of Honolulu under Hawaii's public-records law (UIPA), 40,000+ of them with repeat sales showing deed-measured appreciation.","creator":{"@type":"Organization","name":"Moku"},"isAccessibleForFree":true,"license":"Public records; attribute Moku and the underlying government source","spatialCoverage":{"@type":"Place","name":"State of Hawaii, USA"},"keywords":["Hawaii property records","TMK","recorded sale prices","property tax","short-term rental legality","flood zone","lava zone","tsunami evacuation","HUD fair market rent"]}
+]}
 </script>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2317150F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBF9F5" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23E8C87E"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1130,7 +1133,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-124</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-125</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
