@@ -111,6 +111,12 @@
   @media (max-width: 640px) {
     .hero { grid-template-columns: 1fr; gap: 18px; }
     .duo { grid-template-columns: 1fr; }
+    /* The sticky bar wrapped to two lines on a phone and spent a tenth of the screen forever.
+       The page title says where you are — the bar only needs the way back and the way out. */
+    .topbar { padding: 10px 14px; gap: 10px; flex-wrap: nowrap; }
+    .topbar .brand span { display: none; }
+    .topbar .brand { font-size: 17px; }
+    .wrap { padding-top: 34px; }
   }
 </style>
 </head>
@@ -119,29 +125,10 @@
 <div class="topbar">
   <a class="back" href="index.html">&larr; Map</a>
   <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none">Moku<span style="color:var(--gold)">.</span></a> <span>Kauaʻi Market Intelligence</span></div>
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    try {
-      if (typeof MARKET === "undefined" || !MARKET.statewide) return;
-      const N = { kauai: "Kaua\u02BBi", oahu: "O\u02BBahu", maui: "Maui", hawaii: "Hawai\u02BBi" };
-      const el = document.getElementById("all-islands");
-      el.innerHTML = Object.entries(MARKET.statewide.counties).map(([k, v]) =>
-        `<div style="border:1px solid rgba(23,21,15,0.12);border-radius:12px;padding:12px 14px;background:#fff">
-          <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#8C867A">${N[k] || k}</div>
-          <div style="font-family:Fraunces,Georgia,serif;font-size:22px;color:#17150F;margin-top:2px">${v.active.toLocaleString()}</div>
-          <div style="font-size:11.5px;color:#57534A">active &middot; median list (all types) ${v.median_list >= 1e6 ? "$" + (v.median_list/1e6).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(v.median_list/1e3) + "K"}</div>
-          <div style="font-size:11.5px;color:#17150F;margin-top:6px;padding-top:6px;border-top:1px solid rgba(23,21,15,0.08)">${v.sf_n} sold &middot; ${MARKET.statewide.sold_asof} median ${v.sf_med >= 1e6 ? "$" + (v.sf_med/1e6).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(v.sf_med/1e3) + "K"} <span style="color:${v.sf_yoy === 0 ? "#8C867A" : v.sf_yoy > 0 ? "#0F6E56" : "#A5442E"}">${v.sf_yoy === 0 ? "" : v.sf_yoy > 0 ? "&#9650;" : "&#9660;"}${Math.abs(v.sf_yoy).toFixed(1)}%</span></div>
-          <div style="font-size:11px;color:#57534A">${v.condo_n} condos &middot; ${v.condo_med >= 1e6 ? "$" + (v.condo_med/1e6).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(v.condo_med/1e3) + "K"} <span style="color:${v.condo_yoy === 0 ? "#8C867A" : v.condo_yoy > 0 ? "#0F6E56" : "#A5442E"}">${v.condo_yoy === 0 ? "" : v.condo_yoy > 0 ? "&#9650;" : "&#9660;"}${Math.abs(v.condo_yoy).toFixed(1)}%</span></div>
-        </div>`).join("") +
-        `<div style="grid-column:1/-1;font-size:11px;color:#8C867A">${MARKET.statewide.active_total.toLocaleString()} active statewide (${MARKET.statewide.asof}, Realtor.com via the St. Louis Fed) &middot; sold figures: ${MARKET.statewide.sold_asof} vs year prior, DBEDT quarterly report</div>`;
-    } catch (e) {}
-  });
-  </script>
   <button class="share" id="share-page">Share &#8599;</button>
 </div>
 
 <div class="wrap">
-  <div id="all-islands" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0 8px"></div>
   <div class="eyebrow">Every number sourced &middot; updated <span id="updated">—</span></div>
   <h1>The island&#8217;s market, organized.</h1>
   <p class="sub">Year by year, segment by segment — every number sourced, nothing estimated. Kaua&#699;i in depth; every island at a glance below.</p>
