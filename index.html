@@ -1159,7 +1159,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-134</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-135</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2221,6 +2221,9 @@ async function exploreParcel(lng, lat) {
         setFact("zoning", "County zoning", "none mapped here", "live");
       }
     }
+    // Record whether the hazard servers actually answered. Moku may only say a parcel is OUTSIDE the
+    // flood and tsunami zones when both queries genuinely resolved — never because they failed.
+    if (lastRecord) lastRecord.hazardsKnown = (flood !== undefined && tsu !== undefined);
     if (flood === undefined) {
       setFact("flood", "Flood zone", "couldn&#8217;t load", "");
     } else {
@@ -2727,7 +2730,10 @@ function composeRead() {
   }
   // risk read
   if (risks.length) parts.push("Worth knowing: " + risks.map(r => r.html.replace(/<[^>]+>/g, "").replace(/\.\s*$/, "").trim()).join("; ") + ".");
-  else parts.push("It sits outside the mapped FEMA flood and tsunami zones.");
+  // Only claim "outside the zones" when the hazard servers actually answered. If they were down,
+  // no flags come back — and asserting safety we never verified is the one lie this site can't tell.
+  else if (lastRecord && lastRecord.hazardsKnown) parts.push("It sits outside the mapped FEMA flood and tsunami zones.");
+  else parts.push("The State&#8217;s flood and tsunami layers didn&#8217;t answer just now, so this read can&#8217;t speak to hazard &mdash; reopen the parcel to try again.");
   // history
   if (ahu) parts.push(`Historically it lies in the ahupua\u02BBa of <b>${ahu}</b> \u2014 a traditional mountain-to-sea land division.`);
   rt.innerHTML = parts.join(" ") + `<div class="subnote" style="margin-top:8px">Summarized from the official records on this card \u2014 informational, not advice.</div>`;
@@ -3166,18 +3172,20 @@ function censusGeocode(q) {
   });
 }
 const geoCache = new Map();
+let geoOutage = false; // set when a geocoder threw/timed out, so we report an outage, not "no match"
 async function geocode(qRaw) {
   const q = normalizeAddr(qRaw);
   const key = q.toLowerCase();
   if (geoCache.has(key)) return geoCache.get(key);
   let feats = [];
   const places = placeMatches(q);
+  geoOutage = false; // distinguish "we looked and there's nothing" from "we couldn't look"
   if (/^\s*\d[\d-]*\s+\S/.test(q)) feats = await censusGeocode(q);
   try {
     if (!feats.length && !places.length) feats = await geocodeOnce(q);
     if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/\b\d-(?=\d)/, "")); // strip Kauai district prefix: "4-831" → "831"
     if (!feats.length && !places.length) feats = await geocodeOnce(q.replace(/,/g, " "));
-  } catch (e) { /* geocoder down — the gazetteer and Census still answer */ }
+  } catch (e) { geoOutage = true; /* geocoder down — the gazetteer and Census still answer */ }
   // No house number typed? A place/beach/town should outrank a lone street or POI (so "Kona" isn't a temple).
   if (feats.length && !/^\s*\d/.test(q)) {
     feats = feats.slice().sort((a, b) => ((b.properties && b.properties.locality ? 1 : 0) - (a.properties && a.properties.locality ? 1 : 0)));
@@ -3372,7 +3380,14 @@ function wireSearch(inputId, suggestId) {
     } else {
       try {
         const feats = await geocode(q);
-        if (!feats.length) { toast("No match — try spelling out Road / Highway, or add the town"); return; }
+        if (!feats.length) {
+          // An outage is not the same as "that address doesn't exist" — never blame the user's typing
+          // for our server being down.
+          toast(geoOutage
+            ? "Address lookup is unreachable right now — try again shortly, or tap the lot on the map"
+            : "No match — try spelling out Road / Highway, or add the town");
+          return;
+        }
         const sLow = q.toLowerCase().replace(/[^a-z\s-]/g, "").trim();
         const exactPlace = feats.find(f => f.properties.locality && f.properties.name.toLowerCase() === sLow);
         if (exactPlace) { input.blur(); goFeature(exactPlace); return; }
