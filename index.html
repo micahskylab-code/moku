@@ -1180,7 +1180,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-120</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-121</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2276,6 +2276,34 @@ async function enrichCounty(county, token, tmkRaw) {
     } else if (county === COUNTIES.oahu) {
       // City & County of Honolulu: assessment (TY2026) + owner of record, in parallel
       const tmk8 = tmk9.slice(1);
+      // The #1 visitor question on Oʻahu: is this a LEGAL short-term rental? Answer from the county's
+      // approved-NUC registry — this parcel's own license (with its expiration), plus licensed density nearby.
+      (async () => {
+        try {
+          const NUC = "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/NUC_Tax_11_22_2022/FeatureServer/175";
+          const pt = `${lastRecord.lng},${lastRecord.lat}`;
+          const d = 0.008; // ~0.5 mi box
+          const env = `${lastRecord.lng - d},${lastRecord.lat - d},${lastRecord.lng + d},${lastRecord.lat + d}`;
+          const [hereR, nearR] = await Promise.allSettled([
+            fetchTimeout(NUC + "/query?geometry=" + encodeURIComponent(pt) + "&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=License_Number,Type_of_STR,Expiration_Date&returnGeometry=false&f=json", 9000).then(r => r.json()),
+            fetchTimeout(NUC + "/query?geometry=" + encodeURIComponent(env) + "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&returnCountOnly=true&f=json", 9000).then(r => r.json())
+          ]);
+          if (token !== exploreToken) return;
+          const here = hereR.status === "fulfilled" && hereR.value.features && hereR.value.features[0] && hereR.value.features[0].attributes;
+          const near = nearR.status === "fulfilled" && typeof nearR.value.count === "number" ? nearR.value.count : null;
+          if (here) {
+            const exp = here.Expiration_Date ? new Date(here.Expiration_Date) : null;
+            const expTxt = exp && !isNaN(exp) ? exp.toLocaleDateString("en-US", { month: "short", year: "numeric" }) : null;
+            setSnap("ms-str", "snap-str", "Licensed", "approved NUC" + (expTxt ? " · to " + expTxt : ""));
+            noteIntel("tvr", "plus", `<b>This parcel holds an approved short-term-rental license${here.License_Number ? " (NUC " + esc(String(here.License_Number)) + ")" : ""}.</b>${here.Type_of_STR ? " Type: " + esc(String(here.Type_of_STR)) + "." : ""}${expTxt ? " The license runs to <b>" + expTxt + "</b>, per the county registry." : ""} A permitted use most Oʻahu parcels can’t get under Ord. 22-7.`);
+          } else if (near != null && near > 0) {
+            setSnap("ms-str", "snap-str", String(near), "licensed within ½ mi");
+            noteIntel("tvr", "plus", `<b>${near} county-licensed short-term rental${near > 1 ? "s" : ""} within about a half-mile</b> — a recognized STR area. This parcel itself is not on Oʻahu’s approved-NUC registry; outside resort zones, Ord. 22-7 tightly restricts new short-term rentals.`);
+          } else if (near === 0) {
+            noteIntel("tvr", "flag", "No county-licensed short-term rentals within about a half-mile — not an established STR area, and Oʻahu’s Ord. 22-7 tightly restricts new short-term rentals outside resort zones.");
+          }
+        } catch (e) {}
+      })();
       const [asmt, own, cntR] = await Promise.allSettled([
         queryWhere("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10",
           `tmk = '${tmk8}' AND suffix = '0000'`, "landvalue,buildingvalue,taxyr,seq", "taxyr DESC, seq DESC", 1),
@@ -2490,7 +2518,7 @@ function noteIntel(key, kind, html) {
 function flipLabel(key, kind, html) {
   if (key === "tvr") {
     if (kind === "flag") return "STR restricted";
-    if (/licensed vacation rental/i.test(html)) return "Legal vacation rental";
+    if (/licensed vacation rental|short-term-rental license/i.test(html)) return "Legal vacation rental";
     return "Vacation-rental area";
   }
   const M = {
