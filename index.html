@@ -390,6 +390,19 @@
   .intel-row .idot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
   .intel-row.flag .idot { background: #A5442E; }
   .intel-row.plus .idot { background: #0E6E56; }
+  /* The Flag Flip — the instant verdict: red warnings + green truths, each tap = its county receipt */
+  .flip { margin: 15px 0 2px; }
+  .flip .flip-h { font: 700 9.5px/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .flip-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .flip-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 9px; border-radius: 999px; font: 600 12.5px/1 var(--sans); cursor: pointer; border: 1px solid transparent; -webkit-tap-highlight-color: transparent; transition: transform .08s ease, box-shadow .12s ease; }
+  .flip-chip:active { transform: scale(0.96); }
+  .flip-chip .fdot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .flip-chip.red { background: rgba(165,68,46,0.08); border-color: rgba(165,68,46,0.24); color: #8f3a24; }
+  .flip-chip.red .fdot { background: #A5442E; }
+  .flip-chip.green { background: rgba(14,110,99,0.07); border-color: rgba(14,110,99,0.22); color: #0b5a48; }
+  .flip-chip.green .fdot { background: #0E6E56; }
+  .flip-chip.on { box-shadow: 0 0 0 2px rgba(23,21,15,0.14) inset; }
+  #flip-detail { margin-top: 9px; padding: 10px 12px; background: rgba(23,21,15,0.035); border: 1px solid rgba(23,21,15,0.09); border-radius: 11px; font: 500 12.5px/1.5 var(--sans); color: var(--ink); }
   /* Investment snapshot — the money math, one glance, right under the assessed value */
   .msnap { display: flex; gap: 8px; margin: 14px 0 2px; }
   .ms-tile { flex: 1 1 0; min-width: 0; background: rgba(14,110,99,0.06); border: 1px solid rgba(14,110,99,0.16); border-radius: 12px; padding: 10px 11px; }
@@ -1108,7 +1121,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-111</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-112</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2410,6 +2423,57 @@ function noteIntel(key, kind, html) {
     `<div class="subnote">Computed from the county &amp; state records on this card &mdash; informational, not an inspection, valuation, or advice.</div>`;
   const sec = document.getElementById("intel-sec");
   if (sec) sec.style.display = "";
+  try { renderFlagFlip(); } catch (e) {}
+}
+// The Flag Flip — a verdict-first summary of the record: red warnings + green truths, each chip
+// taps open to the same sourced fact shown below. Facts only; never advice or a valuation.
+function flipLabel(key, kind, html) {
+  if (key === "tvr") {
+    if (kind === "flag") return "STR restricted";
+    if (/licensed vacation rental/i.test(html)) return "Legal vacation rental";
+    return "Vacation-rental area";
+  }
+  const M = {
+    flood:  { flag: "Flood zone",       plus: "Outside flood zone" },
+    tsu:    { flag: "Tsunami zone",      plus: "Outside tsunami zone" },
+    slr:    { flag: "Sea-level rise",    plus: "" },
+    fire:   { flag: "Wildfire risk",     plus: "Low wildfire risk" },
+    lava:   { flag: "Lava zone",         plus: "" },
+    zoning: { flag: "Restricted zoning", plus: "" },
+    exempt: { flag: "",                  plus: "Home exemption" }
+  };
+  return (M[key] && M[key][kind]) || "";
+}
+function renderFlagFlip() {
+  const el = document.getElementById("flag-flip");
+  if (!el) return;
+  const FLIP_KEYS = ["flood", "tsu", "slr", "fire", "lava", "zoning", "tvr", "exempt"];
+  const items = Object.entries(intelBag).filter(([k]) => FLIP_KEYS.indexOf(k) !== -1);
+  const reds = items.filter(([, i]) => i.kind === "flag");
+  const greens = items.filter(([, i]) => i.kind === "plus");
+  const chip = ([k, i]) => {
+    const label = flipLabel(k, i.kind, i.html);
+    if (!label) return "";
+    return `<button type="button" class="flip-chip ${i.kind === "flag" ? "red" : "green"}" onclick="showFlipDetail('${k}',this)"><span class="fdot"></span>${label}</button>`;
+  };
+  const chips = [...reds, ...greens].map(chip).join("");
+  if (!chips) { el.style.display = "none"; return; }
+  el.innerHTML =
+    `<div class="flip-h">The flags &middot; tap any for the county source</div>` +
+    `<div class="flip-chips">${chips}</div>` +
+    `<div id="flip-detail" style="display:none"></div>`;
+  el.style.display = "";
+}
+function showFlipDetail(key, btn) {
+  const d = document.getElementById("flip-detail");
+  if (!d || !intelBag[key]) return;
+  const already = btn.classList.contains("on");
+  const chips = document.querySelectorAll("#flag-flip .flip-chip.on");
+  for (let i = 0; i < chips.length; i++) chips[i].classList.remove("on");
+  if (already) { d.style.display = "none"; return; }
+  btn.classList.add("on");
+  d.innerHTML = intelBag[key].html;
+  d.style.display = "";
 }
 function openRecordCard(lng, lat) {
   intelBag = {};
@@ -2443,6 +2507,7 @@ function openRecordCard(lng, lat) {
           <div class="ms-tile" id="ms-rent" style="display:none"><div class="ms-l">Rent / mo</div><div class="ms-v" id="snap-rent"></div></div>
           <div class="ms-tile" id="ms-str" style="display:none"><div class="ms-l">Vacation rentals</div><div class="ms-v" id="snap-str"></div></div>
         </div>
+        <div id="flag-flip" class="flip" style="display:none"></div>
     </div>
     <div class="sec" id="read-sec" style="display:none">
       <div class="h">Moku&#8217;s read <span style="font-weight:400;color:var(--ink-3);font-size:10px;letter-spacing:0.1em">&middot; PLAIN ENGLISH</span></div>
