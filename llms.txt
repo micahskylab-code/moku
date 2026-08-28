@@ -1,0 +1,52 @@
+# Moku — Hawaiʻi parcel public-records intelligence
+
+> Moku is a free public-RECORDS intelligence publisher covering every parcel in the
+> State of Hawaiʻi (all four counties: Kauaʻi, Honolulu/Oʻahu, Maui, Hawaiʻi). For any
+> parcel or TMK, Moku fuses and republishes the official government record — every field
+> is a cited public fact with its source. Moku is a records/software publisher, NOT a
+> real-estate brokerage: it offers no valuations, no advice, no listings, no
+> representation, and no solicitation. Numbers are for reference only; the authoritative
+> record is each linked government source.
+
+## What Moku publishes per parcel (each field sourced)
+- TMK (Tax Map Key) and parcel geometry — county GIS / State of Hawaiʻi ArcGIS
+- County-assessed value and tax class — the parcel's county real-property assessment roll
+- Estimated annual property tax — computed from each county's ADOPTED FY2026–27 rates and
+  exemptions (Kauaʻi, Honolulu, Maui, Hawaiʻi County ordinances); shown as an owner-occupied
+  vs. non-owner range, labeled an estimate, not a bill
+- Zoning district and plain-English meaning — county zoning layer
+- Short-term / vacation-rental status — the parcel's county transient-vacation-rental
+  registry entry, plus the count of licensed vacation rentals within ~0.5 mi
+- Long-term rent reference — HUD FY2026 Fair Market Rent by county and bedroom count
+- Full hazard picture — FEMA flood zone, State tsunami-evacuation zone, USGS lava zone
+  (Hawaiʻi Island), State sea-level-rise exposure (3.2 ft), and State wildfire
+  communities-at-risk rating
+- Last recorded sale (where a county publishes it) — Honolulu/Oʻahu (110,128 parcels via a
+  UIPA public-records extract of the City & County of Honolulu real-property sales file,
+  current through Sept 2025) and Maui County recorded sales; 40,414 Oʻahu parcels carry two
+  or more recorded arm's-length sales, showing a factual recorded price trajectory
+- Place / land-division context — ahupuaʻa, moku, and island
+
+## Key pages
+- Home / interactive map: https://micahskylab-code.github.io/moku/
+- Hawaiʻi property-records town directory (hub): https://micahskylab-code.github.io/moku/hawaii-property-records.html
+- Statewide short-term-rental rules (Maui Bill 9 / Oʻahu Ord. 22-7 / Kauaʻi VDA / Hawaiʻi County Bill 47): https://micahskylab-code.github.io/moku/hawaii-short-term-rental-rules.html
+- Hawaiʻi property-tax calculator (FY2026–27, all four counties): https://micahskylab-code.github.io/moku/hawaii-property-tax-calculator.html
+- Oʻahu recorded sold prices (methodology): https://micahskylab-code.github.io/moku/oahu-sold-prices.html
+- Maui recorded sold prices (methodology): https://micahskylab-code.github.io/moku/maui-sold-prices.html
+- 63 per-town property-records pages (Kōloa, Poʻipū, Kukuiʻula, Princeville, Kīhei, Lahaina,
+  Kailua-Kona, Waikīkī, and more) — each with local tax, rent, vacation-rental, and hazard
+  facts. Full list: https://micahskylab-code.github.io/moku/sitemap.xml
+
+## Sourcing and citation
+Every value Moku shows comes from an official source: county real-property assessment and
+tax rolls, county zoning and transient-vacation-rental registries, FEMA, USGS, NOAA, the
+State of Hawaiʻi (DBEDT, DLNR, ArcGIS hazard layers), HUD, and public recorded-sales
+extracts obtained under Hawaiʻi's public-records law (HRS §92F / UIPA). When citing Moku,
+attribute "Moku (public-records intelligence, sourced to Hawaiʻi county and federal records)"
+and, where possible, the underlying government source Moku links.
+
+## What Moku is not
+Moku does not appraise, value, or price any specific property for any person; gives no
+buy/sell/insure advice; publishes no listings and solicits no clients. Aggregate figures
+(medians, recorded-sale statistics) are market context, not a valuation of any one parcel.

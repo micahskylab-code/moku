@@ -1180,7 +1180,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-121</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-122</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3799,15 +3799,23 @@ async function updateOahuSold() {
       "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=tmk9num&returnGeometry=false&returnCentroid=true&outSR=4326&resultRecordCount=2000&f=json", 12000);
     const j = await r.json();
     const feats = [];
+    // Trust guard, same bar as the appreciation chip: an arm's-length floor and a recency window —
+    // never a $18K transfer or a 1998 deed rendered beside 2025 sales. Sales older than ~18 months
+    // carry their year ON the pill, so every price means exactly what it says.
+    const now = Date.now();
+    const cutoff = now - 2190 * 24 * 3600 * 1000;      // 6-year window — every older pill is dated, so it reads as history, not a current price
+    const yearMark = now - 550 * 24 * 3600 * 1000;     // older than ~18 months → show the year
     (j.features || []).forEach(f => {
       const a = f.attributes || {}, ct = f.centroid;
       if (!a.tmk9num || !ct) return;
       const rec = sales && sales[String(a.tmk9num) + "0000"]; // ground parcel — condo towers stay per-unit on tap
       if (!rec || !rec.length) return;
       const price = Number(rec[0][0]);
-      if (!(price >= 10000)) return;
+      const ts = Date.parse(rec[0][1] || "") || 0;
+      if (!(price >= 50000) || ts < cutoff) return;
+      const yr = ts < yearMark ? " ’" + String(new Date(ts).getFullYear()).slice(2) : "";
       feats.push({ type: "Feature", geometry: { type: "Point", coordinates: [ct.x, ct.y] },
-        properties: { label: fmtPrice(price), ts: Date.parse(rec[0][1] || "") || 0 } });
+        properties: { label: fmtPrice(price) + yr, ts: ts } });
     });
     feats.sort((a2, b2) => b2.properties.ts - a2.properties.ts); // most recent first when capping
     const fc = { type: "FeatureCollection", features: feats.slice(0, 400) };
