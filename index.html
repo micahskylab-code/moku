@@ -402,7 +402,12 @@
   .flip-chip.green { background: rgba(14,110,99,0.07); border-color: rgba(14,110,99,0.22); color: #0b5a48; }
   .flip-chip.green .fdot { background: #0E6E56; }
   .flip-chip.on { box-shadow: 0 0 0 2px rgba(23,21,15,0.14) inset; }
+  .flip-chip.gold { background: rgba(156,122,60,0.11); border-color: rgba(156,122,60,0.34); color: #7c5f2c; font-weight: 700; }
+  .flip-chip.muted { background: rgba(23,21,15,0.05); border-color: rgba(23,21,15,0.15); color: var(--ink-2); font-weight: 700; }
   #flip-detail { margin-top: 9px; padding: 10px 12px; background: rgba(23,21,15,0.035); border: 1px solid rgba(23,21,15,0.09); border-radius: 11px; font: 500 12.5px/1.5 var(--sans); color: var(--ink); }
+  @keyframes flipIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  .flip-chip { animation: flipIn .32s cubic-bezier(.22,.61,.36,1) both; }
+  @media (prefers-reduced-motion: reduce) { .flip-chip { animation: none; } }
   /* Investment snapshot — the money math, one glance, right under the assessed value */
   .msnap { display: flex; gap: 8px; margin: 14px 0 2px; }
   .ms-tile { flex: 1 1 0; min-width: 0; background: rgba(14,110,99,0.06); border: 1px solid rgba(14,110,99,0.16); border-radius: 12px; padding: 10px 11px; }
@@ -1121,7 +1126,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-112</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-113</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2408,6 +2413,7 @@ function composeRead() {
   if (ahu) parts.push(`Historically it lies in the ahupua\u02BBa of <b>${ahu}</b> \u2014 a traditional mountain-to-sea land division.`);
   rt.innerHTML = parts.join(" ") + `<div class="subnote" style="margin-top:8px">Summarized from the official records on this card \u2014 informational, not advice.</div>`;
   sec.style.display = "";
+  try { renderFlagFlip(); } catch (e) {}
 }
 function noteIntel(key, kind, html) {
   intelBag[key] = { kind, html };
@@ -2444,6 +2450,27 @@ function flipLabel(key, kind, html) {
   };
   return (M[key] && M[key][kind]) || "";
 }
+let flipApprDetail = null;
+// Real appreciation measured from two recorded deeds — the number a Zestimate can't give you in Hawaiʻi.
+function computeAppreciation() {
+  flipApprDetail = null;
+  const s = lastRecord && lastRecord.sale;
+  if (!s || !s.prior || !(s.price > 0) || !(s.prior.price > 0)) return null;
+  const y2m = String(s.when).match(/\d{4}/), y1 = parseInt(s.prior.year, 10);
+  const y2 = y2m ? parseInt(y2m[0], 10) : null;
+  if (!y1 || !y2 || y2 <= y1) return null;
+  const yrs = y2 - y1;
+  const totalPct = (s.price / s.prior.price - 1) * 100;
+  if (!isFinite(totalPct) || Math.abs(totalPct) < 1) return null;
+  const cagr = (Math.pow(s.price / s.prior.price, 1 / yrs) - 1) * 100;
+  const up = totalPct >= 0;
+  const r = (n) => Math.abs(n) >= 100 ? Math.round(n) : Math.round(n * 10) / 10;
+  flipApprDetail =
+    `Sold for <b>$${s.price.toLocaleString()}</b> in ${y2}, ${up ? "up from" : "down from"} <b>$${s.prior.price.toLocaleString()}</b> in ${y1} — ` +
+    `about <b>${up ? "+" : "−"}${r(Math.abs(totalPct))}%</b> over ${yrs} year${yrs === 1 ? "" : "s"} (${up ? "" : "−"}${r(Math.abs(cagr))}%/yr), measured from the two recorded deeds.` +
+    `<div class="subnote">Recorded sale prices (public records) &mdash; a factual price history, not a valuation of today&#8217;s market value.</div>`;
+  return { label: `${up ? "▲" : "▼"} ${r(Math.abs(totalPct))}% since ${y1}`, up: up };
+}
 function renderFlagFlip() {
   const el = document.getElementById("flag-flip");
   if (!el) return;
@@ -2451,28 +2478,37 @@ function renderFlagFlip() {
   const items = Object.entries(intelBag).filter(([k]) => FLIP_KEYS.indexOf(k) !== -1);
   const reds = items.filter(([, i]) => i.kind === "flag");
   const greens = items.filter(([, i]) => i.kind === "plus");
-  const chip = ([k, i]) => {
+  const parts = [];
+  const appr = computeAppreciation();
+  if (appr) parts.push(`<button type="button" class="flip-chip ${appr.up ? "gold" : "muted"}" onclick="showFlipDetail('appreciation',this)">${appr.label}</button>`);
+  const chipOf = ([k, i]) => {
     const label = flipLabel(k, i.kind, i.html);
     if (!label) return "";
     return `<button type="button" class="flip-chip ${i.kind === "flag" ? "red" : "green"}" onclick="showFlipDetail('${k}',this)"><span class="fdot"></span>${label}</button>`;
   };
-  const chips = [...reds, ...greens].map(chip).join("");
-  if (!chips) { el.style.display = "none"; return; }
+  [...reds, ...greens].forEach(e => { const c = chipOf(e); if (c) parts.push(c); });
+  if (!parts.length) { el.style.display = "none"; return; }
+  const sig = (appr ? appr.label : "") + "|" + [...reds, ...greens].map(([k, i]) => k + i.kind).join(",");
+  if (el.dataset.sig === sig) { el.style.display = ""; return; } // no change — don't re-animate
+  el.dataset.sig = sig;
+  const chips = parts.map((c, i) => c.replace("<button ", `<button style="animation-delay:${i * 45}ms" `)).join("");
   el.innerHTML =
-    `<div class="flip-h">The flags &middot; tap any for the county source</div>` +
+    `<div class="flip-h">At a glance &middot; tap any for the source</div>` +
     `<div class="flip-chips">${chips}</div>` +
     `<div id="flip-detail" style="display:none"></div>`;
   el.style.display = "";
 }
 function showFlipDetail(key, btn) {
   const d = document.getElementById("flip-detail");
-  if (!d || !intelBag[key]) return;
+  if (!d) return;
+  const html = key === "appreciation" ? flipApprDetail : (intelBag[key] && intelBag[key].html);
+  if (!html) return;
   const already = btn.classList.contains("on");
-  const chips = document.querySelectorAll("#flag-flip .flip-chip.on");
-  for (let i = 0; i < chips.length; i++) chips[i].classList.remove("on");
+  const on = document.querySelectorAll("#flag-flip .flip-chip.on");
+  for (let i = 0; i < on.length; i++) on[i].classList.remove("on");
   if (already) { d.style.display = "none"; return; }
   btn.classList.add("on");
-  d.innerHTML = intelBag[key].html;
+  d.innerHTML = html;
   d.style.display = "";
 }
 function openRecordCard(lng, lat) {
