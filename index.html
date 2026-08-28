@@ -103,6 +103,28 @@
   .veilfoot b { font-weight: 600; color: var(--ink-2); }
   /* The floating mobile search belongs to the working map — never on top of the front door */
   body:not(.docked) #m-search { display: none !important; }
+  /* Hawaii-at-a-glance: every island's live market, right on the front door */
+  .veil-isles {
+    width: min(560px, 92vw); margin-top: 2px;
+    border: 1px solid rgba(23,21,15,0.10); border-radius: 16px;
+    background: rgba(255,255,255,0.62); overflow: hidden;
+  }
+  .vi-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 16px 9px; border-bottom: 1px solid rgba(23,21,15,0.08);
+  }
+  .vi-head .t { font: 700 9.5px/1.2 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
+  .vi-head .a { font: 500 11px/1 var(--sans); color: var(--ink-3); white-space: nowrap; }
+  .vi-row {
+    display: grid; grid-template-columns: 1fr auto 60px; align-items: baseline; gap: 12px;
+    padding: 9px 16px; border-bottom: 1px solid rgba(23,21,15,0.06); text-align: left;
+  }
+  .vi-row:last-child { border-bottom: none; }
+  .vi-row .isl { font-family: var(--serif); font-size: 15px; font-weight: 500; color: var(--ink); }
+  .vi-row .isl small { display: block; font-family: var(--sans); font-size: 10.5px; font-weight: 500; color: var(--ink-3); margin-top: 1px; }
+  .vi-row .med { font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+  .vi-row .yoy { font: 600 12px/1 var(--sans); font-variant-numeric: tabular-nums; text-align: right; }
+  .vi-row .yoy.up { color: #0F6E56; } .vi-row .yoy.dn { color: #A5442E; } .vi-row .yoy.flat { color: var(--ink-3); }
   #veil > * { position: relative; z-index: 1; pointer-events: auto; }
   #veil::after { pointer-events: none; }
   /* Map buttons stay off the front door; they belong to the working map */
@@ -909,6 +931,8 @@
   #lg-tools-btn:hover { color: #16181A; }
   /* Ledger takes over the landing: retire the old floating chrome on desktop */
   body.has-ledger header, body.has-ledger #discover, body.has-ledger #mode-toggle { display: none !important; }
+  /* ...but never abandon the masthead on desktop — logo + a persistent search must always be there */
+  @media (min-width: 761px) { body.has-ledger header { display: flex !important; } }
   body.has-ledger .layerbar { left: 26px; right: auto; transform: none; bottom: 20px; }
   @media (min-width: 761px) {
     body.has-ledger #draw-btn { right: 466px; top: 20px; }
@@ -1054,14 +1078,14 @@
     <button class="try" data-q="4260030240000">TMK 4-2-6-003:024</button>
     <button class="try" id="try-here">&#128205; What&#8217;s under me?</button>
   </div>
-  <button class="explore-link" id="explore-link">or explore the map — sold prices, rentals, flood zones</button>
+  <div class="veil-isles" id="veil-isles"></div>
+  <button class="explore-link" id="explore-link">or explore the full map — sold prices, rentals, flood &amp; tsunami zones</button>
   </div>
-  <a class="veilfoot" href="market.html">
-    <span><b id="vs-active">6,711</b> active statewide</span>
-    <span><b id="vs-median">$1.33M</b> Kaua&#699;i median, H1 2026</span>
-    <span><b id="vs-sold">$537M</b> Kaua&#699;i sold, H1 2026</span>
-    <span onclick="event.preventDefault(); openAbout()" style="cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.45)">About &amp; privacy</span>
-  </a>
+  <div class="veilfoot">
+    <a href="market.html" style="text-decoration:none;color:inherit;font-weight:600">Full market intelligence &rarr;</a>
+    <span onclick="openAbout()" style="cursor:pointer">About &amp; privacy</span>
+    <span>Public records &middot; not a brokerage</span>
+  </div>
 </div>
 
 <div class="passport" id="passport"></div>
@@ -1154,7 +1178,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-116</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-117</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3687,14 +3711,23 @@ if (deep) {
   } catch (e) {}
 }
 
-// Front-door stats come from the same data file as Market Pulse — one source of truth
+// Front-door: every island's live market, from the same data file as Market Pulse — one source of truth
 try {
-  const inv = MARKET.inventory, h1 = MARKET.years["2026 H1"];
-  if (typeof MARKET !== "undefined" && MARKET.statewide) document.getElementById("vs-active").textContent = MARKET.statewide.active_total.toLocaleString();
-  else if (inv && inv.length) document.getElementById("vs-active").textContent = inv[inv.length - 1].count;
-  if (h1 && h1.sf && h1.sf.median) document.getElementById("vs-median").textContent = "$" + (Math.round(h1.sf.median / 1e4) / 100).toFixed(2) + "M";
-  const sold = ["sf", "condo", "land"].reduce((a, k) => a + ((h1 && h1[k] && h1[k].volume) || 0), 0);
-  if (sold) document.getElementById("vs-sold").textContent = "$" + Math.round(sold / 1e6) + "M";
+  const host = document.getElementById("veil-isles");
+  const S = (typeof MARKET !== "undefined" && MARKET.statewide) ? MARKET.statewide : null;
+  if (host && S && S.counties) {
+    const ISLES = [["kauai", "Kauaʻi"], ["oahu", "Oʻahu"], ["maui", "Maui"], ["hawaii", "Hawaiʻi Island"]];
+    const fmtMed = v => v >= 1e6 ? "$" + (v / 1e6).toFixed(2) + "M" : "$" + Math.round(v / 1e3) + "K";
+    const rows = ISLES.map(([k, name]) => {
+      const c = S.counties[k];
+      if (!c) return "";
+      const y = c.sf_yoy, cls = y > 0.3 ? "up" : (y < -0.3 ? "dn" : "flat"), arw = y > 0.3 ? "▲" : (y < -0.3 ? "▼" : "·");
+      return `<div class="vi-row"><div class="isl">${name}<small>${c.sf_n} sold · ${c.active.toLocaleString()} active</small></div>` +
+        `<div class="med">${fmtMed(c.sf_med)}</div>` +
+        `<div class="yoy ${cls}">${arw} ${Math.abs(y).toFixed(1)}%</div></div>`;
+    }).join("");
+    host.innerHTML = `<div class="vi-head"><span class="t">Hawaiʻi &middot; single-family median &amp; year-over-year</span><span class="a">${esc(S.sold_asof)}</span></div>` + rows;
+  }
 } catch (e) {}
 
 // ---- Map layers: real data ON the map, one tap each ----
