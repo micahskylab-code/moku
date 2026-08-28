@@ -21,7 +21,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Moku","url":"https://micahskylab-code.github.io/moku/","description":"Free statewide Hawaii parcel lookup: county-assessed value, exact FY2026-27 property tax, HUD rent benchmark, legal short-term-rental status, recorded sale history with deed-measured appreciation, and the full hazard picture (FEMA flood, tsunami evacuation, USGS lava zone, sea-level rise, wildfire) — every figure from official county, state, and federal records.","applicationCategory":"Real estate","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
-{"@type":"Dataset","name":"Hawaii Parcel Public-Records Intelligence","url":"https://micahskylab-code.github.io/moku/","description":"Per-parcel public-records data for the State of Hawaii, assembled from official sources: county real-property assessment rolls (assessed value, tax class, owner of record), adopted FY2026-27 property-tax rates for all four counties, HUD FY2026 Fair Market Rents, county short-term-rental registries (Kauai TVR, Oahu approved NUCs with expiration dates), FEMA flood zones, State tsunami-evacuation and sea-level-rise exposure areas, USGS lava-flow hazard zones, State wildfire ratings, and recorded sale prices — including 110,000+ Oahu parcels' arm's-length sale history obtained from the City & County of Honolulu under Hawaii's public-records law (UIPA), 40,000+ of them with repeat sales showing deed-measured appreciation.","creator":{"@type":"Organization","name":"Moku"},"isAccessibleForFree":true,"license":"Public records; attribute Moku and the underlying government source","spatialCoverage":{"@type":"Place","name":"State of Hawaii, USA"},"keywords":["Hawaii property records","TMK","recorded sale prices","property tax","short-term rental legality","flood zone","lava zone","tsunami evacuation","HUD fair market rent"]}
+{"@type":"Dataset","name":"Hawaii Parcel Public-Records Intelligence","url":"https://micahskylab-code.github.io/moku/","description":"Per-parcel public-records data for the State of Hawaii, assembled from official sources: county real-property assessment rolls (assessed value, tax class, owner of record), adopted FY2026-27 property-tax rates for all four counties, HUD FY2026 Fair Market Rents, county short-term-rental registries (Kauaʻi TVR, Oʻahu approved NUCs with expiration dates), FEMA flood zones, State tsunami-evacuation and sea-level-rise exposure areas, USGS lava-flow hazard zones, State wildfire ratings, and recorded sale prices — including 110,000+ Oahu parcels' arm's-length sale history obtained from the City & County of Honolulu under Hawaii's public-records law (UIPA), 40,000+ of them with repeat sales showing deed-measured appreciation.","creator":{"@type":"Organization","name":"Moku"},"isAccessibleForFree":true,"license":"Public records; attribute Moku and the underlying government source","spatialCoverage":{"@type":"Place","name":"State of Hawaii, USA"},"keywords":["Hawaii property records","TMK","recorded sale prices","property tax","short-term rental legality","flood zone","lava zone","tsunami evacuation","HUD fair market rent"]}
 ]}
 </script>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2317150F"/><text x="29" y="45" font-family="Georgia,serif" font-size="38" fill="%23FBF9F5" text-anchor="middle">M</text><circle cx="50" cy="41" r="5" fill="%23E8C87E"/></svg>'>
@@ -1169,7 +1169,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-137</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-138</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1225,7 +1225,7 @@
     <button class="x" onclick="closeAbout()" aria-label="Close">&#10005;</button>
     <div class="mtitle" id="about-title">About Moku</div>
     <p style="font-size:13.5px; color:var(--ink-2); margin:10px 0 0;">
-      Moku is a free lookup of Hawaii&#8217;s official property records, built on Kauai by
+      Moku is a free lookup of Hawaii&#8217;s official property records, built on Kauaʻi by
       <b style="color:var(--ink)">Moku</b> — built on Kaua&#699;i, independently and in the open. No accounts, no ads, nothing for sale on this site.</p>
     <p style="font-size:12.5px; color:var(--ink-2); margin:12px 0 0;">
       <b style="color:var(--ink)">Where the data comes from:</b> the State of Hawaii Statewide GIS Program,
@@ -3850,7 +3850,12 @@ async function loadDrawSales() {
     const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E1000&outFields=GIS_SALES_2YEAR_PRICE&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=2000", 15000);
     const gj = await r.json();
     drawSales = (gj.features || []).map(f => ({ x: f.geometry.coordinates[0], y: f.geometry.coordinates[1], p: f.properties.GIS_SALES_2YEAR_PRICE }));
-  } catch (e) { drawSales = []; }
+  } catch (e) {
+    // Never cache a failure as an empty result: doing that made every later draw report
+    // "No recorded sales" for the rest of the session. Leave it unset so the next try refetches.
+    drawSales = null;
+    return null;
+  }
   return drawSales;
 }
 async function analyzeDraw() {
@@ -3859,6 +3864,12 @@ async function analyzeDraw() {
   if (drawPts.length < 3) { panel.innerHTML = drawTip(); return; }
   panel.innerHTML = `<div style="font-size:12.5px;color:#57534A">Counting recorded sales in your area&hellip;</div>`;
   const sales = await loadDrawSales();
+  if (!sales) {
+    panel.innerHTML = `<div style="font-family:var(--serif);font-size:19px;color:#17150F">Couldn&#8217;t reach the county sales server</div>` +
+      `<div style="font-size:12.5px;color:#57534A;margin-top:4px">This isn&#8217;t an empty area &mdash; the records just didn&#8217;t load. ` +
+      `<b style="cursor:pointer;color:var(--accent)" onclick="analyzeDraw()">Try again &#8599;</b></div>` + drawActions();
+    return;
+  }
   const inside = sales.filter(s => pip([s.x, s.y], drawPts)).map(s => s.p).filter(p => p > 0).sort((a, b) => a - b);
   const acres = polyAcres(drawPts);
   if (!inside.length) {
