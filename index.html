@@ -1142,7 +1142,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-126</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-127</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1807,6 +1807,30 @@ function noteRecent(lng, lat, tmk, addr) {
     localStorage.setItem("moku_recent", JSON.stringify(r.slice(0, 12)));
   } catch (e) {}
 }
+// The road-snap: a #999 TMK is the county's road/remnant parcel — no owner, no tax roll, no record.
+// Re-query a ~35 m ring around the pin and take the nearest REAL lot instead; fall back gracefully.
+async function snapOffRoad(county, lng, lat, parcel) {
+  try {
+    const t0 = parcel && pickTmk(parcel.properties || {});
+    if (!t0 || String(t0).slice(-3) !== "999") return parcel;
+    const d = 0.00035;
+    const u = `${GIS_PZ}${county.parcels}/query?geometry=${lng - d},${lat - d},${lng + d},${lat + d}` +
+      `&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=8`;
+    const r = await fetchTimeout(u, 9000);
+    const gj = await r.json();
+    const real = (gj.features || []).filter(f => { const t = pickTmk(f.properties || {}); return t && String(t).slice(-3) !== "999"; });
+    if (!real.length) return parcel;
+    const dist = f => {
+      try {
+        const ring = f.geometry.type === "Polygon" ? f.geometry.coordinates[0] : f.geometry.coordinates[0][0];
+        let cx = 0, cy = 0; ring.forEach(p => { cx += p[0]; cy += p[1]; });
+        return Math.hypot(cx / ring.length - lng, cy / ring.length - lat);
+      } catch (e) { return 9; }
+    };
+    real.sort((a, b) => dist(a) - dist(b));
+    return real[0];
+  } catch (e) { return parcel; }
+}
 async function exploreParcel(lng, lat) {
   dismissVeil();
   try { closePlace(); } catch (e) {} // a parcel and the place card must never sit open at once
@@ -1816,6 +1840,16 @@ async function exploreParcel(lng, lat) {
   setTimeout(() => loadNearby(lng, lat), 60);
   setTimeout(composeRead, 1600);
   setTimeout(() => loadLandHistory(lng, lat), 80);
+  // Never leave skeletons shimmering: if no tax record ever lands, say so honestly.
+  setTimeout(() => {
+    if (token !== exploreToken) return;
+    const av = document.getElementById("fact-assessed");
+    if (av && av.querySelector(".skel"))
+      setFact("assessed", "Assessed value", "No county tax record at this exact spot — roads, easements and common areas aren&#8217;t assessed. Tap a neighboring lot for its record.", "");
+    const tv = document.getElementById("fact-tmk");
+    if (tv && tv.querySelector(".skel") && !(lastRecord && lastRecord.tmk))
+      setFact("tmk", "TMK (county record)", "&mdash;", "");
+  }, 12000);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
   lastRecord = { lng, lat, tmk: null };
@@ -1901,7 +1935,11 @@ async function exploreParcel(lng, lat) {
     if (token !== exploreToken) return;
     // undefined = server unreachable; null = server answered "nothing here"
     const gv = r => r.status === "fulfilled" ? r.value : undefined;
-    const [parcel, zoning, flood, tsu, elem, mid, high, lava, slr, fire] = settled.map(gv);
+    let [parcel, zoning, flood, tsu, elem, mid, high, lava, slr, fire] = settled.map(gv);
+    // Geocoders drop address pins on the STREET — and the street is its own parcel (#999, the county's
+    // road/remnant number) with no tax record. When the pin lands there, snap to the nearest real lot,
+    // or every address search "doesn't work."
+    if (parcel) { parcel = await snapOffRoad(county, lng, lat, parcel); if (token !== exploreToken) return; }
     const failed = settled.slice(0, 4).some(r => r.status === "rejected");
     if (failed) {
       toast(`Some county data didn&#8217;t load &mdash; <b style="cursor:pointer" onclick="exploreParcel(${lng},${lat})">tap to retry</b>`, 8000);
