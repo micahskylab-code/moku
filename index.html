@@ -973,6 +973,7 @@
 </style>
 </head>
 <body>
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Moku — look up any parcel in Hawaiʻi: assessed value, property tax, rent, recorded sales, and hazard risk</h1>
 
 <div id="map"></div>
 
@@ -1085,9 +1086,9 @@
     <div class="dis-t">real recorded sale prices, straight from county deed records</div>
     <div class="dis-a">See every sale &rarr;</div>
   </div>
-  <div class="dis-card" data-go="tvr" data-chip="1,354 rentals">
-    <div class="dis-big">1,354</div>
-    <div class="dis-t">licensed vacation rentals, from the official county registries</div>
+  <div class="dis-card" data-go="tvr" data-chip="registered rentals">
+    <div class="dis-big" id="dis-tvr-n">602</div>
+    <div class="dis-t">Kauaʻi registered vacation rentals, from the county registry</div>
     <div class="dis-a">Check any street &rarr;</div>
   </div>
   <div class="dis-card" data-go="flood" data-chip="Flood &amp; tsunami">
@@ -1107,7 +1108,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-109</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-110</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3838,6 +3839,15 @@ document.querySelectorAll(".lchip").forEach(b => { b.onclick = () => { if (b.dat
       (typeof MARKET !== "undefined" && MARKET.statewide ? MARKET.statewide.active_total.toLocaleString() + " active · statewide" :
         inv[inv.length - 1].count + " active · $" + (Math.round(med / 1e4) / 100).toFixed(2) + "M");
   } catch (e) {}
+  // TVR card: live Kauaʻi registered-rental count from the county registry (self-updating, never drifts)
+  (async () => {
+    try {
+      const r = await fetchTimeout(KAUAI_TVR_URL + "/query?where=1%3D1&returnCountOnly=true&f=json", 12000);
+      const j = await r.json();
+      const el = document.getElementById("dis-tvr-n");
+      if (el && j && typeof j.count === "number" && j.count > 0) el.textContent = j.count.toLocaleString();
+    } catch (e) {}
+  })();
   d.querySelectorAll(".dis-card").forEach(c => {
     c.onclick = () => {
       const go = c.dataset.go;
