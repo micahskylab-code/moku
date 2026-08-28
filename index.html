@@ -1169,7 +1169,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-138</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-139</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -4011,8 +4011,11 @@ function submitLead() {
   saveProfile(name.trim(), email); // one message in = a remembered profile, zero friction
   // Real-time ping ONLY — never put a prospect's name/email/message on a public channel (PII + wire-fraud risk).
   // The lead's actual details travel privately through the email below; this just says "a lead arrived."
+  // .catch matters: try{} only guards the synchronous call — a blocked or offline request rejects
+  // LATER, and an unhandled rejection here would surface as an error on a working lead submission.
   try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method: "POST",
-    headers: { "Title": "New Moku lead" }, body: "A new lead just came in — open your email for the details." }); } catch (e) {}
+    headers: { "Title": "New Moku lead" }, body: "A new lead just came in — open your email for the details." })
+    .catch(() => {}); } catch (e) {}
   // Safety net: the typed lead survives on the sender's own device even if no mail app is set up
   try { navigator.clipboard.writeText(body + "\n\nTo: " + LEAD_INBOX); } catch (e) {}
   location.href = `mailto:${LEAD_INBOX}?subject=${encodeURIComponent(c.subject)}&body=${encodeURIComponent(body)}`;

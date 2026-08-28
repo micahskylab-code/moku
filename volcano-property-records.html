@@ -57,6 +57,12 @@
   .links{ border-top:1px solid var(--line); margin-top:46px; padding-top:20px; font-size:13.5px; }
   .links a{ color:var(--accent); text-decoration:none; margin-right:16px; line-height:2; }
   footer{ border-top:1px solid var(--line); margin-top:34px; padding-top:18px; font-size:12px; color:var(--ink3); line-height:1.6; }
+  /* On a phone a fixed 150px label column squeezed the values — the numbers people came for —
+     into ~170px. Stack the label above its value instead. */
+  @media (max-width:560px){
+    .row{ flex-direction:column; align-items:flex-start; gap:3px; }
+    .row .k{ width:auto; }
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -142,7 +148,7 @@ function sendBrief(f){
   if (!e) return false;
   var subj = "Moku brief signup — Volcano";
   var msg  = "Please add me to the monthly Volcano brief.\n\nMy email: " + e;
-  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method:"POST", headers:{ "Title":"Brief signup · Volcano" }, body:"A brief signup came in from the Volcano page — check your inbox." }); } catch(err){}
+  try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method:"POST", headers:{ "Title":"Brief signup · Volcano" }, body:"A brief signup came in from the Volcano page — check your inbox." }).catch(function(){}); } catch(err){}
   // The mailto often does nothing (no mail handler configured) — copy first so the signup is never lost.
   try { if (navigator.clipboard) navigator.clipboard.writeText(subj + "\n" + msg); } catch(err){}
   try { location.href = "mailto:micahskylab@gmail.com?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(msg); } catch(err){}
