@@ -144,7 +144,10 @@
   /* Map buttons stay off the front door; they belong to the working map */
   body:not(.docked) .maplibregl-ctrl-group,
   body:not(.docked) .maplibregl-ctrl button.maplibregl-ctrl-geolocate { opacity: 0; pointer-events: none; }
-  #veil.gone { opacity: 0; pointer-events: none; }
+  /* Dismissed = actually gone: visibility (delayed past the fade) removes the invisible
+     search box, chips and links from the tab order and screen readers — before this, a
+     keyboard or VoiceOver user tabbed through a whole phantom front door over the map. */
+  #veil.gone { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
   .onebox-wrap { position: relative; width: min(560px, 92vw); }
   #onebox {
     width: 100%;
@@ -1027,7 +1030,7 @@
   <div class="logo" id="logo-home" title="Beta &middot; live county records"><span>Moku<span class="dot">.</span></span> <span class="live-dot"></span></div>
   <div class="docked-wrap">
     <span class="mag">&#9906;</span>
-    <input id="dockbox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
+    <input id="dockbox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" enterkeyhint="search">
     <div id="dock-suggest"></div>
   </div>
   <div id="mode-toggle" title="Simple keeps it clean. Pro unlocks every layer, the draw tool, and deep intelligence.">
@@ -1046,7 +1049,7 @@
   <div class="sub">Every parcel in Hawaii. One search.</div>
   <div class="onebox-wrap">
     <span class="mag">&#9906;</span>
-    <input id="onebox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" autofocus>
+    <input id="onebox" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" enterkeyhint="search" autofocus>
     <div id="suggest"></div>
   </div>
   <div class="trychips">
@@ -1105,7 +1108,7 @@
   </div>
   <div class="lg-cmd">
     <span class="lg-mag">&#9906;</span>
-    <input id="lg-search" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off">
+    <input id="lg-search" type="text" placeholder="Any Hawaii address or TMK" autocomplete="off" enterkeyhint="search">
     <div class="lg-tools">
       <button id="lg-tools-btn">Layers &amp; tools</button>
       <button id="lg-me-btn">My Moku</button>
@@ -1144,7 +1147,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-129</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-130</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1280,17 +1283,7 @@ if (location.search.includes("debug")) {
 
 // ---- Device: layout adapts to size; heavy features only downgrade on MEASURED slowness ----
 const SMALL = Math.min(screen.width, screen.height) < 780 || (window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
-let LITE = false;
-function watchPerf() {
-  let n = 0, slow = 0, last = performance.now();
-  const step = t => {
-    const dt = t - last; last = t;
-    if (dt > 34) slow++;
-    if (++n < 90) requestAnimationFrame(step);
-    else if (slow > 30 && !LITE) { LITE = true; try { map.setTerrain(null); } catch (e) {} }
-  };
-  requestAnimationFrame(step);
-}
+let LITE = false; // measured-slowness downgrade: armTerrain's own frame probe flips this
 
 // ---- Map: designed light cartography wide, real satellite land up close ----
 const SAT_SOURCE = {
@@ -1308,13 +1301,17 @@ const FALLBACK_SAT_STYLE = {
   sources: { sat: SAT_SOURCE, dem: DEM_SOURCE },
   layers: [
     { id: "bg", type: "background", paint: { "background-color": "#357FA4" } },
-    { id: "sat", type: "raster", source: "sat" },
-    { id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
-      paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
-        "hillshade-highlight-color": "rgba(255,250,235,0.30)", "hillshade-accent-color": "rgba(26,42,32,0.25)",
-        "hillshade-illumination-direction": 315 } }
+    { id: "sat", type: "raster", source: "sat" }
   ]
 };
+// Hillshade is a desktop luxury. On phones it meant downloading DEM elevation tiles AND
+// re-shading them on the GPU during every pinch — a real cause of zoom freezes on older
+// iPhones (armTerrain always knew this; the BOOT style was still shipping it to phones).
+// Phones boot flat satellite; desktop keeps the sculpted light.
+if (!SMALL) FALLBACK_SAT_STYLE.layers.push({ id: "hills", type: "hillshade", source: "dem", maxzoom: 15,
+  paint: { "hillshade-exaggeration": 0.32, "hillshade-shadow-color": "rgba(26,42,32,0.55)",
+    "hillshade-highlight-color": "rgba(255,250,235,0.30)", "hillshade-accent-color": "rgba(26,42,32,0.25)",
+    "hillshade-illumination-direction": 315 } });
 // ---- THE MAP IS OPTIONAL. If the map library fails to load or WebGL can't start on this
 // device (old phones, iOS Lockdown Mode, GPU crashes, a dropped connection mid-load), the
 // product must still work: search → record card → every number. A dead map may never again
@@ -1346,7 +1343,11 @@ try {
     bearing: 0,
     attributionControl: false,
     clickTolerance: 8,
-    maxPitch: SMALL ? 0 : 72
+    maxPitch: SMALL ? 0 : 72,
+    // Old-iPhone lifeline: render at up to 2x, never 3x. A 3x phone was filling 9x the pixels
+    // of a 1x screen every frame of a pinch — on satellite imagery 2x is visually identical,
+    // and it is the difference between a smooth zoom and a frozen tab.
+    pixelRatio: SMALL ? Math.min(window.devicePixelRatio || 1, 2) : undefined
   });
   map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true }), "bottom-right");
@@ -1419,12 +1420,24 @@ try {
         l.layout = Object.assign({}, l.layout, { visibility: "none" });
       }
     });
-    // Roads, towns, and labels arrive as a quiet upgrade after the landing — never before first paint
+    // Roads, towns, and labels arrive as a quiet upgrade after the landing — never before first
+    // paint, and NEVER mid-gesture: a full setStyle rebuild is a multi-second stall on older
+    // phones, and the old one-shot guard could land it 400ms after a pinch — right as the next
+    // pinch began ("I zoom and it freezes"). Now it waits until the map is still AND no finger
+    // is on the glass, retrying quietly until the moment is calm.
     const applyPositron = () => { try { map.setStyle(st); } catch (e) {} };
-    setTimeout(() => {
-      if (map.isMoving()) map.once("moveend", () => setTimeout(applyPositron, 400));
-      else applyPositron();
-    }, SMALL ? 5200 : 4200);
+    let fingersOnMap = 0;
+    try {
+      const mapEl = document.getElementById("map");
+      const track = e => { fingersOnMap = (e.touches && e.touches.length) || 0; };
+      ["touchstart", "touchend", "touchcancel"].forEach(t => mapEl.addEventListener(t, track, { passive: true }));
+    } catch (e) {}
+    const applyWhenCalm = () => {
+      if (MAP_DEAD) return;
+      if (fingersOnMap > 0 || map.isMoving()) { setTimeout(applyWhenCalm, 1100); return; }
+      applyPositron();
+    };
+    setTimeout(applyWhenCalm, SMALL ? 5200 : 4200);
   })
   .catch(() => {});
 
@@ -1618,9 +1631,14 @@ async function queryWhere(url, where, outFields, orderBy, count) {
 const KAUAI_TAX_URL = "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/TY26_PropertyTaxData/FeatureServer/0";
 const KAUAI_TVR_URL = "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/Kauai_TransientVacationRental_NCTVRs/FeatureServer/0";
 const MAUI_SALES_URL = "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_2_Year/FeatureServer/23";
-// Oahu recorded sales — City & County of Honolulu BFS extract (public records, obtained via UIPA). ~110k parcels, lazy-loaded once, cached.
+// Oahu recorded sales — City & County of Honolulu BFS extract (public records, obtained via UIPA).
+// ~110k parcels in a ~5MB file. The file is fetched AND parsed inside a Web Worker and STAYS
+// there — the main thread never holds it, never parses it, never freezes for it (older phones
+// locked up for a second-plus on the first Oʻahu tap when this parse ran on the UI thread).
+// Lookups travel over postMessage in small batches. If Workers are unavailable, the original
+// main-thread path below still answers — same data, same guards, just without the isolation.
 let OAHU_SALES = null, oahuSalesLoading = null;
-function loadOahuSales() {
+function loadOahuSales() { // fallback path only — the worker is the primary
   if (OAHU_SALES) return Promise.resolve(OAHU_SALES);
   if (oahuSalesLoading) return oahuSalesLoading;
   oahuSalesLoading = fetch("oahu-sales.json").then(r => r.ok ? r.json() : {}).then(j => {
@@ -1636,6 +1654,58 @@ function loadOahuSales() {
     return (OAHU_SALES = j);
   }).catch(() => (OAHU_SALES = {}));
   return oahuSalesLoading;
+}
+let _slsW = null, _slsSeq = 0, _slsDead = false, _slsWarned = false;
+const _slsPend = new Map();
+function salesWorker() {
+  if (_slsW || _slsDead) return _slsW;
+  try {
+    // Same format guard as the fallback, running inside the worker: fail safe, never misread.
+    const src =
+      "let db=null,loading=null,bad=false;" +
+      "function ensure(u){if(db)return Promise.resolve(db);" +
+      "if(!loading)loading=fetch(u).then(r=>r.ok?r.json():{}).then(j=>{" +
+      "try{const k=j&&Object.keys(j)[0];" +
+      "if(k&&!(Array.isArray(j[k])&&(!j[k].length||Array.isArray(j[k][0])))){bad=true;j={};}}" +
+      "catch(e){j={};}return (db=j);}).catch(()=>(db={}));return loading;}" +
+      "onmessage=async e=>{const d=await ensure(e.data.url);const out={};" +
+      "for(const k of (e.data.keys||[]))if(d[k])out[k]=d[k];" +
+      "postMessage({id:e.data.id,recs:out,bad:bad});};";
+    _slsW = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+    _slsW.onmessage = ev => {
+      const d = ev.data || {};
+      if (d.bad && !_slsWarned) { _slsWarned = true; journalError("oahu-sales.json format mismatch — records suppressed"); }
+      const res = _slsPend.get(d.id);
+      if (res) { _slsPend.delete(d.id); res(d.recs || {}); }
+    };
+    _slsW.onerror = () => { // worker died mid-flight — every waiter falls back to the main-thread path
+      _slsDead = true;
+      const waiting = Array.from(_slsPend.values());
+      _slsPend.clear();
+      try { _slsW.terminate(); } catch (e) {}
+      _slsW = null;
+      waiting.forEach(res => res(null));
+    };
+  } catch (e) { _slsDead = true; _slsW = null; }
+  return _slsW;
+}
+// Look up specific TMK keys in the sales file without ever parsing it on the UI thread.
+// Resolves to {key: rec} — only keys with recorded sales appear. salesLookup([]) pre-warms
+// the worker's file fetch so it runs in parallel with whatever else is loading.
+function salesLookup(keys) {
+  const fallback = () => loadOahuSales().then(s => {
+    const out = {};
+    (keys || []).forEach(k => { if (s && s[k]) out[k] = s[k]; });
+    return out;
+  });
+  const w = salesWorker();
+  if (!w) return fallback();
+  return new Promise(res => {
+    const id = ++_slsSeq;
+    _slsPend.set(id, res);
+    try { w.postMessage({ id: id, url: new URL("oahu-sales.json", location.href).href, keys: keys || [] }); }
+    catch (e) { _slsPend.delete(id); res(null); }
+  }).then(r => (r === null ? fallback() : r));
 }
 const pickTmk = p => p.tmk_txt || p.tmk9txt || (p.tmk != null ? String(p.tmk) : null);
 // County records arrive as raw ALL-CAPS data dumps — translate to human
@@ -2421,12 +2491,12 @@ async function enrichCounty(county, token, tmkRaw) {
         setFact("owner", "Owner of record", "Individually owned units — open the county record for a specific unit&#8217;s owner", "");
         return;
       }
-      // Last recorded sale — City & County of Honolulu BFS sales extract (public records). Non-blocking; the file loads once and caches.
+      // Last recorded sale — City & County of Honolulu BFS sales extract (public records). Non-blocking; the worker holds the file.
       (async () => {
         try {
-          const sales = await loadOahuSales();
-          if (token !== exploreToken || !sales) return;
           const hpr = (digits.length >= 13 ? digits.slice(9, 13) : "0000");
+          const sales = await salesLookup(hpr !== "0000" ? [tmk9 + hpr, tmk9 + "0000"] : [tmk9 + "0000"]);
+          if (token !== exploreToken || !sales) return;
           const rec = sales[tmk9 + hpr] || (hpr !== "0000" ? sales[tmk9 + "0000"] : null);
           if (!rec || !rec.length) return;
           const price = Number(rec[0][0]);
@@ -3223,20 +3293,12 @@ function wireSearch(inputId, suggestId) {
     });
   }
   input.addEventListener("focus", () => { if (!input.value.trim()) renderDemoSug(); });
-  input.addEventListener("keydown", async e => {
-    if (sug.classList.contains("open") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-      e.preventDefault();
-      hot = e.key === "ArrowDown" ? Math.min(hot + 1, items.length - 1) : Math.max(hot - 1, 0);
-      highlight();
-      return;
-    }
-    if (e.key === "Escape") {
-      if (sug.classList.contains("open")) e.stopPropagation(); // Escape here means "close the dropdown", not the record
-      closeSug();
-      return;
-    }
-    if (e.key === "Enter" && hot >= 0 && items[hot]) { pickSug(items[hot]); return; }
-    if (e.key !== "Enter") return;
+  // One submit path, reachable from EVERY phone keyboard. Many Android IMEs fire the go/search
+  // key as keyCode 229 / key "Unidentified" (or ""), so a bare `e.key === "Enter"` check left
+  // search silently dead on those phones — type an address, hit go, nothing. The beforeinput
+  // "insertLineBreak" signal is what those keyboards DO reliably send on a single-line input.
+  async function submitQuery() {
+    if (hot >= 0 && items[hot]) { pickSug(items[hot]); return; }
     searchSeq++;
     clearTimeout(timer);
     const q = input.value.trim();
@@ -3272,6 +3334,23 @@ function wireSearch(inputId, suggestId) {
         }
       } catch (err) { toast("Search failed — try again"); }
     }
+  }
+  input.addEventListener("keydown", e => {
+    if (sug.classList.contains("open") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      hot = e.key === "ArrowDown" ? Math.min(hot + 1, items.length - 1) : Math.max(hot - 1, 0);
+      highlight();
+      return;
+    }
+    if (e.key === "Escape") {
+      if (sug.classList.contains("open")) e.stopPropagation(); // Escape here means "close the dropdown", not the record
+      closeSug();
+      return;
+    }
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) { e.preventDefault(); submitQuery(); }
+  });
+  input.addEventListener("beforeinput", e => {
+    if (e.inputType === "insertLineBreak") { e.preventDefault(); submitQuery(); }
   });
 }
 
@@ -3901,11 +3980,15 @@ async function updateOahuSold() {
     if (_osoldCache.has(key)) { map.getSource("oahu-sold-src").setData(_osoldCache.get(key)); return; }
     if (_osoldBusy) return;
     _osoldBusy = true;
-    const sales = await loadOahuSales();
+    salesLookup([]); // pre-warm: the worker starts fetching the sales file while the county query runs
     const r = await fetchTimeout("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/All_Parcels/FeatureServer/0/query?where=1%3D1&geometry=" +
       encodeURIComponent(bbox.join(",")) +
       "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=tmk9num&returnGeometry=false&returnCentroid=true&outSR=4326&resultRecordCount=2000&f=json", 12000);
     const j = await r.json();
+    // Batch the viewport's TMKs into ONE worker lookup — the 110K-record file never touches this thread
+    const sales = await salesLookup((j.features || [])
+      .map(f => f.attributes && f.attributes.tmk9num && f.centroid ? String(f.attributes.tmk9num) + "0000" : null)
+      .filter(Boolean));
     const feats = [];
     // Trust guard, same bar as the appreciation chip: an arm's-length floor and a recency window —
     // never a $18K transfer or a 1998 deed rendered beside 2025 sales. Sales older than ~18 months
