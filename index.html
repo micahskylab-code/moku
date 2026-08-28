@@ -1058,7 +1058,7 @@
   </div>
   <div class="lg-rule"></div>
   <div class="lg-closings">
-    <div class="lg-kick brass">LATEST RECORDED SALES &middot; MAUI COUNTY</div>
+    <div class="lg-kick brass" id="lg-closings-hdr">RECORDED SALES &middot; MAUI COUNTY</div>
     <div id="lg-closings-rows"><div class="lg-mut">Loading recorded sales&hellip;</div></div>
   </div>
   <div class="lg-cmd">
@@ -1107,7 +1107,7 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-108</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-109</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -3191,7 +3191,14 @@ try { wireSearch("m-search-input", "m-suggest"); } catch (e) {}
     try {
       const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales_Points_2_Year/FeatureServer/24/query?where=GIS_SALES_2YEAR_PRICE%3E50000&outFields=GIS_SALES_2YEAR_PRICE,GIS_SALES_2YEAR_SALEDT&orderByFields=GIS_SALES_2YEAR_SALEDT%20DESC&returnGeometry=true&outSR=4326&f=geojson&resultRecordCount=3", 12000);
       const gj = await r.json();
-      const rows = (gj.features || []).map(f => {
+      const feats = gj.features || [];
+      // Honest, self-updating currency label — county recorded-sales data lags the market by months
+      if (feats.length) {
+        const nd = new Date(feats[0].properties.GIS_SALES_2YEAR_SALEDT + "T12:00:00");
+        const hdr = document.getElementById("lg-closings-hdr");
+        if (hdr && !isNaN(nd)) hdr.textContent = "RECORDED SALES · MAUI COUNTY · THROUGH " + nd.toLocaleDateString("en-US", { month: "short", year: "numeric" }).toUpperCase();
+      }
+      const rows = feats.map(f => {
         const [x, y] = f.geometry.coordinates, p = f.properties.GIS_SALES_2YEAR_PRICE, dt = f.properties.GIS_SALES_2YEAR_SALEDT;
         const d = new Date(dt + "T12:00:00"); const when = isNaN(d) ? "" : d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
         return `<div class="lg-crow" onclick="exploreParcel(${x.toFixed(6)},${y.toFixed(6)})">
