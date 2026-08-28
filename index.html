@@ -462,9 +462,9 @@
   @media (prefers-reduced-motion: reduce) { .flip-chip { animation: none; } }
   /* Investment snapshot — the money math, one glance, right under the assessed value */
   .msnap { display: flex; gap: 8px; margin: 14px 0 2px; }
-  .ms-tile { flex: 1 1 0; min-width: 0; background: rgba(14,110,99,0.06); border: 1px solid rgba(14,110,99,0.16); border-radius: 12px; padding: 10px 11px; }
+  .ms-tile { flex: 1 1 0; min-width: 0; background: #F3F0E9; border: 1px solid rgba(23,21,15,0.10); border-radius: 12px; padding: 10px 11px; }
   .ms-l { font-family: var(--sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; white-space: nowrap; }
-  .ms-v { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.08; font-variant-numeric: tabular-nums; }
+  .ms-v { font-family: var(--serif); font-size: 18px; font-weight: 500; color: #7A5E2E; line-height: 1.08; font-variant-numeric: tabular-nums; }
   .ms-v small { display: block; font-family: var(--sans); font-size: 10.5px; font-weight: 500; color: var(--ink-2); margin-top: 2px; letter-spacing: 0; }
   @media (max-width: 480px) {
     .msnap { gap: 6px; }
@@ -603,33 +603,6 @@
     }
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
-
-  /* ---- The opening: market numbers as theater ---- */
-  #ovation {
-    position: absolute; inset: 0; z-index: 150;
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; pointer-events: none;
-    background: radial-gradient(80% 70% at 50% 46%, rgba(6,12,18,0.0) 0%, rgba(6,12,18,0.42) 100%);
-    opacity: 0; transition: opacity 0.7s ease;
-  }
-  #ovation.on { display: flex; opacity: 1; }
-  #ovation.fade { opacity: 0; }
-  .ov-kicker {
-    font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 0.34em;
-    color: rgba(255,255,255,0.75); margin-bottom: 18px;
-    text-shadow: 0 1px 12px rgba(0,0,0,0.6);
-  }
-  .ov-big {
-    font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em;
-    font-size: clamp(64px, 12vw, 128px); line-height: 1; color: #fff;
-    font-variant-numeric: tabular-nums;
-    text-shadow: 0 2px 30px rgba(0,0,0,0.65);
-  }
-  .ov-sub {
-    font-family: var(--sans); font-size: 13.5px; font-weight: 600; letter-spacing: 0.06em;
-    color: var(--lux-gold, #E3C27C); margin-top: 16px;
-    text-shadow: 0 1px 10px rgba(0,0,0,0.6);
   }
 
   /* ============ GALLERY WHITE — dark serif on white paper; the map is the art ============ */
@@ -841,18 +814,6 @@
     #draw-panel { top: auto; bottom: calc(150px + env(safe-area-inset-bottom)); right: 12px; left: 12px; width: auto; }
   }
 
-  /* ============ CINEMATIC HERO ============ */
-  #hero-line {
-    position: absolute; left: 56px; bottom: 72px; z-index: 44; max-width: 460px;
-    animation: heroUp 0.9s cubic-bezier(.32,.72,0,1) both;
-  }
-  @keyframes heroUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .hl-kick { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; opacity: 0.9; text-shadow: 0 1px 12px rgba(0,0,0,0.6); }
-  .hl-big { font-family: var(--serif); font-size: clamp(40px, 5vw, 62px); font-weight: 400; line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 12px 0 14px; text-shadow: 0 2px 30px rgba(0,0,0,0.55); }
-  .hl-sub { font-family: var(--sans); font-size: 15px; font-weight: 500; line-height: 1.55; color: #fff; opacity: 0.92; max-width: 380px; text-shadow: 0 1px 14px rgba(0,0,0,0.6); }
-  @media (max-width: 760px) { #hero-line { display: none; } }
-  body.engaged #hero-line { animation: none !important; opacity: 0 !important; transform: translateY(10px); pointer-events: none; transition: opacity 0.55s ease, transform 0.55s ease; }
-  body.has-ledger #hero-line { display: none !important; } /* once the ledger is up, the hero must never collide with the layer chips (desktop included) */
   /* ============ THE STANDING LEDGER ============ */
   #ledger {
     position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 46;
@@ -944,7 +905,6 @@
   @media (max-width: 760px) {
     /* MOBILE = a normal scrolling page: map band on top, data flows below, the whole page scrolls */
     #ledger { max-width: none; }
-    body.has-ledger #hero-line { display: none !important; }
     .lg-big { font-size: clamp(44px, 12vw, 56px); }
     .passport { max-height: 88vh !important; }
     body.has-ledger .layerbar { bottom: calc(132px + env(safe-area-inset-bottom)) !important; left: 8px; right: 8px; transform: none; justify-content: flex-start; overflow-x: auto; }
@@ -1084,7 +1044,7 @@
   <button class="explore-link" id="explore-link">or explore the full map — sold prices, rentals, flood &amp; tsunami zones</button>
   </div>
   <div class="veilfoot">
-    <a href="market.html" style="text-decoration:none;color:inherit;font-weight:600">Full market intelligence &rarr;</a>
+    <a href="market.html" style="text-decoration:none;color:inherit;font-weight:600">Kaua&#699;i market intelligence &rarr;</a>
     <span onclick="openAbout()" style="cursor:pointer">About &amp; privacy</span>
     <span>Public records &middot; not a brokerage</span>
   </div>
@@ -1104,11 +1064,6 @@
 </div>
 <div id="toast"></div>
 <div id="hint"><span>&#128070;</span> Tap any neighboring lot to hop records</div>
-<div id="hero-line">
-  <div class="hl-kick">HAWAI&#699;I &middot; EVERY PARCEL, EVERY ISLAND</div>
-  <div class="hl-big">The islands,<br>by the numbers.</div>
-  <div class="hl-sub">Real county records for every property in Hawai&#699;i &mdash; owners, values, sales, risk. Free, sourced, live.</div>
-</div>
 <div id="m-search"><span class="mmag">&#9906;</span><input id="m-search-input" type="text" placeholder="Search a place, a beach, or an address" autocomplete="off" enterkeyhint="search"><div id="m-suggest"></div></div>
 <div id="ledger">
   <div id="ledger-handle"></div>
@@ -1174,13 +1129,8 @@
     <div class="dis-a">Market Intelligence &rarr;</div>
   </div>
 </div>
-<div id="ovation" aria-hidden="true">
-  <div class="ov-kicker">HAWAI&#699;I&#8217;S PROPERTY MARKET</div>
-  <div class="ov-big" id="ov-num">$0</div>
-  <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
-</div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-122</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-123</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2688,7 +2638,7 @@ function openRecordCard(lng, lat) {
         <span>&middot;</span>
         <button id="save-btn" onclick="toggleSave()">&#9734; Save</button>
         <span>&middot;</span>
-        <button id="copy-record">Copy link</button>
+        <button id="copy-record">Share the record</button>
         <span>&middot;</span>
         <a id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
       </div>
@@ -2697,8 +2647,28 @@ function openRecordCard(lng, lat) {
   document.getElementById("copy-record").onclick = async () => {
     const hash = lastRecord && lastRecord.tmk ? "tmk=" + String(lastRecord.tmk).replace(/\D/g, "") : "p=" + lng.toFixed(5) + "," + lat.toFixed(5);
     setHash(hash);
+    // The truth card: this record's own facts — sale, value, tax, flags — composed for sharing.
+    const L = [];
+    const place = ((document.getElementById("rec-addr") || {}).textContent || "").trim();
     const label = lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : "This parcel";
-    await shareIt(`${label} — live county record on Moku`, hash);
+    L.push((place && !/^-?\d/.test(place) ? place + " · " : "") + label);
+    if (lastRecord.sale && lastRecord.sale.price >= 10000) {
+      let s = "Last recorded sale $" + Number(lastRecord.sale.price).toLocaleString() + " (" + lastRecord.sale.when + ")";
+      if (lastRecord.sale.prior) s += " — previously $" + Number(lastRecord.sale.prior.price).toLocaleString() + " (" + lastRecord.sale.prior.year + ")";
+      L.push(s);
+    } else if (lastRecord.assessed > 10000) {
+      L.push("County-assessed $" + Number(lastRecord.assessed).toLocaleString());
+    }
+    if (lastRecord.taxOwner >= 1) L.push("Est. property tax $" + Math.round(lastRecord.taxOwner).toLocaleString() + "/yr owner-occupied");
+    try {
+      const strip = document.createElement("div"); // strips tags AND decodes entities for plain-text share
+      const warn = Object.values(intelBag).filter(i => i.kind === "flag")
+        .map(i => { strip.innerHTML = i.html; return (strip.textContent || "").split("—")[0].split(".")[0].trim(); })
+        .filter(Boolean).slice(0, 3);
+      if (warn.length) L.push("⚠ " + warn.join(" · "));
+    } catch (e) {}
+    L.push("Official county records, free on Moku:");
+    await shareIt(L.join("\n"), hash);
   };
   const parcelLabel = () => lastRecord && lastRecord.tmk ? "TMK " + fmtTmk(lastRecord.tmk) : lat.toFixed(5) + ", " + lng.toFixed(5);
   document.getElementById("watch-parcel").onclick = () => openLead("owner", parcelLabel());
@@ -3192,28 +3162,6 @@ setTimeout(() => begin(), 6000);
       map.jumpTo({ center: h.c, zoom: h.z, pitch: SMALL ? 0 : (firstVisit ? 28 : 48), bearing: SMALL ? 0 : (firstVisit ? 0 : -18) });
       return;
     }
-    // The opening: the year's real dollars count up over the island chain, then the dive
-    let ovDone = false;
-    try {
-      const y = MARKET.years["2025"];
-      const total = (y.sf.volume || 0) + (y.condo.volume || 0) + (y.land.volume || 0);
-      if (total > 1e8 && !SMALL && !document.body.classList.contains("has-ledger")) {
-        const ov = document.getElementById("ovation");
-        const num = document.getElementById("ov-num");
-        ov.classList.add("on");
-        const t0 = performance.now(), DUR = 900;
-        const tick = t => {
-          const k = Math.min(1, (t - t0) / DUR);
-          const ease = 1 - Math.pow(1 - k, 3);
-          num.textContent = "$" + (total * ease / 1e9).toFixed(2) + "B";
-          if (k < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-        setTimeout(() => { ov.classList.add("fade"); }, 1200);
-        setTimeout(() => { ov.classList.remove("on", "fade"); }, 1800);
-        ovDone = true;
-      }
-    } catch (e) {}
     setTimeout(() => {
       map.flyTo({ center: h.c, zoom: h.z, pitch: SMALL ? 0 : (firstVisit ? 28 : 48), bearing: SMALL ? 0 : (firstVisit ? 0 : -18), speed: SMALL ? 1.6 : 1.15, curve: 1.42, maxDuration: SMALL ? 1800 : 2400, essential: false });
       map.once("moveend", () => {
@@ -3233,7 +3181,7 @@ setTimeout(() => begin(), 6000);
           }
         } catch (e) {}
       });
-    }, ovDone ? 1300 : 250);
+    }, 250);
   };
   window.begin = _begin;
 }
