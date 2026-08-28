@@ -264,7 +264,9 @@
     backdrop-filter: blur(16px) saturate(160%);
     border-radius: 999px;
     padding: 10px 18px 10px 38px;
-    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--chrome-ink);
+    /* 16px: below it, iOS Safari auto-zooms the whole app when this is focused (and never
+       restores) — which is what happened to anyone searching from a landscape iPhone. */
+    font-family: var(--sans); font-size: 16px; font-weight: 500; color: var(--chrome-ink);
     outline: none;
     transition: border-color 0.25s;
   }
@@ -314,7 +316,9 @@
     border: 1px solid rgba(255,255,255,0.6);
     border-radius: 22px;
     box-shadow: var(--shadow-2);
-    overflow-y: auto;
+    /* contain: scrolling to the end of a record used to chain into a whole-page rubber-band,
+       so the app visibly bounced behind the card mid-read. */
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
     transform: translateX(calc(100% + 32px));
     transition: transform 0.55s var(--spring);
   }
@@ -1160,7 +1164,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-132</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-133</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1367,6 +1371,23 @@ try {
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), "bottom-right");
   window.addEventListener("resize", () => map.resize());
   new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
+  // Back-swipe from a town page restores this page from iOS Safari's back/forward cache with the
+  // WebGL context often suspended — the map comes back blank or frozen and looks like the old
+  // freeze bug. Nudge it awake on restore; if the canvas is truly lost, reload once.
+  window.addEventListener("pageshow", e => {
+    if (!e.persisted) return;
+    try {
+      map.resize();
+      map.triggerRepaint();
+      setTimeout(() => {
+        try {
+          const c = map.getCanvas && map.getCanvas();
+          const gl = c && (c.getContext("webgl2") || c.getContext("webgl"));
+          if (!gl || gl.isContextLost()) location.reload();
+        } catch (e2) {}
+      }, 400);
+    } catch (e3) { location.reload(); }
+  });
 } catch (mapErr) {
   MAP_DEAD = true;
   map = __hole;
