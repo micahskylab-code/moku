@@ -144,7 +144,7 @@
   <div id="all-islands" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0 8px"></div>
   <div class="eyebrow">Every number sourced &middot; updated <span id="updated">—</span></div>
   <h1>The island&#8217;s market, organized.</h1>
-  <p class="sub">Year by year, segment by segment — every number sourced, nothing estimated. Kauai first; statewide as county data lands.</p>
+  <p class="sub">Year by year, segment by segment — every number sourced, nothing estimated. Kaua&#699;i in depth; every island at a glance below.</p>
 
   <div class="hero">
     <div>
@@ -156,6 +156,12 @@
       <svg id="inv-chart" viewBox="0 0 640 88" preserveAspectRatio="none"></svg>
     </div>
   </div>
+
+  <section>
+    <div class="kicker"><span class="tag">Statewide</span><h2>Every island, at a glance</h2></div>
+    <div class="card" style="padding:4px 22px" id="state-board"></div>
+    <p style="font-size:12px;color:var(--ink-3);margin-top:8px">Single-family medians &amp; year-over-year (Q1 2026, DBEDT) with sold counts and active inventory as published &mdash; the same figures that power the <a href="index.html" style="color:var(--accent)">live map</a>&#8217;s front door.</p>
+  </section>
 
   <section>
     <div class="kicker"><span class="tag">By the numbers</span><h2>Year by year, every segment</h2></div>
@@ -212,6 +218,28 @@ if (typeof MARKET === "undefined" || !MARKET.inventory || !MARKET.inventory.leng
 const fmtM = v => v == null ? "—" : "$" + (v / 1000000).toFixed(1) + "M";
 const fmtP = v => v == null ? "—" : "$" + v.toLocaleString();
 const fmtN = v => v == null ? "—" : (typeof v === "string" ? v : v.toLocaleString());
+
+// Statewide board: every island's single-family median, sold, active & YoY — same source as the app
+try {
+  const S = MARKET.statewide;
+  const board = document.getElementById("state-board");
+  if (S && S.counties && board) {
+    const ISLES = [["kauai", "Kauaʻi"], ["oahu", "Oʻahu"], ["maui", "Maui"], ["hawaii", "Hawaiʻi Island"]];
+    board.innerHTML = ISLES.map(([k, name]) => {
+      const c = S.counties[k];
+      if (!c) return "";
+      const y = c.sf_yoy, up = y > 0.3, dn = y < -0.3;
+      const med = c.sf_med >= 1e6 ? "$" + (c.sf_med / 1e6).toFixed(2) + "M" : "$" + Math.round(c.sf_med / 1e3) + "K";
+      return `<div style="display:grid;grid-template-columns:1fr auto 64px;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(23,21,15,0.07)">` +
+        `<div><span style="font-family:var(--serif);font-size:17px;color:var(--ink)">${name}</span>` +
+        `<span style="font-size:12px;color:var(--ink-3);margin-left:10px">${c.sf_n} sold &middot; ${c.active.toLocaleString()} active</span></div>` +
+        `<div style="font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)">${med}</div>` +
+        `<div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:${up ? "#0E6E56" : dn ? "#A5442E" : "var(--ink-3)"}">${up ? "▲" : dn ? "▼" : "·"} ${Math.abs(y).toFixed(1)}%</div></div>`;
+    }).join("");
+    const rows = board.children;
+    if (rows.length) rows[rows.length - 1].style.borderBottom = "none";
+  }
+} catch (e) {}
 
 // hero: latest inventory + 24-month chart
 const inv = MARKET.inventory;
