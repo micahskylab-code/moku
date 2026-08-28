@@ -130,7 +130,7 @@
       <input type="email" required placeholder="you@email.com" aria-label="Your email">
       <button class="cta" style="margin:0">Sign me up &rarr;</button>
     </form>
-    <div class="brief-ok">Done — you're on the list. Replies come from Moku.</div>
+    <div class="brief-ok">Your signup is copied to your clipboard. If your mail app didn&#8217;t open, paste it into an email to micahskylab@gmail.com &mdash; that&#8217;s how it reaches us.</div>
   </div>
 
   <div class="links"><strong>More free Hawaiʻi lookups:</strong><br>
@@ -142,8 +142,12 @@
 function sendBrief(f){
   var e = f.querySelector("input").value.trim();
   if (!e) return false;
+  var subj = "Moku brief signup — Wailea";
+  var msg  = "Please add me to the monthly Wailea brief.\n\nMy email: " + e;
   try { fetch("https://ntfy.sh/moku-alerts-9f3c1a7e42d5", { method:"POST", headers:{ "Title":"Brief signup · Wailea" }, body:"A brief signup came in from the Wailea page — check your inbox." }); } catch(err){}
-  try { location.href = "mailto:micahskylab@gmail.com?subject=" + encodeURIComponent("Moku brief signup — Wailea") + "&body=" + encodeURIComponent("Please add me to the monthly Wailea brief.\n\nMy email: " + e); } catch(err){}
+  // The mailto often does nothing (no mail handler configured) — copy first so the signup is never lost.
+  try { if (navigator.clipboard) navigator.clipboard.writeText(subj + "\n" + msg); } catch(err){}
+  try { location.href = "mailto:micahskylab@gmail.com?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(msg); } catch(err){}
   f.style.display = "none";
   f.parentNode.querySelector(".brief-ok").style.display = "block";
   return false;

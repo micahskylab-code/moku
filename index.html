@@ -1147,7 +1147,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-130</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-131</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -2055,6 +2055,8 @@ async function exploreParcel(lng, lat) {
     let taxTries = 0;
     const taxPoll = () => {
       if (token !== exploreToken) return;
+      // A condo/CPR master parcel's aggregate value is NOT one unit's value — never bill it as one.
+      if (lastRecord && lastRecord.multiUnit) return;
       const a = lastRecord && Number(lastRecord.assessed);
       if (a > 10000) { noteAnnualTax(county, a); return; }
       if (taxTries++ < 10) setTimeout(taxPoll, 500);
@@ -2303,11 +2305,16 @@ function copyTmk() {
   if (!t) return;
   try { navigator.clipboard.writeText(t); toast("TMK copied"); } catch (e) {}
 }
+// Every hero write takes a ticket. setHeroVal animates its number over 700ms, so a LATER write
+// (a correction, or the next parcel you tap) would otherwise be overwritten by the old animation
+// still counting up. Bumping the ticket cancels any animation in flight.
+let _heroSeq = 0;
 function setHeroText(label, text) {
   // Non-dollar hero (acreage, sq ft): the brochure masthead is never empty
   const lbl = document.getElementById("hero-val-label");
   const el = document.getElementById("hero-val");
   if (!lbl || !el) return;
+  _heroSeq++;
   lbl.style.display = ""; lbl.textContent = label;
   el.textContent = text;
 }
@@ -2326,8 +2333,10 @@ function setHeroVal(n, label) {
     el.textContent = "$" + Number(n).toLocaleString();
     return;
   }
+  const mine = ++_heroSeq;
   const t0 = performance.now(), DUR = 700;
   const tick = t => {
+    if (mine !== _heroSeq) return; // a newer hero write won — never overwrite it
     const k = Math.min(1, (t - t0) / DUR);
     const ease = 1 - Math.pow(1 - k, 3);
     el.textContent = "$" + Math.round(n * ease).toLocaleString();
@@ -2553,10 +2562,29 @@ async function enrichCounty(county, token, tmkRaw) {
       // thousands and gets mislabeled "TY2026"; the county's own PARCELINFO is correct to the dollar.
       (async () => {
         try {
-          const parid = tmk9.slice(1) + "0000";
-          const r = await fetchTimeout("https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/PARCELINFO/FeatureServer/0/query?where=" + encodeURIComponent("GIS_PARCELINFO_PARID='" + parid + "'") + "&outFields=GIS_PARCELINFO_TOTAL_ASSESSED,GIS_PARCELINFO_OWNER&returnGeometry=false&f=json", 9000);
+          const parid8 = tmk9.slice(1);
+          const parid = parid8 + "0000";
+          const MPI = "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/PARCELINFO/FeatureServer/0/query?";
+          // A tap always lands on the master parcel — condo units carry no geometry. Count the unit
+          // rows first: on a CPR/condo the master's TOTAL_ASSESSED is the WHOLE BUILDING, and showing
+          // it (or a tax bill on it) as this home's number is simply wrong. Oʻahu and Kauaʻi already
+          // guard this; Maui did not.
+          const [cntR, r] = await Promise.all([
+            fetchTimeout(MPI + "where=" + encodeURIComponent("GIS_PARCELINFO_PARID LIKE '" + parid8 + "%'") + "&returnCountOnly=true&f=json", 9000).then(x => x.json()).catch(() => null),
+            fetchTimeout(MPI + "where=" + encodeURIComponent("GIS_PARCELINFO_PARID='" + parid + "'") + "&outFields=GIS_PARCELINFO_TOTAL_ASSESSED,GIS_PARCELINFO_OWNER&returnGeometry=false&f=json", 9000)
+          ]);
           const j = await r.json();
           if (token !== exploreToken) return;
+          const units = cntR && typeof cntR.count === "number" ? cntR.count : 1;
+          if (units > 1) {
+            if (lastRecord) { lastRecord.multiUnit = true; lastRecord.assessed = null; }
+            const msg = `${units} unit records on this parcel &mdash; each assessed individually in the county roll`;
+            if (document.getElementById("fact-assessed")) setFact("assessed", "Assessed value &middot; Maui County", msg, "live");
+            else addFact("row-record", "assessed", "Assessed value &middot; Maui County", msg, "live");
+            try { setHeroText("MAUI COUNTY · CONDO / CPR", units + " units"); } catch (e) {}
+            const tt = document.getElementById("ms-tax"); if (tt) tt.style.display = "none";
+            return;
+          }
           const a = j.features && j.features[0] && j.features[0].attributes;
           if (!a) return;
           const total = Number(a.GIS_PARCELINFO_TOTAL_ASSESSED || 0);
