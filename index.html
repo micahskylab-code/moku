@@ -1076,8 +1076,8 @@
     <div id="suggest"></div>
   </div>
   <div class="trychips">
-    <button class="try" data-q="2720 Hoonani Rd, Koloa">2720 Hoonani Rd, Koloa</button>
-    <button class="try" data-q="4260030240000">TMK 4-2-6-003:024</button>
+    <button class="try" data-q="1440240230000">Kailua home &middot; sold twice &middot; &#9650;353%</button>
+    <button class="try" data-q="4260030240000">Kukui&#699;ula &middot; TMK 4-2-6-003:024</button>
     <button class="try" id="try-here">&#128205; What&#8217;s under me?</button>
   </div>
   <div class="veil-isles" id="veil-isles"></div>
@@ -1180,12 +1180,12 @@
   <div class="ov-sub" id="ov-sub">Kaua&#699;i sales 2025 &middot; one of four counties on Moku &middot; every parcel in Hawai&#699;i</div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-119</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-120</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
 <div class="layerbar" id="layerbar" role="group" aria-label="Map layers">
-  <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices &middot; Maui</button>
+  <button class="lchip" data-lk="sold"><span class="dot2" style="background:#E8C87E"></span>Sold prices &middot; Maui + O&#699;ahu</button>
   <button class="lchip" data-lk="tvr"><span class="dot2" style="background:#0E6E56"></span>Vacation rentals</button>
   <button class="lchip" data-lk="flood"><span class="dot2" style="background:#4A90C4"></span>Flood</button>
   <button class="lchip" data-lk="tsu"><span class="dot2" style="background:#C4574A"></span>Tsunami</button>
@@ -3734,7 +3734,7 @@ try {
 
 // ---- Map layers: real data ON the map, one tap each ----
 const LAYER_NOTES = {
-  sold: "recorded sale prices from county deed records — counties publish at different speeds; coverage grows as they open their rolls",
+  sold: "recorded sale prices from county deed records — Maui at every zoom, Oʻahu at street zoom (public records via UIPA); counties publish at different speeds",
   tvr: "Licensed vacation rentals from the official county registries — coverage grows as counties publish",
   flood: "FEMA high-risk flood zones, statewide",
   tsu: "Tsunami evacuation zones, statewide"
@@ -3745,6 +3745,48 @@ function setLayerVis(key, vis) {
   ((layerState[key] && layerState[key].ids) || []).forEach(id => {
     if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", vis ? "visible" : "none");
   });
+  if (key === "sold" && vis) oahuSoldMoveEnd(); // freshly toggled on over Oʻahu → fill the viewport now
+}
+// ---- Oʻahu recorded sales on the map: county parcel centroids joined in-memory to the UIPA sales
+// file already loaded for record cards. Viewport-driven, debounced, cached, capped — no backend. ----
+let _osoldTimer = null, _osoldBusy = false;
+const _osoldCache = new Map();
+function oahuSoldMoveEnd() { clearTimeout(_osoldTimer); _osoldTimer = setTimeout(updateOahuSold, 280); }
+async function updateOahuSold() {
+  try {
+    if (!map.getLayer("lyr-osold-pill")) return;
+    if (!(layerState.sold && layerState.sold.on)) return;
+    if (map.getZoom() < 13.8) return;
+    const c = map.getCenter();
+    if (c.lng < -158.35 || c.lng > -157.55 || c.lat < 21.2 || c.lat > 21.8) return; // only over Oʻahu
+    const b = map.getBounds();
+    const bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
+    const key = bbox.map(v => v.toFixed(3)).join(",");
+    if (_osoldCache.has(key)) { map.getSource("oahu-sold-src").setData(_osoldCache.get(key)); return; }
+    if (_osoldBusy) return;
+    _osoldBusy = true;
+    const sales = await loadOahuSales();
+    const r = await fetchTimeout("https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/All_Parcels/FeatureServer/0/query?where=1%3D1&geometry=" +
+      encodeURIComponent(bbox.join(",")) +
+      "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=tmk9num&returnGeometry=false&returnCentroid=true&outSR=4326&resultRecordCount=2000&f=json", 12000);
+    const j = await r.json();
+    const feats = [];
+    (j.features || []).forEach(f => {
+      const a = f.attributes || {}, ct = f.centroid;
+      if (!a.tmk9num || !ct) return;
+      const rec = sales && sales[String(a.tmk9num) + "0000"]; // ground parcel — condo towers stay per-unit on tap
+      if (!rec || !rec.length) return;
+      const price = Number(rec[0][0]);
+      if (!(price >= 10000)) return;
+      feats.push({ type: "Feature", geometry: { type: "Point", coordinates: [ct.x, ct.y] },
+        properties: { label: fmtPrice(price), ts: Date.parse(rec[0][1] || "") || 0 } });
+    });
+    feats.sort((a2, b2) => b2.properties.ts - a2.properties.ts); // most recent first when capping
+    const fc = { type: "FeatureCollection", features: feats.slice(0, 400) };
+    if (_osoldCache.size > 40) _osoldCache.clear();
+    _osoldCache.set(key, fc);
+    map.getSource("oahu-sold-src").setData(fc);
+  } catch (e) {} finally { _osoldBusy = false; }
 }
 async function ensureLayer(key) {
   const st = layerState[key] = layerState[key] || {};
@@ -3831,6 +3873,24 @@ async function ensureLayer(key) {
         map.on("mouseleave", "lyr-sold-pill", () => { map.getCanvas().style.cursor = ""; });
       }
       st.ids = ["lyr-sold-cluster", "lyr-sold-count", "lyr-sold-dot", "lyr-sold-pill"];
+      // ---- Oʻahu: real recorded sales (UIPA public records) joined to county parcel centroids,
+      // viewport-driven — the same price pills Maui has, now on the island most people stand on ----
+      if (hasGlyphs && !map.getSource("oahu-sold-src")) {
+        map.addSource("oahu-sold-src", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({ id: "lyr-osold-pill", type: "symbol", source: "oahu-sold-src", minzoom: 13.8,
+          layout: { "icon-image": "pricepill", "icon-text-fit": "both", "icon-text-fit-padding": [2, 6, 2, 6],
+                    "text-field": ["get", "label"], "text-size": 11.5, "text-font": ["Noto Sans Regular"] },
+          paint: { "text-color": "#1D1D1F" } });
+        map.on("click", "lyr-osold-pill", e => {
+          if (e.originalEvent) e.originalEvent._pinHandled = true;
+          const c = e.features[0].geometry.coordinates;
+          exploreParcel(c[0], c[1]);
+        });
+        map.on("mouseenter", "lyr-osold-pill", () => { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "lyr-osold-pill", () => { map.getCanvas().style.cursor = ""; });
+        map.on("moveend", oahuSoldMoveEnd);
+      }
+      if (map.getLayer("lyr-osold-pill")) st.ids.push("lyr-osold-pill");
     } else if (key === "tvr") {
       if (!st.data) {
         // Two official county sources: Kauai's NCTVR registry + O'ahu's licensed STR NUCs
@@ -3874,7 +3934,7 @@ async function ensureLayer(key) {
   } catch (e) { st.ready = false; toast("Couldn&#8217;t load that layer — try again"); return false; }
 }
 const LAYER_BOUNDS = {
-  sold: [[-157.45, 20.4], [-155.9, 21.4]],   // Maui County
+  sold: [[-158.3, 20.4], [-155.9, 21.75]],   // Maui County + O'ahu (Oahu pills join at street zoom)
   tvr:  [[-159.95, 21.2], [-157.55, 22.35]]  // Kauai + O'ahu
 };
 const LEGEND_ROWS = {
