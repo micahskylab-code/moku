@@ -1168,7 +1168,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-140</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-141</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1844,7 +1844,9 @@ function fmtTmk(digits) {
 
 // ---- Share / deep links ----
 function deepUrl(hash) { return location.origin + location.pathname + "#" + hash; }
-function setHash(hash) { try { history.replaceState(null, "", hash ? "#" + hash : location.pathname); } catch (e) {} }
+// Keep whatever state is already on the entry — passing null used to wipe the {moku:"record"}
+// marker that tells a manual close to consume its own history entry.
+function setHash(hash) { try { history.replaceState(history.state, "", hash ? "#" + hash : location.pathname); } catch (e) {} }
 async function shareIt(text, hash) {
   const url = deepUrl(hash);
   if (navigator.share) {
@@ -2043,6 +2045,15 @@ async function exploreParcel(lng, lat) {
     const tv = document.getElementById("fact-tmk");
     if (tv && tv.querySelector(".skel") && !(lastRecord && lastRecord.tmk))
       setFact("tmk", "TMK (county record)", "&mdash;", "");
+    // A headline reading "COUNTY ASSESSED" with nothing under it looks broken. If no value ever
+    // arrived, show what the county DOES publish for this lot — its size — or drop the label.
+    const hv = document.getElementById("hero-val"), hl = document.getElementById("hero-val-label");
+    if (hv && !(hv.textContent || "").trim()) {
+      const ac = lastRecord && Number(lastRecord.acres);
+      if (ac > 0) setHeroText("PARCEL SIZE · COUNTY RECORD",
+        ac >= 1 ? ac.toFixed(ac >= 100 ? 0 : 1) + " acres" : Math.round(ac * 43560).toLocaleString() + " sq ft");
+      else if (hl) hl.style.display = "none";
+    }
   }, 12000);
   if (!tapMarker) { const el = document.createElement("div"); el.className = "tapdot"; tapMarker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map); }
   else tapMarker.setLngLat([lng, lat]).addTo(map);
@@ -2874,6 +2885,7 @@ function showFlipDetail(key, btn) {
   d.style.display = "";
 }
 function openRecordCard(lng, lat) {
+  const wasOpen = document.getElementById("passport").classList.contains("open");
   intelBag = {};
   try { document.getElementById("discover").classList.remove("on"); } catch (e) {}
   const pass = document.getElementById("passport");
@@ -2966,6 +2978,10 @@ function openRecordCard(lng, lat) {
         <a id="dir-btn" href="#" target="_blank" rel="noopener">Directions &rarr;</a>
       </div>
     </div>`;
+  // On a phone, Back is how people dismiss things. Every parcel used to replaceState, so Back walked
+  // straight off the site instead of closing the card. Push ONE entry the first time the card opens;
+  // later parcels replace it, so leaving is never a twenty-tap journey.
+  if (!wasOpen) { try { history.pushState({ moku: "record" }, "", location.hash || " "); } catch (e) {} }
   pass.classList.add("open");
   document.getElementById("copy-record").onclick = async () => {
     const hash = lastRecord && lastRecord.tmk ? "tmk=" + String(lastRecord.tmk).replace(/\D/g, "") : "p=" + lng.toFixed(5) + "," + lat.toFixed(5);
@@ -3012,7 +3028,14 @@ function openRecordCard(lng, lat) {
     }
   } catch (e) {}
 }
-function closeRecord() {
+function closeRecord(fromPop) {
+  // Closing by the X or a swipe should consume the history entry the card pushed, or Back would
+  // later fire on an entry with nothing to close. Route those closes through history.back(), which
+  // comes straight back here as fromPop=true and does the real work.
+  if (!fromPop && document.getElementById("passport").classList.contains("open") &&
+      history.state && history.state.moku === "record") {
+    try { history.back(); return; } catch (e) {}
+  }
   exploreToken++; // a closed card must stay closed — drop any in-flight responses
   pendingParcel = null;
   document.getElementById("passport").classList.remove("open");
@@ -3021,6 +3044,11 @@ function closeRecord() {
   const src = map.getSource("parcel");
   if (src) src.setData({ type: "FeatureCollection", features: [] });
 }
+// Back closes the record instead of ejecting the visitor from the site.
+window.addEventListener("popstate", () => {
+  const pass = document.getElementById("passport");
+  if (pass && pass.classList.contains("open")) closeRecord(true);
+});
 // The record card is a bottom sheet on phones — swipe it down to dismiss, so it always goes away.
 (function passportSwipe() {
   const p = document.getElementById("passport");
