@@ -1168,7 +1168,7 @@
   </div>
 </div>
 <div id="legend" aria-hidden="true"></div>
-<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-141</div>
+<div id="buildtag" style="position:absolute;bottom:3px;left:6px;z-index:40;font-size:9px;color:rgba(255,255,255,0.4);pointer-events:none;font-family:monospace">v8.25-142</div>
 <script>if (!location.search.includes("debug")) { try { document.getElementById("buildtag").remove(); } catch (e) {} }</script>
 <button id="draw-btn" title="Draw an area to analyze recorded sales inside it">&#9998; Draw an area</button>
 <div id="draw-panel"></div>
@@ -1714,14 +1714,22 @@ function salesWorker() {
   if (_slsW || _slsDead) return _slsW;
   try {
     // Same format guard as the fallback, running inside the worker: fail safe, never misread.
+    // A stalled fetch used to hang forever, and a failed one used to cache {} permanently — so one
+    // network blip meant "no recorded sales" for the rest of the session, which is a failure wearing
+    // the costume of an answer. Now: the fetch aborts after 15s, and a failure resets `loading` and
+    // reports failed:true so the caller falls back and a later tap can retry cleanly.
     const src =
       "let db=null,loading=null,bad=false;" +
       "function ensure(u){if(db)return Promise.resolve(db);" +
-      "if(!loading)loading=fetch(u).then(r=>r.ok?r.json():{}).then(j=>{" +
-      "try{const k=j&&Object.keys(j)[0];" +
+      "if(!loading){var c=new AbortController();var t=setTimeout(function(){c.abort();},15000);" +
+      "loading=fetch(u,{signal:c.signal}).then(function(r){clearTimeout(t);" +
+      "if(!r.ok)throw 0;return r.json();}).then(function(j){" +
+      "try{var k=j&&Object.keys(j)[0];" +
       "if(k&&!(Array.isArray(j[k])&&(!j[k].length||Array.isArray(j[k][0])))){bad=true;j={};}}" +
-      "catch(e){j={};}return (db=j);}).catch(()=>(db={}));return loading;}" +
-      "onmessage=async e=>{const d=await ensure(e.data.url);const out={};" +
+      "catch(e){j={};}db=j;return db;}).catch(function(){clearTimeout(t);loading=null;return null;});}" +
+      "return loading;}" +
+      "onmessage=async e=>{const d=await ensure(e.data.url);" +
+      "if(d===null){postMessage({id:e.data.id,failed:true});return;}const out={};" +
       "for(const k of (e.data.keys||[]))if(d[k])out[k]=d[k];" +
       "postMessage({id:e.data.id,recs:out,bad:bad});};";
     _slsW = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
@@ -1729,7 +1737,9 @@ function salesWorker() {
       const d = ev.data || {};
       if (d.bad && !_slsWarned) { _slsWarned = true; journalError("oahu-sales.json format mismatch — records suppressed"); }
       const res = _slsPend.get(d.id);
-      if (res) { _slsPend.delete(d.id); res(d.recs || {}); }
+      // failed:true means the file did not load — resolve null so the caller falls back to the
+      // main-thread path rather than rendering an empty result as "no recorded sales".
+      if (res) { _slsPend.delete(d.id); res(d.failed ? null : (d.recs || {})); }
     };
     _slsW.onerror = () => { // worker died mid-flight — every waiter falls back to the main-thread path
       _slsDead = true;
@@ -1756,6 +1766,12 @@ function salesLookup(keys) {
   return new Promise(res => {
     const id = ++_slsSeq;
     _slsPend.set(id, res);
+    // Belt and braces: if the worker never answers at all (killed tab, stalled thread, an abort that
+    // somehow doesn't surface), stop waiting and take the main-thread path. A request that hangs
+    // forever shows the visitor a permanent blank where sold prices should be.
+    setTimeout(() => {
+      if (_slsPend.has(id)) { _slsPend.delete(id); res(null); }
+    }, 20000);
     try { w.postMessage({ id: id, url: new URL("oahu-sales.json", location.href).href, keys: keys || [] }); }
     catch (e) { _slsPend.delete(id); res(null); }
   }).then(r => (r === null ? fallback() : r));
