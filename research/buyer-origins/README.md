@@ -59,3 +59,11 @@ The report's micro-markets chapter (all Hawaiʻi and each island, by price tier,
 - the checklist to clear before selling.
 
 Its opening figures compare 2024 and 2025 on Title Guaranty's own counts for both years. DBEDT's 2024 count runs about 8% higher.
+
+## Why boxes
+
+Each "Why" box comes from a two-step check, stored in `why/why_result.json`:
+1. A researcher gathered evidence for the pattern and proposed drivers.
+2. A skeptic re-checked every fact and tried to refute each driver.
+
+Refuted drivers are dropped, and weakened ones are marked down a level. The visible summaries in `why/why_curated.json` are written only from the skeptic's checked answer. `why/build_why.py` renders the boxes, which include the full answer, each driver as checked, factors raised but not yet tested, and every source.
