@@ -9,14 +9,16 @@ METRO = {
  'Salt Lake City': ['49035'], 'Anchorage': ['02020'], 'Washington DC area': ['11001','51059','51013','51153','51107','24031','24033','51510'],
  'Texas metros (Dallas, Houston, Austin, San Antonio)': ['48113','48085','48439','48201','48453','48491','48029'], 'Chicago': ['17031'], 'New York City': ['36061','36047','36081','36005','36085']}
 fmap={v:k for k,vs in METRO.items() for v in vs}
-def blank(): return dict(tot=None, named=[])
+def blank(): return dict(tot=None, named=[], seen=set())
 res={}
 def add(yr, isl, direction, st, cty, name, abbr, n1, n2, agi, label):
     d=res.setdefault(yr,{}).setdefault(isl,{}).setdefault(direction,blank())
     if st=='97' and cty=='003':
         d['tot']=(n1,n2,agi)
     elif st.isdigit() and int(st)<=56 and st!='15' and n1>0 and cty!='000':
-        d['named'].append((st+cty,name,abbr,n1,n2,agi))
+        key=st+cty
+        if key in d['seen']: return
+        d['seen'].add(key); d['named'].append((key,name,abbr,n1,n2,agi))
 # old xls 2004-05 .. 2010-11
 for f in sorted(glob.glob(f'{S}/irsold/co*.xls')):
     b=os.path.basename(f); yy=b[2:6]; yr=f'20{yy[:2]}-{yy[2:]}'; direction='in' if ('i' in b[6:8].lower() and b.lower().index('i',6)<b.lower().find('.xls')) else 'out'
@@ -53,11 +55,13 @@ for yr in sorted(res):
     for isl,dd in res[yr].items():
         o={}
         for direction,d in dd.items():
-            nm=sorted(d['named'],key=lambda x:-x[3]); met={}
+            nm=sorted(d['named'],key=lambda x:-x[3]); met={}; met20={}
             for x in nm:
                 m=fmap.get(x[0])
-                if m: a=met.setdefault(m,[0,0,0]); a[0]+=x[3]; a[1]+=x[4]; a[2]+=x[5]
-            o[direction]=dict(tot=d['tot'], top=[[x[1],x[2],x[3],x[4],x[5]] for x in nm[:15]], metros=met, named=sum(x[3] for x in nm))
+                if m:
+                    a=met.setdefault(m,[0,0,0]); a[0]+=x[3]; a[1]+=x[4]; a[2]+=x[5]
+                    if x[3]>=20: b=met20.setdefault(m,[0,0,0]); b[0]+=x[3]; b[1]+=x[4]; b[2]+=x[5]
+            o[direction]=dict(tot=d['tot'], top=[[x[1],x[2],x[3],x[4],x[5]] for x in nm[:15]], full=[[x[1],x[2],x[3]] for x in nm], metros=met, metros20=met20, named=sum(x[3] for x in nm), min_named=min([x[3] for x in nm]) if nm else None)
         out[yr][isl]=o
 json.dump(out,open(f'{S}/an/irs_20yr.json','w'),indent=0)
 for yr in out:
