@@ -10,3 +10,6 @@ Known source issue: the HTA island visitor series repeats Maui 2021 as 2022; the
 - `locals.py` — ACS 2024 PUMS (Hawaiʻi housing + person files, via Hawaiʻi Appleseed; weights sum to Census's 1,446,146 population) for movers, vacancy and rent burden, plus IRS county **outflows** 2014–15 … 2022–23 (SHA-256 in `irs_outflow_sha256.txt`).
 - Oʻahu district figures use Moku's own `oahu-sales.json` (repeat-sale pairs by TMK zone); the zone→district names follow the Oʻahu TMK zone map.
 - ACS county series (income, value, rent, tenure, vacancy, 2015–2024) come from Hawaiʻi Appleseed's `acs_panel.json`.
+- `irs_20yr.py` — IRS county inflow/outflow 2004–05 … 2022–23 (old Hawaiʻi workbooks for 2004–05 … 2010–11; national CSVs after). Totals use IRS row codes (state 97 / county 003 = different state). 2013–14 onward match an independent irs.gov SHA-256 record; earlier files are mirror copies not independently checksummed.
+- `irs_states.py` — IRS state-to-state flows 2011–12 … 2022–23 from the Hawaiʻi state workbooks.
+- `moku_index.py` — Oʻahu weighted repeat-sales index (2000–2025, 2015 = 100) from `oahu-sales.json`, island-wide and by TMK zone; year-over-year changes correlate 0.94 with Zillow ZHVI Honolulu.
