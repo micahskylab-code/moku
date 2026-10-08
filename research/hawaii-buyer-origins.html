@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* Layout: one 760px reading column on Moku's warm paper; charts and tables break out to 960px. Single light identity, matching the Moku site. */
+/* Layout: a 760px reading column on Moku's warm paper; charts, eras and tables break out to 1000px. Single light identity, matching the Moku site. */
 :root{
   --bg:#FBF9F5; --card:#FFFFFF; --ink:#17150F; --ink2:#57534A; --ink3:#8C867A;
   --accent:#0E6E56; --brass:#9C7A3C; --line:rgba(23,21,15,.11); --line2:rgba(23,21,15,.18);
@@ -22,116 +22,138 @@
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;margin:0;padding-inline:16px;padding-block:0 80px}
-.wrap{max-width:960px;margin:0 auto}
+.wrap{max-width:1000px;margin:0 auto}
 .col{max-width:760px}
 header.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding-block:22px 10px;border-bottom:1px solid var(--line)}
 .brand{font-family:var(--serif);font-size:19px;font-weight:600}
 .brand i{font-style:normal;color:var(--brass)}
 .stamp{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink3);text-transform:uppercase}
 .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--brass);text-transform:uppercase}
-h1{font-family:var(--serif);font-size:clamp(32px,6vw,54px);font-weight:500;letter-spacing:-.025em;line-height:1.05;margin:18px 0 18px;text-wrap:balance;max-width:17ch}
+h1{font-family:var(--serif);font-size:clamp(32px,5.6vw,52px);font-weight:500;letter-spacing:-.025em;line-height:1.06;margin:18px 0 18px;text-wrap:balance;max-width:19ch}
 h2{font-family:var(--serif);font-size:clamp(24px,4vw,32px);font-weight:500;letter-spacing:-.015em;line-height:1.15;margin:0 0 8px;text-wrap:balance}
-h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 6px;line-height:1.25}
+h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 6px;line-height:1.25;text-wrap:balance}
 p{margin:0 0 14px}
-.lede{font-size:18.5px;color:var(--ink2);max-width:62ch}
+.lede{font-size:18.5px;color:var(--ink2);max-width:64ch}
 .muted{color:var(--ink2)}
-.small{font-size:13.5px;color:var(--ink2)}
-section{padding-block:56px 0}
-section > .head{margin-bottom:20px}
+section{padding-block:60px 0}
+section > .head{margin-bottom:18px}
 .sec-n{font-family:var(--mono);font-size:12px;color:var(--ink3);letter-spacing:.05em;margin-bottom:6px;display:block}
 a{color:var(--accent);text-underline-offset:2px}
-a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:22px}
+nav.toc a{font-size:13px;text-decoration:none;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:3px 11px;background:var(--card)}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent)}
 
-/* KPI strip */
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);margin-top:30px}
-.kpi{padding:16px 16px 14px;border-left:1px solid var(--line)}
-.kpi:first-child{border-left:0;padding-left:0}
-.kpi .n{font-family:var(--serif);font-size:30px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
-.kpi .l{font-size:13px;color:var(--ink2);margin-top:4px;line-height:1.4}
-@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:nth-child(3){border-left:0;padding-left:0}.kpi:nth-child(n+3){border-top:1px solid var(--line)}}
+/* short version */
+.short{margin-top:30px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.short div{padding:16px 14px 14px;border-left:1px solid var(--line);min-width:0}
+.short div:first-child{border-left:0;padding-left:0}
+.short .n{font-family:var(--serif);font-size:28px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
+.short .l{font-size:13px;color:var(--ink2);margin-top:5px;line-height:1.4}
+@media (max-width:860px){.short{grid-template-columns:repeat(2,minmax(0,1fr))}.short div:nth-child(odd){border-left:0;padding-left:0}.short div:nth-child(n+3){border-top:1px solid var(--line)}}
 
-/* confidence tags */
 .tag{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:3px;border:1px solid;vertical-align:2px;white-space:nowrap}
-.tag.o{color:var(--accent);border-color:rgba(14,110,86,.35);background:rgba(14,110,86,.06)}
+.tag.p{color:var(--accent);border-color:rgba(14,110,86,.35);background:rgba(14,110,86,.06)}
+.tag.o{color:#2F5E8F;border-color:rgba(79,134,198,.45);background:rgba(79,134,198,.07)}
 .tag.r{color:var(--brass);border-color:rgba(156,122,60,.4);background:rgba(156,122,60,.07)}
-.tag.d{color:var(--ink2);border-color:var(--line2);background:var(--wash)}
+.tag.f{color:var(--flag);border-color:rgba(165,68,46,.4);background:rgba(165,68,46,.06)}
 .note{background:var(--wash);border-radius:8px;padding:14px 16px;font-size:14px;color:var(--ink2);margin-top:22px}
 .note b{color:var(--ink)}
 
-/* figure */
-figure{margin:22px 0 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 20px 14px}
+figure{margin:22px 0 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 20px 14px;min-width:0}
 figcaption{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
 figcaption .t{font-family:var(--serif);font-size:18px;font-weight:500}
 figcaption .s{font-size:13px;color:var(--ink2)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);margin-bottom:8px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend i.ln{height:2px;width:14px;border-radius:1px}
 .chart{width:100%;overflow-x:auto}
-.chart svg{display:block;width:100%;height:auto;min-width:520px}
-.chart svg text{font-family:var(--sans);fill:var(--ink2);font-size:12.5px}
-.chart svg text.v{fill:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
-.chart svg text.lab{fill:var(--ink);font-weight:500}
-.chart svg .hit{fill:transparent;cursor:default}
-.chart svg .grid{stroke:var(--line);stroke-width:1}
+.chart svg{display:block;width:100%;height:auto}
+.sm svg{display:block;width:100%;height:auto}
+figure svg text{font-family:var(--sans);fill:var(--ink2);font-size:12px}
+figure svg text.v{fill:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+figure svg text.lab{fill:var(--ink);font-weight:500}
+figure svg text.ann{fill:var(--ink3);font-size:11px}
+figure svg .grid{stroke:var(--line);stroke-width:1}
+figure svg .hit{fill:transparent}
 .src{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.5}
 details.tbl{margin-top:10px;font-size:13px}
 details.tbl summary{cursor:pointer;color:var(--ink2);font-size:12.5px}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.two figure{margin-top:22px;min-width:0}
+.two > *{min-width:0}
 @media (max-width:760px){.two{grid-template-columns:1fr}}
-#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.4;padding:7px 10px;border-radius:6px;max-width:260px;z-index:20;opacity:0;transition:opacity .08s}
-#tip b{font-weight:600}
+.sm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 22px}
+.sm > div{min-width:0}
+.sm .smt{font-size:13px;font-weight:600;color:var(--ink);margin:6px 0 0}
+@media (max-width:620px){.sm{grid-template-columns:1fr}}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.45;padding:7px 10px;border-radius:6px;max-width:280px;z-index:20;opacity:0;transition:opacity .08s}
 @media (prefers-reduced-motion:reduce){#tip{transition:none}}
 
-/* tables */
+/* eras */
+.eras{margin-top:10px;border-left:2px solid var(--line2);padding-left:0}
+.era{position:relative;display:grid;grid-template-columns:170px minmax(0,1fr);gap:8px 26px;padding:24px 0 24px 22px;border-bottom:1px solid var(--line)}
+.era:last-child{border-bottom:0}
+.era::before{content:"";position:absolute;left:-7px;top:31px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.era.now::before{background:var(--accent)}
+.era .when{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--brass);letter-spacing:.04em;text-transform:uppercase;padding-top:5px}
+.era .when b{display:block;font-family:var(--serif);font-size:24px;color:var(--ink);letter-spacing:-.01em;text-transform:none;font-weight:500;margin-top:2px}
+.era ul{margin:8px 0 10px;padding-left:18px}
+.era li{margin-bottom:5px}
+.era .why{font-size:14.5px;color:var(--ink2);background:var(--wash);border-radius:8px;padding:10px 14px}
+.era .why b{color:var(--ink)}
+@media (max-width:680px){.era{grid-template-columns:1fr}}
+
 .tw{overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);background:var(--wash)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);background:var(--wash);white-space:nowrap}
 tr:last-child td{border-bottom:0}
-td.num{font-variant-numeric:tabular-nums}
-#foreign table{min-width:860px}
-#foreign td:first-child{white-space:nowrap}
+td.num,th.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 td .geo{font-weight:600}
 td .why{color:var(--ink2);font-size:13px}
+table.heat td.num{min-width:58px}
+table.heat td.h{color:var(--ink)}
 .tier{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;white-space:nowrap}
 .tier.t1{background:var(--accent);color:#fff}
 .tier.t2{background:rgba(14,110,86,.12);color:var(--accent)}
 .tier.t3{background:var(--wash);color:var(--ink2);border:1px solid var(--line2)}
 .isl{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--wash);color:var(--ink2);margin:0 3px 3px 0;white-space:nowrap}
 
-/* segments */
-.segs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line2);margin-top:20px}
-.seg{padding:20px 20px 18px 0;border-bottom:1px solid var(--line);min-width:0}
+.now-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+.now-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.now-card .nm{font-family:var(--serif);font-size:19px;font-weight:500;margin-bottom:8px}
+.now-card dl{display:grid;grid-template-columns:1fr auto;gap:5px 10px;margin:0;font-size:13.5px}
+.now-card dt{color:var(--ink2)}
+.now-card dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.now-card .read{font-size:13px;color:var(--ink2);margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+@media (max-width:900px){.now-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.now-grid{grid-template-columns:1fr}}
+
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.scen > div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.scen .k{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+.scen .base{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.scen h3{margin-top:4px}
+.scen p{font-size:14px;color:var(--ink2);margin:0 0 8px}
+@media (max-width:760px){.scen{grid-template-columns:1fr}}
+
+.segs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line2);margin-top:18px}
+.seg{padding:18px 20px 16px 0;border-bottom:1px solid var(--line);min-width:0}
 .seg:nth-child(even){padding-left:20px;padding-right:0;border-left:1px solid var(--line)}
 .seg .k{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--brass);margin-bottom:4px}
-.seg dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
-.seg dt{color:var(--ink3);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
-.seg dd{margin:0;color:var(--ink2)}
-.seg p{font-size:14.5px;margin:0}
+.seg p{font-size:14.5px;margin:0 0 6px}
+.seg .reach{font-size:13.5px;color:var(--ink2)}
 @media (max-width:760px){.segs{grid-template-columns:1fr}.seg,.seg:nth-child(even){padding-left:0;padding-right:0;border-left:0}}
-
-/* islands */
-.islands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
-.island{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
-.island .nm{font-family:var(--serif);font-size:19px;font-weight:500}
-.island .pct{font-family:var(--serif);font-size:34px;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:6px;color:var(--accent)}
-.island .pl{font-size:12px;color:var(--ink3);margin-bottom:10px}
-.island ul{margin:0;padding-left:16px;font-size:13.5px;color:var(--ink2)}
-.island li{margin-bottom:4px}
-@media (max-width:900px){.islands{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:520px){.islands{grid-template-columns:1fr}}
-
+.rule{display:grid;grid-template-columns:150px 1fr;gap:6px 18px;border-top:1px solid var(--line);padding-block:12px;font-size:14.5px}
+.rule:last-of-type{border-bottom:1px solid var(--line)}
+.rule .rk{font-weight:600}
+@media (max-width:560px){.rule{grid-template-columns:1fr}}
+.callout{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:22px 0;font-family:var(--serif);font-size:19px;line-height:1.4;max-width:62ch}
 ul.tight{padding-left:20px;margin:0 0 14px}
 ul.tight li{margin-bottom:8px}
 ol.steps{padding-left:22px;margin:0}
-ol.steps li{margin-bottom:12px;padding-left:4px}
-.rule{display:grid;grid-template-columns:150px 1fr;gap:6px 18px;border-top:1px solid var(--line);padding-block:12px;font-size:14.5px}
-.rule:last-child{border-bottom:1px solid var(--line)}
-.rule .rk{font-weight:600}
-@media (max-width:560px){.rule{grid-template-columns:1fr}}
-.callout{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:20px 0;font-family:var(--serif);font-size:19px;line-height:1.4;max-width:60ch}
-code.dom{font-family:var(--mono);font-size:12.5px;background:var(--wash);padding:1px 5px;border-radius:3px}
+ol.steps li{margin-bottom:10px;padding-left:4px}
 .sources{columns:2;column-gap:28px;font-size:12.5px;color:var(--ink2);padding-left:18px}
 .sources li{break-inside:avoid;margin-bottom:6px}
 @media (max-width:700px){.sources{columns:1}}
@@ -143,400 +165,553 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);font-si
 <div class="wrap">
   <header class="top">
     <div class="brand">Moku <i>·</i> Buyer Origins</div>
-    <div class="stamp">All islands · data through Q3 2025 · compiled Oct 2026</div>
+    <div class="stamp">All islands · 2015 → Oct 2026 · compiled Oct 8, 2026</div>
   </header>
 
   <div class="col">
-    <div class="eyebrow" style="margin-top:34px">Market intelligence for Hawaiʻi brokers</div>
-    <h1>One in four Hawaiʻi homes sells to someone who lives somewhere else.</h1>
-    <p class="lede">On Hawaiʻi Island it is two in five. About a third of those out-of-state buyers are Californian, and most of the rest come from a short list of Western metros. This report shows who they are, why they buy, where they land, and how to reach them within fair-housing and ad-platform rules.</p>
+    <div class="eyebrow" style="margin-top:34px">A decade of Hawaiʻi home buying</div>
+    <h1>Who bought Hawaiʻi, from where, and what comes next.</h1>
+    <p class="lede">Eleven years of recorded sales by buyer origin, nine years of IRS migration records, and monthly market data through September 2026, all four counties. Every figure traces to a primary record or an official table, and the checks are listed at the end.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#decade">The decade</a><a href="#eras">What happened, and why</a><a href="#islands">Island by island</a><a href="#origins">Where they came from</a><a href="#pulse">Monthly pulse</a><a href="#now">Where it is now</a><a href="#next">Where it goes next</a><a href="#targets">Who to target</a><a href="#method">How this was checked</a>
+    </nav>
   </div>
 
-  <div class="kpis">
-    <div class="kpi"><div class="n">18,007</div><div class="l">Hawaiʻi home sales in 2024, all islands, houses and condos</div></div>
-    <div class="kpi"><div class="n">22.8%</div><div class="l">went to mainland buyers (4,110 sales)</div></div>
-    <div class="kpi"><div class="n">2.8%</div><div class="l">went to foreign buyers (507 sales)</div></div>
-    <div class="kpi"><div class="n">$1.21M</div><div class="l">average mainland purchase, vs $824K for local buyers</div></div>
+  <div class="short">
+    <div><div class="n">216,386</div><div class="l">Hawaiʻi home sales recorded 2015–2025</div></div>
+    <div><div class="n">43,800</div><div class="l">went to U.S. mainland buyers (20.2%)</div></div>
+    <div><div class="n">25,970</div><div class="l">sales in 2021, the decade's peak, while rates averaged 2.96%</div></div>
+    <div><div class="n">19.6%</div><div class="l">mainland share in 2025, the lowest since 2020</div></div>
+    <div><div class="n">7.28%</div><div class="l">30-year mortgage rate on Oct 1, 2026, the highest since Nov 2023</div></div>
   </div>
-  <p class="src">DBEDT State Data Book 2024, Tables 21.38–21.39 (Title Guaranty / Bureau of Conveyances). Buyer origin = mailing address at purchase.</p>
+  <p class="src">Sales: Title Guaranty county buyer-origin series (via Hawaiʻi Appleseed, published with Title Guaranty's permission), which matches DBEDT Data Book Table 21.38/21.39 wherever both exist. Rate: Freddie Mac PMMS.</p>
 
   <div class="col">
-    <div class="note"><b>How to read the confidence tags.</b>
-      <span class="tag o">Official</span> figure from a state, county or Title Guaranty table. These were read from published extracts and still need a check against the source file (see §8).
-      <span class="tag r">Reported</span> figure from press, brokerage or vendor reporting.
-      <span class="tag d">Derived</span> my arithmetic or inference from the above.
-      One rule runs under everything: official series classify buyers by <b>address at the time of purchase</b>. A Californian who moved here and then bought counts as local, so every out-of-state share here is a floor.
+    <div class="note"><b>Confidence tags.</b>
+      <span class="tag p">Primary</span> computed here from the raw government file, with its checksum verified.
+      <span class="tag o">Official</span> an official or source-provided table, cross-checked against independent publications.
+      <span class="tag r">Reported</span> press or brokerage reporting that has not yet been checked against the source.
+      <span class="tag f">Forecast</span> a projection or judgment, not a fact.
+      Buyer origin in every sales series means the buyer's <b>address at the time of purchase</b>. Someone who moved from California and then bought counts as local, so every outside share here is a floor.
     </div>
   </div>
 
-  <!-- 1 -->
+  <!-- DECADE -->
+  <section id="decade">
+    <div class="head col">
+      <span class="sec-n">01 · The decade at a glance</span>
+      <h2>Outside buyers held a steady fifth of the market, then rode the 2021 surge</h2>
+      <p class="muted">Locals buy three of every four Hawaiʻi homes in every year of the series. The mainland share ran about 19% before the pandemic, jumped to 22–23% from 2021 to 2024, and fell back to 19.6% in 2025. Foreign buying peaked in 2018 and has not recovered.</p>
+    </div>
+    <figure>
+      <figcaption><span class="t">Hawaiʻi home sales by buyer origin, 2015–2025</span><span class="s">Houses and condos, all counties, by year <span class="tag o">Official</span></span></figcaption>
+      <div class="legend"><span><i style="background:var(--s-local)"></i>Hawaiʻi resident</span><span><i style="background:var(--s-main)"></i>U.S. mainland</span><span><i style="background:var(--s-foreign)"></i>Foreign</span></div>
+      <div class="chart" id="c-decade"></div>
+      <details class="tbl"><summary>Show as table</summary><div class="tw"><table id="t-decade"></table></div></details>
+      <p class="src">Title Guaranty county buyer-origin series, 2015–2025. Matches DBEDT Data Book Table 21.38 for every year checked (2019, 2021, 2023, 2024), down to the dollar on average prices.</p>
+    </figure>
+    <div class="two">
+      <figure>
+        <figcaption><span class="t">Mainland buyers' share of sales, by county</span><span class="s">Percent of each county's sales, 2015–2025 <span class="tag o">Official</span></span></figcaption>
+        <div class="chart" id="c-share"></div>
+        <p class="src">Same series. Each line uses the same 0–45% scale.</p>
+      </figure>
+      <figure>
+        <figcaption><span class="t">Average price paid, by buyer origin</span><span class="s">Statewide, 2015–2025 <span class="tag o">Official</span></span></figcaption>
+        <div class="legend"><span><i class="ln" style="background:var(--s-local)"></i>Local</span><span><i class="ln" style="background:var(--s-main)"></i>Mainland</span><span><i class="ln" style="background:var(--s-foreign)"></i>Foreign</span></div>
+        <div class="chart" id="c-price"></div>
+        <p class="src">Same series. These are averages, not medians, so a few very large sales pull them up.</p>
+      </figure>
+    </div>
+    <div class="col">
+      <div class="callout">Over the decade, Maui's mainland share fell from 42% to 25%, while Oʻahu's rose from 10% to 14%. Outside demand moved toward Oʻahu and the Big Island and away from Maui.</div>
+    </div>
+  </section>
+
+  <!-- ERAS -->
+  <section id="eras">
+    <div class="head col">
+      <span class="sec-n">02 · What happened, and why</span>
+      <h2>Five chapters, each with a cause you can see in the data</h2>
+    </div>
+    <div class="eras">
+      <div class="era">
+        <div class="when">2015–2019<b>The steady climb</b></div>
+        <div>
+          <ul>
+            <li>About 19,400–20,500 sales a year. Mainland buyers took 3,698–3,956 of them, between 18.6% and 19.4%.</li>
+            <li>Foreign buying peaked in 2018 at 928 sales (4.5%), averaging $1.25M.</li>
+            <li>Mortgage rates averaged 3.65–4.54%. Statewide visitor arrivals reached 10.24 million in 2019.</li>
+            <li>Maui's mainland share slid from 42% to 28% as prices rose. Kauaʻi and the Big Island held at 32–40%.</li>
+          </ul>
+          <div class="why"><b>Why:</b> cheap money and record tourism kept a steady flow of West Coast buyers coming. The IRS records show Los Angeles–Orange County, San Diego, Seattle and the Bay Area as the top four origin metros in every one of these years.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2020<b>The shutdown</b></div>
+        <div>
+          <ul>
+            <li>The 14-day travel quarantine cut statewide arrivals 74%, from 10.24 million to 2.68 million.</li>
+            <li>Foreign purchases collapsed to 243, from 540 a year earlier. Mainland purchases fell to 3,225 (17.4%), the decade low.</li>
+            <li>Total sales dipped to 18,549. Rates fell to a 3.11% average.</li>
+          </ul>
+          <div class="why"><b>Why:</b> buyers could not visit. Locals kept buying on record-low rates, so the local share rose to 81%.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2021<b>The rush</b></div>
+        <div>
+          <ul>
+            <li>A record 25,970 sales, up 40%. Mainland purchases jumped 80% to 5,806, paying an average $1.20M.</li>
+            <li>Rates averaged 2.96%, the decade low.</li>
+            <li>Inventory disappeared. Maui's active listings averaged 487, down from 1,020 in 2020, and hit 316 in November 2021. Kauaʻi bottomed at 127 in April 2022.</li>
+            <li>The Bay Area became the #2 source of new households (2019–20 through 2021–22). Households moving to Maui in 2021–22 averaged $192K in income, more than double the decade's usual level.</li>
+          </ul>
+          <div class="why"><b>Why:</b> remote work, near-zero rates and stock-market wealth arrived together. High-income West Coast households could live and work here, and they bought faster than sellers listed.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2022–2023<b>Rate shock and the fire</b></div>
+        <div>
+          <ul>
+            <li>Rates jumped from 2.96% to a 5.33% average in 2022 and 6.80% in 2023. Sales fell to 21,131, then 15,638, the decade low.</li>
+            <li>The mainland <i>share</i> held at 22–23%. Mainland buyers, many paying cash, pulled back less than locals.</li>
+            <li>On Maui, buyers who could not claim the homeowner exemption (second-home buyers and investors) peaked at 64.5% of home sales in FY2022 and 70.7% of dollar value.</li>
+            <li>The Lahaina fire on Aug 8, 2023 destroyed most of the town. Maui visitor arrivals fell from 2.97 million in 2022 to 2.53 million in 2023.</li>
+          </ul>
+          <div class="why"><b>Why:</b> higher rates froze local owners in place, because few would trade a 3% mortgage for a 7% one. Cash-rich outside buyers kept their share, and Maui's recovery after the fire has tilted toward housing residents.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2024–2025<b>The locked-in market</b></div>
+        <div>
+          <ul>
+            <li>Sales recovered to 18,007 in 2024, then slipped to 16,909 in 2025.</li>
+            <li>Mainland purchases fell from 4,110 to 3,306, a 19.6% share. Maui reached a decade low of 25%, and the Big Island fell from 39% to 32%.</li>
+            <li>Maui condos fell hard: the 2025 median dropped 23% to $692,860 <span class="tag r">Reported</span> (Realtors Association of Maui), as condo-insurance costs and the Bill 9 vacation-rental phase-out hit.</li>
+            <li>Inventory rebuilt. Oʻahu averaged 3,256 active listings in 2025, against 1,649 in 2022. Maui averaged 1,301, against 419.</li>
+          </ul>
+          <div class="why"><b>Why:</b> rates stayed between 6.6% and 6.7% on average. Short-term-rental rules tightened on Maui and Oʻahu, and condo HOA and insurance costs rose. Those shocks hit the investor and second-home condo buyer, who is disproportionately from out of state.</div>
+        </div>
+      </div>
+      <div class="era now">
+        <div class="when">2026 to date<b>Rates climb again</b></div>
+        <div>
+          <ul>
+            <li>The 30-year rate rose from 6.05% (February average) to 7.28% on Oct 1, after six straight weekly increases.</li>
+            <li>Oʻahu's single-family median set a record of $1,242,500 in June, then fell to $1,110,000 in September, down 3.9% from a year earlier <span class="tag r">Reported</span> (Honolulu Board of Realtors via Star-Advertiser).</li>
+            <li>Listings are up from a year ago on every island as of September: Big Island +24.9%, Kauaʻi +8.1%, Oʻahu +6.4%, Maui +5.2%.</li>
+            <li>Sales through August are mixed. Maui condos are up 17%, Oʻahu single-family homes up 5.9%, and Kauaʻi condos down 26.6%.</li>
+          </ul>
+          <div class="why"><b>Why:</b> buyers expected rates to keep falling, and they rose instead. Sellers are listing anyway, so the advantage is slowly moving toward buyers, fastest on the Big Island.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ISLANDS -->
   <section id="islands">
     <div class="head col">
-      <span class="sec-n">§1 · The island split</span>
-      <h2>The neighbor islands are where outside money concentrates</h2>
-      <p class="muted">Oʻahu has nearly two-thirds of all sales but the lowest outside share. Hawaiʻi Island, Kauaʻi and Maui each sell a third or more of their homes to buyers with addresses elsewhere.</p>
+      <span class="sec-n">03 · Island by island</span>
+      <h2>Four different markets</h2>
+      <p class="muted">Mainland buyers per year on each island, on one shared scale. Oʻahu has the most outside buyers in raw numbers. The neighbor islands depend on them far more.</p>
     </div>
-
     <figure>
-      <figcaption><span class="t">Who bought, by county, 2024</span><span class="s">Share of residential sales by buyer origin <span class="tag o">Official</span> · Maui split <span class="tag d">Derived</span></span></figcaption>
-      <div class="legend"><span><i style="background:var(--s-local)"></i>Hawaiʻi resident</span><span><i style="background:var(--s-main)"></i>U.S. mainland</span><span><i style="background:var(--s-foreign)"></i>Foreign</span></div>
-      <div class="chart" id="c-stack"></div>
-      <details class="tbl"><summary>Show as table</summary>
-        <div class="tw"><table><thead><tr><th>County</th><th>Sales</th><th>Local</th><th>Mainland</th><th>Foreign</th></tr></thead><tbody id="t-stack"></tbody></table></div>
-      </details>
-      <p class="src">DBEDT Data Book 2024, Table 21.39. Maui's mainland and foreign counts were cut off in the extract, so they are derived by subtracting the other three counties from the statewide totals (≈448 mainland, ≈49 foreign).</p>
+      <figcaption><span class="t">Mainland buyers per year, by island</span><span class="s">Number of sales to U.S. mainland buyers, 2015–2025 <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-isl-main"></div>
+      <p class="src">Title Guaranty county buyer-origin series.</p>
     </figure>
-
-    <div class="two">
-      <figure>
-        <figcaption><span class="t">Mainland share of sales, 2021 → 2024</span><span class="s">Each line runs from the 2021 share to the 2024 share <span class="tag o">Official</span></span></figcaption>
-        <div class="legend"><span><i style="background:var(--ink3);border-radius:50%"></i>2021</span><span><i style="background:var(--s-main);border-radius:50%"></i>2024</span></div>
-        <div class="chart" id="c-dumb"></div>
-        <p class="src">DBEDT Data Book 2022 and 2024, Table 21.39. Maui 2024 <span class="tag d">Derived</span></p>
-      </figure>
-      <figure>
-        <figcaption><span class="t">Statewide mainland share by year</span><span class="s">Share of all Hawaiʻi residential sales <span class="tag o">Official</span></span></figcaption>
-        <div class="chart" id="c-trend"></div>
-        <p class="src">DBEDT Data Book series, Table 21.39. Years without a confirmed figure are left out, not interpolated.</p>
-      </figure>
-    </div>
-
-    <div class="col">
-      <div class="callout">Maui's outside share fell from about 35% to about 28% after the Lahaina fire and the Bill 9 vacation-rental phase-out. Oʻahu's rose. Outside demand is moving, not shrinking.</div>
-      <ul class="tight">
-        <li><b>Condos are the outsider product.</b> In 2024 out-of-state buyers took 31% of condo sales statewide, and <b>more than half</b> of neighbor-island condo sales, compared with 20% of single-family sales. <span class="tag o">Official</span> UHERO Housing Factbook 2025.</li>
-        <li><b>Outside buyers bring more money.</b> In 2024 the average mainland purchase was $1.21M and the average foreign purchase $1.64M, against $824K for local buyers. On Maui (H1 2025), mainland buyers were 29% of sales but <b>43% of dollar volume</b>. <span class="tag o">Official</span> / <span class="tag r">Reported</span></li>
-        <li><b>The highest-share ZIPs.</b> Kōloa–Poʻipū (96756) and Princeville (96722) were each about 60% out-of-state buyers in 2024. <span class="tag o">Official</span> UHERO 2025.</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 2 -->
-  <section id="states">
-    <div class="head col">
-      <span class="sec-n">§2 · Where they come from in the U.S.</span>
-      <h2>California first by a wide margin, then the Pacific Northwest</h2>
-      <p class="muted">Title Guaranty tallies buyers by home state for each island. On both Hawaiʻi Island and Oʻahu, California alone accounts for about a third of buyers from outside the state. Washington is a steady second or third everywhere.</p>
-    </div>
-    <div class="two">
-      <figure>
-        <figcaption><span class="t">Hawaiʻi Island: out-of-state buyers by origin</span><span class="s">Sales, Jan–Sep 2025 · 915 of 2,811 sales went to non-residents <span class="tag o">Official</span></span></figcaption>
-        <div class="chart" id="c-bigisland"></div>
-        <p class="src">Title Guaranty, Buyer Stats Hawaiʻi Q3 2025 (extract; verify against PDF). California = $568.5M in volume.</p>
-      </figure>
-      <figure>
-        <figcaption><span class="t">Oʻahu: out-of-state buyers by origin</span><span class="s">Sales, Jan–Sep 2025 · 1,434 of 7,745 sales went to non-residents <span class="tag o">Official</span></span></figcaption>
-        <div class="chart" id="c-oahu"></div>
-        <p class="src">Title Guaranty, Buyer Stats Oʻahu Q3 2025 (extract; verify). California = $523.1M. Florida, Texas and Virginia counts likely include military relocations.</p>
-      </figure>
-    </div>
-
-    <div class="col" style="margin-top:22px">
-      <h3>The other two islands</h3>
-      <ul class="tight">
-        <li><b>Kauaʻi:</b> California leads every period: 112 buyers and $215M in 2024, and 51 buyers ($101M) in H1 2025. Colorado, Washington, Texas, Utah and Nevada follow at 12–14 each per half-year. <span class="tag o">Official</span> / <span class="tag r">Reported</span></li>
-        <li><b>Maui:</b> in H1 2025, California had 53 buyers ($130.5M) and Washington 21. Canada was the largest foreign source at $45.8M. Island Sotheby's describes Maui luxury buyers as mostly Seattle and Bay Area. <span class="tag r">Reported</span></li>
-      </ul>
-
-      <h3 style="margin-top:22px">Getting from states to metros</h3>
-      <p>No official source reports buyer origin by city. Four independent signals all point to the same metros:</p>
-      <ul class="tight">
-        <li><b>Where people search from.</b> Redfin's top metros for users looking to move to Honolulu (Jan–Mar 2026) were Los Angeles (579 users), San Francisco (535) and Seattle (238). <span class="tag r">Reported</span></li>
-        <li><b>Where movers come from.</b> In 2023, 58,539 people moved to Hawaiʻi from other states: California 11,200 (19%), Washington 4,092, Texas 3,742, Virginia 3,388 and Colorado 3,359. <span class="tag o">Official</span> ACS via DBEDT Table 1.62.</li>
-        <li><b>Where repeat visitors come from.</b> California sent 2.88M visitors in 2024, and Los Angeles alone was 9.1% of <i>all</i> arrivals. 82% of US West visitors had been before. Repeat visitors are the buyer pipeline. <span class="tag o">Official</span> DBEDT 2024 Visitor Research.</li>
-        <li><b>Where nonstop flights come from.</b> New 2026 routes widen the pipeline: Minneapolis, Chicago and Boston to Maui and Honolulu; Burbank, Ontario, Boise and Spokane to Honolulu; Salt Lake City to Kona; Las Vegas to Hilo. <span class="tag r">Reported</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 3 -->
-  <section id="foreign">
-    <div class="head col">
-      <span class="sec-n">§3 · Where they come from abroad</span>
-      <h2>Japan buys Oʻahu condos, Canada buys Maui and Kona, Korea is rising</h2>
-      <p class="muted">Foreign buyers made only 2.8% of 2024 sales, but at an average $1.64M they are the highest-value segment. Their sales concentrate on very few islands and products.</p>
-    </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Origin</th><th>Recent volume</th><th>Where they buy</th><th>Why now</th><th>Pipeline</th></tr></thead>
-        <tbody>
-          <tr><td><span class="geo">Japan</span><br><span class="why">Tokyo, Osaka, Nagoya</span></td><td class="num">Oʻahu 2024: 260 sales, $397M <span class="tag o">Official</span><br>Statewide Jan–Sep 2025: 153 sales</td><td>90%+ of value on Oʻahu: Waikīkī, Ala Moana, Kakaʻako (Ward Village, Park Lane), Ko Olina. Also ordinary Windward and Mililani townhomes bought to rent.</td><td>A Japanese tax rule lets buyers depreciate older wood-frame US buildings fast against Japanese income. With the yen near 162 per dollar (its weakest since 1986), Japanese owners are now <b>selling into dollar gains</b>. That makes them a listing source, not only a buyer pool.</td><td class="num">Aug 2026 to HNL: Haneda 186 flights, Narita 115, Kansai 62, Nagoya 31. 732K Japanese visitors in 2025.</td></tr>
-          <tr><td><span class="geo">Canada</span><br><span class="why">Vancouver, Calgary, Edmonton</span></td><td class="num">Maui H1 2025: top foreign source, $45.8M <span class="tag r">Reported</span></td><td>Maui resort condos (West and South Maui), Kona and South Kohala, Waikoloa, some Puna.</td><td>Snowbird second homes, sensitive to the exchange rate. Headwinds: the 2025 travel boycott (Canadian visitors −11.6% in 2025) and Bill 9 hitting the West Maui condos Canadians favor.</td><td class="num">WestJet: YVR/YYC to HNL and OGG, YEG seasonal. Air Canada: YVR to HNL and OGG. Kauaʻi loses its last Canadian nonstop on Dec 7, 2026.</td></tr>
-          <tr><td><span class="geo">South Korea</span><br><span class="why">Seoul</span></td><td class="num">Oʻahu 2024: $68.6M · Jan–Sep 2025: 47 sales <span class="tag o">Official</span></td><td>Honolulu condos.</td><td>Consistently #2 or #3 foreign buyer since 2024. Korean visitors were up 8.7% in 2025.</td><td class="num">About 67 flights a month from Incheon (Korean Air, Asiana, Air Premia).</td></tr>
-          <tr><td><span class="geo">Smaller sources</span><br><span class="why">China, Hong Kong, Taiwan, Australia, NZ, Germany, Singapore</span></td><td class="num">Small counts, unstable quarter to quarter</td><td>Honolulu condos (Asia). Maui and Kauaʻi (Australia, Germany).</td><td>Opportunistic. Not enough volume for dedicated campaigns.</td><td class="num">Sydney about 49 flights a month. Manila on Philippine Airlines.</td></tr>
-        </tbody>
+        <thead><tr><th>Island</th><th class="num">Mainland share 2015</th><th class="num">2021</th><th class="num">2025</th><th class="num">Mainland avg price 2025</th><th class="num">Local avg price 2025</th><th>What changed</th></tr></thead>
+        <tbody id="t-isl"></tbody>
       </table>
     </div>
-    <p class="src">Title Guaranty Buyer Stats (Q4 2024, Q3 2025), DBEDT Hawaiʻi–Japan Economic Relationship report (May 2026), HVCB Air Service Grid (Aug 2026), DBEDT/HTA visitor statistics 2025.</p>
+    <p class="src">Title Guaranty county buyer-origin series. Averages include both houses and condos.</p>
   </section>
 
-  <!-- 4 -->
-  <section id="landing">
+  <!-- ORIGINS -->
+  <section id="origins">
     <div class="head col">
-      <span class="sec-n">§4 · Where they land</span>
-      <h2>Outside owners cluster in the resort districts</h2>
-      <p class="muted">Sales figures show the flow of buyers. Ownership records show the stock that has built up. Both point to the same resort coasts.</p>
+      <span class="sec-n">04 · Where they came from</span>
+      <h2>Nine years of IRS records: the same six metros, with the Bay Area peaking in the remote-work years</h2>
+      <p class="muted">The IRS tracks every household that changes its tax address from one county to another. This is the only official source that names the mainland county a household came from. It covers people who moved here, not second-home buyers who kept a mainland address. <span class="tag p">Primary</span></p>
     </div>
-    <div class="islands">
-      <div class="island"><div class="nm">Hawaiʻi Island</div><div class="pct">39%</div><div class="pl">mainland share of 2024 sales</div>
-        <ul><li>Kona: about 50% of 2008–15 sales went to mainland buyers <span class="tag o">Official</span></li><li>Kohala Coast (Mauna Kea, Hualālai, Kūkiʻo, Waikoloa): about 40%. Californians were 31% of volume in 2021</li><li>Puna and Kaʻū: the affordable, land-heavy end</li></ul></div>
-      <div class="island"><div class="nm">Kauaʻi</div><div class="pct">33%</div><div class="pl">mainland share of 2024 sales</div>
-        <ul><li>Princeville (96722): about 60% out-of-state buyers; vacation rentals are 80% of its housing <span class="tag o">Official</span></li><li>Kōloa–Poʻipū (96756): about 60% buyers; 51% vacation rentals</li><li>Vacation rentals are 20% of all island housing, the highest in the state</li></ul></div>
-      <div class="island"><div class="nm">Maui</div><div class="pct">≈28%</div><div class="pl">mainland share of 2024 sales <span class="tag d">Derived</span></div>
-        <ul><li>West Maui (Kāʻanapali, Kapalua): Californians were 24% of 2021 sales</li><li>South Maui (Wailea, Mākena, Kīhei): 19%. Estate sales drive volume</li><li>85% of the 6,172 Minatoya-list STR condos have off-island owners: California 36%, Washington 12%, Canada 8% <span class="tag o">Official</span> UHERO 2025</li></ul></div>
-      <div class="island"><div class="nm">Oʻahu</div><div class="pct">15%</div><div class="pl">mainland share of 2024 sales</div>
-        <ul><li>Waikīkī, Kakaʻako, Ala Moana: Asian and mainland condo buyers</li><li>Kāhala and Diamond Head: ultra-luxury. The $65.75M Hale Hanohano sale (Mar 2025) is the state record</li><li>Ko Olina: resort second homes</li><li>Military-driven areas near Pearl Harbor–Hickam, Schofield and Kāneʻohe</li></ul></div>
-    </div>
-    <p class="src">DBEDT Residential Home Sales report (2008–Sep 2015; older and later revised lower), Hawaii Business (2021 district data), UHERO Housing Factbooks 2025–2026, UHERO Minatoya List analysis (2025).</p>
-  </section>
-
-  <!-- 5 -->
-  <section id="why">
-    <div class="head col">
-      <span class="sec-n">§5 · Why they buy</span>
-      <h2>Eight buyer types, each with its own trigger</h2>
-      <p class="muted">"Hawaiʻi buyer" is several different people. Each type below has its own origin geography, island preference and timing, and needs its own message.</p>
-    </div>
-    <div class="segs">
-      <div class="seg"><div class="k">Largest outside segment</div><h3>The West Coast second-home buyer</h3>
-        <p>Affluent 45–64-year-olds who have vacationed here for years. Nationally, 85% of 2025 vacation-home mortgages went to high earners, with a median income of $294K <span class="tag r">Reported</span> Redfin. Many buy with cash.</p>
-        <dl><dt>From</dt><dd>LA and Orange County, SF Bay Area, Seattle, Portland</dd><dt>Buys</dt><dd>Neighbor-island resort condos and homes</dd><dt>Reach</dt><dd>Mainland winter (Oct–Feb), while they are on island; retarget after visits</dd></dl></div>
-      <div class="seg"><div class="k">Tax-driven</div><h3>The retiree</h3>
-        <p>Hawaiʻi exempts Social Security and employer-funded pensions, government and military pensions included. IRA and 401(k) withdrawals <i>are</i> taxed. A new 13% top bracket from 2027 (from $1M joint income) removes any tax edge over California for the very wealthy <span class="tag o">Official</span></p>
-        <dl><dt>From</dt><dd>California public-pension retirees, retired military and federal workers</dd><dt>Buys</dt><dd>Single-level condos near hospitals; Kona, Kīhei, Honolulu</dd><dt>Reach</dt><dd>Lead with the pension exemption; give IRA-heavy clients an honest tax note</dd></dl></div>
-      <div class="seg"><div class="k">Coming home</div><h3>The returning kamaʻāina</h3>
-        <p>More Native Hawaiians now live on the mainland (about 370K) than in Hawaiʻi (about 309K). Young island-born residents are moving back. 65% of the 2021 remote-worker cohort were former residents <span class="tag o">Official</span></p>
-        <dl><dt>From</dt><dd>Las Vegas and Henderson (the "ninth island"), Southern California, Seattle, Texas</dd><dt>Buys</dt><dd>First homes, family land, entry-price Oʻahu and Big Island</dd><dt>Reach</dt><dd>Hawaiʻi clubs, alumni networks, festivals, holiday homecomings</dd></dl></div>
-      <div class="seg"><div class="k">Fixed cycle</div><h3>The military buyer</h3>
-        <p>BAH with dependents runs $3,663 (E-5) to $4,428 (O-3) a month. That often covers a mortgage, and the home becomes a rental after the next move. The VA loan limit is about $1.21M <span class="tag r">Reported</span></p>
-        <dl><dt>From</dt><dd>Base towns: San Diego, San Antonio, Norfolk/Virginia, Florida</dd><dt>Buys</dt><dd>Oʻahu: ʻEwa, Kapolei, Mililani, Kāneʻohe</dd><dt>Reach</dt><dd>PCS season (spring–summer), VA lenders, base relocation offices</dd></dl></div>
-      <div class="seg"><div class="k">Being reshaped by law</div><h3>The rental investor</h3>
-        <p>Maui's Bill 9 ends short-term rental use for about 6,200–7,000 apartment-zoned units by 2029 (West Maui) and 2031 (elsewhere). Maui taxes long-term rentals at $2.90 per $1,000 against $13–17 for vacation rentals <span class="tag o">Official</span> Legal resort-zone and VDA units command a premium.</p>
-        <dl><dt>From</dt><dd>West Coast and Canadian condo owners, 1031 exchangers</dd><dt>Buys</dt><dd>Legal resort-zone and VDA inventory; Oʻahu long-term rentals</dd><dt>Reach</dt><dd>Exit and 1031 plans timed to the 2029/2031 deadlines</dd></dl></div>
-      <div class="seg"><div class="k">Small count, huge volume</div><h3>The ultra-high-net-worth estate buyer</h3>
-        <p>Zuckerberg (Kauaʻi, about 1,400 acres), Ellison (Lānaʻi), Oprah (Kula), Bezos (Maui, $78M) and Benioff (Waimea) set a halo. Oʻahu sales in the $3–5M band rose from 19 to 31 in Q4 2025 <span class="tag r">Reported</span></p>
-        <dl><dt>From</dt><dd>Bay Area tech, LA entertainment, Seattle, NYC finance</dd><dt>Buys</dt><dd>Kāhala, Kohala Coast, Wailea and Mākena, North Shore Kauaʻi</dd><dt>Reach</dt><dd>Family offices, private bankers, attorneys; off-market and LLC deals</dd></dl></div>
-      <div class="seg"><div class="k">Currency-driven</div><h3>The Japanese condo buyer and seller</h3>
-        <p>Japan is the #1 foreign buyer, with 90%+ of its value on Oʻahu. The record-weak yen has turned many Japanese owners into sellers, so they are a listing opportunity as well as a buyer pool <span class="tag o">Official</span></p>
-        <dl><dt>From</dt><dd>Tokyo, Osaka</dd><dt>Buys</dt><dd>Waikīkī, Kakaʻako, Ala Moana, Ko Olina</dd><dt>Reach</dt><dd>Japanese-language agents and developer sales offices in Tokyo</dd></dl></div>
-      <div class="seg"><div class="k">Snowbird</div><h3>The Canadian winter buyer</h3>
-        <p>Historically the #1 foreign buyer on Maui and the Big Island. Demand follows the loonie and politics, and 2025–26 has been weak <span class="tag r">Reported</span></p>
-        <dl><dt>From</dt><dd>Vancouver, Calgary, Edmonton</dd><dt>Buys</dt><dd>Maui and Kona resort condos</dd><dt>Reach</dt><dd>Dec–Mar while they are on island; Canada-friendly lenders; currency-aware pricing</dd></dl></div>
+    <figure>
+      <figcaption><span class="t">Households moving to Hawaiʻi, by origin metro and year</span><span class="s">Tax-filing households, sum over all four counties. Darker = more households.</span></figcaption>
+      <div class="tw" style="margin-top:4px;border:0"><table class="heat" id="t-heat"></table></div>
+      <p class="src">IRS Statistics of Income, county-to-county migration inflow, 2014–15 through 2022–23. Counts are lower bounds: IRS shows only county pairs with 20 or more households. Metros are the standard OMB county groupings. Texas groups Dallas, Houston, Austin and San Antonio.</p>
+    </figure>
+    <div class="two">
+      <figure>
+        <figcaption><span class="t">Average household income of new arrivals</span><span class="s">AGI per household moving in from another state <span class="tag p">Primary</span></span></figcaption>
+        <div class="sm" id="c-agi"></div>
+        <p class="src">IRS SOI inflow, "Total Migration – Different State" rows. Kauaʻi 2015–16 ($258K) is as published in both IRS file sets. A few very-high-income households drive it.</p>
+      </figure>
+      <figure>
+        <figcaption><span class="t">Top origin counties, 2022–23</span><span class="s">Households moving in, by island <span class="tag p">Primary</span></span></figcaption>
+        <div class="tw" style="margin-top:0;border:0"><table id="t-topc"></table></div>
+        <p class="src">IRS SOI 2022–23 county inflow. Avg AGI is per household.</p>
+      </figure>
     </div>
     <div class="col">
-      <div class="note" style="margin-top:22px"><b>Remote workers are mostly a past story.</b> The 2020–22 remote-work wave was real: 42% of private employees worked remotely in Aug 2021. But the population is falling again, with a net 24 people a day leaving for other states in 2025. The buyers who remain from that wave are mostly returning kamaʻāina (above), not new arrivals.</div>
+      <ul class="tight" style="margin-top:20px">
+        <li><b>Money comes from the north and west.</b> King County (Seattle) households moving to Maui and the Big Island averaged $202K–206K in 2022–23. Santa Clara, Alameda and San Francisco households moving to Maui averaged $197K–283K across the last two years.</li>
+        <li><b>Volume comes from the south.</b> San Diego, Las Vegas and Phoenix send the most households, at $52K–90K average income for most island pairings. Much of that flow goes to Oʻahu and is military.</li>
+        <li><b>Oʻahu is a military market.</b> Base counties rank high on Oʻahu every year: Pierce WA (Lewis-McChord), Bexar TX, El Paso CO and TX, Bell TX, Cumberland NC. In 2022–23 a further 996 households came from military mail addresses (APO/FPO).</li>
+        <li><b>Las Vegas runs both ways.</b> In 2022–23, 1,243 households left Oʻahu for Clark County and 523 came back. The "ninth island" is where many local families go, and some return as buyers.</li>
+      </ul>
     </div>
+    <figure>
+      <figcaption><span class="t">Maui: share of home sales to buyers without a homeowner exemption</span><span class="s">Second-home buyers, investors and landlords, by fiscal year (July–June) <span class="tag o">Official</span></span></figcaption>
+      <div class="chart" id="c-maui"></div>
+      <p class="src">Maui County RPT Sales Data File (every recorded sale, with its conveyance-tax schedule), as processed by Hawaiʻi Appleseed. "Non-owner" means a sale taxed on the schedule for buyers who are not eligible for the homeowner exemption. That includes local landlords, so it is a broader measure than "out-of-state".</p>
+    </figure>
   </section>
 
-  <!-- 6 -->
-  <section id="targets">
+  <!-- PULSE -->
+  <section id="pulse">
     <div class="head col">
-      <span class="sec-n">§6 · The target list</span>
-      <h2>Where to point the campaigns</h2>
-      <p class="muted">Tiers rank the strength of evidence, not just size. <span class="tier t1">Tier 1</span> appears in every data source for every island. <span class="tier t2">Tier 2</span> is a proven secondary source or a strong island-specific one. <span class="tier t3">Tier 3</span> is emerging, mostly signaled by new flights. Metro picks within a state are <span class="tag d">Derived</span>, because official data stops at the state.</p>
+      <span class="sec-n">05 · Monthly pulse</span>
+      <h2>The month-by-month record behind the story</h2>
+      <p class="muted">No agency publishes buyer origin by month. These are the monthly series that drove it: borrowing costs, how many homes were for sale, what they sold for, and who was visiting.</p>
     </div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Tier</th><th>Origin market</th><th>Islands</th><th>Main segments</th><th>Evidence</th><th>When</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Los Angeles & Orange County</span></td><td><span class="isl">All four</span></td><td>Second home, UHNW, kamaʻāina</td><td class="why">CA is #1 on every island; LA is 9.1% of all visitors and #1 in Redfin search</td><td>Oct–Feb</td></tr>
-          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">San Francisco Bay Area</span></td><td><span class="isl">Maui</span><span class="isl">Kauaʻi</span><span class="isl">Oʻahu</span></td><td>UHNW, second home</td><td class="why">#2 Redfin search; Maui luxury "mostly Bay Area"</td><td>Oct–Feb</td></tr>
-          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Seattle & Bellevue</span></td><td><span class="isl">Maui</span><span class="isl">Hawaiʻi Is.</span><span class="isl">Oʻahu</span></td><td>Second home, retiree</td><td class="why">WA is #2–3 on every island and #2 among mover origins; 12% of Maui STR owners</td><td>Oct–Mar</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Portland</span></td><td><span class="isl">Hawaiʻi Is.</span></td><td>Second home, retiree</td><td class="why">OR is #3 on Hawaiʻi Island (57 buyers, Jan–Sep 2025)</td><td>Oct–Mar</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">San Diego</span></td><td><span class="isl">Oʻahu</span></td><td>Military, retiree</td><td class="why">Historic #1 origin county for Honolulu movers; Navy pipeline</td><td>Spring–summer</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Las Vegas & Henderson</span></td><td><span class="isl">Oʻahu</span><span class="isl">Hawaiʻi Is.</span></td><td>Returning kamaʻāina</td><td class="why">The "ninth island" diaspora; NV in the top 6 on Oʻahu and Big Island; new LAS–Hilo flight</td><td>Holidays, summer</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Denver & Boulder</span></td><td><span class="isl">Kauaʻi</span><span class="isl">Maui</span></td><td>Second home</td><td class="why">CO is #2 on Kauaʻi and #3 on Maui (2022); #5 among mover origins</td><td>Oct–Mar</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Anchorage</span></td><td><span class="isl">Hawaiʻi Is.</span></td><td>Second home, retiree</td><td class="why">AK is #4 on Hawaiʻi Island (49 buyers); winter escape</td><td>Oct–Feb</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Dallas, Austin, Houston, San Antonio</span></td><td><span class="isl">Oʻahu</span><span class="isl">Hawaiʻi Is.</span><span class="isl">Kauaʻi</span></td><td>Military, second home</td><td class="why">TX is top 6 on every island and #3 among movers; Texas is the largest US East visitor state</td><td>Year-round</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Phoenix & Scottsdale</span></td><td><span class="isl">Hawaiʻi Is.</span></td><td>Retiree, second home</td><td class="why">AZ in the Big Island top 8</td><td>May–Sep (their hot season)</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Tokyo & Osaka</span></td><td><span class="isl">Oʻahu</span></td><td>Condo buyer, condo seller</td><td class="why">#1 foreign buyer; 90%+ of value on Oʻahu</td><td>Year-round</td></tr>
-          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Vancouver & Calgary</span></td><td><span class="isl">Maui</span><span class="isl">Hawaiʻi Is.</span></td><td>Snowbird, STR investor</td><td class="why">#1 foreign buyer on Maui (H1 2025); 8% of Maui STR owners</td><td>Dec–Mar</td></tr>
-          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Salt Lake City, Boise, Spokane</span></td><td><span class="isl">Hawaiʻi Is.</span><span class="isl">Kauaʻi</span><span class="isl">Oʻahu</span></td><td>Second home</td><td class="why">UT ranks on Kauaʻi; new Delta and Alaska nonstops</td><td>Winter</td></tr>
-          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Chicago, Minneapolis, Boston, NYC, Detroit</span></td><td><span class="isl">Maui</span><span class="isl">Oʻahu</span></td><td>UHNW, second home</td><td class="why">NY was #3 on Oʻahu (2021); new 2026 nonstops ORD–OGG, MSP–OGG, BOS–HNL</td><td>Winter</td></tr>
-          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Seoul</span></td><td><span class="isl">Oʻahu</span></td><td>Condo buyer</td><td class="why">Rising #2–3 foreign buyer; visitors +8.7%</td><td>Year-round</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <figure>
+      <figcaption><span class="t">30-year fixed mortgage rate</span><span class="s">Monthly average of Freddie Mac's weekly survey, Jan 2015 – Oct 2026 <span class="tag o">Official</span></span></figcaption>
+      <div class="chart" id="c-mort"></div>
+      <p class="src">Freddie Mac PMMS. October 2026 is a single weekly reading (Oct 1).</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Homes for sale</span><span class="s">Active listings by island, monthly, Jul 2016 – Sep 2026. Each panel has its own scale. <span class="tag p">Primary</span></span></figcaption>
+      <div class="sm" id="c-active"></div>
+      <p class="src">Realtor.com county inventory history, downloaded directly from Realtor.com's research data file.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Single-family median price</span><span class="s">Monthly median (faint) and its 12-month average (solid), Jan 2015 – Aug 2026. Each panel has its own scale. <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-median"></div>
+      <p class="src">DBEDT Monthly Economic Indicators (county Realtor board data). Checked against published figures: Oʻahu Dec 2025 $1,100,000 and Aug 2026 $1,240,000; Maui Aug 2026 $1,200,000. All match. On Kauaʻi and the Big Island, single-month medians from different publishers can differ by a few percent because sales are few, so use the 12-month line.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Home sales, rolling 12 months</span><span class="s">Single-family plus condo sales over the trailing 12 months, by island. Each panel has its own scale. <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-sales"></div>
+      <p class="src">DBEDT Monthly Economic Indicators. Oʻahu 2025 totals (2,890 single-family, 4,408 condo) match the Honolulu Board of Realtors' year-end release.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Visitor arrivals, the buyer pipeline</span><span class="s">Statewide arrivals per month, domestic vs international, Jan 2015 – Aug 2026 <span class="tag o">Official</span></span></figcaption>
+      <div class="legend"><span><i class="ln" style="background:var(--s-main)"></i>Domestic (U.S.)</span><span><i class="ln" style="background:var(--s-foreign)"></i>International</span></div>
+      <div class="chart" id="c-arr"></div>
+      <p class="src">DBEDT Monthly Economic Indicators. One source error was found and corrected: a Hawaiʻi Tourism Authority island series repeats Maui's 2021 months as 2022, so the state's own arrivals series (Maui 2022: 2,969,395) is used throughout.</p>
+    </figure>
   </section>
 
-  <!-- 7 -->
-  <section id="rules">
+  <!-- NOW -->
+  <section id="now">
     <div class="head col">
-      <span class="sec-n">§7 · Rules of the road</span>
-      <h2>ZIP-level precision lives in the mail, not the ad platforms</h2>
-      <p class="muted">Housing ads are a regulated category. The rules change which channel can carry which level of targeting.</p>
+      <span class="sec-n">06 · Where it is now</span>
+      <h2>September 2026: more homes for sale, rising rates, and buyers with leverage</h2>
     </div>
-    <div class="col">
-      <div class="rule"><div class="rk">Meta (FB/IG)</div><div>Ads must be declared under the Housing special category. There is no ZIP targeting, and a city or pin expands to at least a 15-mile radius. Age must stay 18–65+ with all genders, and lookalikes and exclusions are off. <b>Allowed:</b> origin cities and states (Seattle + 15 mi, all of California) and your own uploaded client list.</div></div>
-      <div class="rule"><div class="rk">Google</div><div>Housing policy (US and Canada): no targeting by ZIP, age, gender, parental or marital status. Use city, metro, state or radius instead.</div></div>
-      <div class="rule"><div class="rk">Fair housing</div><div>Targeting by <b>place</b> is fine when it adds reach. Targeting by <b>country, language or ancestry</b> can read as a national-origin preference under 42 USC 3604(c), and Hawaiʻi's HRS §515-3 adds ancestry, age and marital status as protected classes. Have Japan, Korea and Canada campaigns reviewed, and keep ad copy about the property, never about who the buyer should be.</div></div>
-      <div class="rule"><div class="rk">Direct mail</div><div>The precise channel. Owner mailing addresses from county tax rolls are public records (OIP Op. Ltr. 11-01), and mail can go to any ZIP. Fair housing and brokerage-disclosure rules still apply to the mailer.</div></div>
-      <div class="rule"><div class="rk">Every ad</div><div>HAR §16-99-11: show the brokerage's legal or registered trade name and the licensee's status. Team names must be registered trade names.</div></div>
-      <div class="rule"><div class="rk">Phone, text, email</div><div>TCPA requires prior express written consent for autodialed or prerecorded marketing, a Do Not Call scrub every 31 days, and calls only 8am–9pm in the recipient's local time. CAN-SPAM requires a postal address and an opt-out honored within 10 business days.</div></div>
-      <div class="rule"><div class="rk">Lahaina</div><div>The governor's proclamation bans unsolicited offers to burn-zone owners, with penalties of up to 1 year and $5,000. Do not prospect there. Reach sellers only through local and land-trust channels.</div></div>
-      <p class="src" style="margin-top:12px">Meta Business Help Center (Housing special ad category); Google Ads housing policy; 42 USC 3604(c); HRS §515-3; HAR §16-99-11; OIP Op. Ltr. 11-01; 47 CFR 64.1200; FTC CAN-SPAM guide; Office of the Governor, Aug 19, 2023 proclamation. This is a summary of rules, not legal advice; confirm campaigns with your principal broker.</p>
+    <div class="now-grid">
+      <div class="now-card"><div class="nm">Oʻahu</div><dl>
+        <dt>Active listings</dt><dd>3,483</dd><dt>vs Sep 2025</dt><dd>+6.4%</dd><dt>Median days listed</dt><dd>76</dd><dt>Listings with a price cut</dt><dd>14.3%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>+5.9%</dd><dt>Condo sales Jan–Aug</dt><dd>−1.6%</dd></dl>
+        <div class="read">Single-family homes are still tight: a record $1,242,500 median in June, then −3.9% in September. Condos are flat. Outside demand is rising but mostly military and Asian condo buyers.</div></div>
+      <div class="now-card"><div class="nm">Maui</div><dl>
+        <dt>Active listings</dt><dd>1,367</dd><dt>vs Sep 2025</dt><dd>+5.2%</dd><dt>Median days listed</dt><dd>117</dd><dt>Listings with a price cut</dt><dd>12.5%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>+2.5%</dd><dt>Condo sales Jan–Aug</dt><dd>+17.0%</dd></dl>
+        <div class="read">More than four times its November 2021 low of 316 listings, and condos are finally moving at lower prices. The single-family median was $1,200,000 in August, down 7.9%.</div></div>
+      <div class="now-card"><div class="nm">Kauaʻi</div><dl>
+        <dt>Active listings</dt><dd>385</dd><dt>vs Sep 2025</dt><dd>+8.1%</dd><dt>Median days listed</dt><dd>116</dd><dt>Listings with a price cut</dt><dd>4.8%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>−9.6%</dd><dt>Condo sales Jan–Aug</dt><dd>−26.6%</dd></dl>
+        <div class="read">The thinnest market. Sellers are holding price (few cuts) while sales fall, a standoff that usually ends with cuts.</div></div>
+      <div class="now-card"><div class="nm">Hawaiʻi Island</div><dl>
+        <dt>Active listings</dt><dd>1,365</dd><dt>vs Sep 2025</dt><dd>+24.9%</dd><dt>Median days listed</dt><dd>92</dd><dt>Listings with a price cut</dt><dd>16.7%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>−2.8%</dd><dt>Condo sales Jan–Aug</dt><dd>−3.9%</dd></dl>
+        <div class="read">The clearest shift toward buyers: the fastest inventory growth and the most price cuts. Mainland buyers fell to 32% of sales in 2025, down from 39%.</div></div>
     </div>
+    <p class="src">Listings, days listed and price cuts: Realtor.com, September 2026 <span class="tag p">Primary</span>. Sales: DBEDT Monthly Economic Indicators, January–August 2026 vs 2025 <span class="tag o">Official</span>.</p>
   </section>
 
-  <!-- 8 -->
+  <!-- NEXT -->
   <section id="next">
     <div class="head col">
-      <span class="sec-n">§8 · Getting to ZIP level</span>
-      <h2>The next build: count every out-of-state owner by home ZIP</h2>
-      <p class="muted">The published data stops at the state. The county tax rolls go further: every parcel carries the owner's mailing address of record. Counting those addresses gives an origin map down to the ZIP code, for each island and neighborhood. No published report has this.</p>
+      <span class="sec-n">07 · Where it goes next</span>
+      <h2>2027 outlook: flat prices, slow volume, and a better market for patient buyers</h2>
+      <p class="muted">This section is judgment, built on the record above and UHERO's latest forecast. It is not fact. <span class="tag f">Forecast</span></p>
     </div>
     <div class="col">
-      <ol class="steps">
-        <li><b>Maui County, available now.</b> The county publishes a free "Property Owners &amp; Mailing Addresses" extract on its Download Public Information page.</li>
-        <li><b>Hawaiʻi County.</b> qPublic search results export to CSV/XLSX, including mailing labels. Request a full roll from cohrpt@hawaiicounty.gov.</li>
-        <li><b>Kauaʻi County.</b> Mailing addresses are shown per parcel. Request a bulk roll under UIPA.</li>
-        <li><b>Honolulu.</b> The open-data tables (OWNERDAT, OWNALL) may not include mailing addresses. Moku already holds a UIPA sales extract from the city, so a second UIPA request for the owner-address roll fits the existing relationship (bfsrpmailbox@honolulu.gov).</li>
-        <li><b>Join the rolls to Moku's parcels</b> by TMK. That gives out-of-state owner counts by origin ZIP × island × neighborhood, weighted by assessed value, with tax class (homeowner exemption vs. non-owner-occupied) as a check.</li>
-        <li><b>Verify every <span class="tag o">Official</span> figure above</b> against the source files: DBEDT Table 21.39, the Title Guaranty quarterly Buyer Stats PDFs (statewide, Q4 2025 and Q2 2026), and IRS SOI county-to-county inflows for 2022–23. The IRS data gives the top origin <i>counties</i> for each Hawaiʻi county, which is the official metro detail this report lacks.</li>
-      </ol>
-      <div class="note"><b>Why these figures aren't verified yet.</b> The environment that compiled this report could not reach state, county, IRS, Census or Title Guaranty servers. Adding these hosts to its network allowlist lets steps 1, 2 and 6 run automatically:
-        <code class="dom">files.hawaii.gov</code> <code class="dom">dbedt.hawaii.gov</code> <code class="dom">www.tghawaii.com</code> <code class="dom">uhero.hawaii.edu</code> <code class="dom">www.irs.gov</code> <code class="dom">api.census.gov</code> <code class="dom">www.mauicounty.gov</code> <code class="dom">qpublic.schneidercorp.com</code> <code class="dom">honolulu-cchnl.opendata.arcgis.com</code> <code class="dom">geodata.hawaii.gov</code> <code class="dom">services.arcgis.com</code> <code class="dom">services1.arcgis.com</code> <code class="dom">services3.arcgis.com</code>
-      </div>
+      <p>UHERO (University of Hawaiʻi Economic Research Organization) now expects the 30-year rate to average about 6.7% in 2027 and 6.6% in 2028. It expects Oʻahu's single-family median to rise about 1.5% in 2027 to roughly $1.2M, and condos about 0.3%. Honolulu inflation reached 5.6% in the 12 months to July 2026. <span class="tag r">Reported</span> (UHERO Q3 2026 forecast, via Star-Advertiser)</p>
+    </div>
+    <div class="scen">
+      <div><div class="k">If rates fall below 6%</div><h3>A smaller 2021</h3><p>The record shows mainland buyers react first and hardest when money gets cheap: purchases rose 80% in 2021. Expect West Coast second-home demand to return to Maui and Kauaʻi resort areas within two or three quarters, with inventory absorbing quickly.</p><p><b>Do now:</b> build the West Coast lists before it happens.</p></div>
+      <div class="base"><div class="k">Base case · rates 6.5–7%</div><h3>A slow buyer's market</h3><p>Sales stay near 16,000–18,000 a year. The mainland share stays around 19–22%, because cash buyers are less rate-sensitive. Prices are flat in nominal terms and down after inflation. Neighbor-island condos and the Big Island soften most, while Oʻahu single-family holds.</p><p><b>Do now:</b> target cash-heavy, high-income origins (Bay Area, Seattle, Orange County) and listing pipelines from out-of-state owners.</p></div>
+      <div><div class="k">If rates rise above 7.5%</div><h3>Volume falls further</h3><p>The 2023 pattern repeats: sales fall toward 15,000, price cuts spread, and the mainland share rises again as locals drop out. Distressed sellers emerge among Maui condo owners facing the Bill 9 deadlines and rising HOA costs.</p><p><b>Do now:</b> seller outreach to out-of-state owners, and cash buyers for the deals.</p></div>
+    </div>
+    <div class="col" style="margin-top:20px">
+      <h3>What to watch, with dates</h3>
+      <ul class="tight">
+        <li><b>Weekly:</b> the Freddie Mac rate, published every Thursday. It is the single biggest driver in the record.</li>
+        <li><b>Late 2026 or 2027:</b> IRS 2023–24 migration data, the first year to show where households moved after the Lahaina fire.</li>
+        <li><b>Quarterly:</b> Title Guaranty buyer stats by state and country, the earliest read on mainland and foreign share.</li>
+        <li><b>Jan 1, 2029 and Jan 1, 2031:</b> Maui Bill 9 deadlines for ending apartment-zoned vacation rentals in West Maui and the rest of the county. Lawsuits are pending. Expect condo listings to build ahead of each date.</li>
+        <li><b>Currencies:</b> the yen near 1986 lows has turned Japanese owners into sellers. A weak Canadian dollar and the 2025 travel boycott have held back Canadian buyers.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TARGETS -->
+  <section id="targets">
+    <div class="head col">
+      <span class="sec-n">08 · Who to target</span>
+      <h2>The target list, now ranked on nine years of records</h2>
+      <p class="muted">Ranking: volume and income from the IRS records, plus the state lists in Title Guaranty's buyer stats. Housing ads on Meta and Google cannot target ZIP codes, so the unit here is a city plus radius. Direct mail can go to any ZIP.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Tier</th><th>Origin market</th><th>Best islands</th><th class="num">Households/yr</th><th class="num">Avg income, 2022–23</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">SF Bay Area & San Jose</span></td><td><span class="isl">Maui</span><span class="isl">Hawaiʻi Is.</span><span class="isl">Kauaʻi</span></td><td class="num">710–1,442</td><td class="num">$194K Maui · $199K Big Is.</td><td class="why">Highest income of any large flow. Peaked in the remote-work years and fell back in 2022–23, so it is due to return when rates ease.</td></tr>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Seattle–Tacoma</span></td><td><span class="isl">Maui</span><span class="isl">Hawaiʻi Is.</span><span class="isl">Oʻahu</span></td><td class="num">714–1,335</td><td class="num">$171K Maui · $172K Big Is.</td><td class="why">Top four every year. Seattle movers bring high income. Pierce County (Tacoma) moves to Oʻahu are mostly military.</td></tr>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Los Angeles–Orange County</span></td><td><span class="isl">All four</span></td><td class="num">1,121–1,875</td><td class="num">$94K Oʻahu · $145K Kauaʻi</td><td class="why">#1 origin metro in all nine years. Orange County moves to Kauaʻi averaged $237K.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">San Diego</span></td><td><span class="isl">Oʻahu</span></td><td class="num">915–1,316</td><td class="num">$71K Oʻahu · $90K Maui</td><td class="why">Big volume, mostly Navy. VA buyers in the Oʻahu suburbs, timed to PCS season.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Las Vegas–Henderson</span></td><td><span class="isl">Oʻahu</span><span class="isl">Hawaiʻi Is.</span></td><td class="num">517–728</td><td class="num">$52K–62K</td><td class="why">The returning kamaʻāina corridor. Entry-price and family buyers.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Phoenix</span></td><td><span class="isl">Hawaiʻi Is.</span><span class="isl">Maui</span></td><td class="num">331–525</td><td class="num">$101K Big Is. · $67K Maui</td><td class="why">Steadily rising origin. Retirees and second homes.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Portland</span></td><td><span class="isl">Hawaiʻi Is.</span><span class="isl">Maui</span></td><td class="num">273–530</td><td class="num">$85K Big Is. · $70K Maui</td><td class="why">Multnomah County ranks in the Big Island's top seven most years.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Texas metros</span></td><td><span class="isl">Oʻahu</span></td><td class="num">573–905</td><td class="num">$75K Oʻahu · $89K Big Is.</td><td class="why">Heavily military: San Antonio (Bexar) is the largest Texas origin. Military bases outside these metros (Killeen, El Paso) are not counted here.</td></tr>
+          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Denver–Boulder, Salt Lake City, Anchorage, Sacramento</span></td><td><span class="isl">Kauaʻi</span><span class="isl">Hawaiʻi Is.</span></td><td class="num">under 300 each</td><td class="num">varies</td><td class="why">Consistent smaller origins. Salt Lake City and Anchorage favor the Big Island.</td></tr>
+          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Tokyo–Osaka, Seoul, Vancouver–Calgary</span></td><td><span class="isl">Oʻahu</span><span class="isl">Maui</span></td><td class="num">n/a (foreign)</td><td class="num">n/a</td><td class="why">Foreign buyers were 415 sales in 2025 (2.5%). Japan is #1, concentrated in Oʻahu condos. Treat these owners as a listing source as much as a buyer pool.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Households/yr: the lowest and highest year across the nine IRS years, for the metro's named counties, all islands combined (lower bounds). Avg income: AGI per household moving from that metro to the island named, 2022–23. <span class="tag p">Primary</span></p>
+
+    <div class="col" style="margin-top:26px">
+      <h3>Why each group buys</h3>
+    </div>
+    <div class="segs">
+      <div class="seg"><div class="k">Largest outside segment</div><h3>West Coast second-home buyer</h3><p>Affluent, 45–64, often paying cash. They buy on the neighbor islands, in resort condos and homes. Much less rate-sensitive than locals: their share rose in 2022–23 while total sales fell.</p><div class="reach">Bay Area, Seattle, Orange County. Mainland winter (Oct–Feb), while they are on island.</div></div>
+      <div class="seg"><div class="k">Fixed cycle</div><h3>Military buyer</h3><p>Base-county inflows to Oʻahu are large and steady every year. These buyers use VA loans, and the home often becomes a rental after the next assignment.</p><div class="reach">San Diego, Pierce WA, Bexar TX, El Paso CO/TX. PCS season (spring–summer).</div></div>
+      <div class="seg"><div class="k">Coming home</div><h3>Returning kamaʻāina</h3><p>Las Vegas runs both ways: far more Oʻahu households leave for Clark County than return, but several hundred return every year.</p><div class="reach">Las Vegas–Henderson, Southern California. Hawaiʻi clubs, alumni networks, holiday homecomings.</div></div>
+      <div class="seg"><div class="k">Retiree</div><h3>Pension retiree</h3><p>Hawaiʻi does not tax Social Security or employer-funded pensions <span class="tag r">Reported</span>. Phoenix, Portland and Salt Lake City flows lean older and mid-income.</p><div class="reach">Lead with the tax treatment. Single-level condos near care.</div></div>
+      <div class="seg"><div class="k">Being reshaped by law</div><h3>Rental investor</h3><p>Maui's Bill 9 (Ordinance 5909) ends apartment-zoned vacation rentals by 2029 in West Maui and 2031 elsewhere <span class="tag r">Reported</span>. Investor demand moves to legal resort zones. Existing condo owners become sellers.</p><div class="reach">Out-of-state Maui condo owners (direct mail). 1031 buyers.</div></div>
+      <div class="seg"><div class="k">Currency-driven</div><h3>Japanese and Canadian owners</h3><p>The share of sales going to foreign buyers fell from 4.5% (2018) to 2.5% (2025) <span class="tag o">Official</span>. A weak yen and Canadian dollar favor selling over buying.</p><div class="reach">Listing outreach to foreign owners of Oʻahu and Maui condos.</div></div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section id="rules">
+    <div class="head col"><span class="sec-n">09 · Rules of the road</span><h2>ZIP-level precision lives in the mail, not the ad platforms</h2></div>
+    <div class="col">
+      <div class="rule"><div class="rk">Meta (FB/IG)</div><div>Housing ads go under the special ad category. There is no ZIP targeting, and locations expand to at least a 15-mile radius. Age must stay 18–65+ with all genders. No lookalike audiences. You can target origin cities and states and upload your own client list. <span class="tag r">Reported</span></div></div>
+      <div class="rule"><div class="rk">Google</div><div>Under the housing policy, there is no targeting by ZIP, age, gender, parental status or marital status. Use city, metro, state or radius. <span class="tag r">Reported</span></div></div>
+      <div class="rule"><div class="rk">Fair housing</div><div>Targeting by <b>place</b> is fine when it adds reach. Targeting by country, language or ancestry can read as a national-origin preference (42 USC 3604(c); HRS §515-3). Keep ad copy about the property, never about the buyer.</div></div>
+      <div class="rule"><div class="rk">Direct mail</div><div>Owner mailing addresses in county tax records are public under Hawaiʻi's records law (OIP Op. Ltr. 11-01) <span class="tag r">Reported</span>. Mail can go to any ZIP. Fair-housing and brokerage-name rules still apply.</div></div>
+      <div class="rule"><div class="rk">Every ad</div><div>HAR §16-99-11 requires the brokerage's legal or registered trade name and the licensee's status.</div></div>
+      <div class="rule"><div class="rk">Lahaina</div><div>Unsolicited offers to burn-zone owners were banned by the governor's Aug 2023 proclamation. Do not prospect there. <span class="tag r">Reported</span></div></div>
+      <p class="src" style="margin-top:12px">A summary of rules, not legal advice. Confirm campaigns with your principal broker. Items tagged Reported are being re-verified against their sources.</p>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="head col"><span class="sec-n">10 · How this was checked</span><h2>Every dataset, where it came from, and how it was verified</h2></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Dataset</th><th>Coverage</th><th>How obtained</th><th>Verification</th></tr></thead>
+        <tbody>
+          <tr><td><span class="geo">IRS county-to-county migration</span></td><td>2014–15 to 2022–23, all four counties</td><td>IRS SOI CSVs from a public research mirror (state and national files)</td><td>All 9 files' SHA-256 match an independent record of direct irs.gov downloads. The Hawaii state workbooks agree with the national files on every total checked. All tables recomputed here. <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Buyer origin by county</span></td><td>2015–2025</td><td>Title Guaranty series compiled by Hawaiʻi Appleseed, published with Title Guaranty's permission (Sep 2026)</td><td>Matches DBEDT Data Book Table 21.38/21.39 exactly for 2019, 2021, 2023 and 2024 (counts and average prices), and Maui 2021 and 2024. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Active listings, days on market, price cuts</span></td><td>Jul 2016 – Sep 2026</td><td>Downloaded directly from Realtor.com's research data file</td><td>Primary file, read here. <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Monthly sales and medians</span></td><td>Jan 2015 – Aug 2026</td><td>DBEDT Monthly Economic Indicators, via Hawaiʻi Appleseed's data file</td><td>Matches the Honolulu Board of Realtors and the Realtors Association of Maui on all six figures checked. Kauaʻi and Big Island single months differ slightly by publisher. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Mortgage rates</span></td><td>Jan 2015 – Oct 2026</td><td>Freddie Mac PMMS, monthly mean</td><td>Oct 1, 2026 = 7.28%, matching Freddie Mac's release. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Visitor arrivals</span></td><td>Jan 2015 – Aug 2026</td><td>DBEDT Monthly Economic Indicators</td><td>Error found and corrected: the Hawaiʻi Tourism Authority island series duplicates Maui 2021 as 2022, so the state series is used. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Maui non-owner share</span></td><td>FY2016 – FY2026</td><td>Maui County RPT Sales Data File (520,135 records), processed by Hawaiʻi Appleseed</td><td>Category definitions read in their published script: conveyance-tax schedule and homeowner tax class. <span class="tag o">Official</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <div class="note"><b>What is still missing.</b> Buyer origin by ZIP code. County tax rolls hold every owner's mailing address. Joined to recorded sales, they would show who bought in each neighborhood, each month, by home ZIP, which would make ZIP-level direct-mail lists possible. Maui's roll is a free public download. The environment that built this report cannot reach the county servers, so that build is the next step.</div>
     </div>
   </section>
 
   <section id="sources">
     <div class="head col"><span class="sec-n">Sources</span><h2>Where every number comes from</h2></div>
     <ul class="sources">
-      <li>DBEDT State Data Book 2024, Tables 21.38–21.39, Home Sales by Origin of Buyer — files.hawaii.gov/dbedt/economic/databook/2024-individual/21/213924.pdf</li>
-      <li>DBEDT Data Book 2022 and 2018, Table 21.39 (2021 and 2018 county splits)</li>
-      <li>DBEDT, Residential Home Sales in Hawaiʻi report (2008–Sep 2015), and Home Sales to Foreign Buyers by Property Type</li>
-      <li>DBEDT Data Book 2024, Table 1.62, state-to-state migration (ACS 2023)</li>
-      <li>DBEDT 2024 Annual Visitor Research Report; HTA/DBEDT 2025 and June 2026 visitor statistics</li>
-      <li>DBEDT, Hawaiʻi–Japan Economic Relationship and Impacts (May 2026)</li>
-      <li>Title Guaranty Hawaiʻi, Buyer Stats: Hawaiʻi Q3 2025, Oʻahu Q3 2025, Kauaʻi Q2 2025, Oʻahu Q4 2024 — tghawaii.com</li>
-      <li>UHERO, The Hawaiʻi Housing Factbook 2023, 2025 and 2026 — uhero.hawaii.edu</li>
-      <li>UHERO, Maui Short-Term Rentals: the Minatoya List and Housing Supply (2025)</li>
-      <li>Hawaii Business Magazine: West Coast buyers (2021 districts), Maui mainland/foreign buyers (Island Sotheby's), weak yen and Japanese investment</li>
-      <li>Maui Now (Jan 2023), DBEDT Q1–Q3 2022 Maui buyer origins; Wailea Hawaii market update (Jul 2025)</li>
-      <li>Hawaii Life market reports (Kauaʻi Q4 2024; Oct 2024 forecast)</li>
-      <li>Redfin Honolulu housing market, search migration (Jan–Mar 2026); Redfin vacation-home buyer analysis (2025)</li>
-      <li>HVCB Air Service Grid (Aug 2026); Business Traveller, KHON2, Airline Geeks, Beat of Hawaii (2026 routes)</li>
-      <li>Maui County Ordinance 5909 (Bill 9) — Civil Beat, HPR, Maui Now (Dec 2025 – Jul 2026)</li>
-      <li>Honolulu and Maui County FY26–27 real property tax rates; Act 96 (2025) green fee; Act 24 (2026) top bracket</li>
-      <li>DBEDT Vintage 2025 population estimates; UHERO migration research (2025); HNN on the Native Hawaiian mainland population (2024)</li>
-      <li>Hale Hanohano $65.75M sale (Coldwell Banker, Mar 2025); List Sotheby's Q4 2025 luxury report</li>
-      <li>Meta Business Help Center, Housing special ad category; Google Ads housing policy; DOJ–Meta settlement (2022)</li>
-      <li>HAR §16-99-11; HRS §515-3; HRS §92F; OIP Op. Ltr. 11-01; 47 CFR 64.1200; FTC CAN-SPAM guide</li>
+      <li>IRS Statistics of Income, County-to-County Migration Data, 2014–15 through 2022–23 (countyinflow*.csv; Hawaii state workbooks)</li>
+      <li>Title Guaranty Hawaiʻi buyer-origin series 2015–2025, compiled by Hawaiʻi Appleseed (Census-Forecaster repository, county_home_sales_tg_2015_2025.csv)</li>
+      <li>DBEDT State Data Book, Tables 21.38 and 21.39 (Home Sales by Origin of Buyer)</li>
+      <li>DBEDT Monthly Economic Indicators, county workbooks (sales, medians, visitor arrivals)</li>
+      <li>Realtor.com Residential Data, RDC_Inventory_Core_Metrics_County_History.csv</li>
+      <li>Freddie Mac Primary Mortgage Market Survey, weekly 30-year fixed</li>
+      <li>Maui County Real Property Tax, RPT Sales Data File and Full Assessment Listing, as processed by Hawaiʻi Appleseed (maui_sales_totals_fy2016_2026.csv)</li>
+      <li>Honolulu Board of Realtors monthly and year-end releases (via Star-Advertiser, Oct 7, 2026; Lists Sotheby's; Hawaii Realtors)</li>
+      <li>Realtors Association of Maui monthly and year-end releases (via Maui Now, Jan 16, 2026 and Sep 4, 2026)</li>
+      <li>UHERO Forecast for the State of Hawaiʻi, Q3 2026 (via Star-Advertiser)</li>
+      <li>Maui County Ordinance 5909 (Bill 9); Governor's proclamation of Aug 19, 2023; HAR §16-99-11; HRS §515-3; 42 USC 3604(c); OIP Op. Ltr. 11-01</li>
+      <li>Meta Business Help Center, Housing special ad category; Google Ads housing policy</li>
     </ul>
   </section>
 
-  <footer>Moku · Hawaiʻi parcel public-records intelligence. Compiled October 2026 from published public sources; figures marked Official still need a check against the original files. Market intelligence only, not legal or tax advice.</footer>
+  <footer>Moku · Hawaiʻi parcel public-records intelligence. Compiled October 8, 2026. Market intelligence, not legal, tax or investment advice. Forecasts are judgment.</footer>
 </div>
 
 <div id="tip" role="tooltip"></div>
 
+<script id="data" type="application/json">{"months":["2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09","2026-10"],"mortgage":[3.67,3.71,3.77,3.67,3.84,3.98,4.05,3.9,3.89,3.8,3.94,3.96,3.87,3.66,3.69,3.6,3.6,3.57,3.44,3.44,3.46,3.47,3.77,4.2,4.15,4.17,4.2,4.04,4.01,3.9,3.97,3.88,3.81,3.9,3.92,3.95,4.03,4.33,4.44,4.47,4.59,4.57,4.53,4.55,4.63,4.83,4.87,4.64,4.46,4.37,4.26,4.14,4.07,3.8,3.77,3.62,3.6,3.69,3.69,3.72,3.62,3.46,3.45,3.31,3.23,3.16,3.02,2.94,2.89,2.83,2.77,2.68,2.73,2.81,3.08,3.06,2.96,2.98,2.87,2.84,2.9,3.07,3.07,3.1,3.44,3.76,4.17,4.98,5.23,5.52,5.41,5.22,6.11,6.9,6.8,6.36,6.27,6.26,6.54,6.34,6.42,6.71,6.84,7.07,7.2,7.62,7.44,6.82,6.64,6.78,6.82,6.99,7.06,6.92,6.85,6.5,6.18,6.43,6.8,6.71,6.96,6.84,6.65,6.72,6.82,6.82,6.72,6.59,6.35,6.25,6.24,6.19,6.1,6.05,6.18,6.33,6.44,6.49,6.54,6.67,6.86,7.28],"islands":{"Oahu":{"sf_sales":[210.0,201.0,244.0,301.0,309.0,324.0,337.0,344.0,329.0,313.0,246.0,297.0,232.0,240.0,297.0,301.0,319.0,324.0,322.0,344.0,329.0,335.0,294.0,341.0,247.0,221.0,309.0,280.0,362.0,370.0,335.0,362.0,374.0,355.0,332.0,361.0,252.0,217.0,305.0,289.0,332.0,365.0,330.0,354.0,309.0,309.0,288.0,259.0,246.0,208.0,276.0,318.0,320.0,327.0,372.0,360.0,347.0,347.0,320.0,309.0,265.0,247.0,303.0,248.0,248.0,302.0,361.0,370.0,391.0,345.0,338.0,420.0,291.0,260.0,361.0,375.0,405.0,451.0,404.0,425.0,424.0,381.0,371.0,378.0,326.0,241.0,321.0,365.0,344.0,357.0,312.0,314.0,278.0,222.0,192.0,202.0,150.0,173.0,236.0,208.0,262.0,248.0,224.0,252.0,232.0,213.0,180.0,182.0,184.0,179.0,230.0,262.0,249.0,258.0,269.0,253.0,217.0,261.0,203.0,228.0,196.0,167.0,206.0,241.0,235.0,289.0,249.0,259.0,276.0,261.0,241.0,270.0,194.0,177.0,260.0,230.0,255.0,270.0,300.0,264.0,null,null],"condo_sales":[286.0,290.0,403.0,454.0,450.0,500.0,501.0,428.0,480.0,454.0,358.0,424.0,338.0,324.0,491.0,460.0,477.0,548.0,444.0,481.0,512.0,428.0,421.0,525.0,378.0,362.0,495.0,486.0,540.0,536.0,475.0,575.0,526.0,489.0,501.0,461.0,374.0,385.0,485.0,547.0,495.0,547.0,502.0,521.0,511.0,443.0,429.0,440.0,326.0,321.0,467.0,476.0,520.0,473.0,513.0,512.0,466.0,472.0,434.0,428.0,379.0,316.0,410.0,343.0,254.0,312.0,426.0,409.0,456.0,480.0,407.0,514.0,392.0,446.0,626.0,645.0,598.0,730.0,671.0,675.0,615.0,611.0,601.0,593.0,552.0,486.0,672.0,672.0,688.0,626.0,518.0,508.0,496.0,435.0,340.0,360.0,275.0,325.0,444.0,420.0,438.0,470.0,422.0,422.0,376.0,399.0,310.0,272.0,292.0,334.0,344.0,431.0,478.0,355.0,389.0,401.0,366.0,405.0,341.0,323.0,312.0,293.0,369.0,395.0,374.0,358.0,389.0,391.0,408.0,443.0,316.0,360.0,297.0,291.0,351.0,378.0,339.0,397.0,416.0,365.0,null,null],"sf_median":[675000.0,648000.0,700000.0,674900.0,698000.0,700000.0,710000.0,699000.0,730000.0,720000.0,715500.0,700000.0,733500.0,700000.0,725000.0,720000.0,719000.0,760000.0,746000.0,747500.0,750000.0,742000.0,750000.0,730000.0,730000.0,755000.0,752000.0,712500.0,745000.0,795000.0,750000.0,786250.0,760000.0,752000.0,773500.0,750000.0,772000.0,772500.0,760000.0,790000.0,778000.0,782388.0,789500.0,810000.0,812500.0,800000.0,797000.0,788000.0,767500.0,789000.0,782500.0,766750.0,770000.0,800000.0,835000.0,790000.0,777000.0,780000.0,794750.0,820000.0,770000.0,765000.0,810000.0,809000.0,797000.0,770000.0,815000.0,839000.0,880000.0,865000.0,872500.0,870000.0,883000.0,917500.0,950000.0,928000.0,978000.0,979000.0,992500.0,1050000.0,1050000.0,1000000.0,1050000.0,1050000.0,1050000.0,1125000.0,1150000.0,1105000.0,1153500.0,1100000.0,1107944.0,1125500.0,1100000.0,1050000.0,1149500.0,1049500.0,970000.0,987000.0,1083750.0,999995.0,1109000.0,1050000.0,1090000.0,1110000.0,1050000.0,1100000.0,1100055.0,996500.0,1021016.0,1075000.0,1100000.0,1100000.0,1085000.0,1120000.0,1140000.0,1122000.0,1112722.0,1100000.0,1115000.0,1054500.0,1120000.0,1185000.0,1160000.0,1170000.0,1175000.0,1125000.0,1075000.0,1105500.0,1155000.0,1162500.0,1100000.0,1100000.0,1122500.0,1205000.0,1199500.0,1150000.0,1166000.0,1242500.0,1224500.0,1240000.0,null,null],"condo_median":[381500.0,326000.0,380000.0,370475.0,375000.0,338500.0,350000.0,354000.0,366000.0,370000.0,347500.0,386250.0,374500.0,378444.0,385000.0,389500.0,373000.0,405500.0,400000.0,398000.0,383250.0,396000.0,395000.0,390000.0,380000.0,385000.0,400000.0,415500.0,406500.0,400000.0,425000.0,419000.0,425000.0,397500.0,405000.0,405000.0,430000.0,409000.0,435000.0,416000.0,430000.0,420000.0,429500.0,427000.0,428000.0,390000.0,420000.0,398500.0,399000.0,415000.0,429000.0,418950.0,417500.0,432500.0,461500.0,419500.0,445000.0,441000.0,415000.0,425500.0,429000.0,430000.0,435000.0,450000.0,399000.0,421500.0,440000.0,430000.0,445000.0,439500.0,420000.0,455000.0,452000.0,457500.0,451000.0,450000.0,457750.0,460000.0,475000.0,500000.0,478000.0,500000.0,500000.0,485000.0,510000.0,497000.0,515500.0,510000.0,516500.0,534000.0,500000.0,498500.0,502500.0,520000.0,480000.0,502500.0,495000.0,480000.0,536000.0,500000.0,505000.0,510000.0,500000.0,515000.0,532500.0,515000.0,516179.0,510000.0,502500.0,512500.0,500000.0,528000.0,495000.0,530000.0,509000.0,500000.0,517500.0,525000.0,530000.0,540000.0,539500.0,494000.0,500000.0,505000.0,500000.0,510000.0,490000.0,515000.0,508750.0,535000.0,487450.0,512000.0,529000.0,500000.0,510000.0,500000.0,520000.0,528000.0,504500.0,510000.0,null,null],"active":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,2380.0,2413.0,2340.0,2288.0,2243.0,2162.0,2119.0,2142.0,2190.0,2281.0,2308.0,2370.0,2383.0,2380.0,2340.0,2338.0,2300.0,2234.0,2188.0,2256.0,2340.0,2448.0,2497.0,2604.0,2744.0,2753.0,2774.0,2818.0,2918.0,2909.0,2962.0,3080.0,3078.0,3030.0,2997.0,2995.0,3112.0,3105.0,3114.0,3114.0,3031.0,2861.0,2724.0,2778.0,2837.0,2829.0,2825.0,2793.0,2589.0,2577.0,2458.0,2433.0,2368.0,2438.0,2368.0,1900.0,1815.0,1741.0,1581.0,1571.0,1568.0,1472.0,1513.0,1575.0,1570.0,1488.0,1390.0,1428.0,1366.0,1371.0,1470.0,1528.0,1686.0,1754.0,1778.0,1935.0,2041.0,2044.0,2129.0,2452.0,2511.0,1805.0,1777.0,1811.0,1840.0,1858.0,1862.0,1970.0,2077.0,2107.0,2054.0,2074.0,2197.0,2243.0,2357.0,2440.0,2636.0,2738.0,2788.0,2800.0,2931.0,2895.0,2876.0,2953.0,3106.0,3332.0,3496.0,3542.0,3524.0,3369.0,3273.0,3232.0,3245.0,3118.0,3020.0,3064.0,3105.0,3145.0,3286.0,3448.0,3506.0,3494.0,3483.0,null],"dom":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,58.0,60.0,60.0,61.0,64.0,68.0,62.0,53.0,49.0,46.0,52.0,53.0,55.0,56.0,60.0,60.0,60.0,65.0,66.0,52.0,50.0,51.0,53.0,54.0,54.0,56.0,60.0,64.0,63.0,68.0,65.0,59.0,55.0,57.0,56.0,56.0,54.0,57.0,61.0,64.0,66.0,74.0,76.0,69.0,61.0,71.0,82.0,91.0,83.0,75.0,73.0,74.0,77.0,85.0,101.0,73.0,60.0,59.0,53.0,45.0,44.0,46.0,43.0,41.0,44.0,52.0,58.0,45.0,44.0,42.0,36.0,39.0,41.0,46.0,49.0,50.0,53.0,64.0,68.0,64.0,60.0,64.0,59.0,58.0,59.0,61.0,58.0,54.0,56.0,62.0,72.0,68.0,60.0,58.0,55.0,57.0,61.0,63.0,66.0,68.0,71.0,75.0,76.0,74.0,61.0,61.0,64.0,68.0,75.0,80.0,81.0,79.0,79.0,83.0,85.0,80.0,71.0,72.0,71.0,68.0,72.0,73.0,76.0,null],"cuts":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.0955,0.0932,0.1006,0.0954,0.0806,0.072,0.0939,0.0956,0.1027,0.1143,0.1196,0.1224,0.1378,0.131,0.141,0.1299,0.1243,0.1049,0.0968,0.1279,0.1283,0.1251,0.1293,0.1491,0.1554,0.1788,0.175,0.1757,0.1355,0.1337,0.1344,0.1626,0.1606,0.1601,0.1633,0.1664,0.1624,0.1563,0.1565,0.1561,0.1347,0.1103,0.1284,0.1373,0.1389,0.085,0.0853,0.0805,0.0888,0.0797,0.0757,0.0765,0.0719,0.0582,0.0474,0.0581,0.0552,0.0467,0.0441,0.045,0.0564,0.0467,0.0504,0.0609,0.0584,0.0417,0.0478,0.0428,0.0575,0.0528,0.0723,0.088,0.1131,0.1263,0.1326,0.1447,0.1364,0.1163,0.1086,0.1008,0.1056,0.0958,0.1036,0.0953,0.1114,0.1158,0.1162,0.1167,0.1228,0.0899,0.1078,0.1107,0.1098,0.1197,0.1253,0.124,0.1423,0.1343,0.1294,0.1363,0.1252,0.1049,0.1497,0.1446,0.145,0.1423,0.1407,0.1542,0.1368,0.1366,0.131,0.1383,0.1149,0.0901,0.1244,0.1215,0.1131,0.1278,0.1171,0.1299,0.1411,0.1432,0.1425,null]},"Maui":{"sf_sales":[75.0,60.0,86.0,87.0,88.0,101.0,129.0,96.0,97.0,106.0,72.0,93.0,72.0,69.0,99.0,100.0,94.0,99.0,93.0,96.0,83.0,82.0,91.0,98.0,66.0,63.0,105.0,98.0,95.0,120.0,92.0,106.0,81.0,112.0,73.0,90.0,87.0,98.0,101.0,92.0,113.0,86.0,114.0,109.0,80.0,88.0,76.0,95.0,63.0,79.0,96.0,78.0,134.0,89.0,87.0,100.0,119.0,104.0,74.0,97.0,85.0,83.0,91.0,84.0,42.0,72.0,89.0,99.0,108.0,96.0,102.0,108.0,101.0,101.0,123.0,135.0,122.0,113.0,110.0,122.0,115.0,111.0,105.0,120.0,92.0,88.0,104.0,110.0,100.0,86.0,90.0,87.0,58.0,79.0,63.0,66.0,61.0,45.0,74.0,58.0,74.0,72.0,69.0,59.0,66.0,48.0,48.0,57.0,57.0,62.0,76.0,72.0,75.0,67.0,57.0,64.0,52.0,53.0,63.0,54.0,59.0,48.0,49.0,70.0,56.0,67.0,60.0,62.0,56.0,64.0,51.0,65.0,53.0,46.0,78.0,50.0,59.0,78.0,55.0,64.0,null,null],"condo_sales":[83.0,95.0,123.0,105.0,110.0,99.0,79.0,101.0,110.0,105.0,74.0,101.0,83.0,104.0,104.0,126.0,119.0,110.0,111.0,124.0,99.0,97.0,112.0,121.0,97.0,112.0,133.0,117.0,130.0,124.0,101.0,110.0,126.0,135.0,128.0,140.0,121.0,124.0,127.0,176.0,172.0,151.0,138.0,149.0,123.0,134.0,120.0,122.0,130.0,121.0,154.0,138.0,145.0,123.0,162.0,120.0,120.0,137.0,142.0,125.0,128.0,134.0,161.0,87.0,54.0,67.0,93.0,118.0,86.0,122.0,140.0,171.0,115.0,167.0,232.0,264.0,242.0,251.0,210.0,190.0,182.0,134.0,154.0,176.0,156.0,162.0,186.0,177.0,154.0,154.0,99.0,105.0,98.0,89.0,71.0,69.0,54.0,67.0,122.0,90.0,91.0,93.0,76.0,101.0,67.0,63.0,53.0,94.0,93.0,65.0,94.0,108.0,77.0,59.0,67.0,67.0,51.0,65.0,53.0,53.0,55.0,51.0,61.0,67.0,64.0,58.0,53.0,57.0,46.0,61.0,51.0,78.0,44.0,65.0,75.0,70.0,51.0,90.0,82.0,68.0,null,null],"sf_median":[577000.0,558625.0,632625.0,581000.0,607098.0,650000.0,590000.0,550000.0,573300.0,592000.0,550000.0,550000.0,631650.0,595000.0,611500.0,665000.0,622500.0,659000.0,600000.0,672063.0,665000.0,632500.0,635000.0,701000.0,660000.0,672575.0,756000.0,673000.0,700000.0,740000.0,701000.0,700000.0,650000.0,668675.0,688000.0,685500.0,705000.0,684350.0,680000.0,725000.0,690000.0,727500.0,764500.0,700000.0,754248.0,774223.0,740398.0,707500.0,730000.0,790000.0,712718.0,819500.0,705000.0,750000.0,788000.0,825250.0,719435.0,732000.0,729998.0,740000.0,777500.0,747150.0,835000.0,754523.0,800000.0,773250.0,779690.0,799000.0,782500.0,867500.0,852500.0,849000.0,980000.0,895000.0,985000.0,975000.0,1019000.0,1105000.0,1050000.0,1045000.0,995000.0,930000.0,1000000.0,1075000.0,1157500.0,1100000.0,1177500.0,1242500.0,1212500.0,1252500.0,1100000.0,983575.0,1016850.0,1075000.0,1025000.0,1081250.0,1175000.0,1079000.0,1191000.0,1112500.0,1271500.0,1032000.0,1200000.0,1200000.0,1294500.0,1269025.0,1112500.0,1200000.0,1342581.0,1272000.0,1299346.0,1300000.0,1295000.0,1395000.0,1200000.0,1325000.0,1428894.0,1285000.0,1300000.0,1366738.0,1200000.0,1395319.0,1295000.0,1377500.0,1290000.0,1300000.0,1315000.0,1302500.0,1292500.0,1245000.0,1150000.0,1330000.0,1415000.0,1250000.0,1200000.0,1295000.0,1159000.0,1356975.0,1150000.0,1200000.0,null,null],"condo_median":[378000.0,475000.0,440000.0,410000.0,459500.0,355000.0,399000.0,336000.0,399500.0,392900.0,475000.0,410000.0,395000.0,431950.0,494000.0,444500.0,422000.0,384000.0,440000.0,420000.0,379000.0,460000.0,382500.0,411000.0,525000.0,465000.0,390000.0,490000.0,475000.0,430000.0,440000.0,400000.0,423750.0,517500.0,399500.0,432500.0,506000.0,469250.0,450000.0,506113.0,472500.0,515000.0,513163.0,500000.0,492500.0,500000.0,528650.0,491000.0,528450.0,525000.0,508500.0,444444.0,510000.0,554000.0,494875.0,504500.0,542500.0,521600.0,499000.0,514120.0,562000.0,553500.0,555000.0,602494.0,680000.0,503000.0,505000.0,663500.0,497500.0,593900.0,560500.0,630000.0,560000.0,556990.0,642500.0,690000.0,612500.0,620000.0,711500.0,647500.0,729125.0,672500.0,725000.0,700000.0,713750.0,730500.0,810000.0,820000.0,717500.0,807500.0,789500.0,808379.0,800000.0,800000.0,850000.0,770000.0,657500.0,915000.0,798250.0,888000.0,830000.0,979900.0,845000.0,750000.0,779000.0,817000.0,890000.0,850000.0,800000.0,740000.0,1301250.0,962500.0,850000.0,980000.0,799000.0,1000000.0,990000.0,920000.0,735000.0,860000.0,675000.0,960000.0,820000.0,715000.0,762500.0,685000.0,675000.0,650000.0,652500.0,637500.0,625000.0,641250.0,629950.0,845000.0,675000.0,651250.0,597000.0,625000.0,690000.0,564950.0,null,null],"active":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1415.0,1412.0,1325.0,1307.0,1332.0,1412.0,1450.0,1445.0,1431.0,1377.0,1285.0,1262.0,1274.0,1233.0,1193.0,1175.0,1168.0,1218.0,1251.0,1242.0,1215.0,1144.0,1068.0,1074.0,1093.0,1087.0,1045.0,1044.0,1047.0,1065.0,1098.0,1091.0,1085.0,1055.0,1018.0,968.0,947.0,918.0,880.0,892.0,976.0,975.0,959.0,946.0,950.0,978.0,981.0,1012.0,1061.0,1076.0,1105.0,1078.0,1064.0,1035.0,922.0,790.0,658.0,530.0,463.0,427.0,375.0,336.0,341.0,345.0,316.0,340.0,347.0,360.0,350.0,345.0,376.0,431.0,488.0,504.0,449.0,426.0,461.0,496.0,515.0,524.0,504.0,495.0,477.0,471.0,490.0,445.0,436.0,478.0,519.0,616.0,635.0,678.0,749.0,797.0,885.0,1013.0,1056.0,1087.0,1066.0,1032.0,1067.0,1125.0,1170.0,1220.0,1261.0,1313.0,1331.0,1319.0,1320.0,1321.0,1299.0,1289.0,1363.0,1411.0,1417.0,1430.0,1427.0,1442.0,1435.0,1450.0,1437.0,1400.0,1367.0,null],"dom":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,116.0,118.0,120.0,117.0,106.0,81.0,82.0,86.0,104.0,108.0,110.0,106.0,98.0,102.0,101.0,100.0,93.0,82.0,82.0,87.0,88.0,96.0,102.0,107.0,98.0,95.0,103.0,99.0,97.0,80.0,74.0,79.0,84.0,90.0,96.0,100.0,93.0,89.0,88.0,87.0,75.0,79.0,83.0,83.0,86.0,80.0,87.0,92.0,88.0,82.0,75.0,82.0,88.0,102.0,103.0,93.0,85.0,66.0,60.0,53.0,52.0,61.0,47.0,50.0,46.0,41.0,50.0,46.0,46.0,48.0,48.0,47.0,50.0,66.0,77.0,78.0,68.0,64.0,66.0,74.0,79.0,75.0,73.0,72.0,73.0,81.0,74.0,63.0,64.0,61.0,59.0,63.0,69.0,77.0,75.0,74.0,75.0,88.0,102.0,104.0,105.0,100.0,94.0,92.0,96.0,96.0,94.0,97.0,103.0,108.0,115.0,115.0,107.0,102.0,103.0,106.0,110.0,114.0,112.0,114.0,112.0,115.0,117.0,null],"cuts":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.097,0.0949,0.0949,0.0872,0.072,0.0679,0.1023,0.1243,0.1149,0.1087,0.0822,0.0865,0.0973,0.0919,0.0903,0.0878,0.0794,0.0814,0.1063,0.1251,0.1309,0.1036,0.0917,0.0836,0.088,0.0828,0.0843,0.0775,0.0643,0.1026,0.0883,0.0806,0.0917,0.1116,0.0719,0.0916,0.1028,0.0833,0.0876,0.0801,0.0857,0.0648,0.0854,0.0978,0.0885,0.0642,0.0761,0.0837,0.0843,0.0987,0.0934,0.0576,0.0691,0.0672,0.0744,0.0524,0.0371,0.0435,0.0435,0.0537,0.0574,0.0649,0.0381,0.051,0.0384,0.0246,0.0361,0.0396,0.0468,0.0557,0.0932,0.1177,0.1173,0.114,0.1034,0.0962,0.0974,0.0965,0.1005,0.0978,0.1032,0.0858,0.0973,0.0716,0.1126,0.0625,0.0734,0.1104,0.1108,0.0813,0.1047,0.0954,0.1344,0.1378,0.1552,0.129,0.1566,0.1738,0.1183,0.1245,0.097,0.1077,0.1442,0.1647,0.158,0.1477,0.1492,0.1776,0.138,0.1754,0.1417,0.1398,0.1198,0.1114,0.1026,0.1293,0.1314,0.1509,0.1482,0.1254,0.13,0.1323,0.1251,null]},"Kauai":{"sf_sales":[33.0,25.0,34.0,36.0,51.0,47.0,41.0,57.0,36.0,49.0,31.0,49.0,32.0,37.0,55.0,47.0,35.0,63.0,40.0,59.0,47.0,37.0,61.0,55.0,50.0,34.0,45.0,34.0,53.0,54.0,51.0,44.0,46.0,51.0,48.0,42.0,45.0,53.0,64.0,40.0,50.0,56.0,57.0,53.0,59.0,36.0,40.0,45.0,48.0,28.0,31.0,58.0,57.0,63.0,59.0,56.0,51.0,46.0,43.0,41.0,34.0,33.0,54.0,41.0,20.0,23.0,37.0,47.0,49.0,64.0,60.0,72.0,57.0,49.0,68.0,70.0,69.0,85.0,44.0,72.0,67.0,49.0,48.0,67.0,52.0,44.0,55.0,60.0,51.0,42.0,24.0,42.0,28.0,30.0,25.0,22.0,16.0,25.0,26.0,22.0,30.0,36.0,16.0,19.0,16.0,26.0,25.0,28.0,30.0,28.0,29.0,37.0,33.0,23.0,37.0,41.0,26.0,24.0,22.0,28.0,29.0,32.0,41.0,34.0,19.0,44.0,34.0,28.0,36.0,47.0,42.0,37.0,18.0,32.0,25.0,32.0,37.0,29.0,35.0,28.0,null,null],"condo_sales":[26.0,23.0,32.0,25.0,42.0,42.0,36.0,20.0,29.0,35.0,29.0,32.0,36.0,22.0,37.0,34.0,37.0,22.0,32.0,26.0,31.0,31.0,29.0,41.0,39.0,31.0,33.0,35.0,42.0,51.0,32.0,24.0,36.0,58.0,30.0,42.0,34.0,36.0,44.0,42.0,47.0,73.0,35.0,36.0,40.0,37.0,37.0,42.0,31.0,23.0,34.0,41.0,49.0,41.0,37.0,24.0,32.0,46.0,27.0,45.0,22.0,31.0,39.0,32.0,26.0,17.0,26.0,19.0,30.0,32.0,35.0,41.0,41.0,39.0,59.0,60.0,68.0,71.0,68.0,60.0,55.0,45.0,56.0,63.0,27.0,47.0,56.0,48.0,44.0,45.0,30.0,45.0,29.0,39.0,20.0,19.0,26.0,25.0,39.0,24.0,29.0,30.0,24.0,24.0,29.0,19.0,26.0,21.0,16.0,23.0,31.0,27.0,35.0,32.0,21.0,22.0,25.0,28.0,18.0,26.0,33.0,19.0,28.0,29.0,23.0,25.0,20.0,26.0,17.0,24.0,22.0,22.0,21.0,11.0,19.0,21.0,22.0,22.0,18.0,15.0,null,null],"sf_median":[497000.0,730000.0,967500.0,551750.0,615000.0,570000.0,612000.0,645000.0,550500.0,675000.0,585000.0,575000.0,645000.0,650000.0,652000.0,550000.0,510000.0,690999.0,750000.0,600000.0,580000.0,624000.0,598000.0,690000.0,632000.0,682500.0,669000.0,641000.0,750000.0,702500.0,565000.0,622063.0,640000.0,700000.0,682500.0,587500.0,770000.0,725000.0,758000.0,635000.0,737500.0,730000.0,615000.0,695000.0,677000.0,745000.0,782500.0,625000.0,685750.0,689000.0,609919.0,622504.0,660000.0,620000.0,650000.0,657000.0,615000.0,680500.0,800000.0,715000.0,795000.0,802500.0,750000.0,725000.0,772500.0,605000.0,813750.0,750000.0,810000.0,976250.0,772007.0,922504.0,1036000.0,975000.0,1077500.0,979500.0,1125000.0,1100000.0,1327500.0,910000.0,1172500.0,1000000.0,1213000.0,1625000.0,925000.0,1341000.0,1228000.0,1175000.0,1028000.0,1550000.0,1194000.0,975000.0,987500.0,1022500.0,1650000.0,1468254.0,809500.0,1000000.0,1075000.0,1570000.0,1125000.0,1075000.0,1300000.0,1800000.0,1185000.0,982500.0,1300000.0,1292500.0,1411500.0,1425000.0,1600000.0,1107000.0,1450000.0,1092000.0,1300000.0,1330000.0,1712500.0,1200000.0,1387500.0,1105500.0,1325000.0,1059000.0,1160000.0,1112500.0,1105000.0,1236000.0,1212500.0,1185000.0,1370000.0,1595000.0,1052500.0,1250000.0,987500.0,1369000.0,1550000.0,1135000.0,1550000.0,1600000.0,1195000.0,1088000.0,null,null],"condo_median":[430000.0,315000.0,297504.0,385000.0,373000.0,306504.0,447500.0,247250.0,390000.0,318000.0,430000.0,364500.0,477500.0,310500.0,355000.0,429975.0,340000.0,344000.0,391000.0,468000.0,445000.0,440000.0,390000.0,400000.0,301000.0,464000.0,425000.0,430000.0,467500.0,430000.0,360000.0,428500.0,437500.0,465000.0,406000.0,542500.0,287500.0,333000.0,441500.0,463500.0,284000.0,575000.0,475000.0,440000.0,792500.0,430000.0,550000.0,658938.0,570000.0,355000.0,521750.0,550000.0,580000.0,528000.0,630000.0,585750.0,510000.0,556000.0,565000.0,689660.0,468750.0,720000.0,699950.0,497250.0,367500.0,470000.0,549500.0,415000.0,597500.0,562500.0,659000.0,507000.0,549000.0,665000.0,650000.0,478500.0,622000.0,610000.0,604500.0,517500.0,588000.0,729000.0,674250.0,595000.0,475000.0,735000.0,568750.0,820000.0,900000.0,750000.0,1035500.0,529000.0,675000.0,735000.0,757500.0,749000.0,781975.0,650000.0,575000.0,630000.0,605000.0,685000.0,1035000.0,1012500.0,525000.0,896000.0,598056.0,650000.0,992500.0,610000.0,759000.0,994800.0,615000.0,790000.0,894000.0,632000.0,640000.0,857500.0,1006000.0,680500.0,780000.0,979000.0,887500.0,750000.0,875000.0,660000.0,795000.0,680000.0,820000.0,656500.0,702500.0,684500.0,965000.0,636700.0,700000.0,875000.0,817500.0,989500.0,901938.0,999999.0,null,null],"active":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,702.0,704.0,680.0,626.0,623.0,618.0,594.0,580.0,571.0,568.0,542.0,536.0,558.0,546.0,504.0,479.0,478.0,475.0,467.0,445.0,436.0,415.0,401.0,397.0,403.0,427.0,436.0,435.0,457.0,474.0,472.0,477.0,467.0,466.0,469.0,462.0,474.0,453.0,437.0,434.0,447.0,491.0,473.0,457.0,446.0,425.0,425.0,424.0,431.0,447.0,465.0,469.0,463.0,446.0,407.0,386.0,349.0,353.0,287.0,238.0,238.0,216.0,214.0,205.0,177.0,180.0,169.0,155.0,148.0,127.0,128.0,144.0,167.0,185.0,191.0,203.0,206.0,211.0,208.0,204.0,194.0,183.0,174.0,186.0,210.0,216.0,217.0,219.0,220.0,222.0,217.0,214.0,213.0,235.0,263.0,289.0,314.0,306.0,302.0,305.0,318.0,346.0,352.0,361.0,368.0,398.0,401.0,389.0,366.0,360.0,356.0,338.0,341.0,356.0,343.0,347.0,346.0,354.0,369.0,406.0,418.0,414.0,385.0,null],"dom":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,130.0,128.0,131.0,133.0,132.0,122.0,117.0,110.0,113.0,115.0,108.0,107.0,101.0,107.0,122.0,131.0,129.0,117.0,103.0,106.0,108.0,110.0,109.0,107.0,88.0,82.0,87.0,92.0,102.0,112.0,112.0,102.0,104.0,107.0,104.0,110.0,102.0,103.0,105.0,106.0,102.0,95.0,101.0,106.0,110.0,115.0,117.0,130.0,119.0,92.0,85.0,86.0,93.0,100.0,104.0,109.0,95.0,82.0,85.0,86.0,87.0,88.0,78.0,68.0,74.0,61.0,71.0,74.0,87.0,89.0,60.0,59.0,57.0,64.0,74.0,90.0,88.0,103.0,107.0,109.0,110.0,114.0,101.0,89.0,87.0,83.0,80.0,84.0,91.0,90.0,83.0,88.0,94.0,82.0,77.0,75.0,77.0,85.0,92.0,100.0,103.0,105.0,102.0,96.0,100.0,89.0,88.0,93.0,106.0,108.0,105.0,112.0,94.0,91.0,100.0,99.0,103.0,109.0,98.0,96.0,94.0,103.0,116.0,null],"cuts":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.1141,0.1088,0.1093,0.1052,0.0692,0.0766,0.0772,0.1098,0.0895,0.0829,0.0791,0.081,0.0925,0.1164,0.0915,0.0807,0.0751,0.0689,0.0758,0.0759,0.0713,0.056,0.0654,0.0728,0.0823,0.0736,0.0824,0.0987,0.0835,0.093,0.1045,0.0812,0.1202,0.1246,0.0931,0.0921,0.0667,0.1057,0.075,0.0832,0.0843,0.0637,0.077,0.0851,0.1002,0.0714,0.0847,0.0716,0.0633,0.0699,0.0648,0.0543,0.0981,0.0603,0.0655,0.0627,0.0691,0.0707,0.0627,0.0897,0.0726,0.0448,0.0662,0.0486,0.0533,0.0305,0.0457,0.058,0.0737,0.0622,0.0953,0.095,0.1173,0.0753,0.1031,0.1813,0.078,0.104,0.1458,0.1053,0.1189,0.1093,0.0884,0.1045,0.1337,0.1411,0.132,0.1213,0.0667,0.1111,0.1081,0.1282,0.1135,0.1089,0.1585,0.1803,0.1797,0.1811,0.1825,0.1085,0.1215,0.134,0.1492,0.148,0.1277,0.1687,0.1664,0.1648,0.1588,0.145,0.1314,0.1068,0.0885,0.1165,0.1253,0.1354,0.1195,0.1352,0.1333,0.1561,0.1392,0.1519,0.048,null]},"Hawaii Island":{"sf_sales":[152.0,142.0,149.0,180.0,197.0,170.0,190.0,182.0,149.0,193.0,133.0,179.0,156.0,193.0,205.0,196.0,218.0,191.0,212.0,200.0,179.0,162.0,185.0,209.0,152.0,166.0,234.0,218.0,239.0,226.0,219.0,215.0,204.0,231.0,188.0,205.0,173.0,160.0,250.0,199.0,207.0,226.0,188.0,195.0,188.0,183.0,182.0,189.0,148.0,154.0,210.0,216.0,232.0,209.0,223.0,242.0,169.0,217.0,202.0,212.0,217.0,180.0,237.0,178.0,133.0,165.0,224.0,241.0,253.0,281.0,257.0,296.0,248.0,238.0,319.0,290.0,261.0,279.0,261.0,268.0,270.0,259.0,230.0,293.0,222.0,228.0,291.0,245.0,271.0,256.0,183.0,206.0,205.0,186.0,172.0,153.0,139.0,133.0,164.0,164.0,190.0,204.0,155.0,185.0,165.0,173.0,139.0,143.0,159.0,170.0,153.0,182.0,183.0,160.0,185.0,179.0,148.0,172.0,158.0,172.0,173.0,142.0,187.0,156.0,174.0,192.0,165.0,166.0,171.0,185.0,131.0,174.0,154.0,128.0,169.0,161.0,182.0,187.0,183.0,153.0,null,null],"condo_sales":[54.0,58.0,57.0,79.0,57.0,55.0,57.0,46.0,49.0,42.0,41.0,68.0,54.0,44.0,75.0,83.0,66.0,43.0,48.0,75.0,54.0,58.0,52.0,59.0,58.0,54.0,81.0,70.0,95.0,82.0,78.0,59.0,72.0,75.0,63.0,68.0,55.0,60.0,85.0,90.0,80.0,79.0,47.0,80.0,59.0,69.0,51.0,78.0,64.0,59.0,71.0,109.0,79.0,75.0,64.0,77.0,61.0,78.0,54.0,71.0,59.0,67.0,66.0,43.0,29.0,43.0,54.0,65.0,65.0,81.0,82.0,97.0,85.0,100.0,138.0,152.0,108.0,106.0,82.0,90.0,82.0,76.0,73.0,85.0,69.0,85.0,86.0,87.0,98.0,86.0,65.0,58.0,50.0,40.0,31.0,39.0,38.0,48.0,58.0,63.0,57.0,80.0,47.0,52.0,56.0,48.0,30.0,30.0,32.0,43.0,58.0,78.0,75.0,33.0,53.0,43.0,27.0,42.0,45.0,47.0,39.0,46.0,53.0,48.0,48.0,43.0,43.0,37.0,49.0,39.0,38.0,59.0,41.0,40.0,54.0,52.0,39.0,44.0,42.0,31.0,null,null],"sf_median":[352500.0,329000.0,330000.0,378950.0,317979.0,285000.0,343500.0,336500.0,365000.0,295000.0,328500.0,309000.0,290450.0,300000.0,305000.0,365000.0,314000.0,371500.0,305000.0,353750.0,327000.0,380000.0,359000.0,285000.0,344500.0,344250.0,377500.0,337500.0,320000.0,351250.0,325000.0,370000.0,332450.0,383250.0,371250.0,340000.0,329000.0,322500.0,382500.0,388800.0,400000.0,381250.0,320000.0,355000.0,356720.0,335000.0,364900.0,399000.0,359850.0,382000.0,381360.0,352500.0,413000.0,370000.0,375000.0,396053.0,393750.0,350000.0,394500.0,359875.0,448000.0,450000.0,412000.0,362500.0,370000.0,375000.0,357000.0,439000.0,420000.0,402500.0,447000.0,477000.0,450000.0,525000.0,409000.0,475000.0,500000.0,470000.0,426000.0,495000.0,482500.0,480000.0,525000.0,520000.0,536500.0,514250.0,520000.0,525000.0,501000.0,475950.0,455000.0,483725.0,530000.0,509500.0,492500.0,462000.0,505000.0,459500.0,550000.0,447500.0,492500.0,512804.0,495000.0,495000.0,525000.0,550000.0,499000.0,550000.0,499000.0,504000.0,595000.0,533000.0,548000.0,627775.0,580000.0,549000.0,556500.0,545000.0,550000.0,502500.0,585000.0,565000.0,630000.0,597500.0,550000.0,602650.0,525000.0,523500.0,590000.0,499000.0,525000.0,550000.0,574500.0,575000.0,619000.0,570000.0,470000.0,599800.0,535000.0,580000.0,null,null],"condo_median":[251250.0,223500.0,339000.0,260000.0,329000.0,285000.0,254000.0,267500.0,375000.0,267500.0,300000.0,270000.0,254000.0,337500.0,275000.0,345500.0,339500.0,300000.0,285000.0,285000.0,312500.0,361250.0,321000.0,295000.0,330500.0,387000.0,365000.0,313750.0,275000.0,368750.0,292000.0,300000.0,302000.0,265000.0,336000.0,281500.0,347000.0,332500.0,410000.0,372500.0,382500.0,362500.0,292200.0,330000.0,297500.0,323000.0,324000.0,384000.0,325000.0,380000.0,375000.0,419000.0,375000.0,385000.0,330000.0,325000.0,354500.0,363500.0,372750.0,350000.0,430000.0,324000.0,410000.0,349900.0,319000.0,378000.0,327500.0,475000.0,410000.0,450000.0,447500.0,385000.0,465000.0,480000.0,497000.0,474500.0,449500.0,485000.0,484500.0,450000.0,467500.0,555000.0,535000.0,471088.0,500000.0,545000.0,606000.0,689900.0,556750.0,612500.0,540000.0,597000.0,620000.0,504500.0,440000.0,610000.0,625250.0,554000.0,595000.0,549000.0,550000.0,600000.0,625000.0,612500.0,620000.0,539950.0,530750.0,598500.0,608500.0,700000.0,672500.0,787500.0,680000.0,552000.0,725000.0,550000.0,719000.0,610000.0,650000.0,464000.0,680000.0,750000.0,620000.0,582500.0,816000.0,575000.0,620000.0,572500.0,640000.0,615000.0,604913.0,720000.0,615000.0,736500.0,777500.0,582500.0,479000.0,535000.0,838750.0,493000.0,null,null],"active":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1747.0,1725.0,1685.0,1676.0,1688.0,1767.0,1767.0,1735.0,1682.0,1607.0,1532.0,1482.0,1442.0,1404.0,1377.0,1404.0,1392.0,1437.0,1448.0,1479.0,1400.0,1359.0,1319.0,1354.0,1363.0,1376.0,1367.0,1386.0,1459.0,1503.0,1588.0,1617.0,1589.0,1574.0,1538.0,1515.0,1482.0,1466.0,1439.0,1419.0,1445.0,1445.0,1399.0,1370.0,1382.0,1320.0,1299.0,1273.0,1173.0,1124.0,1029.0,1003.0,956.0,910.0,832.0,662.0,557.0,525.0,464.0,444.0,411.0,436.0,495.0,493.0,488.0,469.0,454.0,454.0,456.0,445.0,498.0,572.0,685.0,703.0,680.0,727.0,758.0,778.0,750.0,747.0,707.0,661.0,638.0,658.0,690.0,677.0,693.0,717.0,780.0,818.0,846.0,880.0,868.0,886.0,885.0,943.0,1016.0,1046.0,1034.0,1035.0,1082.0,1088.0,1110.0,1168.0,1206.0,1257.0,1284.0,1174.0,1174.0,1131.0,1093.0,1088.0,1117.0,1151.0,1197.0,1247.0,1256.0,1247.0,1268.0,1302.0,1350.0,1387.0,1365.0,null],"dom":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,100.0,100.0,102.0,105.0,103.0,96.0,95.0,95.0,98.0,101.0,101.0,99.0,97.0,96.0,94.0,87.0,88.0,85.0,91.0,88.0,88.0,87.0,90.0,91.0,94.0,94.0,92.0,93.0,86.0,85.0,83.0,82.0,84.0,86.0,92.0,94.0,96.0,101.0,101.0,101.0,96.0,96.0,96.0,93.0,88.0,90.0,99.0,105.0,105.0,85.0,78.0,78.0,76.0,75.0,81.0,82.0,61.0,52.0,50.0,48.0,52.0,45.0,42.0,47.0,57.0,56.0,54.0,52.0,45.0,46.0,44.0,47.0,48.0,58.0,68.0,71.0,72.0,76.0,82.0,80.0,83.0,78.0,69.0,70.0,67.0,76.0,78.0,71.0,74.0,75.0,77.0,74.0,79.0,78.0,77.0,75.0,79.0,83.0,86.0,86.0,82.0,85.0,88.0,85.0,78.0,81.0,86.0,87.0,87.0,92.0,93.0,88.0,81.0,79.0,82.0,85.0,82.0,85.0,88.0,87.0,85.0,86.0,92.0,null],"cuts":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.1072,0.1154,0.0942,0.0983,0.0835,0.0848,0.101,0.105,0.1122,0.102,0.1065,0.1078,0.098,0.0933,0.0981,0.0991,0.1023,0.0782,0.1101,0.1221,0.1098,0.1027,0.0958,0.0896,0.0979,0.1072,0.1128,0.1202,0.1024,0.1078,0.1356,0.1284,0.1353,0.1401,0.1429,0.1145,0.0596,0.1288,0.1176,0.1114,0.1125,0.106,0.1285,0.1399,0.1247,0.0801,0.0793,0.0706,0.0925,0.0728,0.0792,0.0702,0.0797,0.0705,0.0831,0.0671,0.0636,0.0568,0.0483,0.0464,0.068,0.0783,0.0643,0.0799,0.0767,0.0656,0.0706,0.0853,0.076,0.0863,0.1117,0.1386,0.1622,0.181,0.1843,0.1679,0.1615,0.1116,0.1615,0.151,0.128,0.1315,0.1275,0.1248,0.1459,0.142,0.1402,0.1447,0.1363,0.0956,0.148,0.1437,0.151,0.1753,0.159,0.1626,0.1801,0.152,0.152,0.1691,0.1425,0.1169,0.1725,0.1823,0.184,0.1855,0.1571,0.1337,0.1339,0.1831,0.1429,0.1606,0.1383,0.1084,0.1398,0.1588,0.1526,0.1656,0.1605,0.1717,0.171,0.1772,0.167,null]}},"arr_dom":[433291.1,420485.01,518203.82,460032.48,490034.65,563332.35,576262.6,506339.03,401034.78,447790.18,434376.58,530957.2,454619.8,446494.46,526555.67,459230.94,499704.98,573952.88,592691.6,521453.01,427874.39,461141.14,445308.96,559751.61,466674.54,447282.32,537414.04,499238.34,521135.81,597545.72,630313.16,543972.45,447356.97,481099.4,478099.86,589614.98,509493.08,497620.63,607474.18,533128.07,569137.75,650145.85,676433.88,571580.63,471834.67,514006.22,517156.23,618724.86,524706.01,510144.58,647169.75,578158.98,622724.51,715089.4,740482.36,662487.89,484587.5,548178.18,545666.6,674410.25,575463.62,574272.26,333722.27,4566.57,9805.9,17095.23,21567.69,22347.19,17541.45,75658.73,182865.88,230782.06,167886.52,233611.19,437960.11,482270.28,627113.7,787872.4,874291.86,714147.69,498915.74,539545.0,587288.55,705876.23,533656.14,578346.24,720957.49,740243.32,719555.28,783418.41,833020.17,741184.95,614154.24,635881.93,612793.22,719974.34,636800.69,617468.39,749360.29,693111.58,694869.95,771892.72,805093.26,629191.36,527097.0,573178.4,568438.97,675656.32,584813.21,590572.83,704258.39,615680.28,659184.29,752301.03,788668.84,686218.96,564258.02,606914.78,614516.85,729002.75,618697.6,605732.12,728911.51,672825.38,654099.65,720425.51,749618.66,666342.0,550782.79,591414.09,590364.8,691874.51,701702.58,624100.95,720499.0,670195.0,692876.42,745715.93,763306.0,639688.32,null,null],"arr_intl":[242930.0,233167.0,249785.0,207755.0,211012.0,213640.0,239337.0,251200.0,222864.0,222249.0,225154.0,261785.0,257248.0,239063.0,249425.0,218147.0,207689.0,224142.0,239794.0,254168.0,229829.0,232101.0,241895.0,259522.0,274608.0,247428.0,259980.0,243236.0,219037.0,237819.0,261863.0,272569.0,243406.0,237862.0,261572.0,278485.0,273206.0,264358.0,275950.0,245833.0,219753.0,239718.0,257831.0,272004.0,234588.0,227268.0,249475.0,264728.0,280861.0,254368.0,269856.0,246451.0,213333.0,231284.0,254728.0,263929.0,233454.0,227497.0,246880.0,266718.0,270673.0,234552.0,95275.0,418.0,207.0,638.0,1006.0,1009.0,868.0,1032.0,913.0,5793.0,4093.0,1660.0,1836.0,2277.0,2733.0,3648.0,5262.0,8869.0,5670.0,11240.0,26729.0,46964.0,33445.0,34739.0,67953.0,69255.0,54130.0,57690.0,85596.0,88587.0,78051.0,91518.0,106229.0,138295.0,139012.0,116296.0,143377.0,113819.0,95624.0,114451.0,125111.0,137382.0,121048.0,127212.0,152903.0,171601.0,150174.0,155264.0,160493.0,121758.0,108304.0,117842.0,124144.0,142107.0,125933.0,129143.0,141267.0,160556.0,150981.0,142122.0,148160.0,124483.0,110474.0,112160.0,131777.0,151162.0,131239.0,141052.0,140668.0,170253.0,156990.0,136689.0,148564.0,131140.0,102582.0,112861.0,117950.0,130474.0,null,null],"tg":[{"county":"Honolulu","year":2015,"n_total":13214,"n_sf":4579,"n_condo":8635,"avg_total":584178,"avg_sf":863969,"avg_condo":435810,"n_local":11470,"n_mainland":1299,"n_foreign":445,"avg_local":572646,"avg_mainland":645150,"avg_foreign":703436},{"county":"Honolulu","year":2016,"n_total":13502,"n_sf":4499,"n_condo":9003,"avg_total":676253,"avg_sf":884427,"avg_condo":572223,"n_local":11578,"n_mainland":1221,"n_foreign":703,"avg_local":634736,"avg_mainland":720084,"avg_foreign":1283884},{"county":"Honolulu","year":2017,"n_total":13753,"n_sf":4417,"n_condo":9336,"avg_total":723886,"avg_sf":945206,"avg_condo":619177,"n_local":11978,"n_mainland":1214,"n_foreign":561,"avg_local":685414,"avg_mainland":808613,"avg_foreign":1361971},{"county":"Honolulu","year":2018,"n_total":12993,"n_sf":4343,"n_condo":8650,"avg_total":754537,"avg_sf":1032415,"avg_condo":615019,"n_local":11052,"n_mainland":1202,"n_foreign":739,"avg_local":705448,"avg_mainland":898862,"avg_foreign":1253924},{"county":"Honolulu","year":2019,"n_total":12553,"n_sf":4458,"n_condo":8095,"avg_total":695365,"avg_sf":967045,"avg_condo":545748,"n_local":10933,"n_mainland":1204,"n_foreign":416,"avg_local":677292,"avg_mainland":751161,"avg_foreign":1008848},{"county":"Honolulu","year":2020,"n_total":11146,"n_sf":4450,"n_condo":6696,"avg_total":731263,"avg_sf":1011881,"avg_condo":544771,"n_local":10085,"n_mainland":896,"n_foreign":165,"avg_local":713090,"avg_mainland":880938,"avg_foreign":1029211},{"county":"Honolulu","year":2021,"n_total":15741,"n_sf":5197,"n_condo":10544,"avg_total":807955,"avg_sf":1220766,"avg_condo":604485,"n_local":13420,"n_mainland":1991,"n_foreign":330,"avg_local":779073,"avg_mainland":945487,"avg_foreign":1152692},{"county":"Honolulu","year":2022,"n_total":13467,"n_sf":4181,"n_condo":9286,"avg_total":869977,"avg_sf":1338057,"avg_condo":659226,"n_local":11124,"n_mainland":1970,"n_foreign":373,"avg_local":838896,"avg_mainland":982279,"avg_foreign":1203795},{"county":"Honolulu","year":2023,"n_total":9851,"n_sf":3207,"n_condo":6644,"avg_total":861186,"avg_sf":1255100,"avg_condo":671048,"n_local":7880,"n_mainland":1599,"n_foreign":372,"avg_local":832729,"avg_mainland":948927,"avg_foreign":1086854},{"county":"Honolulu","year":2024,"n_total":11396,"n_sf":3707,"n_condo":7689,"avg_total":903327,"avg_sf":1298853,"avg_condo":712637,"n_local":9244,"n_mainland":1752,"n_foreign":400,"avg_local":877899,"avg_mainland":903898,"avg_foreign":1488469},{"county":"Honolulu","year":2025,"n_total":11097,"n_sf":3563,"n_condo":7534,"avg_total":883513,"avg_sf":1349345,"avg_condo":663211,"n_local":9202,"n_mainland":1531,"n_foreign":364,"avg_local":865054,"avg_mainland":940974,"avg_foreign":1108486},{"county":"Hawaii","year":2015,"n_total":2822,"n_sf":2016,"n_condo":806,"avg_total":530062,"avg_sf":541472,"avg_condo":501523,"n_local":1714,"n_mainland":1066,"n_foreign":42,"avg_local":393737,"avg_mainland":731083,"avg_foreign":991329},{"county":"Hawaii","year":2016,"n_total":2968,"n_sf":2149,"n_condo":819,"avg_total":528106,"avg_sf":555114,"avg_condo":457241,"n_local":1812,"n_mainland":1119,"n_foreign":37,"avg_local":365097,"avg_mainland":772918,"avg_foreign":1107271},{"county":"Hawaii","year":2017,"n_total":3253,"n_sf":2288,"n_condo":965,"avg_total":560023,"avg_sf":565379,"avg_condo":547325,"n_local":1875,"n_mainland":1312,"n_foreign":66,"avg_local":368212,"avg_mainland":816553,"avg_foreign":909738},{"county":"Hawaii","year":2018,"n_total":3412,"n_sf":2329,"n_condo":1083,"avg_total":537563,"avg_sf":515642,"avg_condo":584705,"n_local":2002,"n_mainland":1329,"n_foreign":81,"avg_local":394462,"avg_mainland":704015,"avg_foreign":1343418},{"county":"Hawaii","year":2019,"n_total":3889,"n_sf":2798,"n_condo":1091,"avg_total":514905,"avg_sf":511617,"avg_condo":523336,"n_local":2404,"n_mainland":1419,"n_foreign":66,"avg_local":375371,"avg_mainland":728322,"avg_foreign":1008840},{"county":"Hawaii","year":2020,"n_total":4208,"n_sf":3267,"n_condo":941,"avg_total":564275,"avg_sf":535846,"avg_condo":662977,"n_local":2781,"n_mainland":1383,"n_foreign":44,"avg_local":381656,"avg_mainland":904828,"avg_foreign":1402448},{"county":"Hawaii","year":2021,"n_total":5724,"n_sf":4334,"n_condo":1390,"avg_total":685017,"avg_sf":658719,"avg_condo":767014,"n_local":3421,"n_mainland":2228,"n_foreign":75,"avg_local":420565,"avg_mainland":1073909,"avg_foreign":1194881},{"county":"Hawaii","year":2022,"n_total":4688,"n_sf":3692,"n_condo":996,"avg_total":665318,"avg_sf":599544,"avg_condo":909131,"n_local":2874,"n_mainland":1764,"n_foreign":50,"avg_local":433299,"avg_mainland":1010326,"avg_foreign":1829895},{"county":"Hawaii","year":2023,"n_total":3648,"n_sf":2877,"n_condo":771,"avg_total":652539,"avg_sf":584437,"avg_condo":906665,"n_local":2321,"n_mainland":1288,"n_foreign":39,"avg_local":447524,"avg_mainland":996457,"avg_foreign":1495441},{"county":"Hawaii","year":2024,"n_total":4236,"n_sf":3231,"n_condo":1005,"avg_total":745999,"avg_sf":697383,"avg_condo":902297,"n_local":2524,"n_mainland":1660,"n_foreign":52,"avg_local":480407,"avg_mainland":1114949,"avg_foreign":1859404},{"county":"Hawaii","year":2025,"n_total":3675,"n_sf":2983,"n_condo":692,"avg_total":748013,"avg_sf":672594,"avg_condo":1073120,"n_local":2467,"n_mainland":1175,"n_foreign":33,"avg_local":497181,"avg_mainland":1230191,"avg_foreign":2331152},{"county":"Maui","year":2015,"n_total":2569,"n_sf":1172,"n_condo":1397,"avg_total":667061,"avg_sf":694111,"avg_condo":644367,"n_local":1392,"n_mainland":1090,"n_foreign":87,"avg_local":522070,"avg_mainland":818362,"avg_foreign":1091288},{"county":"Maui","year":2016,"n_total":2576,"n_sf":1112,"n_condo":1464,"avg_total":695789,"avg_sf":780522,"avg_condo":631430,"n_local":1428,"n_mainland":1077,"n_foreign":71,"avg_local":537552,"avg_mainland":879948,"avg_foreign":1084852},{"county":"Maui","year":2017,"n_total":2605,"n_sf":1107,"n_condo":1498,"avg_total":759567,"avg_sf":791034,"avg_condo":736314,"n_local":1450,"n_mainland":1076,"n_foreign":79,"avg_local":561784,"avg_mainland":998129,"avg_foreign":1140488},{"county":"Maui","year":2018,"n_total":2828,"n_sf":1289,"n_condo":1539,"avg_total":776665,"avg_sf":842371,"avg_condo":721633,"n_local":1768,"n_mainland":964,"n_foreign":96,"avg_local":623047,"avg_mainland":1020893,"avg_foreign":1153351},{"county":"Maui","year":2019,"n_total":2520,"n_sf":1278,"n_condo":1242,"avg_total":779415,"avg_sf":865021,"avg_condo":691327,"n_local":1760,"n_mainland":712,"n_foreign":48,"avg_local":648012,"avg_mainland":1045693,"avg_foreign":1647725},{"county":"Maui","year":2020,"n_total":2318,"n_sf":1332,"n_condo":986,"avg_total":892484,"avg_sf":965117,"avg_condo":794362,"n_local":1629,"n_mainland":656,"n_foreign":33,"avg_local":724193,"avg_mainland":1276787,"avg_foreign":1560415},{"county":"Maui","year":2021,"n_total":3099,"n_sf":1710,"n_condo":1389,"avg_total":1229938,"avg_sf":1461656,"avg_condo":944670,"n_local":1975,"n_mainland":1069,"n_foreign":55,"avg_local":978509,"avg_mainland":1665497,"avg_foreign":1792832},{"county":"Maui","year":2022,"n_total":2105,"n_sf":1304,"n_condo":801,"avg_total":1227565,"avg_sf":1380198,"avg_condo":979083,"n_local":1390,"n_mainland":677,"n_foreign":38,"avg_local":982804,"avg_mainland":1640098,"avg_foreign":2831073},{"county":"Maui","year":2023,"n_total":1491,"n_sf":859,"n_condo":632,"avg_total":1364072,"avg_sf":1416056,"avg_condo":1293416,"n_local":1005,"n_mainland":453,"n_foreign":33,"avg_local":1024270,"avg_mainland":2044222,"avg_foreign":2375980},{"county":"Maui","year":2024,"n_total":1625,"n_sf":1008,"n_condo":617,"avg_total":1483697,"avg_sf":1480940,"avg_condo":1488202,"n_local":1128,"n_mainland":448,"n_foreign":49,"avg_local":1103117,"avg_mainland":2345716,"avg_foreign":2363496},{"county":"Maui","year":2025,"n_total":1247,"n_sf":842,"n_condo":405,"avg_total":1427364,"avg_sf":1567915,"avg_condo":1135156,"n_local":915,"n_mainland":316,"n_foreign":16,"avg_local":1102874,"avg_mainland":2237541,"avg_foreign":3983125},{"county":"Kauai","year":2015,"n_total":750,"n_sf":460,"n_condo":290,"avg_total":717287,"avg_sf":768638,"avg_condo":635833,"n_local":501,"n_mainland":243,"n_foreign":6,"avg_local":527757,"avg_mainland":1105254,"avg_foreign":830333},{"county":"Kauai","year":2016,"n_total":788,"n_sf":479,"n_condo":309,"avg_total":654954,"avg_sf":669030,"avg_condo":633134,"n_local":493,"n_mainland":285,"n_foreign":10,"avg_local":505950,"avg_mainland":890118,"avg_foreign":1298643},{"county":"Kauai","year":2017,"n_total":863,"n_sf":528,"n_condo":335,"avg_total":611043,"avg_sf":662046,"avg_condo":530656,"n_local":532,"n_mainland":315,"n_foreign":16,"avg_local":474700,"avg_mainland":848181,"avg_foreign":475781},{"county":"Kauai","year":2018,"n_total":1176,"n_sf":671,"n_condo":505,"avg_total":722596,"avg_sf":735590,"avg_condo":705332,"n_local":703,"n_mainland":461,"n_foreign":12,"avg_local":576855,"avg_mainland":933613,"avg_foreign":1154042},{"county":"Kauai","year":2019,"n_total":1148,"n_sf":653,"n_condo":495,"avg_total":716973,"avg_sf":722315,"avg_condo":709925,"n_local":726,"n_mainland":412,"n_foreign":10,"avg_local":563867,"avg_mainland":987369,"avg_foreign":692130},{"county":"Kauai","year":2020,"n_total":877,"n_sf":469,"n_condo":408,"avg_total":814052,"avg_sf":861582,"avg_condo":759416,"n_local":586,"n_mainland":290,"n_foreign":1,"avg_local":652267,"avg_mainland":1134725,"avg_foreign":2625000},{"county":"Kauai","year":2021,"n_total":1406,"n_sf":807,"n_condo":599,"avg_total":1146798,"avg_sf":1236389,"avg_condo":1026096,"n_local":880,"n_mainland":518,"n_foreign":8,"avg_local":787916,"avg_mainland":1749830,"avg_foreign":1577375},{"county":"Kauai","year":2022,"n_total":871,"n_sf":489,"n_condo":382,"avg_total":1302071,"avg_sf":1406124,"avg_condo":1168871,"n_local":535,"n_mainland":324,"n_foreign":12,"avg_local":916197,"avg_mainland":1949351,"avg_foreign":1029044},{"county":"Kauai","year":2023,"n_total":648,"n_sf":388,"n_condo":260,"avg_total":1218975,"avg_sf":1271167,"avg_condo":1141089,"n_local":383,"n_mainland":258,"n_foreign":7,"avg_local":964893,"avg_mainland":1571849,"avg_foreign":2115000},{"county":"Kauai","year":2024,"n_total":750,"n_sf":435,"n_condo":315,"avg_total":1302926,"avg_sf":1386861,"avg_condo":1187017,"n_local":494,"n_mainland":250,"n_foreign":6,"avg_local":924593,"avg_mainland":1988763,"avg_foreign":3875833},{"county":"Kauai","year":2025,"n_total":890,"n_sf":492,"n_condo":398,"avg_total":1313768,"avg_sf":1708999,"avg_condo":825191,"n_local":604,"n_mainland":284,"n_foreign":2,"avg_local":985714,"avg_mainland":2013208,"avg_foreign":1065567},{"county":"State","year":2015,"n_total":19355,"n_sf":8227,"n_condo":11128,"avg_total":592447,"avg_sf":755414,"avg_condo":471964,"n_local":15077,"n_mainland":3698,"n_foreign":580,"avg_local":546146,"avg_mainland":751210,"avg_foreign":783774},{"county":"State","year":2016,"n_total":19834,"n_sf":8239,"n_condo":11595,"avg_total":655775,"avg_sf":771985,"avg_condo":573200,"n_local":15311,"n_mainland":3702,"n_foreign":821,"avg_local":589614,"avg_mainland":795652,"avg_foreign":1258892},{"county":"State","year":2017,"n_total":20474,"n_sf":8340,"n_condo":12134,"avg_total":697634,"avg_sf":802613,"avg_condo":625480,"n_local":15835,"n_mainland":3917,"n_foreign":722,"avg_local":629455,"avg_mainland":866514,"avg_foreign":1276758},{"county":"State","year":2018,"n_total":20409,"n_sf":8632,"n_condo":11777,"avg_total":719489,"avg_sf":841532,"avg_condo":630036,"n_local":15525,"n_mainland":3956,"n_foreign":928,"avg_local":650139,"avg_mainland":867190,"avg_foreign":1250040},{"county":"State","year":2019,"n_total":20110,"n_sf":9187,"n_condo":10923,"avg_total":672232,"avg_sf":796752,"avg_condo":567502,"n_local":15823,"n_mainland":3747,"n_foreign":540,"avg_local":622960,"avg_mainland":824451,"avg_foreign":1059771},{"county":"State","year":2020,"n_total":18549,"n_sf":9518,"n_condo":9031,"avg_total":717442,"avg_sf":834534,"avg_condo":594035,"n_local":15081,"n_mainland":3225,"n_foreign":243,"avg_local":650808,"avg_mainland":994524,"avg_foreign":1175499},{"county":"State","year":2021,"n_total":25970,"n_sf":12048,"n_condo":13922,"avg_total":849558,"avg_sf":1053819,"avg_condo":672793,"n_local":19696,"n_mainland":5806,"n_foreign":468,"avg_local":737197,"avg_mainland":1199098,"avg_foreign":1241943},{"county":"State","year":2022,"n_total":21131,"n_sf":9666,"n_condo":11465,"avg_total":878005,"avg_sf":1065105,"avg_condo":720263,"n_local":15923,"n_mainland":4735,"n_foreign":473,"avg_local":780848,"avg_mainland":1152955,"avg_foreign":1396278},{"county":"State","year":2023,"n_total":15638,"n_sf":7331,"n_condo":8307,"avg_total":875287,"avg_sf":1011613,"avg_condo":754978,"n_local":11589,"n_mainland":3598,"n_foreign":451,"avg_local":776560,"avg_mainland":1148510,"avg_foreign":1232470},{"county":"State","year":2024,"n_total":18007,"n_sf":8381,"n_condo":9626,"avg_total":935334,"avg_sf":1093445,"avg_condo":797674,"n_local":13390,"n_mainland":4110,"n_foreign":507,"avg_local":823668,"avg_mainland":1212291,"avg_foreign":1639335},{"county":"State","year":2025,"n_total":16909,"n_sf":7880,"n_condo":9029,"avg_total":916818,"avg_sf":1138969,"avg_condo":722936,"n_local":13188,"n_mainland":3306,"n_foreign":415,"avg_local":818264,"avg_mainland":1259806,"avg_foreign":1316333}],"maui_fy":[{"fy":2016,"category":"owner","count":1534,"sum_price":793651037},{"fy":2016,"category":"nonowner","count":1814,"sum_price":1239175223},{"fy":2017,"category":"owner","count":1521,"sum_price":865422392},{"fy":2017,"category":"nonowner","count":2048,"sum_price":1475517433},{"fy":2018,"category":"owner","count":1687,"sum_price":972190743},{"fy":2018,"category":"nonowner","count":2152,"sum_price":1700193245},{"fy":2019,"category":"owner","count":1642,"sum_price":1004900011},{"fy":2019,"category":"nonowner","count":2027,"sum_price":1654729096},{"fy":2020,"category":"owner","count":1535,"sum_price":997021496},{"fy":2020,"category":"nonowner","count":1918,"sum_price":1615190541},{"fy":2021,"category":"owner","count":1818,"sum_price":1424707375},{"fy":2021,"category":"nonowner","count":2560,"sum_price":2794104920},{"fy":2022,"category":"owner","count":1547,"sum_price":1450643785},{"fy":2022,"category":"nonowner","count":2813,"sum_price":3506961325},{"fy":2023,"category":"owner","count":1030,"sum_price":966956997},{"fy":2023,"category":"nonowner","count":1568,"sum_price":1911799259},{"fy":2024,"category":"owner","count":959,"sum_price":912363979},{"fy":2024,"category":"nonowner","count":1431,"sum_price":2150461787},{"fy":2025,"category":"owner","count":881,"sum_price":967700961},{"fy":2025,"category":"nonowner","count":1166,"sum_price":1651998922},{"fy":2026,"category":"owner","count":896,"sum_price":879600223},{"fy":2026,"category":"nonowner","count":1173,"sum_price":1389710898}],"irs":{"2014-15":{"Hawaii Island":{"households":2227,"people":3844,"agi":140020,"metros":{"Los Angeles\u2013Orange County":[130,222,11373],"San Diego":[78,120,4157],"SF Bay Area & San Jose":[99,145,6692],"Seattle\u2013Tacoma":[75,125,4547],"Las Vegas":[67,115,3357],"Phoenix":[46,83,3487],"Portland":[60,112,2749],"Inland Empire":[28,42,1190],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[25,48,1215],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",91,149,8721],["San Diego County","CA",78,120,4157],["King County","WA",75,125,4547],["Clark County","NV",67,115,3357],["Maricopa County","AZ",46,83,3487],["Orange County","CA",39,73,2652],["Multnomah County","OR",37,66,1350],["Santa Clara County","CA",34,53,2529],["Riverside County","CA",28,42,1190],["Anchorage Municipality","AK",25,48,1215],["San Francisco County","CA",23,31,1984],["Clark County","WA",23,46,1399]],"named":628},"Oahu":{"households":15234,"people":29502,"agi":724000,"metros":{"Los Angeles\u2013Orange County":[769,1268,47554],"San Diego":[714,1401,34378],"SF Bay Area & San Jose":[510,803,35361],"Seattle\u2013Tacoma":[548,1193,28008],"Las Vegas":[346,613,14889],"Phoenix":[213,359,8766],"Portland":[186,328,6661],"Inland Empire":[312,644,13516],"Denver\u2013Boulder":[172,296,10978],"Sacramento":[128,223,4892],"Salt Lake City":[79,162,3172],"Anchorage":[74,175,2975],"Texas metros (Dallas, Houston, Austin, San Antonio)":[573,1115,30672],"Washington DC area":[267,547,18799],"Chicago":[131,183,7206],"New York City":[202,314,10033]},"top":[["San Diego County","CA",714,1401,34378],["Los Angeles County","CA",557,895,36311],["Clark County","NV",346,613,14889],["Pierce County","WA",242,611,10657],["King County","WA",231,430,14463],["Maricopa County","AZ",213,359,8766],["Orange County","CA",212,373,11243],["San Bernardino County","CA",182,399,7525],["El Paso County","TX",179,475,7442],["Bexar County","TX",177,386,8922],["Monterey County","CA",145,236,7458],["El Paso County","CO",143,391,6297]],"named":10354},"Kauai":{"households":832,"people":1393,"agi":49014,"metros":{"Los Angeles\u2013Orange County":[69,104,7664],"San Diego":[49,70,1983],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[29,46,2077],"Las Vegas":[24,51,615],"Phoenix":[21,35,1610],"Portland":[0,0,0],"Inland Empire":[0,0,0],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["San Diego County","CA",49,70,1983],["Los Angeles County","CA",45,66,6214],["King County","WA",29,46,2077],["Orange County","CA",24,38,1450],["Clark County","NV",24,51,615],["Maricopa County","AZ",21,35,1610]],"named":192},"Maui":{"households":1995,"people":3081,"agi":173125,"metros":{"Los Angeles\u2013Orange County":[153,221,7932],"San Diego":[74,98,5282],"SF Bay Area & San Jose":[101,170,19665],"Seattle\u2013Tacoma":[62,92,3083],"Las Vegas":[80,136,3348],"Phoenix":[51,69,2043],"Portland":[27,37,828],"Inland Empire":[24,42,838],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[21,39,745],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[31,38,2617],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",101,138,4648],["Clark County","NV",80,136,3348],["San Diego County","CA",74,98,5282],["King County","WA",62,92,3083],["Orange County","CA",52,83,3284],["Maricopa County","AZ",51,69,2043],["San Francisco County","CA",33,50,10098],["Cook County","IL",31,38,2617],["Multnomah County","OR",27,37,828],["Contra Costa County","CA",25,45,2524],["Riverside County","CA",24,42,838],["Santa Clara County","CA",24,44,4126]],"named":624}},"2015-16":{"Hawaii Island":{"households":2971,"people":5222,"agi":200720,"metros":{"Los Angeles\u2013Orange County":[192,322,17078],"San Diego":[86,148,4106],"SF Bay Area & San Jose":[163,290,15761],"Seattle\u2013Tacoma":[124,205,8140],"Las Vegas":[78,152,5544],"Phoenix":[67,128,3191],"Portland":[98,181,6287],"Inland Empire":[60,103,5868],"Denver\u2013Boulder":[21,31,936],"Sacramento":[28,52,1505],"Salt Lake City":[0,0,0],"Anchorage":[45,67,4483],"Texas metros (Dallas, Houston, Austin, San Antonio)":[27,50,2228],"Washington DC area":[0,0,0],"Chicago":[28,42,2416],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",124,206,12573],["San Diego County","CA",86,148,4106],["Clark County","NV",78,152,5544],["Orange County","CA",68,116,4505],["Maricopa County","AZ",67,128,3191],["King County","WA",63,101,4958],["Anchorage Municipality","AK",45,67,4483],["Multnomah County","OR",43,76,2095],["Alameda County","CA",39,73,3361],["Santa Clara County","CA",38,66,3700],["Riverside County","CA",36,58,4511],["Contra Costa County","CA",35,67,2931]],"named":1099},"Oahu":{"households":18414,"people":37573,"agi":980739,"metros":{"Los Angeles\u2013Orange County":[950,1574,58269],"San Diego":[802,1737,42675],"SF Bay Area & San Jose":[573,923,42774],"Seattle\u2013Tacoma":[724,1533,40500],"Las Vegas":[411,704,20421],"Phoenix":[243,435,12242],"Portland":[224,403,11049],"Inland Empire":[342,710,16822],"Denver\u2013Boulder":[149,260,8957],"Sacramento":[158,303,9098],"Salt Lake City":[93,174,3087],"Anchorage":[101,213,5193],"Texas metros (Dallas, Houston, Austin, San Antonio)":[633,1299,38690],"Washington DC area":[528,1187,46229],"Chicago":[174,281,12075],"New York City":[268,385,15434]},"top":[["San Diego County","CA",802,1737,42675],["Los Angeles County","CA",684,1134,40819],["Clark County","NV",411,704,20421],["Pierce County","WA",346,898,16442],["King County","WA",295,466,19909],["Orange County","CA",266,440,17450],["Maricopa County","AZ",243,435,12242],["Bexar County","TX",241,566,12943],["Bell County","TX",235,624,9606],["El Paso County","TX",230,676,11131],["El Paso County","CO",229,623,11886],["San Bernardino County","CA",179,390,9230]],"named":13791},"Kauai":{"households":1019,"people":1698,"agi":263020,"metros":{"Los Angeles\u2013Orange County":[83,134,6641],"San Diego":[39,53,2152],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[23,38,1011],"Las Vegas":[23,44,2467],"Phoenix":[0,0,0],"Portland":[0,0,0],"Inland Empire":[0,0,0],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",50,82,3869],["San Diego County","CA",39,53,2152],["Orange County","CA",33,52,2772],["Clark County","NV",23,44,2467],["King County","WA",23,38,1011]],"named":168},"Maui":{"households":2571,"people":4101,"agi":193552,"metros":{"Los Angeles\u2013Orange County":[220,336,13712],"San Diego":[95,140,4956],"SF Bay Area & San Jose":[155,235,22309],"Seattle\u2013Tacoma":[142,219,12769],"Las Vegas":[67,96,3155],"Phoenix":[62,111,5477],"Portland":[39,56,2041],"Inland Empire":[57,120,3228],"Denver\u2013Boulder":[31,45,1805],"Sacramento":[25,43,1569],"Salt Lake City":[21,48,1595],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[24,47,1561],"Washington DC area":[0,0,0],"Chicago":[23,36,917],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",149,217,8599],["San Diego County","CA",95,140,4956],["King County","WA",95,146,10471],["Orange County","CA",71,119,5113],["Clark County","NV",67,96,3155],["Maricopa County","AZ",62,111,5477],["Multnomah County","OR",39,56,2041],["Alameda County","CA",38,54,3802],["Riverside County","CA",34,65,2364],["San Francisco County","CA",33,46,3916],["Contra Costa County","CA",32,56,4487],["Santa Clara County","CA",31,41,7374]],"named":985}},"2016-17":{"Hawaii Island":{"households":3862,"people":7022,"agi":285529,"metros":{"Los Angeles\u2013Orange County":[272,481,22424],"San Diego":[102,166,5879],"SF Bay Area & San Jose":[243,421,38442],"Seattle\u2013Tacoma":[180,322,12151],"Las Vegas":[108,200,4762],"Phoenix":[93,160,6055],"Portland":[153,276,8849],"Inland Empire":[77,156,4098],"Denver\u2013Boulder":[65,95,4029],"Sacramento":[63,119,3600],"Salt Lake City":[25,46,1520],"Anchorage":[44,91,4216],"Texas metros (Dallas, Houston, Austin, San Antonio)":[47,95,4208],"Washington DC area":[0,0,0],"Chicago":[28,41,3096],"New York City":[20,24,2230]},"top":[["Los Angeles County","CA",157,279,12320],["Orange County","CA",115,202,10104],["Clark County","NV",108,200,4762],["King County","WA",108,197,8145],["San Diego County","CA",102,166,5879],["Maricopa County","AZ",93,160,6055],["Multnomah County","OR",65,103,2989],["Alameda County","CA",62,110,15221],["Santa Clara County","CA",48,87,6076],["Anchorage Municipality","AK",44,91,4216],["Sacramento County","CA",42,84,2576],["Riverside County","CA",41,82,2488]],"named":1829},"Oahu":{"households":23171,"people":49647,"agi":1357136,"metros":{"Los Angeles\u2013Orange County":[1207,2025,74599],"San Diego":[1009,2232,58430],"SF Bay Area & San Jose":[823,1363,66042],"Seattle\u2013Tacoma":[936,2025,56472],"Las Vegas":[470,935,24052],"Phoenix":[298,594,15297],"Portland":[275,482,16933],"Inland Empire":[454,1028,26312],"Denver\u2013Boulder":[215,368,11606],"Sacramento":[177,332,11331],"Salt Lake City":[103,208,4554],"Anchorage":[187,437,10081],"Texas metros (Dallas, Houston, Austin, San Antonio)":[790,1557,49377],"Washington DC area":[788,1873,77753],"Chicago":[188,287,9918],"New York City":[292,428,20155]},"top":[["San Diego County","CA",1009,2232,58430],["Los Angeles County","CA",885,1460,56717],["Clark County","NV",470,935,24052],["Pierce County","WA",440,1137,22982],["El Paso County","CO",397,1138,21593],["King County","WA",379,657,26586],["Orange County","CA",322,565,17882],["Bell County","TX",310,853,16315],["Maricopa County","AZ",298,594,15297],["Bexar County","TX",293,710,16858],["El Paso County","TX",290,841,13564],["Cumberland County","NC",275,754,12722]],"named":18303},"Kauai":{"households":1410,"people":2437,"agi":124125,"metros":{"Los Angeles\u2013Orange County":[126,202,11896],"San Diego":[82,148,6527],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[56,91,3146],"Las Vegas":[38,63,1792],"Phoenix":[33,57,2502],"Portland":[26,35,760],"Inland Empire":[20,34,1101],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["San Diego County","CA",82,148,6527],["Los Angeles County","CA",74,109,7870],["Orange County","CA",52,93,4026],["Clark County","NV",38,63,1792],["King County","WA",36,55,2090],["Maricopa County","AZ",33,57,2502],["Multnomah County","OR",26,35,760],["Riverside County","CA",20,34,1101],["Snohomish County","WA",20,36,1056]],"named":381},"Maui":{"households":3156,"people":5159,"agi":233781,"metros":{"Los Angeles\u2013Orange County":[270,426,22356],"San Diego":[123,212,8239],"SF Bay Area & San Jose":[206,334,20958],"Seattle\u2013Tacoma":[163,273,9053],"Las Vegas":[88,150,3197],"Phoenix":[81,142,7158],"Portland":[59,104,3682],"Inland Empire":[63,97,3603],"Denver\u2013Boulder":[22,33,1350],"Sacramento":[21,33,991],"Salt Lake City":[24,43,1368],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[68,99,4510],"Washington DC area":[0,0,0],"Chicago":[40,56,3788],"New York City":[23,32,1232]},"top":[["Los Angeles County","CA",172,265,14861],["San Diego County","CA",123,212,8239],["King County","WA",117,187,6159],["Orange County","CA",98,161,7495],["Clark County","NV",88,150,3197],["Maricopa County","AZ",81,142,7158],["Alameda County","CA",64,107,4019],["Contra Costa County","CA",43,67,3732],["Santa Clara County","CA",42,74,8739],["Riverside County","CA",40,61,2310],["Cook County","IL",40,56,3788],["Multnomah County","OR",38,62,2417]],"named":1306}},"2017-18":{"Hawaii Island":{"households":3067,"people":5331,"agi":212345,"metros":{"Los Angeles\u2013Orange County":[187,326,16376],"San Diego":[86,138,5766],"SF Bay Area & San Jose":[174,286,24662],"Seattle\u2013Tacoma":[156,281,10453],"Las Vegas":[89,161,4296],"Phoenix":[69,117,4771],"Portland":[107,165,5047],"Inland Empire":[78,152,5458],"Denver\u2013Boulder":[0,0,0],"Sacramento":[33,56,1724],"Salt Lake City":[21,40,1413],"Anchorage":[29,51,2336],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",111,172,8531],["King County","WA",96,157,6991],["Clark County","NV",89,161,4296],["San Diego County","CA",86,138,5766],["Orange County","CA",76,154,7845],["Maricopa County","AZ",69,117,4771],["Multnomah County","OR",56,86,3092],["Riverside County","CA",46,84,3410],["Sonoma County","CA",42,66,3099],["Santa Clara County","CA",39,64,6831],["Alameda County","CA",36,52,3245],["San Mateo County","CA",36,60,5898]],"named":1246},"Oahu":{"households":18204,"people":37200,"agi":1066367,"metros":{"Los Angeles\u2013Orange County":[950,1621,57064],"San Diego":[777,1612,47708],"SF Bay Area & San Jose":[602,963,61828],"Seattle\u2013Tacoma":[777,1595,50438],"Las Vegas":[413,718,18266],"Phoenix":[254,485,15150],"Portland":[242,395,11409],"Inland Empire":[336,747,16340],"Denver\u2013Boulder":[191,349,12028],"Sacramento":[157,273,9332],"Salt Lake City":[97,207,6110],"Anchorage":[146,307,6542],"Texas metros (Dallas, Houston, Austin, San Antonio)":[611,1206,36311],"Washington DC area":[533,1225,47378],"Chicago":[178,259,10859],"New York City":[226,340,22122]},"top":[["San Diego County","CA",777,1612,47708],["Los Angeles County","CA",699,1155,45499],["Clark County","NV",413,718,18266],["King County","WA",347,610,28696],["Pierce County","WA",340,831,17001],["El Paso County","CO",314,764,16830],["El Paso County","TX",259,685,11360],["Orange County","CA",251,466,11565],["Bell County","TX",248,630,11173],["Maricopa County","AZ",231,441,14330],["Bexar County","TX",210,485,11681],["San Bernardino County","CA",189,430,8894]],"named":13365},"Kauai":{"households":1117,"people":1905,"agi":83345,"metros":{"Los Angeles\u2013Orange County":[88,156,6399],"San Diego":[61,107,4344],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[31,49,2098],"Las Vegas":[29,47,1457],"Phoenix":[29,55,2735],"Portland":[0,0,0],"Inland Empire":[23,48,1743],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["San Diego County","CA",61,107,4344],["Los Angeles County","CA",46,86,2201],["Orange County","CA",42,70,4198],["King County","WA",31,49,2098],["Maricopa County","AZ",29,55,2735],["Clark County","NV",29,47,1457],["Riverside County","CA",23,48,1743]],"named":261},"Maui":{"households":2748,"people":4494,"agi":261402,"metros":{"Los Angeles\u2013Orange County":[231,378,17358],"San Diego":[107,158,9211],"SF Bay Area & San Jose":[176,287,27798],"Seattle\u2013Tacoma":[96,145,6972],"Las Vegas":[79,137,5257],"Phoenix":[61,98,4763],"Portland":[97,207,7940],"Inland Empire":[65,115,3141],"Denver\u2013Boulder":[0,0,0],"Sacramento":[36,61,2848],"Salt Lake City":[20,28,955],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[21,45,4599],"Washington DC area":[0,0,0],"Chicago":[36,51,1866],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",149,232,10047],["San Diego County","CA",107,158,9211],["Orange County","CA",82,146,7311],["Clark County","NV",79,137,5257],["King County","WA",69,107,5533],["Maricopa County","AZ",61,98,4763],["Santa Clara County","CA",59,95,13413],["Alameda County","CA",52,75,6105],["Multnomah County","OR",43,70,2931],["Riverside County","CA",38,70,1760],["Contra Costa County","CA",36,74,5090],["Sacramento County","CA",36,61,2848]],"named":1072}},"2018-19":{"Hawaii Island":{"households":2962,"people":5273,"agi":233285,"metros":{"Los Angeles\u2013Orange County":[199,325,18065],"San Diego":[83,133,6086],"SF Bay Area & San Jose":[143,243,19805],"Seattle\u2013Tacoma":[167,295,11674],"Las Vegas":[79,128,4822],"Phoenix":[65,108,3399],"Portland":[87,126,4543],"Inland Empire":[61,112,3936],"Denver\u2013Boulder":[20,34,1828],"Sacramento":[22,48,1233],"Salt Lake City":[20,43,1217],"Anchorage":[29,51,2828],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",136,221,12426],["King County","WA",100,154,7187],["San Diego County","CA",83,133,6086],["Clark County","NV",79,128,4822],["Maricopa County","AZ",65,108,3399],["Orange County","CA",63,104,5639],["Alameda County","CA",51,83,4599],["Santa Clara County","CA",38,72,7494],["Multnomah County","OR",37,52,1916],["Pierce County","WA",35,71,2556],["Contra Costa County","CA",33,56,5430],["Snohomish County","WA",32,70,1931]],"named":1093},"Oahu":{"households":17425,"people":34620,"agi":1083292,"metros":{"Los Angeles\u2013Orange County":[908,1454,62057],"San Diego":[770,1562,56788],"SF Bay Area & San Jose":[630,1036,67810],"Seattle\u2013Tacoma":[674,1318,46064],"Las Vegas":[411,769,22632],"Phoenix":[262,512,16315],"Portland":[289,502,23189],"Inland Empire":[335,725,17723],"Denver\u2013Boulder":[222,365,11527],"Sacramento":[180,328,10028],"Salt Lake City":[88,171,4152],"Anchorage":[99,208,6679],"Texas metros (Dallas, Houston, Austin, San Antonio)":[612,1252,35170],"Washington DC area":[516,1143,50365],"Chicago":[155,262,10590],"New York City":[241,369,19191]},"top":[["San Diego County","CA",770,1562,56788],["Los Angeles County","CA",643,1017,44704],["Clark County","NV",411,769,22632],["King County","WA",317,511,26263],["Pierce County","WA",270,644,14820],["Orange County","CA",265,437,17353],["Maricopa County","AZ",262,512,16315],["Bexar County","TX",242,584,15308],["El Paso County","CO",217,544,10654],["El Paso County","TX",209,502,9707],["Bell County","TX",193,487,9128],["San Bernardino County","CA",169,383,8518]],"named":12665},"Kauai":{"households":1006,"people":1659,"agi":76772,"metros":{"Los Angeles\u2013Orange County":[81,139,6522],"San Diego":[43,69,4381],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[0,0,0],"Las Vegas":[33,69,2347],"Phoenix":[24,42,2272],"Portland":[0,0,0],"Inland Empire":[21,40,1391],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",49,80,4675],["San Diego County","CA",43,69,4381],["Clark County","NV",33,69,2347],["Orange County","CA",32,59,1847],["Maricopa County","AZ",24,42,2272],["Riverside County","CA",21,40,1391]],"named":202},"Maui":{"households":2639,"people":4319,"agi":187652,"metros":{"Los Angeles\u2013Orange County":[207,323,18417],"San Diego":[107,163,7303],"SF Bay Area & San Jose":[185,298,20539],"Seattle\u2013Tacoma":[142,224,15561],"Las Vegas":[88,150,5255],"Phoenix":[65,97,5754],"Portland":[35,62,1682],"Inland Empire":[65,112,4336],"Denver\u2013Boulder":[23,31,1479],"Sacramento":[37,70,2542],"Salt Lake City":[20,47,748],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[20,30,960],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",139,218,12955],["San Diego County","CA",107,163,7303],["King County","WA",93,141,10176],["Clark County","NV",88,150,5255],["Orange County","CA",68,105,5462],["Maricopa County","AZ",65,97,5754],["Santa Clara County","CA",43,83,6414],["Riverside County","CA",38,69,3017],["Sacramento County","CA",37,70,2542],["Multnomah County","OR",35,62,1682],["Alameda County","CA",34,51,3927],["San Francisco County","CA",32,41,2851]],"named":1020}},"2019-20":{"Hawaii Island":{"households":3281,"people":6011,"agi":275127,"metros":{"Los Angeles\u2013Orange County":[211,340,18052],"San Diego":[99,179,8805],"SF Bay Area & San Jose":[218,407,48759],"Seattle\u2013Tacoma":[155,312,14943],"Las Vegas":[94,175,6142],"Phoenix":[69,115,4671],"Portland":[131,249,8483],"Inland Empire":[67,122,4458],"Denver\u2013Boulder":[0,0,0],"Sacramento":[47,89,4636],"Salt Lake City":[0,0,0],"Anchorage":[32,69,3044],"Texas metros (Dallas, Houston, Austin, San Antonio)":[20,42,1231],"Washington DC area":[0,0,0],"Chicago":[24,32,1727],"New York City":[20,26,2172]},"top":[["Los Angeles County","CA",143,235,11914],["San Diego County","CA",99,179,8805],["King County","WA",97,163,10138],["Clark County","NV",94,175,6142],["Maricopa County","AZ",69,115,4671],["Orange County","CA",68,105,6138],["Alameda County","CA",60,120,17768],["Multnomah County","OR",59,92,3084],["Sacramento County","CA",47,89,4636],["Riverside County","CA",40,67,2358],["Santa Clara County","CA",38,77,7554],["Contra Costa County","CA",35,77,4800]],"named":1400},"Oahu":{"households":17761,"people":36767,"agi":1221940,"metros":{"Los Angeles\u2013Orange County":[951,1571,102629],"San Diego":[781,1733,54276],"SF Bay Area & San Jose":[775,1305,105616],"Seattle\u2013Tacoma":[647,1292,45700],"Las Vegas":[476,981,23043],"Phoenix":[253,497,15974],"Portland":[267,440,16727],"Inland Empire":[329,707,17220],"Denver\u2013Boulder":[243,425,15919],"Sacramento":[191,344,12632],"Salt Lake City":[79,172,6399],"Anchorage":[105,255,5723],"Texas metros (Dallas, Houston, Austin, San Antonio)":[654,1327,53253],"Washington DC area":[579,1261,68057],"Chicago":[152,228,13019],"New York City":[307,457,25351]},"top":[["San Diego County","CA",781,1733,54276],["Los Angeles County","CA",696,1123,85547],["Clark County","NV",476,981,23043],["King County","WA",318,543,25647],["Orange County","CA",255,448,17082],["Maricopa County","AZ",253,497,15974],["Bexar County","TX",247,588,26905],["Pierce County","WA",245,595,15358],["El Paso County","CO",227,604,11269],["El Paso County","TX",214,589,10952],["San Francisco County","CA",183,255,29379],["Bell County","TX",183,535,8932]],"named":13132},"Kauai":{"households":1149,"people":2118,"agi":113577,"metros":{"Los Angeles\u2013Orange County":[97,198,12155],"San Diego":[56,98,4379],"SF Bay Area & San Jose":[64,105,12523],"Seattle\u2013Tacoma":[39,69,4509],"Las Vegas":[31,47,1060],"Phoenix":[31,70,1987],"Portland":[26,40,808],"Inland Empire":[0,0,0],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",59,126,7650],["San Diego County","CA",56,98,4379],["King County","WA",39,69,4509],["Orange County","CA",38,72,4505],["Maricopa County","AZ",31,70,1987],["Clark County","NV",31,47,1060],["Multnomah County","OR",26,40,808],["San Francisco County","CA",22,37,6486],["Santa Clara County","CA",22,36,4135],["Alameda County","CA",20,32,1902]],"named":344},"Maui":{"households":2783,"people":4543,"agi":267742,"metros":{"Los Angeles\u2013Orange County":[221,341,18345],"San Diego":[116,186,8859],"SF Bay Area & San Jose":[195,335,32509],"Seattle\u2013Tacoma":[118,196,16379],"Las Vegas":[111,176,5979],"Phoenix":[71,110,3509],"Portland":[106,177,7805],"Inland Empire":[68,107,5133],"Denver\u2013Boulder":[27,34,2264],"Sacramento":[26,48,1560],"Salt Lake City":[29,44,1243],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[29,39,1369],"New York City":[21,35,2138]},"top":[["Los Angeles County","CA",162,246,13574],["San Diego County","CA",116,186,8859],["Clark County","NV",111,176,5979],["King County","WA",98,166,15702],["Maricopa County","AZ",71,110,3509],["San Francisco County","CA",60,96,9286],["Orange County","CA",59,95,4771],["Alameda County","CA",44,73,5267],["Riverside County","CA",43,67,3507],["Santa Clara County","CA",40,72,7533],["Multnomah County","OR",38,62,2264],["Cook County","IL",29,39,1369]],"named":1211}},"2020-21":{"Hawaii Island":{"households":3716,"people":6545,"agi":362318,"metros":{"Los Angeles\u2013Orange County":[262,425,26889],"San Diego":[101,167,8189],"SF Bay Area & San Jose":[268,451,55337],"Seattle\u2013Tacoma":[183,332,20299],"Las Vegas":[102,190,4183],"Phoenix":[101,194,7811],"Portland":[137,235,7860],"Inland Empire":[92,166,5115],"Denver\u2013Boulder":[23,37,1197],"Sacramento":[65,118,36595],"Salt Lake City":[36,54,1062],"Anchorage":[31,65,2505],"Texas metros (Dallas, Houston, Austin, San Antonio)":[22,43,1987],"Washington DC area":[0,0,0],"Chicago":[32,44,1687],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",176,285,16586],["King County","WA",123,219,15363],["Clark County","NV",102,190,4183],["Maricopa County","AZ",101,194,7811],["San Diego County","CA",101,167,8189],["Orange County","CA",86,140,10303],["Multnomah County","OR",71,110,3604],["Alameda County","CA",63,93,6336],["San Francisco County","CA",58,84,21872],["Santa Clara County","CA",55,104,12515],["Riverside County","CA",52,87,2583],["San Mateo County","CA",51,102,8061]],"named":1690},"Oahu":{"households":17297,"people":34046,"agi":1287556,"metros":{"Los Angeles\u2013Orange County":[964,1551,104043],"San Diego":[721,1515,49579],"SF Bay Area & San Jose":[891,1445,158266],"Seattle\u2013Tacoma":[736,1353,57066],"Las Vegas":[460,830,21779],"Phoenix":[293,516,20611],"Portland":[284,465,23738],"Inland Empire":[309,645,20359],"Denver\u2013Boulder":[233,375,16276],"Sacramento":[163,282,11994],"Salt Lake City":[74,141,5249],"Anchorage":[87,169,4712],"Texas metros (Dallas, Houston, Austin, San Antonio)":[571,1179,38438],"Washington DC area":[528,1243,58293],"Chicago":[111,168,10032],"New York City":[312,422,31356]},"top":[["San Diego County","CA",721,1515,49579],["Los Angeles County","CA",689,1058,62754],["Clark County","NV",460,830,21779],["King County","WA",355,533,33233],["Orange County","CA",275,493,41289],["Maricopa County","AZ",264,475,19599],["Pierce County","WA",264,602,15308],["San Francisco County","CA",241,323,40831],["El Paso County","CO",233,600,13455],["Santa Clara County","CA",230,394,51500],["Bexar County","TX",227,564,13742],["Bell County","TX",216,585,12310]],"named":12705},"Kauai":{"households":1112,"people":1909,"agi":155861,"metros":{"Los Angeles\u2013Orange County":[103,163,23575],"San Diego":[56,103,5547],"SF Bay Area & San Jose":[51,81,12942],"Seattle\u2013Tacoma":[26,45,2303],"Las Vegas":[29,56,2685],"Phoenix":[32,50,3230],"Portland":[0,0,0],"Inland Empire":[0,0,0],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",76,117,19729],["San Diego County","CA",56,103,5547],["Maricopa County","AZ",32,50,3230],["Clark County","NV",29,56,2685],["Orange County","CA",27,46,3846],["San Francisco County","CA",26,34,8832],["King County","WA",26,45,2303],["Alameda County","CA",25,47,4110]],"named":297},"Maui":{"households":2577,"people":4214,"agi":337298,"metros":{"Los Angeles\u2013Orange County":[213,320,17535],"San Diego":[94,151,10725],"SF Bay Area & San Jose":[232,385,45256],"Seattle\u2013Tacoma":[108,209,10857],"Las Vegas":[86,151,3853],"Phoenix":[67,109,9884],"Portland":[64,96,4036],"Inland Empire":[62,97,5487],"Denver\u2013Boulder":[23,34,2249],"Sacramento":[24,35,1619],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[23,35,1925],"New York City":[23,33,6536]},"top":[["Los Angeles County","CA",142,201,10038],["San Diego County","CA",94,151,10725],["Clark County","NV",86,151,3853],["Orange County","CA",71,119,7497],["Maricopa County","AZ",67,109,9884],["King County","WA",63,115,7985],["Santa Clara County","CA",54,93,8958],["San Francisco County","CA",50,66,10315],["Multnomah County","OR",44,67,3027],["Riverside County","CA",41,63,4368],["Alameda County","CA",39,72,5753],["San Mateo County","CA",35,66,7647]],"named":1098}},"2021-22":{"Hawaii Island":{"households":3383,"people":5998,"agi":379763,"metros":{"Los Angeles\u2013Orange County":[232,388,46746],"San Diego":[108,175,10436],"SF Bay Area & San Jose":[203,339,44765],"Seattle\u2013Tacoma":[190,307,18735],"Las Vegas":[89,177,5539],"Phoenix":[98,171,8353],"Portland":[103,190,10124],"Inland Empire":[76,136,4952],"Denver\u2013Boulder":[42,83,3512],"Sacramento":[37,63,2170],"Salt Lake City":[42,98,5520],"Anchorage":[26,37,2091],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",154,248,29718],["King County","WA",116,177,14065],["San Diego County","CA",108,175,10436],["Maricopa County","AZ",98,171,8353],["Clark County","NV",89,177,5539],["Orange County","CA",78,140,17028],["Riverside County","CA",53,97,3925],["Multnomah County","OR",49,83,5383],["Santa Clara County","CA",46,89,14223],["Salt Lake County","UT",42,98,5520],["Alameda County","CA",40,71,6532],["Pierce County","WA",38,60,2204]],"named":1431},"Oahu":{"households":18207,"people":34977,"agi":1524869,"metros":{"Los Angeles\u2013Orange County":[1004,1629,103543],"San Diego":[819,1660,58416],"SF Bay Area & San Jose":[859,1375,146261],"Seattle\u2013Tacoma":[765,1420,70604],"Las Vegas":[465,788,25820],"Phoenix":[312,514,20699],"Portland":[286,489,21577],"Inland Empire":[373,754,22804],"Denver\u2013Boulder":[274,471,21642],"Sacramento":[175,314,13969],"Salt Lake City":[86,179,5902],"Anchorage":[96,219,5449],"Texas metros (Dallas, Houston, Austin, San Antonio)":[643,1214,49634],"Washington DC area":[544,1146,63683],"Chicago":[138,187,11252],"New York City":[293,422,37540]},"top":[["San Diego County","CA",819,1660,58416],["Los Angeles County","CA",715,1113,77313],["Clark County","NV",465,788,25820],["King County","WA",398,662,47577],["Orange County","CA",289,516,26230],["Maricopa County","AZ",284,479,20090],["Pierce County","WA",282,612,17702],["El Paso County","CO",256,593,15585],["Bexar County","TX",226,492,14934],["Bell County","TX",220,510,12004],["El Paso County","TX",216,530,10919],["Riverside County","CA",214,425,12838]],"named":13576},"Kauai":{"households":1049,"people":1736,"agi":139019,"metros":{"Los Angeles\u2013Orange County":[109,161,13501],"San Diego":[52,75,9790],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[37,63,5246],"Las Vegas":[0,0,0],"Phoenix":[34,59,2922],"Portland":[0,0,0],"Inland Empire":[0,0,0],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",66,88,6259],["San Diego County","CA",52,75,9790],["Orange County","CA",43,73,7242],["King County","WA",37,63,5246],["Maricopa County","AZ",34,59,2922]],"named":232},"Maui":{"households":2647,"people":4114,"agi":508080,"metros":{"Los Angeles\u2013Orange County":[218,340,42615],"San Diego":[98,157,11708],"SF Bay Area & San Jose":[210,348,49942],"Seattle\u2013Tacoma":[87,146,19408],"Las Vegas":[84,145,5014],"Phoenix":[68,106,5015],"Portland":[61,85,6847],"Inland Empire":[57,87,5606],"Denver\u2013Boulder":[0,0,0],"Sacramento":[25,42,1534],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[29,54,5095],"New York City":[21,26,1104]},"top":[["Los Angeles County","CA",153,237,33063],["San Diego County","CA",98,157,11708],["King County","WA",87,146,19408],["Clark County","NV",84,145,5014],["Maricopa County","AZ",68,106,5015],["Orange County","CA",65,103,9552],["Santa Clara County","CA",45,79,12440],["Alameda County","CA",42,69,10653],["Contra Costa County","CA",38,67,6437],["Multnomah County","OR",37,52,5169],["Riverside County","CA",34,49,3555],["San Francisco County","CA",33,46,9333]],"named":1023}},"2022-23":{"Hawaii Island":{"households":3200,"people":5462,"agi":292461,"metros":{"Los Angeles\u2013Orange County":[205,335,23210],"San Diego":[113,179,9783],"SF Bay Area & San Jose":[163,287,32435],"Seattle\u2013Tacoma":[162,291,27824],"Las Vegas":[95,171,5144],"Phoenix":[98,170,9921],"Portland":[105,162,8952],"Inland Empire":[48,71,6920],"Denver\u2013Boulder":[0,0,0],"Sacramento":[38,61,2648],"Salt Lake City":[30,63,2428],"Anchorage":[25,39,1227],"Texas metros (Dallas, Houston, Austin, San Antonio)":[43,75,3842],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",134,213,15879],["San Diego County","CA",113,179,9783],["King County","WA",110,182,22708],["Maricopa County","AZ",98,170,9921],["Clark County","NV",95,171,5144],["Orange County","CA",71,122,7331],["Multnomah County","OR",52,70,4098],["Riverside County","CA",48,71,6920],["Santa Clara County","CA",46,92,8391],["Sacramento County","CA",38,61,2648],["Alameda County","CA",35,60,4248],["Ventura County","CA",34,53,3560]],"named":1226},"Oahu":{"households":18542,"people":34431,"agi":1360143,"metros":{"Los Angeles\u2013Orange County":[1005,1534,94901],"San Diego":[789,1529,56101],"SF Bay Area & San Jose":[731,1126,104452],"Seattle\u2013Tacoma":[704,1322,65384],"Las Vegas":[523,914,32259],"Phoenix":[334,576,26446],"Portland":[307,470,22278],"Inland Empire":[353,668,22272],"Denver\u2013Boulder":[266,410,18582],"Sacramento":[221,345,15770],"Salt Lake City":[137,268,8945],"Anchorage":[112,243,7149],"Texas metros (Dallas, Houston, Austin, San Antonio)":[695,1348,52037],"Washington DC area":[453,966,51814],"Chicago":[109,153,8337],"New York City":[284,421,30524]},"top":[["San Diego County","CA",789,1529,56101],["Los Angeles County","CA",678,1007,66500],["Clark County","NV",523,914,32259],["King County","WA",335,509,41968],["Orange County","CA",327,527,28401],["Maricopa County","AZ",310,527,25434],["Pierce County","WA",293,665,17500],["Bexar County","TX",257,597,18895],["El Paso County","CO",213,481,12962],["Riverside County","CA",194,353,12348],["El Paso County","TX",193,468,10625],["Bell County","TX",184,411,9872]],"named":13490},"Kauai":{"households":940,"people":1484,"agi":90288,"metros":{"Los Angeles\u2013Orange County":[81,132,11755],"San Diego":[41,56,3057],"SF Bay Area & San Jose":[0,0,0],"Seattle\u2013Tacoma":[23,29,3845],"Las Vegas":[26,42,1364],"Phoenix":[23,28,2775],"Portland":[0,0,0],"Inland Empire":[20,39,2449],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[0,0,0],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[0,0,0],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",49,77,4158],["San Diego County","CA",41,56,3057],["Orange County","CA",32,55,7597],["Clark County","NV",26,42,1364],["Maricopa County","AZ",23,28,2775],["King County","WA",23,29,3845],["Riverside County","CA",20,39,2449]],"named":214},"Maui":{"households":2344,"people":3654,"agi":211204,"metros":{"Los Angeles\u2013Orange County":[182,266,17811],"San Diego":[93,145,8368],"SF Bay Area & San Jose":[76,124,14774],"Seattle\u2013Tacoma":[98,167,16806],"Las Vegas":[84,149,5194],"Phoenix":[70,118,4703],"Portland":[27,37,1896],"Inland Empire":[53,81,4848],"Denver\u2013Boulder":[0,0,0],"Sacramento":[0,0,0],"Salt Lake City":[27,49,1970],"Anchorage":[0,0,0],"Texas metros (Dallas, Houston, Austin, San Antonio)":[0,0,0],"Washington DC area":[0,0,0],"Chicago":[25,33,2252],"New York City":[0,0,0]},"top":[["Los Angeles County","CA",131,189,11903],["San Diego County","CA",93,145,8368],["Clark County","NV",84,149,5194],["Maricopa County","AZ",70,118,4703],["King County","WA",66,110,13299],["Orange County","CA",51,77,5908],["Pierce County","WA",32,57,3507],["Santa Clara County","CA",29,40,5714],["Riverside County","CA",28,41,2576],["Multnomah County","OR",27,37,1896],["Salt Lake County","UT",27,49,1970],["Alameda County","CA",25,45,5729]],"named":755}}},"metros":["Los Angeles\u2013Orange County","San Diego","SF Bay Area & San Jose","Seattle\u2013Tacoma","Las Vegas","Phoenix","Portland","Inland Empire","Denver\u2013Boulder","Sacramento","Salt Lake City","Anchorage","Texas metros (Dallas, Houston, Austin, San Antonio)","Washington DC area","Chicago","New York City"]}</script>
 <script>
 (function(){
-  var NS="http://www.w3.org/2000/svg";
-  var C={local:"#4F86C6",main:"#0B8062",foreign:"#C47F1A",grid:"rgba(23,21,15,.11)",ink3:"#8C867A",bg:"#FFFFFF"};
-  var tip=document.getElementById("tip");
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {local:'#4F86C6', main:'#0B8062', foreign:'#C47F1A', ink2:'#57534A', ink3:'#8C867A', surf:'#FFFFFF', accent:'#0E6E56'};
+  var tip = document.getElementById('tip');
   function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
-  function txt(p,x,y,s,cls,anchor){var t=el("text",{x:x,y:y,"text-anchor":anchor||"start"},p);if(cls)t.setAttribute("class",cls);t.textContent=s;return t;}
+  function tx(p,x,y,s,cls,anc){var t=el('text',{x:x,y:y,'text-anchor':anc||'start'},p);if(cls)t.setAttribute('class',cls);t.textContent=s;return t;}
+  function move(e){var x=e.clientX+14,y=e.clientY+14,w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=x+'px';tip.style.top=y+'px';}
   function show(e,h){tip.innerHTML=h;tip.style.opacity=1;move(e);}
-  function move(e){var x=e.clientX+14,y=e.clientY+14;var w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;tip.style.left=x+"px";tip.style.top=y+"px";}
   function hide(){tip.style.opacity=0;}
-  function hover(node,h){node.addEventListener("mouseenter",function(e){show(e,h)});node.addEventListener("mousemove",move);node.addEventListener("mouseleave",hide);}
-  // bar with rounded data end, square at baseline
-  function hbar(p,x,y,w,h,fill,roundEnd){
-    if(w<=0)return;var r=Math.min(4,w/2,h/2);
-    if(!roundEnd){return el("rect",{x:x,y:y,width:w,height:h,fill:fill},p);}
-    var d="M"+x+","+y+"H"+(x+w-r)+"Q"+(x+w)+","+y+" "+(x+w)+","+(y+r)+"V"+(y+h-r)+"Q"+(x+w)+","+(y+h)+" "+(x+w-r)+","+(y+h)+"H"+x+"Z";
-    return el("path",{d:d,fill:fill},p);
+  function hov(n,h){n.addEventListener('mouseenter',function(e){show(e,typeof h==='function'?h():h)});n.addEventListener('mousemove',move);n.addEventListener('mouseleave',hide);}
+  function fmt(n){return Math.round(n).toLocaleString('en-US');}
+  function money(n){return n>=1e6?'$'+(n/1e6).toFixed(2)+'M':'$'+Math.round(n/1000)+'K';}
+  function niceMax(v){var p=Math.pow(10,Math.floor(Math.log10(v)));var m=v/p;var s=m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10;return s*p;}
+  function colPath(x,y,w,h){var r=Math.min(4,w/2,h);return 'M'+x+','+(y+h)+'V'+(y+r)+'Q'+x+','+y+' '+(x+r)+','+y+'H'+(x+w-r)+'Q'+(x+w)+','+y+' '+(x+w)+','+(y+r)+'V'+(y+h)+'Z';}
+  var MON = D.months, ISL = ['Oahu','Maui','Kauai','Hawaii Island'], NAME = {'Oahu':'Oʻahu','Maui':'Maui','Kauai':'Kauaʻi','Hawaii Island':'Hawaiʻi Island'};
+  var TG = {}; D.tg.forEach(function(r){TG[r.county+'|'+r.year]=r;});
+  var YRS=[]; for(var y=2015;y<=2025;y++)YRS.push(y);
+  var TGC={'Oahu':'Honolulu','Maui':'Maui','Kauai':'Kauai','Hawaii Island':'Hawaii'};
+
+  /* generic line chart: series [{name,color,vals,width,opacity}] over labels */
+  function line(host,o){
+    var W=o.w||900,H=o.h||260,L=o.L||52,R=o.R||16,T=12,B=26,pw=W-L-R,ph=H-T-B;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.label||''},host);
+    var all=[];o.series.forEach(function(s){s.vals.forEach(function(v){if(v!=null)all.push(v)})});
+    var y0=o.yMin!=null?o.yMin:0,y1=o.yMax!=null?o.yMax:niceMax(Math.max.apply(null,all));
+    var n=o.labels.length;function X(i){return L+pw*i/(n-1)}function Y(v){return T+ph*(1-(v-y0)/(y1-y0))}
+    var ticks=o.ticks||5;for(var k=0;k<=ticks;k++){var v=y0+(y1-y0)*k/ticks;el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,o.yf(v),null,'end');}
+    o.labels.forEach(function(lb,i){if(o.xtick(lb,i))tx(svg,X(i),H-8,o.xl(lb),null,'middle');});
+    (o.bands||[]).forEach(function(b){var a=o.labels.indexOf(b[0]),z=o.labels.indexOf(b[1]);if(a<0||z<0)return;el('rect',{x:X(a),y:T,width:X(z)-X(a),height:ph,fill:'rgba(156,122,60,.08)'},svg);tx(svg,X(a)+4,T+12,b[2],'ann');});
+    o.series.forEach(function(s){var d='',pen=false;s.vals.forEach(function(v,i){if(v==null){pen=false;return;}d+=(pen?'L':'M')+X(i).toFixed(1)+','+Y(v).toFixed(1);pen=true;});
+      el('path',{d:d,fill:'none',stroke:s.color,'stroke-width':s.width||2,'stroke-opacity':s.opacity||1,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+      if(s.end){for(var i=s.vals.length-1;i>=0;i--){if(s.vals[i]!=null){el('circle',{cx:X(i),cy:Y(s.vals[i]),r:4.5,fill:s.color,stroke:C.surf,'stroke-width':2},svg);if(s.endLabel)tx(svg,X(i)-8,Y(s.vals[i])-10,o.vf(s.vals[i]),'v','end');break;}}}
+    });
+    var cross=el('line',{x1:0,x2:0,y1:T,y2:T+ph,stroke:C.ink3,'stroke-width':1,opacity:0},svg);
+    var hit=el('rect',{x:L,y:T,width:pw,height:ph,class:'hit'},svg);
+    hit.addEventListener('mousemove',function(e){var b=svg.getBoundingClientRect();var sx=(e.clientX-b.left)*W/b.width;var i=Math.max(0,Math.min(n-1,Math.round((sx-L)/pw*(n-1))));
+      cross.setAttribute('x1',X(i));cross.setAttribute('x2',X(i));cross.setAttribute('opacity',.6);
+      var h='<b>'+o.tl(o.labels[i])+'</b>';o.series.forEach(function(s){if(s.hide)return;var v=s.vals[i];h+='<br>'+(s.name?s.name+': ':'')+(v==null?'n/a':o.vf(v));});show(e,h);});
+    hit.addEventListener('mouseleave',function(){cross.setAttribute('opacity',0);hide();});
+    return svg;
   }
-  function fmt(n){return n.toLocaleString("en-US");}
+  var monthTick=function(lb){return lb.slice(5)==='01'&&(+lb.slice(0,4))%2===1;}, monthL=function(lb){return lb.slice(0,4);};
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthTL=function(lb){return MN[+lb.slice(5)-1]+' '+lb.slice(0,4);};
 
-  // 1. stacked 100% bars
-  var S=[
-    {n:"Statewide",t:18007,l:13390,m:4110,f:507},
-    {n:"Hawaiʻi Island",t:4236,l:2524,m:1660,f:52},
-    {n:"Kauaʻi",t:750,l:494,m:250,f:6},
-    {n:"Maui",t:1625,l:1128,m:448,f:49,est:true},
-    {n:"Oʻahu",t:11396,l:9241,m:1755,f:400}
-  ];
+  /* 1. decade stacked columns */
   (function(){
-    var W=880,L=130,R=16,bh=24,gap=20,top=8,H=top+S.length*(bh+gap)+22;
-    var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Stacked bars of buyer origin share by county, 2024"},document.getElementById("c-stack"));
-    var pw=W-L-R;
-    [0,25,50,75,100].forEach(function(v){var x=L+pw*v/100;el("line",{x1:x,x2:x,y1:top-4,y2:H-22,class:"grid"},svg);txt(svg,x,H-6,v+"%",null,v===0?"start":v===100?"end":"middle");});
-    S.forEach(function(d,i){
-      var y=top+i*(bh+gap);
-      txt(svg,L-10,y+bh/2+4.5,d.n,"lab","end");
-      var segs=[["Hawaiʻi resident",d.l,C.local],["U.S. mainland",d.m,C.main],["Foreign",d.f,C.foreign]];
-      var x=L;
-      segs.forEach(function(s,j){
-        var w=pw*s[1]/d.t; var drawW=j<2?Math.max(0,w-2):w;
-        var b=hbar(svg,x,y,drawW,bh,s[2],j===2);
-        var hit=el("rect",{x:x,y:y-4,width:Math.max(w,6),height:bh+8,class:"hit"},svg);
-        hover(hit,"<b>"+d.n+"</b> · "+s[0]+"<br>"+fmt(s[1])+" of "+fmt(d.t)+" sales ("+(100*s[1]/d.t).toFixed(1)+"%)"+(d.est&&j>0?"<br>Derived by subtraction":""));
-        if(j===1&&w>58){var lt=txt(svg,x+w/2,y+bh/2+4.5,(100*s[1]/d.t).toFixed(0)+"%",null,"middle");lt.setAttribute("style","fill:#fff;font-weight:600");lt.setAttribute("pointer-events","none");}
-        x+=w;
-      });
+    var host=document.getElementById('c-decade'),W=900,H=300,L=52,R=16,T=22,B=26,pw=W-L-R,ph=H-T-B,mx=30000;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Stacked columns of sales by buyer origin 2015-2025'},host);
+    function Y(v){return T+ph*(1-v/mx)}
+    [0,10000,20000,30000].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,fmt(v),null,'end');});
+    var band=pw/YRS.length,bw=Math.min(40,band*.6);
+    YRS.forEach(function(y,i){var r=TG['State|'+y],x=L+band*i+(band-bw)/2,base=0;
+      [['Hawaiʻi resident',r.n_local,C.local],['U.S. mainland',r.n_mainland,C.main],['Foreign',r.n_foreign,C.foreign]].forEach(function(s,j){
+        var y0=Y(base+s[1]),h=Y(base)-y0;var gap=j>0?2:0;
+        if(j===2)el('path',{d:colPath(x,y0,bw,Math.max(0,h-gap)),fill:s[2]},svg);else el('rect',{x:x,y:y0,width:bw,height:Math.max(0,h-gap),fill:s[2]},svg);base+=s[1];});
+      tx(svg,x+bw/2,Y(r.n_total)-6,(100*r.n_mainland/r.n_total).toFixed(1)+'%','v','middle');
+      tx(svg,x+bw/2,H-8,String(y),null,'middle');
+      var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);
+      hov(hit,'<b>'+y+'</b> · '+fmt(r.n_total)+' sales<br>Local '+fmt(r.n_local)+' ('+(100*r.n_local/r.n_total).toFixed(1)+'%)<br>Mainland '+fmt(r.n_mainland)+' ('+(100*r.n_mainland/r.n_total).toFixed(1)+'%)<br>Foreign '+fmt(r.n_foreign)+' ('+(100*r.n_foreign/r.n_total).toFixed(1)+'%)');
     });
-    var tb=document.getElementById("t-stack");
-    S.forEach(function(d){var tr=document.createElement("tr");tr.innerHTML="<td>"+d.n+(d.est?" (mainland/foreign derived)":"")+"</td><td class='num'>"+fmt(d.t)+"</td><td class='num'>"+fmt(d.l)+" ("+(100*d.l/d.t).toFixed(1)+"%)</td><td class='num'>"+fmt(d.m)+" ("+(100*d.m/d.t).toFixed(1)+"%)</td><td class='num'>"+fmt(d.f)+" ("+(100*d.f/d.t).toFixed(1)+"%)</td>";tb.appendChild(tr);});
+    tx(svg,L,12,'Label above each column = mainland share','ann');
+    var t=document.getElementById('t-decade');t.innerHTML='<thead><tr><th>Year</th><th class="num">Sales</th><th class="num">Local</th><th class="num">Mainland</th><th class="num">Foreign</th><th class="num">Avg local</th><th class="num">Avg mainland</th><th class="num">Avg foreign</th></tr></thead>';
+    var tb=document.createElement('tbody');YRS.forEach(function(y){var r=TG['State|'+y];var tr=document.createElement('tr');tr.innerHTML='<td>'+y+'</td><td class="num">'+fmt(r.n_total)+'</td><td class="num">'+fmt(r.n_local)+'</td><td class="num">'+fmt(r.n_mainland)+'</td><td class="num">'+fmt(r.n_foreign)+'</td><td class="num">$'+fmt(r.avg_local)+'</td><td class="num">$'+fmt(r.avg_mainland)+'</td><td class="num">$'+fmt(r.avg_foreign)+'</td>';tb.appendChild(tr);});t.appendChild(tb);
   })();
 
-  // 2. dumbbell 2021 -> 2024
+  /* 2. mainland share small-multiple-like single chart with 4 labeled lines in one color family -> use small multiples */
   (function(){
-    var D=[["Hawaiʻi Island",38.9,39.2],["Kauaʻi",36.8,33.3],["Maui",34.5,27.6],["Oʻahu",12.6,15.4]];
-    var W=440,L=110,R=40,rh=40,top=10,H=top+D.length*rh+24,pw=W-L-R,mx=45;
-    var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Mainland share 2021 versus 2024 by county"},document.getElementById("c-dumb"));
-    svg.style.minWidth="380px";
-    [0,15,30,45].forEach(function(v){var x=L+pw*v/mx;el("line",{x1:x,x2:x,y1:top,y2:H-24,class:"grid"},svg);txt(svg,x,H-8,v+"%",null,"middle");});
-    D.forEach(function(d,i){
-      var y=top+i*rh+rh/2,x1=L+pw*d[1]/mx,x2=L+pw*d[2]/mx;
-      txt(svg,L-10,y+4.5,d[0],"lab","end");
-      el("line",{x1:x1,x2:x2,y1:y,y2:y,stroke:C.ink3,"stroke-width":2,"stroke-linecap":"round"},svg);
-      el("circle",{cx:x1,cy:y,r:5,fill:C.ink3,stroke:C.bg,"stroke-width":2},svg);
-      el("circle",{cx:x2,cy:y,r:6,fill:C.main,stroke:C.bg,"stroke-width":2},svg);
-      var right=x2>=x1; txt(svg,right?x2+11:x2-11,y+4.5,d[2].toFixed(1)+"%","v",right?"start":"end");
-      var hit=el("rect",{x:L,y:y-rh/2,width:pw,height:rh,class:"hit"},svg);
-      var dlt=(d[2]-d[1]);hover(hit,"<b>"+d[0]+"</b><br>2021: "+d[1]+"% · 2024: "+d[2]+"%<br>"+(dlt>=0?"+":"")+dlt.toFixed(1)+" pts"+(d[0]==="Maui"?"<br>2024 derived by subtraction":""));
-    });
+    var host=document.getElementById('c-share');var wrap=document.createElement('div');wrap.className='sm';host.appendChild(wrap);
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';wrap.appendChild(d);
+      var vals=YRS.map(function(y){var r=TG[TGC[isl]+'|'+y];return 100*r.n_mainland/r.n_total;});
+      line(d,{w:300,h:150,L:38,labels:YRS,series:[{name:'Mainland share',color:C.main,vals:vals,end:true,endLabel:true}],yMin:0,yMax:45,ticks:3,yf:function(v){return v+'%'},vf:function(v){return v.toFixed(0)+'%'},xtick:function(lb,i){return i===0||i===10||i===6},xl:String,tl:String,label:NAME[isl]+' mainland share'});});
   })();
 
-  // 3. trend (dot + line segments only between consecutive known years)
+  /* 3. avg price by origin */
   (function(){
-    var D=[[2008,23.5],[2019,18.6],[2020,17.4],[2021,22.4],[2023,23.0],[2024,22.8]];
-    var W=440,L=40,R=20,top=16,H=200,pb=28,ph=H-top-pb,pw=W-L-R,x0=2007,x1=2025,y0=10,y1=30;
-    var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Statewide mainland buyer share by year"},document.getElementById("c-trend"));
-    svg.style.minWidth="380px";
-    function X(v){return L+pw*(v-x0)/(x1-x0)} function Y(v){return top+ph*(1-(v-y0)/(y1-y0))}
-    [10,15,20,25,30].forEach(function(v){el("line",{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:"grid"},svg);txt(svg,L-6,Y(v)+4,v+"%",null,"end");});
-    [2008,2012,2016,2020,2024].forEach(function(v){txt(svg,X(v),H-8,String(v),null,"middle");});
-    for(var i=1;i<D.length;i++){var a=D[i-1],b=D[i];if(b[0]-a[0]===1){el("line",{x1:X(a[0]),y1:Y(a[1]),x2:X(b[0]),y2:Y(b[1]),stroke:C.main,"stroke-width":2,"stroke-linecap":"round"},svg);}}
-    D.forEach(function(d,i){
-      el("circle",{cx:X(d[0]),cy:Y(d[1]),r:i===D.length-1?6:4.5,fill:C.main,stroke:C.bg,"stroke-width":2},svg);
-      var hit=el("circle",{cx:X(d[0]),cy:Y(d[1]),r:14,class:"hit"},svg);
-      hover(hit,"<b>"+d[0]+"</b><br>"+d[1]+"% of sales to mainland buyers");
-    });
-    txt(svg,X(2024),Y(22.8)-12,"22.8%","v","middle");
-    txt(svg,X(2008),Y(23.5)-12,"23.5%","v","start");
-    txt(svg,X(2020),Y(17.4)+20,"17.4%","v","middle");
+    var host=document.getElementById('c-price');
+    var s=[['Local','avg_local',C.local],['Mainland','avg_mainland',C.main],['Foreign','avg_foreign',C.foreign]].map(function(a){return {name:a[0],color:a[2],vals:YRS.map(function(y){return TG['State|'+y][a[1]];}),end:true};});
+    line(host,{w:440,h:240,L:52,labels:YRS,series:s,yMin:0,yMax:1800000,ticks:3,yf:function(v){return v?money(v):'$0'},vf:money,xtick:function(lb,i){return i%2===0},xl:String,tl:String,label:'Average price by origin'});
   })();
 
-  // 4/5. origin-state bars
-  function stateBars(id,data,mx,total){
-    var W=440,L=96,R=44,bh=18,gap=10,top=4,H=top+data.length*(bh+gap)+4,pw=W-L-R;
-    var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Out-of-state buyers by origin state"},document.getElementById(id));
-    svg.style.minWidth="360px";
-    data.forEach(function(d,i){
-      var y=top+i*(bh+gap),w=pw*d[1]/mx;
-      txt(svg,L-10,y+bh/2+4.5,d[0],"lab","end");
-      hbar(svg,L,y,Math.max(w,2),bh,C.main,true);
-      txt(svg,L+w+8,y+bh/2+4.5,fmt(d[1]),"v");
-      var hit=el("rect",{x:0,y:y-gap/2,width:W,height:bh+gap,class:"hit"},svg);
-      hover(hit,"<b>"+d[0]+"</b><br>"+fmt(d[1])+" buyers · "+(100*d[1]/total).toFixed(1)+"% of out-of-state buyers"+(d[2]?"<br>"+d[2]:""));
+  /* 4. island mainland counts small multiples (bars) */
+  (function(){
+    var host=document.getElementById('c-isl-main');var mx=2400;
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var W=440,H=170,L=40,R=8,T=16,B=22,pw=W-L-R,ph=H-T-B;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':NAME[isl]+' mainland buyers per year'},d);
+      function Y(v){return T+ph*(1-v/mx)}[0,1200,2400].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,fmt(v),null,'end');});
+      var band=pw/YRS.length,bw=Math.min(22,band*.62);
+      YRS.forEach(function(y,i){var r=TG[TGC[isl]+'|'+y],v=r.n_mainland,x=L+band*i+(band-bw)/2;el('path',{d:colPath(x,Y(v),bw,Y(0)-Y(v)),fill:C.main},svg);
+        if(i===0||i===6||i===10){tx(svg,x+bw/2,Y(v)-5,fmt(v),'v','middle');tx(svg,x+bw/2,H-6,String(y),null,'middle');}
+        var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>'+NAME[isl]+' '+y+'</b><br>'+fmt(v)+' mainland buyers of '+fmt(r.n_total)+' ('+(100*v/r.n_total).toFixed(1)+'%)<br>Avg mainland price $'+fmt(r.avg_mainland));});
     });
+    var notes={'Oahu':'Share up from 10% to 14%. Mostly military and condo buyers.','Maui':'Share down from 42% to 25%. Prices, the fire, and STR rules.','Kauai':'Steady at about a third. Smallest market, highest prices.','Hawaii Island':'Highest share most years (32–40%). Fell sharply in 2025.'};
+    var tb=document.getElementById('t-isl');ISL.forEach(function(isl){var a=TG[TGC[isl]+'|2015'],b=TG[TGC[isl]+'|2021'],c=TG[TGC[isl]+'|2025'];var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="geo">'+NAME[isl]+'</span></td><td class="num">'+(100*a.n_mainland/a.n_total).toFixed(1)+'%</td><td class="num">'+(100*b.n_mainland/b.n_total).toFixed(1)+'%</td><td class="num">'+(100*c.n_mainland/c.n_total).toFixed(1)+'%</td><td class="num">$'+fmt(c.avg_mainland)+'</td><td class="num">$'+fmt(c.avg_local)+'</td><td class="why">'+notes[isl]+'</td>';tb.appendChild(tr);});
+  })();
+
+  /* 5. IRS heat table */
+  (function(){
+    var yrs=Object.keys(D.irs),t=document.getElementById('t-heat'),M=D.metros.slice();
+    var tot={};M.forEach(function(m){tot[m]=yrs.map(function(y){return ISL.reduce(function(s,i){return s+D.irs[y][i].metros[m][0]},0);});});
+    M.sort(function(a,b){return tot[b].reduce(function(x,y){return x+y})-tot[a].reduce(function(x,y){return x+y})});
+    var mx=0;M.forEach(function(m){tot[m].forEach(function(v){if(v>mx)mx=v})});
+    var h='<thead><tr><th>Origin metro</th>'+yrs.map(function(y){return '<th class="num">'+y.slice(2,4)+'–'+y.slice(-2)+'</th>'}).join('')+'</tr></thead><tbody>';
+    M.forEach(function(m){h+='<tr><td>'+m.replace('Texas metros (Dallas, Houston, Austin, San Antonio)','Texas metros')+'</td>'+tot[m].map(function(v,i){var a=v/mx;return '<td class="num h" style="background:rgba(11,128,98,'+(a*0.55).toFixed(3)+');'+(a>0.62?'color:#fff;':'')+'" title="'+m+' '+yrs[i]+': '+fmt(v)+' households">'+(v?fmt(v):'·')+'</td>'}).join('')+'</tr>';});
+    t.innerHTML=h+'</tbody>';
+  })();
+
+  /* 6. AGI per household small multiples */
+  (function(){
+    var host=document.getElementById('c-agi'),yrs=Object.keys(D.irs);
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var vals=yrs.map(function(y){var r=D.irs[y][isl];return r.agi/r.households;});
+      line(d,{w:300,h:150,L:44,labels:yrs,series:[{name:'Avg AGI',color:C.main,vals:vals,end:true,endLabel:true}],yMin:0,yMax:300,ticks:2,yf:function(v){return '$'+v+'K'},vf:function(v){return '$'+Math.round(v)+'K'},xtick:function(lb,i){return i===0||i===yrs.length-1},xl:function(l){return l.slice(2,4)+'–'+l.slice(-2)},tl:function(l){return l+' · '+fmt(D.irs[l][isl].households)+' households'},label:NAME[isl]+' income of new arrivals'});});
+  })();
+
+  /* 7. top counties 2022-23 */
+  (function(){
+    var t=document.getElementById('t-topc'),y='2022-23',h='<thead><tr><th>Island</th><th>Top origins (households · avg AGI)</th></tr></thead><tbody>';
+    ISL.forEach(function(isl){var top=D.irs[y][isl].top.slice(0,6).map(function(x){return x[0].replace(' County','').replace(' Municipality','')+' '+x[1]+' <b>'+fmt(x[2])+'</b> · $'+Math.round(x[4]/x[2])+'K'});h+='<tr><td><span class="geo">'+NAME[isl]+'</span></td><td class="why">'+top.join('<br>')+'</td></tr>';});
+    t.innerHTML=h+'</tbody>';
+  })();
+
+  /* 8. Maui FY non-owner share */
+  (function(){
+    var host=document.getElementById('c-maui'),fy={};D.maui_fy.forEach(function(r){(fy[r.fy]=fy[r.fy]||{})[r.category]=r;});
+    var ks=Object.keys(fy).sort(),W=900,H=230,L=52,R=16,T=22,B=26,pw=W-L-R,ph=H-T-B;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Maui non-owner share of home sales by fiscal year'},host);
+    function Y(v){return T+ph*(1-v/80)}[0,20,40,60,80].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,v+'%',null,'end');});
+    var band=pw/ks.length,bw=Math.min(36,band*.6);
+    ks.forEach(function(k,i){var o=fy[k].owner,n=fy[k].nonowner,sh=100*n.count/(o.count+n.count),vs=100*n.sum_price/(o.sum_price+n.sum_price),x=L+band*i+(band-bw)/2;
+      el('path',{d:colPath(x,Y(sh),bw,Y(0)-Y(sh)),fill:C.main},svg);tx(svg,x+bw/2,Y(sh)-6,sh.toFixed(0)+'%','v','middle');tx(svg,x+bw/2,H-8,'FY'+k.slice(2),null,'middle');
+      var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>Maui FY'+k+'</b> (Jul '+(k-1)+'–Jun '+k+')<br>'+fmt(n.count)+' of '+fmt(o.count+n.count)+' home sales ('+sh.toFixed(1)+'%)<br>'+vs.toFixed(1)+'% of dollar value');});
+  })();
+
+  /* 9. mortgage */
+  line(document.getElementById('c-mort'),{labels:MON,series:[{name:'30-yr fixed',color:C.main,vals:D.mortgage,end:true,endLabel:true}],yMin:0,yMax:8,ticks:4,yf:function(v){return v+'%'},vf:function(v){return v.toFixed(2)+'%'},xtick:monthTick,xl:monthL,tl:monthTL,label:'30-year mortgage rate',bands:[['2020-03','2021-12','Pandemic lows'],['2022-03','2023-10','Rate shock']]});
+
+  /* small multiples helper for monthly island series */
+  function smMonthly(id,key,fn,yf,vf,opts){
+    var host=document.getElementById(id);
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var raw=D.islands[isl][key].map(function(v){return v});var s=fn(raw,isl);
+      var first=0;while(first<MON.length&&s[0].vals[first]==null)first++;
+      var last=MON.length-1;while(last>0&&s[0].vals[last]==null&&(!s[1]||s[1].vals[last]==null))last--;
+      var labels=MON.slice(first,last+1);s.forEach(function(x){x.vals=x.vals.slice(first,last+1)});
+      var all=[];s.forEach(function(x){if(!x.noScale)x.vals.forEach(function(v){if(v!=null)all.push(v)})});
+      line(d,{w:440,h:170,L:60,labels:labels,series:s,yMin:0,yMax:niceMax(Math.max.apply(null,all)),ticks:2,yf:yf,vf:vf,xtick:function(lb){return lb.slice(5)==='01'&&(+lb.slice(0,4))%3===0},xl:monthL,tl:monthTL,label:NAME[isl]});});
   }
-  stateBars("c-bigisland",[["California",313,"$568.5M volume"],["Washington",80],["Oregon",57],["Alaska",49],["Texas",44],["Nevada",33],["Arizona",33],["Colorado",33],["Florida",24]],330,915);
-  stateBars("c-oahu",[["California",505,"$523.1M volume"],["Florida",88,"Likely includes military relocations"],["Washington",83],["Texas",60,"Likely includes military relocations"],["Nevada",54]],530,1434);
+  smMonthly('c-active','active',function(r){return [{name:'Active listings',color:C.main,vals:r,end:true,endLabel:true}]},function(v){return fmt(v)},fmt);
+  function roll(arr,n,agg){return arr.map(function(_,i){if(i<n-1)return null;var w=arr.slice(i-n+1,i+1);if(w.some(function(v){return v==null}))return null;return agg(w)});}
+  smMonthly('c-median','sf_median',function(r){return [{name:'12-mo avg',color:C.main,vals:roll(r,12,function(w){return w.reduce(function(a,b){return a+b})/w.length}),end:true,endLabel:true},{name:'Month',color:C.main,vals:r,width:1,opacity:.28}]},function(v){return money(v)},money);
+  smMonthly('c-sales','sf_sales',function(r,isl){var c=D.islands[isl].condo_sales;var t=r.map(function(v,i){return v==null||c[i]==null?null:v+c[i]});return [{name:'Trailing 12-mo sales',color:C.main,vals:roll(t,12,function(w){return w.reduce(function(a,b){return a+b})}),end:true,endLabel:true}]},function(v){return fmt(v)},fmt);
+
+  /* 10. arrivals */
+  (function(){var last=MON.length-1;while(D.arr_dom[last]==null)last--;var labels=MON.slice(0,last+1);
+    line(document.getElementById('c-arr'),{labels:labels,series:[{name:'Domestic',color:C.main,vals:D.arr_dom.slice(0,last+1),end:true},{name:'International',color:C.foreign,vals:D.arr_intl.slice(0,last+1),end:true}],yMin:0,yMax:1000000,ticks:4,yf:function(v){return v?(v/1000)+'K':'0'},vf:function(v){return fmt(v)},xtick:monthTick,xl:monthL,tl:monthTL,label:'Visitor arrivals',bands:[['2020-03','2021-10','Quarantine']]});})();
 })();
 </script>
 </body>
