@@ -37,6 +37,11 @@ The report's micro-markets chapter (all Hawaiʻi and each island, by price tier,
 
 `owners/oahu_ind.py` builds `owners/oahu_individual.json` from the Honolulu owner roll (data as of 2026-10-05). It counts owner mailing addresses by state, metro and situs ZIP. Any mailing address shared by 10 or more parcels is treated as institutional and kept separate. Only aggregates are published: no names, street addresses or parcel IDs.
 
+- `micro/district_ytd.py` builds `micro/district_ytd.json`, the district scorecards for 2026 to date against the same months of 2025:
+  - Oʻahu, Hawaiʻi Island and Kauaʻi, January–August, from the Fidelity National Title August 2026 summaries. These republish HiCentral MLS, Hawaii Information Service and Kauai Board of REALTORS data, and their district rows sum to the island totals.
+  - Maui County, January–September, from the REALTORS Association of Maui.
+- The Realtor.com ZIP rows that Realtor.com marks as lower quality are flagged † in the report.
+
 `hawaii-buyer-origins.src.html` is the page template. The build replaces `__DATA__` with `page_data.json` and inserts the micro-markets chapter.
 
 ## Go-to-market plan

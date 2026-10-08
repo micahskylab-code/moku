@@ -38,7 +38,7 @@ for key, name, cty, tgk, fips in ISL:
     else:
         offv = '<span class="why">county file not public</span>'
     cols.append(dict(name=name, rows=[
-        f"{int(pub['active_listing_count']):,}", money(pub['median_listing_price']), str(int(pub['median_days_on_market'])), pct(pub['price_reduced_share'], 1),
+        f"{int(pub['active_listing_count']):,}", money(pub['median_listing_price']) + ('<sup>†</sup>' if pub.get('quality_flag') == 1 else ''), str(int(pub['median_days_on_market'])), pct(pub['price_reduced_share'], 1) + ('<sup>‡</sup>' if key == 'Kauai' else ''),
         f"{sh3(r['n_local']/n)} · {sh3(r['n_mainland']/n)} · {sh3(r['n_foreign']/n)}",
         f"{pct(u['out_of_state_share_sf'])} · {pct(u['out_of_state_share_condo'])}",
         pct(occ['second_residence'] + occ['investment_property']),
@@ -116,9 +116,11 @@ def ziptable(key):
         if Y and Y.get('median_listing_price') and L.get('median_listing_price'):
             ch = L['median_listing_price'] / Y['median_listing_price'] - 1
         oos = u.get('out_of_state_share'); oz = OZ.get(z['zip'])
-        rows.append((L['active_listing_count'], f"<tr><td><span class=\"geo\">{z['zip']}</span> {esc(z['place'])}</td><td class=\"num\">{L['active_listing_count']:,}</td>"
-            f"<td class=\"num\">{money(L.get('median_listing_price'))}</td><td class=\"num\">{'—' if ch is None else (('+' if ch>=0 else '−')+f'{abs(100*ch):.0f}%')}</td>"
-            f"<td class=\"num\">{int(L['median_days_on_market']) if L.get('median_days_on_market') else '—'}</td><td class=\"num\">{pct(L['price_reduced_share']) if L.get('price_reduced_share') is not None else '—'}</td>"
+        fl = '<sup>†</sup>' if L.get('quality_flag') == 1 else ''
+        fire = ' <span class="why">fire area: no unsolicited offers</span>' if z['zip'] in ('96761', '96767', '96790') else ''
+        rows.append((L['active_listing_count'], f"<tr><td><span class=\"geo\">{z['zip']}</span> {esc(z['place'])}{fl}{fire}</td><td class=\"num\">{L['active_listing_count']:,}</td>"
+            f"<td class=\"num\">{money(L.get('median_listing_price'))}</td><td class=\"num\">{'—' if ch is None else ('0%' if abs(ch) < 0.005 else (('+' if ch>=0 else '−')+f'{abs(100*ch):.0f}%'))}</td>"
+            f"<td class=\"num\">{int(L['median_days_on_market']) if L.get('median_days_on_market') else '—'}</td><td class=\"num\">{pct(L['price_reduced_share']) if L.get('price_reduced_share') is not None and key != 'Kauai' else '—'}</td>"
             f"<td class=\"num\">{money(u.get('median_sf_price')) if u.get('median_sf_price') else '—'}</td>"
             f"<td class=\"num\">{pct(oos) if oos is not None else '—'}</td>"
             + (f"<td class=\"num\">{pct(oz['mainland']+oz['foreign'])}</td>" if key == 'Oahu' else '') + "</tr>"))
@@ -126,6 +128,60 @@ def ziptable(key):
     head = ("<tr><th>ZIP</th><th class=\"num\">Listings Sep 2026</th><th class=\"num\">Median list price</th><th class=\"num\">vs Sep 2025</th><th class=\"num\">Days on market</th><th class=\"num\">Price cuts</th><th class=\"num\">House median sale 2025</th><th class=\"num\">Out-of-state buyers 2025</th>"
             + ("<th class=\"num\">Owned from off-island</th>" if key == 'Oahu' else '') + "</tr>")
     return f'<div class="tw"><table class="zt"><thead>{head}</thead><tbody>{"".join(r for _, r in rows)}</tbody></table></div>', len(rows)
+
+DY = J('an/mm/district_ytd.json')
+DNAME = {"PUNA": "Puna", "SOUTH HILO": "South Hilo (Hilo town)", "NORTH HILO": "North Hilo", "HAMAKUA": "Hāmākua", "NORTH KOHALA": "North Kohala (Hāwī)",
+         "SOUTH KOHALA": "South Kohala (Waikoloa, Mauna Lani, Mauna Kea)", "NORTH KONA": "North Kona (Kailua-Kona)", "SOUTH KONA": "South Kona", "KA'U": "Kaʻū",
+         "WAIMEA": "Waimea (West Side)", "KOLOA": "Kōloa (Poʻipū, South Shore)", "LIHUE": "Līhuʻe", "KAWAIHAU": "Kawaihau (Kapaʻa, East Side)",
+         "HANALEI": "Hanalei (North Shore, Princeville)", "Lanai": "Lānaʻi", "Molokai": "Molokaʻi"}
+def chg(a, b, minn=None):
+    if a is None or b in (None, 0): return '—'
+    c = a / b - 1
+    return '0%' if abs(c) < 0.005 else ('+' if c >= 0 else '−') + f'{abs(100*c):.0f}%'
+def dytd(key):
+    D = DY[key]; h = D['data']['house']; c = D['data'].get('condo', {})
+    names = [a for a in h if a != 'TOTAL']
+    for a in c:
+        if a != 'TOTAL' and a not in names: names.append(a)
+    rows = []
+    for a in names:
+        H = h.get(a, {}); C = c.get(a, {})
+        tot = (H.get('n26') or 0) + (C.get('n26') or 0) + (H.get('n25') or 0) + (C.get('n25') or 0)
+        if tot == 0: continue
+        def cell(X):
+            n26, n25, m26, m25 = X.get('n26'), X.get('n25'), X.get('med26'), X.get('med25')
+            if not n26 and not n25: return '<td class="num">—</td><td class="num">—</td>'
+            small = (n26 or 0) < 10 or (n25 or 0) < 10
+            nc = chg(n26 or 0, n25) if n25 else 'new'
+            mc = '' if small or not m26 or not m25 else f' <span class="why">{chg(m26, m25)}</span>'
+            return (f'<td class="num">{n26 or 0:,} <span class="why">{nc}</span></td>'
+                    f'<td class="num">{money(m26) if m26 else "—"}{mc}{" <span class=\"why\">(few sales)</span>" if small and m26 else ""}</td>')
+        rows.append(((H.get('n26') or 0) + (C.get('n26') or 0), f'<tr><td>{esc(DNAME.get(a, a))}</td>{cell(H)}{cell(C)}</tr>'))
+    rows.sort(key=lambda x: -x[0])
+    T = lambda X: (f'<td class="num"><b>{X["n26"]:,}</b> <span class="why">{chg(X["n26"], X["n25"])}</span></td>'
+                   f'<td class="num"><b>{money(X["med26"])}</b> <span class="why">{chg(X["med26"], X["med25"])}</span></td>')
+    tot = f'<tr><td><b>Whole island</b></td>{T(h["TOTAL"])}{T(c["TOTAL"])}</tr>'
+    head = ('<tr><th>District</th><th class="num">Houses sold</th><th class="num">House median</th>'
+            '<th class="num">Condos sold</th><th class="num">Condo median</th></tr>')
+    Hh, Cc = h['TOTAL'], c['TOTAL']
+    g = lambda X, a: X[a]['med26'] / X[a]['med25'] - 1
+    pc = lambda x: ('+' if x >= 0 else '−') + f'{abs(100*x):.0f}%'
+    pa = lambda x: f'{abs(100*x):.0f}%'
+    if key == 'Oahu':
+        say = (f"House sales are up {pa(Hh['n26']/Hh['n25']-1)} and the median is up {pa(g(h,'TOTAL'))} to {money(Hh['med26'])}. "
+               f"Condos are flat: sales {pc(Cc['n26']/Cc['n25']-1)}, median {money(Cc['med26'])}.")
+    elif key == 'Maui County':
+        say = (f"Buyers are back for condos, but at lower prices: condo sales are up {pa(Cc['n26']/Cc['n25']-1)} while the median fell {pa(g(c,'TOTAL'))} to {money(Cc['med26'])}. "
+               f"Resort condos fell most: Wailea/Mākena {pc(g(c,'Wailea/Makena'))}, Kapalua {pc(g(c,'Kapalua'))}, Kīhei {pc(g(c,'Kihei'))}, Nāpili/Kahana {pc(g(c,'Napili/Kahana/Honokowai'))}.")
+    elif key == 'Kauai':
+        say = (f"Fewer sales (houses {pc(Hh['n26']/Hh['n25']-1)}, condos {pc(Cc['n26']/Cc['n25']-1)}), but the house median rose {pa(g(h,'TOTAL'))} to {money(Hh['med26'])}, "
+               f"pulled up by Kōloa and Poʻipū ({pc(g(h,'KOLOA'))}). The mix shifted toward expensive homes.")
+    else:
+        say = (f"Sales are flat island-wide (houses {pc(Hh['n26']/Hh['n25']-1)}, median {money(Hh['med26'])}), but house dollar volume is up {pa(Hh['vol26']/Hh['vol25']-1)} "
+               f"because the top end grew: South Kohala {pc(h['SOUTH KOHALA']['vol26']/h['SOUTH KOHALA']['vol25']-1)} and North Kona {pc(h['NORTH KONA']['vol26']/h['NORTH KONA']['vol25']-1)}.")
+    return (f'<h3 style="margin-top:28px">District scorecard, {D["period"].split(" vs ")[0]}</h3><p class="col" style="margin:0 0 12px">{say}</p>'
+            f'<div class="tw"><table class="dy"><thead>{head}</thead><tbody>{"".join(r for _, r in rows)}{tot}</tbody></table></div>'
+            f'<p class="src">{esc(D["source"])} {O}; district rows sum to the island totals. Grey figures are the change from the same months of 2025; median changes are left out where either year had fewer than 10 sales. MLS resales only, so totals differ from recorded-deed counts.</p>')
 
 isl_secs = ''
 NOTES = {
@@ -152,7 +208,8 @@ for key, name, cty, tgk, fips in ISL:
   <section id="mm-{key.split()[0].lower()}">
     <div class="head col"><span class="sec-n">{NOTES[key][0]}</span><h2>{NOTES[key][1]}</h2></div>
     {t}
-    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings ({n} shown) {P}. House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) {O}.{(' Owned from off-island: Honolulu owner roll, residential parcels, October 2026 '+P+'.') if key=='Oahu' else ''}</p>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings ({n} shown) {P}. † Realtor.com flags this ZIP's figures as lower quality for September 2026; treat the year-over-year change as rough.{' Price cuts are left blank for Kauaʻi because Realtor.com’s field is nearly empty there.' if key == 'Kauai' else ''} House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) {O}.{(' Owned from off-island: Honolulu owner roll, residential parcels, October 2026 '+P+'.') if key=='Oahu' else ''}</p>
+    {dytd(key)}
     {extra}
     <!--WHY:mm-{key.split()[0].lower()}-->
   </section>'''
@@ -164,7 +221,7 @@ chapter = f'''
     <div class="head col"><span class="sec-n">All Hawaiʻi, island by island</span><h2>Four islands, four different markets</h2>
       <p class="muted">The latest listings (September 2026), who bought in 2025, and how much of each island is owned or bought from away.</p></div>
     {gl}
-    <p class="src">Listings: Realtor.com county data, September 2026 {P}. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
+    <p class="src">Listings: Realtor.com county data, September 2026 {P}. † Realtor.com has flagged Maui County's data as lower quality every month since December 2025, so read its listing price with care. ‡ Realtor.com's price-cut field is nearly empty for most Kauaʻi ZIPs, so Kauaʻi's share is probably understated. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
     <!--WHY:mm-glance-->
   </section>
   <section id="mm-tiers">
