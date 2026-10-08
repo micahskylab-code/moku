@@ -1,0 +1,18 @@
+{
+ "Oahu": {
+  "period": "Jan–Aug 2026",
+  "text": "House sales are up 6% and the median is up 4% to $1.19M. Condos are flat: sales −2%, median $512K."
+ },
+ "Maui County": {
+  "period": "Jan–Sep 2026",
+  "text": "Buyers are back for condos, but at lower prices: condo sales are up 21% while the median fell 7% to $655K. Resort condos fell most: Wailea/Mākena −17%, Kapalua −16%, Kīhei −12%, Nāpili/Kahana −12%."
+ },
+ "Kauai": {
+  "period": "Jan–Aug 2026",
+  "text": "Fewer sales (houses −8%, condos −21%), but the house median rose 11% to $1.30M, pulled up by Kōloa and Poʻipū (+47%). The mix shifted toward expensive homes."
+ },
+ "Hawaii Island": {
+  "period": "Jan–Aug 2026",
+  "text": "Sales are flat island-wide (houses −1%, median $564K), but house dollar volume is up 18% because the top end grew: South Kohala +48% and North Kona +29%."
+ }
+}

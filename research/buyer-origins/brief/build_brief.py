@@ -108,7 +108,10 @@ def buyrows():
         out+='<td><b>Biggest visitor metros</b><span class="mn">'+' · '.join(f'{html.escape(mshort(r["metro"]))} {round(r[VK[i]]/1000):,}K' for r in top)+'</span></td>'
     return out+'</tr>'
 tpl=open(f'{S}/brief/brief.tpl.html').read()
-out=(tpl.replace('{{TILES}}',tiles).replace('{{HEAD}}',head).replace('{{BUY}}',buyrows()).replace('{{OVER}}',overrow({'Oahu':20000,'Maui':20000,'Kauai':10000,'Hawaii Island':15000})).replace('{{OUT}}',rows('out'))
+SAY=json.load(open(f'{S}/an/mm/district_say.json'))
+NM={'Oahu':'Oʻahu','Maui County':'Maui County','Kauai':'Kauaʻi','Hawaii Island':'Hawaiʻi Island'}
+ytd=''.join(f'<div><b>{NM[k]}, {v["period"]}</b>{html.escape(v["text"])}</div>' for k,v in SAY.items())
+out=(tpl.replace('{{TILES}}',tiles).replace('{{YTD}}',ytd).replace('{{HEAD}}',head).replace('{{BUY}}',buyrows()).replace('{{OVER}}',overrow({'Oahu':20000,'Maui':20000,'Kauai':10000,'Hawaii Island':15000})).replace('{{OUT}}',rows('out'))
      .replace('{{CALHEAD}}',''.join(f'<th>{m}</th>' for m in MN)).replace('{{CAL}}',cal)
      .replace('{{LOCAL_D}}',f'{local_d:.0f}').replace('{{LOCAL_HO}}',f'{local_ho:.0f}').replace('{{FOR_N}}',f'{for_n:,}').replace('{{FOR_PCT}}',f'{for_pct:.1f}'))
 assert '{{' not in out

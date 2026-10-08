@@ -78,7 +78,9 @@ for k, lab, mk, hk in tiers:
         oc = h['occupancy_share']; oc19 = h19['occupancy_share'] if h19 else None
         inc = h['income_thousands_usd']['median']; incs = f"${inc/1000:.2f}M" if inc >= 1000 else f"${inc:.0f}K"
         small = ' (n&lt;20)' if h['n_loans'] < 20 else ''
-        htxt = f"{pct(oc['second_home'])} second home · {pct(oc['investment'])} investor<br><span class=\"why\">{h['n_loans']:,} loans{small}; median income {incs}; 2019: {pct(oc19['second_home'])} · {pct(oc19['investment'])}</span>" if oc19 else f"{pct(oc['second_home'])} · {pct(oc['investment'])}"
+        no = oc['second_home'] + oc['investment']
+        htxt = (f"<b>{pct(no)}</b> won't live there ({pct(oc['second_home'])} second home, {pct(oc['investment'])} investor)<br><span class=\"why\">{h['n_loans']:,} loans{small}; median income {incs}"
+                + (f"; 2019: {pct(oc19['second_home'] + oc19['investment'])} won't live there</span>" if oc19 else '</span>'))
     trows += f"<tr><td><b>{lab}</b></td><td class=\"num\">{100*o['hawaii_total']:.0f}% · {100*o['mainland_us']:.0f}% · {100*o['foreign']:.0f}%<br><span class=\"why\">{o['n']:,} sales{flag}</span></td><td class=\"num\">{mtxt}</td><td>{htxt}</td></tr>"
 
 # ---------- 3. type
@@ -138,6 +140,7 @@ def chg(a, b, minn=None):
     if a is None or b in (None, 0): return '—'
     c = a / b - 1
     return '0%' if abs(c) < 0.005 else ('+' if c >= 0 else '−') + f'{abs(100*c):.0f}%'
+SAY = {}
 def dytd(key):
     D = DY[key]; h = D['data']['house']; c = D['data'].get('condo', {})
     names = [a for a in h if a != 'TOTAL']
@@ -179,6 +182,7 @@ def dytd(key):
     else:
         say = (f"Sales are flat island-wide (houses {pc(Hh['n26']/Hh['n25']-1)}, median {money(Hh['med26'])}), but house dollar volume is up {pa(Hh['vol26']/Hh['vol25']-1)} "
                f"because the top end grew: South Kohala {pc(h['SOUTH KOHALA']['vol26']/h['SOUTH KOHALA']['vol25']-1)} and North Kona {pc(h['NORTH KONA']['vol26']/h['NORTH KONA']['vol25']-1)}.")
+    SAY[key] = dict(period=D['period'].split(' vs ')[0], text=say)
     return (f'<h3 style="margin-top:28px">District scorecard, {D["period"].split(" vs ")[0]}</h3><p class="col" style="margin:0 0 12px">{say}</p>'
             f'<div class="tw"><table class="dy"><thead>{head}</thead><tbody>{"".join(r for _, r in rows)}{tot}</tbody></table></div>'
             f'<p class="src">{esc(D["source"])} {O}; district rows sum to the island totals. Grey figures are the change from the same months of 2025; median changes are left out where either year had fewer than 10 sales. MLS resales only, so totals differ from recorded-deed counts.</p>')
@@ -246,7 +250,7 @@ chapter = f'''
     <div class="col"><ul class="tight" style="margin-top:16px">
       <li><b>Who buys it:</b> on Oʻahu, $3M+ buyers in 2023–25 were 67% local, 27% mainland (led by the Bay Area, Los Angeles and Seattle) and 6% foreign, almost all from Japan {P}. On Maui, 81% of $3–10M sales and 89% of $10M+ sales went to buyers without a homeowner exemption {O}. In January–June 2026, 15 of the state's 22 single-family sales at $10M+ were on Hawaiʻi Island {R}.</li>
       <li><b>Resort enclaves:</b> Mauna Kea Resort recorded 30 sales worth $159M in 2025 (average $6.8M); South Kohala had 42 sales at $3M+ {R}. On Oʻahu, $5M+ condo sales in Q2 2026 clustered in Park Lane (4) and Waiea (3) {R}.</li>
-      <li><b>Financed luxury is rare and changing:</b> only 150 mortgaged purchases statewide were $3–10M in 2025; their second-home share fell from 45% (2019) to 29% {P}.</li>
+      <li><b>Financed luxury is rare and changing:</b> only 150 mortgaged purchases statewide were $3–10M in 2025; the share bought as a second home or investment fell from {pct(hm_tier(HT19,'luxury')['occupancy_share']['second_home']+hm_tier(HT19,'luxury')['occupancy_share']['investment'])} in 2019 to {pct(hm_tier(HT,'luxury')['occupancy_share']['second_home']+hm_tier(HT,'luxury')['occupancy_share']['investment'])} {P}. HMDA coded second homes differently in the two years, so only the combined share is compared.</li>
     </ul></div>
     <p class="src">Hawaiʻi Life luxury reports (2025 year-end, 2026 midyear), island figures summed here {R}. List Sotheby's Oʻahu Q2 2026 {R}. Oʻahu buyer origin: owner-roll match {P}. Maui: conveyance-tax schedule {O}. HMDA 2025 {P}.</p>
     <!--WHY:mm-luxury-->
@@ -255,5 +259,6 @@ chapter = f'''
   </div>
 '''
 open(f'{S}/an/micro_chapter.html', 'w').write(chapter)
+json.dump(SAY, open(f'{S}/an/mm/district_say.json', 'w'), ensure_ascii=False, indent=1)
 print('chapter chars', len(chapter))
 print('tier rows sample', trows[:600])
