@@ -7,3 +7,6 @@
 - `prep.py` — trims the merged dataset to what the page charts.
 
 Known source issue: the HTA island visitor series repeats Maui 2021 as 2022; the report uses DBEDT's arrivals series instead.
+- `locals.py` — ACS 2024 PUMS (Hawaiʻi housing + person files, via Hawaiʻi Appleseed; weights sum to Census's 1,446,146 population) for movers, vacancy and rent burden, plus IRS county **outflows** 2014–15 … 2022–23 (SHA-256 in `irs_outflow_sha256.txt`).
+- Oʻahu district figures use Moku's own `oahu-sales.json` (repeat-sale pairs by TMK zone); the zone→district names follow the Oʻahu TMK zone map.
+- ACS county series (income, value, rent, tenure, vacancy, 2015–2024) come from Hawaiʻi Appleseed's `acs_panel.json`.
