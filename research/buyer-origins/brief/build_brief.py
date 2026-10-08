@@ -81,8 +81,14 @@ local_d=dollar_share(st,'local'); local_ho=dollar_share(ho,'local')
 for_n=st['n_foreign']; for_pct=100*st['n_foreign']/st['n_total']
 
 TGC={'Oahu':'Honolulu','Maui':'Maui','Kauai':'Kauai','Hawaii Island':'Hawaii'}
-STATES={'Oahu':'Florida 88, Washington 83, Texas 60, Nevada 54 (Jan–Sep)','Maui':'Washington 21, Colorado 13 (Jan–Jun)','Kauai':'Colorado, Washington, Texas: 12–14 each (Jan–Jun)','Hawaii Island':'Washington 80, Oregon 57, Alaska 49, Texas 44 (Jan–Sep)'}
-CA={'Oahu':'505 (Jan–Sep)','Maui':'53 (Jan–Jun)','Kauai':'51 (Jan–Jun)','Hawaii Island':'313 (Jan–Sep)'}
+TGJ=json.load(open(f'{S}/an/new/tg.json'))
+TGE={(e['period'][:4]+('H1' if 'Jun' in e['period'] else ''),e['geography'].split(' (')[0]):e for e in TGJ['editions']}
+GEO={'Oahu':'Oahu','Maui':'Maui County','Kauai':'Kauai','Hawaii Island':'Hawaii Island'}
+SNM={'CA':'California','WA':'Washington','TX':'Texas','FL':'Florida','CO':'Colorado','NV':'Nevada','OR':'Oregon','AK':'Alaska','UT':'Utah','NY':'New York','AZ':'Arizona','IL':'Illinois','WY':'Wyoming'}
+def nxt(per,i,k,skip_ca=True):
+    st=[x for x in TGE[(per,GEO[i])]['states'] if x['state']!='HI' and not (skip_ca and x['state']=='CA')][:k]
+    return ', '.join(f"{SNM.get(x['state'],x['state'])} {x['count']}" for x in st)
+def ca(per,i): return [x for x in TGE[(per,GEO[i])]['states'] if x['state']=='CA'][0]['count']
 def pc(x):
     return '<1%' if 0<x<0.5 else f'{x:.0f}%'
 def buyrows():
@@ -91,9 +97,11 @@ def buyrows():
         r=TG[TGC[i]]; n=r['n_total']
         out+=f"<td><b>{pc(100*r['n_local']/n)} local · {pc(100*r['n_mainland']/n)} mainland · {pc(100*r['n_foreign']/n)} foreign</b><span class=\"mn\">{n:,} buyers in 2025</span></td>"
     out+='</tr><tr><td class="rk"></td>'
-    for i in ISL: out+=f'<td><b>California {CA[i]}</b><span class="mn">#1 out-of-state buyer state</span></td>'
+    for i in ISL: out+=f'<td><b>California {ca("2025",i)}</b><span class="mn">#1 out-of-state buyer state, 2025</span></td>'
     out+='</tr><tr><td class="rk"></td>'
-    for i in ISL: out+=f'<td><b>Next buyer states</b><span class="mn">{STATES[i]}</span></td>'
+    for i in ISL: out+=f'<td><b>Next buyer states, 2025</b><span class="mn">{nxt("2025",i,4)}</span></td>'
+    out+='</tr><tr><td class="rk"></td>'
+    for i in ISL: out+=f'<td><b>2026 so far (Jan–Jun)</b><span class="mn">California {ca("2026H1",i)}, {nxt("2026H1",i,2)}</span></td>'
     out+='</tr><tr><td class="rk"></td>'
     for i in ISL:
         top=sorted(VJ_M,key=lambda r:-r[VK[i]])[:4]
