@@ -42,6 +42,10 @@ The report's micro-markets chapter (all Hawaiʻi and each island, by price tier,
   - Maui County, January–September, from the REALTORS Association of Maui.
 - The Realtor.com ZIP rows that Realtor.com marks as lower quality are flagged † in the report.
 
+- `gap/tg_districts.json` holds Title Guaranty buyer origin for all 26 of its districts: 2024, 2025, Jan–Jun 2025 and Jan–Jun 2026. Each district page's foot-row columns were matched to their district by fill colour, and district rows sum exactly to island totals.
+- `gap/hmda_tract.json` holds HMDA 2025 and 2019 purchase loans by census tract, county subdivision, place and ZCTA. Tracts are mapped to county subdivisions through TIGER faces, weighted by block housing units.
+- `gap/owner_fields.json` records the search for owner mailing fields for Hawaiʻi County and Kauaʻi. Nothing public was found. It lists what to request from each county.
+
 `hawaii-buyer-origins.src.html` is the page template. The build replaces `__DATA__` with `page_data.json` and inserts the micro-markets chapter.
 
 ## Go-to-market plan

@@ -105,6 +105,38 @@ lrows += (f"<tr><td><b>All Hawaiʻi</b></td><td class=\"num\"><b>{sw['2025']['al
           f"<td class=\"num\"><b>{sw['2025']['all_10m_plus']}</b></td><td class=\"num\">—</td><td class=\"num\">{sw['H1_2026']['all_3m']} · {sw['H1_2026']['all_10m_plus']}</td></tr>")
 lux3 = oj.get('by_price_tier', {})
 
+# ---------- 4b. district buyer origin (Title Guaranty) and 4c. mortgaged buyers by county subdivision (HMDA)
+TD = J('an/gap/tg_districts.json')['district_summary']
+ISLN = {'Oahu': 'Oʻahu', 'Maui County': 'Maui County', 'Hawaii Island': 'Hawaiʻi Island', 'Kauai': 'Kauaʻi'}
+TDN = {'Kau': 'Kaʻū', 'Lihue': 'Līhuʻe', 'Koloa': 'Kōloa', 'Hamakua': 'Hāmākua', 'Molokai': 'Molokaʻi', 'Lanai': 'Lānaʻi', 'Up Country': 'Upcountry'}
+drows = ''
+for isl in ['Oahu', 'Maui County', 'Hawaii Island', 'Kauai']:
+    rr = sorted([r for r in TD if r['island'].split(' (')[0] == isl], key=lambda r: -r['2025FY']['other_us_pct'])
+    drows += f'<tr class="grp"><td colspan="5"><b>{ISLN[isl]}</b></td></tr>'
+    for r in rr:
+        a = r['2025FY']; b = r.get('2026H1') or {}
+        sm = ' <span class="why">(under 20 sales)</span>' if a['total_lt20'] else ''
+        bar = f'<span class="mbar"><i style="width:{a["other_us_pct"]:.0f}%"></i></span>'
+        drows += (f'<tr><td>{esc(TDN.get(r["district"], r["district"]))}{sm}</td><td class="num">{a["total_sales"]:,}</td>'
+                  f'<td class="num">{a["hawaii_pct"]:.0f}% · <b>{a["other_us_pct"]:.0f}%</b> · {a["foreign_pct"]:.0f}%</td><td>{bar}</td>'
+                  f'<td class="num">{(str(round(b["other_us_pct"])) + "%") if b.get("other_us_pct") is not None else "—"}<br><span class="why">{b.get("total_sales", 0):,} sales</span></td></tr>')
+HC = J('an/gap/hmda_tract.json')['data']
+C25 = HC['years']['2025']['by_ccd']; CCH = HC['ccd_change_2019_2025']
+crows = ''
+for isl in ['Oahu', 'Maui County', 'Hawaii Island', 'Kauai']:
+    isk = {'Maui County': 'Maui'}.get(isl, isl)
+    rr = [(k, v) for k, v in C25.items() if v['island'] in (isl, isk, 'Maui', 'Molokai', 'Lanai') and (v['island'] == isl or (isl == 'Maui County' and v['island'] in ('Maui', 'Maui County', 'Molokai', 'Lanai'))) and not v['low_n_flag']]
+    rr.sort(key=lambda kv: -kv[1]['share_second_plus_investment'])
+    if not rr: continue
+    crows += f'<tr class="grp"><td colspan="6"><b>{ISLN[isl]}</b></td></tr>'
+    for k, v in rr:
+        c = CCH.get(k, {}); o19 = c.get('share_second_plus_investment_2019')
+        inc = v.get('median_income_k'); incs = '—' if inc is None else (f'${inc/1000:.2f}M' if inc >= 1000 else f'${inc:.0f}K')
+        crows += (f'<tr><td>{esc(v["ccd_name"].replace(" CCD", ""))}</td><td class="num">{v["n_loans"]:,}</td>'
+                  f'<td class="num"><b>{pct(v["share_second_plus_investment"])}</b>' + (f' <span class="why">2019: {pct(o19)}</span>' if o19 is not None and not c.get('low_n_flag') else '') + '</td>'
+                  f'<td class="num">{pct(v["share_va"])}</td><td class="num">{incs}</td><td class="num">{money(v.get("median_property_value"))}</td></tr>')
+lowc = sorted(v['ccd_name'].replace(' CCD', '') for v in C25.values() if v['low_n_flag'])
+
 # ---------- 5. ZIP tables
 OZ = own['situs_zip']
 def ziptable(key):
@@ -254,6 +286,20 @@ chapter = f'''
     </ul></div>
     <p class="src">Hawaiʻi Life luxury reports (2025 year-end, 2026 midyear), island figures summed here {R}. List Sotheby's Oʻahu Q2 2026 {R}. Oʻahu buyer origin: owner-roll match {P}. Maui: conveyance-tax schedule {O}. HMDA 2025 {P}.</p>
     <!--WHY:mm-luxury-->
+  </section>
+  <section id="mm-districts">
+    <div class="head col"><span class="sec-n">Who buys in each district</span><h2>Mainland buyers range from 5% of sales in Central Oʻahu to two-thirds in Hanalei</h2>
+      <p class="muted">Every Title Guaranty district on every island: where the 2025 buyers lived, and the mainland share in the first half of 2026.</p></div>
+    <div class="tw"><table class="td"><thead><tr><th>District</th><th class="num">Sales 2025</th><th class="num">Buyers 2025: Hawaiʻi · <b>mainland</b> · foreign</th><th>Mainland share</th><th class="num">Mainland, Jan–Jun 2026</th></tr></thead><tbody>{drows}</tbody></table></div>
+    <p class="src">Title Guaranty buyer statistics, district pages of the Q4 2025 and Q2 2026 editions. Each district's total is its US TOTAL plus FOREIGN TOTAL; mainland = US TOTAL minus Hawaiʻi-resident buyers. District rows sum exactly to the island totals {O}. Districts are Title Guaranty's own and are not ZIPs or tax districts. Foreign shares outside Honolulu rest on fewer than 20 sales.</p>
+    <!--WHY:mm-districts-->
+  </section>
+  <section id="mm-loans">
+    <div class="head col"><span class="sec-n">Mortgaged buyers, area by area</span><h2>In Poʻipū, Hanalei and Lahaina, 7 in 10 mortgaged buyers won't live in the home. In ʻEwa, 44% use a VA loan.</h2>
+      <p class="muted">2025 home-purchase loans by census county subdivision: the share bought as a second home or investment, the VA share, and buyers' incomes.</p></div>
+    <div class="tw"><table class="td"><thead><tr><th>Area</th><th class="num">Loans 2025</th><th class="num">Won't live there</th><th class="num">VA loans</th><th class="num">Median income</th><th class="num">Median value</th></tr></thead><tbody>{crows}</tbody></table></div>
+    <p class="src">HMDA 2025 (and 2019) originated home-purchase loans on 1–4 unit site-built homes, mapped from census tract to county subdivision by housing units; tracts sit inside one subdivision almost everywhere {P}. "Won't live there" = second home plus investment; the two were coded differently in 2019, so only the combined share is compared. HMDA has no cash purchases. Areas with fewer than 20 loans are left out: {', '.join(lowc)}.</p>
+    <!--WHY:mm-loans-->
   </section>
 {isl_secs}
   </div>
