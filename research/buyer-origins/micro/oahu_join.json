@@ -1,0 +1,6333 @@
+{
+ "key": "oahu_join",
+ "title": "Who buys Oahu: 2023-2025 recorded sales joined to the current owner roll's first-owner mailing address",
+ "generated_utc": "2026-10-08T06:21:24Z",
+ "source": {
+  "sales": {
+   "file": "/home/user/moku/oahu-sales.json",
+   "sha256": "08260a068a8185ea6ded95046ea12a025fe9f6633b051a2014c983e92e79b19f",
+   "description": "Moku oahu-sales.json: {13-digit key = county digit '1' + 12-digit TMK incl. 4-digit CPR suffix: [[price, date], ...]}, last two recorded sales per parcel; 110,127 parcels; latest sale date 2025-09-26; no 2026-dated sales."
+  },
+  "owner_roll_free_text": {
+   "name": "City & County of Honolulu HoLIS OWNINFO (RPAD OWNDAT+OWNMLT), dataLastEdit 2026-10-05",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/OWNINFO/FeatureServer/0",
+   "records": 587662,
+   "sha256_concat_pages": "d32074f52b69ea67038e8da38dde98c5374bf2b4408b01f8b864f8ba979da40d"
+  },
+  "owner_roll_structured": {
+   "name": "HoLIS CadastralTables OWNDAT (layer 6): taxbillstate / taxbillcountry / taxbillzip5, dataLastEdit 2026-10-05",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/6",
+   "records": 326870,
+   "sha256_concat_pages": "25adeeb2094a6152591b23fa0315ea4adfed9e339f9ac5a430505905c199f116"
+  },
+  "tax_class": {
+   "name": "HoLIS CadastralTables ASMTPITT (layer 10), taxyr 2026; class labels inferred (see an/new/owners_oahu.json)",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10",
+   "records": 327161
+  },
+  "situs_zip": {
+   "name": "HoLIS LEGDAT_ADDRESS (layer 1), taxyr 2024, layer last edited 2023-10-27",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/LEGDAT_ADDRESS/FeatureServer/1",
+   "records": 320771
+  },
+  "calibration": {
+   "name": "Title Guaranty of Hawaii Buyer Statistics, Oahu (Q4 2024, Q2 2025, Q4 2025, Q1 2026, Q2 2026 editions) as parsed in an/new/tg.json",
+   "file": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/new/tg.json"
+  },
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/owners_oahu",
+  "build_script": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/who_oahu_join/join.py (= _head.py + _lib_from_owners_oahu_build.py + _main.py)"
+ },
+ "method": [
+  "1. SALES: every recorded sale dated 2023-01-01 or later with price >= $50,000 (12,513 parcel-sale records; 4 sub-$50K dropped). The sales-file key is 13 digits (county '1' + 12-digit TMK); the leading '1' is stripped to match the roll's 12-digit parid.",
+  "2. DEDUPE: parcel-sale records are grouped by (price, date, first 8 digits of the 12-digit TMK = zone+section+plat+parcel) and counted once (16 multi-parcel groups). Second pass: groups in different TMK8s with the same price, date AND identical current-owner mailing address are merged as one portfolio deal (25 merged; 17 of them >= $3M).",
+  "3. CURRENT-BUYER RULE: a deal is kept only if, for at least one of its parcels, it is the parcel's most recent recorded sale (so the current first-listed owner is that buyer). 154 deals resold later were dropped (124 of them 2023 sales).",
+  "4. OWNER ADDRESS: first-listed owner = OWNINFO ownseq 0 (Fee Owner preferred over Condo/Co-op Master). Origin comes from OWNDAT structured taxbillstate/taxbillcountry/taxbillzip5 when present (96.6% of analyzed deals); otherwise the OWNINFO free-text last address line is parsed (state+ZIP, country keywords, Canadian postcodes), falling back to the first OWNMLT fee-owner address when ownseq 0 is blank (never lessees). On deals where both exist, category agreement is 100% and US state/ZIP agreement 100% (country 191/192).",
+  "5. CLASSES: Hawaii split into Oahu ZIP (968xx + 19 Oahu 967xx ZIPs) vs neighbor-island ZIP; mainland_us = 49 other states + DC (metro by approximate USPS ZIP3 map); foreign by country; US territories (GU, AS, MP, FM, MH, PW, PR) and military APO/FPO (AA/AE/AP) are separate small buckets. For TG comparison territory+military are added to 'other US'.",
+  "6. INSTITUTIONAL: a deal whose current owner mailing address (normalized OWNINFO address lines) is shared by >= 10 non-master Oahu parcels on the current roll is set aside and reported separately (161 housing deals, 57 addresses).",
+  "7. HOUSING SAMPLE (all micro-market cuts): dominant ASMTPITT class 1 (inferred Residential) parcels, plus class 7 (inferred Hotel & Resort) CPR units. 259 commercial/industrial/agricultural/preservation/whole-hotel deals are excluded from the cuts but kept in 'all_property_*' for calibration (they distort $10M+ figures, e.g. a $499M resort sale).",
+  "8. TYPE: condo = every parcel in the deal has CPR suffix != '0000'; house = suffix '0000' (includes vacant residential lots). Supplementary condo split: TMK8 with >= 5 CPR units on the roll ('condo building') vs 2-4 units (mostly CPR'd house/duplex lots).",
+  "9. GEOGRAPHY: TMK zone = first digit of the 12-digit TMK; Waikiki = zone 2 section 6. Situs ZIP from LEGDAT (parcel match 98%; otherwise the modal ZIP of the same TMK8; 43 deals unmatched); ZIPs with >= 40 analyzed deals are shown.",
+  "10. SHARES are of deals with a classifiable owner address (33 deals with no usable address excluded). Dollar shares weight by deal price. Cells with n < 20 carry small_cell_n_lt_20 = true."
+ ],
+ "notes": [
+  "NO 2026: oahu-sales.json has no sale after 2025-09-26, and 2025 is thin after April (1,905 deals vs TG 11,097), so '2026 YTD' cannot be measured from this join. The only 2026 figure available is TG Oahu Jan-Jun 2026: Hawaii 82.6%, other US 13.5%, foreign 3.9% of 5,026 sales.",
+  "COVERAGE: deals in the sales file equal 53% (2023), 48% (2024) and 17% (2025) of Title Guaranty's Oahu sale counts. The file is not a complete transaction record. In particular, developer closings in new towers are largely missing: 9557 CPR units created since late 2023 are on the roll but only 515 have any sale in the file.",
+  "CALIBRATION 2025: our 2025 housing mix (n=1796, excl. institutional) is Hawaii 83.9% / other US 14.0% / foreign 2.1% vs TG Oahu 2025 82.9% / 13.9% / 3.2% (derived counts 9,202 / 1,539 / 356 of 11,097; the brief's 13.8% / 3.3% differ from these by 0.1 pt through rounding). Gap = +1.0 / +0.2 / -1.1 pts. 2024, the most complete year (n=4973, 48% coverage), shows a larger gap: +3.7 / -2.1 / -1.6 pts. 2023: +2.9 / -1.2 / -1.4 pts against TG's published integer shares.",
+  "DIRECTION OF BIAS: in every year the join puts more buyers in 'Hawaii' (+1 to +4 pts) and fewer in 'foreign' (-1.1 to -1.6 pts) than TG. The near-match for full-year 2025 is partly coincidence: our 2025 deals are mostly January-April closings, and the like-for-like January-June 2025 comparison gives a gap of +2.1 / -1.3 / -0.8 pts. Use TG for island-level levels; use this join for differences between micro-markets (tier, type, zone, ZIP), which TG does not publish.",
+  "CAUSE 1, SALES-FILE SELECTION (foreign shortfall, partly measured): the non-institutional owners of the new CPR units missing from the sales file (n=2963) are 4.3% foreign, against 2.1% in the joined sales. In TMK zone 2 (Kakaako/Ala Moana/Waikiki) they are 13.4% foreign and 12.9% mainland. In the Honolulu districts (TMK zones 1-3) our 2024 foreign share is 3.2% vs TG 6.1%. A rough what-if that adds these owners to the 2023-2025 joined deals raises foreign from 2.1% to 2.4%, so missing developer closings explain part (about 0.3 pt) of the 1.1-1.6 pt foreign shortfall. It would raise Hawaii too, so it does not explain the Hawaii overstatement. The make-up of the other ~half of TG transactions missing from the file is unknown.",
+  "CAUSE 2, MAILING-ADDRESS LAG OR DRIFT BY RELOCATING BUYERS (likely main cause of the Hawaii overstatement, inferred): TG classifies a buyer by the address at closing, while the roll shows today's bill-to address. Mainland households that move to Oahu, such as military and job transfers, are 'US buyers' to TG but 'Hawaii' here once they live in the home. Consistent with this, the other-US shortfall shows up in the owner-occupant suburbs: Leeward+Central (TMK zones 7-9) -3.0 pts in 2024 and -2.0 in 2025, and Windward+North Shore (zones 4-6) -3.1 in 2024 and -7.2 in 2025 (n=216). It does not show up in urban Honolulu (zones 1-3: -1.0 and +4.0), where TG's extra foreign buyers dominate the gap. The gap does not grow with time since purchase (2023 +2.9, 2024 +3.7, 2025 +1.0 pts Hawaii), which fits a change of address at move-in rather than slow drift. The roll (2026-10-05) is more than 12 months newer than the latest sale, so unprocessed deeds should not matter.",
+  "CAUSE 3, TRUSTS / LLCs / AGENTS / BILL-TO-UNIT: owners who send the tax bill to a Hawaii trustee, attorney, property manager or the unit itself count as 'Hawaii'. Of 2023-24 Hawaii-address buyers of class-1 condos, 41% carry no exemption of any kind (investors, or absentee owners using a local address). For 77% of Oahu-address condo buyers the mailing ZIP equals the unit's ZIP. Owner names were not pulled, so trusts and LLCs cannot be identified directly. Shared institutional addresses (10+ parcels) cover only 1.3% of deals and are 91% Hawaii-addressed; including or excluding them moves the shares by <= 0.3 pt, and thresholds of 5-50 parcels move them by <= 0.1 pt.",
+  "CAUSE 4, MULTI-PARCEL DEDUPE (negligible): parcel-level counts without any dedupe differ from deal-level shares by <= 0.1 pt in every year, and the all-property and housing samples differ by <= 0.1 pt. The 154 deals resold since purchase cannot be tested because their buyers are no longer on the roll.",
+  "DEFINITIONS: TG does not publish how it treats territories or military addresses; here they are added to 'other US' (0.1-0.3%). TG Korea = 'Korea'. California is 53% of our 2024-25 mainland buyers vs 44% of TG's other-US buyers, and Japan is 63% of foreign vs TG 64%.",
+  "SMALL CELLS: $10M+ housing has only 14 deals (2023-2025) and luxury condos only 72, so treat their mixes as indicative. Any cell with n < 20 is flagged.",
+  "HOUSE vs CONDO caveat: a CPR suffix also covers CPR'd house lots. Only 209 of 8043 CPR-unit deals sit on TMKs with 2-4 units, so 'condo' here is essentially apartment condos. Tax-class labels are inferred because the layer publishes no lookup table.",
+  "METROS use an approximate hand-built USPS ZIP3 -> metro map (from pull/owners_oahu/build.py), not an official CBSA crosswalk.",
+  "PRIVACY: the output holds aggregate counts and shares only. No owner names (not pulled), street addresses, parcel IDs or TMK8s are included. Institutional addresses are reported only as counts."
+ ],
+ "results": {
+  "headline": {
+   "deals_analyzed_housing_excl_institutional": 11851,
+   "overall_2023_2025_share": {
+    "hawaii_total": 0.8389,
+    "hawaii_oahu_zip": 0.8288,
+    "hawaii_neighbor_island_zip": 0.0101,
+    "mainland_us": 0.138,
+    "foreign": 0.0207
+   },
+   "overall_2023_2025_dollar_share": {
+    "hawaii_total": 0.8177,
+    "mainland_us": 0.1519,
+    "foreign": 0.0285,
+    "territory_military": 0.0018
+   },
+   "house_vs_condo_share": {
+    "house_non_cpr": {
+     "hawaii_total": 0.9217,
+     "mainland_us": 0.0748,
+     "foreign": 0.0024,
+     "n": 3808
+    },
+    "condo_cpr_unit": {
+     "hawaii_total": 0.7997,
+     "mainland_us": 0.168,
+     "foreign": 0.0293,
+     "n": 8043
+    }
+   },
+   "tier_share": {
+    "entry_lt_750k": {
+     "hawaii_total": 0.8288,
+     "mainland_us": 0.1489,
+     "foreign": 0.0192,
+     "n": 5888
+    },
+    "mid_750k_1.5m": {
+     "hawaii_total": 0.8679,
+     "mainland_us": 0.1122,
+     "foreign": 0.018,
+     "n": 4511
+    },
+    "upper_1.5m_3m": {
+     "hawaii_total": 0.8174,
+     "mainland_us": 0.1522,
+     "foreign": 0.0296,
+     "n": 1183
+    },
+    "luxury_3m_10m": {
+     "hawaii_total": 0.6863,
+     "mainland_us": 0.2627,
+     "foreign": 0.051,
+     "n": 255
+    },
+    "ultra_10m_plus": {
+     "hawaii_total": 0.3571,
+     "mainland_us": 0.4286,
+     "foreign": 0.2143,
+     "n": 14
+    }
+   },
+   "calibration_2025_gap_pts_ours_minus_tg": {
+    "hawaii": 1.0,
+    "other_us": 0.2,
+    "foreign": -1.1
+   },
+   "calibration_2024_gap_pts_ours_minus_tg": {
+    "hawaii": 3.7,
+    "other_us": -2.1,
+    "foreign": -1.6
+   }
+  },
+  "funnel": {
+   "sales_file_key_length": {
+    "13": 110127
+   },
+   "sales_file_latest_sale_date": "2025-09-26",
+   "sale_records_2023plus_any_price": 12517,
+   "dropped_price_lt_50k": 4,
+   "sale_records_2023plus_ge_50k": 12513,
+   "parcels_with_two_sales_on_same_2023plus_date": 0,
+   "multi_parcel_deals_with_conflicting_owner_categories": 1,
+   "deal_groups_sharing_price_and_date_with_another_tmk8_group": 608,
+   "merged_same_price_date_owner_address_by_tier": {
+    "upper_1.5m_3m": 6,
+    "mid_750k_1.5m": 2,
+    "ultra_10m_plus": 8,
+    "luxury_3m_10m": 9
+   },
+   "all_years": {
+    "deals_after_multiparcel_dedupe": 12495,
+    "multi_parcel_deals": 16,
+    "parcel_sale_records_in_these_deals": 12513,
+    "superseded_by_later_sale": 154,
+    "parcel_not_on_current_roll": 6,
+    "condo_master_record": 6,
+    "no_classifiable_owner_address": 33,
+    "merged_same_price_date_owner_address": 25,
+    "institutional_address_10plus_parcels": 183,
+    "analyzed": 12088,
+    "housing_analyzed_excl_institutional": 11851,
+    "housing_institutional": 161,
+    "non_housing_tax_class_excluded_from_cuts": 259
+   },
+   "by_year": {
+    "2023": {
+     "deals_after_multiparcel_dedupe": 5414,
+     "multi_parcel_deals": 8,
+     "parcel_sale_records_in_these_deals": 5424,
+     "superseded_by_later_sale": 124,
+     "parcel_not_on_current_roll": 1,
+     "condo_master_record": 4,
+     "no_classifiable_owner_address": 22,
+     "merged_same_price_date_owner_address": 3,
+     "institutional_address_10plus_parcels": 70,
+     "analyzed": 5190,
+     "housing_analyzed_excl_institutional": 5082,
+     "housing_institutional": 60,
+     "non_housing_tax_class_excluded_from_cuts": 118
+    },
+    "2024": {
+     "deals_after_multiparcel_dedupe": 5176,
+     "multi_parcel_deals": 7,
+     "parcel_sale_records_in_these_deals": 5183,
+     "superseded_by_later_sale": 28,
+     "parcel_not_on_current_roll": 5,
+     "condo_master_record": 1,
+     "no_classifiable_owner_address": 8,
+     "merged_same_price_date_owner_address": 17,
+     "institutional_address_10plus_parcels": 77,
+     "analyzed": 5040,
+     "housing_analyzed_excl_institutional": 4973,
+     "housing_institutional": 66,
+     "non_housing_tax_class_excluded_from_cuts": 78
+    },
+    "2025": {
+     "deals_after_multiparcel_dedupe": 1905,
+     "multi_parcel_deals": 1,
+     "parcel_sale_records_in_these_deals": 1906,
+     "superseded_by_later_sale": 2,
+     "parcel_not_on_current_roll": 0,
+     "condo_master_record": 1,
+     "no_classifiable_owner_address": 3,
+     "merged_same_price_date_owner_address": 5,
+     "institutional_address_10plus_parcels": 36,
+     "analyzed": 1858,
+     "housing_analyzed_excl_institutional": 1796,
+     "housing_institutional": 35,
+     "non_housing_tax_class_excluded_from_cuts": 63
+    },
+    "2026": {
+     "deals_after_multiparcel_dedupe": 0,
+     "note": "no 2026-dated sales in oahu-sales.json (latest 2025-09-26)"
+    }
+   }
+  },
+  "classification_source_for_analyzed_deals": {
+   "owndat_structured": 11696,
+   "owninfo_ownmlt_fee_owner_fallback": 519,
+   "owninfo_ownseq0": 56
+  },
+  "all_property_2023_2025_excl_institutional": {
+   "n": 12088,
+   "counts": {
+    "hawaii_total": 10143,
+    "hawaii_oahu_zip": 10020,
+    "hawaii_neighbor_island_zip": 123,
+    "hawaii_zip_unknown": 0,
+    "mainland_us": 1672,
+    "foreign": 245,
+    "us_territory": 15,
+    "military_apo_fpo": 13
+   },
+   "share": {
+    "hawaii_total": 0.8391,
+    "hawaii_oahu_zip": 0.8289,
+    "hawaii_neighbor_island_zip": 0.0102,
+    "mainland_us": 0.1383,
+    "foreign": 0.0203,
+    "us_territory": 0.0012,
+    "military_apo_fpo": 0.0011,
+    "non_hawaii_total": 0.1609
+   },
+   "dollar_volume_usd": 12071906156,
+   "dollar_share": {
+    "hawaii_total": 0.8069,
+    "mainland_us": 0.1648,
+    "foreign": 0.0265,
+    "territory_military": 0.0017
+   }
+  },
+  "all_property_2023_2025_incl_institutional": {
+   "n": 12271,
+   "counts": {
+    "hawaii_total": 10308,
+    "hawaii_oahu_zip": 10185,
+    "hawaii_neighbor_island_zip": 123,
+    "hawaii_zip_unknown": 0,
+    "mainland_us": 1690,
+    "foreign": 245,
+    "us_territory": 15,
+    "military_apo_fpo": 13
+   },
+   "share": {
+    "hawaii_total": 0.84,
+    "hawaii_oahu_zip": 0.83,
+    "hawaii_neighbor_island_zip": 0.01,
+    "mainland_us": 0.1377,
+    "foreign": 0.02,
+    "us_territory": 0.0012,
+    "military_apo_fpo": 0.0011,
+    "non_hawaii_total": 0.16
+   },
+   "dollar_volume_usd": 12952685075,
+   "dollar_share": {
+    "hawaii_total": 0.7794,
+    "mainland_us": 0.1943,
+    "foreign": 0.0247,
+    "territory_military": 0.0016
+   }
+  },
+  "all_property_by_year_excl_institutional": {
+   "2023": {
+    "n": 5190,
+    "counts": {
+     "hawaii_total": 4306,
+     "hawaii_oahu_zip": 4254,
+     "hawaii_neighbor_island_zip": 52,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 748,
+     "foreign": 119,
+     "us_territory": 9,
+     "military_apo_fpo": 8
+    },
+    "share": {
+     "hawaii_total": 0.8297,
+     "hawaii_oahu_zip": 0.8197,
+     "hawaii_neighbor_island_zip": 0.01,
+     "mainland_us": 0.1441,
+     "foreign": 0.0229,
+     "us_territory": 0.0017,
+     "military_apo_fpo": 0.0015,
+     "non_hawaii_total": 0.1703
+    },
+    "dollar_volume_usd": 5028451174,
+    "dollar_share": {
+     "hawaii_total": 0.7888,
+     "mainland_us": 0.1771,
+     "foreign": 0.0318,
+     "territory_military": 0.0024
+    }
+   },
+   "2024": {
+    "n": 5040,
+    "counts": {
+     "hawaii_total": 4279,
+     "hawaii_oahu_zip": 4225,
+     "hawaii_neighbor_island_zip": 54,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 663,
+     "foreign": 89,
+     "us_territory": 4,
+     "military_apo_fpo": 5
+    },
+    "share": {
+     "hawaii_total": 0.849,
+     "hawaii_oahu_zip": 0.8383,
+     "hawaii_neighbor_island_zip": 0.0107,
+     "mainland_us": 0.1315,
+     "foreign": 0.0177,
+     "us_territory": 0.0008,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.151
+    },
+    "dollar_volume_usd": 5034172636,
+    "dollar_share": {
+     "hawaii_total": 0.8142,
+     "mainland_us": 0.1608,
+     "foreign": 0.0236,
+     "territory_military": 0.0014
+    }
+   },
+   "2025": {
+    "n": 1858,
+    "counts": {
+     "hawaii_total": 1558,
+     "hawaii_oahu_zip": 1541,
+     "hawaii_neighbor_island_zip": 17,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 261,
+     "foreign": 37,
+     "us_territory": 2,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8385,
+     "hawaii_oahu_zip": 0.8294,
+     "hawaii_neighbor_island_zip": 0.0091,
+     "mainland_us": 0.1405,
+     "foreign": 0.0199,
+     "us_territory": 0.0011,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1615
+    },
+    "dollar_volume_usd": 2009282346,
+    "dollar_share": {
+     "hawaii_total": 0.8344,
+     "mainland_us": 0.1442,
+     "foreign": 0.0206,
+     "territory_military": 0.0008
+    }
+   }
+  },
+  "all_property_by_tax_class_dominant": {
+   "1 (inferred Residential)": {
+    "n": 11192,
+    "counts": {
+     "hawaii_total": 9666,
+     "hawaii_oahu_zip": 9556,
+     "hawaii_neighbor_island_zip": 110,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 1351,
+     "foreign": 150,
+     "us_territory": 14,
+     "military_apo_fpo": 11
+    },
+    "share": {
+     "hawaii_total": 0.8637,
+     "hawaii_oahu_zip": 0.8538,
+     "hawaii_neighbor_island_zip": 0.0098,
+     "mainland_us": 0.1207,
+     "foreign": 0.0134,
+     "us_territory": 0.0013,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.1363
+    }
+   },
+   "7 (inferred Hotel & Resort) CPR units": {
+    "n": 659,
+    "counts": {
+     "hawaii_total": 276,
+     "hawaii_oahu_zip": 266,
+     "hawaii_neighbor_island_zip": 10,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 285,
+     "foreign": 95,
+     "us_territory": 1,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.4188,
+     "hawaii_oahu_zip": 0.4036,
+     "hawaii_neighbor_island_zip": 0.0152,
+     "mainland_us": 0.4325,
+     "foreign": 0.1442,
+     "us_territory": 0.0015,
+     "military_apo_fpo": 0.003,
+     "non_hawaii_total": 0.5812
+    }
+   },
+   "3 (inferred Commercial)": {
+    "n": 133,
+    "counts": {
+     "hawaii_total": 116,
+     "hawaii_oahu_zip": 113,
+     "hawaii_neighbor_island_zip": 3,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 17,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8722,
+     "hawaii_oahu_zip": 0.8496,
+     "hawaii_neighbor_island_zip": 0.0226,
+     "mainland_us": 0.1278,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1278
+    }
+   },
+   "5 (inferred Agricultural)": {
+    "n": 55,
+    "counts": {
+     "hawaii_total": 45,
+     "hawaii_oahu_zip": 45,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 10,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8182,
+     "hawaii_oahu_zip": 0.8182,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.1818,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1818
+    }
+   },
+   "4 (inferred Industrial)": {
+    "n": 41,
+    "counts": {
+     "hawaii_total": 34,
+     "hawaii_oahu_zip": 34,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 7,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8293,
+     "hawaii_oahu_zip": 0.8293,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.1707,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1707
+    }
+   },
+   "6 (inferred Preservation)": {
+    "n": 7,
+    "small_cell_n_lt_20": true,
+    "counts": {
+     "hawaii_total": 5,
+     "hawaii_oahu_zip": 5,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 2,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.7143,
+     "hawaii_oahu_zip": 0.7143,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.2857,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.2857
+    }
+   },
+   "7 non-CPR (whole hotel/resort parcels)": {
+    "n": 1,
+    "small_cell_n_lt_20": true,
+    "counts": {
+     "hawaii_total": 1,
+     "hawaii_oahu_zip": 1,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 0,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 1.0,
+     "hawaii_oahu_zip": 1.0,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.0,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0
+    }
+   }
+  },
+  "overall_2023_2025_excl_institutional": {
+   "n": 11851,
+   "counts": {
+    "hawaii_total": 9942,
+    "hawaii_oahu_zip": 9822,
+    "hawaii_neighbor_island_zip": 120,
+    "hawaii_zip_unknown": 0,
+    "mainland_us": 1636,
+    "foreign": 245,
+    "us_territory": 15,
+    "military_apo_fpo": 13
+   },
+   "share": {
+    "hawaii_total": 0.8389,
+    "hawaii_oahu_zip": 0.8288,
+    "hawaii_neighbor_island_zip": 0.0101,
+    "mainland_us": 0.138,
+    "foreign": 0.0207,
+    "us_territory": 0.0013,
+    "military_apo_fpo": 0.0011,
+    "non_hawaii_total": 0.1611
+   },
+   "dollar_volume_usd": 11228563872,
+   "dollar_share": {
+    "hawaii_total": 0.8177,
+    "mainland_us": 0.1519,
+    "foreign": 0.0285,
+    "territory_military": 0.0018
+   },
+   "median_price_usd": {
+    "hawaii_total": 759000.0,
+    "mainland_us": 700000.0,
+    "foreign": 790000
+   },
+   "median_price_n": {
+    "hawaii_total": 9942,
+    "mainland_us": 1636,
+    "foreign": 245
+   }
+  },
+  "overall_2023_2025_incl_institutional": {
+   "n": 12012,
+   "counts": {
+    "hawaii_total": 10089,
+    "hawaii_oahu_zip": 9969,
+    "hawaii_neighbor_island_zip": 120,
+    "hawaii_zip_unknown": 0,
+    "mainland_us": 1650,
+    "foreign": 245,
+    "us_territory": 15,
+    "military_apo_fpo": 13
+   },
+   "share": {
+    "hawaii_total": 0.8399,
+    "hawaii_oahu_zip": 0.8299,
+    "hawaii_neighbor_island_zip": 0.01,
+    "mainland_us": 0.1374,
+    "foreign": 0.0204,
+    "us_territory": 0.0012,
+    "military_apo_fpo": 0.0011,
+    "non_hawaii_total": 0.1601
+   },
+   "dollar_volume_usd": 11403563675,
+   "dollar_share": {
+    "hawaii_total": 0.8198,
+    "mainland_us": 0.1504,
+    "foreign": 0.0281,
+    "territory_military": 0.0018
+   }
+  },
+  "by_year_excl_institutional": {
+   "2023": {
+    "n": 5082,
+    "counts": {
+     "hawaii_total": 4212,
+     "hawaii_oahu_zip": 4160,
+     "hawaii_neighbor_island_zip": 52,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 734,
+     "foreign": 119,
+     "us_territory": 9,
+     "military_apo_fpo": 8
+    },
+    "share": {
+     "hawaii_total": 0.8288,
+     "hawaii_oahu_zip": 0.8186,
+     "hawaii_neighbor_island_zip": 0.0102,
+     "mainland_us": 0.1444,
+     "foreign": 0.0234,
+     "us_territory": 0.0018,
+     "military_apo_fpo": 0.0016,
+     "non_hawaii_total": 0.1712
+    },
+    "dollar_volume_usd": 4632545449,
+    "dollar_share": {
+     "hawaii_total": 0.7973,
+     "mainland_us": 0.1656,
+     "foreign": 0.0345,
+     "territory_military": 0.0026
+    },
+    "median_price_usd": {
+     "hawaii_total": 735000.0,
+     "mainland_us": 675000.0,
+     "foreign": 799000
+    },
+    "median_price_n": {
+     "hawaii_total": 4212,
+     "mainland_us": 734,
+     "foreign": 119
+    }
+   },
+   "2024": {
+    "n": 4973,
+    "counts": {
+     "hawaii_total": 4223,
+     "hawaii_oahu_zip": 4171,
+     "hawaii_neighbor_island_zip": 52,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 652,
+     "foreign": 89,
+     "us_territory": 4,
+     "military_apo_fpo": 5
+    },
+    "share": {
+     "hawaii_total": 0.8492,
+     "hawaii_oahu_zip": 0.8387,
+     "hawaii_neighbor_island_zip": 0.0105,
+     "mainland_us": 0.1311,
+     "foreign": 0.0179,
+     "us_territory": 0.0008,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.1508
+    },
+    "dollar_volume_usd": 4729072640,
+    "dollar_share": {
+     "hawaii_total": 0.8276,
+     "mainland_us": 0.1458,
+     "foreign": 0.0251,
+     "territory_military": 0.0015
+    },
+    "median_price_usd": {
+     "hawaii_total": 764000,
+     "mainland_us": 712500.0,
+     "foreign": 840000
+    },
+    "median_price_n": {
+     "hawaii_total": 4223,
+     "mainland_us": 652,
+     "foreign": 89
+    }
+   },
+   "2025": {
+    "n": 1796,
+    "counts": {
+     "hawaii_total": 1507,
+     "hawaii_oahu_zip": 1491,
+     "hawaii_neighbor_island_zip": 16,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 250,
+     "foreign": 37,
+     "us_territory": 2,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8391,
+     "hawaii_oahu_zip": 0.8302,
+     "hawaii_neighbor_island_zip": 0.0089,
+     "mainland_us": 0.1392,
+     "foreign": 0.0206,
+     "us_territory": 0.0011,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1609
+    },
+    "dollar_volume_usd": 1866945783,
+    "dollar_share": {
+     "hawaii_total": 0.8434,
+     "mainland_us": 0.1336,
+     "foreign": 0.0221,
+     "territory_military": 0.0009
+    },
+    "median_price_usd": {
+     "hawaii_total": 810000,
+     "mainland_us": 739500.0,
+     "foreign": 686000
+    },
+    "median_price_n": {
+     "hawaii_total": 1507,
+     "mainland_us": 250,
+     "foreign": 37
+    }
+   },
+   "2026_ytd": {
+    "n": 0,
+    "note": "No 2026-dated sales exist in oahu-sales.json (latest recorded sale 2025-09-26); 2026 YTD cannot be measured from this join. TG Oahu Jan-Jun 2026 is in calibration_vs_title_guaranty."
+   }
+  },
+  "by_year_incl_institutional": {
+   "2023": {
+    "n": 5142,
+    "counts": {
+     "hawaii_total": 4265,
+     "hawaii_oahu_zip": 4213,
+     "hawaii_neighbor_island_zip": 52,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 741,
+     "foreign": 119,
+     "us_territory": 9,
+     "military_apo_fpo": 8
+    },
+    "share": {
+     "hawaii_total": 0.8294,
+     "hawaii_oahu_zip": 0.8193,
+     "hawaii_neighbor_island_zip": 0.0101,
+     "mainland_us": 0.1441,
+     "foreign": 0.0231,
+     "us_territory": 0.0018,
+     "military_apo_fpo": 0.0016,
+     "non_hawaii_total": 0.1706
+    },
+    "dollar_volume_usd": 4706249016,
+    "dollar_share": {
+     "hawaii_total": 0.7997,
+     "mainland_us": 0.1637,
+     "foreign": 0.034,
+     "territory_military": 0.0025
+    }
+   },
+   "2024": {
+    "n": 5039,
+    "counts": {
+     "hawaii_total": 4283,
+     "hawaii_oahu_zip": 4231,
+     "hawaii_neighbor_island_zip": 52,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 658,
+     "foreign": 89,
+     "us_territory": 4,
+     "military_apo_fpo": 5
+    },
+    "share": {
+     "hawaii_total": 0.85,
+     "hawaii_oahu_zip": 0.8397,
+     "hawaii_neighbor_island_zip": 0.0103,
+     "mainland_us": 0.1306,
+     "foreign": 0.0177,
+     "us_territory": 0.0008,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.15
+    },
+    "dollar_volume_usd": 4791277776,
+    "dollar_share": {
+     "hawaii_total": 0.8289,
+     "mainland_us": 0.1448,
+     "foreign": 0.0248,
+     "territory_military": 0.0015
+    }
+   },
+   "2025": {
+    "n": 1831,
+    "counts": {
+     "hawaii_total": 1541,
+     "hawaii_oahu_zip": 1525,
+     "hawaii_neighbor_island_zip": 16,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 251,
+     "foreign": 37,
+     "us_territory": 2,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8416,
+     "hawaii_oahu_zip": 0.8329,
+     "hawaii_neighbor_island_zip": 0.0087,
+     "mainland_us": 0.1371,
+     "foreign": 0.0202,
+     "us_territory": 0.0011,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1584
+    },
+    "dollar_volume_usd": 1906036883,
+    "dollar_share": {
+     "hawaii_total": 0.8461,
+     "mainland_us": 0.1313,
+     "foreign": 0.0217,
+     "territory_military": 0.0008
+    }
+   }
+  },
+  "by_quarter_excl_institutional": {
+   "2023Q1": {
+    "n": 1153,
+    "share": {
+     "hawaii_total": 0.8092,
+     "hawaii_oahu_zip": 0.7971,
+     "hawaii_neighbor_island_zip": 0.0121,
+     "mainland_us": 0.17,
+     "foreign": 0.0191,
+     "us_territory": 0.0017,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1908
+    }
+   },
+   "2023Q2": {
+    "n": 1435,
+    "share": {
+     "hawaii_total": 0.8341,
+     "hawaii_oahu_zip": 0.8237,
+     "hawaii_neighbor_island_zip": 0.0105,
+     "mainland_us": 0.1449,
+     "foreign": 0.0174,
+     "us_territory": 0.0014,
+     "military_apo_fpo": 0.0021,
+     "non_hawaii_total": 0.1659
+    }
+   },
+   "2023Q3": {
+    "n": 1313,
+    "share": {
+     "hawaii_total": 0.8606,
+     "hawaii_oahu_zip": 0.85,
+     "hawaii_neighbor_island_zip": 0.0107,
+     "mainland_us": 0.1173,
+     "foreign": 0.0175,
+     "us_territory": 0.0015,
+     "military_apo_fpo": 0.003,
+     "non_hawaii_total": 0.1394
+    }
+   },
+   "2023Q4": {
+    "n": 1181,
+    "share": {
+     "hawaii_total": 0.8061,
+     "hawaii_oahu_zip": 0.7985,
+     "hawaii_neighbor_island_zip": 0.0076,
+     "mainland_us": 0.149,
+     "foreign": 0.0415,
+     "us_territory": 0.0025,
+     "military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.1939
+    }
+   },
+   "2024Q1": {
+    "n": 1187,
+    "share": {
+     "hawaii_total": 0.8408,
+     "hawaii_oahu_zip": 0.829,
+     "hawaii_neighbor_island_zip": 0.0118,
+     "mainland_us": 0.1415,
+     "foreign": 0.0177,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1592
+    }
+   },
+   "2024Q2": {
+    "n": 1311,
+    "share": {
+     "hawaii_total": 0.8337,
+     "hawaii_oahu_zip": 0.8207,
+     "hawaii_neighbor_island_zip": 0.013,
+     "mainland_us": 0.1388,
+     "foreign": 0.0214,
+     "us_territory": 0.0031,
+     "military_apo_fpo": 0.0031,
+     "non_hawaii_total": 0.1663
+    }
+   },
+   "2024Q3": {
+    "n": 1263,
+    "share": {
+     "hawaii_total": 0.8519,
+     "hawaii_oahu_zip": 0.8432,
+     "hawaii_neighbor_island_zip": 0.0087,
+     "mainland_us": 0.1283,
+     "foreign": 0.0198,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1481
+    }
+   },
+   "2024Q4": {
+    "n": 1212,
+    "share": {
+     "hawaii_total": 0.8713,
+     "hawaii_oahu_zip": 0.863,
+     "hawaii_neighbor_island_zip": 0.0083,
+     "mainland_us": 0.1155,
+     "foreign": 0.0124,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.1287
+    }
+   },
+   "2025Q1": {
+    "n": 968,
+    "share": {
+     "hawaii_total": 0.8233,
+     "hawaii_oahu_zip": 0.8171,
+     "hawaii_neighbor_island_zip": 0.0062,
+     "mainland_us": 0.1498,
+     "foreign": 0.0248,
+     "us_territory": 0.0021,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1767
+    }
+   },
+   "2025Q2": {
+    "n": 676,
+    "share": {
+     "hawaii_total": 0.8521,
+     "hawaii_oahu_zip": 0.8373,
+     "hawaii_neighbor_island_zip": 0.0148,
+     "mainland_us": 0.1302,
+     "foreign": 0.0178,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1479
+    }
+   },
+   "2025Q3": {
+    "n": 152,
+    "share": {
+     "hawaii_total": 0.8816,
+     "hawaii_oahu_zip": 0.8816,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.1118,
+     "foreign": 0.0066,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1184
+    }
+   }
+  },
+  "by_price_tier": {
+   "entry_lt_750k": {
+    "n": 5888,
+    "counts": {
+     "hawaii_total": 4880,
+     "hawaii_oahu_zip": 4794,
+     "hawaii_neighbor_island_zip": 86,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 877,
+     "foreign": 113,
+     "us_territory": 9,
+     "military_apo_fpo": 9
+    },
+    "share": {
+     "hawaii_total": 0.8288,
+     "hawaii_oahu_zip": 0.8142,
+     "hawaii_neighbor_island_zip": 0.0146,
+     "mainland_us": 0.1489,
+     "foreign": 0.0192,
+     "us_territory": 0.0015,
+     "military_apo_fpo": 0.0015,
+     "non_hawaii_total": 0.1712
+    },
+    "dollar_volume_usd": 2854269786,
+    "dollar_share": {
+     "hawaii_total": 0.8368,
+     "mainland_us": 0.1425,
+     "foreign": 0.0176,
+     "territory_military": 0.0032
+    },
+    "median_price_usd": {
+     "hawaii_total": 490000.0,
+     "mainland_us": 450000,
+     "foreign": 460000
+    },
+    "median_price_n": {
+     "hawaii_total": 4880,
+     "mainland_us": 877,
+     "foreign": 113
+    }
+   },
+   "mid_750k_1.5m": {
+    "n": 4511,
+    "counts": {
+     "hawaii_total": 3915,
+     "hawaii_oahu_zip": 3894,
+     "hawaii_neighbor_island_zip": 21,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 506,
+     "foreign": 81,
+     "us_territory": 6,
+     "military_apo_fpo": 3
+    },
+    "share": {
+     "hawaii_total": 0.8679,
+     "hawaii_oahu_zip": 0.8632,
+     "hawaii_neighbor_island_zip": 0.0047,
+     "mainland_us": 0.1122,
+     "foreign": 0.018,
+     "us_territory": 0.0013,
+     "military_apo_fpo": 0.0007,
+     "non_hawaii_total": 0.1321
+    },
+    "dollar_volume_usd": 4637074928,
+    "dollar_share": {
+     "hawaii_total": 0.8683,
+     "mainland_us": 0.1115,
+     "foreign": 0.0181,
+     "territory_military": 0.0021
+    },
+    "median_price_usd": {
+     "hawaii_total": 988000,
+     "mainland_us": 985000.0,
+     "foreign": 997803
+    },
+    "median_price_n": {
+     "hawaii_total": 3915,
+     "mainland_us": 506,
+     "foreign": 81
+    }
+   },
+   "upper_1.5m_3m": {
+    "n": 1183,
+    "counts": {
+     "hawaii_total": 967,
+     "hawaii_oahu_zip": 956,
+     "hawaii_neighbor_island_zip": 11,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 180,
+     "foreign": 35,
+     "us_territory": 0,
+     "military_apo_fpo": 1
+    },
+    "share": {
+     "hawaii_total": 0.8174,
+     "hawaii_oahu_zip": 0.8081,
+     "hawaii_neighbor_island_zip": 0.0093,
+     "mainland_us": 0.1522,
+     "foreign": 0.0296,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.1826
+    },
+    "dollar_volume_usd": 2282714666,
+    "dollar_share": {
+     "hawaii_total": 0.8113,
+     "mainland_us": 0.1562,
+     "foreign": 0.0317,
+     "territory_military": 0.0008
+    },
+    "median_price_usd": {
+     "hawaii_total": 1790000,
+     "mainland_us": 1850000.0,
+     "foreign": 1999000
+    },
+    "median_price_n": {
+     "hawaii_total": 967,
+     "mainland_us": 180,
+     "foreign": 35
+    }
+   },
+   "luxury_3m_10m": {
+    "n": 255,
+    "counts": {
+     "hawaii_total": 175,
+     "hawaii_oahu_zip": 173,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 67,
+     "foreign": 13,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.6863,
+     "hawaii_oahu_zip": 0.6784,
+     "hawaii_neighbor_island_zip": 0.0078,
+     "mainland_us": 0.2627,
+     "foreign": 0.051,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3137
+    },
+    "dollar_volume_usd": 1204641492,
+    "dollar_share": {
+     "hawaii_total": 0.6623,
+     "mainland_us": 0.2855,
+     "foreign": 0.0522,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 3875000,
+     "mainland_us": 4400000,
+     "foreign": 4600000
+    },
+    "median_price_n": {
+     "hawaii_total": 175,
+     "mainland_us": 67,
+     "foreign": 13
+    }
+   },
+   "ultra_10m_plus": {
+    "n": 14,
+    "small_cell_n_lt_20": true,
+    "counts": {
+     "hawaii_total": 5,
+     "hawaii_oahu_zip": 5,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 6,
+     "foreign": 3,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.3571,
+     "hawaii_oahu_zip": 0.3571,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.4286,
+     "foreign": 0.2143,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.6429
+    },
+    "dollar_volume_usd": 249863000,
+    "dollar_share": {
+     "hawaii_total": 0.4685,
+     "mainland_us": 0.3279,
+     "foreign": 0.2036,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 12000000,
+     "mainland_us": 14325000.0,
+     "foreign": 13000000
+    },
+    "median_price_n": {
+     "hawaii_total": 5,
+     "mainland_us": 6,
+     "foreign": 3
+    }
+   }
+  },
+  "by_price_tier_by_year": {
+   "entry_lt_750k": {
+    "2023": {
+     "n": 2614,
+     "share": {
+      "hawaii_total": 0.8194,
+      "hawaii_oahu_zip": 0.8053,
+      "hawaii_neighbor_island_zip": 0.0142,
+      "mainland_us": 0.1538,
+      "foreign": 0.0218,
+      "us_territory": 0.0023,
+      "military_apo_fpo": 0.0027,
+      "non_hawaii_total": 0.1806
+     }
+    },
+    "2024": {
+     "n": 2432,
+     "share": {
+      "hawaii_total": 0.8421,
+      "hawaii_oahu_zip": 0.8269,
+      "hawaii_neighbor_island_zip": 0.0152,
+      "mainland_us": 0.1419,
+      "foreign": 0.0144,
+      "us_territory": 0.0008,
+      "military_apo_fpo": 0.0008,
+      "non_hawaii_total": 0.1579
+     }
+    },
+    "2025": {
+     "n": 842,
+     "share": {
+      "hawaii_total": 0.8195,
+      "hawaii_oahu_zip": 0.8052,
+      "hawaii_neighbor_island_zip": 0.0143,
+      "mainland_us": 0.1544,
+      "foreign": 0.0249,
+      "us_territory": 0.0012,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.1805
+     }
+    }
+   },
+   "mid_750k_1.5m": {
+    "2023": {
+     "n": 1958,
+     "share": {
+      "hawaii_total": 0.8601,
+      "hawaii_oahu_zip": 0.8544,
+      "hawaii_neighbor_island_zip": 0.0056,
+      "mainland_us": 0.1205,
+      "foreign": 0.0179,
+      "us_territory": 0.0015,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.1399
+     }
+    },
+    "2024": {
+     "n": 1869,
+     "share": {
+      "hawaii_total": 0.8737,
+      "hawaii_oahu_zip": 0.8689,
+      "hawaii_neighbor_island_zip": 0.0048,
+      "mainland_us": 0.1038,
+      "foreign": 0.0198,
+      "us_territory": 0.0011,
+      "military_apo_fpo": 0.0016,
+      "non_hawaii_total": 0.1263
+     }
+    },
+    "2025": {
+     "n": 684,
+     "share": {
+      "hawaii_total": 0.8743,
+      "hawaii_oahu_zip": 0.8728,
+      "hawaii_neighbor_island_zip": 0.0015,
+      "mainland_us": 0.1111,
+      "foreign": 0.0132,
+      "us_territory": 0.0015,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.1257
+     }
+    }
+   },
+   "upper_1.5m_3m": {
+    "2023": {
+     "n": 406,
+     "share": {
+      "hawaii_total": 0.7931,
+      "hawaii_oahu_zip": 0.7833,
+      "hawaii_neighbor_island_zip": 0.0099,
+      "mainland_us": 0.1552,
+      "foreign": 0.0493,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0025,
+      "non_hawaii_total": 0.2069
+     }
+    },
+    "2024": {
+     "n": 563,
+     "share": {
+      "hawaii_total": 0.833,
+      "hawaii_oahu_zip": 0.8242,
+      "hawaii_neighbor_island_zip": 0.0089,
+      "mainland_us": 0.1474,
+      "foreign": 0.0195,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.167
+     }
+    },
+    "2025": {
+     "n": 214,
+     "share": {
+      "hawaii_total": 0.8224,
+      "hawaii_oahu_zip": 0.8131,
+      "hawaii_neighbor_island_zip": 0.0093,
+      "mainland_us": 0.1589,
+      "foreign": 0.0187,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.1776
+     }
+    }
+   },
+   "luxury_3m_10m": {
+    "2023": {
+     "n": 98,
+     "share": {
+      "hawaii_total": 0.6429,
+      "hawaii_oahu_zip": 0.6429,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.2959,
+      "foreign": 0.0612,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.3571
+     }
+    },
+    "2024": {
+     "n": 103,
+     "share": {
+      "hawaii_total": 0.6893,
+      "hawaii_oahu_zip": 0.6796,
+      "hawaii_neighbor_island_zip": 0.0097,
+      "mainland_us": 0.2718,
+      "foreign": 0.0388,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.3107
+     }
+    },
+    "2025": {
+     "n": 54,
+     "share": {
+      "hawaii_total": 0.7593,
+      "hawaii_oahu_zip": 0.7407,
+      "hawaii_neighbor_island_zip": 0.0185,
+      "mainland_us": 0.1852,
+      "foreign": 0.0556,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.2407
+     }
+    }
+   },
+   "ultra_10m_plus": {
+    "2023": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "share": {
+      "hawaii_total": 0.1667,
+      "hawaii_oahu_zip": 0.1667,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.6667,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.8333
+     }
+    },
+    "2024": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "share": {
+      "hawaii_total": 0.3333,
+      "hawaii_oahu_zip": 0.3333,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.3333,
+      "foreign": 0.3333,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.6667
+     }
+    },
+    "2025": {
+     "n": 2,
+     "small_cell_n_lt_20": true,
+     "share": {
+      "hawaii_total": 1.0,
+      "hawaii_oahu_zip": 1.0,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.0,
+      "foreign": 0.0,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.0
+     }
+    }
+   }
+  },
+  "by_type": {
+   "condo_cpr_unit": {
+    "n": 8043,
+    "counts": {
+     "hawaii_total": 6432,
+     "hawaii_oahu_zip": 6331,
+     "hawaii_neighbor_island_zip": 101,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 1351,
+     "foreign": 236,
+     "us_territory": 13,
+     "military_apo_fpo": 11
+    },
+    "share": {
+     "hawaii_total": 0.7997,
+     "hawaii_oahu_zip": 0.7871,
+     "hawaii_neighbor_island_zip": 0.0126,
+     "mainland_us": 0.168,
+     "foreign": 0.0293,
+     "us_territory": 0.0016,
+     "military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.2003
+    },
+    "dollar_volume_usd": 5678308961,
+    "dollar_share": {
+     "hawaii_total": 0.7607,
+     "mainland_us": 0.188,
+     "foreign": 0.0485,
+     "territory_military": 0.0028
+    },
+    "median_price_usd": {
+     "hawaii_total": 560000.0,
+     "mainland_us": 608000,
+     "foreign": 772500.0
+    },
+    "median_price_n": {
+     "hawaii_total": 6432,
+     "mainland_us": 1351,
+     "foreign": 236
+    }
+   },
+   "house_non_cpr": {
+    "n": 3808,
+    "counts": {
+     "hawaii_total": 3510,
+     "hawaii_oahu_zip": 3491,
+     "hawaii_neighbor_island_zip": 19,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 285,
+     "foreign": 9,
+     "us_territory": 2,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.9217,
+     "hawaii_oahu_zip": 0.9168,
+     "hawaii_neighbor_island_zip": 0.005,
+     "mainland_us": 0.0748,
+     "foreign": 0.0024,
+     "us_territory": 0.0005,
+     "military_apo_fpo": 0.0005,
+     "non_hawaii_total": 0.0783
+    },
+    "dollar_volume_usd": 5550254911,
+    "dollar_share": {
+     "hawaii_total": 0.8761,
+     "mainland_us": 0.115,
+     "foreign": 0.0081,
+     "territory_military": 0.0008
+    },
+    "median_price_usd": {
+     "hawaii_total": 1135000.0,
+     "mainland_us": 1560000,
+     "foreign": 1950000
+    },
+    "median_price_n": {
+     "hawaii_total": 3510,
+     "mainland_us": 285,
+     "foreign": 9
+    }
+   }
+  },
+  "by_condo_subtype": {
+   "cpr_tmk_2_4_units (mostly CPR house/duplex lots)": {
+    "n": 209,
+    "counts": {
+     "hawaii_total": 192,
+     "hawaii_oahu_zip": 190,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 16,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9187,
+     "hawaii_oahu_zip": 0.9091,
+     "hawaii_neighbor_island_zip": 0.0096,
+     "mainland_us": 0.0766,
+     "foreign": 0.0048,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0813
+    },
+    "dollar_volume_usd": 299970384,
+    "dollar_share": {
+     "hawaii_total": 0.8173,
+     "mainland_us": 0.1611,
+     "foreign": 0.0217,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1050650.0,
+     "mainland_us": 1312500.0,
+     "foreign": 6500000
+    },
+    "median_price_n": {
+     "hawaii_total": 192,
+     "mainland_us": 16,
+     "foreign": 1
+    }
+   },
+   "cpr_tmk_5plus_units (condo building)": {
+    "n": 7834,
+    "counts": {
+     "hawaii_total": 6240,
+     "hawaii_oahu_zip": 6141,
+     "hawaii_neighbor_island_zip": 99,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 1335,
+     "foreign": 235,
+     "us_territory": 13,
+     "military_apo_fpo": 11
+    },
+    "share": {
+     "hawaii_total": 0.7965,
+     "hawaii_oahu_zip": 0.7839,
+     "hawaii_neighbor_island_zip": 0.0126,
+     "mainland_us": 0.1704,
+     "foreign": 0.03,
+     "us_territory": 0.0017,
+     "military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.2035
+    },
+    "dollar_volume_usd": 5378338577,
+    "dollar_share": {
+     "hawaii_total": 0.7575,
+     "mainland_us": 0.1895,
+     "foreign": 0.05,
+     "territory_military": 0.003
+    },
+    "median_price_usd": {
+     "hawaii_total": 551400.0,
+     "mainland_us": 600000,
+     "foreign": 765000
+    },
+    "median_price_n": {
+     "hawaii_total": 6240,
+     "mainland_us": 1335,
+     "foreign": 235
+    }
+   }
+  },
+  "tier_x_type": {
+   "house_non_cpr": {
+    "entry_lt_750k": {
+     "n": 279,
+     "counts": {
+      "hawaii_total": 268,
+      "hawaii_oahu_zip": 266,
+      "hawaii_neighbor_island_zip": 2,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 10,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 1
+     },
+     "share": {
+      "hawaii_total": 0.9606,
+      "hawaii_oahu_zip": 0.9534,
+      "hawaii_neighbor_island_zip": 0.0072,
+      "mainland_us": 0.0358,
+      "foreign": 0.0,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0036,
+      "non_hawaii_total": 0.0394
+     },
+     "dollar_volume_usd": 175613838,
+     "dollar_share": {
+      "hawaii_total": 0.9629,
+      "mainland_us": 0.0328,
+      "foreign": 0.0,
+      "territory_military": 0.0043
+     }
+    },
+    "mid_750k_1.5m": {
+     "n": 2473,
+     "counts": {
+      "hawaii_total": 2350,
+      "hawaii_oahu_zip": 2342,
+      "hawaii_neighbor_island_zip": 8,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 119,
+      "foreign": 1,
+      "us_territory": 2,
+      "military_apo_fpo": 1
+     },
+     "share": {
+      "hawaii_total": 0.9503,
+      "hawaii_oahu_zip": 0.947,
+      "hawaii_neighbor_island_zip": 0.0032,
+      "mainland_us": 0.0481,
+      "foreign": 0.0004,
+      "us_territory": 0.0008,
+      "military_apo_fpo": 0.0004,
+      "non_hawaii_total": 0.0497
+     },
+     "dollar_volume_usd": 2661446117,
+     "dollar_share": {
+      "hawaii_total": 0.9481,
+      "mainland_us": 0.0499,
+      "foreign": 0.0005,
+      "territory_military": 0.0014
+     }
+    },
+    "upper_1.5m_3m": {
+     "n": 859,
+     "counts": {
+      "hawaii_total": 749,
+      "hawaii_oahu_zip": 742,
+      "hawaii_neighbor_island_zip": 7,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 106,
+      "foreign": 4,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.8719,
+      "hawaii_oahu_zip": 0.8638,
+      "hawaii_neighbor_island_zip": 0.0081,
+      "mainland_us": 0.1234,
+      "foreign": 0.0047,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.1281
+     },
+     "dollar_volume_usd": 1663431464,
+     "dollar_share": {
+      "hawaii_total": 0.8651,
+      "mainland_us": 0.1306,
+      "foreign": 0.0043,
+      "territory_military": 0.0
+     }
+    },
+    "luxury_3m_10m": {
+     "n": 189,
+     "counts": {
+      "hawaii_total": 140,
+      "hawaii_oahu_zip": 138,
+      "hawaii_neighbor_island_zip": 2,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 47,
+      "foreign": 2,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.7407,
+      "hawaii_oahu_zip": 0.7302,
+      "hawaii_neighbor_island_zip": 0.0106,
+      "mainland_us": 0.2487,
+      "foreign": 0.0106,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.2593
+     },
+     "dollar_volume_usd": 887988492,
+     "dollar_share": {
+      "hawaii_total": 0.7166,
+      "mainland_us": 0.2688,
+      "foreign": 0.0145,
+      "territory_military": 0.0
+     }
+    },
+    "ultra_10m_plus": {
+     "n": 8,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 3,
+      "hawaii_oahu_zip": 3,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 3,
+      "foreign": 2,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.375,
+      "hawaii_oahu_zip": 0.375,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.375,
+      "foreign": 0.25,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.625
+     },
+     "dollar_volume_usd": 161775000,
+     "dollar_share": {
+      "hawaii_total": 0.5857,
+      "mainland_us": 0.2698,
+      "foreign": 0.1445,
+      "territory_military": 0.0
+     }
+    }
+   },
+   "condo_cpr_unit": {
+    "entry_lt_750k": {
+     "n": 5609,
+     "counts": {
+      "hawaii_total": 4612,
+      "hawaii_oahu_zip": 4528,
+      "hawaii_neighbor_island_zip": 84,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 867,
+      "foreign": 113,
+      "us_territory": 9,
+      "military_apo_fpo": 8
+     },
+     "share": {
+      "hawaii_total": 0.8222,
+      "hawaii_oahu_zip": 0.8073,
+      "hawaii_neighbor_island_zip": 0.015,
+      "mainland_us": 0.1546,
+      "foreign": 0.0201,
+      "us_territory": 0.0016,
+      "military_apo_fpo": 0.0014,
+      "non_hawaii_total": 0.1778
+     },
+     "dollar_volume_usd": 2678655948,
+     "dollar_share": {
+      "hawaii_total": 0.8285,
+      "mainland_us": 0.1497,
+      "foreign": 0.0187,
+      "territory_military": 0.0031
+     }
+    },
+    "mid_750k_1.5m": {
+     "n": 2038,
+     "counts": {
+      "hawaii_total": 1565,
+      "hawaii_oahu_zip": 1552,
+      "hawaii_neighbor_island_zip": 13,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 387,
+      "foreign": 80,
+      "us_territory": 4,
+      "military_apo_fpo": 2
+     },
+     "share": {
+      "hawaii_total": 0.7679,
+      "hawaii_oahu_zip": 0.7615,
+      "hawaii_neighbor_island_zip": 0.0064,
+      "mainland_us": 0.1899,
+      "foreign": 0.0393,
+      "us_territory": 0.002,
+      "military_apo_fpo": 0.001,
+      "non_hawaii_total": 0.2321
+     },
+     "dollar_volume_usd": 1975628811,
+     "dollar_share": {
+      "hawaii_total": 0.7609,
+      "mainland_us": 0.1943,
+      "foreign": 0.0417,
+      "territory_military": 0.0031
+     }
+    },
+    "upper_1.5m_3m": {
+     "n": 324,
+     "counts": {
+      "hawaii_total": 218,
+      "hawaii_oahu_zip": 214,
+      "hawaii_neighbor_island_zip": 4,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 74,
+      "foreign": 31,
+      "us_territory": 0,
+      "military_apo_fpo": 1
+     },
+     "share": {
+      "hawaii_total": 0.6728,
+      "hawaii_oahu_zip": 0.6605,
+      "hawaii_neighbor_island_zip": 0.0123,
+      "mainland_us": 0.2284,
+      "foreign": 0.0957,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0031,
+      "non_hawaii_total": 0.3272
+     },
+     "dollar_volume_usd": 619283202,
+     "dollar_share": {
+      "hawaii_total": 0.6668,
+      "mainland_us": 0.2249,
+      "foreign": 0.1053,
+      "territory_military": 0.003
+     }
+    },
+    "luxury_3m_10m": {
+     "n": 66,
+     "counts": {
+      "hawaii_total": 35,
+      "hawaii_oahu_zip": 35,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 20,
+      "foreign": 11,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.5303,
+      "hawaii_oahu_zip": 0.5303,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.303,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.4697
+     },
+     "dollar_volume_usd": 316653000,
+     "dollar_share": {
+      "hawaii_total": 0.51,
+      "mainland_us": 0.3321,
+      "foreign": 0.1579,
+      "territory_military": 0.0
+     }
+    },
+    "ultra_10m_plus": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 2,
+      "hawaii_oahu_zip": 2,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 3,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.3333,
+      "hawaii_oahu_zip": 0.3333,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.5,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.6667
+     },
+     "dollar_volume_usd": 88088000,
+     "dollar_share": {
+      "hawaii_total": 0.2532,
+      "mainland_us": 0.4347,
+      "foreign": 0.3122,
+      "territory_military": 0.0
+     }
+    }
+   },
+   "condo_building_5plus_units_only": {
+    "entry_lt_750k": {
+     "n": 5578,
+     "counts": {
+      "hawaii_total": 4581,
+      "hawaii_oahu_zip": 4497,
+      "hawaii_neighbor_island_zip": 84,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 867,
+      "foreign": 113,
+      "us_territory": 9,
+      "military_apo_fpo": 8
+     },
+     "share": {
+      "hawaii_total": 0.8213,
+      "hawaii_oahu_zip": 0.8062,
+      "hawaii_neighbor_island_zip": 0.0151,
+      "mainland_us": 0.1554,
+      "foreign": 0.0203,
+      "us_territory": 0.0016,
+      "military_apo_fpo": 0.0014,
+      "non_hawaii_total": 0.1787
+     },
+     "dollar_volume_usd": 2659317619,
+     "dollar_share": {
+      "hawaii_total": 0.8273,
+      "mainland_us": 0.1508,
+      "foreign": 0.0189,
+      "territory_military": 0.0031
+     }
+    },
+    "mid_750k_1.5m": {
+     "n": 1910,
+     "counts": {
+      "hawaii_total": 1447,
+      "hawaii_oahu_zip": 1435,
+      "hawaii_neighbor_island_zip": 12,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 377,
+      "foreign": 80,
+      "us_territory": 4,
+      "military_apo_fpo": 2
+     },
+     "share": {
+      "hawaii_total": 0.7576,
+      "hawaii_oahu_zip": 0.7513,
+      "hawaii_neighbor_island_zip": 0.0063,
+      "mainland_us": 0.1974,
+      "foreign": 0.0419,
+      "us_territory": 0.0021,
+      "military_apo_fpo": 0.001,
+      "non_hawaii_total": 0.2424
+     },
+     "dollar_volume_usd": 1837946656,
+     "dollar_share": {
+      "hawaii_total": 0.7493,
+      "mainland_us": 0.2026,
+      "foreign": 0.0448,
+      "territory_military": 0.0033
+     }
+    },
+    "upper_1.5m_3m": {
+     "n": 285,
+     "counts": {
+      "hawaii_total": 181,
+      "hawaii_oahu_zip": 178,
+      "hawaii_neighbor_island_zip": 3,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 72,
+      "foreign": 31,
+      "us_territory": 0,
+      "military_apo_fpo": 1
+     },
+     "share": {
+      "hawaii_total": 0.6351,
+      "hawaii_oahu_zip": 0.6246,
+      "hawaii_neighbor_island_zip": 0.0105,
+      "mainland_us": 0.2526,
+      "foreign": 0.1088,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0035,
+      "non_hawaii_total": 0.3649
+     },
+     "dollar_volume_usd": 545401302,
+     "dollar_share": {
+      "hawaii_total": 0.6289,
+      "mainland_us": 0.2482,
+      "foreign": 0.1195,
+      "territory_military": 0.0034
+     }
+    },
+    "luxury_3m_10m": {
+     "n": 57,
+     "counts": {
+      "hawaii_total": 30,
+      "hawaii_oahu_zip": 30,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 17,
+      "foreign": 10,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.5263,
+      "hawaii_oahu_zip": 0.5263,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.2982,
+      "foreign": 0.1754,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.4737
+     },
+     "dollar_volume_usd": 273773000,
+     "dollar_share": {
+      "hawaii_total": 0.5187,
+      "mainland_us": 0.3224,
+      "foreign": 0.1589,
+      "territory_military": 0.0
+     }
+    },
+    "ultra_10m_plus": {
+     "n": 4,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 1,
+      "hawaii_oahu_zip": 1,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 2,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.25,
+      "hawaii_oahu_zip": 0.25,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.5,
+      "foreign": 0.25,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.75
+     },
+     "dollar_volume_usd": 61900000,
+     "dollar_share": {
+      "hawaii_total": 0.1939,
+      "mainland_us": 0.3619,
+      "foreign": 0.4443,
+      "territory_military": 0.0
+     }
+    }
+   }
+  },
+  "by_tmk_zone": {
+   "1": {
+    "n": 705,
+    "counts": {
+     "hawaii_total": 678,
+     "hawaii_oahu_zip": 671,
+     "hawaii_neighbor_island_zip": 7,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 26,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9617,
+     "hawaii_oahu_zip": 0.9518,
+     "hawaii_neighbor_island_zip": 0.0099,
+     "mainland_us": 0.0369,
+     "foreign": 0.0014,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0383
+    },
+    "dollar_volume_usd": 499985561,
+    "dollar_share": {
+     "hawaii_total": 0.9625,
+     "mainland_us": 0.0368,
+     "foreign": 0.0007,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 506000.0,
+     "mainland_us": 579500.0,
+     "foreign": 330000
+    },
+    "median_price_n": {
+     "hawaii_total": 678,
+     "mainland_us": 26,
+     "foreign": 1
+    },
+    "label_approx": "Zone 1 - Honolulu (Kalihi/Moanalua/Salt Lake/airport side)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 489,
+      "share": {
+       "hawaii_total": 0.9571,
+       "hawaii_oahu_zip": 0.9448,
+       "hawaii_neighbor_island_zip": 0.0123,
+       "mainland_us": 0.0409,
+       "foreign": 0.002,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0429
+      }
+     },
+     "house_non_cpr": {
+      "n": 216,
+      "share": {
+       "hawaii_total": 0.9722,
+       "hawaii_oahu_zip": 0.9676,
+       "hawaii_neighbor_island_zip": 0.0046,
+       "mainland_us": 0.0278,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0278
+      }
+     }
+    }
+   },
+   "2": {
+    "n": 4099,
+    "counts": {
+     "hawaii_total": 2884,
+     "hawaii_oahu_zip": 2812,
+     "hawaii_neighbor_island_zip": 72,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 991,
+     "foreign": 211,
+     "us_territory": 9,
+     "military_apo_fpo": 4
+    },
+    "share": {
+     "hawaii_total": 0.7036,
+     "hawaii_oahu_zip": 0.686,
+     "hawaii_neighbor_island_zip": 0.0176,
+     "mainland_us": 0.2418,
+     "foreign": 0.0515,
+     "us_territory": 0.0022,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.2964
+    },
+    "dollar_volume_usd": 3213234732,
+    "dollar_share": {
+     "hawaii_total": 0.686,
+     "mainland_us": 0.2357,
+     "foreign": 0.076,
+     "territory_military": 0.0022
+    },
+    "median_price_usd": {
+     "hawaii_total": 549500.0,
+     "mainland_us": 560000,
+     "foreign": 750000
+    },
+    "median_price_n": {
+     "hawaii_total": 2884,
+     "mainland_us": 991,
+     "foreign": 211
+    },
+    "label_approx": "Zone 2 - Honolulu (Downtown/Makiki/Ala Moana/Kakaako/Waikiki/Manoa)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 3864,
+      "share": {
+       "hawaii_total": 0.6913,
+       "hawaii_oahu_zip": 0.6726,
+       "hawaii_neighbor_island_zip": 0.0186,
+       "mainland_us": 0.251,
+       "foreign": 0.0543,
+       "us_territory": 0.0023,
+       "military_apo_fpo": 0.001,
+       "non_hawaii_total": 0.3087
+      }
+     },
+     "house_non_cpr": {
+      "n": 235,
+      "share": {
+       "hawaii_total": 0.9064,
+       "hawaii_oahu_zip": 0.9064,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.0894,
+       "foreign": 0.0043,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0936
+      }
+     }
+    }
+   },
+   "3": {
+    "n": 1253,
+    "counts": {
+     "hawaii_total": 1077,
+     "hawaii_oahu_zip": 1065,
+     "hawaii_neighbor_island_zip": 12,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 160,
+     "foreign": 12,
+     "us_territory": 2,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.8595,
+     "hawaii_oahu_zip": 0.85,
+     "hawaii_neighbor_island_zip": 0.0096,
+     "mainland_us": 0.1277,
+     "foreign": 0.0096,
+     "us_territory": 0.0016,
+     "military_apo_fpo": 0.0016,
+     "non_hawaii_total": 0.1405
+    },
+    "dollar_volume_usd": 2252170361,
+    "dollar_share": {
+     "hawaii_total": 0.8104,
+     "mainland_us": 0.1678,
+     "foreign": 0.0198,
+     "territory_military": 0.002
+    },
+    "median_price_usd": {
+     "hawaii_total": 1350000,
+     "mainland_us": 1587500.0,
+     "foreign": 1487500.0
+    },
+    "median_price_n": {
+     "hawaii_total": 1077,
+     "mainland_us": 160,
+     "foreign": 12
+    },
+    "label_approx": "Zone 3 - Honolulu (Kaimuki/Diamond Head/Kahala/Aina Haina/Hawaii Kai)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 470,
+      "share": {
+       "hawaii_total": 0.8298,
+       "hawaii_oahu_zip": 0.8191,
+       "hawaii_neighbor_island_zip": 0.0106,
+       "mainland_us": 0.1511,
+       "foreign": 0.017,
+       "us_territory": 0.0021,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1702
+      }
+     },
+     "house_non_cpr": {
+      "n": 783,
+      "share": {
+       "hawaii_total": 0.8774,
+       "hawaii_oahu_zip": 0.8685,
+       "hawaii_neighbor_island_zip": 0.0089,
+       "mainland_us": 0.1137,
+       "foreign": 0.0051,
+       "us_territory": 0.0013,
+       "military_apo_fpo": 0.0026,
+       "non_hawaii_total": 0.1226
+      }
+     }
+    }
+   },
+   "4": {
+    "n": 1049,
+    "counts": {
+     "hawaii_total": 936,
+     "hawaii_oahu_zip": 932,
+     "hawaii_neighbor_island_zip": 4,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 102,
+     "foreign": 8,
+     "us_territory": 1,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.8923,
+     "hawaii_oahu_zip": 0.8885,
+     "hawaii_neighbor_island_zip": 0.0038,
+     "mainland_us": 0.0972,
+     "foreign": 0.0076,
+     "us_territory": 0.001,
+     "military_apo_fpo": 0.0019,
+     "non_hawaii_total": 0.1077
+    },
+    "dollar_volume_usd": 1403758257,
+    "dollar_share": {
+     "hawaii_total": 0.8435,
+     "mainland_us": 0.1412,
+     "foreign": 0.0127,
+     "territory_military": 0.0027
+    },
+    "median_price_usd": {
+     "hawaii_total": 1100000.0,
+     "mainland_us": 1291861.0,
+     "foreign": 1080000.0
+    },
+    "median_price_n": {
+     "hawaii_total": 936,
+     "mainland_us": 102,
+     "foreign": 8
+    },
+    "label_approx": "Zone 4 - Koolaupoko (Kailua/Kaneohe/Waimanalo)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 460,
+      "share": {
+       "hawaii_total": 0.8674,
+       "hawaii_oahu_zip": 0.8587,
+       "hawaii_neighbor_island_zip": 0.0087,
+       "mainland_us": 0.1174,
+       "foreign": 0.0109,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0043,
+       "non_hawaii_total": 0.1326
+      }
+     },
+     "house_non_cpr": {
+      "n": 589,
+      "share": {
+       "hawaii_total": 0.9117,
+       "hawaii_oahu_zip": 0.9117,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.0815,
+       "foreign": 0.0051,
+       "us_territory": 0.0017,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0883
+      }
+     }
+    }
+   },
+   "5": {
+    "n": 178,
+    "counts": {
+     "hawaii_total": 125,
+     "hawaii_oahu_zip": 123,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 52,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.7022,
+     "hawaii_oahu_zip": 0.691,
+     "hawaii_neighbor_island_zip": 0.0112,
+     "mainland_us": 0.2921,
+     "foreign": 0.0056,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.2978
+    },
+    "dollar_volume_usd": 225229706,
+    "dollar_share": {
+     "hawaii_total": 0.71,
+     "mainland_us": 0.2881,
+     "foreign": 0.0019,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1050000,
+     "mainland_us": 1007500.0,
+     "foreign": 430000
+    },
+    "median_price_n": {
+     "hawaii_total": 125,
+     "mainland_us": 52,
+     "foreign": 1
+    },
+    "label_approx": "Zone 5 - Koolauloa (Kahuku/Laie/Hauula)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 81,
+      "share": {
+       "hawaii_total": 0.6173,
+       "hawaii_oahu_zip": 0.6173,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.3704,
+       "foreign": 0.0123,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.3827
+      }
+     },
+     "house_non_cpr": {
+      "n": 97,
+      "share": {
+       "hawaii_total": 0.7732,
+       "hawaii_oahu_zip": 0.7526,
+       "hawaii_neighbor_island_zip": 0.0206,
+       "mainland_us": 0.2268,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2268
+      }
+     }
+    }
+   },
+   "6": {
+    "n": 107,
+    "counts": {
+     "hawaii_total": 89,
+     "hawaii_oahu_zip": 88,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 18,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8318,
+     "hawaii_oahu_zip": 0.8224,
+     "hawaii_neighbor_island_zip": 0.0093,
+     "mainland_us": 0.1682,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1682
+    },
+    "dollar_volume_usd": 149071550,
+    "dollar_share": {
+     "hawaii_total": 0.7646,
+     "mainland_us": 0.2354,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1015000,
+     "mainland_us": 919500.0,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 89,
+     "mainland_us": 18,
+     "foreign": 0
+    },
+    "label_approx": "Zone 6 - Waialua (North Shore/Haleiwa)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 56,
+      "share": {
+       "hawaii_total": 0.7857,
+       "hawaii_oahu_zip": 0.7857,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.2143,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2143
+      }
+     },
+     "house_non_cpr": {
+      "n": 51,
+      "share": {
+       "hawaii_total": 0.8824,
+       "hawaii_oahu_zip": 0.8627,
+       "hawaii_neighbor_island_zip": 0.0196,
+       "mainland_us": 0.1176,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1176
+      }
+     }
+    }
+   },
+   "7": {
+    "n": 110,
+    "counts": {
+     "hawaii_total": 107,
+     "hawaii_oahu_zip": 107,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 3,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9727,
+     "hawaii_oahu_zip": 0.9727,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.0273,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0273
+    },
+    "dollar_volume_usd": 83508869,
+    "dollar_share": {
+     "hawaii_total": 0.9756,
+     "mainland_us": 0.0244,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 795000,
+     "mainland_us": 850000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 107,
+     "mainland_us": 3,
+     "foreign": 0
+    },
+    "label_approx": "Zone 7 - Wahiawa (Wahiawa/Whitmore/Kunia)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 40,
+      "share": {
+       "hawaii_total": 0.975,
+       "hawaii_oahu_zip": 0.975,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.025,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.025
+      }
+     },
+     "house_non_cpr": {
+      "n": 70,
+      "share": {
+       "hawaii_total": 0.9714,
+       "hawaii_oahu_zip": 0.9714,
+       "hawaii_neighbor_island_zip": 0.0,
+       "mainland_us": 0.0286,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0286
+      }
+     }
+    }
+   },
+   "8": {
+    "n": 520,
+    "counts": {
+     "hawaii_total": 444,
+     "hawaii_oahu_zip": 438,
+     "hawaii_neighbor_island_zip": 6,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 73,
+     "foreign": 3,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8538,
+     "hawaii_oahu_zip": 0.8423,
+     "hawaii_neighbor_island_zip": 0.0115,
+     "mainland_us": 0.1404,
+     "foreign": 0.0058,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1462
+    },
+    "dollar_volume_usd": 329173329,
+    "dollar_share": {
+     "hawaii_total": 0.8413,
+     "mainland_us": 0.154,
+     "foreign": 0.0047,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 650000.0,
+     "mainland_us": 475000,
+     "foreign": 270000
+    },
+    "median_price_n": {
+     "hawaii_total": 444,
+     "mainland_us": 73,
+     "foreign": 3
+    },
+    "label_approx": "Zone 8 - Waianae (Waianae Coast)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 265,
+      "share": {
+       "hawaii_total": 0.7585,
+       "hawaii_oahu_zip": 0.7434,
+       "hawaii_neighbor_island_zip": 0.0151,
+       "mainland_us": 0.2302,
+       "foreign": 0.0113,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2415
+      }
+     },
+     "house_non_cpr": {
+      "n": 255,
+      "share": {
+       "hawaii_total": 0.9529,
+       "hawaii_oahu_zip": 0.9451,
+       "hawaii_neighbor_island_zip": 0.0078,
+       "mainland_us": 0.0471,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0471
+      }
+     }
+    }
+   },
+   "9": {
+    "n": 3830,
+    "counts": {
+     "hawaii_total": 3602,
+     "hawaii_oahu_zip": 3586,
+     "hawaii_neighbor_island_zip": 16,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 211,
+     "foreign": 9,
+     "us_territory": 3,
+     "military_apo_fpo": 5
+    },
+    "share": {
+     "hawaii_total": 0.9405,
+     "hawaii_oahu_zip": 0.9363,
+     "hawaii_neighbor_island_zip": 0.0042,
+     "mainland_us": 0.0551,
+     "foreign": 0.0023,
+     "us_territory": 0.0008,
+     "military_apo_fpo": 0.0013,
+     "non_hawaii_total": 0.0595
+    },
+    "dollar_volume_usd": 3072431507,
+    "dollar_share": {
+     "hawaii_total": 0.9292,
+     "mainland_us": 0.0655,
+     "foreign": 0.0036,
+     "territory_military": 0.0017
+    },
+    "median_price_usd": {
+     "hawaii_total": 775000.0,
+     "mainland_us": 885000,
+     "foreign": 1200000
+    },
+    "median_price_n": {
+     "hawaii_total": 3602,
+     "mainland_us": 211,
+     "foreign": 9
+    },
+    "label_approx": "Zone 9 - Ewa (Ewa/Kapolei/Waipahu/Pearl City/Aiea/Mililani)",
+    "by_type": {
+     "condo_cpr_unit": {
+      "n": 2318,
+      "share": {
+       "hawaii_total": 0.9362,
+       "hawaii_oahu_zip": 0.9318,
+       "hawaii_neighbor_island_zip": 0.0043,
+       "mainland_us": 0.0569,
+       "foreign": 0.0035,
+       "us_territory": 0.0013,
+       "military_apo_fpo": 0.0022,
+       "non_hawaii_total": 0.0638
+      }
+     },
+     "house_non_cpr": {
+      "n": 1512,
+      "share": {
+       "hawaii_total": 0.9471,
+       "hawaii_oahu_zip": 0.9431,
+       "hawaii_neighbor_island_zip": 0.004,
+       "mainland_us": 0.0522,
+       "foreign": 0.0007,
+       "us_territory": 0.0,
+       "military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0529
+      }
+     }
+    }
+   }
+  },
+  "waikiki_tmk_2_6": {
+   "n": 1666,
+   "counts": {
+    "hawaii_total": 880,
+    "hawaii_oahu_zip": 855,
+    "hawaii_neighbor_island_zip": 25,
+    "hawaii_zip_unknown": 0,
+    "mainland_us": 663,
+    "foreign": 115,
+    "us_territory": 4,
+    "military_apo_fpo": 4
+   },
+   "share": {
+    "hawaii_total": 0.5282,
+    "hawaii_oahu_zip": 0.5132,
+    "hawaii_neighbor_island_zip": 0.015,
+    "mainland_us": 0.398,
+    "foreign": 0.069,
+    "us_territory": 0.0024,
+    "military_apo_fpo": 0.0024,
+    "non_hawaii_total": 0.4718
+   },
+   "dollar_volume_usd": 1073662378,
+   "dollar_share": {
+    "hawaii_total": 0.5041,
+    "mainland_us": 0.3817,
+    "foreign": 0.11,
+    "territory_military": 0.0042
+   },
+   "median_price_usd": {
+    "hawaii_total": 500000.0,
+    "mainland_us": 530000,
+    "foreign": 750000
+   },
+   "median_price_n": {
+    "hawaii_total": 880,
+    "mainland_us": 663,
+    "foreign": 115
+   }
+  },
+  "by_situs_zip_ge_40_deals": {
+   "96701": {
+    "n": 389,
+    "counts": {
+     "hawaii_total": 375,
+     "hawaii_oahu_zip": 374,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 11,
+     "foreign": 1,
+     "us_territory": 2,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.964,
+     "hawaii_oahu_zip": 0.9614,
+     "hawaii_neighbor_island_zip": 0.0026,
+     "mainland_us": 0.0283,
+     "foreign": 0.0026,
+     "us_territory": 0.0051,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.036
+    },
+    "dollar_volume_usd": 279221311,
+    "dollar_share": {
+     "hawaii_total": 0.9669,
+     "mainland_us": 0.0278,
+     "foreign": 0.0026,
+     "territory_military": 0.0028
+    },
+    "median_price_usd": {
+     "hawaii_total": 572000,
+     "mainland_us": 579000,
+     "foreign": 720000
+    },
+    "median_price_n": {
+     "hawaii_total": 375,
+     "mainland_us": 11,
+     "foreign": 1
+    },
+    "condo_share_of_deals": 0.7301,
+    "place_approx": "Aiea"
+   },
+   "96706": {
+    "n": 1243,
+    "counts": {
+     "hawaii_total": 1161,
+     "hawaii_oahu_zip": 1155,
+     "hawaii_neighbor_island_zip": 6,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 78,
+     "foreign": 2,
+     "us_territory": 0,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.934,
+     "hawaii_oahu_zip": 0.9292,
+     "hawaii_neighbor_island_zip": 0.0048,
+     "mainland_us": 0.0628,
+     "foreign": 0.0016,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0016,
+     "non_hawaii_total": 0.066
+    },
+    "dollar_volume_usd": 1082878713,
+    "dollar_share": {
+     "hawaii_total": 0.9253,
+     "mainland_us": 0.0714,
+     "foreign": 0.0017,
+     "territory_military": 0.0015
+    },
+    "median_price_usd": {
+     "hawaii_total": 845000,
+     "mainland_us": 916270.0,
+     "foreign": 947499.5
+    },
+    "median_price_n": {
+     "hawaii_total": 1161,
+     "mainland_us": 78,
+     "foreign": 2
+    },
+    "condo_share_of_deals": 0.5318,
+    "place_approx": "Ewa Beach"
+   },
+   "96707": {
+    "n": 583,
+    "counts": {
+     "hawaii_total": 508,
+     "hawaii_oahu_zip": 507,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 68,
+     "foreign": 6,
+     "us_territory": 1,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8714,
+     "hawaii_oahu_zip": 0.8696,
+     "hawaii_neighbor_island_zip": 0.0017,
+     "mainland_us": 0.1166,
+     "foreign": 0.0103,
+     "us_territory": 0.0017,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1286
+    },
+    "dollar_volume_usd": 504126064,
+    "dollar_share": {
+     "hawaii_total": 0.831,
+     "mainland_us": 0.1509,
+     "foreign": 0.0168,
+     "territory_military": 0.0013
+    },
+    "median_price_usd": {
+     "hawaii_total": 770000.0,
+     "mainland_us": 927500.0,
+     "foreign": 1292500.0
+    },
+    "median_price_n": {
+     "hawaii_total": 508,
+     "mainland_us": 68,
+     "foreign": 6
+    },
+    "condo_share_of_deals": 0.6913,
+    "place_approx": "Kapolei"
+   },
+   "96712": {
+    "n": 58,
+    "counts": {
+     "hawaii_total": 47,
+     "hawaii_oahu_zip": 46,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 11,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8103,
+     "hawaii_oahu_zip": 0.7931,
+     "hawaii_neighbor_island_zip": 0.0172,
+     "mainland_us": 0.1897,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1897
+    },
+    "dollar_volume_usd": 149234800,
+    "dollar_share": {
+     "hawaii_total": 0.7454,
+     "mainland_us": 0.2546,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1700000,
+     "mainland_us": 2350000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 47,
+     "mainland_us": 11,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.2069,
+    "place_approx": "Haleiwa"
+   },
+   "96717": {
+    "n": 79,
+    "counts": {
+     "hawaii_total": 50,
+     "hawaii_oahu_zip": 49,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 28,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.6329,
+     "hawaii_oahu_zip": 0.6203,
+     "hawaii_neighbor_island_zip": 0.0127,
+     "mainland_us": 0.3544,
+     "foreign": 0.0127,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3671
+    },
+    "dollar_volume_usd": 58781206,
+    "dollar_share": {
+     "hawaii_total": 0.7015,
+     "mainland_us": 0.2912,
+     "foreign": 0.0073,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 800000.0,
+     "mainland_us": 438555.5,
+     "foreign": 430000
+    },
+    "median_price_n": {
+     "hawaii_total": 50,
+     "mainland_us": 28,
+     "foreign": 1
+    },
+    "condo_share_of_deals": 0.519,
+    "place_approx": "Hauula"
+   },
+   "96734": {
+    "n": 435,
+    "counts": {
+     "hawaii_total": 366,
+     "hawaii_oahu_zip": 364,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 62,
+     "foreign": 7,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8414,
+     "hawaii_oahu_zip": 0.8368,
+     "hawaii_neighbor_island_zip": 0.0046,
+     "mainland_us": 0.1425,
+     "foreign": 0.0161,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1586
+    },
+    "dollar_volume_usd": 734017667,
+    "dollar_share": {
+     "hawaii_total": 0.7874,
+     "mainland_us": 0.1905,
+     "foreign": 0.0222,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1350000.0,
+     "mainland_us": 1365000.0,
+     "foreign": 785000
+    },
+    "median_price_n": {
+     "hawaii_total": 366,
+     "mainland_us": 62,
+     "foreign": 7
+    },
+    "condo_share_of_deals": 0.3977,
+    "place_approx": "Kailua"
+   },
+   "96744": {
+    "n": 591,
+    "counts": {
+     "hawaii_total": 553,
+     "hawaii_oahu_zip": 551,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 34,
+     "foreign": 1,
+     "us_territory": 1,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.9357,
+     "hawaii_oahu_zip": 0.9323,
+     "hawaii_neighbor_island_zip": 0.0034,
+     "mainland_us": 0.0575,
+     "foreign": 0.0017,
+     "us_territory": 0.0017,
+     "military_apo_fpo": 0.0034,
+     "non_hawaii_total": 0.0643
+    },
+    "dollar_volume_usd": 630403590,
+    "dollar_share": {
+     "hawaii_total": 0.9259,
+     "mainland_us": 0.0657,
+     "foreign": 0.0025,
+     "territory_military": 0.0059
+    },
+    "median_price_usd": {
+     "hawaii_total": 975000,
+     "mainland_us": 1164500.0,
+     "foreign": 1570000
+    },
+    "median_price_n": {
+     "hawaii_total": 553,
+     "mainland_us": 34,
+     "foreign": 1
+    },
+    "condo_share_of_deals": 0.4856,
+    "place_approx": "Kaneohe"
+   },
+   "96782": {
+    "n": 215,
+    "counts": {
+     "hawaii_total": 208,
+     "hawaii_oahu_zip": 206,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 7,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9674,
+     "hawaii_oahu_zip": 0.9581,
+     "hawaii_neighbor_island_zip": 0.0093,
+     "mainland_us": 0.0326,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0326
+    },
+    "dollar_volume_usd": 156480525,
+    "dollar_share": {
+     "hawaii_total": 0.9745,
+     "mainland_us": 0.0255,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 775000.0,
+     "mainland_us": 288000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 208,
+     "mainland_us": 7,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.507,
+    "place_approx": "Pearl City"
+   },
+   "96786": {
+    "n": 110,
+    "counts": {
+     "hawaii_total": 107,
+     "hawaii_oahu_zip": 107,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 3,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9727,
+     "hawaii_oahu_zip": 0.9727,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.0273,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0273
+    },
+    "dollar_volume_usd": 83508869,
+    "dollar_share": {
+     "hawaii_total": 0.9756,
+     "mainland_us": 0.0244,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 795000,
+     "mainland_us": 850000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 107,
+     "mainland_us": 3,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.3636,
+    "place_approx": "Wahiawa"
+   },
+   "96789": {
+    "n": 741,
+    "counts": {
+     "hawaii_total": 712,
+     "hawaii_oahu_zip": 708,
+     "hawaii_neighbor_island_zip": 4,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 27,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.9609,
+     "hawaii_oahu_zip": 0.9555,
+     "hawaii_neighbor_island_zip": 0.0054,
+     "mainland_us": 0.0364,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0027,
+     "non_hawaii_total": 0.0391
+    },
+    "dollar_volume_usd": 521059852,
+    "dollar_share": {
+     "hawaii_total": 0.9593,
+     "mainland_us": 0.0386,
+     "foreign": 0.0,
+     "territory_military": 0.0021
+    },
+    "median_price_usd": {
+     "hawaii_total": 590000.0,
+     "mainland_us": 625000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 712,
+     "mainland_us": 27,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.668,
+    "place_approx": "Mililani"
+   },
+   "96791": {
+    "n": 78,
+    "counts": {
+     "hawaii_total": 64,
+     "hawaii_oahu_zip": 64,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 14,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8205,
+     "hawaii_oahu_zip": 0.8205,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.1795,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1795
+    },
+    "dollar_volume_usd": 79402250,
+    "dollar_share": {
+     "hawaii_total": 0.82,
+     "mainland_us": 0.18,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 900000.0,
+     "mainland_us": 780000.0,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 64,
+     "mainland_us": 14,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.6154,
+    "place_approx": "Waialua"
+   },
+   "96792": {
+    "n": 517,
+    "counts": {
+     "hawaii_total": 441,
+     "hawaii_oahu_zip": 435,
+     "hawaii_neighbor_island_zip": 6,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 73,
+     "foreign": 3,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.853,
+     "hawaii_oahu_zip": 0.8414,
+     "hawaii_neighbor_island_zip": 0.0116,
+     "mainland_us": 0.1412,
+     "foreign": 0.0058,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.147
+    },
+    "dollar_volume_usd": 326818329,
+    "dollar_share": {
+     "hawaii_total": 0.8402,
+     "mainland_us": 0.1551,
+     "foreign": 0.0047,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 650000,
+     "mainland_us": 475000,
+     "foreign": 270000
+    },
+    "median_price_n": {
+     "hawaii_total": 441,
+     "mainland_us": 73,
+     "foreign": 3
+    },
+    "condo_share_of_deals": 0.5126,
+    "place_approx": "Waianae"
+   },
+   "96797": {
+    "n": 566,
+    "counts": {
+     "hawaii_total": 550,
+     "hawaii_oahu_zip": 548,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 15,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 1
+    },
+    "share": {
+     "hawaii_total": 0.9717,
+     "hawaii_oahu_zip": 0.9682,
+     "hawaii_neighbor_island_zip": 0.0035,
+     "mainland_us": 0.0265,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0018,
+     "non_hawaii_total": 0.0283
+    },
+    "dollar_volume_usd": 441879452,
+    "dollar_share": {
+     "hawaii_total": 0.9716,
+     "mainland_us": 0.0258,
+     "foreign": 0.0,
+     "territory_military": 0.0025
+    },
+    "median_price_usd": {
+     "hawaii_total": 820000.0,
+     "mainland_us": 608000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 550,
+     "mainland_us": 15,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.5813,
+    "place_approx": "Waipahu"
+   },
+   "96813": {
+    "n": 461,
+    "counts": {
+     "hawaii_total": 400,
+     "hawaii_oahu_zip": 385,
+     "hawaii_neighbor_island_zip": 15,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 55,
+     "foreign": 5,
+     "us_territory": 1,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8677,
+     "hawaii_oahu_zip": 0.8351,
+     "hawaii_neighbor_island_zip": 0.0325,
+     "mainland_us": 0.1193,
+     "foreign": 0.0108,
+     "us_territory": 0.0022,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1323
+    },
+    "dollar_volume_usd": 308766445,
+    "dollar_share": {
+     "hawaii_total": 0.8618,
+     "mainland_us": 0.1231,
+     "foreign": 0.0131,
+     "territory_military": 0.002
+    },
+    "median_price_usd": {
+     "hawaii_total": 600000.0,
+     "mainland_us": 629000,
+     "foreign": 855000
+    },
+    "median_price_n": {
+     "hawaii_total": 400,
+     "mainland_us": 55,
+     "foreign": 5
+    },
+    "condo_share_of_deals": 0.9458,
+    "place_approx": "Downtown/Punchbowl/Kakaako (part)"
+   },
+   "96814": {
+    "n": 1148,
+    "counts": {
+     "hawaii_total": 847,
+     "hawaii_oahu_zip": 825,
+     "hawaii_neighbor_island_zip": 22,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 206,
+     "foreign": 91,
+     "us_territory": 4,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.7378,
+     "hawaii_oahu_zip": 0.7186,
+     "hawaii_neighbor_island_zip": 0.0192,
+     "mainland_us": 0.1794,
+     "foreign": 0.0793,
+     "us_territory": 0.0035,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.2622
+    },
+    "dollar_volume_usd": 1166856272,
+    "dollar_share": {
+     "hawaii_total": 0.6705,
+     "mainland_us": 0.2231,
+     "foreign": 0.1046,
+     "territory_military": 0.0018
+    },
+    "median_price_usd": {
+     "hawaii_total": 760000,
+     "mainland_us": 886500.0,
+     "foreign": 758000
+    },
+    "median_price_n": {
+     "hawaii_total": 847,
+     "mainland_us": 206,
+     "foreign": 91
+    },
+    "condo_share_of_deals": 0.9895,
+    "place_approx": "Ala Moana/Kakaako"
+   },
+   "96815": {
+    "n": 1766,
+    "counts": {
+     "hawaii_total": 946,
+     "hawaii_oahu_zip": 921,
+     "hawaii_neighbor_island_zip": 25,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 689,
+     "foreign": 121,
+     "us_territory": 5,
+     "military_apo_fpo": 5
+    },
+    "share": {
+     "hawaii_total": 0.5357,
+     "hawaii_oahu_zip": 0.5215,
+     "hawaii_neighbor_island_zip": 0.0142,
+     "mainland_us": 0.3901,
+     "foreign": 0.0685,
+     "us_territory": 0.0028,
+     "military_apo_fpo": 0.0028,
+     "non_hawaii_total": 0.4643
+    },
+    "dollar_volume_usd": 1238363588,
+    "dollar_share": {
+     "hawaii_total": 0.5132,
+     "mainland_us": 0.3676,
+     "foreign": 0.1136,
+     "territory_military": 0.0056
+    },
+    "median_price_usd": {
+     "hawaii_total": 520000.0,
+     "mainland_us": 540000,
+     "foreign": 780000
+    },
+    "median_price_n": {
+     "hawaii_total": 946,
+     "mainland_us": 689,
+     "foreign": 121
+    },
+    "condo_share_of_deals": 0.9813,
+    "place_approx": "Waikiki/Diamond Head"
+   },
+   "96816": {
+    "n": 403,
+    "counts": {
+     "hawaii_total": 371,
+     "hawaii_oahu_zip": 363,
+     "hawaii_neighbor_island_zip": 8,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 30,
+     "foreign": 2,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9206,
+     "hawaii_oahu_zip": 0.9007,
+     "hawaii_neighbor_island_zip": 0.0199,
+     "mainland_us": 0.0744,
+     "foreign": 0.005,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0794
+    },
+    "dollar_volume_usd": 839922381,
+    "dollar_share": {
+     "hawaii_total": 0.8595,
+     "mainland_us": 0.1339,
+     "foreign": 0.0066,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1320000,
+     "mainland_us": 1945000.0,
+     "foreign": 2755000.0
+    },
+    "median_price_n": {
+     "hawaii_total": 371,
+     "mainland_us": 30,
+     "foreign": 2
+    },
+    "condo_share_of_deals": 0.268,
+    "place_approx": "Kaimuki/Kahala/Palolo"
+   },
+   "96817": {
+    "n": 329,
+    "counts": {
+     "hawaii_total": 315,
+     "hawaii_oahu_zip": 314,
+     "hawaii_neighbor_island_zip": 1,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 14,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9574,
+     "hawaii_oahu_zip": 0.9544,
+     "hawaii_neighbor_island_zip": 0.003,
+     "mainland_us": 0.0426,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0426
+    },
+    "dollar_volume_usd": 255770348,
+    "dollar_share": {
+     "hawaii_total": 0.9708,
+     "mainland_us": 0.0292,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 560000,
+     "mainland_us": 500625.0,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 315,
+     "mainland_us": 14,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.6565,
+    "place_approx": "Kalihi/Nuuanu"
+   },
+   "96819": {
+    "n": 465,
+    "counts": {
+     "hawaii_total": 446,
+     "hawaii_oahu_zip": 440,
+     "hawaii_neighbor_island_zip": 6,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 18,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9591,
+     "hawaii_oahu_zip": 0.9462,
+     "hawaii_neighbor_island_zip": 0.0129,
+     "mainland_us": 0.0387,
+     "foreign": 0.0022,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0409
+    },
+    "dollar_volume_usd": 320168634,
+    "dollar_share": {
+     "hawaii_total": 0.9596,
+     "mainland_us": 0.0394,
+     "foreign": 0.001,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 524500.0,
+     "mainland_us": 559500.0,
+     "foreign": 330000
+    },
+    "median_price_n": {
+     "hawaii_total": 446,
+     "mainland_us": 18,
+     "foreign": 1
+    },
+    "condo_share_of_deals": 0.714,
+    "place_approx": "Kalihi/Moanalua/Airport"
+   },
+   "96821": {
+    "n": 228,
+    "counts": {
+     "hawaii_total": 199,
+     "hawaii_oahu_zip": 197,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 28,
+     "foreign": 1,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.8728,
+     "hawaii_oahu_zip": 0.864,
+     "hawaii_neighbor_island_zip": 0.0088,
+     "mainland_us": 0.1228,
+     "foreign": 0.0044,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1272
+    },
+    "dollar_volume_usd": 520438028,
+    "dollar_share": {
+     "hawaii_total": 0.8024,
+     "mainland_us": 0.1726,
+     "foreign": 0.025,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 1800000,
+     "mainland_us": 2787500.0,
+     "foreign": 13000000
+    },
+    "median_price_n": {
+     "hawaii_total": 199,
+     "mainland_us": 28,
+     "foreign": 1
+    },
+    "condo_share_of_deals": 0.0658,
+    "place_approx": "Aina Haina/Waialae-Kahala"
+   },
+   "96822": {
+    "n": 474,
+    "counts": {
+     "hawaii_total": 439,
+     "hawaii_oahu_zip": 435,
+     "hawaii_neighbor_island_zip": 4,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 35,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9262,
+     "hawaii_oahu_zip": 0.9177,
+     "hawaii_neighbor_island_zip": 0.0084,
+     "mainland_us": 0.0738,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0738
+    },
+    "dollar_volume_usd": 412943527,
+    "dollar_share": {
+     "hawaii_total": 0.9351,
+     "mainland_us": 0.0649,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 478000,
+     "mainland_us": 465000,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 439,
+     "mainland_us": 35,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.7468,
+    "place_approx": "Manoa/Makiki"
+   },
+   "96825": {
+    "n": 542,
+    "counts": {
+     "hawaii_total": 458,
+     "hawaii_oahu_zip": 456,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 79,
+     "foreign": 3,
+     "us_territory": 1,
+     "military_apo_fpo": 1
+    },
+    "share": {
+     "hawaii_total": 0.845,
+     "hawaii_oahu_zip": 0.8413,
+     "hawaii_neighbor_island_zip": 0.0037,
+     "mainland_us": 0.1458,
+     "foreign": 0.0055,
+     "us_territory": 0.0018,
+     "military_apo_fpo": 0.0018,
+     "non_hawaii_total": 0.155
+    },
+    "dollar_volume_usd": 744436651,
+    "dollar_share": {
+     "hawaii_total": 0.8122,
+     "mainland_us": 0.1804,
+     "foreign": 0.0047,
+     "territory_military": 0.0027
+    },
+    "median_price_usd": {
+     "hawaii_total": 1210000.0,
+     "mainland_us": 1210000,
+     "foreign": 1250000
+    },
+    "median_price_n": {
+     "hawaii_total": 458,
+     "mainland_us": 79,
+     "foreign": 3
+    },
+    "condo_share_of_deals": 0.5295,
+    "place_approx": "Hawaii Kai"
+   },
+   "96826": {
+    "n": 264,
+    "counts": {
+     "hawaii_total": 242,
+     "hawaii_oahu_zip": 236,
+     "hawaii_neighbor_island_zip": 6,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 22,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.9167,
+     "hawaii_oahu_zip": 0.8939,
+     "hawaii_neighbor_island_zip": 0.0227,
+     "mainland_us": 0.0833,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0833
+    },
+    "dollar_volume_usd": 171209202,
+    "dollar_share": {
+     "hawaii_total": 0.9136,
+     "mainland_us": 0.0864,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 476000.0,
+     "mainland_us": 455000.0,
+     "foreign": null
+    },
+    "median_price_n": {
+     "hawaii_total": 242,
+     "mainland_us": 22,
+     "foreign": 0
+    },
+    "condo_share_of_deals": 0.8523,
+    "place_approx": "Moiliili/McCully"
+   }
+  },
+  "situs_zip_coverage": {
+   "analyzed_deals": 11851,
+   "legdat_parid": 11590,
+   "legdat_same_tmk8_mode": 220,
+   "none": 41
+  },
+  "by_tax_class_dominant_housing": {
+   "1 (inferred Residential)": {
+    "n": 11192,
+    "counts": {
+     "hawaii_total": 9666,
+     "hawaii_oahu_zip": 9556,
+     "hawaii_neighbor_island_zip": 110,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 1351,
+     "foreign": 150,
+     "us_territory": 14,
+     "military_apo_fpo": 11
+    },
+    "share": {
+     "hawaii_total": 0.8637,
+     "hawaii_oahu_zip": 0.8538,
+     "hawaii_neighbor_island_zip": 0.0098,
+     "mainland_us": 0.1207,
+     "foreign": 0.0134,
+     "us_territory": 0.0013,
+     "military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.1363
+    }
+   },
+   "7 (inferred Hotel & Resort)": {
+    "n": 659,
+    "counts": {
+     "hawaii_total": 276,
+     "hawaii_oahu_zip": 266,
+     "hawaii_neighbor_island_zip": 10,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 285,
+     "foreign": 95,
+     "us_territory": 1,
+     "military_apo_fpo": 2
+    },
+    "share": {
+     "hawaii_total": 0.4188,
+     "hawaii_oahu_zip": 0.4036,
+     "hawaii_neighbor_island_zip": 0.0152,
+     "mainland_us": 0.4325,
+     "foreign": 0.1442,
+     "us_territory": 0.0015,
+     "military_apo_fpo": 0.003,
+     "non_hawaii_total": 0.5812
+    }
+   }
+  },
+  "luxury_3m_plus": {
+   "definition": "deal price >= $3,000,000 (2023-2025 recorded sales still held by the buyer)",
+   "excl_institutional": {
+    "n": 269,
+    "counts": {
+     "hawaii_total": 180,
+     "hawaii_oahu_zip": 178,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 73,
+     "foreign": 16,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.6691,
+     "hawaii_oahu_zip": 0.6617,
+     "hawaii_neighbor_island_zip": 0.0074,
+     "mainland_us": 0.2714,
+     "foreign": 0.0595,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3309
+    },
+    "dollar_volume_usd": 1454504492,
+    "dollar_share": {
+     "hawaii_total": 0.629,
+     "mainland_us": 0.2928,
+     "foreign": 0.0782,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 3912500.0,
+     "mainland_us": 4798000,
+     "foreign": 4750000.0
+    },
+    "median_price_n": {
+     "hawaii_total": 180,
+     "mainland_us": 73,
+     "foreign": 16
+    }
+   },
+   "institutional_address_deals_in_segment": 12,
+   "institutional_origin_counts": {
+    "hawaii_oahu_zip": 12
+   },
+   "incl_institutional": {
+    "n": 281,
+    "counts": {
+     "hawaii_total": 192,
+     "hawaii_oahu_zip": 190,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 73,
+     "foreign": 16,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.6833,
+     "hawaii_oahu_zip": 0.6762,
+     "hawaii_neighbor_island_zip": 0.0071,
+     "mainland_us": 0.2598,
+     "foreign": 0.0569,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3167
+    },
+    "dollar_volume_usd": 1506942120,
+    "dollar_share": {
+     "hawaii_total": 0.6419,
+     "mainland_us": 0.2826,
+     "foreign": 0.0755,
+     "territory_military": 0.0
+    }
+   },
+   "by_year_excl_institutional": {
+    "2023": {
+     "n": 104,
+     "counts": {
+      "hawaii_total": 64,
+      "hawaii_oahu_zip": 64,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 33,
+      "foreign": 7,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.6154,
+      "hawaii_oahu_zip": 0.6154,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.3173,
+      "foreign": 0.0673,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.3846
+     }
+    },
+    "2024": {
+     "n": 109,
+     "counts": {
+      "hawaii_total": 73,
+      "hawaii_oahu_zip": 72,
+      "hawaii_neighbor_island_zip": 1,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 30,
+      "foreign": 6,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.6697,
+      "hawaii_oahu_zip": 0.6606,
+      "hawaii_neighbor_island_zip": 0.0092,
+      "mainland_us": 0.2752,
+      "foreign": 0.055,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.3303
+     }
+    },
+    "2025": {
+     "n": 56,
+     "counts": {
+      "hawaii_total": 43,
+      "hawaii_oahu_zip": 42,
+      "hawaii_neighbor_island_zip": 1,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 10,
+      "foreign": 3,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.7679,
+      "hawaii_oahu_zip": 0.75,
+      "hawaii_neighbor_island_zip": 0.0179,
+      "mainland_us": 0.1786,
+      "foreign": 0.0536,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.2321
+     }
+    }
+   },
+   "by_type_excl_institutional": {
+    "condo_cpr_unit": {
+     "n": 72,
+     "counts": {
+      "hawaii_total": 37,
+      "hawaii_oahu_zip": 37,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 23,
+      "foreign": 12,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.5139,
+      "hawaii_oahu_zip": 0.5139,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.3194,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.4861
+     },
+     "dollar_share": {
+      "hawaii_total": 0.4541,
+      "mainland_us": 0.3544,
+      "foreign": 0.1915,
+      "territory_military": 0.0
+     }
+    },
+    "house_non_cpr": {
+     "n": 197,
+     "counts": {
+      "hawaii_total": 143,
+      "hawaii_oahu_zip": 141,
+      "hawaii_neighbor_island_zip": 2,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 50,
+      "foreign": 4,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.7259,
+      "hawaii_oahu_zip": 0.7157,
+      "hawaii_neighbor_island_zip": 0.0102,
+      "mainland_us": 0.2538,
+      "foreign": 0.0203,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.2741
+     },
+     "dollar_share": {
+      "hawaii_total": 0.6965,
+      "mainland_us": 0.269,
+      "foreign": 0.0346,
+      "territory_military": 0.0
+     }
+    }
+   },
+   "by_tmk_zone_excl_institutional": {
+    "1": {
+     "n": 3,
+     "counts": {
+      "hawaii_total": 3,
+      "hawaii_oahu_zip": 3,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 0,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "2": {
+     "n": 66,
+     "counts": {
+      "hawaii_total": 40,
+      "hawaii_oahu_zip": 40,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 16,
+      "foreign": 10,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": false
+    },
+    "3": {
+     "n": 139,
+     "counts": {
+      "hawaii_total": 100,
+      "hawaii_oahu_zip": 99,
+      "hawaii_neighbor_island_zip": 1,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 34,
+      "foreign": 5,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": false
+    },
+    "4": {
+     "n": 43,
+     "counts": {
+      "hawaii_total": 26,
+      "hawaii_oahu_zip": 26,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 16,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": false
+    },
+    "5": {
+     "n": 10,
+     "counts": {
+      "hawaii_total": 5,
+      "hawaii_oahu_zip": 5,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 5,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "6": {
+     "n": 7,
+     "counts": {
+      "hawaii_total": 5,
+      "hawaii_oahu_zip": 4,
+      "hawaii_neighbor_island_zip": 1,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 2,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "9": {
+     "n": 1,
+     "counts": {
+      "hawaii_total": 1,
+      "hawaii_oahu_zip": 1,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 0,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    }
+   },
+   "top_mainland_states": [
+    {
+     "state": "CA",
+     "name": "California",
+     "n": 29,
+     "share_of_mainland": 0.3973
+    },
+    {
+     "state": "WA",
+     "name": "Washington",
+     "n": 9,
+     "share_of_mainland": 0.1233
+    },
+    {
+     "state": "TX",
+     "name": "Texas",
+     "n": 8,
+     "share_of_mainland": 0.1096
+    },
+    {
+     "state": "NV",
+     "name": "Nevada",
+     "n": 4,
+     "share_of_mainland": 0.0548
+    },
+    {
+     "state": "FL",
+     "name": "Florida",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "state": "CO",
+     "name": "Colorado",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "state": "UT",
+     "name": "Utah",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "state": "NY",
+     "name": "New York",
+     "n": 2,
+     "share_of_mainland": 0.0274
+    },
+    {
+     "state": "MA",
+     "name": "Massachusetts",
+     "n": 2,
+     "share_of_mainland": 0.0274
+    },
+    {
+     "state": "MD",
+     "name": "Maryland",
+     "n": 2,
+     "share_of_mainland": 0.0274
+    }
+   ],
+   "top_mainland_metros_approx": [
+    {
+     "metro_approx_zip3": "San Francisco Bay Area CA",
+     "n": 16,
+     "share_of_mainland": 0.2192
+    },
+    {
+     "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+     "n": 12,
+     "share_of_mainland": 0.1644
+    },
+    {
+     "metro_approx_zip3": "Seattle-Tacoma WA",
+     "n": 8,
+     "share_of_mainland": 0.1096
+    },
+    {
+     "metro_approx_zip3": "Houston TX",
+     "n": 4,
+     "share_of_mainland": 0.0548
+    },
+    {
+     "metro_approx_zip3": "Las Vegas NV",
+     "n": 4,
+     "share_of_mainland": 0.0548
+    },
+    {
+     "metro_approx_zip3": "Denver-Boulder CO",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "metro_approx_zip3": "New York City NY-NJ",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "metro_approx_zip3": "Dallas-Fort Worth TX",
+     "n": 3,
+     "share_of_mainland": 0.0411
+    },
+    {
+     "metro_approx_zip3": "Salt Lake City UT",
+     "n": 2,
+     "share_of_mainland": 0.0274
+    },
+    {
+     "metro_approx_zip3": "Boston MA",
+     "n": 2,
+     "share_of_mainland": 0.0274
+    }
+   ],
+   "top_foreign_countries": [
+    {
+     "country": "Japan",
+     "n": 14,
+     "share_of_foreign": 0.875
+    },
+    {
+     "country": "South Korea",
+     "n": 1,
+     "share_of_foreign": 0.0625
+    },
+    {
+     "country": "Cayman Islands",
+     "n": 1,
+     "share_of_foreign": 0.0625
+    }
+   ],
+   "deals_with_same_price_date_in_another_tmk8_group": 0,
+   "multi_parcel_deals": 0
+  },
+  "ultra_10m_plus": {
+   "definition": "deal price >= $10,000,000",
+   "excl_institutional": {
+    "n": 14,
+    "small_cell_n_lt_20": true,
+    "counts": {
+     "hawaii_total": 5,
+     "hawaii_oahu_zip": 5,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 6,
+     "foreign": 3,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.3571,
+     "hawaii_oahu_zip": 0.3571,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.4286,
+     "foreign": 0.2143,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.6429
+    },
+    "dollar_volume_usd": 249863000,
+    "dollar_share": {
+     "hawaii_total": 0.4685,
+     "mainland_us": 0.3279,
+     "foreign": 0.2036,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 12000000,
+     "mainland_us": 14325000.0,
+     "foreign": 13000000
+    },
+    "median_price_n": {
+     "hawaii_total": 5,
+     "mainland_us": 6,
+     "foreign": 3
+    }
+   },
+   "institutional_address_deals_in_segment": 0,
+   "institutional_origin_counts": {},
+   "incl_institutional": {
+    "n": 14,
+    "small_cell_n_lt_20": true,
+    "counts": {
+     "hawaii_total": 5,
+     "hawaii_oahu_zip": 5,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 6,
+     "foreign": 3,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.3571,
+     "hawaii_oahu_zip": 0.3571,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.4286,
+     "foreign": 0.2143,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.6429
+    },
+    "dollar_volume_usd": 249863000,
+    "dollar_share": {
+     "hawaii_total": 0.4685,
+     "mainland_us": 0.3279,
+     "foreign": 0.2036,
+     "territory_military": 0.0
+    }
+   },
+   "by_year_excl_institutional": {
+    "2023": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 1,
+      "hawaii_oahu_zip": 1,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 4,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.1667,
+      "hawaii_oahu_zip": 0.1667,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.6667,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.8333
+     }
+    },
+    "2024": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 2,
+      "hawaii_oahu_zip": 2,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 2,
+      "foreign": 2,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.3333,
+      "hawaii_oahu_zip": 0.3333,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.3333,
+      "foreign": 0.3333,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.6667
+     }
+    },
+    "2025": {
+     "n": 2,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 2,
+      "hawaii_oahu_zip": 2,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 0,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 1.0,
+      "hawaii_oahu_zip": 1.0,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.0,
+      "foreign": 0.0,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.0
+     }
+    }
+   },
+   "by_type_excl_institutional": {
+    "condo_cpr_unit": {
+     "n": 6,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 2,
+      "hawaii_oahu_zip": 2,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 3,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.3333,
+      "hawaii_oahu_zip": 0.3333,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.5,
+      "foreign": 0.1667,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.6667
+     },
+     "dollar_share": {
+      "hawaii_total": 0.2532,
+      "mainland_us": 0.4347,
+      "foreign": 0.3122,
+      "territory_military": 0.0
+     }
+    },
+    "house_non_cpr": {
+     "n": 8,
+     "small_cell_n_lt_20": true,
+     "counts": {
+      "hawaii_total": 3,
+      "hawaii_oahu_zip": 3,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 3,
+      "foreign": 2,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "share": {
+      "hawaii_total": 0.375,
+      "hawaii_oahu_zip": 0.375,
+      "hawaii_neighbor_island_zip": 0.0,
+      "mainland_us": 0.375,
+      "foreign": 0.25,
+      "us_territory": 0.0,
+      "military_apo_fpo": 0.0,
+      "non_hawaii_total": 0.625
+     },
+     "dollar_share": {
+      "hawaii_total": 0.5857,
+      "mainland_us": 0.2698,
+      "foreign": 0.1445,
+      "territory_military": 0.0
+     }
+    }
+   },
+   "by_tmk_zone_excl_institutional": {
+    "2": {
+     "n": 3,
+     "counts": {
+      "hawaii_total": 0,
+      "hawaii_oahu_zip": 0,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 2,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "3": {
+     "n": 6,
+     "counts": {
+      "hawaii_total": 3,
+      "hawaii_oahu_zip": 3,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 2,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "4": {
+     "n": 3,
+     "counts": {
+      "hawaii_total": 1,
+      "hawaii_oahu_zip": 1,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 1,
+      "foreign": 1,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "5": {
+     "n": 1,
+     "counts": {
+      "hawaii_total": 1,
+      "hawaii_oahu_zip": 1,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 0,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    },
+    "6": {
+     "n": 1,
+     "counts": {
+      "hawaii_total": 0,
+      "hawaii_oahu_zip": 0,
+      "hawaii_neighbor_island_zip": 0,
+      "hawaii_zip_unknown": 0,
+      "mainland_us": 1,
+      "foreign": 0,
+      "us_territory": 0,
+      "military_apo_fpo": 0
+     },
+     "small_cell_n_lt_20": true
+    }
+   },
+   "top_mainland_states": [
+    {
+     "state": "CA",
+     "name": "California",
+     "n": 4,
+     "share_of_mainland": 0.6667
+    },
+    {
+     "state": "NY",
+     "name": "New York",
+     "n": 1,
+     "share_of_mainland": 0.1667
+    },
+    {
+     "state": "UT",
+     "name": "Utah",
+     "n": 1,
+     "share_of_mainland": 0.1667
+    }
+   ],
+   "top_mainland_metros_approx": [
+    {
+     "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+     "n": 2,
+     "share_of_mainland": 0.3333
+    },
+    {
+     "metro_approx_zip3": "San Francisco Bay Area CA",
+     "n": 2,
+     "share_of_mainland": 0.3333
+    },
+    {
+     "metro_approx_zip3": "New York City NY-NJ",
+     "n": 1,
+     "share_of_mainland": 0.1667
+    },
+    {
+     "metro_approx_zip3": "Salt Lake City UT",
+     "n": 1,
+     "share_of_mainland": 0.1667
+    }
+   ],
+   "top_foreign_countries": [
+    {
+     "country": "Japan",
+     "n": 2,
+     "share_of_foreign": 0.6667
+    },
+    {
+     "country": "Cayman Islands",
+     "n": 1,
+     "share_of_foreign": 0.3333
+    }
+   ],
+   "deals_with_same_price_date_in_another_tmk8_group": 0,
+   "multi_parcel_deals": 0
+  },
+  "luxury_3m_10m_only": {
+   "definition": "$3M <= price < $10M",
+   "excl_institutional": {
+    "n": 255,
+    "counts": {
+     "hawaii_total": 175,
+     "hawaii_oahu_zip": 173,
+     "hawaii_neighbor_island_zip": 2,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 67,
+     "foreign": 13,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.6863,
+     "hawaii_oahu_zip": 0.6784,
+     "hawaii_neighbor_island_zip": 0.0078,
+     "mainland_us": 0.2627,
+     "foreign": 0.051,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3137
+    },
+    "dollar_volume_usd": 1204641492,
+    "dollar_share": {
+     "hawaii_total": 0.6623,
+     "mainland_us": 0.2855,
+     "foreign": 0.0522,
+     "territory_military": 0.0
+    },
+    "median_price_usd": {
+     "hawaii_total": 3875000,
+     "mainland_us": 4400000,
+     "foreign": 4600000
+    },
+    "median_price_n": {
+     "hawaii_total": 175,
+     "mainland_us": 67,
+     "foreign": 13
+    }
+   },
+   "top_mainland_states": [
+    {
+     "state": "CA",
+     "name": "California",
+     "n": 25,
+     "share_of_mainland": 0.3731
+    },
+    {
+     "state": "WA",
+     "name": "Washington",
+     "n": 9,
+     "share_of_mainland": 0.1343
+    },
+    {
+     "state": "TX",
+     "name": "Texas",
+     "n": 8,
+     "share_of_mainland": 0.1194
+    },
+    {
+     "state": "NV",
+     "name": "Nevada",
+     "n": 4,
+     "share_of_mainland": 0.0597
+    },
+    {
+     "state": "FL",
+     "name": "Florida",
+     "n": 3,
+     "share_of_mainland": 0.0448
+    },
+    {
+     "state": "CO",
+     "name": "Colorado",
+     "n": 3,
+     "share_of_mainland": 0.0448
+    },
+    {
+     "state": "UT",
+     "name": "Utah",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    },
+    {
+     "state": "MA",
+     "name": "Massachusetts",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    },
+    {
+     "state": "MD",
+     "name": "Maryland",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    },
+    {
+     "state": "MI",
+     "name": "Michigan",
+     "n": 1,
+     "share_of_mainland": 0.0149
+    }
+   ],
+   "top_mainland_metros_approx": [
+    {
+     "metro_approx_zip3": "San Francisco Bay Area CA",
+     "n": 14,
+     "share_of_mainland": 0.209
+    },
+    {
+     "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+     "n": 10,
+     "share_of_mainland": 0.1493
+    },
+    {
+     "metro_approx_zip3": "Seattle-Tacoma WA",
+     "n": 8,
+     "share_of_mainland": 0.1194
+    },
+    {
+     "metro_approx_zip3": "Houston TX",
+     "n": 4,
+     "share_of_mainland": 0.0597
+    },
+    {
+     "metro_approx_zip3": "Las Vegas NV",
+     "n": 4,
+     "share_of_mainland": 0.0597
+    },
+    {
+     "metro_approx_zip3": "Denver-Boulder CO",
+     "n": 3,
+     "share_of_mainland": 0.0448
+    },
+    {
+     "metro_approx_zip3": "Dallas-Fort Worth TX",
+     "n": 3,
+     "share_of_mainland": 0.0448
+    },
+    {
+     "metro_approx_zip3": "New York City NY-NJ",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    },
+    {
+     "metro_approx_zip3": "Boston MA",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    },
+    {
+     "metro_approx_zip3": "Washington DC-MD-VA",
+     "n": 2,
+     "share_of_mainland": 0.0299
+    }
+   ],
+   "top_foreign_countries": [
+    {
+     "country": "Japan",
+     "n": 12,
+     "share_of_foreign": 0.9231
+    },
+    {
+     "country": "South Korea",
+     "n": 1,
+     "share_of_foreign": 0.0769
+    }
+   ]
+  },
+  "top_mainland_states": [
+   {
+    "state": "CA",
+    "name": "California",
+    "n": 872,
+    "share_of_mainland": 0.533
+   },
+   {
+    "state": "WA",
+    "name": "Washington",
+    "n": 128,
+    "share_of_mainland": 0.0782
+   },
+   {
+    "state": "TX",
+    "name": "Texas",
+    "n": 74,
+    "share_of_mainland": 0.0452
+   },
+   {
+    "state": "NV",
+    "name": "Nevada",
+    "n": 70,
+    "share_of_mainland": 0.0428
+   },
+   {
+    "state": "NY",
+    "name": "New York",
+    "n": 58,
+    "share_of_mainland": 0.0355
+   },
+   {
+    "state": "CO",
+    "name": "Colorado",
+    "n": 39,
+    "share_of_mainland": 0.0238
+   },
+   {
+    "state": "FL",
+    "name": "Florida",
+    "n": 38,
+    "share_of_mainland": 0.0232
+   },
+   {
+    "state": "OR",
+    "name": "Oregon",
+    "n": 27,
+    "share_of_mainland": 0.0165
+   },
+   {
+    "state": "AZ",
+    "name": "Arizona",
+    "n": 27,
+    "share_of_mainland": 0.0165
+   },
+   {
+    "state": "NJ",
+    "name": "New Jersey",
+    "n": 24,
+    "share_of_mainland": 0.0147
+   },
+   {
+    "state": "UT",
+    "name": "Utah",
+    "n": 23,
+    "share_of_mainland": 0.0141
+   },
+   {
+    "state": "MD",
+    "name": "Maryland",
+    "n": 20,
+    "share_of_mainland": 0.0122
+   },
+   {
+    "state": "IL",
+    "name": "Illinois",
+    "n": 20,
+    "share_of_mainland": 0.0122
+   },
+   {
+    "state": "VA",
+    "name": "Virginia",
+    "n": 17,
+    "share_of_mainland": 0.0104
+   },
+   {
+    "state": "NC",
+    "name": "North Carolina",
+    "n": 16,
+    "share_of_mainland": 0.0098
+   }
+  ],
+  "top_mainland_metros_approx": [
+   {
+    "metro_approx_zip3": "San Francisco Bay Area CA",
+    "n": 429,
+    "share_of_mainland": 0.2622
+   },
+   {
+    "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+    "n": 276,
+    "share_of_mainland": 0.1687
+   },
+   {
+    "metro_approx_zip3": "Seattle-Tacoma WA",
+    "n": 108,
+    "share_of_mainland": 0.066
+   },
+   {
+    "metro_approx_zip3": "New York City NY-NJ",
+    "n": 76,
+    "share_of_mainland": 0.0465
+   },
+   {
+    "metro_approx_zip3": "San Diego CA",
+    "n": 68,
+    "share_of_mainland": 0.0416
+   },
+   {
+    "metro_approx_zip3": "Las Vegas NV",
+    "n": 53,
+    "share_of_mainland": 0.0324
+   },
+   {
+    "metro_approx_zip3": "Sacramento CA",
+    "n": 35,
+    "share_of_mainland": 0.0214
+   },
+   {
+    "metro_approx_zip3": "Denver-Boulder CO",
+    "n": 32,
+    "share_of_mainland": 0.0196
+   },
+   {
+    "metro_approx_zip3": "Houston TX",
+    "n": 30,
+    "share_of_mainland": 0.0183
+   },
+   {
+    "metro_approx_zip3": "Phoenix AZ",
+    "n": 23,
+    "share_of_mainland": 0.0141
+   },
+   {
+    "metro_approx_zip3": "Portland OR-WA",
+    "n": 20,
+    "share_of_mainland": 0.0122
+   },
+   {
+    "metro_approx_zip3": "Washington DC-MD-VA",
+    "n": 20,
+    "share_of_mainland": 0.0122
+   },
+   {
+    "metro_approx_zip3": "Reno-Tahoe NV/CA",
+    "n": 19,
+    "share_of_mainland": 0.0116
+   },
+   {
+    "metro_approx_zip3": "Salt Lake City UT",
+    "n": 16,
+    "share_of_mainland": 0.0098
+   },
+   {
+    "metro_approx_zip3": "Chicago IL",
+    "n": 16,
+    "share_of_mainland": 0.0098
+   },
+   {
+    "metro_approx_zip3": "Riverside-San Bernardino CA (Inland Empire)",
+    "n": 16,
+    "share_of_mainland": 0.0098
+   },
+   {
+    "metro_approx_zip3": "Dallas-Fort Worth TX",
+    "n": 15,
+    "share_of_mainland": 0.0092
+   },
+   {
+    "metro_approx_zip3": "Boston MA",
+    "n": 15,
+    "share_of_mainland": 0.0092
+   },
+   {
+    "metro_approx_zip3": "Other NC (not mapped)",
+    "n": 14,
+    "share_of_mainland": 0.0086
+   },
+   {
+    "metro_approx_zip3": "Anchorage AK",
+    "n": 13,
+    "share_of_mainland": 0.0079
+   }
+  ],
+  "top_foreign_countries": [
+   {
+    "country": "Japan",
+    "n": 166,
+    "share_of_foreign": 0.6776
+   },
+   {
+    "country": "Canada",
+    "n": 33,
+    "share_of_foreign": 0.1347
+   },
+   {
+    "country": "South Korea",
+    "n": 27,
+    "share_of_foreign": 0.1102
+   },
+   {
+    "country": "China",
+    "n": 5,
+    "share_of_foreign": 0.0204
+   },
+   {
+    "country": "Taiwan",
+    "n": 2,
+    "share_of_foreign": 0.0082
+   },
+   {
+    "country": "Hong Kong",
+    "n": 2,
+    "share_of_foreign": 0.0082
+   },
+   {
+    "country": "Australia",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "New Zealand",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Cayman Islands",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Singapore",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Chile",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Panama",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Switzerland",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Hungary",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   },
+   {
+    "country": "Philippines",
+    "n": 1,
+    "share_of_foreign": 0.0041
+   }
+  ],
+  "top_foreign_countries_by_type": {
+   "condo_cpr_unit": [
+    {
+     "country": "Japan",
+     "n": 159,
+     "share_of_foreign": 0.6737
+    },
+    {
+     "country": "Canada",
+     "n": 33,
+     "share_of_foreign": 0.1398
+    },
+    {
+     "country": "South Korea",
+     "n": 25,
+     "share_of_foreign": 0.1059
+    },
+    {
+     "country": "China",
+     "n": 5,
+     "share_of_foreign": 0.0212
+    },
+    {
+     "country": "Taiwan",
+     "n": 2,
+     "share_of_foreign": 0.0085
+    },
+    {
+     "country": "Hong Kong",
+     "n": 2,
+     "share_of_foreign": 0.0085
+    }
+   ],
+   "house_non_cpr": [
+    {
+     "country": "Japan",
+     "n": 7,
+     "share_of_foreign": 0.7778
+    },
+    {
+     "country": "South Korea",
+     "n": 2,
+     "share_of_foreign": 0.2222
+    }
+   ]
+  },
+  "top_mainland_metros_by_type": {
+   "condo_cpr_unit": [
+    {
+     "metro_approx_zip3": "San Francisco Bay Area CA",
+     "n": 348,
+     "share_of_mainland": 0.2576
+    },
+    {
+     "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+     "n": 235,
+     "share_of_mainland": 0.1739
+    },
+    {
+     "metro_approx_zip3": "Seattle-Tacoma WA",
+     "n": 89,
+     "share_of_mainland": 0.0659
+    },
+    {
+     "metro_approx_zip3": "New York City NY-NJ",
+     "n": 73,
+     "share_of_mainland": 0.054
+    },
+    {
+     "metro_approx_zip3": "San Diego CA",
+     "n": 55,
+     "share_of_mainland": 0.0407
+    },
+    {
+     "metro_approx_zip3": "Las Vegas NV",
+     "n": 39,
+     "share_of_mainland": 0.0289
+    },
+    {
+     "metro_approx_zip3": "Sacramento CA",
+     "n": 28,
+     "share_of_mainland": 0.0207
+    },
+    {
+     "metro_approx_zip3": "Denver-Boulder CO",
+     "n": 27,
+     "share_of_mainland": 0.02
+    }
+   ],
+   "house_non_cpr": [
+    {
+     "metro_approx_zip3": "San Francisco Bay Area CA",
+     "n": 81,
+     "share_of_mainland": 0.2842
+    },
+    {
+     "metro_approx_zip3": "Los Angeles-Long Beach-Anaheim CA",
+     "n": 41,
+     "share_of_mainland": 0.1439
+    },
+    {
+     "metro_approx_zip3": "Seattle-Tacoma WA",
+     "n": 19,
+     "share_of_mainland": 0.0667
+    },
+    {
+     "metro_approx_zip3": "Las Vegas NV",
+     "n": 14,
+     "share_of_mainland": 0.0491
+    },
+    {
+     "metro_approx_zip3": "San Diego CA",
+     "n": 13,
+     "share_of_mainland": 0.0456
+    },
+    {
+     "metro_approx_zip3": "Houston TX",
+     "n": 8,
+     "share_of_mainland": 0.0281
+    },
+    {
+     "metro_approx_zip3": "Reno-Tahoe NV/CA",
+     "n": 7,
+     "share_of_mainland": 0.0246
+    },
+    {
+     "metro_approx_zip3": "Sacramento CA",
+     "n": 7,
+     "share_of_mainland": 0.0246
+    }
+   ]
+  },
+  "neighbor_island_buyers_by_island": {
+   "Maui County": 49,
+   "Hawaii Island": 52,
+   "Kauai": 19
+  },
+  "territory_military_detail": {
+   "us_territory_by_code": {
+    "GU": 10,
+    "AS": 2,
+    "FM": 2,
+    "MP": 1
+   },
+   "military_by_code": {
+    "AE": 5,
+    "AP": 8
+   }
+  },
+  "owner_occupancy_proxy_exemption_2023_2024_sales_class1": {
+   "all": {
+    "hawaii_total": {
+     "n": 8197,
+     "share_with_any_exemption": 0.6205
+    },
+    "mainland_us": {
+     "n": 1137,
+     "share_with_any_exemption": 0.0528
+    },
+    "foreign": {
+     "n": 119,
+     "share_with_any_exemption": 0.0168
+    }
+   },
+   "house_non_cpr": {
+    "hawaii_total": {
+     "n": 2893,
+     "share_with_any_exemption": 0.6827
+    },
+    "mainland_us": {
+     "n": 235,
+     "share_with_any_exemption": 0.0979
+    },
+    "foreign": {
+     "n": 8,
+     "share_with_any_exemption": 0.125,
+     "small_cell_n_lt_20": true
+    }
+   },
+   "condo_cpr_unit": {
+    "hawaii_total": {
+     "n": 5304,
+     "share_with_any_exemption": 0.5865
+    },
+    "mainland_us": {
+     "n": 902,
+     "share_with_any_exemption": 0.041
+    },
+    "foreign": {
+     "n": 111,
+     "share_with_any_exemption": 0.009
+    }
+   }
+  },
+  "oahu_address_buyers_mailing_zip_equals_situs_zip": {
+   "condo_cpr_unit": {
+    "n": 6329,
+    "share": 0.7733
+   },
+   "house_non_cpr": {
+    "n": 3456,
+    "share": 0.866
+   }
+  },
+  "institutional_addresses_10plus_parcels": {
+   "definition": "deal whose current first-owner mailing address (normalized OWNINFO address lines) is shared by >= 10 non-master Oahu parcels on the current roll",
+   "deals": 161,
+   "share_of_classifiable_deals": 0.0134,
+   "distinct_addresses": 57,
+   "parcels_per_address_distribution": {
+    "10-24": 41,
+    "25-99": 14,
+    "100+": 2
+   },
+   "origin_mix_of_address": {
+    "n": 161,
+    "counts": {
+     "hawaii_total": 147,
+     "hawaii_oahu_zip": 147,
+     "hawaii_neighbor_island_zip": 0,
+     "hawaii_zip_unknown": 0,
+     "mainland_us": 14,
+     "foreign": 0,
+     "us_territory": 0,
+     "military_apo_fpo": 0
+    },
+    "share": {
+     "hawaii_total": 0.913,
+     "hawaii_oahu_zip": 0.913,
+     "hawaii_neighbor_island_zip": 0.0,
+     "mainland_us": 0.087,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.087
+    },
+    "dollar_volume_usd": 174999803,
+    "dollar_share": {
+     "hawaii_total": 0.9506,
+     "mainland_us": 0.0494,
+     "foreign": 0.0,
+     "territory_military": 0.0
+    }
+   },
+   "by_year": {
+    "2023": 60,
+    "2024": 66,
+    "2025": 35
+   },
+   "by_type": {
+    "condo_cpr_unit": 134,
+    "house_non_cpr": 27
+   },
+   "by_tier": {
+    "entry_lt_750k": 78,
+    "mid_750k_1.5m": 54,
+    "upper_1.5m_3m": 17,
+    "luxury_3m_10m": 12,
+    "ultra_10m_plus": 0
+   },
+   "by_tmk_zone": {
+    "1": 1,
+    "2": 97,
+    "3": 12,
+    "4": 26,
+    "6": 2,
+    "7": 3,
+    "8": 2,
+    "9": 18
+   },
+   "share_of_deals_by_type": {
+    "house_non_cpr": 0.007,
+    "condo_cpr_unit": 0.0164
+   },
+   "waikiki_tmk_2_6_share": 0.0263
+  },
+  "institutional_threshold_sensitivity": {
+   "5": {
+    "deals_kept": 11630,
+    "share": {
+     "hawaii_total": 0.8389,
+     "mainland_us": 0.1377,
+     "foreign": 0.0211
+    }
+   },
+   "10": {
+    "deals_kept": 11851,
+    "share": {
+     "hawaii_total": 0.8389,
+     "mainland_us": 0.138,
+     "foreign": 0.0207
+    }
+   },
+   "25": {
+    "deals_kept": 11942,
+    "share": {
+     "hawaii_total": 0.8391,
+     "mainland_us": 0.1381,
+     "foreign": 0.0205
+    }
+   },
+   "50": {
+    "deals_kept": 11976,
+    "share": {
+     "hawaii_total": 0.8394,
+     "mainland_us": 0.1378,
+     "foreign": 0.0205
+    }
+   }
+  },
+  "crosscheck_owndat_vs_owninfo_on_joined_deals": {
+   "both": 11438,
+   "cat_match": 11438,
+   "state_both": 11221,
+   "state_match": 11221,
+   "zip_both": 11221,
+   "zip_match": 11221,
+   "ctry_both": 192,
+   "ctry_match": 191
+  },
+  "calibration_vs_title_guaranty": {
+   "tg_oahu": {
+    "2025FY": {
+     "total_sales": 11097,
+     "hawaii": 9202,
+     "other_us": 1539,
+     "foreign": 356,
+     "share": {
+      "hawaii": 0.8292,
+      "other_us": 0.1387,
+      "foreign": 0.0321
+     },
+     "dollar_share_published_pct": {
+      "hawaii": 81,
+      "other_us_states": 15,
+      "foreign": 4
+     },
+     "top_states": [
+      [
+       "HI",
+       9202
+      ],
+      [
+       "CA",
+       656
+      ],
+      [
+       "WA",
+       112
+      ],
+      [
+       "FL",
+       111
+      ],
+      [
+       "TX",
+       83
+      ],
+      [
+       "NV",
+       65
+      ],
+      [
+       "NY",
+       55
+      ],
+      [
+       "UT",
+       48
+      ],
+      [
+       "CO",
+       43
+      ],
+      [
+       "OR",
+       31
+      ]
+     ],
+     "countries": [
+      [
+       "Japan",
+       202
+      ],
+      [
+       "Korea",
+       87
+      ],
+      [
+       "Canada",
+       35
+      ],
+      [
+       "Hong Kong",
+       6
+      ],
+      [
+       "Philippines",
+       5
+      ]
+     ]
+    },
+    "2026H1": {
+     "total_sales": 5026,
+     "hawaii": 4150,
+     "other_us": 681,
+     "foreign": 195,
+     "share": {
+      "hawaii": 0.8257,
+      "other_us": 0.1355,
+      "foreign": 0.0388
+     },
+     "dollar_share_published_pct": {
+      "hawaii": 79,
+      "other_us_states": 15,
+      "foreign": 5
+     },
+     "top_states": [
+      [
+       "HI",
+       4150
+      ],
+      [
+       "CA",
+       271
+      ],
+      [
+       "WA",
+       54
+      ],
+      [
+       "TX",
+       52
+      ],
+      [
+       "FL",
+       24
+      ],
+      [
+       "UT",
+       23
+      ],
+      [
+       "NY",
+       22
+      ],
+      [
+       "NV",
+       21
+      ],
+      [
+       "VA",
+       19
+      ],
+      [
+       "CO",
+       18
+      ]
+     ],
+     "countries": [
+      [
+       "Japan",
+       133
+      ],
+      [
+       "Korea",
+       37
+      ],
+      [
+       "Canada",
+       8
+      ],
+      [
+       "Singapore",
+       4
+      ],
+      [
+       "Hong Kong",
+       2
+      ]
+     ]
+    },
+    "2024FY": {
+     "total_sales": 10607,
+     "hawaii": 8616,
+     "other_us": 1630,
+     "foreign": 361,
+     "share": {
+      "hawaii": 0.8123,
+      "other_us": 0.1537,
+      "foreign": 0.034
+     },
+     "dollar_share_published_pct": {
+      "hawaii": 79,
+      "other_us_states": 15,
+      "foreign": 5
+     },
+     "top_states": [
+      [
+       "HI",
+       8616
+      ],
+      [
+       "CA",
+       735
+      ],
+      [
+       "WA",
+       137
+      ],
+      [
+       "TX",
+       85
+      ],
+      [
+       "NV",
+       73
+      ],
+      [
+       "NY",
+       57
+      ],
+      [
+       "FL",
+       49
+      ],
+      [
+       "AZ",
+       45
+      ],
+      [
+       "UT",
+       42
+      ],
+      [
+       "OR",
+       38
+      ]
+     ],
+     "countries": [
+      [
+       "Japan",
+       260
+      ],
+      [
+       "Korea",
+       40
+      ],
+      [
+       "Canada",
+       31
+      ],
+      [
+       "China",
+       8
+      ],
+      [
+       "Taiwan",
+       3
+      ]
+     ]
+    },
+    "2025H1": {
+     "total_sales": 4613,
+     "hawaii": 3756,
+     "other_us": 717,
+     "foreign": 140,
+     "share": {
+      "hawaii": 0.8142,
+      "other_us": 0.1554,
+      "foreign": 0.0303
+     },
+     "dollar_share_published_pct": {
+      "hawaii": 81,
+      "other_us_states": 16,
+      "foreign": 3
+     },
+     "top_states": [
+      [
+       "HI",
+       3756
+      ],
+      [
+       "CA",
+       308
+      ],
+      [
+       "WA",
+       58
+      ],
+      [
+       "TX",
+       43
+      ],
+      [
+       "NV",
+       38
+      ],
+      [
+       "NY",
+       28
+      ],
+      [
+       "CO",
+       22
+      ],
+      [
+       "FL",
+       22
+      ],
+      [
+       "UT",
+       20
+      ],
+      [
+       "VA",
+       17
+      ]
+     ],
+     "countries": [
+      [
+       "Japan",
+       84
+      ],
+      [
+       "Canada",
+       31
+      ],
+      [
+       "Korea",
+       8
+      ],
+      [
+       "Hong Kong",
+       4
+      ],
+      [
+       "Philippines",
+       4
+      ]
+     ]
+    },
+    "2026Q1": {
+     "total_sales": 2062,
+     "hawaii": 1727,
+     "other_us": 283,
+     "foreign": 52,
+     "share": {
+      "hawaii": 0.8375,
+      "other_us": 0.1372,
+      "foreign": 0.0252
+     },
+     "dollar_share_published_pct": {
+      "hawaii": 81,
+      "other_us_states": 16,
+      "foreign": 3
+     },
+     "top_states": [
+      [
+       "HI",
+       1727
+      ],
+      [
+       "CA",
+       109
+      ],
+      [
+       "WA",
+       24
+      ],
+      [
+       "TX",
+       15
+      ],
+      [
+       "UT",
+       11
+      ],
+      [
+       "NY",
+       10
+      ],
+      [
+       "FL",
+       10
+      ],
+      [
+       "MI",
+       10
+      ],
+      [
+       "CO",
+       9
+      ],
+      [
+       "AZ",
+       8
+      ]
+     ],
+     "countries": [
+      [
+       "Japan",
+       32
+      ],
+      [
+       "Korea",
+       11
+      ],
+      [
+       "Canada",
+       3
+      ],
+      [
+       "Mariana Islands",
+       2
+      ],
+      [
+       "France",
+       2
+      ]
+     ]
+    },
+    "2023FY_from_Q4_2024_edition": {
+     "total_sales": 9835,
+     "share_pct_published": {
+      "hawaii": 80,
+      "other_us_states": 16,
+      "foreign": 4
+     },
+     "foreign_derived": 366,
+     "foreign_share_derived": 0.0372
+    }
+   },
+   "housing": {
+    "2023": {
+     "ours_excl_institutional": {
+      "n": 5082,
+      "hawaii": 0.8288,
+      "other_us_incl_territory_military": 0.1478,
+      "foreign": 0.0234,
+      "mainland_only": 0.1444
+     },
+     "ours_incl_institutional": {
+      "n": 5142,
+      "hawaii": 0.8294,
+      "other_us_incl_territory_military": 0.1474,
+      "foreign": 0.0231,
+      "mainland_only": 0.1441
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 5150,
+      "hawaii": 0.8293,
+      "other_us_incl_territory_military": 0.1476,
+      "foreign": 0.0231,
+      "mainland_only": 0.1443
+     },
+     "tg": {
+      "hawaii": 0.8,
+      "other_us": 0.16,
+      "foreign": 0.0372
+     },
+     "tg_basis": "published integer % (hawaii, other_us) + derived foreign count",
+     "tg_total_sales": 9835,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.5228,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 2.9,
+      "other_us": -1.2,
+      "foreign": -1.4
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 2.9,
+      "other_us": -1.3,
+      "foreign": -1.4
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.7973,
+      "mainland_us": 0.1656,
+      "foreign": 0.0345,
+      "territory_military": 0.0026
+     }
+    },
+    "2024": {
+     "ours_excl_institutional": {
+      "n": 4973,
+      "hawaii": 0.8492,
+      "other_us_incl_territory_military": 0.1329,
+      "foreign": 0.0179,
+      "mainland_only": 0.1311
+     },
+     "ours_incl_institutional": {
+      "n": 5039,
+      "hawaii": 0.85,
+      "other_us_incl_territory_military": 0.1324,
+      "foreign": 0.0177,
+      "mainland_only": 0.1306
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 5042,
+      "hawaii": 0.8499,
+      "other_us_incl_territory_military": 0.1325,
+      "foreign": 0.0177,
+      "mainland_only": 0.1307
+     },
+     "tg": {
+      "hawaii": 0.8123,
+      "other_us": 0.1537,
+      "foreign": 0.034
+     },
+     "tg_basis": "derived counts",
+     "tg_total_sales": 10607,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.4751,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 3.7,
+      "other_us": -2.1,
+      "foreign": -1.6
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 3.8,
+      "other_us": -2.1,
+      "foreign": -1.6
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.8276,
+      "mainland_us": 0.1458,
+      "foreign": 0.0251,
+      "territory_military": 0.0015
+     },
+     "tg_dollar_share_published_pct": {
+      "hawaii": 79,
+      "other_us_states": 15,
+      "foreign": 5
+     }
+    },
+    "2025": {
+     "ours_excl_institutional": {
+      "n": 1796,
+      "hawaii": 0.8391,
+      "other_us_incl_territory_military": 0.1403,
+      "foreign": 0.0206,
+      "mainland_only": 0.1392
+     },
+     "ours_incl_institutional": {
+      "n": 1831,
+      "hawaii": 0.8416,
+      "other_us_incl_territory_military": 0.1382,
+      "foreign": 0.0202,
+      "mainland_only": 0.1371
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 1833,
+      "hawaii": 0.8418,
+      "other_us_incl_territory_military": 0.138,
+      "foreign": 0.0202,
+      "mainland_only": 0.1369
+     },
+     "tg": {
+      "hawaii": 0.8292,
+      "other_us": 0.1387,
+      "foreign": 0.0321
+     },
+     "tg_basis": "derived counts",
+     "tg_total_sales": 11097,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.165,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 1.0,
+      "other_us": 0.2,
+      "foreign": -1.1
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 1.2,
+      "other_us": -0.1,
+      "foreign": -1.2
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.8434,
+      "mainland_us": 0.1336,
+      "foreign": 0.0221,
+      "territory_military": 0.0009
+     },
+     "tg_dollar_share_published_pct": {
+      "hawaii": 81,
+      "other_us_states": 15,
+      "foreign": 4
+     }
+    },
+    "2025H1": {
+     "ours_excl_institutional": {
+      "n": 1644,
+      "hawaii": 0.8352,
+      "other_us_incl_territory_military": 0.1429,
+      "foreign": 0.0219,
+      "mainland_only": 0.1417
+     },
+     "tg": {
+      "hawaii": 0.8142,
+      "other_us": 0.1554,
+      "foreign": 0.0303
+     },
+     "tg_total_sales": 4613,
+     "coverage_our_deals_over_tg": 0.3564,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 2.1,
+      "other_us": -1.3,
+      "foreign": -0.8
+     }
+    }
+   },
+   "all_property": {
+    "2023": {
+     "ours_excl_institutional": {
+      "n": 5190,
+      "hawaii": 0.8297,
+      "other_us_incl_territory_military": 0.1474,
+      "foreign": 0.0229,
+      "mainland_only": 0.1441
+     },
+     "ours_incl_institutional": {
+      "n": 5260,
+      "hawaii": 0.8306,
+      "other_us_incl_territory_military": 0.1468,
+      "foreign": 0.0226,
+      "mainland_only": 0.1435
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 5273,
+      "hawaii": 0.8299,
+      "other_us_incl_territory_military": 0.1475,
+      "foreign": 0.0226,
+      "mainland_only": 0.1443
+     },
+     "tg": {
+      "hawaii": 0.8,
+      "other_us": 0.16,
+      "foreign": 0.0372
+     },
+     "tg_basis": "published integer % (hawaii, other_us) + derived foreign count",
+     "tg_total_sales": 9835,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.5348,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 3.0,
+      "other_us": -1.3,
+      "foreign": -1.4
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 3.1,
+      "other_us": -1.3,
+      "foreign": -1.5
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.7888,
+      "mainland_us": 0.1771,
+      "foreign": 0.0318,
+      "territory_military": 0.0024
+     }
+    },
+    "2024": {
+     "ours_excl_institutional": {
+      "n": 5040,
+      "hawaii": 0.849,
+      "other_us_incl_territory_military": 0.1333,
+      "foreign": 0.0177,
+      "mainland_only": 0.1315
+     },
+     "ours_incl_institutional": {
+      "n": 5117,
+      "hawaii": 0.8493,
+      "other_us_incl_territory_military": 0.1333,
+      "foreign": 0.0174,
+      "mainland_only": 0.1315
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 5141,
+      "hawaii": 0.8494,
+      "other_us_incl_territory_military": 0.1332,
+      "foreign": 0.0173,
+      "mainland_only": 0.1315
+     },
+     "tg": {
+      "hawaii": 0.8123,
+      "other_us": 0.1537,
+      "foreign": 0.034
+     },
+     "tg_basis": "derived counts",
+     "tg_total_sales": 10607,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.4824,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 3.7,
+      "other_us": -2.0,
+      "foreign": -1.6
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 3.7,
+      "other_us": -2.0,
+      "foreign": -1.7
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.8142,
+      "mainland_us": 0.1608,
+      "foreign": 0.0236,
+      "territory_military": 0.0014
+     },
+     "tg_dollar_share_published_pct": {
+      "hawaii": 79,
+      "other_us_states": 15,
+      "foreign": 5
+     }
+    },
+    "2025": {
+     "ours_excl_institutional": {
+      "n": 1858,
+      "hawaii": 0.8385,
+      "other_us_incl_territory_military": 0.1416,
+      "foreign": 0.0199,
+      "mainland_only": 0.1405
+     },
+     "ours_incl_institutional": {
+      "n": 1894,
+      "hawaii": 0.8411,
+      "other_us_incl_territory_military": 0.1394,
+      "foreign": 0.0195,
+      "mainland_only": 0.1383
+     },
+     "ours_parcel_level_no_dedupe_incl_inst": {
+      "n": 1900,
+      "hawaii": 0.8416,
+      "other_us_incl_territory_military": 0.1389,
+      "foreign": 0.0195,
+      "mainland_only": 0.1379
+     },
+     "tg": {
+      "hawaii": 0.8292,
+      "other_us": 0.1387,
+      "foreign": 0.0321
+     },
+     "tg_basis": "derived counts",
+     "tg_total_sales": 11097,
+     "coverage_our_deals_incl_inst_over_tg_sales": 0.1707,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 0.9,
+      "other_us": 0.3,
+      "foreign": -1.2
+     },
+     "gap_pts_ours_minus_tg_incl_inst": {
+      "hawaii": 1.2,
+      "other_us": 0.1,
+      "foreign": -1.3
+     },
+     "ours_dollar_share_excl_inst": {
+      "hawaii_total": 0.8344,
+      "mainland_us": 0.1442,
+      "foreign": 0.0206,
+      "territory_military": 0.0008
+     },
+     "tg_dollar_share_published_pct": {
+      "hawaii": 81,
+      "other_us_states": 15,
+      "foreign": 4
+     }
+    },
+    "2025H1": {
+     "ours_excl_institutional": {
+      "n": 1692,
+      "hawaii": 0.8339,
+      "other_us_incl_territory_military": 0.1448,
+      "foreign": 0.0213,
+      "mainland_only": 0.1436
+     },
+     "tg": {
+      "hawaii": 0.8142,
+      "other_us": 0.1554,
+      "foreign": 0.0303
+     },
+     "tg_total_sales": 4613,
+     "coverage_our_deals_over_tg": 0.3668,
+     "gap_pts_ours_minus_tg_excl_inst": {
+      "hawaii": 2.0,
+      "other_us": -1.1,
+      "foreign": -0.9
+     }
+    }
+   },
+   "district_approx_housing": {
+    "Honolulu + East Honolulu (TG) ~ TMK zones 1-3": {
+     "2024": {
+      "ours_excl_institutional": {
+       "n": 2540,
+       "hawaii": 0.7815,
+       "other_us_incl_territory_military": 0.1866,
+       "foreign": 0.0319,
+       "mainland_only": 0.1843
+      },
+      "tg": {
+       "total_sales": 5618,
+       "hawaii": 0.7419,
+       "other_us": 0.197,
+       "foreign": 0.0611
+      },
+      "gap_pts": {
+       "hawaii": 4.0,
+       "other_us": -1.0,
+       "foreign": -2.9
+      }
+     },
+     "2025": {
+      "ours_excl_institutional": {
+       "n": 909,
+       "hawaii": 0.7624,
+       "other_us_incl_territory_military": 0.2013,
+       "foreign": 0.0363,
+       "mainland_only": 0.2002
+      },
+      "tg": {
+       "total_sales": 6142,
+       "hawaii": 0.7848,
+       "other_us": 0.1615,
+       "foreign": 0.0537
+      },
+      "gap_pts": {
+       "hawaii": -2.2,
+       "other_us": 4.0,
+       "foreign": -1.7
+      }
+     }
+    },
+    "Windward + North Shore (TG) ~ TMK zones 4-6": {
+     "2024": {
+      "ours_excl_institutional": {
+       "n": 630,
+       "hawaii": 0.854,
+       "other_us_incl_territory_military": 0.1381,
+       "foreign": 0.0079,
+       "mainland_only": 0.1381
+      },
+      "tg": {
+       "total_sales": 1147,
+       "hawaii": 0.8239,
+       "other_us": 0.1691,
+       "foreign": 0.007
+      },
+      "gap_pts": {
+       "hawaii": 3.0,
+       "other_us": -3.1,
+       "foreign": 0.1
+      }
+     },
+     "2025": {
+      "ours_excl_institutional": {
+       "n": 216,
+       "hawaii": 0.8843,
+       "other_us_incl_territory_military": 0.1019,
+       "foreign": 0.0139,
+       "mainland_only": 0.1019
+      },
+      "tg": {
+       "total_sales": 1204,
+       "hawaii": 0.8189,
+       "other_us": 0.1736,
+       "foreign": 0.0075
+      },
+      "gap_pts": {
+       "hawaii": 6.5,
+       "other_us": -7.2,
+       "foreign": 0.6
+      }
+     }
+    },
+    "Leeward + Central (TG) ~ TMK zones 7-9": {
+     "2024": {
+      "ours_excl_institutional": {
+       "n": 1803,
+       "hawaii": 0.9429,
+       "other_us_incl_territory_military": 0.0555,
+       "foreign": 0.0017,
+       "mainland_only": 0.0538
+      },
+      "tg": {
+       "total_sales": 3842,
+       "hawaii": 0.9118,
+       "other_us": 0.0856,
+       "foreign": 0.0026
+      },
+      "gap_pts": {
+       "hawaii": 3.1,
+       "other_us": -3.0,
+       "foreign": -0.1
+      }
+     },
+     "2025": {
+      "ours_excl_institutional": {
+       "n": 671,
+       "hawaii": 0.9285,
+       "other_us_incl_territory_military": 0.07,
+       "foreign": 0.0015,
+       "mainland_only": 0.0686
+      },
+      "tg": {
+       "total_sales": 3751,
+       "hawaii": 0.9054,
+       "other_us": 0.0901,
+       "foreign": 0.0045
+      },
+      "gap_pts": {
+       "hawaii": 2.3,
+       "other_us": -2.0,
+       "foreign": -0.3
+      }
+     }
+    }
+   },
+   "where_from_2024_2025_vs_tg": {
+    "california_share_of_other_us": {
+     "ours": 0.5299,
+     "tg": 0.4389
+    },
+    "washington_share_of_other_us": {
+     "ours": 0.0843,
+     "tg": 0.0786
+    },
+    "japan_share_of_foreign": {
+     "ours": 0.6349,
+     "tg": 0.6444
+    },
+    "korea_share_of_foreign": {
+     "ours": 0.127,
+     "tg": 0.1771
+    },
+    "canada_share_of_foreign": {
+     "ours": 0.127,
+     "tg": 0.0921
+    },
+    "ours_n_mainland": 902,
+    "ours_n_foreign": 126,
+    "tg_n_other_us": 3169,
+    "tg_n_foreign": 717,
+    "ours_top_states": [
+     {
+      "state": "CA",
+      "name": "California",
+      "n": 478,
+      "share_of_mainland": 0.5299
+     },
+     {
+      "state": "WA",
+      "name": "Washington",
+      "n": 76,
+      "share_of_mainland": 0.0843
+     },
+     {
+      "state": "NV",
+      "name": "Nevada",
+      "n": 38,
+      "share_of_mainland": 0.0421
+     },
+     {
+      "state": "TX",
+      "name": "Texas",
+      "n": 38,
+      "share_of_mainland": 0.0421
+     },
+     {
+      "state": "NY",
+      "name": "New York",
+      "n": 35,
+      "share_of_mainland": 0.0388
+     },
+     {
+      "state": "FL",
+      "name": "Florida",
+      "n": 18,
+      "share_of_mainland": 0.02
+     },
+     {
+      "state": "OR",
+      "name": "Oregon",
+      "n": 18,
+      "share_of_mainland": 0.02
+     },
+     {
+      "state": "CO",
+      "name": "Colorado",
+      "n": 18,
+      "share_of_mainland": 0.02
+     },
+     {
+      "state": "AZ",
+      "name": "Arizona",
+      "n": 17,
+      "share_of_mainland": 0.0188
+     },
+     {
+      "state": "UT",
+      "name": "Utah",
+      "n": 16,
+      "share_of_mainland": 0.0177
+     }
+    ],
+    "ours_top_countries": [
+     {
+      "country": "Japan",
+      "n": 80,
+      "share_of_foreign": 0.6349
+     },
+     {
+      "country": "Canada",
+      "n": 16,
+      "share_of_foreign": 0.127
+     },
+     {
+      "country": "South Korea",
+      "n": 16,
+      "share_of_foreign": 0.127
+     },
+     {
+      "country": "China",
+      "n": 3,
+      "share_of_foreign": 0.0238
+     },
+     {
+      "country": "Taiwan",
+      "n": 2,
+      "share_of_foreign": 0.0159
+     },
+     {
+      "country": "Hong Kong",
+      "n": 2,
+      "share_of_foreign": 0.0159
+     }
+    ]
+   },
+   "new_construction_cpr_units_since_2023_check": {
+    "new_cpr_units_on_roll_not_in_legdat_2023": 9557,
+    "of_which_with_any_sale_in_sales_file": 515,
+    "of_which_at_institutional_10plus_addresses": 5631,
+    "of_which_no_owner_address": 963,
+    "non_institutional_owner_mix": {
+     "n": 2963,
+     "hawaii": 0.8792,
+     "mainland_us": 0.0763,
+     "foreign": 0.0429,
+     "territory_military": 0.0017
+    },
+    "non_institutional_owners_not_in_sales_file": 2461,
+    "by_tmk_zone_non_institutional": {
+     "1": {
+      "n": 17,
+      "hawaii": 0.9412,
+      "foreign": 0.0,
+      "mainland_us": 0.0588
+     },
+     "2": {
+      "n": 943,
+      "hawaii": 0.7328,
+      "foreign": 0.1336,
+      "mainland_us": 0.1294
+     },
+     "3": {
+      "n": 56,
+      "hawaii": 0.9643,
+      "foreign": 0.0,
+      "mainland_us": 0.0357
+     },
+     "4": {
+      "n": 46,
+      "hawaii": 1.0,
+      "foreign": 0.0,
+      "mainland_us": 0.0
+     },
+     "5": {
+      "n": 58,
+      "hawaii": 0.8103,
+      "foreign": 0.0,
+      "mainland_us": 0.1897
+     },
+     "6": {
+      "n": 65,
+      "hawaii": 0.7538,
+      "foreign": 0.0,
+      "mainland_us": 0.2462
+     },
+     "7": {
+      "n": 112,
+      "hawaii": 0.9286,
+      "foreign": 0.0,
+      "mainland_us": 0.0714
+     },
+     "8": {
+      "n": 39,
+      "hawaii": 1.0,
+      "foreign": 0.0,
+      "mainland_us": 0.0
+     },
+     "9": {
+      "n": 1627,
+      "hawaii": 0.9582,
+      "foreign": 0.0006,
+      "mainland_us": 0.0406
+     }
+    },
+    "what_if_missing_new_unit_owners_added_to_2023_2025_joined_deals": {
+     "n": 14312,
+     "hawaii": 0.8467,
+     "mainland_us": 0.1267,
+     "foreign": 0.0242,
+     "caveat": "rough what-if: mixes periods (units created Oct 2023 - Oct 2026) and assumes each missing unit owner is one missing deal"
+    },
+    "note": "Owners of CPR units created since late 2023 are mostly first buyers from developers; no sale price/date is available for them in oahu-sales.json, so they cannot be tiered or dated. Their non-institutional owner mix is shown only to test whether developer closings missing from the sales file skew foreign."
+   }
+  }
+ }
+}

@@ -1,0 +1,1193 @@
+<title>Hawaiʻi Buyer Origins</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: Apple-style long read. 980px column, frosted sticky chapter bar, large headlines, rounded cards, generous white space. Light and dark. */
+:root{
+  --bg:#FBFBFD; --bg2:#F5F5F7; --card:#FFFFFF; --ink:#1D1D1F; --ink2:#6E6E73; --ink3:#707075;
+  --line:rgba(0,0,0,.08); --line2:rgba(0,0,0,.14); --accent:#0071E3; --accent-ink:#0066CC;
+  --s-local:#248A3D; --s-main:#0071E3; --s-foreign:#C93400;
+  --pos:#248A3D; --neg:#C93400; --band:rgba(0,0,0,.035);
+  --shadow:0 2px 8px rgba(0,0,0,.04),0 12px 32px rgba(0,0,0,.06);
+  --nav:rgba(251,251,253,.72); --tipbg:#1D1D1F; --tipfg:#F5F5F7;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Inter",system-ui,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Inter",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#000000; --bg2:#0B0B0C; --card:#1C1C1E; --ink:#F5F5F7; --ink2:#A1A1A6; --ink3:#86868B;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18); --accent:#2997FF; --accent-ink:#2997FF;
+  --s-local:#28A745; --s-main:#2F8CFF; --s-foreign:#D2710F; --pos:#30B04F; --neg:#E07A20; --band:rgba(255,255,255,.05);
+  --shadow:none; --nav:rgba(22,22,23,.72); --tipbg:#F5F5F7; --tipfg:#1D1D1F; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#000000; --bg2:#0B0B0C; --card:#1C1C1E; --ink:#F5F5F7; --ink2:#A1A1A6; --ink3:#86868B;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18); --accent:#2997FF; --accent-ink:#2997FF;
+  --s-local:#28A745; --s-main:#2F8CFF; --s-foreign:#D2710F; --pos:#30B04F; --neg:#E07A20; --band:rgba(255,255,255,.05);
+  --shadow:none; --nav:rgba(22,22,23,.72); --tipbg:#F5F5F7; --tipfg:#1D1D1F; color-scheme:dark }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.53;letter-spacing:-.01em;margin:0;-webkit-font-smoothing:antialiased;padding-inline:0;padding-block:0 96px}
+.wrap{max-width:1020px;margin:0 auto;padding-inline:20px}
+.col{max-width:720px}
+a{color:var(--accent-ink);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+p{margin:0 0 16px}
+
+/* nav */
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--nav);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+nav.bar .in{max-width:1020px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:22px;height:52px}
+nav.bar .brand{font-family:var(--display);font-weight:600;font-size:17px;white-space:nowrap;color:var(--ink)}
+nav.bar .links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+nav.bar .links::-webkit-scrollbar{display:none}
+nav.bar .links a{font-size:13px;color:var(--ink2);white-space:nowrap;padding:6px 10px;border-radius:980px}
+nav.bar .links a:hover{color:var(--ink);background:var(--line);text-decoration:none}
+@media (max-width:640px){nav.bar .brand{display:none}}
+
+/* hero */
+.hero{text-align:center;padding-block:76px 40px}
+.hero .eyebrow{font-size:19px;font-weight:600;color:var(--accent-ink);letter-spacing:-.01em}
+.hero h1{font-family:var(--display);font-size:clamp(40px,7.4vw,80px);line-height:1.04;font-weight:700;letter-spacing:-.035em;margin:12px auto 18px;max-width:14ch;text-wrap:balance}
+.hero .sub{font-size:clamp(19px,2.4vw,24px);line-height:1.38;color:var(--ink2);max-width:36ch;margin:0 auto;font-weight:400;text-wrap:balance}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:44px}
+.stat{background:var(--card);border-radius:22px;padding:24px 22px 22px;box-shadow:var(--shadow);text-align:left;min-width:0}
+.stat .n{font-family:var(--display);font-size:clamp(32px,4vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:14px;color:var(--ink2);margin-top:10px;line-height:1.4}
+@media (max-width:860px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.answer{background:var(--card);border-radius:28px;padding:36px 40px;box-shadow:var(--shadow);margin-top:20px}
+.answer h2{font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0 0 18px}
+.answer ul{list-style:none;padding:0;margin:0;display:grid;gap:16px}
+.answer li{display:grid;grid-template-columns:28px 1fr;gap:12px;font-size:18px;line-height:1.45}
+.answer li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:9px;justify-self:center}
+.answer li b{font-weight:600}
+@media (max-width:640px){.answer{padding:26px 22px}.answer li{font-size:16.5px}}
+.key{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--ink2);margin-top:18px}
+
+/* chapters & sections */
+.chapter{padding-block:96px 0}
+.chapter > .ch{border-top:1px solid var(--line2);padding-top:22px;margin-bottom:8px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.chapter > .ch .num{font-size:15px;font-weight:600;color:var(--accent-ink)}
+.chapter > .ch .t{font-family:var(--display);font-size:clamp(40px,6vw,64px);font-weight:700;letter-spacing:-.035em;line-height:1.05;margin:0}
+.chapter > .ch p{flex-basis:100%;font-size:21px;color:var(--ink2);margin:10px 0 0;max-width:40ch;line-height:1.4}
+section{padding-block:56px 0}
+section > .head{margin-bottom:10px}
+.sec-n{display:block;font-size:15px;font-weight:600;color:var(--ink2);margin-bottom:8px}
+h2{font-family:var(--display);font-size:clamp(28px,3.8vw,40px);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin:0 0 12px;text-wrap:balance;max-width:24ch}
+h3{font-family:var(--display);font-size:21px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px;line-height:1.25;text-wrap:balance}
+.muted{color:var(--ink2);font-size:19px;line-height:1.45}
+.lede{font-size:19px;color:var(--ink2)}
+
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.02em;padding:2px 8px;border-radius:980px;vertical-align:2px;white-space:nowrap;line-height:1.5}
+.tag.p{color:var(--pos);background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.tag.o{color:var(--accent-ink);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.tag.r{color:var(--ink2);background:var(--line)}
+.tag.f{color:var(--neg);background:color-mix(in srgb,var(--neg) 12%,transparent)}
+.note{background:var(--bg2);border-radius:18px;padding:18px 20px;font-size:14px;color:var(--ink2);margin-top:18px}
+.note b{color:var(--ink)}
+.means{margin-top:22px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:18px;padding:18px 22px;font-size:16px;line-height:1.5;max-width:760px}
+.means b{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:4px}
+
+figure{margin:22px 0 0;background:var(--card);border-radius:24px;padding:28px 28px 20px;box-shadow:var(--shadow);min-width:0}
+:root[data-theme="dark"] figure{border:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) figure{border:1px solid var(--line)}}
+figcaption{display:flex;flex-direction:column;gap:3px;margin-bottom:14px}
+figcaption .t{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.015em}
+figcaption .s{font-size:14px;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--ink2);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.legend i.ln{height:3px;width:16px;border-radius:2px}
+.chart{width:100%;overflow-x:auto}
+.chart svg,.sm svg{display:block;width:100%;height:auto}
+figure svg text{font-family:var(--font);fill:var(--ink2);font-size:12px;letter-spacing:0}
+figure svg text.v{fill:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+figure svg text.lab{fill:var(--ink);font-weight:500}
+figure svg text.ann{fill:var(--ink3);font-size:11px}
+figure svg .grid{stroke:var(--line);stroke-width:1}
+figure svg .hit{fill:transparent}
+.src{font-size:12.5px;color:var(--ink3);margin-top:12px;line-height:1.5}
+details.tbl{margin-top:12px;font-size:13px}
+details.tbl summary{cursor:pointer;color:var(--accent-ink);font-size:13px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.two > *{min-width:0}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.sm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
+.sm > div{min-width:0}
+.sm .smt{font-size:14px;font-weight:600;color:var(--ink);margin:8px 0 0}
+@media (max-width:620px){.sm{grid-template-columns:1fr}}
+#tip{position:fixed;pointer-events:none;background:var(--tipbg);color:var(--tipfg);font-size:13px;line-height:1.45;padding:9px 12px;border-radius:12px;max-width:300px;z-index:40;opacity:0;transition:opacity .1s;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+
+/* eras */
+.eras{display:grid;gap:14px;margin-top:22px}
+.era{display:grid;grid-template-columns:200px minmax(0,1fr);gap:8px 30px;background:var(--card);border-radius:22px;padding:24px 28px;box-shadow:var(--shadow)}
+.era .when{font-size:14px;font-weight:600;color:var(--accent-ink)}
+.era .when b{display:block;font-family:var(--display);font-size:24px;color:var(--ink);letter-spacing:-.02em;font-weight:700;margin-top:4px;line-height:1.15}
+.era ul{margin:0 0 12px;padding-left:18px;font-size:16px}
+.era li{margin-bottom:6px}
+.era .why{font-size:15px;color:var(--ink2);border-top:1px solid var(--line);padding-top:10px}
+.era .why b{color:var(--ink)}
+.era.now{box-shadow:0 0 0 2px var(--accent) inset,var(--shadow)}
+@media (max-width:700px){.era{grid-template-columns:1fr;padding:20px}}
+
+.tw{overflow-x:auto;margin-top:18px;border-radius:20px;background:var(--card);box-shadow:var(--shadow)}
+figure .tw{box-shadow:none;border-radius:0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:600;color:var(--ink3);white-space:nowrap;letter-spacing:.01em}
+tr:last-child td{border-bottom:0}
+td.num,th.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td .geo{font-weight:600}
+td .why{color:var(--ink2);font-size:13.5px}
+table.heat td.num{min-width:54px}
+.tier{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:980px;white-space:nowrap}
+.tier.t1{background:var(--accent);color:#fff}
+.tier.t2{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent-ink)}
+.tier.t3{background:var(--line);color:var(--ink2)}
+.isl{display:inline-block;font-size:12px;font-weight:500;padding:2px 8px;border-radius:980px;background:var(--line);color:var(--ink2);margin:0 4px 4px 0;white-space:nowrap}
+
+.now-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+.now-card{background:var(--card);border-radius:22px;padding:22px;box-shadow:var(--shadow);min-width:0}
+.now-card .nm{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:12px}
+.now-card dl{display:grid;grid-template-columns:1fr auto;gap:7px 10px;margin:0;font-size:14px}
+.now-card dt{color:var(--ink2)}
+.now-card dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.now-card .read{font-size:14px;color:var(--ink2);margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+@media (max-width:900px){.now-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.now-grid{grid-template-columns:1fr}}
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
+.scen > div{background:var(--card);border-radius:22px;padding:22px;box-shadow:var(--shadow);min-width:0}
+.scen .k{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3)}
+.scen .base{box-shadow:0 0 0 2px var(--accent) inset,var(--shadow)}
+.scen h3{margin-top:6px}
+.scen p{font-size:15px;color:var(--ink2);margin:0 0 10px}
+@media (max-width:760px){.scen{grid-template-columns:1fr}}
+.rule{display:grid;grid-template-columns:160px 1fr;gap:6px 20px;border-top:1px solid var(--line);padding-block:14px;font-size:16px}
+.rule:last-of-type{border-bottom:1px solid var(--line)}
+.rule .rk{font-weight:600}
+@media (max-width:560px){.rule{grid-template-columns:1fr}}
+.callout{font-family:var(--display);font-size:clamp(22px,2.6vw,28px);font-weight:600;letter-spacing:-.02em;line-height:1.3;margin:36px 0 8px;max-width:30ch;color:var(--ink)}
+ul.tight{padding-left:20px;margin:0 0 14px}
+ul.tight li{margin-bottom:10px}
+.sources{columns:2;column-gap:32px;font-size:13px;color:var(--ink2);padding-left:18px}
+.sources li{break-inside:avoid;margin-bottom:7px}
+@media (max-width:700px){.sources{columns:1}}
+details.method{margin-top:26px;background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:6px 24px}
+details.method > summary{cursor:pointer;list-style:none;padding:18px 0;font-family:var(--display);font-size:21px;font-weight:600;letter-spacing:-.015em;display:flex;justify-content:space-between;align-items:center}
+details.method > summary::-webkit-details-marker{display:none}
+details.method > summary::after{content:"+";font-size:26px;font-weight:400;color:var(--accent-ink)}
+details.method[open] > summary::after{content:"–"}
+details.method section{padding-block:10px 22px}
+footer{margin-top:80px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3)}
+#t-zidx td:nth-child(2){min-width:230px}#buyers td:first-child{min-width:150px}table.gl td:first-child{min-width:210px;color:var(--ink2)}#mm-maui table td:first-child{min-width:190px}table.gl{min-width:720px}table.zt{min-width:860px}#buyers table{min-width:760px}tr.thin td{color:var(--ink3)}tr.thin td b{color:var(--ink3);font-weight:500}.thin-n{font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:0 5px;margin-left:4px;white-space:nowrap}
+</style>
+
+<nav class="bar" aria-label="Chapters"><div class="in"><div class="brand">Hawaiʻi Housing</div><div class="links"><a href="#answer">The answer</a><a href="#story">The story</a><a href="#flows">Who buys, who leaves</a><a href="#micro">Micro-markets</a><a href="#locals">Locals and housing</a><a href="#market">The market now</a><a href="#playbook">Playbook</a><a href="#checks">Sources and checks</a></div></div></nav>
+<div class="wrap">
+  <div class="hero" id="answer">
+    <div class="eyebrow">Hawaiʻi Housing Intelligence · <span style="white-space:nowrap">2006–2026</span></div>
+    <h1>Who buys Hawaiʻi. Who leaves. What’s next.</h1>
+    <p class="sub">Twenty years of records from every island, checked and explained.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">+80%</div><div class="l">Oʻahu single-family price, 2006 to 2025</div></div>
+      <div class="stat"><div class="n">66%</div><div class="l">of a typical Oʻahu income went to the payment on a median house in 2025 (41% in 2019)</div></div>
+      <div class="stat"><div class="n">−31,821</div><div class="l">net tax-filing households lost to other states in 19 years, all of it from Oʻahu</div></div>
+      <div class="stat"><div class="n">9.6</div><div class="l">months of supply on Maui, a buyer's market (August 2026)</div></div>
+    </div>
+  </div>
+  <div class="answer">
+    <h2>The short answer</h2>
+    <ul>
+      <li><span><b>Prices outran incomes.</b> Oʻahu's median house price rose 80% from 2006 to 2025. In 2025 the mortgage payment on a median house took 66% of a typical Oʻahu income, 78% on Maui and 76% on Kauaʻi, up from about 40% in 2019. Higher rates did most of that.</span></li>
+      <li><span><b>Buyers come mostly from California.</b> Mainland buyers make about a fifth of purchases statewide, but about half the purchase dollars on the Big Island and Kauaʻi. California is the #1 out-of-state buyer state on every island; Washington, Colorado, Oregon, Alaska, Texas and Florida follow, depending on the island.</span></li>
+      <li><span><b>Hawaiʻi's families go to Las Vegas.</b> The state lost 31,821 more households to other states than it gained in 19 years, all of it from Oʻahu. Las Vegas (Clark County) is the #1 destination county from every island. Denver, Salt Lake City and Portland are the fastest-growing exits.</span></li>
+      <li><span><b>Every island is different.</b> Locals buy most homes under $3 million. Above it, mainland and foreign buyers take a third of Oʻahu sales, and buyers without a homeowner exemption take 81–89% of Maui sales. Condos are the outsiders' market: about half of neighbor-island condo buyers are from out of state. The Big Island now leads at $10M+.</span></li>
+      <li><span><b>The market has turned toward buyers.</b> Rates are back above 7%. Maui, Kauaʻi and the Big Island have 6.5–9.6 months of supply (August 2026). Oʻahu is balanced overall at 5.2 months, but its houses have only about 3, still a seller's market.</span></li>
+      <li><span><b>The playbook.</b> For the neighbor islands, the biggest feeder is Oʻahu. On the mainland, find buyers in the Bay Area, Los Angeles–Orange County and Seattle, and second-home buyers in Salt Lake City, Denver, Minneapolis and Anchorage. Build referral partnerships in Las Vegas, Phoenix and Texas, where departing Hawaiʻi households go.</span></li>
+    </ul>
+    <div class="key">How sure each number is:<span class="tag p">Primary</span>computed here from the raw data file<span class="tag o">Official</span>an official table, cross-checked<span class="tag r">Reported</span>press figure, not yet checked against its source<span class="tag f">Forecast</span>judgment, not fact</div>
+  </div>
+
+  <div class="chapter" id="story">
+    <div class="ch"><span class="num">Chapter 1</span><h2 class="t">The story</h2><p>What happened between the 2006 peak and today, and why.</p></div>
+  <!-- GLANCE -->
+  <section id="glance">
+    <div class="head col">
+      <span class="sec-n">Twenty years at a glance</span>
+      <h2>Two booms, a crash, and a market that now takes far more of local income</h2>
+      <p class="muted">Oʻahu prices from Moku's own repeat-sales index, sales volume by island, and the borrowing cost behind both.</p>
+    </div>
+    <figure>
+      <figcaption><span class="t">Oʻahu home price index, 2000–2025</span><span class="s">Repeat sales of the same homes, 2015 = 100 <span class="tag p">Primary</span></span></figcaption>
+      <div class="legend"><span><i class="ln" style="background:var(--s-main)"></i>Houses</span><span><i class="ln" style="background:var(--s-local)"></i>Condos</span></div>
+      <div class="chart" id="c-index"></div>
+      <p class="src">Built from Moku's City and County of Honolulu sales records: 37,562 homes that sold twice between 2000 and 2025 (weighted repeat-sales method, the approach behind the Case-Shiller indexes). Year-over-year changes correlate 0.94 with Zillow's independent Honolulu home value index.</p>
+    </figure>
+    <div class="two">
+      <figure>
+        <figcaption><span class="t">Home sales per year, by island</span><span class="s">Single-family plus condo <span class="tag o">Official</span></span></figcaption>
+        <div class="sm" id="c-annual"></div>
+        <p class="src">DBEDT Monthly Economic Indicators. The monthly series has no Kauaʻi or Hawaiʻi Island data for 2007–2012, so those years are blank, not zero. 2026 is not shown (8 months).</p>
+      </figure>
+      <figure>
+        <figcaption><span class="t">New homes authorized per year, statewide</span><span class="s">Private housing units in building permits <span class="tag o">Official</span></span></figcaption>
+        <div class="chart" id="c-permits"></div>
+        <p class="src">Census Building Permits Survey (FRED series HIBPPRIV). 2026 is January–August. Since 2010 the state has authorized about 3,800 homes a year, about half of 2006's 7,549.</p>
+      </figure>
+    </div>
+    <div class="means"><b>For brokers</b>Prices are near records, and the monthly payment on a median house rose 75% on Oʻahu and 96% on Maui from 2021 to 2025. Expect fewer deals, longer listing times and more negotiation.</div>
+  </section>
+  <!-- ERAS -->
+  <section id="eras">
+    <div class="head col">
+      <span class="sec-n">What happened, and why</span>
+      <h2>Nine chapters: what the data shows, and our read of why</h2>
+    </div>
+    <div class="eras">
+      <div class="era">
+        <div class="when">2006–2007<b>The top of the first boom</b></div>
+        <div>
+          <ul>
+            <li>Oʻahu recorded 10,421 sales in 2006, a level not seen again until 2021. Maui recorded 2,331.</li>
+            <li>Oʻahu's price index peaked in 2006 at 95.3 (2015 = 100). Maui's single-family median averaged $702K that year.</li>
+            <li>Mortgage rates averaged 6.41% and 6.34%, close to 2026's year-to-date average of 6.49%. The state authorized 7,549 new homes in 2006, the most in 20 years.</li>
+            <li>The neighbor islands were gaining households: in 2004–05 the Big Island took in 1,126 more households from other states than it lost.</li>
+            <li>On Maui, 37% of 2004 home sales went to buyers living outside Maui County, and more than half in West Maui <span class="tag r">Reported</span> (County of Maui Planning, 2006). No official statewide series by buyer origin starts before 2008.</li>
+          </ul>
+          <div class="why"><b>Our read:</b> easy credit and a national housing boom. Mainland households were moving to the neighbor islands (IRS shows net gains there), while Oʻahu was already losing slightly more households than it gained.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2008–2011<b>The crash</b></div>
+        <div>
+          <ul>
+            <li>Sales fell 40% on Oʻahu from 2006 to 2009 (to 6,263) and 34% on Maui (to 1,528).</li>
+            <li>Maui's single-family median fell 37%, from $702K (2006) to $439K (2011). On the same measure Oʻahu's fell 9%, from $632K to $576K; its repeat-sales index fell 14%, from 95.3 to 82.3.</li>
+            <li>New-home permits collapsed to 2,592 in 2009. Rates fell from 6.04% (2008) to 4.46% (2011).</li>
+            <li>Mainland buyers' share of recorded sales rose from 23.5% (2008) to 29.3% in 2010 (6,207 purchases), the high of the 2008–2025 series. That year recorded sales jumped 31% while MLS sales rose 19%, so read the 2010 peak with caution. Foreign buyers' share reached 5.0% in 2011.</li>
+            <li>On the neighbor islands, migration nearly stopped: the net flow was a few hundred households a year either way. Visitor arrivals by air bottomed at 6.42 million in 2009.</li>
+          </ul>
+          <div class="why"><b>Our read:</b> the national financial crisis. Prices fell much harder on Maui (−37% median) than on Oʻahu (−9% median, −14% repeat-sales index). Maui depends more on outside buyers and visitors, while on Oʻahu the military and government base steadied demand, even though Oʻahu's sales count fell slightly more.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2012–2015<b>Recovery, and the foreign buyer</b></div>
+        <div>
+          <ul>
+            <li>Rates hit 3.66% in 2012. Oʻahu's price index rose 21%, from 82.3 (2011) to 100 (2015).</li>
+            <li>International visitors rose from 2.05 million (2011) to 2.78 million (2015). Foreign buyers' share was 4.9% in 2012, then fell to 3.0% by 2015. The mainland share held near 21% in 2012–2014, then fell to 19% in 2015.</li>
+            <li>The neighbor islands gained households again, and the arrivals were richer. On Kauaʻi in 2012–13, households moving in averaged $103K in income, against $47K for those leaving.</li>
+          </ul>
+          <div class="why"><b>Our read:</b> cheap money, a strong yen (2011–12) and a Canadian dollar near par drew Asian and Canadian buyers. As the yen weakened from 2013, the foreign share fell. Higher-income mainland households began replacing departing locals on the neighbor islands.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2016–2019<b>The steady climb</b></div>
+        <div>
+          <ul>
+            <li>About 19,800–20,500 sales a year. Mainland buyers took 3,702–3,956 of them, between 18.6% and 19.4%.</li>
+            <li>Foreign purchases reached their highest count in 2018, 928 (4.5%), averaging $1.25M. Japanese buyers made 610 purchases that year <span class="tag r">Reported</span> (Title Guaranty, via Hawaii Business).</li>
+            <li>Mortgage rates averaged 3.65–4.54%. Visitor arrivals by air reached 10.24 million in 2019.</li>
+            <li>Oʻahu started losing 3,300–7,700 households a year to other states. Maui's mainland buyer share slid from 42% (2015) to 28% (2019).</li>
+          </ul>
+          <div class="why"><b>Our read:</b> record tourism and low rates kept outside demand steady. Meanwhile Oʻahu households were leaving, mostly for Las Vegas, the West Coast and Texas, which fits the cost-of-living gap shown under The squeeze on local families.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2020<b>The shutdown</b></div>
+        <div>
+          <ul>
+            <li>The 14-day travel quarantine cut air arrivals 74%, from 10.24 million to 2.68 million.</li>
+            <li>Foreign purchases fell 55%, to 243 from 540 a year earlier. Mainland purchases fell 14%, to 3,225 (17.4%), the lowest count and share since at least 2008.</li>
+            <li>Total sales dipped to 18,549. Rates fell to a 3.11% average.</li>
+          </ul>
+          <div class="why"><b>Our read:</b> the quarantine made visiting hard until pre-travel testing began on Oct 15, 2020. Outside purchases fell while locals kept buying on record-low rates, so the local share rose to 81%.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2021<b>The rush</b></div>
+        <div>
+          <ul>
+            <li>A record 25,970 sales, up 40%. Mainland purchases jumped 80% to 5,806, paying an average $1.20M.</li>
+            <li>Rates averaged 2.96%, the 20-year low.</li>
+            <li>Inventory fell by more than half: months of supply dropped to about one month on every island.</li>
+            <li>The Bay Area was the #2 source of new households from 2019–20 through 2021–22. The rise began just before the pandemic. Households moving to Maui in 2021–22 reported an average $192K in income, about double the usual level.</li>
+            <li>On Maui, buyers without a homeowner exemption (second homes, investors and landlords) peaked at 64.5% of home sales in FY2022 (July 2021–June 2022).</li>
+          </ul>
+          <div class="why"><b>Our read:</b> remote work, record-low mortgage rates of about 3% and stock-market wealth arrived together. High-income West Coast households could live and work here, and they bought faster than sellers listed.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2022–2023<b>Rate shock and the fire</b></div>
+        <div>
+          <ul>
+            <li>Rates jumped from 2.96% to 5.33% (2022) and 6.80% (2023). Recorded sales fell to 21,131, then 15,638, the fewest in the 2008–2025 recorded series. MLS sales (11,997 in 2023) stayed above their 2008–2011 levels.</li>
+            <li>The mainland <i>share</i> held at 22–23%. From 2021 to 2023, mainland purchases fell 38% and local purchases fell 41%.</li>
+                        <li>The Lahaina fire on Aug 8, 2023 destroyed most of the town. Maui County air arrivals fell from 2.97 million (2022) to 2.53 million (2023).</li>
+          </ul>
+          <div class="why"><b>Our read:</b> higher rates froze local owners in place, because few would trade a 3% mortgage for a 7% one. Mainland purchases fell almost as much as local ones (38% vs 41%), so the mainland share held.</div>
+        </div>
+      </div>
+      <div class="era">
+        <div class="when">2024–2025<b>The locked-in market</b></div>
+        <div>
+          <ul>
+            <li>DBEDT counts 18,007 sales in 2024 and 16,909 in 2025. Its 2024 figure runs about 8% above Title Guaranty's own 2024 count (16,709), while the two agree for 2023 and 2025; on Title Guaranty's count, 2025 sales rose 1.2%. The mainland share was 19.6% in 2025, against 22.8% in 2024.</li>
+            <li>On Maui the mainland share fell to 25% in 2025, the lowest in the 2015–2025 county series, and condo prices fell sharply <span class="tag r">Reported</span>, as condo insurance costs rose and Maui moved to phase out apartment-zoned vacation rentals (Bill 9, signed Dec 15, 2025, with deadlines in 2029 and 2031).</li>
+            <li>The mortgage payment on a median house took 66% of median income on Oʻahu and 78% on Maui in 2025.</li>
+          </ul>
+          <div class="why"><b>Our read:</b> rates stayed between 6.6% and 6.7% while prices held, so the monthly payment on a median house rose 75% on Oʻahu and 96% on Maui from 2021 to 2025. Oʻahu's 90-day rental minimum (2022) and Maui's pending Bill 9 made vacation-rental investing riskier, and HOA and insurance costs rose.</div>
+        </div>
+      </div>
+      <div class="era now">
+        <div class="when">2026 to date<b>Rates climb again</b></div>
+        <div>
+          <ul>
+            <li>The 30-year rate rose from 6.05% (February average) to 7.28% on Oct 1, after six straight weekly increases.</li>
+            <li>Oʻahu's single-family median set a record of $1,242,500 in June, then fell to $1,110,000 in September, down 3.9% from a year earlier <span class="tag r">Reported</span>.</li>
+            <li>Months of supply (August): Maui 9.6, Kauaʻi 8.4, Big Island 6.5, Oʻahu 5.2. That is buyers' territory on three of four islands.</li>
+            <li>January–June 2026, statewide: 7,738 recorded sales, up 1.5% from a year earlier. The mainland share eased to 19.2% (21.8%) while foreign buyers rose to 2.9% (2.3%). Oʻahu sales rose 9%, the Big Island fell 9% and Kauaʻi 34% <span class="tag o">Official</span> (DBEDT quarterly report). Buyers included 552 from California, 175 from Washington and 138 from Japan <span class="tag r">Reported</span>. MLS sales for the same months were down 1.0% (DBEDT).</li>
+          </ul>
+          <div class="why"><b>Our read:</b> rates fell through 2025 to a 6.05% low in February 2026, then rose instead. New listings are down from a year ago on Maui, Kauaʻi and the Big Island, but homes are selling more slowly, so inventory keeps building and the advantage is moving toward buyers.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <div class="chapter" id="flows">
+    <div class="ch"><span class="num">Chapter 2</span><h2 class="t">Who buys, who leaves</h2><p>Where buyers come from, and where Hawaiʻi's families go.</p></div>
+  <!-- CORRIDORS -->
+  <section id="corridors">
+    <div class="head col">
+      <span class="sec-n">Where sellers go</span>
+      <h2>Departing households land in Las Vegas, Texas and the interior West. Those are the referral markets.</h2>
+      <p class="muted">No public record shows where a home seller moves, so this uses the next best thing: every tax-filing household that moved between Hawaiʻi and a mainland metro, in both directions, over 19 IRS filing-year pairs (moves from about 2004 to early 2023). An amber bar means Hawaiʻi loses more households to that metro than it gains. <span class="tag p">Primary</span></p>
+    </div>
+    <figure>
+      <figcaption><span class="t">Net households, by mainland metro, 19 years</span><span class="s">Arrived in Hawaiʻi minus left Hawaiʻi, all four counties. Hover for both directions.</span></figcaption>
+      <div class="legend"><span><i style="background:var(--s-main)"></i>Feeder: more arrive than leave</span><span><i style="background:var(--s-foreign)"></i>Landing spot: more leave than arrive</span></div>
+      <div class="chart" id="c-corr"></div>
+      <p class="src">IRS SOI county-to-county inflow and outflow, core counties of each metro (not full census metro areas). To compare years fairly, only county pairs with 20 or more households are counted in every year (IRS showed pairs down to 10 before 2013–14), and duplicate rows in the 2013–14 file are removed. Counts are lower bounds.</p>
+    </figure>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Metro</th><th class="num">Arrived</th><th class="num">Left</th><th class="num">Net</th><th class="num">Arrivals' avg income</th><th class="num">Leavers' avg income</th><th class="num">Leaving per yr, 2004–08 → 2019–23</th></tr></thead>
+        <tbody id="t-corr"></tbody>
+      </table>
+    </div>
+    <p class="src">Income is adjusted gross income per household, averaged over all 19 years, in nominal dollars. <span class="tag p">Primary</span></p>
+    <div class="col">
+      <ul class="tight" style="margin-top:20px">
+        <li><b>Departing households head to lower-cost metros.</b> Las Vegas took 12,894 more Hawaiʻi households than it sent. Clark County is the #1 destination county from every island. Next come the Texas metros (−4,712), Seattle–Tacoma (−4,130), Portland (−3,029), Phoenix (−2,186) and the Washington DC area (−2,087).</li>
+        <li><b>The interior West is the growing exit.</b> Departures per year rose 75% to Denver, 68% to Salt Lake City, 55% to Portland, 48% to Phoenix, 46% to Texas and to Seattle, and 32% to Las Vegas (2004–08 vs 2019–23, same 20-household rule both periods). Departures to the Bay Area fell 20%.</li>
+        <li><b>Oʻahu is where most departures come from.</b> More Oʻahu tax-filing households moved to other states than arrived in 16 of 19 years (net −45,422), and leaving has outnumbered arriving every year since 2015–16. Military rotation is part of it. Maui has lost households to other states every year since 2020–21, and Kauaʻi since 2021–22 <span class="tag p">Primary</span>.</li>
+      </ul>
+      <div class="means"><b>For brokers</b>Build referral partnerships where departing Hawaiʻi households go: Las Vegas, Phoenix, Texas, Seattle–Tacoma and Portland. IRS counts households that move, not sellers, so treat the landing list as the likeliest places, not a certainty.</div>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Island</th><th>Where leavers went, 2019–20 to 2022–23 (households)</th></tr></thead>
+        <tbody id="t-dest"></tbody>
+      </table>
+    </div>
+    <p class="src">IRS SOI county outflow, destination counties summed over the last four filing-year pairs (all published counties). <span class="tag p">Primary</span></p>
+  </section>
+  <!-- OWNERS -->
+  <section id="owners">
+    <div class="head col">
+      <span class="sec-n">Owners who live elsewhere</span>
+      <h2>About 23,000 Oʻahu homes are owned from off-island. They are the listing pipeline.</h2>
+      <p class="muted">Every Oʻahu parcel on the October 2026 tax roll, by where the owner's tax bill is mailed. Residential parcels only; the first-listed owner. <span class="tag p">Primary</span></p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Oʻahu ZIP (where the home is)</th><th class="num">Residential parcels</th><th class="num">Owner on the mainland</th><th class="num">Owner abroad</th><th class="num">Off-island total</th></tr></thead>
+        <tbody><tr><td><span class="geo">96815</span> Waikīkī</td><td class="num">17,053</td><td class="num">23%</td><td class="num">5.7%</td><td class="num"><b>28%</b></td></tr><tr><td><span class="geo">96731</span> Kahuku · Turtle Bay</td><td class="num">945</td><td class="num">26%</td><td class="num">0.9%</td><td class="num"><b>26%</b></td></tr><tr><td><span class="geo">96717</span> Hauʻula</td><td class="num">1,361</td><td class="num">18%</td><td class="num">1.2%</td><td class="num"><b>19%</b></td></tr><tr><td><span class="geo">96712</span> Haleʻiwa · North Shore</td><td class="num">2,089</td><td class="num">17%</td><td class="num">0.6%</td><td class="num"><b>17%</b></td></tr><tr><td><span class="geo">96814</span> Ala Moana · Kakaʻako</td><td class="num">17,373</td><td class="num">12%</td><td class="num">4.9%</td><td class="num"><b>17%</b></td></tr><tr><td><span class="geo">96762</span> Lāʻie</td><td class="num">713</td><td class="num">14%</td><td class="num">0.4%</td><td class="num"><b>15%</b></td></tr><tr><td><span class="geo">96791</span> Waialua</td><td class="num">2,113</td><td class="num">12%</td><td class="num">0.3%</td><td class="num"><b>12%</b></td></tr><tr><td><span class="geo">96730</span> Kaʻaʻawa</td><td class="num">514</td><td class="num">11%</td><td class="num">0.0%</td><td class="num"><b>11%</b></td></tr><tr><td><span class="geo">96734</span> Kailua</td><td class="num">12,620</td><td class="num">10%</td><td class="num">0.5%</td><td class="num"><b>10%</b></td></tr><tr><td><span class="geo">96707</span> Kapolei · Ko Olina · Makakilo</td><td class="num">12,316</td><td class="num">9%</td><td class="num">0.5%</td><td class="num"><b>10%</b></td></tr></tbody>
+      </table>
+    </div>
+    <div class="two" style="margin-top:18px">
+      <figure>
+        <figcaption><span class="t">Where off-island owners live</span><span class="s">Oʻahu residential parcels owned by individuals, by the owner's mainland metro</span></figcaption>
+        <div class="tw" style="margin-top:0;border:0"><table><tbody><tr><td>San Francisco Bay Area</td><td class="num">3,641</td></tr><tr><td>Los Angeles–Orange County</td><td class="num">3,064</td></tr><tr><td>Seattle–Tacoma</td><td class="num">1,355</td></tr><tr><td>San Diego</td><td class="num">797</td></tr><tr><td>Las Vegas</td><td class="num">745</td></tr><tr><td>New York</td><td class="num">667</td></tr><tr><td>Washington DC</td><td class="num">607</td></tr><tr><td>Portland</td><td class="num">408</td></tr><tr><td>Sacramento</td><td class="num">370</td></tr><tr><td>Denver</td><td class="num">355</td></tr><tr><td>Phoenix</td><td class="num">297</td></tr><tr><td>Dallas–Fort Worth</td><td class="num">295</td></tr></tbody></table></div>
+      </figure>
+      <figure>
+        <figcaption><span class="t">Their top home ZIP codes</span><span class="s">Oʻahu residential parcels, by individual owner's mailing ZIP</span></figcaption>
+        <div class="tw" style="margin-top:0;border:0"><table><tbody><tr><td><span class="geo">94010</span> Burlingame · Hillsborough</td><td class="num">96</td></tr><tr><td><span class="geo">94122</span> San Francisco (Sunset)</td><td class="num">72</td></tr><tr><td><span class="geo">95014</span> Cupertino</td><td class="num">69</td></tr><tr><td><span class="geo">94404</span> Foster City</td><td class="num">64</td></tr><tr><td><span class="geo">94539</span> Fremont</td><td class="num">60</td></tr><tr><td><span class="geo">90274</span> Palos Verdes Peninsula</td><td class="num">59</td></tr><tr><td><span class="geo">95120</span> San Jose (Almaden)</td><td class="num">57</td></tr><tr><td><span class="geo">91754</span> Monterey Park</td><td class="num">56</td></tr><tr><td><span class="geo">90275</span> Rancho Palos Verdes</td><td class="num">52</td></tr><tr><td><span class="geo">98006</span> Bellevue</td><td class="num">51</td></tr><tr><td><span class="geo">94501</span> Alameda</td><td class="num">49</td></tr><tr><td><span class="geo">94116</span> San Francisco (Parkside)</td><td class="num">47</td></tr><tr><td><span class="geo">95070</span> Saratoga</td><td class="num">47</td></tr><tr><td><span class="geo">94030</span> Millbrae</td><td class="num">46</td></tr><tr><td><span class="geo">94121</span> San Francisco (Richmond)</td><td class="num">46</td></tr></tbody></table></div>
+      </figure>
+    </div>
+    <div class="col">
+      <ul class="tight" style="margin-top:18px">
+        <li><b>Island-wide:</b> 91.2% of Oʻahu's 270,163 residential parcels with a mailing address belong to owners in Hawaiʻi, 7.6% (20,423) to owners elsewhere in the U.S. and 1.0% (2,695) to owners abroad. Condo units are owned off-island about three times as often as houses (13% vs 5%).</li>
+        <li><b>Abroad:</b> Japan holds 62% of foreign-owned Oʻahu parcels (all property types), then Canada (15%) and Korea (8%).</li>
+        <li><b>Second homes, not residences:</b> 6% of mainland-owned residential parcels carry a property-tax exemption, against 62% of Hawaiʻi-owned ones.</li>
+      </ul>
+      <div class="means"><b>For brokers</b>These owners are the most likely sellers when rates, insurance and HOA costs rise. Mail them where they live (direct mail can target any ZIP outside the Lahaina and Kula ZIPs), and partner with agents in their home metros, led by the Bay Area, Los Angeles and Seattle.</div>
+    </div>
+    <p class="src">City and County of Honolulu real property owner roll (OWNINFO, 587,662 owner records, data as of Oct 5, 2026), assessment tax class (residential rate class) and situs ZIP tables, downloaded directly from the county's ArcGIS services; computed here. Mailing address is where the tax bill goes, which can be a manager or trust rather than the owner's home. "Individual owners" excludes mailing addresses shared by 10 or more Oʻahu parcels (about 5% of mainland-owned parcels; likely companies such as timeshare and management firms, our read). Neighbor-island owner rolls are being added.</p>
+  </section>
+  <!-- DECADE -->
+  <section id="decade">
+    <div class="head col">
+      <span class="sec-n">Buyers by origin, 2008 to mid-2026</span>
+      <h2>Mainland buyers' share of recorded sales peaked at 29% in 2010. Since 2012 it has held between 17% and 23%.</h2>
+      <p class="muted">Recorded sales by the buyer's address at purchase, statewide and by county from 2008 through June 2026. No official series exists before 2008.</p>
+    </div>
+    <figure>
+      <figcaption><span class="t">Hawaiʻi home sales by buyer origin, 2008–2025</span><span class="s">Houses and condos, all counties, by year <span class="tag o">Official</span></span></figcaption>
+      <div class="legend"><span><i style="background:var(--s-local)"></i>Hawaiʻi resident</span><span><i style="background:var(--s-main)"></i>U.S. mainland</span><span><i style="background:var(--s-foreign)"></i>Foreign</span></div>
+      <div class="chart" id="c-decade"></div>
+      <details class="tbl"><summary>Show as table</summary><div class="tw"><table id="t-decade"></table></div></details>
+      <p class="src">DBEDT State of Hawaii Data Book 2025 (Tables 21.36–21.38) and Quarterly Statistical &amp; Economic Report, 3rd quarter 2026 (Title Guaranty data), downloaded directly; all 716 figures that overlap the earlier transcription match. *DBEDT's 2024 count (18,007) runs about 8% above Title Guaranty's own 2024 count (16,709), cause unknown; the two agree for 2023 and 2025. Compare 2024 with its neighbors by share, not count. Each year's local, mainland and foreign counts add exactly to the published total and reproduce its average price, and the 2008–2015 sums match DBEDT's 2016 home-sales report to the home (144,382 sales). The 2010 jump is as published (single-family sales 8,384 in 2009, 11,073 in 2010, 7,626 in 2011). MLS sales moved much less (+19% in 2010, +1% in 2011, against +31% and −19% for recorded sales), so compare 2008–2011 with later years with caution.</p>
+    </figure>
+    <h3 style="margin-top:28px">The latest: first half of 2026 vs first half of 2025</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Area</th><th class="num">Recorded sales, Jan–Jun 2026</th><th class="num">vs 2025</th><th class="num">Mainland share</th><th class="num">Foreign share</th><th class="num">Avg mainland price</th></tr></thead>
+        <tbody><tr><td><span class="geo">Statewide</span></td><td class="num">7,738</td><td class="num">+2%</td><td class="num">21.8% → <b>19.2%</b></td><td class="num">2.3% → <b>2.9%</b></td><td class="num">$1.49M</td></tr><tr><td><span class="geo">Oʻahu</span></td><td class="num">5,032</td><td class="num">+9%</td><td class="num">15.4% → <b>13.5%</b></td><td class="num">3.2% → <b>4.0%</b></td><td class="num">$1.11M</td></tr><tr><td><span class="geo">Maui County</span></td><td class="num">643</td><td class="num">+5%</td><td class="num">28.5% → <b>27.8%</b></td><td class="num">1.5% → <b>1.2%</b></td><td class="num">$1.86M</td></tr><tr><td><span class="geo">Kauaʻi</span></td><td class="num">325</td><td class="num">−34%</td><td class="num">32.1% → <b>33.5%</b></td><td class="num">0.2% → <b>0.9%</b></td><td class="num">$2.55M</td></tr><tr><td><span class="geo">Hawaiʻi Island</span></td><td class="num">1,738</td><td class="num">−9%</td><td class="num">32.5% → <b>30.1%</b></td><td class="num">1.0% → <b>0.8%</b></td><td class="num">$1.64M</td></tr></tbody>
+      </table>
+    </div>
+    <p class="src">DBEDT Quarterly Statistical &amp; Economic Report, 3rd quarter 2026, Tables E-11, E-12 and G-49 to G-56 (Title Guaranty data through June 2026) <span class="tag o">Official</span>. Half-year shares swing more than annual ones, especially on Maui and Kauaʻi.</p>
+    <div class="two">
+      <figure>
+        <figcaption><span class="t">Mainland buyers' share of sales, by county</span><span class="s">Percent of each county's sales, 2008–2025 <span class="tag o">Official</span></span></figcaption>
+        <div class="chart" id="c-share"></div>
+        <p class="src">Same series. Each panel uses the same 0–60% scale. County rows for 2008–2015 come from DBEDT's quarterly report (Tables G-53 to G-56); they sum exactly to the statewide totals.</p>
+      </figure>
+      <figure>
+        <figcaption><span class="t">Average price paid, by buyer origin</span><span class="s">Statewide, 2008–2025 <span class="tag o">Official</span></span></figcaption>
+        <div class="legend"><span><i class="ln" style="background:var(--s-local)"></i>Local</span><span><i class="ln" style="background:var(--s-main)"></i>Mainland</span><span><i class="ln" style="background:var(--s-foreign)"></i>Foreign</span></div>
+        <div class="chart" id="c-price"></div>
+        <p class="src">Same series. These are averages, not medians, so a few very large sales pull them up.</p>
+      </figure>
+    </div>
+    <div class="means"><b>For brokers</b>About one sale in five goes to a mainland buyer statewide. On the Big Island and Kauaʻi, mainland buyers bring about half of all purchase dollars.</div>
+  </section>
+  <!-- ISLANDS -->
+  <section id="islands">
+    <div class="head col">
+      <span class="sec-n">Island by island</span>
+      <h2>On the Big Island and Kauaʻi, mainland buyers spend about half of all home-purchase dollars</h2>
+    </div>
+    <figure>
+      <figcaption><span class="t">Mainland buyers per year, by island</span><span class="s">Number of sales to U.S. mainland buyers, 2008–2025 <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-isl-main"></div>
+    </figure>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Island</th><th class="num">Mainland share 2008</th><th class="num">2015</th><th class="num">2021</th><th class="num">2025</th><th class="num">Share of dollars 2025</th><th class="num">Mainland avg price 2025</th><th class="num">Local avg price 2025</th><th>What changed</th></tr></thead>
+        <tbody id="t-isl"></tbody>
+      </table>
+    </div>
+    <p class="src">DBEDT buyer-origin series. Share of dollars = mainland sales × mainland average price ÷ all sales × average price. DBEDT's 2024 count runs about 8% above Title Guaranty's own (18,007 vs 16,709); 2023 and 2025 agree. Compare 2024 by share, not count.</p>
+    <div class="means"><b>For brokers</b>Neighbor-island listings need mainland marketing. Oʻahu is mostly a local market: Hawaiʻi residents made 83% of its 2025 purchases.</div>
+  </section>
+  <!-- BUYERS -->
+  <section id="buyers">
+    <div class="head col">
+      <span class="sec-n">Where buyers come from, island by island</span>
+      <h2>California leads on every island. Behind it, each island draws its own second-home markets.</h2>
+      <p class="muted">Buyer records by the buyer's home state, plus the state's visitor counts by mainland metro, the best public signal for where second-home buyers live.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>Oʻahu</th><th>Maui</th><th>Kauaʻi</th><th>Hawaiʻi Island</th></tr></thead>
+        <tbody><tr><td><b>Buyers, 2025</b><br><span class="why">Hawaiʻi · mainland · foreign</span></td><td class="num" style="text-align:left">9,202 · 1,531 · 364<br><span class="why">83% · 14% · 3% of 11,097</span></td><td class="num" style="text-align:left">915 · 316 · 16<br><span class="why">73% · 25% · 1% of 1,247</span></td><td class="num" style="text-align:left">604 · 284 · 2<br><span class="why">68% · 32% · 0% of 890</span></td><td class="num" style="text-align:left">2,467 · 1,175 · 33<br><span class="why">67% · 32% · 1% of 3,675</span></td></tr><tr><td><b>Top out-of-state buyer states, 2025</b></td><td>California 656<br>Washington 112<br>Florida 111<br>Texas 83<br>Nevada 65</td><td>California 107<br>Washington 34<br>Oregon 17<br>Colorado 17<br>Texas 15</td><td>California 102<br>Colorado 24<br>Texas 19<br>Washington 18<br>Utah 16</td><td>California 406<br>Washington 114<br>Oregon 77<br>Texas 58<br>Alaska 55</td></tr><tr><td><b>2026 so far</b><br><span class="why">January–June</span></td><td>California 271<br>Washington 54<br>Texas 52</td><td>California 55<br>Washington 38<br>Colorado 13</td><td>California 50<br>Washington 13<br>Texas 7</td><td>California 176<br>Washington 70<br>Oregon 30</td></tr><tr><td><b>Foreign buyers, 2025</b></td><td>Japan 202<br>Korea 87<br>Canada 35</td><td>Canada 11<br>Cayman Islands 1<br>Switzerland 1</td><td>Japan 1<br>Canada 1</td><td>Canada 17<br>Japan 10<br>Switzerland 2</td></tr><tr><td><b>Biggest visitor metros</b><br><span class="why">2024 arrivals</span></td><td>Los Angeles–Orange County 496K<br>San Francisco–Oakland 296K<br>Seattle–Tacoma 209K<br>San Diego 156K</td><td>Los Angeles–Orange County 211K<br>San Francisco–Oakland 159K<br>Seattle–Tacoma 127K<br>San Diego 70K</td><td>Los Angeles–Orange County 123K<br>San Francisco–Oakland 86K<br>Seattle–Tacoma 61K<br>San Diego 49K</td><td>Los Angeles–Orange County 129K<br>San Francisco–Oakland 101K<br>Seattle–Tacoma 87K<br>San Diego 48K</td></tr><tr><td><b>Second-home signals</b><br><span class="why">metros over-sending visitors</span></td><td>Washington DC 1.33×<br>Baltimore 1.32×<br>San Antonio 1.29×<br>New York 1.24×<br>Boston 1.23×</td><td>Minneapolis–St. Paul 1.31×<br>Chicago 1.25×<br>Dallas–Fort Worth 1.14×<br>New York 1.11×<br>Sacramento 1.10×</td><td>Salt Lake City–Provo–Ogden 1.44×<br>Denver 1.32×<br>Minneapolis–St. Paul 1.29×<br>Chicago 1.18×<br>Boston 1.17×</td><td>Anchorage 1.42×<br>Minneapolis–St. Paul 1.28×<br>Portland 1.22×<br>New York 1.21×<br>Denver 1.17×</td></tr></tbody>
+      </table>
+    </div>
+    <p class="src">Buyers 2025: DBEDT buyer-origin series (Title Guaranty data) <span class="tag o">Official</span>. Buyer states and countries: Title Guaranty buyer statistics, full year 2025 (Q4 2025 edition) and January–June 2026 (Q2 2026 edition, the latest published), downloaded directly; Maui figures cover Maui County <span class="tag o">Official</span>. Visitor metros: DBEDT 2024 Annual Visitor Research, Table 55, domestic air arrivals by island and metro <span class="tag p">Primary</span>. Second-home signal = the share of a metro's Hawaiʻi visitors who go to that island ÷ the same share for all visitors from the 67 metros DBEDT lists, taken together (Utah's three metros counted as one); 1.30 means 30% above average; minimum 20,000 visitors to Oʻahu or Maui, 15,000 to Hawaiʻi Island, 10,000 to Kauaʻi. Visitors are a signal, not a count of buyers. On Oʻahu the top over-senders are military and federal centers, so official travel may explain part of their lead.</p>
+    <div class="col">
+      <ul class="tight" style="margin-top:18px">
+        <li><b>Statewide, 2025:</b> the top buyer states by number of purchases were California (1,271), Washington (278), Texas (175), Florida (159), Colorado (136) and Nevada (134) <span class="tag o">Official</span>. In January–June 2026: California 552, Washington 175, Texas 94, Colorado 61, Oregon 50 <span class="tag o">Official</span>. Japan led the foreign buyers with 213, followed by Korea with 87 and Canada with 64 <span class="tag o">Official</span> (Title Guaranty, statewide 2025); in January–June 2026, Japan 138, Korea 37, Canada 26.</li>
+        <li><b>Foreign buyers:</b> 415 purchases in 2025 (2.5%): 364 on Oʻahu, 33 on Hawaiʻi Island, 16 on Maui and 2 on Kauaʻi. Over the past ten years more than 90% of Japanese real-estate purchase value, commercial and residential, was on Oʻahu (DBEDT, May 2026), and for homes in 2025 it was 85% ($233.1M of $273.3M, Title Guaranty) <span class="tag o">Official</span>; Japan's visitors come mostly from the Tokyo (301K), Osaka (164K) and Nagoya (134K) regions. Canada led the foreign buyers by number of purchases on Hawaiʻi Island (17) and Maui (11) in 2025 <span class="tag o">Official</span>; its visitors come mostly from British Columbia (211K) and Ontario (107K), then Alberta (67K) <span class="tag p">Primary</span>.</li>
+        <li><b>Local buyers on the neighbor islands include many Oʻahu residents.</b> Oʻahu sends each neighbor island about two to three times as many households a year as Los Angeles–Orange County does: 3.0× on the Big Island, 2.3× on Kauaʻi and 1.9× on Maui (IRS, 2019–23; Maui and Kauaʻi 2019–22, because IRS did not publish those pairs for 2022–23) <span class="tag p">Primary</span>.</li>
+      </ul>
+      <div class="means"><b>For brokers</b>Put Southern California, the Bay Area and Seattle in every island's plan. Then add each island's own second-home markets: Salt Lake City and Denver for Kauaʻi; Minneapolis, Chicago and Dallas for Maui; Anchorage and Portland for the Big Island. For neighbor-island listings, advertise on Oʻahu too.</div>
+    </div>
+  </section>
+  </div>
+
+  <div class="chapter" id="micro">
+    <div class="ch"><span class="num">Chapter 3</span><h2 class="t">Micro-markets</h2><p>Every island by property type, price tier, district and ZIP: what sells, at what price, and who buys it.</p></div>
+  <section id="mm-glance">
+    <div class="head col"><span class="sec-n">All Hawaiʻi, island by island</span><h2>Four islands, four different markets</h2>
+      <p class="muted">The latest listings (September 2026), who bought in 2025, and how much of each island is owned or bought from away.</p></div>
+    <div class="tw"><table class="gl"><thead><tr><th></th><th class="num">Oʻahu</th><th class="num">Maui County</th><th class="num">Kauaʻi</th><th class="num">Hawaiʻi Island</th></tr></thead><tbody><tr><td>Active listings, Sep 2026</td><td class="num">3,483</td><td class="num">1,367</td><td class="num">385</td><td class="num">1,365</td></tr><tr><td>Median list price</td><td class="num">$675K</td><td class="num">$995K</td><td class="num">$1.51M</td><td class="num">$599K</td></tr><tr><td>Median days on market</td><td class="num">76</td><td class="num">117</td><td class="num">116</td><td class="num">92</td></tr><tr><td>Listings with a price cut</td><td class="num">14.2%</td><td class="num">12.5%</td><td class="num">4.8%</td><td class="num">16.7%</td></tr><tr><td>Buyers 2025: local · mainland · foreign</td><td class="num">83% · 14% · 3%</td><td class="num">73% · 25% · 1%</td><td class="num">68% · 32% · <1%</td><td class="num">67% · 32% · 1%</td></tr><tr><td>Out-of-state buyers 2025: houses · condos</td><td class="num">9% · 16%</td><td class="num">18% · 55%</td><td class="num">29% · 44%</td><td class="num">25% · 49%</td></tr><tr><td>Mortgaged buyers who won't live there (2025)</td><td class="num">16%</td><td class="num">34%</td><td class="num">40%</td><td class="num">31%</td></tr><tr><td>$3M+ sales 2025 · of which $10M+</td><td class="num">196 · 9</td><td class="num">125 · 14</td><td class="num">83 · 7</td><td class="num">115 · 22</td></tr><tr><td>Vacation rentals, share of homes</td><td class="num">2.5%</td><td class="num">15.2%</td><td class="num">19.9%</td><td class="num">9.0%</td></tr><tr><td>Homes owned from outside Hawaiʻi (Oʻahu: off-island)</td><td class="num">8.6%</td><td class="num">30.6%</td><td class="num"><span class="why">county file not public</span></td><td class="num"><span class="why">county file not public</span></td></tr></tbody></table></div>
+    <p class="src">Listings: Realtor.com county data, September 2026 <span class="tag p">Primary</span>. Buyers: DBEDT/Title Guaranty 2025 <span class="tag o">Official</span>. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 <span class="tag o">Official</span>. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy <span class="tag p">Primary</span>. $3M+ sales: Hawaiʻi Life luxury report 2025 <span class="tag r">Reported</span>. Owner shares: county owner rolls, October 2026 <span class="tag p">Primary</span>.</p>
+    <!--WHY:mm-glance-->
+  </section>
+  <section id="mm-tiers">
+    <div class="head col"><span class="sec-n">Who buys at each price</span><h2>Locals buy the first $3 million. Above it, the mainland and the world take over.</h2></div>
+    <div class="tw"><table><thead><tr><th>Price tier</th><th class="num">Oʻahu buyers 2023–25<br>local · mainland · foreign</th><th class="num">Maui County: buyers without a homeowner exemption, FY2024–26</th><th>Statewide mortgaged buyers, 2025: second homes and investors</th></tr></thead><tbody><tr><td><b>Entry, under $750K</b></td><td class="num">83% · 15% · 2%<br><span class="why">5,888 sales</span></td><td class="num">58%<br><span class="why">of 2,995 sales</span></td><td>4% second home · 16% investor<br><span class="why">4,836 loans; median income $123K; 2019: 8% · 12%</span></td></tr><tr><td><b>Mid, $750K–1.5M</b></td><td class="num">87% · 11% · 2%<br><span class="why">4,511 sales</span></td><td class="num">50%<br><span class="why">of 2,052 sales</span></td><td>4% second home · 16% investor<br><span class="why">3,718 loans; median income $202K; 2019: 11% · 13%</span></td></tr><tr><td><b>Upper, $1.5M–3M</b></td><td class="num">82% · 15% · 3%<br><span class="why">1,183 sales</span></td><td class="num">63%<br><span class="why">of 1,017 sales</span></td><td>10% second home · 22% investor<br><span class="why">864 loans; median income $343K; 2019: 26% · 16%</span></td></tr><tr><td><b>Luxury, $3M–10M</b></td><td class="num">69% · 26% · 5%<br><span class="why">255 sales</span></td><td class="num">81%<br><span class="why">of 392 sales</span></td><td>29% second home · 23% investor<br><span class="why">150 loans; median income $1.02M; 2019: 45% · 26%</span></td></tr><tr><td><b>Ultra, $10M+</b></td><td class="num">36% · 43% · 21%<br><span class="why">14 sales <span class="why">(n&lt;20)</span></span></td><td class="num">89%<br><span class="why">of 44 sales</span></td><td>50% second home · 50% investor<br><span class="why">6 loans (n&lt;20); median income $2.85M; 2019: 75% · 0%</span></td></tr></tbody></table></div>
+    <p class="src">Oʻahu: 2023–2025 sales matched to the October 2026 owner roll by the buyer's mailing address; excludes addresses shared by 10+ parcels; within about 1–4 points of Title Guaranty's island totals <span class="tag p">Primary</span>. Maui: conveyance-tax schedule (homeowner vs non-homeowner rate), sales by price band; the entry cut is $800K in this source <span class="tag o">Official</span>. Statewide: HMDA first-lien purchase loans by property value <span class="tag p">Primary</span>.</p>
+    <!--WHY:mm-tiers-->
+  </section>
+  <section id="mm-type">
+    <div class="head col"><span class="sec-n">Houses vs condos</span><h2>Condos are the outsiders' market: half of neighbor-island condo buyers are from out of state</h2></div>
+    <div class="tw"><table><thead><tr><th>Island</th><th class="num">Houses sold 2025 · avg price</th><th class="num">Condos sold 2025 · avg price</th><th class="num">Out-of-state buyers: houses</th><th class="num">Out-of-state buyers: condos</th></tr></thead><tbody><tr><td><span class="geo">Oʻahu</span></td><td class="num">3,563 · $1.35M<br><span class="why">2019: 4,458 · $967K</span></td><td class="num">7,534 · $663K<br><span class="why">2019: 8,095 · $546K</span></td><td class="num">9%</td><td class="num"><b>16%</b></td></tr><tr><td><span class="geo">Maui County</span></td><td class="num">842 · $1.57M<br><span class="why">2019: 1,278 · $865K</span></td><td class="num">405 · $1.14M<br><span class="why">2019: 1,242 · $691K</span></td><td class="num">18%</td><td class="num"><b>55%</b></td></tr><tr><td><span class="geo">Kauaʻi</span></td><td class="num">492 · $1.71M<br><span class="why">2019: 653 · $722K</span></td><td class="num">398 · $825K<br><span class="why">2019: 495 · $710K</span></td><td class="num">29%</td><td class="num"><b>44%</b></td></tr><tr><td><span class="geo">Hawaiʻi Island</span></td><td class="num">2,983 · $673K<br><span class="why">2019: 2,798 · $512K</span></td><td class="num">692 · $1.07M<br><span class="why">2019: 1,091 · $523K</span></td><td class="num">25%</td><td class="num"><b>49%</b></td></tr></tbody></table></div>
+    <div class="col"><ul class="tight" style="margin-top:16px">
+      <li><b>Oʻahu:</b> condo buyers in 2023–25 were 17% mainland and 3% foreign; house buyers 7.5% mainland <span class="tag p">Primary</span>.</li>
+      <li><b>Maui County:</b> 60% of condo units are owned from outside Hawaiʻi, against 11% of houses; 72% of condo sales in FY2024–26 went to buyers without a homeowner exemption, against 39% of house sales <span class="tag p">Primary</span>.</li>
+    </ul></div>
+    <p class="src">Sales and average prices: DBEDT quarterly report Tables G-49 to G-52 (Title Guaranty data) <span class="tag o">Official</span>. Out-of-state shares: UHERO 2026 (2025 sales) <span class="tag o">Official</span>.</p>
+    <!--WHY:mm-type-->
+  </section>
+  <section id="mm-luxury">
+    <div class="head col"><span class="sec-n">Luxury and ultra-luxury</span><h2>519 sales at $3M+ in 2025. The Big Island now leads at $10M+.</h2></div>
+    <div class="tw"><table><thead><tr><th>Island</th><th class="num">$3M+ sales, 2025</th><th class="num">Homes · condos · land</th><th class="num">$10M+ sales, 2025</th><th class="num">Median $3M+ home, 2025</th><th class="num">Jan–Jun 2026: $3M+ · $10M+</th></tr></thead><tbody><tr><td><span class="geo">Oʻahu</span></td><td class="num">196</td><td class="num">144 · 48 · 4</td><td class="num">9</td><td class="num">$3.85M</td><td class="num">92 · 8</td></tr><tr><td><span class="geo">Maui County</span></td><td class="num">125</td><td class="num">71 · 41 · 13</td><td class="num">14</td><td class="num">$4.50M</td><td class="num">48 · 2</td></tr><tr><td><span class="geo">Kauaʻi</span></td><td class="num">83</td><td class="num">67 · 6 · 10</td><td class="num">7</td><td class="num">$4.30M</td><td class="num">45 · 2</td></tr><tr><td><span class="geo">Hawaiʻi Island</span></td><td class="num">115</td><td class="num">56 · 44 · 15</td><td class="num">22</td><td class="num">$7.23M</td><td class="num">79 · 17</td></tr><tr><td><b>All Hawaiʻi</b></td><td class="num"><b>519</b></td><td class="num">338 · 139 · 42</td><td class="num"><b>52</b></td><td class="num">—</td><td class="num">264 · 29</td></tr></tbody></table></div>
+    <div class="col"><ul class="tight" style="margin-top:16px">
+      <li><b>Who buys it:</b> on Oʻahu, $3M+ buyers in 2023–25 were 67% local, 27% mainland (led by the Bay Area, Los Angeles and Seattle) and 6% foreign, almost all from Japan <span class="tag p">Primary</span>. On Maui, 81% of $3–10M sales and 89% of $10M+ sales went to buyers without a homeowner exemption <span class="tag o">Official</span>. In January–June 2026, 15 of the state's 22 single-family sales at $10M+ were on Hawaiʻi Island <span class="tag r">Reported</span>.</li>
+      <li><b>Resort enclaves:</b> Mauna Kea Resort recorded 30 sales worth $159M in 2025 (average $6.8M); South Kohala had 42 sales at $3M+ <span class="tag r">Reported</span>. On Oʻahu, $5M+ condo sales in Q2 2026 clustered in Park Lane (4) and Waiea (3) <span class="tag r">Reported</span>.</li>
+      <li><b>Financed luxury is rare and changing:</b> only 150 mortgaged purchases statewide were $3–10M in 2025; their second-home share fell from 45% (2019) to 29% <span class="tag p">Primary</span>.</li>
+    </ul></div>
+    <p class="src">Hawaiʻi Life luxury reports (2025 year-end, 2026 midyear), island figures summed here <span class="tag r">Reported</span>. List Sotheby's Oʻahu Q2 2026 <span class="tag r">Reported</span>. Oʻahu buyer origin: owner-roll match <span class="tag p">Primary</span>. Maui: conveyance-tax schedule <span class="tag o">Official</span>. HMDA 2025 <span class="tag p">Primary</span>.</p>
+    <!--WHY:mm-luxury-->
+  </section>
+
+  <section id="mm-oahu">
+    <div class="head col"><span class="sec-n">Oʻahu by ZIP</span><h2>Town condos sell to locals; Waikīkī, the North Shore and Turtle Bay sell to the mainland.</h2></div>
+    <div class="tw"><table class="zt"><thead><tr><th>ZIP</th><th class="num">Listings Sep 2026</th><th class="num">Median list price</th><th class="num">vs Sep 2025</th><th class="num">Days on market</th><th class="num">Price cuts</th><th class="num">House median sale 2025</th><th class="num">Out-of-state buyers 2025</th><th class="num">Owned from off-island</th></tr></thead><tbody><tr><td><span class="geo">96815</span> Honolulu</td><td class="num">813</td><td class="num">$525K</td><td class="num">−3%</td><td class="num">99</td><td class="num">14%</td><td class="num">$1.41M</td><td class="num">37%</td><td class="num">28%</td></tr><tr><td><span class="geo">96814</span> Honolulu</td><td class="num">532</td><td class="num">$816K</td><td class="num">−4%</td><td class="num">82</td><td class="num">16%</td><td class="num">$1.46M</td><td class="num">25%</td><td class="num">17%</td></tr><tr><td><span class="geo">96706</span> Ewa Beach</td><td class="num">211</td><td class="num">$811K</td><td class="num">+2%</td><td class="num">56</td><td class="num">11%</td><td class="num">$1.00M</td><td class="num">9%</td><td class="num">6%</td></tr><tr><td><span class="geo">96792</span> Waianae</td><td class="num">198</td><td class="num">$512K</td><td class="num">+6%</td><td class="num">84</td><td class="num">9%</td><td class="num">$645K</td><td class="num">17%</td><td class="num">10%</td></tr><tr><td><span class="geo">96822</span> Honolulu</td><td class="num">160</td><td class="num">$395K</td><td class="num">−8%</td><td class="num">73</td><td class="num">18%</td><td class="num">$1.59M</td><td class="num">9%</td><td class="num">6%</td></tr><tr><td><span class="geo">96813</span> Honolulu</td><td class="num">158</td><td class="num">$638K</td><td class="num">−13%</td><td class="num">77</td><td class="num">9%</td><td class="num">$1.31M</td><td class="num">4%</td><td class="num">7%</td></tr><tr><td><span class="geo">96707</span> Kapolei</td><td class="num">150</td><td class="num">$792K</td><td class="num">+1%</td><td class="num">64</td><td class="num">12%</td><td class="num">$1.02M</td><td class="num">13%</td><td class="num">10%</td></tr><tr><td><span class="geo">96825</span> Honolulu</td><td class="num">133</td><td class="num">$1.10M</td><td class="num">+10%</td><td class="num">76</td><td class="num">16%</td><td class="num">$1.54M</td><td class="num">15%</td><td class="num">8%</td></tr><tr><td><span class="geo">96789</span> Mililani</td><td class="num">130</td><td class="num">$521K</td><td class="num">−3%</td><td class="num">65</td><td class="num">19%</td><td class="num">$988K</td><td class="num">4%</td><td class="num">4%</td></tr><tr><td><span class="geo">96744</span> Kaneohe</td><td class="num">123</td><td class="num">$1.02M</td><td class="num">+19%</td><td class="num">62</td><td class="num">19%</td><td class="num">$1.15M</td><td class="num">7%</td><td class="num">5%</td></tr><tr><td><span class="geo">96826</span> Honolulu</td><td class="num">120</td><td class="num">$441K</td><td class="num">+11%</td><td class="num">79</td><td class="num">20%</td><td class="num">$1.32M</td><td class="num">11%</td><td class="num">9%</td></tr><tr><td><span class="geo">96734</span> Kailua</td><td class="num">112</td><td class="num">$1.66M</td><td class="num">−2%</td><td class="num">61</td><td class="num">17%</td><td class="num">$1.65M</td><td class="num">16%</td><td class="num">10%</td></tr><tr><td><span class="geo">96817</span> Honolulu</td><td class="num">93</td><td class="num">$449K</td><td class="num">+6%</td><td class="num">58</td><td class="num">10%</td><td class="num">$1.10M</td><td class="num">6%</td><td class="num">4%</td></tr><tr><td><span class="geo">96818</span> Honolulu</td><td class="num">89</td><td class="num">$439K</td><td class="num">−10%</td><td class="num">88</td><td class="num">19%</td><td class="num">$1.14M</td><td class="num">4%</td><td class="num">3%</td></tr><tr><td><span class="geo">96701</span> Aiea</td><td class="num">87</td><td class="num">$465K</td><td class="num">−1%</td><td class="num">48</td><td class="num">15%</td><td class="num">$1.15M</td><td class="num">5%</td><td class="num">5%</td></tr><tr><td><span class="geo">96816</span> Honolulu</td><td class="num">81</td><td class="num">$1.55M</td><td class="num">+11%</td><td class="num">80</td><td class="num">13%</td><td class="num">$1.35M</td><td class="num">8%</td><td class="num">6%</td></tr><tr><td><span class="geo">96797</span> Waipahu</td><td class="num">65</td><td class="num">$536K</td><td class="num">−4%</td><td class="num">51</td><td class="num">11%</td><td class="num">$935K</td><td class="num">4%</td><td class="num">4%</td></tr><tr><td><span class="geo">96821</span> Honolulu</td><td class="num">51</td><td class="num">$2.69M</td><td class="num">+9%</td><td class="num">49</td><td class="num">7%</td><td class="num">$1.75M</td><td class="num">10%</td><td class="num">5%</td></tr><tr><td><span class="geo">96782</span> Pearl City</td><td class="num">31</td><td class="num">$542K</td><td class="num">+7%</td><td class="num">56</td><td class="num">11%</td><td class="num">$1.01M</td><td class="num">4%</td><td class="num">4%</td></tr><tr><td><span class="geo">96791</span> Waialua</td><td class="num">30</td><td class="num">$1.04M</td><td class="num">−28%</td><td class="num">95</td><td class="num">9%</td><td class="num">$1.11M</td><td class="num">18%</td><td class="num">12%</td></tr><tr><td><span class="geo">96717</span> Hauula</td><td class="num">29</td><td class="num">$810K</td><td class="num">−9%</td><td class="num">76</td><td class="num">11%</td><td class="num">$862K</td><td class="num">40%</td><td class="num">19%</td></tr><tr><td><span class="geo">96712</span> Haleiwa</td><td class="num">25</td><td class="num">$1.79M</td><td class="num">−36%</td><td class="num">111</td><td class="num">0%</td><td class="num">$1.78M</td><td class="num">20%</td><td class="num">17%</td></tr><tr><td><span class="geo">96819</span> Honolulu</td><td class="num">19</td><td class="num">$1.06M</td><td class="num">+1%</td><td class="num">72</td><td class="num">14%</td><td class="num">$1.02M</td><td class="num">3%</td><td class="num">4%</td></tr><tr><td><span class="geo">96786</span> Wahiawa</td><td class="num">16</td><td class="num">$889K</td><td class="num">+15%</td><td class="num">62</td><td class="num">15%</td><td class="num">$828K</td><td class="num">12%</td><td class="num">5%</td></tr><tr><td><span class="geo">96731</span> Kahuku</td><td class="num">12</td><td class="num">$1.42M</td><td class="num">+29%</td><td class="num">108</td><td class="num">0%</td><td class="num">$761K</td><td class="num">33%</td><td class="num">26%</td></tr><tr><td><span class="geo">96795</span> Waimanalo</td><td class="num">11</td><td class="num">$1.93M</td><td class="num">−31%</td><td class="num">118</td><td class="num">17%</td><td class="num">$1.32M</td><td class="num">35%</td><td class="num">3%</td></tr></tbody></table></div>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings (26 shown) <span class="tag p">Primary</span>. House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) <span class="tag o">Official</span>. Owned from off-island: Honolulu owner roll, residential parcels, October 2026 <span class="tag p">Primary</span>.</p>
+    
+    <!--WHY:mm-oahu-->
+  </section>
+  <section id="mm-maui">
+    <div class="head col"><span class="sec-n">Maui County by ZIP and district</span><h2>West Maui and Wailea are owned from away; Upcountry and Central Maui are local.</h2></div>
+    <div class="tw"><table class="zt"><thead><tr><th>ZIP</th><th class="num">Listings Sep 2026</th><th class="num">Median list price</th><th class="num">vs Sep 2025</th><th class="num">Days on market</th><th class="num">Price cuts</th><th class="num">House median sale 2025</th><th class="num">Out-of-state buyers 2025</th></tr></thead><tbody><tr><td><span class="geo">96761</span> Lahaina</td><td class="num">545</td><td class="num">$867K</td><td class="num">−28%</td><td class="num">126</td><td class="num">10%</td><td class="num">$1.75M</td><td class="num">63%</td></tr><tr><td><span class="geo">96753</span> Kihei</td><td class="num">403</td><td class="num">$1.00M</td><td class="num">−5%</td><td class="num">114</td><td class="num">13%</td><td class="num">$1.38M</td><td class="num">47%</td></tr><tr><td><span class="geo">96793</span> Wailuku</td><td class="num">119</td><td class="num">$899K</td><td class="num">−10%</td><td class="num">97</td><td class="num">11%</td><td class="num">$1.10M</td><td class="num">12%</td></tr><tr><td><span class="geo">96732</span> Kahului</td><td class="num">56</td><td class="num">$1.08M</td><td class="num">+4%</td><td class="num">101</td><td class="num">23%</td><td class="num">$1.05M</td><td class="num">8%</td></tr><tr><td><span class="geo">96708</span> Haiku</td><td class="num">42</td><td class="num">$1.89M</td><td class="num">−21%</td><td class="num">139</td><td class="num">13%</td><td class="num">$1.20M</td><td class="num">22%</td></tr><tr><td><span class="geo">96770</span> Maunaloa</td><td class="num">41</td><td class="num">$399K</td><td class="num">+22%</td><td class="num">114</td><td class="num">0%</td><td class="num">—</td><td class="num">—</td></tr><tr><td><span class="geo">96768</span> Makawao</td><td class="num">40</td><td class="num">$1.24M</td><td class="num">−15%</td><td class="num">73</td><td class="num">15%</td><td class="num">$1.15M</td><td class="num">10%</td></tr><tr><td><span class="geo">96790</span> Kula</td><td class="num">37</td><td class="num">$2.22M</td><td class="num">+6%</td><td class="num">97</td><td class="num">27%</td><td class="num">$1.49M</td><td class="num">15%</td></tr><tr><td><span class="geo">96748</span> Kaunakakai</td><td class="num">31</td><td class="num">$276K</td><td class="num">−23%</td><td class="num">151</td><td class="num">6%</td><td class="num">$351K</td><td class="num">40%</td></tr><tr><td><span class="geo">96713</span> Hana</td><td class="num">20</td><td class="num">$1.40M</td><td class="num">−20%</td><td class="num">238</td><td class="num">0%</td><td class="num">—</td><td class="num">—</td></tr><tr><td><span class="geo">96779</span> Paia</td><td class="num">17</td><td class="num">$3.12M</td><td class="num">+105%</td><td class="num">82</td><td class="num">0%</td><td class="num">$1.41M</td><td class="num">33%</td></tr><tr><td><span class="geo">96763</span> Lanai City</td><td class="num">14</td><td class="num">$789K</td><td class="num">−46%</td><td class="num">140</td><td class="num">12%</td><td class="num">$776K</td><td class="num">33%</td></tr></tbody></table></div>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings (12 shown) <span class="tag p">Primary</span>. House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) <span class="tag o">Official</span>.</p>
+    <h3 style="margin-top:24px">Maui County districts: who owns, and who bought most recently</h3>
+    <div class="tw"><table><thead><tr><th>District</th><th class="num">Residential parcels</th><th class="num">Owner on the mainland</th><th class="num">Owner abroad</th><th class="num">Owned from outside Hawaiʻi</th><th class="num">Recent buyers from outside Hawaiʻi</th><th class="num">Median assessed value</th></tr></thead><tbody><tr><td>West Maui N: Kaanapali-Kahana-Napili-Kapalua</td><td class="num">10,309</td><td class="num">64%</td><td class="num">4.6%</td><td class="num"><b>68%</b></td><td class="num">61%</td><td class="num">$908K</td></tr><tr><td>West Maui S: Lahaina town-Launiupoko-Olowalu</td><td class="num">3,840</td><td class="num">26%</td><td class="num">2.2%</td><td class="num"><b>28%</b></td><td class="num">39%</td><td class="num">$266K</td></tr><tr><td>Kihei</td><td class="num">11,795</td><td class="num">40%</td><td class="num">6.1%</td><td class="num"><b>46%</b></td><td class="num">40%</td><td class="num">$840K</td></tr><tr><td>Wailea-Makena</td><td class="num">4,654</td><td class="num">46%</td><td class="num">8.1%</td><td class="num"><b>54%</b></td><td class="num">54%</td><td class="num">$2.03M</td></tr><tr><td>Upcountry</td><td class="num">8,328</td><td class="num">8%</td><td class="num">0.2%</td><td class="num"><b>8%</b></td><td class="num">14%</td><td class="num">$1.13M</td></tr><tr><td>Haiku-Paia</td><td class="num">4,112</td><td class="num">12%</td><td class="num">1.1%</td><td class="num"><b>13%</b></td><td class="num">11%</td><td class="num">$1.17M</td></tr><tr><td>Central: Kahului-Wailuku-Waikapu</td><td class="num">15,824</td><td class="num">7%</td><td class="num">0.3%</td><td class="num"><b>8%</b></td><td class="num">11%</td><td class="num">$945K</td></tr><tr><td>Hana / East Maui</td><td class="num">771</td><td class="num">21%</td><td class="num">0.4%</td><td class="num"><b>21%</b></td><td class="num">100% <span class="why">(n&lt;20)</span></td><td class="num">$599K</td></tr><tr><td>Molokai</td><td class="num">3,852</td><td class="num">24%</td><td class="num">0.8%</td><td class="num"><b>25%</b></td><td class="num">69%</td><td class="num">$277K</td></tr><tr><td>Lanai</td><td class="num">1,310</td><td class="num">15%</td><td class="num">0.3%</td><td class="num"><b>15%</b></td><td class="num">40% <span class="why">(n&lt;20)</span></td><td class="num">$726K</td></tr></tbody></table></div>
+    <p class="src">Maui County parcel fabric owner mailing addresses (Oct 4, 2026) and 2026 certified roll, computed here <span class="tag p">Primary</span>. "Recent buyers" are parcels whose owner changed between the April 2026 roll and October 2026: an estimate of who is buying now, not recorded sales.</p>
+    <!--WHY:mm-maui-->
+  </section>
+  <section id="mm-kauai">
+    <div class="head col"><span class="sec-n">Kauaʻi by ZIP</span><h2>The North Shore and Poʻipū are second-home markets; Līhuʻe and the West Side are local.</h2></div>
+    <div class="tw"><table class="zt"><thead><tr><th>ZIP</th><th class="num">Listings Sep 2026</th><th class="num">Median list price</th><th class="num">vs Sep 2025</th><th class="num">Days on market</th><th class="num">Price cuts</th><th class="num">House median sale 2025</th><th class="num">Out-of-state buyers 2025</th></tr></thead><tbody><tr><td><span class="geo">96756</span> Koloa</td><td class="num">106</td><td class="num">$1.38M</td><td class="num">−16%</td><td class="num">138</td><td class="num">5%</td><td class="num">$1.82M</td><td class="num">57%</td></tr><tr><td><span class="geo">96722</span> Princeville</td><td class="num">80</td><td class="num">$1.54M</td><td class="num">+2%</td><td class="num">115</td><td class="num">4%</td><td class="num">$2.30M</td><td class="num">75%</td></tr><tr><td><span class="geo">96746</span> Kapaa</td><td class="num">70</td><td class="num">$1.29M</td><td class="num">+8%</td><td class="num">102</td><td class="num">2%</td><td class="num">$890K</td><td class="num">30%</td></tr><tr><td><span class="geo">96766</span> Lihue</td><td class="num">54</td><td class="num">$650K</td><td class="num">+23%</td><td class="num">105</td><td class="num">6%</td><td class="num">$999K</td><td class="num">17%</td></tr><tr><td><span class="geo">96754</span> Kilauea</td><td class="num">27</td><td class="num">$4.35M</td><td class="num">+18%</td><td class="num">120</td><td class="num">0%</td><td class="num">$1.70M</td><td class="num">37%</td></tr><tr><td><span class="geo">96714</span> Hanalei</td><td class="num">17</td><td class="num">$3.75M</td><td class="num">+4%</td><td class="num">75</td><td class="num">0%</td><td class="num">—</td><td class="num">—</td></tr><tr><td><span class="geo">96741</span> Kalaheo</td><td class="num">13</td><td class="num">$1.59M</td><td class="num">+27%</td><td class="num">113</td><td class="num">0%</td><td class="num">$1.10M</td><td class="num">16%</td></tr></tbody></table></div>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings (7 shown) <span class="tag p">Primary</span>. House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) <span class="tag o">Official</span>.</p>
+    
+    <!--WHY:mm-kauai-->
+  </section>
+  <section id="mm-hawaii">
+    <div class="head col"><span class="sec-n">Hawaiʻi Island by ZIP</span><h2>Kohala and Kona draw the mainland; Hilo and Puna are local and affordable.</h2></div>
+    <div class="tw"><table class="zt"><thead><tr><th>ZIP</th><th class="num">Listings Sep 2026</th><th class="num">Median list price</th><th class="num">vs Sep 2025</th><th class="num">Days on market</th><th class="num">Price cuts</th><th class="num">House median sale 2025</th><th class="num">Out-of-state buyers 2025</th></tr></thead><tbody><tr><td><span class="geo">96740</span> Kailua Kona</td><td class="num">300</td><td class="num">$978K</td><td class="num">+3%</td><td class="num">89</td><td class="num">16%</td><td class="num">$1.20M</td><td class="num">41%</td></tr><tr><td><span class="geo">96778</span> Pahoa</td><td class="num">198</td><td class="num">$332K</td><td class="num">−3%</td><td class="num">91</td><td class="num">22%</td><td class="num">$250K</td><td class="num">24%</td></tr><tr><td><span class="geo">96720</span> Hilo</td><td class="num">130</td><td class="num">$604K</td><td class="num">+1%</td><td class="num">82</td><td class="num">18%</td><td class="num">$550K</td><td class="num">15%</td></tr><tr><td><span class="geo">96749</span> Keaau</td><td class="num">117</td><td class="num">$574K</td><td class="num">+1%</td><td class="num">84</td><td class="num">24%</td><td class="num">$450K</td><td class="num">28%</td></tr><tr><td><span class="geo">96738</span> Waikoloa</td><td class="num">116</td><td class="num">$954K</td><td class="num">−5%</td><td class="num">108</td><td class="num">18%</td><td class="num">$898K</td><td class="num">40%</td></tr><tr><td><span class="geo">96743</span> Kamuela</td><td class="num">91</td><td class="num">$1.98M</td><td class="num">−15%</td><td class="num">96</td><td class="num">11%</td><td class="num">$910K</td><td class="num">46%</td></tr><tr><td><span class="geo">96737</span> Ocean View</td><td class="num">73</td><td class="num">$296K</td><td class="num">+4%</td><td class="num">158</td><td class="num">15%</td><td class="num">$365K</td><td class="num">26%</td></tr><tr><td><span class="geo">96785</span> Volcano</td><td class="num">72</td><td class="num">$416K</td><td class="num">−7%</td><td class="num">71</td><td class="num">16%</td><td class="num">$320K</td><td class="num">14%</td></tr><tr><td><span class="geo">96771</span> Mountain View</td><td class="num">52</td><td class="num">$390K</td><td class="num">+33%</td><td class="num">78</td><td class="num">16%</td><td class="num">$302K</td><td class="num">12%</td></tr><tr><td><span class="geo">96704</span> Captain Cook</td><td class="num">45</td><td class="num">$849K</td><td class="num">+6%</td><td class="num">97</td><td class="num">14%</td><td class="num">$598K</td><td class="num">39%</td></tr><tr><td><span class="geo">96772</span> Naalehu</td><td class="num">35</td><td class="num">$508K</td><td class="num">−15%</td><td class="num">99</td><td class="num">5%</td><td class="num">$292K</td><td class="num">41%</td></tr><tr><td><span class="geo">96760</span> Kurtistown</td><td class="num">32</td><td class="num">$392K</td><td class="num">−0%</td><td class="num">73</td><td class="num">9%</td><td class="num">$376K</td><td class="num">29%</td></tr><tr><td><span class="geo">96725</span> Holualoa</td><td class="num">18</td><td class="num">$1.87M</td><td class="num">+10%</td><td class="num">84</td><td class="num">8%</td><td class="num">$1.42M</td><td class="num">20%</td></tr><tr><td><span class="geo">96727</span> Honokaa</td><td class="num">16</td><td class="num">$780K</td><td class="num">−14%</td><td class="num">99</td><td class="num">20%</td><td class="num">$555K</td><td class="num">16%</td></tr><tr><td><span class="geo">96755</span> Kapaau</td><td class="num">14</td><td class="num">$922K</td><td class="num">+42%</td><td class="num">97</td><td class="num">9%</td><td class="num">$698K</td><td class="num">26%</td></tr></tbody></table></div>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings (15 shown) <span class="tag p">Primary</span>. House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) <span class="tag o">Official</span>.</p>
+    
+    <!--WHY:mm-hawaii-->
+  </section>
+  </div>
+
+  <div class="chapter" id="locals">
+    <div class="ch"><span class="num">Chapter 4</span><h2 class="t">Locals and housing</h2><p>What twenty years did to the people who live here.</p></div>
+  <!-- SQUEEZE -->
+  <section id="squeeze">
+    <div class="head col">
+      <span class="sec-n">The squeeze on local families</span>
+      <h2>On Oʻahu, Maui and Kauaʻi, the payment on a median house went from about 40% of local income in 2019 to 66–78% in 2025</h2>
+    </div>
+    <figure>
+      <figcaption><span class="t">Mortgage payment on a median-priced house, as a share of median household income</span><span class="s">30-year loan, 20% down, principal and interest only, by county <span class="tag o">Official</span> inputs, calculation here</span></figcaption>
+      <div class="sm" id="c-afford"></div>
+      <p class="src">Price: average of monthly single-family medians (DBEDT). Rate: Freddie Mac annual average. Income: Census ACS median household income. 2020 income is interpolated (no ACS 1-year release), and 2025–26 use 2024 income, the latest available. Taxes, insurance and HOA dues are excluded, so the true burden is higher. All four counties start in 2010. Most of the jump since 2021 is the rate: at 2021's 2.96%, Oʻahu's 2025 figure would be about 43%, not 66%.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Median household income vs median home value, indexed</span><span class="s">2010 = 100, by county <span class="tag o">Official</span></span></figcaption>
+      <div class="legend"><span><i class="ln" style="background:var(--s-local)"></i>Median household income</span><span><i class="ln" style="background:var(--s-main)"></i>Median home value</span></div>
+      <div class="sm" id="c-squeeze"></div>
+      <p class="src">ACS 1-year, tables B19013 and B25077, 2010–2024. No 2020 release.</p>
+    </figure>
+    <div class="tw">
+      <table>
+        <thead><tr><th>County</th><th class="num">Income 2010 → 2024</th><th class="num">Home value 2010 → 2024</th><th class="num">Value ÷ income</th><th class="num">Median rent 2010 → 2024</th><th class="num">Homeownership 2024</th></tr></thead>
+        <tbody id="t-squeeze"></tbody>
+      </table>
+    </div>
+    <div>
+      <figure>
+        <figcaption><span class="t">Renters paying 30% or more of income</span><span class="s">Share of renter households, 2024 <span class="tag p">Primary</span></span></figcaption>
+        <div class="legend"><span><i style="background:var(--s-foreign)"></i>Pays 50% or more</span><span><i style="background:var(--s-main)"></i>Pays 30–49%</span></div>
+        <div class="chart" id="c-burden"></div>
+        <p class="src">ACS 2024 PUMS (Census microdata), computed here. Maui and Kauaʻi share one Census area.</p>
+      </figure>
+    </div>
+    <div class="col">
+      <div class="callout">Hawaiʻi residents still bring most of the purchase money: 70% statewide and 81% on Oʻahu in 2025.</div>
+    </div>
+    <div class="means"><b>For brokers</b>Most local buyers now need help to buy: down-payment programs, condos and smaller homes. Expect first-time buyers to need more preparation.</div>
+  </section>
+  <!-- EMPTY -->
+  <section id="empty">
+    <div class="head col">
+      <span class="sec-n">Homes nobody lives in full-time</span>
+      <h2>One in six homes on Maui and Kauaʻi is held for seasonal or occasional use</h2>
+    </div>
+    <figure>
+      <figcaption><span class="t">Homes held for seasonal or occasional use</span><span class="s">Share of all housing units, 2024 <span class="tag p">Primary</span></span></figcaption>
+      <div class="chart" id="c-seasonal"></div>
+      <details class="tbl"><summary>Show vacancy by reason</summary><div class="tw"><table id="t-vac"></table></div></details>
+      <p class="src">ACS 2024 PUMS housing records, computed here. Housing-unit weights sum to 572,824.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Maui: share of home sales to buyers without a homeowner exemption</span><span class="s">Second-home buyers, investors and landlords, by fiscal year (July–June) <span class="tag o">Official</span></span></figcaption>
+      <div class="chart" id="c-maui"></div>
+      <p class="src">Maui County RPT Sales Data File, processed by Hawaiʻi Appleseed. "Non-owner" = conveyance-tax schedule for buyers not eligible for the homeowner exemption. That includes local landlords, so it is broader than out-of-state.</p>
+    </figure>
+    <div class="col">
+      <ul class="tight" style="margin-top:18px">
+        <li><b>Statewide:</b> 36,808 homes (6.4%) are held for seasonal or occasional use. On Maui and Kauaʻi together it is 16,831, about one in six homes.</li>
+        <li><b>Maui's vacation-rental condos:</b> 85% of the 6,172 Minatoya-list units have an out-of-state owner mailing address. 36% of owners list California, 12% Washington and 8% Canada <span class="tag o">Official</span> (UHERO, June 2024). In June 2026 Maui enacted Bill 88 (Ordinance 6008), which lets about 4,500 of those units seek hotel zoning and keep renting; in September the Planning Commission recommended against most of the first batch, and no property had been rezoned <span class="tag r">Reported</span>.</li>
+      </ul>
+    </div>
+    <div class="means"><b>For brokers</b>Second-home owners are a listing source, especially Maui condo owners facing the Bill 9 deadlines and rising HOA costs.</div>
+  </section>
+  <!-- OAHU -->
+  <section id="oahu">
+    <div class="head col">
+      <span class="sec-n">Oʻahu district by district</span>
+      <h2>Since 2012, Waiʻanae and ʻEwa–Kapolei prices have about doubled. In town they rose 45%.</h2>
+      <p class="muted">Moku's repeat-sales index by tax zone, plus recent prices. From Moku's City and County of Honolulu sales records. <span class="tag p">Primary</span></p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Zone</th><th>Areas</th><th class="num">Index 2006</th><th class="num">2012</th><th class="num">2019</th><th class="num">2024</th><th class="num">Change 2012 → 2024</th><th class="num">House median 2023–25</th><th class="num">Condo median 2023–25</th></tr></thead>
+        <tbody id="t-zidx"></tbody>
+      </table>
+    </div>
+    <p class="src">Index: weighted repeat sales, 2015 = 100, all homes in the zone, ending in 2024, the last full year in the extract (2025 records thin out after April). Rows in grey rest on fewer than 25 repeat sales at 2012 or 2024 and are too thin to rank. Moku's extract keeps each parcel's latest two sales, so early years reflect homes that have not resold since. Medians: recorded sales January 2023 – September 2025. Zone areas from the Oʻahu TMK zone map; boundaries approximate.</p>
+    <div class="means"><b>For brokers</b>Town condos grew the least, in part as HOA and insurance costs rose, so buyers there have the most room to negotiate. ʻEwa–Kapolei and Waiʻanae, where most of Oʻahu's entry-level houses are, rose the most.</div>
+  </section>
+  </div>
+
+  <div class="chapter" id="market">
+    <div class="ch"><span class="num">Chapter 5</span><h2 class="t">The market now</h2><p>Where things stand, and where they are heading.</p></div>
+  <!-- NOW -->
+  <section id="now">
+    <div class="head col">
+      <span class="sec-n">Where it is now</span>
+      <h2>September 2026: more homes for sale, rising rates, and buyers with leverage</h2>
+    </div>
+    <div class="now-grid">
+      <div class="now-card"><div class="nm">Oʻahu</div><dl>
+        <dt>Active listings</dt><dd>3,483</dd><dt>vs Sep 2025</dt><dd>+6.4%</dd><dt>Months of supply (Aug)</dt><dd>5.2</dd><dt>Listings with a price cut</dt><dd>14.3%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>+5.9%</dd><dt>Payment ÷ income</dt><dd>~69%</dd></dl>
+        <div class="read">Houses alone have about 3 months of supply, still a seller's market. Condos make the overall figure look balanced. Mainland buyers were 81% of Oʻahu's outside buyers in 2025.</div></div>
+      <div class="now-card"><div class="nm">Maui</div><dl>
+        <dt>Active listings</dt><dd>1,367</dd><dt>vs Sep 2025</dt><dd>+5.2%*</dd><dt>Months of supply (Aug)</dt><dd>9.6</dd><dt>Listings with a price cut</dt><dd>12.5%</dd><dt>Condo sales Jan–Aug</dt><dd>+17.0%</dd><dt>Payment ÷ income</dt><dd>~75%</dd></dl>
+        <div class="read">The deepest buyer's market. Condos are moving at lower prices. The August single-family median was $1,200,000, down 7.9%.</div></div>
+      <div class="now-card"><div class="nm">Kauaʻi</div><dl>
+        <dt>Active listings</dt><dd>385</dd><dt>vs Sep 2025</dt><dd>+8.1%</dd><dt>Months of supply (Aug)</dt><dd>8.4</dd><dt>Listings with a price cut (Aug)</dt><dd>15.2%</dd><dt>Condo sales Jan–Aug</dt><dd>−26.6%</dd><dt>Payment ÷ income</dt><dd>~81%</dd></dl>
+        <div class="read">Sales are down sharply, especially condos. September's price-cut share (4.8%) is a one-month dip, so August is shown.</div></div>
+      <div class="now-card"><div class="nm">Hawaiʻi Island</div><dl>
+        <dt>Active listings</dt><dd>1,365</dd><dt>vs Sep 2025</dt><dd>+24.9%</dd><dt>Months of supply (Aug)</dt><dd>6.5</dd><dt>Listings with a price cut</dt><dd>16.7%</dd><dt>SF sales Jan–Aug vs 2025</dt><dd>−2.8%</dd><dt>Payment ÷ income</dt><dd>~45%</dd></dl>
+        <div class="read">The fastest-rising inventory and the most price cuts. Still the most affordable island relative to local income.</div></div>
+    </div>
+    <p class="src">Realtor.com (September 2026) <span class="tag p">Primary</span>. *Realtor.com flags Maui's recent months as thin volume. DBEDT sales January–August <span class="tag o">Official</span>. Payment ÷ income is the 2026-to-date version of the affordability calculation, using 2024 income.</p>
+    <div class="means"><b>For brokers</b>Buyers have leverage on Maui, Kauaʻi and the Big Island. Oʻahu houses are still a seller's market. Oʻahu condos are where buyers can negotiate.</div>
+  </section>
+  <!-- THERMOMETER -->
+  <section id="thermo">
+    <div class="head col">
+      <span class="sec-n">Market thermometer</span>
+      <h2>From one month of supply in 2021 to buyer's markets on three islands</h2>
+      <p class="muted">Months of supply = homes for sale ÷ homes sold per month. Under 4 favors sellers, 4–6 is balanced, over 6 favors buyers.</p>
+    </div>
+    <figure>
+      <figcaption><span class="t">Months of supply, by island</span><span class="s">Active listings ÷ 3-month average of monthly sales, Jul 2016 – Aug 2026. Shared scale. <span class="tag p">Primary</span> / <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-mos"></div>
+      <p class="src">Listings: Realtor.com county inventory. Sales: DBEDT single-family plus condo. Realtor.com listings include some land, so read the trend more than the exact level.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">The calendar: when homes sell and when visitors come</span><span class="s">Each month vs an average month (1.00). Sales: 2015–2025 excluding 2020–21. Visitors: 2015–2019 and 2023–2025 <span class="tag o">Official</span></span></figcaption>
+      <div class="tw" style="margin-top:4px;border:0"><table class="heat" id="t-season"></table></div>
+      <p class="src">Sales: DBEDT monthly single-family plus condo. Arrivals: DBEDT statewide domestic and international arrivals, 2015–2019 and 2023–2025.</p>
+    </figure>
+    <div class="means"><b>For brokers</b>On the neighbor islands, list by February for the March–June peak. On Oʻahu, list by March for the April–September season. Mainland visitors, a rough guide to buyer trips, peak in June–July, December and March.</div>
+  </section>
+  <!-- PULSE -->
+  <section id="pulse">
+    <div class="head col">
+      <span class="sec-n">Monthly pulse</span>
+      <h2>The month-by-month record, 2006 to 2026</h2>
+    </div>
+    <figure>
+      <figcaption><span class="t">30-year fixed mortgage rate</span><span class="s">Monthly average of Freddie Mac's weekly survey, Jan 2006 – Oct 2026 <span class="tag o">Official</span></span></figcaption>
+      <div class="chart" id="c-mort"></div>
+      <p class="src">Freddie Mac PMMS. October 2026 is a single weekly reading (Oct 1).</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Single-family median price</span><span class="s">Monthly median (faint) and its 12-month average (solid). Each panel has its own scale. <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-median"></div>
+      <p class="src">DBEDT Monthly Economic Indicators. Checked: Oʻahu Dec 2025 $1,100,000 and Aug 2026 $1,240,000, Maui Aug 2026 $1,200,000, all match published figures. Kauaʻi and Big Island have no monthly medians March 2006 – December 2007.</p>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Home sales, rolling 12 months</span><span class="s">Single-family plus condo, by island. Each panel has its own scale. <span class="tag o">Official</span></span></figcaption>
+      <div class="sm" id="c-sales"></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Homes for sale</span><span class="s">Active listings by island, Jul 2016 – Sep 2026 <span class="tag p">Primary</span></span></figcaption>
+      <div class="sm" id="c-active"></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">Visitor arrivals, the buyer pipeline</span><span class="s">Statewide arrivals per month, domestic vs international <span class="tag o">Official</span></span></figcaption>
+      <div class="legend"><span><i class="ln" style="background:var(--s-main)"></i>Domestic (U.S.)</span><span><i class="ln" style="background:var(--s-foreign)"></i>International</span></div>
+      <div class="chart" id="c-arr"></div>
+      <p class="src">DBEDT Monthly Economic Indicators. International arrivals peaked at 3.04 million in 2017 and were 1.65 million in 2025.</p>
+    </figure>
+  </section>
+  <!-- NEXT -->
+  <section id="next">
+    <div class="head col">
+      <span class="sec-n">Where it goes next</span>
+      <h2>2027 outlook: flat prices, slow volume, and a better market for patient buyers</h2>
+      <p class="muted">Judgment built on the record above, a simple rate model fitted to 2015–2025, and UHERO's latest forecast. <span class="tag f">Forecast</span></p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>What the last 11 years show</th><th class="num">Effect of +1 point on the mortgage rate</th><th class="num">Fit (R²)</th></tr></thead>
+        <tbody>
+          <tr><td>Sales to Hawaiʻi residents</td><td class="num">−7.2% (−11.0% to −3.3%)</td><td class="num">0.65</td></tr>
+          <tr><td>All sales</td><td class="num">−6.2% (−10.6% to −1.5%)</td><td class="num">0.50</td></tr>
+          <tr><td>Sales to mainland buyers</td><td class="num">−2.4% (−10.3% to +6.1%)</td><td class="num">0.05 (no clear link)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Log-linear fit of annual recorded sales (DBEDT buyer-origin series, as published) on the annual average Freddie Mac rate, 2015–2025. Ranges in the table are 95% confidence intervals. Eleven points, including the 2020–21 pandemic years, and rates moved together with prices and insurance costs, so read this as correlation, not a measured cause. Adding 2008–2014, when the credit crisis rather than rates held sales down, weakens the overall link (−4.5% per point, range −9.1% to +0.2%) but leaves the pattern intact: local buying falls with rates (−5.6%), and mainland buying shows no link. These counts are recorded sales; the MLS sales in the monthly charts run about 12,000 a year.</p>
+    <div class="col">
+      <p style="margin-top:16px">At UHERO's expected 2027 rate of about 6.7%, the model points to about 17,200 recorded sales statewide (95% prediction range for a single year: roughly 13,300 to 22,100). UHERO expects Oʻahu's single-family median to rise about 1.5% in 2027 and condos about 0.3% <span class="tag r">Reported</span> (UHERO Q3 2026 forecast, via Star-Advertiser).</p>
+    </div>
+    <div class="scen">
+      <div><div class="k">If 2027 rates average below 6.5%</div><h3>Local buyers return</h3><p>Local buyers are the clearly rate-sensitive group, so they would gain the most. The model gives about 17,400 recorded sales at 6.5% and 17,900 at 6%, and inventory would absorb faster.</p><p><b>Do now:</b> build buyer lists in the feeder metros.</p></div>
+      <div class="base"><div class="k">Base case · 2027 average rate 6.5–7.5%</div><h3>A slow buyer's market</h3><p>Recorded sales stay near 16,300–17,400. The mainland share has run 19–23% at these rates, and the data show no clear link between rates and mainland buying. Prices are flat in nominal terms and down after inflation. Maui, Kauaʻi and Big Island condos soften most, while Oʻahu single-family holds.</p><p><b>Do now:</b> work high-income feeder metros, and run listing outreach to out-of-state owners.</p></div>
+      <div><div class="k">If 2027 rates average above 7.5%</div><h3>Volume falls further</h3><p>The model gives about 15,800 recorded sales at 8%, and 2023 showed sales can undershoot the model (15,638 at a 6.8% rate). Price cuts spread, and the mainland share rises as locals drop out. Maui condo owners facing the Bill 9 deadlines and rising HOA costs become motivated sellers.</p><p><b>Do now:</b> seller outreach, and mainland buyers in the feeder metros, whose buying shows no clear link to rates.</p></div>
+    </div>
+    <div class="col" style="margin-top:20px">
+      <h3>What to watch, with dates</h3>
+      <ul class="tight">
+        <li><b>Weekly:</b> the Freddie Mac rate, every Thursday. It moves local demand the most.</li>
+        <li><b>Late 2026 or 2027:</b> IRS 2023–24 migration data, the first year to show where households moved after the Lahaina fire.</li>
+        <li><b>Quarterly:</b> Title Guaranty buyer stats by state and country.</li>
+        <li><b>Jan 1, 2029 and Jan 1, 2031:</b> Maui Bill 9 deadlines for apartment-zoned vacation rentals (West Maui, then the rest of the county). Two owner lawsuits against Bill 9 are pending in state court, with no ruling reported as of September 2026 <span class="tag r">Reported</span>.</li>
+        <li><b>Currencies:</b> the yen passed ¥162 per dollar in late June 2026 and hit about ¥164 in late July, its weakest since December 1986, before recovering to about ¥158 in early October (Federal Reserve). Yet Japanese purchases rose to 138 in January–June 2026 from 91 a year earlier <span class="tag r">Reported</span>. Canadian buying fell to 64 purchases statewide in 2025 ($110.7M), from 106 in 2024 <span class="tag o">Official</span>; Canadian air visitor arrivals fell 11.6% in 2025 (preliminary) <span class="tag o">Official</span>, and Kauaʻi will have no Canadian nonstop this winter because WestJet dropped its seasonal Vancouver–Līhuʻe flights from Dec 7, 2026 <span class="tag r">Reported</span>.</li>
+        <li><b>Maui Bill 88:</b> Ordinance 6008, in effect June 22, 2026, lets about 4,500 Minatoya-list units seek hotel zoning, but rezones nothing itself. In September 2026 the Maui Planning Commission recommended against most of the first batch, so those rezonings need 6 of 9 council votes <span class="tag r">Reported</span>. Any approvals would keep those condos renting rather than selling.</li>
+      </ul>
+    </div>
+  </section>
+  </div>
+
+  <div class="chapter" id="playbook">
+    <div class="ch"><span class="num">Chapter 6</span><h2 class="t">Broker playbook</h2><p>Who to target, when, and the rules.</p></div>
+  <!-- TARGETS -->
+  <section id="targets">
+    <div class="head col">
+      <span class="sec-n">Who to target, and when</span>
+      <h2>Two lists: where to find buyers, and where to find referral partners</h2>
+      <p class="muted">Housing ads on Meta and Google cannot target ZIP codes, so the unit here is a city plus radius. Direct mail can go to any ZIP except 96761, 96767 and 96790 (see Rules of the road).</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Tier</th><th>Market</th><th>Best islands</th><th>Buyer evidence (Title Guaranty)</th><th>Visitor evidence (DBEDT 2024)</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Southern California</span><br><span class="why">Los Angeles–Orange County, San Diego, Inland Empire</span></td><td><span class="isl">All four</span></td><td class="why">California is the #1 out-of-state buyer state on every island: 656 purchases on Oʻahu, 406 on Hawaiʻi Island, 107 in Maui County and 102 on Kauaʻi in 2025.</td><td class="why">Los Angeles is the #1 visitor metro for every island (871K visitors); San Diego 292K; Inland Empire 198K.</td></tr>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Northern California</span><br><span class="why">SF Bay Area, San Jose, Sacramento</span></td><td><span class="isl">All four</span></td><td class="why">Same California counts.</td><td class="why">San Francisco–Oakland is #2 for every island (591K); San Jose 257K; Sacramento 205K.</td></tr>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Seattle–Tacoma and Portland</span></td><td><span class="isl">Hawaiʻi Is.</span><span class="isl">Maui</span><span class="isl">Oʻahu</span></td><td class="why">Washington was #2 out-of-state on Oʻahu (112), Hawaiʻi Island (114) and in Maui County (34) in 2025, and #4 on Kauaʻi (18). Oregon: 77 on Hawaiʻi Island.</td><td class="why">Seattle is #3 for every island (444K); Portland 212K and over-sends to Hawaiʻi Island (1.22×).</td></tr>
+          <tr><td><span class="tier t1">Tier 1</span></td><td><span class="geo">Oʻahu residents</span></td><td><span class="isl">Hawaiʻi Is.</span><span class="isl">Maui</span><span class="isl">Kauaʻi</span></td><td class="why">Hawaiʻi residents were 67–73% of neighbor-island buyers in 2025.</td><td class="why">Oʻahu sends each neighbor island about two to three times as many households as Los Angeles–Orange County: 3.0× on the Big Island, 2.3× on Kauaʻi, 1.9× on Maui (IRS, 2019–23).</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Second-home markets</span><br><span class="why">Salt Lake City and Denver (Kauaʻi); Minneapolis, Chicago, Dallas (Maui); Anchorage, Portland (Big Island)</span></td><td><span class="isl">Kauaʻi</span><span class="isl">Maui</span><span class="isl">Hawaiʻi Is.</span></td><td class="why">Colorado was #2 out-of-state on Kauaʻi (24) and tied for #3 in Maui County (17); Utah 16 on Kauaʻi; Oregon (77) and Alaska (55) on Hawaiʻi Island (2025).</td><td class="why">Each sends its island 14–44% more of its visitors than average.</td></tr>
+          <tr><td><span class="tier t2">Tier 2</span></td><td><span class="geo">Texas, Florida, Nevada</span></td><td><span class="isl">Oʻahu</span></td><td class="why">Oʻahu's next buyer states after California and Washington: Florida 111, Texas 83, Nevada 65 (2025).</td><td class="why">Washington DC, Baltimore and San Antonio over-send to Oʻahu (military and federal centers).</td></tr>
+          <tr><td><span class="tier t3">Tier 3</span></td><td><span class="geo">Tokyo, Osaka and Nagoya regions; Seoul; British Columbia and Ontario</span></td><td><span class="isl">Oʻahu</span><span class="isl">Maui</span></td><td class="why">415 foreign purchases in 2025, 364 of them on Oʻahu: Japan 202, Korea 87 and Canada 35 there. Canada led on Hawaiʻi Island (17) and in Maui County (11).</td><td class="why">98% of Japanese visitors go to Oʻahu. Kauaʻi has no Canadian nonstop in winter 2026–27 (WestJet's seasonal Vancouver flights are cancelled from Dec 7, 2026). Reach foreign buyers through listing platforms and brokers abroad, and have any country-level campaign reviewed for fair-housing compliance.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Seller landing market</th><th class="num">Net, 19 yrs</th><th class="num">Leaving per yr, 2019–23</th><th>Use it for</th></tr></thead>
+        <tbody>
+          <tr><td><span class="geo">Las Vegas–Henderson</span></td><td class="num">−12,894</td><td class="num">1,657</td><td class="why">The #1 destination county from every island. Also likely a source of returning kamaʻāina (our read).</td></tr>
+          <tr><td><span class="geo">Phoenix</span></td><td class="num">−2,186</td><td class="num">672 (+48%)</td><td class="why">A fast-growing exit, and a top-four destination metro from Maui, Kauaʻi and the Big Island.</td></tr>
+          <tr><td><span class="geo">Seattle–Tacoma</span></td><td class="num">−4,130</td><td class="num">1,372 (+46%)</td><td class="why">Mostly from Oʻahu (−4,520 there); net positive into every neighbor island.</td></tr>
+          <tr><td><span class="geo">Texas metros</span></td><td class="num">−4,712</td><td class="num">981 (+46%)</td><td class="why">Mostly from Oʻahu. Military rotations are likely part of it (our read).</td></tr>
+          <tr><td><span class="geo">Portland, Denver, Salt Lake City, Boise</span></td><td class="num">−3,029 · −1,535 · −598 · n/a</td><td class="num">636 · 359 · 179</td><td class="why">The fastest-growing exits: departures up 55%, 75% and 68%. Idaho departures rose 39% (state data, 2011–14 vs 2020–23).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">IRS SOI, computed here <span class="tag p">Primary</span>. "Leaving per yr" is the 2019–20 to 2022–23 average, with the change from 2004–08 in parentheses. The IRS 2011–12 method change raised matched counts by about 5%, so treat small changes with care. These are tax-filing households that moved, not buyers or sellers. Several landing markets are also buyer sources: Texas (175 purchases), Colorado (136) and others are top-ten buyer states in 2025 <span class="tag r">Reported</span>, so an agent there can refer in both directions.</p>
+        <div class="col" style="margin-top:22px">
+      <h3>When to run each campaign</h3>
+      <ul class="tight">
+        <li><b>Mainland buyer ads:</b> June–July, December and March, when the most visitors arrive on domestic flights (8–20% above an average month), a rough guide to buyer trips. January and February are 9–11% below.</li>
+        <li><b>International buyer outreach:</b> December, January, March and August, the peaks for international arrivals.</li>
+        <li><b>Listings:</b> closings are busiest March–June on Maui, Kauaʻi and the Big Island, and April–September on Oʻahu. January, February and November are the slowest everywhere, 8–23% below an average month. List a month or two before the busy season.</li>
+        <li><b>Military buyers:</b> spring–summer PCS season (Oʻahu).</li>
+      </ul>
+    </div>
+  </section>
+  <!-- RULES -->
+  <section id="rules">
+    <div class="head col"><span class="sec-n">Rules of the road</span><h2>ZIP-level precision lives in the mail, not the ad platforms</h2></div>
+    <div class="col">
+      <div class="rule"><div class="rk">Meta (FB/IG)</div><div>Housing ads go under the special ad category. No targeting by ZIP code, age or gender: audiences must include ages 18–65+ and all genders, and a city or address expands to at least a 15-mile radius in the U.S. and Canada (15 km elsewhere). No location exclusions or lookalike audiences. You can target origin cities and states, and use your own client list if Meta marks it eligible.</div></div>
+      <div class="rule"><div class="rk">Google</div><div>Under the housing policy (U.S. and Canada), there is no targeting by ZIP, age, gender, parental status or marital status. Use city, metro, state or radius.</div></div>
+      <div class="rule"><div class="rk">Fair housing</div><div>Ads that indicate a preference based on national origin, ancestry, race or other protected classes are illegal (42 USC 3604(c); HRS §515-3), and targeting by place can act as a proxy for them. Base geographic targeting on documented demand, keep it broad, and have country-level or language-specific campaigns reviewed. Keep ad copy about the property, never about the buyer. HUD withdrew its 2024 guidance on digital housing ads in September 2025, but the law itself is unchanged.</div></div>
+      <div class="rule"><div class="rk">Direct mail</div><div>Can go to any ZIP except 96761, 96767 and 96790 (see Lahaina and Kula). Owner mailing addresses in county tax records are public under Hawaiʻi's records law (OIP Op. Ltr. 11-01); Maui County offers a free owner and mailing-address extract. Fair-housing and brokerage-name rules still apply.</div></div>
+      <div class="rule"><div class="rk">Referrals</div><div>Referral fees to out-of-state agents must go through licensed brokerages, under each state's licensing rules.</div></div>
+      <div class="rule"><div class="rk">Every ad</div><div>HAR §16-99-11 requires the brokerage's legal or registered trade name and the licensee's status.</div></div>
+      <div class="rule"><div class="rk">Lahaina and Kula</div><div>The governor's wildfire emergency proclamations ban unsolicited offers to buy any real property from any owner in ZIP codes 96761, 96767 and 96790 (Lahaina–Kāʻanapali–Kapalua, Lahaina post office boxes, and Kula). A violation is a misdemeanor: up to a $5,000 fine and a year in jail. The ban has been renewed in every proclamation since August 2023; the latest checked, the Thirty-second (August 24, 2026), runs about 60 days, to around October 23, 2026. Check for a renewal before relying on its lapse, and do not prospect there.</div></div>
+      <p class="src" style="margin-top:12px">A summary of rules, not legal advice. Confirm campaigns with your principal broker.</p>
+    </div>
+  </section>
+  </div>
+
+  <div class="chapter" id="checks">
+    <div class="ch"><span class="num">Chapter 7</span><h2 class="t">Sources and checks</h2><p>Every dataset, how it was obtained and how it was verified.</p></div>
+    <details class="method"><summary>How every number was checked</summary>
+  <!-- METHOD -->
+  <section id="method">
+    <div class="head col"><span class="sec-n">How this was checked</span><h2>Every dataset, where it came from, and what was cross-checked</h2></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Dataset</th><th>Coverage</th><th>How obtained</th><th>Verification</th></tr></thead>
+        <tbody>
+          <tr><td><span class="geo">IRS migration, county and state</span></td><td>2004–05 to 2022–23</td><td>IRS SOI files from a public research mirror: national CSVs from 2011–12, Hawaiʻi county workbooks for 2004–05 to 2010–11. State-to-state flows cover 2011–12 to 2022–23. IRS changed its method with 2011–12 (full-year filings, spouse and dependent matching).</td><td>20 national files (inflow and outflow, 2013–14 through 2022–23) match the SHA-256 fingerprints in a separate project's log of its own direct irs.gov downloads (IRS publishes no checksums). Earlier files are from the same mirror and not independently checksummed. The new parser reproduces the verified decade exactly, and state-sheet totals equal county totals in 10 of 12 years (2020–21 within 0.3%). <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Buyer origin by county</span></td><td>2008 – June 2026</td><td>DBEDT Data Book 2025 (Tables 21.36–21.38) and Quarterly Statistical &amp; Economic Report, 3rd quarter 2026 (Tables E-11, E-12, G-49 to G-56), Title Guaranty data, downloaded directly</td><td>County rows sum exactly to the statewide totals every year; count-weighted averages reproduce statewide averages within $1. All 716 figures overlapping the earlier Hawaiʻi Appleseed transcription match; one Data Book typo (Honolulu 2019 local average) corrected to the quarterly report's value. 2025 statewide and county totals equal Title Guaranty's Q4 2025 buyer stats. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Buyer origin, statewide</span></td><td>2008–2014</td><td>State Data Book 2025, Tables 21.36–21.38 (Excel, downloaded directly; SHA-256 df9a8331…), and DBEDT's quarterly report (3rd quarter 2026) for county rows 2008–2015 and quarters through June 2026</td><td>Each year: local + mainland + foreign = the published total, and the count-weighted average prices reproduce the published average to within $1. The 2008–2015 sums equal DBEDT's May 2016 home-sales report (104,927 local, 33,680 mainland, 5,775 foreign, 144,382 total). 2015 equals the series above. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Oʻahu price index and districts</span></td><td>2000–2025</td><td>Moku's City and County of Honolulu sales extract (110,127 parcels; latest two sales per parcel)</td><td>Repeat-sales index from 37,562 pairs. Year-over-year changes correlate 0.94 with Zillow's Honolulu index. <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Monthly sales and medians</span></td><td>2006 – Aug 2026</td><td>DBEDT Monthly Economic Indicators, via Hawaiʻi Appleseed</td><td>Matches the Honolulu Board of Realtors and the Realtors Association of Maui on all figures checked. Kauaʻi and Big Island: no monthly sales counts March 2006 – December 2012, and no monthly medians March 2006 – December 2007. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Listings, days on market, price cuts</span></td><td>Jul 2016 – Sep 2026</td><td>Realtor.com research file, downloaded directly</td><td>Primary file. <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Census income, values, rents, ownership</span></td><td>2010–2024</td><td>ACS 1-year county estimates, via Hawaiʻi Appleseed's ACS panel</td><td>2024 vacancy rates match ACS published figures. <span class="tag o">Official</span></td></tr>
+          <tr><td><span class="geo">Census microdata</span></td><td>2024</td><td>ACS 2024 PUMS for Hawaiʻi, via Hawaiʻi Appleseed</td><td>Weights sum to Census's 1,446,146 population and 572,824 housing units. <span class="tag p">Primary</span></td></tr>
+          <tr><td><span class="geo">Building permits, mortgage rates, visitor arrivals</span></td><td>2006–2026</td><td>Census BPS / FRED HIBPPRIV, Freddie Mac PMMS, DBEDT</td><td>October 2026 rate matches Freddie Mac's release. A Hawaiʻi Tourism Authority series error (Maui 2021 repeated as 2022) was found and avoided. <span class="tag o">Official</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <div class="note"><b>Still missing.</b> (1) Buyer origin by county for each year 2008–2014: the Data Book publishes only an eight-year county total for 2008–2015. Nothing official exists before 2008. (2) Owner origin by ZIP code: Honolulu's free OWNINFO data service (about 587,000 owner rows with mailing addresses), Maui County's free "Property Owners &amp; Mailing Addresses" file, and bulk-roll requests to Hawaiʻi County and Kauaʻi. This environment cannot reach those servers. (3) No public record links a seller to where they move next. The IRS household flows above are the best available measure.</div>
+    </div>
+  </section>
+  <section id="sources">
+    <div class="head col"><span class="sec-n">Sources</span><h2>Where every number comes from</h2></div>
+    <ul class="sources">
+      <li>IRS Statistics of Income, county-to-county and state-to-state migration, 2004–05 through 2022–23</li>
+      <li>DBEDT, 2024 Annual Visitor Research Report workbook: Table 55 (domestic air visitor arrivals by island and metro), Tables 23 and 25 (Japan visitors by region, Canada visitors by province), via the msyxorap/hawaii_tourism_migration mirror (SHA-256 86bf9ca5…)</li>
+      <li>DBEDT buyer-origin series 2015–2025 (QSER; State Data Book Tables 21.38–21.39), Title Guaranty data, transcribed by Hawaiʻi Appleseed</li>
+      <li>DBEDT State of Hawaii Data Book 2025, Tables 21.36–21.38 (home sales by type and by origin of buyer, 2008–2025); DBEDT Quarterly Statistical &amp; Economic Report, 3rd quarter 2026, Tables E-11, E-12 and G-49 to G-56 (by county, 2008 through June 2026); DBEDT, <i>Residential Home Sales in Hawaii: Trends and Characteristics 2008–2015</i> (May 2016)</li>
+      <li>City and County of Honolulu real property sales extract (public records request), as published in Moku</li>
+      <li>DBEDT Monthly Economic Indicators, county workbooks (sales, medians, arrivals)</li>
+      <li>Realtor.com Residential Data, RDC_Inventory_Core_Metrics_County_History.csv</li>
+      <li>Freddie Mac Primary Mortgage Market Survey</li>
+      <li>U.S. Census Bureau: ACS 1-year estimates 2010–2024; ACS 2024 PUMS; Building Permits Survey (FRED HIBPPRIV)</li>
+      <li>Zillow Home Value Index, Honolulu County (used as a cross-check only)</li>
+      <li>Maui County RPT Sales Data File, as processed by Hawaiʻi Appleseed</li>
+      <li>Title Guaranty Hawaiʻi Buyer Stats, Q4 2025 and Q2 2026 (via search extracts)</li>
+      <li>Honolulu Board of Realtors and Realtors Association of Maui releases (via Star-Advertiser, Maui Now)</li>
+      <li>UHERO Forecast, Q3 2026; UHERO Insight, 'Maui Short-Term Rentals, the Minatoya List, and Housing Supply' (Tyndall and Kim, June 25, 2024)</li>
+      <li>Maui County Ordinance 5909; Governor's proclamation of Aug 19, 2023; HAR §16-99-11; HRS §515-3; 42 USC 3604(c); OIP Op. Ltr. 11-01; Meta and Google housing ad policies</li>
+    </ul>
+  </section>
+    </details>
+  </div>
+  <footer>Moku · Hawaiʻi parcel public-records intelligence. Compiled October 8, 2026. Market intelligence, not legal, tax or investment advice. Forecasts are judgment.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {local:'var(--s-local)', main:'var(--s-main)', foreign:'var(--s-foreign)', ink2:'var(--ink2)', ink3:'var(--ink3)', surf:'var(--card)', accent:'var(--accent)'};
+  var tip = document.getElementById('tip');
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a){var v=a[k];if((k==='fill'||k==='stroke')&&typeof v==='string'&&v.indexOf('var(')===0)e.style.setProperty(k,v);else e.setAttribute(k,v);}if(p)p.appendChild(e);return e;}
+  function tx(p,x,y,s,cls,anc){var t=el('text',{x:x,y:y,'text-anchor':anc||'start'},p);if(cls)t.setAttribute('class',cls);t.textContent=s;return t;}
+  function move(e){var x=e.clientX+14,y=e.clientY+14,w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=x+'px';tip.style.top=y+'px';}
+  function show(e,h){tip.innerHTML=h;tip.style.opacity=1;move(e);}
+  function hide(){tip.style.opacity=0;}
+  function hov(n,h){n.addEventListener('mouseenter',function(e){show(e,typeof h==='function'?h():h)});n.addEventListener('mousemove',move);n.addEventListener('mouseleave',hide);}
+  function fmt(n){return Math.round(n).toLocaleString('en-US');}
+  function money(n){if(!n)return '$0';return n>=999500?'$'+(n/1e6).toFixed(2)+'M':'$'+Math.round(n/1000)+'K';}
+  function niceMax(v){var p=Math.pow(10,Math.floor(Math.log10(v)));var m=v/p;var s=m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10;return s*p;}
+  function colPath(x,y,w,h){var r=Math.min(4,w/2,h);return 'M'+x+','+(y+h)+'V'+(y+r)+'Q'+x+','+y+' '+(x+r)+','+y+'H'+(x+w-r)+'Q'+(x+w)+','+y+' '+(x+w)+','+(y+r)+'V'+(y+h)+'Z';}
+  var MON = D.months, ISL = ['Oahu','Maui','Kauai','Hawaii Island'], NAME = {'Oahu':'Oʻahu','Maui':'Maui','Kauai':'Kauaʻi','Hawaii Island':'Hawaiʻi Island'};
+  var TG = {}; D.tg.forEach(function(r){TG[r.county+'|'+r.year]=r;});
+  var YRS=[]; for(var y=2015;y<=2025;y++)YRS.push(y);
+  var YRL=[]; for(var y=2008;y<=2025;y++)YRL.push(y);
+  var TGC={'Oahu':'Honolulu','Maui':'Maui','Kauai':'Kauai','Hawaii Island':'Hawaii'};
+
+  /* generic line chart: series [{name,color,vals,width,opacity}] over labels */
+  function line(host,o){
+    var W=o.w||900,H=o.h||260,L=o.L||52,R=o.R||16,T=12,B=26,pw=W-L-R,ph=H-T-B;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.label||''},host);
+    var all=[];o.series.forEach(function(s){s.vals.forEach(function(v){if(v!=null)all.push(v)})});
+    var y0=o.yMin!=null?o.yMin:0,y1=o.yMax!=null?o.yMax:niceMax(Math.max.apply(null,all));
+    var n=o.labels.length;function X(i){return L+pw*i/(n-1)}function Y(v){return T+ph*(1-(v-y0)/(y1-y0))}
+    var ticks=o.ticks||5;for(var k=0;k<=ticks;k++){var v=y0+(y1-y0)*k/ticks;el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,o.yf(v),null,'end');}
+    o.labels.forEach(function(lb,i){if(o.xtick(lb,i))tx(svg,X(i),H-8,o.xl(lb),null,'middle');});
+    (o.bands||[]).forEach(function(b){var a=o.labels.indexOf(b[0]),z=o.labels.indexOf(b[1]);if(a<0||z<0)return;el('rect',{x:X(a),y:T,width:X(z)-X(a),height:ph,fill:'var(--band)'},svg);tx(svg,X(a)+4,T+12,b[2],'ann');});
+    o.series.forEach(function(s){var d='',pen=false;s.vals.forEach(function(v,i){if(v==null){pen=false;return;}d+=(pen?'L':'M')+X(i).toFixed(1)+','+Y(v).toFixed(1);pen=true;});
+      el('path',{d:d,fill:'none',stroke:s.color,'stroke-width':s.width||2,'stroke-opacity':s.opacity||1,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+      if(s.end){for(var i=s.vals.length-1;i>=0;i--){if(s.vals[i]!=null){el('circle',{cx:X(i),cy:Y(s.vals[i]),r:4.5,fill:s.color,stroke:C.surf,'stroke-width':2},svg);if(s.endLabel)tx(svg,X(i)-8,Y(s.vals[i])+(s.below?18:-10),o.vf(s.vals[i]),'v','end');break;}}}
+    });
+    var cross=el('line',{x1:0,x2:0,y1:T,y2:T+ph,stroke:C.ink3,'stroke-width':1,opacity:0},svg);
+    var hit=el('rect',{x:L,y:T,width:pw,height:ph,class:'hit'},svg);
+    hit.addEventListener('mousemove',function(e){var b=svg.getBoundingClientRect();var sx=(e.clientX-b.left)*W/b.width;var i=Math.max(0,Math.min(n-1,Math.round((sx-L)/pw*(n-1))));
+      cross.setAttribute('x1',X(i));cross.setAttribute('x2',X(i));cross.setAttribute('opacity',.6);
+      var h='<b>'+o.tl(o.labels[i])+'</b>';o.series.forEach(function(s){if(s.hide)return;var v=s.vals[i];h+='<br>'+(s.name?s.name+': ':'')+(v==null?'n/a':o.vf(v));});show(e,h);});
+    hit.addEventListener('mouseleave',function(){cross.setAttribute('opacity',0);hide();});
+    return svg;
+  }
+  var monthTick=function(lb){return lb.slice(5)==='01'&&(+lb.slice(0,4))%2===1;}, monthL=function(lb){return lb.slice(0,4);};
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthTL=function(lb){return MN[+lb.slice(5)-1]+' '+lb.slice(0,4);};
+
+  /* 1. decade stacked columns */
+  (function(){
+    var host=document.getElementById('c-decade'),W=900,H=300,L=52,R=16,T=22,B=26,pw=W-L-R,ph=H-T-B,mx=30000;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Stacked columns of sales by buyer origin 2008-2025'},host);
+    function Y(v){return T+ph*(1-v/mx)}
+    [0,10000,20000,30000].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,fmt(v),null,'end');});
+    var band=pw/YRL.length,bw=Math.min(40,band*.6);
+    YRL.forEach(function(y,i){var r=TG['State|'+y],x=L+band*i+(band-bw)/2,base=0;
+      [['Hawaiʻi resident',r.n_local,C.local],['U.S. mainland',r.n_mainland,C.main],['Foreign',r.n_foreign,C.foreign]].forEach(function(s,j){
+        var y0=Y(base+s[1]),h=Y(base)-y0;var gap=j>0?2:0;
+        if(j===2)el('path',{d:colPath(x,y0,bw,Math.max(0,h-gap)),fill:s[2]},svg);else el('rect',{x:x,y:y0,width:bw,height:Math.max(0,h-gap),fill:s[2]},svg);base+=s[1];});
+      tx(svg,x+bw/2,Y(r.n_total)-6,(100*r.n_mainland/r.n_total).toFixed(0)+'%','v','middle');
+      tx(svg,x+bw/2,H-8,String(y)+(y===2024?'*':''),null,'middle');
+      var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);
+      hov(hit,'<b>'+y+'</b> · '+fmt(r.n_total)+' sales<br>Local '+fmt(r.n_local)+' ('+(100*r.n_local/r.n_total).toFixed(1)+'%)<br>Mainland '+fmt(r.n_mainland)+' ('+(100*r.n_mainland/r.n_total).toFixed(1)+'%)<br>Foreign '+fmt(r.n_foreign)+' ('+(100*r.n_foreign/r.n_total).toFixed(1)+'%)');
+    });
+    tx(svg,L,12,'Label above each column = mainland share','ann');
+    var t=document.getElementById('t-decade');t.innerHTML='<thead><tr><th>Year</th><th class="num">Sales</th><th class="num">Local</th><th class="num">Mainland</th><th class="num">Foreign</th><th class="num">Avg local</th><th class="num">Avg mainland</th><th class="num">Avg foreign</th></tr></thead>';
+    var tb=document.createElement('tbody');YRL.forEach(function(y){var r=TG['State|'+y];var tr=document.createElement('tr');tr.innerHTML='<td>'+y+'</td><td class="num">'+fmt(r.n_total)+'</td><td class="num">'+fmt(r.n_local)+'</td><td class="num">'+fmt(r.n_mainland)+'</td><td class="num">'+fmt(r.n_foreign)+'</td><td class="num">$'+fmt(r.avg_local)+'</td><td class="num">$'+fmt(r.avg_mainland)+'</td><td class="num">$'+fmt(r.avg_foreign)+'</td>';tb.appendChild(tr);});t.appendChild(tb);
+  })();
+
+  /* 2. mainland share small-multiple-like single chart with 4 labeled lines in one color family -> use small multiples */
+  (function(){
+    var host=document.getElementById('c-share');var wrap=document.createElement('div');wrap.className='sm';host.appendChild(wrap);
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';wrap.appendChild(d);
+      var vals=YRL.map(function(y){var r=TG[TGC[isl]+'|'+y];return 100*r.n_mainland/r.n_total;});
+      line(d,{w:300,h:150,L:38,labels:YRL,series:[{name:'Mainland share',color:C.main,vals:vals,end:true,endLabel:true}],yMin:0,yMax:60,ticks:3,yf:function(v){return v+'%'},vf:function(v){return v.toFixed(0)+'%'},xtick:function(lb,i){return i===0||i===7||i===YRL.length-1},xl:String,tl:String,label:NAME[isl]+' mainland share'});});
+  })();
+
+  /* 3. avg price by origin */
+  (function(){
+    var host=document.getElementById('c-price');
+    var s=[['Local','avg_local',C.local],['Mainland','avg_mainland',C.main],['Foreign','avg_foreign',C.foreign]].map(function(a){return {name:a[0],color:a[2],vals:YRL.map(function(y){return TG['State|'+y][a[1]];}),end:true};});
+    line(host,{w:440,h:240,L:52,labels:YRL,series:s,yMin:0,yMax:1800000,ticks:3,yf:function(v){return v?money(v):'$0'},vf:money,xtick:function(lb,i){return ((+lb)%4===0&&i<YRL.length-2)||i===YRL.length-1},xl:String,tl:String,label:'Average price by origin'});
+  })();
+
+  /* 4. island mainland counts small multiples (bars) */
+  (function(){
+    var host=document.getElementById('c-isl-main');var mx=2400;
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var W=440,H=170,L=40,R=8,T=16,B=22,pw=W-L-R,ph=H-T-B;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':NAME[isl]+' mainland buyers per year'},d);
+      function Y(v){return T+ph*(1-v/mx)}[0,1200,2400].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,fmt(v),null,'end');});
+      var band=pw/YRL.length,bw=Math.min(22,band*.62);
+      YRL.forEach(function(y,i){var r=TG[TGC[isl]+'|'+y],v=r.n_mainland,x=L+band*i+(band-bw)/2;el('path',{d:colPath(x,Y(v),bw,Y(0)-Y(v)),fill:C.main},svg);
+        if(i===0||i===7||i===13||i===YRL.length-1){tx(svg,x+bw/2,Y(v)-5,fmt(v),'v','middle');tx(svg,x+bw/2,H-6,String(y),null,'middle');}
+        var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>'+NAME[isl]+' '+y+'</b><br>'+fmt(v)+' mainland buyers of '+fmt(r.n_total)+' ('+(100*v/r.n_total).toFixed(1)+'%)<br>Avg mainland price $'+fmt(r.avg_mainland));});
+    });
+    var notes={'Oahu':'8–16% every year since 2008, back up to 13–16% since 2021. The lowest share, but the most mainland buyers in number.','Maui':'From 52% (2010) and 42% (2015) to 25% in 2025, the lowest since at least 2008. Most of the drop came by 2019, before the fire and Bill 9.','Kauai':'About half in 2009–2011, about a third since 2014. The smallest market by number of sales.','Hawaii Island':'32–43% every year since 2008, the steadiest outside share; 2025 was the low.'};
+    var tb=document.getElementById('t-isl');ISL.forEach(function(isl){var z=TG[TGC[isl]+'|2008'],a=TG[TGC[isl]+'|2015'],b=TG[TGC[isl]+'|2021'],c=TG[TGC[isl]+'|2025'];var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="geo">'+NAME[isl]+'</span></td><td class="num">'+(100*z.n_mainland/z.n_total).toFixed(1)+'%</td><td class="num">'+(100*a.n_mainland/a.n_total).toFixed(1)+'%</td><td class="num">'+(100*b.n_mainland/b.n_total).toFixed(1)+'%</td><td class="num">'+(100*c.n_mainland/c.n_total).toFixed(1)+'%</td><td class="num"><b>'+(100*c.n_mainland*c.avg_mainland/(c.n_total*c.avg_total)).toFixed(1)+'%</b></td><td class="num">$'+fmt(c.avg_mainland)+'</td><td class="num">$'+fmt(c.avg_local)+'</td><td class="why">'+notes[isl]+'</td>';tb.appendChild(tr);});
+  })();
+
+  /* 7. top counties 2022-23 */
+  (function(){
+    if(!document.getElementById('t-topc'))return;
+    var t=document.getElementById('t-topc'),y='2022-23',h='<thead><tr><th>Island</th><th>Top origins (households · avg AGI)</th></tr></thead><tbody>';
+    ISL.forEach(function(isl){var top=D.irs[y][isl].top.slice(0,6).map(function(x){return x[0].replace(' County','').replace(' Municipality','')+' '+x[1]+' <b>'+fmt(x[2])+'</b> · $'+Math.round(x[4]/x[2])+'K'});h+='<tr><td><span class="geo">'+NAME[isl]+'</span></td><td class="why">'+top.join('<br>')+'</td></tr>';});
+    t.innerHTML=h+'</tbody>';
+  })();
+
+  /* 8. Maui FY non-owner share */
+  (function(){
+    var host=document.getElementById('c-maui'),fy={};D.maui_fy.forEach(function(r){(fy[r.fy]=fy[r.fy]||{})[r.category]=r;});
+    var ks=Object.keys(fy).sort(),W=900,H=230,L=52,R=16,T=22,B=26,pw=W-L-R,ph=H-T-B;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Maui non-owner share of home sales by fiscal year'},host);
+    function Y(v){return T+ph*(1-v/80)}[0,20,40,60,80].forEach(function(v){el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),class:'grid'},svg);tx(svg,L-6,Y(v)+4,v+'%',null,'end');});
+    var band=pw/ks.length,bw=Math.min(36,band*.6);
+    ks.forEach(function(k,i){var o=fy[k].owner,n=fy[k].nonowner,sh=100*n.count/(o.count+n.count),vs=100*n.sum_price/(o.sum_price+n.sum_price),x=L+band*i+(band-bw)/2;
+      el('path',{d:colPath(x,Y(sh),bw,Y(0)-Y(sh)),fill:C.main},svg);tx(svg,x+bw/2,Y(sh)-6,sh.toFixed(0)+'%','v','middle');tx(svg,x+bw/2,H-8,'FY'+k.slice(2),null,'middle');
+      var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>Maui FY'+k+'</b> (Jul '+(k-1)+'–Jun '+k+')<br>'+fmt(n.count)+' of '+fmt(o.count+n.count)+' home sales ('+sh.toFixed(1)+'%)<br>'+vs.toFixed(1)+'% of dollar value');});
+  })();
+
+  /* 9. mortgage */
+  line(document.getElementById('c-mort'),{labels:MON,series:[{name:'30-yr fixed',color:C.main,vals:D.mortgage,end:true,endLabel:true}],yMin:0,yMax:8,ticks:4,yf:function(v){return v+'%'},vf:function(v){return v.toFixed(2)+'%'},xtick:monthTick,xl:monthL,tl:monthTL,label:'30-year mortgage rate',bands:[['2007-07','2011-12','Crash'],['2020-03','2021-12','Lows'],['2022-03','2023-10','Rate shock']]});
+
+  /* small multiples helper for monthly island series */
+  function smMonthly(id,key,fn,yf,vf,opts){
+    var host=document.getElementById(id);
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var raw=D.islands[isl][key].map(function(v){return v});var s=fn(raw,isl);
+      var first=MON.length,last=0;s.forEach(function(x){var a=0,z=MON.length-1;while(a<MON.length&&x.vals[a]==null)a++;while(z>0&&x.vals[z]==null)z--;if(a<first)first=a;if(z>last)last=z;});
+      var labels=MON.slice(first,last+1);s.forEach(function(x){x.vals=x.vals.slice(first,last+1)});
+      var all=[];s.forEach(function(x){if(!x.noScale)x.vals.forEach(function(v){if(v!=null)all.push(v)})});
+      line(d,{w:440,h:170,L:60,labels:labels,series:s,yMin:0,yMax:niceMax(Math.max.apply(null,all)),ticks:2,yf:yf,vf:vf,xtick:function(lb){return lb.slice(5)==='01'&&(+lb.slice(0,4))%3===0},xl:monthL,tl:monthTL,label:NAME[isl]});});
+  }
+  smMonthly('c-active','active',function(r){return [{name:'Active listings',color:C.main,vals:r,end:true,endLabel:true}]},function(v){return fmt(v)},fmt);
+  function roll(arr,n,agg){return arr.map(function(_,i){if(i<n-1)return null;var w=arr.slice(i-n+1,i+1);if(w.some(function(v){return v==null}))return null;return agg(w)});}
+  smMonthly('c-median','sf_median',function(r){return [{name:'12-mo avg',color:C.main,vals:roll(r,12,function(w){return w.reduce(function(a,b){return a+b})/w.length}),end:true,endLabel:true},{name:'Month',color:C.main,vals:r,width:1,opacity:.28}]},function(v){return money(v)},money);
+  smMonthly('c-sales','sf_sales',function(r,isl){var c=D.islands[isl].condo_sales;var t=r.map(function(v,i){return v==null||c[i]==null?null:v+c[i]});return [{name:'Trailing 12-mo sales',color:C.main,vals:roll(t,12,function(w){return w.reduce(function(a,b){return a+b})}),end:true,endLabel:true}]},function(v){return fmt(v)},fmt);
+
+  /* 10. arrivals */
+  (function(){var last=MON.length-1;while(D.arr_dom[last]==null)last--;var labels=MON.slice(0,last+1);
+    line(document.getElementById('c-arr'),{labels:labels,series:[{name:'Domestic',color:C.main,vals:D.arr_dom.slice(0,last+1),end:true},{name:'International',color:C.foreign,vals:D.arr_intl.slice(0,last+1),end:true}],yMin:0,yMax:1000000,ticks:4,yf:function(v){return v?(v/1000)+'K':'0'},vf:function(v){return fmt(v)},xtick:monthTick,xl:monthL,tl:monthTL,label:'Visitor arrivals',bands:[['2007-12','2009-06','Recession'],['2020-03','2022-03','Travel rules']]});})();
+  /* ===== v3 kept: squeeze ===== */
+  (function(){
+    var YY=['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024'],host=document.getElementById('c-squeeze');
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var A=D.acs[isl],b0=A['2010'];
+      var inc=YY.map(function(y){return A[y]?100*A[y].inc/b0.inc:null}),val=YY.map(function(y){return A[y]?100*A[y].val/b0.val:null});
+      line(d,{w:440,h:170,L:44,labels:YY,series:[{name:'Income',color:C.local,vals:inc,end:true,endLabel:true,below:true},{name:'Home value',color:C.main,vals:val,end:true,endLabel:true}],yMin:50,yMax:250,ticks:4,yf:function(v){return Math.round(v)},vf:function(v){return Math.round(v)},xtick:function(lb,i){return i===0||i===14||i===5||i===10},xl:String,tl:function(l){return l+(A[l]?' · income $'+fmt(A[l].inc)+' · value $'+fmt(A[l].val):' · no ACS 1-year release')},label:NAME[isl]+' income vs value'});});
+    var tb=document.getElementById('t-squeeze');
+    ISL.forEach(function(isl){var a=D.acs[isl]['2010'],b=D.acs[isl]['2024'];var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="geo">'+NAME[isl]+'</span></td><td class="num">$'+fmt(a.inc)+' → $'+fmt(b.inc)+' ('+(b.inc/a.inc*100-100).toFixed(0)+'%)</td><td class="num">$'+fmt(a.val)+' → $'+fmt(b.val)+' ('+(b.val/a.val*100-100).toFixed(0)+'%)</td><td class="num">'+(a.val/a.inc).toFixed(1)+' → '+(b.val/b.inc).toFixed(1)+'</td><td class="num">$'+fmt(a.rent)+' → $'+fmt(b.rent)+' ('+(b.rent/a.rent*100-100).toFixed(0)+'%)</td><td class="num">'+(100*b.own).toFixed(0)+'%</td>';tb.appendChild(tr);});
+  })();
+  (function(){
+    var host=document.getElementById('c-burden'),B=D.pums.burden,K=['Oʻahu','Maui + Kauaʻi','Hawaiʻi Island','Statewide'];
+    var W=440,H=200,L=110,R=44,T=6,bh=22,gap=18,pw=W-L-R;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Renter cost burden'},host);
+    function X(v){return L+pw*v}[0,.25,.5,.75].forEach(function(v){el('line',{x1:X(v),x2:X(v),y1:T,y2:T+K.length*(bh+gap)-gap+4,class:'grid'},svg);tx(svg,X(v),H-6,Math.round(v*100)+'%',null,'middle');});
+    K.forEach(function(k,i){var b=B[k],y=T+i*(bh+gap),sev=b.renter_severe,mod=b.renter_burden-b.renter_severe;
+      tx(svg,L-8,y+bh/2+4,k,'lab','end');
+      el('rect',{x:X(0),y:y,width:Math.max(0,X(sev)-X(0)-1),height:bh,fill:C.foreign},svg);
+      el('path',{d:'M'+X(sev)+','+y+'H'+(X(b.renter_burden)-4)+'Q'+X(b.renter_burden)+','+y+' '+X(b.renter_burden)+','+(y+4)+'V'+(y+bh-4)+'Q'+X(b.renter_burden)+','+(y+bh)+' '+(X(b.renter_burden)-4)+','+(y+bh)+'H'+X(sev)+'Z',fill:C.main},svg);
+      tx(svg,X(b.renter_burden)+6,y+bh/2+4,Math.round(100*b.renter_burden)+'%','v');
+      var hit=el('rect',{x:0,y:y-gap/2,width:W,height:bh+gap,class:'hit'},svg);hov(hit,'<b>'+k+'</b><br>'+Math.round(100*b.renter_burden)+'% of renters pay 30%+ of income<br>'+Math.round(100*sev)+'% pay 50%+<br>Owners with a mortgage paying 30%+: '+Math.round(100*b.owner_mortgage_burden)+'%');});
+  })();
+  (function(){
+    if(!document.getElementById('t-movers'))return;
+    var M=D.pums.movers,Hh=D.pums.households,t=document.getElementById('t-movers');
+    var rows=[['Moved from another state',fmt(M.from_states)+' ('+(100*M.from_states/M.total_pop).toFixed(1)+'% of residents)'],['Moved from abroad',fmt(M.from_abroad)],['Top origin states',M.top_states.slice(0,6).map(function(x){return x[0]+' '+fmt(x[1])}).join(', ')],['Active-duty military',Math.round(100*M.active_duty_share)+'%'],['Under age 25',Math.round(100*M.age_share['under 25'])+'%'],['Age 65+',Math.round(100*M.age_share['65+'])+'%'],['New households that own',Math.round(100*Hh.new_owner_share)+'%'],['New households, median income','$'+fmt(Hh.new_median_income)],['Households that did not move','$'+fmt(Hh.stayer_median_income)]];
+    t.innerHTML='<tbody>'+rows.map(function(r){return '<tr><td style="width:46%">'+r[0]+'</td><td style="text-align:right;font-variant-numeric:tabular-nums">'+r[1]+'</td></tr>'}).join('')+'</tbody>';
+  })();
+  (function(){
+    var host=document.getElementById('c-seasonal'),V=D.pums.vacancy,K=['Maui + Kauaʻi','Hawaiʻi Island','Oʻahu','Statewide'];
+    var W=900,H=170,L=120,R=200,T=6,bh=22,gap=14,pw=W-L-R,mx=.2;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Seasonal homes share'},host);
+    function X(v){return L+pw*v/mx}[0,.05,.1,.15,.2].forEach(function(v){el('line',{x1:X(v),x2:X(v),y1:T,y2:T+K.length*(bh+gap)-gap+4,class:'grid'},svg);tx(svg,X(v),H-6,Math.round(v*100)+'%',null,'middle');});
+    K.forEach(function(k,i){var v=V[k],sh=v.seasonal/v.units,y=T+i*(bh+gap);tx(svg,L-8,y+bh/2+4,k,'lab','end');
+      el('path',{d:'M'+L+','+y+'H'+(X(sh)-4)+'Q'+X(sh)+','+y+' '+X(sh)+','+(y+4)+'V'+(y+bh-4)+'Q'+X(sh)+','+(y+bh)+' '+(X(sh)-4)+','+(y+bh)+'H'+L+'Z',fill:C.main},svg);
+      tx(svg,X(sh)+8,y+bh/2+4,(100*sh).toFixed(1)+'% · '+fmt(v.seasonal)+' homes','v');
+      var hit=el('rect',{x:0,y:y-gap/2,width:W,height:bh+gap,class:'hit'},svg);hov(hit,'<b>'+k+'</b><br>'+fmt(v.seasonal)+' seasonal-use homes of '+fmt(v.units)+'<br>All vacant: '+fmt(v.vacant)+' ('+(100*v.vacant/v.units).toFixed(1)+'%)');});
+    var R2=['Seasonal, recreational or occasional use','For rent','For sale','Rented, not yet occupied','Sold, not yet occupied','Migrant workers','Other vacant'];
+    var t=document.getElementById('t-vac');t.innerHTML='<thead><tr><th>Reason vacant</th>'+K.map(function(k){return '<th class="num">'+k+'</th>'}).join('')+'</tr></thead><tbody>'+R2.map(function(r){return '<tr><td>'+r+'</td>'+K.map(function(k){return '<td class="num">'+fmt(V[k].by[r]||0)+'</td>'}).join('')+'</tr>'}).join('')+'<tr><td><b>All vacant</b></td>'+K.map(function(k){return '<td class="num"><b>'+fmt(V[k].vacant)+'</b></td>'}).join('')+'</tr><tr><td>All housing units</td>'+K.map(function(k){return '<td class="num">'+fmt(V[k].units)+'</td>'}).join('')+'</tr></tbody>';
+  })();
+
+  /* ===== v4 blocks ===== */
+  var IY=D.irs20_years;
+  function irsTot(y,isl,k){var v=D.irs20[y][isl][k];return v&&v.tot;}
+  /* heat table, 19 years */
+  (function(){
+    if(!document.getElementById('t-heat'))return;
+    var t=document.getElementById('t-heat'),M=D.metros.slice(),tot={};
+    M.forEach(function(m){tot[m]=IY.map(function(y){return ISL.reduce(function(s,i){var mm=D.irs20[y][i]['in'].metros[m];return s+(mm?mm[0]:0)},0)})});
+    M.sort(function(a,b){return tot[b].reduce(function(x,y){return x+y})-tot[a].reduce(function(x,y){return x+y})});
+    var mx=0;M.forEach(function(m){tot[m].forEach(function(v){if(v>mx)mx=v})});
+    var h='<thead><tr><th>Origin metro</th>'+IY.map(function(y){return '<th class="num">'+y.slice(2,4)+'–'+y.slice(-2)+'</th>'}).join('')+'</tr></thead><tbody>';
+    M.forEach(function(m){h+='<tr><td style="white-space:nowrap">'+m.replace('Texas metros (Dallas, Houston, Austin, San Antonio)','Texas metros')+'</td>'+tot[m].map(function(v,i){var a=v/mx;return '<td class="num h" style="background:rgba(11,128,98,'+(a*0.6).toFixed(3)+');'+(a>0.6?'color:#fff;':'')+'" title="'+m+' '+IY[i]+': '+fmt(v)+' households">'+(v?fmt(v):'·')+'</td>'}).join('')+'</tr>';});
+    t.innerHTML=h+'</tbody>';
+  })();
+  /* AGI minis, 19 years */
+  (function(){
+    if(!document.getElementById('c-agi'))return;
+    var host=document.getElementById('c-agi');
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var a=IY.map(function(y){var t=irsTot(y,isl,'in');return t?t[2]/t[0]:null}),b=IY.map(function(y){var t=irsTot(y,isl,'out');return t?t[2]/t[0]:null});
+      line(d,{w:300,h:150,L:44,labels:IY,series:[{name:'Arrivals',color:C.main,vals:a,end:true,endLabel:true},{name:'Leavers',color:C.foreign,vals:b,end:true}],yMin:0,yMax:300,ticks:2,yf:function(v){return v?'$'+v+'K':'$0'},vf:function(v){return '$'+Math.round(v)+'K'},xtick:function(lb,i){return i===0||i===IY.length-1},xl:function(l){return l.slice(2,4)+'–'+l.slice(-2)},tl:function(l){return l},label:NAME[isl]+' income of arrivals and leavers'});});
+    var lg=document.createElement('div');lg.className='legend';lg.style.marginTop='6px';lg.innerHTML='<span><i class="ln" style="background:var(--s-main)"></i>Arriving households</span><span><i class="ln" style="background:var(--s-foreign)"></i>Leaving households</span>';host.parentNode.insertBefore(lg,host);
+  })();
+  /* migration minis, 19 years */
+  (function(){
+    if(!document.getElementById('c-mig'))return;
+    var host=document.getElementById('c-mig');
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var a=IY.map(function(y){return irsTot(y,isl,'in')[0]}),b=IY.map(function(y){return irsTot(y,isl,'out')[0]});
+      line(d,{w:440,h:170,L:56,labels:IY,series:[{name:'Arrived',color:C.main,vals:a,end:true},{name:'Left',color:C.foreign,vals:b,end:true}],yMin:0,yMax:niceMax(Math.max.apply(null,a.concat(b))),ticks:2,yf:function(v){return fmt(v)},vf:fmt,xtick:function(lb,i){return i===0||i===IY.length-1||lb==='2012-13'},xl:function(l){return l.slice(2,4)+'–'+l.slice(-2)},tl:function(l){return l},label:NAME[isl]+' migration'});});
+    var tb=document.getElementById('t-mig');
+    ISL.forEach(function(isl){var ti=0,to=0;IY.forEach(function(y){ti+=irsTot(y,isl,'in')[0];to+=irsTot(y,isl,'out')[0]});var a=irsTot('2022-23',isl,'in'),b=irsTot('2022-23',isl,'out');
+      var tr=document.createElement('tr');tr.innerHTML='<td><span class="geo">'+NAME[isl]+'</span></td><td class="num">'+fmt(ti)+'</td><td class="num">'+fmt(to)+'</td><td class="num">'+(ti-to>0?'+':'')+fmt(ti-to)+'</td><td class="num">$'+Math.round(a[2]/a[0])+'K</td><td class="num">$'+Math.round(b[2]/b[0])+'K</td>';tb.appendChild(tr);});
+  })();
+  /* Oahu repeat-sales index */
+  (function(){
+    var MI=D.moku_index,y=MI.years.map(String);
+    line(document.getElementById('c-index'),{labels:y,series:[{name:'Houses',color:C.main,vals:MI.all.Houses.index,end:true,endLabel:true},{name:'Condos',color:C.local,vals:MI.all.Condos.index,end:true,endLabel:true,below:true}],yMin:0,yMax:180,ticks:3,yf:function(v){return Math.round(v)},vf:function(v){return v.toFixed(1)},xtick:function(lb,i){return i%5===0||i===y.length-1},xl:String,tl:String,label:'Oahu repeat-sales index',bands:[['2007','2011','Crash'],['2020','2022','Pandemic surge']]});
+  })();
+  /* annual sales minis */
+  (function(){
+    var T=D.twenty,host=document.getElementById('c-annual'),Y=T.years.filter(function(y){return y<=2025});
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var v=Y.map(function(y){var r=T.islands[isl][y];return r&&r.months===12?r.sf+r.condo:null});var mx=niceMax(Math.max.apply(null,v.filter(function(x){return x!=null})));
+      var W=300,H=150,L=44,R=6,Tp=14,B=20,pw=W-L-R,ph=H-Tp-B;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':NAME[isl]+' annual sales'},d);
+      function Yp(x){return Tp+ph*(1-x/mx)}[0,mx/2,mx].forEach(function(t){el('line',{x1:L,x2:W-R,y1:Yp(t),y2:Yp(t),class:'grid'},svg);tx(svg,L-5,Yp(t)+4,fmt(t),null,'end');});
+      var band=pw/Y.length,bw=Math.max(3,band*.66);
+      Y.forEach(function(yy,i){var x=L+band*i+(band-bw)/2,val=v[i];if(val!=null)el('path',{d:colPath(x,Yp(val),bw,Yp(0)-Yp(val)),fill:C.main},svg);
+        if(i===0||i===Y.length-1||yy===2016)tx(svg,x+bw/2,H-5,String(yy),null,'middle');
+        var hit=el('rect',{x:L+band*i,y:Tp,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>'+NAME[isl]+' '+yy+'</b><br>'+(val==null?'No monthly data':fmt(val)+' sales'));});
+    });
+  })();
+  /* permits */
+  (function(){
+    var P2=D.ext.permits_state,Y=Object.keys(P2).filter(function(y){return +y<=2025}),host=document.getElementById('c-permits');
+    var W=440,H=230,L=48,R=10,T=16,B=24,pw=W-L-R,ph=H-T-B,mx=8000;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Housing permits'},host);
+    function Yp(x){return T+ph*(1-x/mx)}[0,4000,8000].forEach(function(t){el('line',{x1:L,x2:W-R,y1:Yp(t),y2:Yp(t),class:'grid'},svg);tx(svg,L-5,Yp(t)+4,fmt(t),null,'end');});
+    var band=pw/Y.length,bw=band*.66;
+    Y.forEach(function(y,i){var v=P2[y],x=L+band*i+(band-bw)/2;el('path',{d:colPath(x,Yp(v),bw,Yp(0)-Yp(v)),fill:C.main},svg);
+      if(i===Y.length-1||y==='2009')tx(svg,x+bw/2,Yp(v)-5,fmt(v),'v','middle');
+      if(i%4===0||i===Y.length-1)tx(svg,x+bw/2,H-6,y,null,'middle');
+      var hit=el('rect',{x:L+band*i,y:T,width:band,height:ph,class:'hit'},svg);hov(hit,'<b>'+y+'</b><br>'+fmt(v)+' private housing units authorized');});
+  })();
+  /* corridors: diverging bars */
+  (function(){
+    var host=document.getElementById('c-corr'),R=D.corridors.slice().sort(function(a,b){return (b.inn-b.out)-(a.inn-a.out)});
+    var W=900,rowH=26,T=10,L=230,R2=60,H=T+R.length*rowH+24,pw=W-L-R2;var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Net migration by metro'},host);
+    var mx=14000;function X(v){return L+pw*(v+mx)/(2*mx)}
+    [-12000,-6000,0,6000,12000].forEach(function(t){el('line',{x1:X(t),x2:X(t),y1:T,y2:H-22,class:'grid'},svg);tx(svg,X(t),H-6,(t>0?'+':'')+fmt(t),null,'middle');});
+    R.forEach(function(r,i){var y=T+i*rowH,net=r.inn-r.out,x0=X(0),x1=X(net),bh=16;
+      tx(svg,L-10,y+bh/2+4,r.metro.replace('Texas metros (Dallas, Houston, Austin, San Antonio)','Texas metros'),'lab','end');
+      var a=Math.min(x0,x1),w=Math.max(2,Math.abs(x1-x0));el('rect',{x:a,y:y,width:w,height:bh,rx:3,fill:net>=0?C.main:C.foreign},svg);
+      tx(svg,net>=0?x0-6:x0+6,y+bh/2+4,(net>0?'+':'')+fmt(net),'v',net>=0?'end':'start');
+      var hit=el('rect',{x:0,y:y-4,width:W,height:rowH,class:'hit'},svg);
+      hov(hit,'<b>'+r.metro+'</b><br>Arrived in Hawaiʻi: '+fmt(r.inn)+' · Left for it: '+fmt(r.out)+'<br>Avg income: arrivals $'+Math.round(r.agi_in)+'K · leavers $'+Math.round(r.agi_out)+'K<br>Leaving per year: '+fmt(r.out_early)+' (2004–08) → '+fmt(r.out_late)+' (2019–23)');});
+    var tb=document.getElementById('t-corr');
+    D.corridors.forEach(function(r){var net=r.inn-r.out,ch=r.out_early?100*(r.out_late/r.out_early-1):null;var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="geo">'+r.metro.replace('Texas metros (Dallas, Houston, Austin, San Antonio)','Texas metros (Dallas, Houston, Austin, San Antonio)')+'</span></td><td class="num">'+fmt(r.inn)+'</td><td class="num">'+fmt(r.out)+'</td><td class="num" style="color:'+(net>=0?'var(--s-main)':'var(--s-foreign)')+';font-weight:600">'+(net>0?'+':'')+fmt(net)+'</td><td class="num">$'+Math.round(r.agi_in)+'K</td><td class="num">$'+Math.round(r.agi_out)+'K</td><td class="num">'+fmt(r.out_early)+' → '+fmt(r.out_late)+(ch==null?'':' ('+(ch>0?'+':'')+ch.toFixed(0)+'%)')+'</td>';tb.appendChild(tr);});
+    var ts=document.getElementById('t-states'),S=D.state_corr.slice(0,20);
+    var h='<thead><tr><th>State</th><th class="num">Arrived</th><th class="num">Left</th><th class="num">Net</th><th class="num">Arrivals\' income</th><th class="num">Leavers\' income</th><th class="num">Leaving per yr, 2011–14 → 2020–23</th></tr></thead><tbody>';
+    S.forEach(function(r){var net=r.inn-r.out,ch=100*(r.out_late/r.out_early-1);h+='<tr><td><span class="geo">'+r.st+'</span></td><td class="num">'+fmt(r.inn)+'</td><td class="num">'+fmt(r.out)+'</td><td class="num" style="color:'+(net>=0?'var(--s-main)':'var(--s-foreign)')+';font-weight:600">'+(net>0?'+':'')+fmt(net)+'</td><td class="num">$'+Math.round(r.agi_in)+'K</td><td class="num">$'+Math.round(r.agi_out)+'K</td><td class="num">'+fmt(r.out_early)+' → '+fmt(r.out_late)+' ('+(ch>0?'+':'')+ch.toFixed(0)+'%)</td></tr>'});
+    if(ts)ts.innerHTML=h+'</tbody>';
+    var td=document.getElementById('t-dest');
+    ISL.forEach(function(isl){var top=D.dest4[isl].map(function(kv){return kv[0]+' <b>'+fmt(kv[1])+'</b>'}).join(' · ');
+      var tr=document.createElement('tr');tr.innerHTML='<td><span class="geo">'+NAME[isl]+'</span></td><td class="why">'+top+'</td>';td.appendChild(tr);});
+  })();
+  /* affordability minis */
+  (function(){
+    var A=D.ext.afford,host=document.getElementById('c-afford'),Y=[];for(var y=2010;y<=2026;y++)Y.push(String(y));
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var v=Y.map(function(y){return A[isl][y]?100*A[isl][y].share:null});
+      line(d,{w:440,h:170,L:44,labels:Y,series:[{name:'Payment ÷ income',color:C.main,vals:v,end:true,endLabel:true}],yMin:0,yMax:100,ticks:4,yf:function(x){return x+'%'},vf:function(x){return Math.round(x)+'%'},xtick:function(lb,i){return i===0||i===Y.length-1||lb==='2018'},xl:String,tl:function(l){var r=A[isl][l];return r?l+' · median $'+fmt(r.price)+' at '+r.rate+'% → $'+fmt(r.payment)+'/mo vs income $'+fmt(r.income)+(r.income_held?' (2024 income)':'')+(r.income_interp?' (interpolated)':''):l+' · no data'},label:NAME[isl]+' affordability'});});
+  })();
+  /* zone index table */
+  (function(){
+    var MI=D.moku_index,Zn=D.zones,tb=document.getElementById('t-zidx'),yi=function(y){return MI.years.indexOf(y)};
+    ['1','2','3','4','5','6','7','8','9'].forEach(function(z){var Z=MI.zones[z];if(!Z)return;var ix=Z.index,h=Zn[z+'|house'],c=Zn[z+'|condo'],t=Z.touch||{},ch=100*(ix[yi(2024)]/ix[yi(2012)]-1),thin=t['2012']<25||t['2024']<25;
+      var tr=document.createElement('tr');if(thin){tr.className='thin';tr.title='Too thin to rank: '+t['2012']+' repeat sales touch 2012, '+t['2024']+' touch 2024';}tr.innerHTML='<td class="num" style="text-align:left">'+z+'</td><td>'+Zn._zones[z]+(thin?' <span class="thin-n">thin</span>':'')+'</td><td class="num">'+ix[yi(2006)].toFixed(0)+'</td><td class="num">'+ix[yi(2012)].toFixed(0)+'</td><td class="num">'+ix[yi(2019)].toFixed(0)+'</td><td class="num"><b>'+ix[yi(2024)].toFixed(0)+'</b></td><td class="num" title="'+Z.n+' repeat-sale pairs in the zone">'+(ch>=0?'+':'−')+Math.abs(ch).toFixed(0)+'%</td><td class="num">$'+fmt(h.med_recent)+'</td><td class="num">$'+fmt(c.med_recent)+'</td>';tb.appendChild(tr);});
+  })();
+  /* months of supply minis */
+  (function(){
+    var host=document.getElementById('c-mos');
+    ISL.forEach(function(isl){var d=document.createElement('div');d.innerHTML='<div class="smt">'+NAME[isl]+'</div>';host.appendChild(d);
+      var v=D.ext.mos[isl],first=0;while(first<v.length&&v[first]==null)first++;var last=v.length-1;while(last>0&&v[last]==null)last--;
+      var labels=MON.slice(first,last+1);
+      var svg=line(d,{w:440,h:170,L:40,labels:labels,series:[{name:'Months of supply',color:C.main,vals:v.slice(first,last+1),end:true,endLabel:true}],yMin:0,yMax:16,ticks:4,yf:function(x){return x},vf:function(x){return x.toFixed(1)},xtick:function(lb){return lb.slice(5)==='01'&&(+lb.slice(0,4))%3===0},xl:monthL,tl:monthTL,label:NAME[isl]+' months of supply'});
+    });
+  })();
+  /* seasonality table */
+  (function(){
+    var Sx=D.ext.season,t=document.getElementById('t-season'),MN2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var rows=[['Oʻahu home sales',Sx['Oahu']],['Maui home sales',Sx['Maui']],['Kauaʻi home sales',Sx['Kauai']],['Big Island home sales',Sx['Hawaii Island']],['U.S. visitors arriving',Sx.arr_dom],['International visitors arriving',Sx.arr_intl]];
+    var h='<thead><tr><th></th>'+MN2.map(function(m){return '<th class="num">'+m+'</th>'}).join('')+'</tr></thead><tbody>';
+    rows.forEach(function(r){h+='<tr><td style="white-space:nowrap">'+r[0]+'</td>'+r[1].map(function(v){var d=v-1,bg=d>=0?'color-mix(in srgb,var(--s-main) '+Math.round(Math.min(.6,d*3)*100)+'%,transparent)':'color-mix(in srgb,var(--s-foreign) '+Math.round(Math.min(.6,-d*3)*100)+'%,transparent)';return '<td class="num h" style="background:'+bg+'">'+v.toFixed(2)+'</td>'}).join('')+'</tr>'});
+    t.innerHTML=h+'</tbody>';
+  })();
+
+})();
+</script>

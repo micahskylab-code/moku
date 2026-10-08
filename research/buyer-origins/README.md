@@ -21,3 +21,32 @@ Known source issue: the HTA island visitor series repeats Maui 2021 as 2022; the
 ## Broker brief
 
 `../hawaii-broker-brief.html` is a one-page summary for brokers, built by `brief/build_brief.py` from `brief/brief.tpl.html`, `brief/brief_data.json` (IRS metros by island, seasonal factors), `irs_instate.json`, `vis_cbsa.json` and `page_data.json`. Every figure was re-checked against the raw files by an independent audit before release.
+
+## Micro-markets
+
+The report's micro-markets chapter (all Hawaiʻi and each island, by price tier, houses versus condos, luxury, ZIP and Maui district) is built by `micro/build_micro.py` from these files:
+
+- `micro/rdc_zip.json`: Realtor.com ZIP core metrics.
+- `micro/oahu_tiers.json`: Oʻahu sales by price tier, ZIP and TMK zone, from `oahu-sales.json`.
+- `micro/neighbor_sales.json`: Maui assessor sales, FY24–25.
+- `micro/luxury.json` and `micro/luxury_buyers.json`: $3M+ and $10M+ counts. Company-reported figures are labelled.
+- `micro/district_stats.json`: REALTOR board district statistics.
+- `micro/oahu_join.json` and `micro/maui_join.json`: buyer origin from each recent sale joined to the current owner roll.
+- `micro/hmda_tiers.json`: HMDA occupancy by price tier, 2025 vs 2019.
+- `micro/tg_prices.json`: Title Guaranty price bands.
+
+`owners/oahu_ind.py` builds `owners/oahu_individual.json` from the Honolulu owner roll (data as of 2026-10-05). It counts owner mailing addresses by state, metro and situs ZIP. Any mailing address shared by 10 or more parcels is treated as institutional and kept separate. Only aggregates are published: no names, street addresses or parcel IDs.
+
+`hawaii-buyer-origins.src.html` is the page template. The build replaces `__DATA__` with `page_data.json` and inserts the micro-markets chapter.
+
+## Go-to-market plan
+
+`../hawaii-go-to-market.html` is the plan for selling the report to brokerages. It covers:
+
+- the offer, price anchors and revenue scenarios;
+- why Hawaii Life is the first target, and who to approach;
+- a 90-day pilot;
+- RESPA-safe sponsorship and compliance guardrails;
+- the checklist to clear before selling.
+
+Its opening figures compare 2024 and 2025 on Title Guaranty's own counts for both years. DBEDT's 2024 count runs about 8% higher.

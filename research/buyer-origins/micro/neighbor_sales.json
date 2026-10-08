@@ -1,0 +1,2719 @@
+{
+ "key": "neighbor_sales",
+ "generated": "2026-10-08",
+ "source": {
+  "maui": {
+   "name": "County of Maui Real Property Assessment Division - ArcGIS Online feature service \"Sales\" (service description: \"2 Year Sales FY 2024 - 2025\"; backs the county Comparable Sales dashboard/Equitable Property Value hub)",
+   "url": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Sales/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&orderByFields=OBJECTID&resultOffset=0&resultRecordCount=2000&f=json",
+   "raw_file": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/mm_neighbor_sales/maui/sales_p0.json",
+   "raw_sha256": "9a7fabe35a7c21ee5642e075a04314dec5a316abffba2b1dc1d95817b12f9d49",
+   "rows": 1500,
+   "layer_dataLastEditDate_epoch_ms": 1777574334524,
+   "join": "District and residential-unit count from County of Maui PARCELINFO layer (raw/owners_neighbor/maui/parcelinfo/*.json, 81,581 parcels, joined on 12-digit PARID; 1500/1500 matched)",
+   "mirrors_checked": [
+    "Sales_2_Year/FeatureServer/23 (identical 1500 rows)",
+    "Sales_Points_2_Year/FeatureServer/24 (identical 1500 rows)"
+   ]
+  },
+  "hawaii": null,
+  "kauai": null
+ },
+ "notes": {
+  "coverage_maui": "NOT the full recorded-sales universe. Layer holds only the county assessor's VALID (arm's-length) sales used for the TY2025 and TY2026 assessments: sale dates 2023-03-04..2025-06-30 (all but 26 rows fall Jul-2023..Jun-2025). All 1500 PARIDs end in 0000 = whole fee-simple parcels; NO CPR units, so NO condos (and no CPR'd houses) are in this data. Sale codes present: Valid Sale, Valid mult bldgs, Developer sale, Valid sale w/ adj price. Non-arm's-length/nominal deeds were already excluded by the county.",
+  "periods": "by_assess_window = the two complete 12-month windows (TY2025: Jul2023-Jun2024; TY2026: Jul2024-Jun2025) - use these for comparisons. by_year = calendar year of sale date: 2023 is partial (effectively Jul-Dec plus 4 earlier sales), 2024 complete, 2025 = Jan-Jun only. 2019-2022 and 2025H2/2026 YTD: NOT AVAILABLE from any county source reached.",
+  "cleaning": "Dropped 3 rows < $50,000 (1500 -> 1497 rows). Multi-parcel dedupe: rows sharing sale date + price + zone/section/plat (first 5 digits of PARID) counted as one deal: 3 deals spanned >1 parcel, giving 1493 deals.",
+  "property_type": "house = SALETYPE Improved/Fix with >=1 residential unit on parcel (PARCELINFO RES_COUNT); land = SALETYPE Vacant; other_improved = improved with no residential unit (commercial/ag/industrial). Condo: not present in source. Note RES_COUNT and tax class are current (2026) attributes, not at-sale.",
+  "district_mapping": "From PARCELINFO CITYNAME (postal city): LAHAINA->West Maui (incl. Kaanapali/Napili/Kapalua, all 96761); KIHEI/MAKENA->South Maui (incl. Wailea, 96753); MAKAWAO/KULA/PUKALANI->Upcountry; WAILUKU/KAHULUI/PUUNENE->Central (WAILUKU postal area also includes Waikapu, Waihee, Maalaea); HAIKU/PAIA/HANA/KEANAE->Haiku/Paia/Hana; KAUNAKAKAI/MAUNALOA/HOOLEHUA/KUALAPUU->Molokai; LANAI->Lanai. Enclave-level split (Wailea vs Kihei, Kapalua vs Lahaina) not possible from postal city.",
+  "tiers": "entry < $750K; mid $750K-<1.5M; upper $1.5M-<3M; luxury $3M-<10M; ultra >= $10M; n_1m_plus/n_3m_plus/n_5m_plus/n_10m_plus are >= thresholds. Medians are of deal prices (statistics.median).",
+  "privacy": "No owner names or street addresses output. salekey = county sale record key from the layer, included only so a verifier can re-find each top sale in the raw file.",
+  "hawaii_county_attempts": [
+   "https://hawaiipropertytax.com/ and https://www.hawaiipropertytax.com/ and /faq/ with browser UA (2026-10-08): HTTP 403 Cloudflare \"Just a moment...\" JS challenge (raw/mm_neighbor_sales/hawaii/hpt_*.html). Not bypassed.",
+   "https://gis.hawaiicounty.gov/public/ : HTTP 403 (earlier probe, raw/owners_neighbor/probe/x).",
+   "County ArcGIS Online org C2LPusZs5OXNGFDn: 221 services listed; none carries sale date/price fields (cohRPT has TMK, values, PittCode, NHoodCode only). ArcGIS Online item search \"(sales OR sale OR sold OR comparable) orgid:C2LPusZs5OXNGFDn\" -> 1 unrelated hit (cohbuildings view). Global AGOL search for Hawaii/Kauai sales layers -> nothing relevant.",
+   "Web search for a Hawaii County bulk sales extract: none found (county publishes tax-sale lists only)."
+  ],
+  "kauai_county_attempts": [
+   "https://qpublic.net/hi/kauai/ reachable (200) but record search hands off to https://qpublic.schneidercorp.com/Application.aspx?App=KauaiCountyHI -> HTTP 403 Cloudflare JS challenge; Schneider qPublic offers per-parcel/sales search only, no bulk extract, and was not scraped.",
+   "https://www.kauai.gov/.../Real-Property-Tax/Assessment/Public-Record-Search : HTTP 403 Akamai \"Access Denied\".",
+   "County ArcGIS Online org 0DaVqrPt2eyXUS9g: 593 services; none with sale date/price fields (TY26_PropertyTaxData, ALL_PARCELS_CPRS etc. are roll/parcel data). AGOL item search for sales in org -> 14 unrelated hits."
+  ],
+  "maui_full_extract_attempts": [
+   "https://www.mauicounty.gov/1032/Download-Public-Information and /DocumentCenter/Index/229 (\"Property Sales Data\") with browser UA + full browser headers: HTTP 403 Cloudflare \"you have been blocked\".",
+   "Wayback snapshot of page 1032 (2026-10-04) confirms the folder: DocumentCenter/Index/229 \"Property Sales Data\", but the folder file list is AJAX-loaded (/Admin/DocumentCenter/Home/Document_AjaxBinding/229) and not archived (Wayback 404); direct POST blocked (403).",
+   "Wayback CDX listing of all 21,655 archived mauicounty.gov/DocumentCenter/View/* URLs: no sales-extract file archived (only Parcel-Data-Extract View/2470, Assessment-Summaries View/2453, RPT-Ownership-Data View/8072).",
+   "https://qpublic.net/hi/maui/ reachable; links to Comparable Sales app = the ArcGIS Sales layer used here."
+  ],
+  "gaps": [
+   "Maui condos (CPR units) - none in source",
+   "Maui 2019-2022, Jul-2025 onward, 2026 YTD",
+   "Hawaii County - no data obtained",
+   "Kauai County - no data obtained",
+   "Resort-enclave splits (Wailea, Kapalua, Kaanapali) within postal cities"
+  ]
+ },
+ "maui": {
+  "counts": {
+   "raw_rows": 1500,
+   "dropped_nominal_lt50k": 3,
+   "deals_after_dedupe": 1493,
+   "multi_parcel_deals": 3,
+   "by_type": {
+    "house": 1208,
+    "land": 239,
+    "other_improved": 46
+   },
+   "by_salecode": {
+    "Valid Sale": 1163,
+    "Valid mult bldgs": 192,
+    "Developer sale": 136,
+    "Valid sale w/ adj price": 2
+   }
+  },
+  "by_assess_window": {
+   "TY2025 (Jul2023-Jun2024)": {
+    "all": {
+     "n": 790,
+     "median": 1250000.0,
+     "tiers": {
+      "entry_lt750k": 113,
+      "mid_750k_1.5m": 419,
+      "upper_1.5m_3m": 170,
+      "luxury_3m_10m": 80,
+      "ultra_10m_plus": 8
+     },
+     "n_1m_plus": 533,
+     "n_3m_plus": 88,
+     "n_5m_plus": 39,
+     "n_10m_plus": 8
+    },
+    "by_type": {
+     "house": {
+      "n": 628,
+      "median": 1273500.0,
+      "tiers": {
+       "entry_lt750k": 57,
+       "mid_750k_1.5m": 371,
+       "upper_1.5m_3m": 145,
+       "luxury_3m_10m": 53,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 455,
+      "n_3m_plus": 55,
+      "n_5m_plus": 20,
+      "n_10m_plus": 2
+     },
+     "land": {
+      "n": 136,
+      "median": 892000.0,
+      "tiers": {
+       "entry_lt750k": 54,
+       "mid_750k_1.5m": 40,
+       "upper_1.5m_3m": 17,
+       "luxury_3m_10m": 21,
+       "ultra_10m_plus": 4
+      },
+      "n_1m_plus": 57,
+      "n_3m_plus": 25,
+      "n_5m_plus": 16,
+      "n_10m_plus": 4
+     },
+     "other_improved": {
+      "n": 26,
+      "median": 1775000.0,
+      "tiers": {
+       "entry_lt750k": 2,
+       "mid_750k_1.5m": 8,
+       "upper_1.5m_3m": 8,
+       "luxury_3m_10m": 6,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 21,
+      "n_3m_plus": 8,
+      "n_5m_plus": 3,
+      "n_10m_plus": 2
+     }
+    },
+    "by_district": {
+     "Central (Kahului/Wailuku)": {
+      "n": 283,
+      "median": 1175000,
+      "tiers": {
+       "entry_lt750k": 38,
+       "mid_750k_1.5m": 204,
+       "upper_1.5m_3m": 31,
+       "luxury_3m_10m": 7,
+       "ultra_10m_plus": 3
+      },
+      "n_1m_plus": 188,
+      "n_3m_plus": 10,
+      "n_5m_plus": 4,
+      "n_10m_plus": 3
+     },
+     "Haiku/Paia/Hana": {
+      "n": 98,
+      "median": 1350000.0,
+      "tiers": {
+       "entry_lt750k": 9,
+       "mid_750k_1.5m": 49,
+       "upper_1.5m_3m": 28,
+       "luxury_3m_10m": 12,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 66,
+      "n_3m_plus": 12,
+      "n_5m_plus": 3,
+      "n_10m_plus": 0
+     },
+     "Lanai": {
+      "n": 12,
+      "median": 670000.0,
+      "tiers": {
+       "entry_lt750k": 10,
+       "mid_750k_1.5m": 2,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "Molokai": {
+      "n": 42,
+      "median": 373385.0,
+      "tiers": {
+       "entry_lt750k": 37,
+       "mid_750k_1.5m": 4,
+       "upper_1.5m_3m": 1,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 4,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "n": 143,
+      "median": 1475000,
+      "tiers": {
+       "entry_lt750k": 1,
+       "mid_750k_1.5m": 72,
+       "upper_1.5m_3m": 50,
+       "luxury_3m_10m": 18,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 127,
+      "n_3m_plus": 20,
+      "n_5m_plus": 10,
+      "n_10m_plus": 2
+     },
+     "Upcountry": {
+      "n": 127,
+      "median": 1395000,
+      "tiers": {
+       "entry_lt750k": 12,
+       "mid_750k_1.5m": 58,
+       "upper_1.5m_3m": 30,
+       "luxury_3m_10m": 25,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 86,
+      "n_3m_plus": 27,
+      "n_5m_plus": 14,
+      "n_10m_plus": 2
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "n": 85,
+      "median": 1695000,
+      "tiers": {
+       "entry_lt750k": 6,
+       "mid_750k_1.5m": 30,
+       "upper_1.5m_3m": 30,
+       "luxury_3m_10m": 18,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 62,
+      "n_3m_plus": 19,
+      "n_5m_plus": 8,
+      "n_10m_plus": 1
+     }
+    },
+    "by_district_type": {
+     "Central (Kahului/Wailuku)": {
+      "house": {
+       "n": 245,
+       "median": 1185000,
+       "tiers": {
+        "entry_lt750k": 21,
+        "mid_750k_1.5m": 197,
+        "upper_1.5m_3m": 25,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 169,
+       "n_3m_plus": 2,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 25,
+       "median": 585000,
+       "tiers": {
+        "entry_lt750k": 17,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 3,
+       "n_5m_plus": 2,
+       "n_10m_plus": 2
+      },
+      "other_improved": {
+       "n": 13,
+       "median": 2600000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 6,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 4,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 11,
+       "n_3m_plus": 5,
+       "n_5m_plus": 2,
+       "n_10m_plus": 1
+      }
+     },
+     "Haiku/Paia/Hana": {
+      "house": {
+       "n": 71,
+       "median": 1400000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 40,
+        "upper_1.5m_3m": 19,
+        "luxury_3m_10m": 11,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 50,
+       "n_3m_plus": 11,
+       "n_5m_plus": 3,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 22,
+       "median": 965000.0,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 9,
+        "upper_1.5m_3m": 5,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 11,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 5,
+       "median": 1700000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 5,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Lanai": {
+      "house": {
+       "n": 10,
+       "median": 705000.0,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 1,
+       "median": 435000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 335000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Molokai": {
+      "house": {
+       "n": 29,
+       "median": 465000,
+       "tiers": {
+        "entry_lt750k": 24,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 4,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 12,
+       "median": 90500.0,
+       "tiers": {
+        "entry_lt750k": 12,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 255000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "house": {
+       "n": 132,
+       "median": 1450000.0,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 68,
+        "upper_1.5m_3m": 45,
+        "luxury_3m_10m": 16,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 119,
+       "n_3m_plus": 18,
+       "n_5m_plus": 9,
+       "n_10m_plus": 2
+      },
+      "land": {
+       "n": 9,
+       "median": 1500000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 6,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 2025000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Upcountry": {
+      "house": {
+       "n": 84,
+       "median": 1367500.0,
+       "tiers": {
+        "entry_lt750k": 2,
+        "mid_750k_1.5m": 49,
+        "upper_1.5m_3m": 26,
+        "luxury_3m_10m": 7,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 59,
+       "n_3m_plus": 7,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 40,
+       "median": 2125000.0,
+       "tiers": {
+        "entry_lt750k": 10,
+        "mid_750k_1.5m": 7,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 17,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 25,
+       "n_3m_plus": 19,
+       "n_5m_plus": 13,
+       "n_10m_plus": 2
+      },
+      "other_improved": {
+       "n": 3,
+       "median": 1175000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "house": {
+       "n": 57,
+       "median": 1999216,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 11,
+        "upper_1.5m_3m": 29,
+        "luxury_3m_10m": 17,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 54,
+       "n_3m_plus": 17,
+       "n_5m_plus": 7,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 27,
+       "median": 916500,
+       "tiers": {
+        "entry_lt750k": 6,
+        "mid_750k_1.5m": 19,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 7,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 325100000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 1,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      }
+     }
+    }
+   },
+   "TY2026 (Jul2024-Jun2025)": {
+    "all": {
+     "n": 703,
+     "median": 1285000,
+     "tiers": {
+      "entry_lt750k": 109,
+      "mid_750k_1.5m": 351,
+      "upper_1.5m_3m": 177,
+      "luxury_3m_10m": 58,
+      "ultra_10m_plus": 8
+     },
+     "n_1m_plus": 491,
+     "n_3m_plus": 66,
+     "n_5m_plus": 33,
+     "n_10m_plus": 8
+    },
+    "by_type": {
+     "house": {
+      "n": 580,
+      "median": 1300050.0,
+      "tiers": {
+       "entry_lt750k": 51,
+       "mid_750k_1.5m": 326,
+       "upper_1.5m_3m": 153,
+       "luxury_3m_10m": 44,
+       "ultra_10m_plus": 6
+      },
+      "n_1m_plus": 439,
+      "n_3m_plus": 50,
+      "n_5m_plus": 25,
+      "n_10m_plus": 6
+     },
+     "land": {
+      "n": 103,
+      "median": 650000,
+      "tiers": {
+       "entry_lt750k": 58,
+       "mid_750k_1.5m": 24,
+       "upper_1.5m_3m": 12,
+       "luxury_3m_10m": 8,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 32,
+      "n_3m_plus": 9,
+      "n_5m_plus": 6,
+      "n_10m_plus": 1
+     },
+     "other_improved": {
+      "n": 20,
+      "median": 2359018.5,
+      "tiers": {
+       "entry_lt750k": 0,
+       "mid_750k_1.5m": 1,
+       "upper_1.5m_3m": 12,
+       "luxury_3m_10m": 6,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 20,
+      "n_3m_plus": 7,
+      "n_5m_plus": 2,
+      "n_10m_plus": 1
+     }
+    },
+    "by_district": {
+     "Central (Kahului/Wailuku)": {
+      "n": 256,
+      "median": 1175000.0,
+      "tiers": {
+       "entry_lt750k": 31,
+       "mid_750k_1.5m": 180,
+       "upper_1.5m_3m": 39,
+       "luxury_3m_10m": 4,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 173,
+      "n_3m_plus": 6,
+      "n_5m_plus": 2,
+      "n_10m_plus": 2
+     },
+     "Haiku/Paia/Hana": {
+      "n": 68,
+      "median": 1427500.0,
+      "tiers": {
+       "entry_lt750k": 8,
+       "mid_750k_1.5m": 27,
+       "upper_1.5m_3m": 28,
+       "luxury_3m_10m": 5,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 47,
+      "n_3m_plus": 5,
+      "n_5m_plus": 3,
+      "n_10m_plus": 0
+     },
+     "Lanai": {
+      "n": 6,
+      "median": 787500.0,
+      "tiers": {
+       "entry_lt750k": 2,
+       "mid_750k_1.5m": 4,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "Molokai": {
+      "n": 44,
+      "median": 414950.0,
+      "tiers": {
+       "entry_lt750k": 40,
+       "mid_750k_1.5m": 4,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 1,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "n": 112,
+      "median": 1600054.0,
+      "tiers": {
+       "entry_lt750k": 2,
+       "mid_750k_1.5m": 46,
+       "upper_1.5m_3m": 42,
+       "luxury_3m_10m": 20,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 103,
+      "n_3m_plus": 22,
+      "n_5m_plus": 11,
+      "n_10m_plus": 2
+     },
+     "Upcountry": {
+      "n": 137,
+      "median": 1325000,
+      "tiers": {
+       "entry_lt750k": 14,
+       "mid_750k_1.5m": 72,
+       "upper_1.5m_3m": 44,
+       "luxury_3m_10m": 7,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 105,
+      "n_3m_plus": 7,
+      "n_5m_plus": 2,
+      "n_10m_plus": 0
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "n": 80,
+      "median": 1910000.0,
+      "tiers": {
+       "entry_lt750k": 12,
+       "mid_750k_1.5m": 18,
+       "upper_1.5m_3m": 24,
+       "luxury_3m_10m": 22,
+       "ultra_10m_plus": 4
+      },
+      "n_1m_plus": 62,
+      "n_3m_plus": 26,
+      "n_5m_plus": 15,
+      "n_10m_plus": 4
+     }
+    },
+    "by_district_type": {
+     "Central (Kahului/Wailuku)": {
+      "house": {
+       "n": 225,
+       "median": 1175000,
+       "tiers": {
+        "entry_lt750k": 18,
+        "mid_750k_1.5m": 176,
+        "upper_1.5m_3m": 31,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 157,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 19,
+       "median": 610000,
+       "tiers": {
+        "entry_lt750k": 13,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 4,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      },
+      "other_improved": {
+       "n": 12,
+       "median": 2312500.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 7,
+        "luxury_3m_10m": 3,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 12,
+       "n_3m_plus": 4,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      }
+     },
+     "Haiku/Paia/Hana": {
+      "house": {
+       "n": 53,
+       "median": 1500000,
+       "tiers": {
+        "entry_lt750k": 4,
+        "mid_750k_1.5m": 22,
+        "upper_1.5m_3m": 23,
+        "luxury_3m_10m": 4,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 40,
+       "n_3m_plus": 4,
+       "n_5m_plus": 3,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 13,
+       "median": 815000,
+       "tiers": {
+        "entry_lt750k": 4,
+        "mid_750k_1.5m": 5,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 5,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 3234018.5,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Lanai": {
+      "house": {
+       "n": 6,
+       "median": 787500.0,
+       "tiers": {
+        "entry_lt750k": 2,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Molokai": {
+      "house": {
+       "n": 28,
+       "median": 525000.0,
+       "tiers": {
+        "entry_lt750k": 24,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 16,
+       "median": 154500.0,
+       "tiers": {
+        "entry_lt750k": 16,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "house": {
+       "n": 97,
+       "median": 1600108,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 42,
+        "upper_1.5m_3m": 38,
+        "luxury_3m_10m": 15,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 93,
+       "n_3m_plus": 17,
+       "n_5m_plus": 8,
+       "n_10m_plus": 2
+      },
+      "land": {
+       "n": 12,
+       "median": 1300000.0,
+       "tiers": {
+        "entry_lt750k": 2,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 3,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 7,
+       "n_3m_plus": 3,
+       "n_5m_plus": 2,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 3,
+       "median": 3100000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      }
+     },
+     "Upcountry": {
+      "house": {
+       "n": 115,
+       "median": 1345000,
+       "tiers": {
+        "entry_lt750k": 3,
+        "mid_750k_1.5m": 69,
+        "upper_1.5m_3m": 39,
+        "luxury_3m_10m": 4,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 95,
+       "n_3m_plus": 4,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 20,
+       "median": 645000.0,
+       "tiers": {
+        "entry_lt750k": 11,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 3,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 3,
+       "n_5m_plus": 2,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 1635000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "house": {
+       "n": 56,
+       "median": 2650000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 9,
+        "upper_1.5m_3m": 22,
+        "luxury_3m_10m": 21,
+        "ultra_10m_plus": 4
+       },
+       "n_1m_plus": 53,
+       "n_3m_plus": 25,
+       "n_5m_plus": 14,
+       "n_10m_plus": 4
+      },
+      "land": {
+       "n": 23,
+       "median": 695000,
+       "tiers": {
+        "entry_lt750k": 12,
+        "mid_750k_1.5m": 9,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 1,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 2600000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     }
+    }
+   }
+  },
+  "by_calendar_year": {
+   "2023": {
+    "all": {
+     "n": 378,
+     "median": 1200000.0,
+     "tiers": {
+      "entry_lt750k": 62,
+      "mid_750k_1.5m": 208,
+      "upper_1.5m_3m": 71,
+      "luxury_3m_10m": 32,
+      "ultra_10m_plus": 5
+     },
+     "n_1m_plus": 239,
+     "n_3m_plus": 37,
+     "n_5m_plus": 16,
+     "n_10m_plus": 5
+    },
+    "by_type": {
+     "house": {
+      "n": 304,
+      "median": 1220000.0,
+      "tiers": {
+       "entry_lt750k": 29,
+       "mid_750k_1.5m": 186,
+       "upper_1.5m_3m": 60,
+       "luxury_3m_10m": 28,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 210,
+      "n_3m_plus": 29,
+      "n_5m_plus": 11,
+      "n_10m_plus": 1
+     },
+     "land": {
+      "n": 61,
+      "median": 715000,
+      "tiers": {
+       "entry_lt750k": 32,
+       "mid_750k_1.5m": 19,
+       "upper_1.5m_3m": 6,
+       "luxury_3m_10m": 2,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 17,
+      "n_3m_plus": 4,
+      "n_5m_plus": 3,
+      "n_10m_plus": 2
+     },
+     "other_improved": {
+      "n": 13,
+      "median": 2100000,
+      "tiers": {
+       "entry_lt750k": 1,
+       "mid_750k_1.5m": 3,
+       "upper_1.5m_3m": 5,
+       "luxury_3m_10m": 2,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 12,
+      "n_3m_plus": 4,
+      "n_5m_plus": 2,
+      "n_10m_plus": 2
+     }
+    },
+    "by_district": {
+     "Central (Kahului/Wailuku)": {
+      "n": 156,
+      "median": 1152500.0,
+      "tiers": {
+       "entry_lt750k": 25,
+       "mid_750k_1.5m": 107,
+       "upper_1.5m_3m": 16,
+       "luxury_3m_10m": 5,
+       "ultra_10m_plus": 3
+      },
+      "n_1m_plus": 98,
+      "n_3m_plus": 8,
+      "n_5m_plus": 3,
+      "n_10m_plus": 3
+     },
+     "Haiku/Paia/Hana": {
+      "n": 48,
+      "median": 1350000.0,
+      "tiers": {
+       "entry_lt750k": 4,
+       "mid_750k_1.5m": 24,
+       "upper_1.5m_3m": 15,
+       "luxury_3m_10m": 5,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 29,
+      "n_3m_plus": 5,
+      "n_5m_plus": 1,
+      "n_10m_plus": 0
+     },
+     "Lanai": {
+      "n": 6,
+      "median": 662500.0,
+      "tiers": {
+       "entry_lt750k": 5,
+       "mid_750k_1.5m": 1,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "Molokai": {
+      "n": 21,
+      "median": 345000,
+      "tiers": {
+       "entry_lt750k": 19,
+       "mid_750k_1.5m": 2,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 2,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "n": 65,
+      "median": 1395000,
+      "tiers": {
+       "entry_lt750k": 1,
+       "mid_750k_1.5m": 39,
+       "upper_1.5m_3m": 19,
+       "luxury_3m_10m": 5,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 56,
+      "n_3m_plus": 6,
+      "n_5m_plus": 3,
+      "n_10m_plus": 1
+     },
+     "Upcountry": {
+      "n": 38,
+      "median": 1125000.0,
+      "tiers": {
+       "entry_lt750k": 5,
+       "mid_750k_1.5m": 21,
+       "upper_1.5m_3m": 7,
+       "luxury_3m_10m": 5,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 20,
+      "n_3m_plus": 5,
+      "n_5m_plus": 2,
+      "n_10m_plus": 0
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "n": 44,
+      "median": 1805000.0,
+      "tiers": {
+       "entry_lt750k": 3,
+       "mid_750k_1.5m": 14,
+       "upper_1.5m_3m": 14,
+       "luxury_3m_10m": 12,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 34,
+      "n_3m_plus": 13,
+      "n_5m_plus": 7,
+      "n_10m_plus": 1
+     }
+    },
+    "by_district_type": {
+     "Central (Kahului/Wailuku)": {
+      "house": {
+       "n": 130,
+       "median": 1152500.0,
+       "tiers": {
+        "entry_lt750k": 13,
+        "mid_750k_1.5m": 103,
+        "upper_1.5m_3m": 12,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 84,
+       "n_3m_plus": 2,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 18,
+       "median": 627500.0,
+       "tiers": {
+        "entry_lt750k": 12,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 6,
+       "n_3m_plus": 3,
+       "n_5m_plus": 2,
+       "n_10m_plus": 2
+      },
+      "other_improved": {
+       "n": 8,
+       "median": 2700000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 3,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      }
+     },
+     "Haiku/Paia/Hana": {
+      "house": {
+       "n": 37,
+       "median": 1350000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 21,
+        "upper_1.5m_3m": 10,
+        "luxury_3m_10m": 5,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 22,
+       "n_3m_plus": 5,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 9,
+       "median": 1000000,
+       "tiers": {
+        "entry_lt750k": 3,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 5,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 1900000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Lanai": {
+      "house": {
+       "n": 4,
+       "median": 705000.0,
+       "tiers": {
+        "entry_lt750k": 3,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 1,
+       "median": 435000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 335000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Molokai": {
+      "house": {
+       "n": 13,
+       "median": 415000,
+       "tiers": {
+        "entry_lt750k": 11,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 8,
+       "median": 121500.0,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "house": {
+       "n": 61,
+       "median": 1395000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 37,
+        "upper_1.5m_3m": 17,
+        "luxury_3m_10m": 5,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 53,
+       "n_3m_plus": 6,
+       "n_5m_plus": 3,
+       "n_10m_plus": 1
+      },
+      "land": {
+       "n": 3,
+       "median": 1250000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 1850000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Upcountry": {
+      "house": {
+       "n": 28,
+       "median": 1295000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 17,
+        "upper_1.5m_3m": 7,
+        "luxury_3m_10m": 4,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 18,
+       "n_3m_plus": 4,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 10,
+       "median": 732500.0,
+       "tiers": {
+        "entry_lt750k": 5,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 1,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      }
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "house": {
+       "n": 31,
+       "median": 2150000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 5,
+        "upper_1.5m_3m": 14,
+        "luxury_3m_10m": 12,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 31,
+       "n_3m_plus": 12,
+       "n_5m_plus": 6,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 12,
+       "median": 892500.5,
+       "tiers": {
+        "entry_lt750k": 3,
+        "mid_750k_1.5m": 9,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 325100000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 1,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      }
+     }
+    }
+   },
+   "2024": {
+    "all": {
+     "n": 774,
+     "median": 1282000.0,
+     "tiers": {
+      "entry_lt750k": 111,
+      "mid_750k_1.5m": 404,
+      "upper_1.5m_3m": 181,
+      "luxury_3m_10m": 71,
+      "ultra_10m_plus": 7
+     },
+     "n_1m_plus": 541,
+     "n_3m_plus": 78,
+     "n_5m_plus": 35,
+     "n_10m_plus": 7
+    },
+    "by_type": {
+     "house": {
+      "n": 623,
+      "median": 1300000,
+      "tiers": {
+       "entry_lt750k": 55,
+       "mid_750k_1.5m": 365,
+       "upper_1.5m_3m": 157,
+       "luxury_3m_10m": 41,
+       "ultra_10m_plus": 5
+      },
+      "n_1m_plus": 470,
+      "n_3m_plus": 46,
+      "n_5m_plus": 18,
+      "n_10m_plus": 5
+     },
+     "land": {
+      "n": 128,
+      "median": 812500.0,
+      "tiers": {
+       "entry_lt750k": 55,
+       "mid_750k_1.5m": 34,
+       "upper_1.5m_3m": 14,
+       "luxury_3m_10m": 23,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 52,
+      "n_3m_plus": 25,
+      "n_5m_plus": 16,
+      "n_10m_plus": 2
+     },
+     "other_improved": {
+      "n": 23,
+      "median": 2075000,
+      "tiers": {
+       "entry_lt750k": 1,
+       "mid_750k_1.5m": 5,
+       "upper_1.5m_3m": 10,
+       "luxury_3m_10m": 7,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 19,
+      "n_3m_plus": 7,
+      "n_5m_plus": 1,
+      "n_10m_plus": 0
+     }
+    },
+    "by_district": {
+     "Central (Kahului/Wailuku)": {
+      "n": 258,
+      "median": 1202500.0,
+      "tiers": {
+       "entry_lt750k": 25,
+       "mid_750k_1.5m": 196,
+       "upper_1.5m_3m": 33,
+       "luxury_3m_10m": 4,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 181,
+      "n_3m_plus": 4,
+      "n_5m_plus": 1,
+      "n_10m_plus": 0
+     },
+     "Haiku/Paia/Hana": {
+      "n": 84,
+      "median": 1287500.0,
+      "tiers": {
+       "entry_lt750k": 12,
+       "mid_750k_1.5m": 39,
+       "upper_1.5m_3m": 22,
+       "luxury_3m_10m": 11,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 58,
+      "n_3m_plus": 11,
+      "n_5m_plus": 4,
+      "n_10m_plus": 0
+     },
+     "Lanai": {
+      "n": 11,
+      "median": 745000,
+      "tiers": {
+       "entry_lt750k": 7,
+       "mid_750k_1.5m": 4,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "Molokai": {
+      "n": 46,
+      "median": 414950.0,
+      "tiers": {
+       "entry_lt750k": 41,
+       "mid_750k_1.5m": 4,
+       "upper_1.5m_3m": 1,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 3,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "n": 128,
+      "median": 1620054.0,
+      "tiers": {
+       "entry_lt750k": 2,
+       "mid_750k_1.5m": 53,
+       "upper_1.5m_3m": 50,
+       "luxury_3m_10m": 21,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 117,
+      "n_3m_plus": 23,
+      "n_5m_plus": 9,
+      "n_10m_plus": 2
+     },
+     "Upcountry": {
+      "n": 168,
+      "median": 1390000.0,
+      "tiers": {
+       "entry_lt750k": 16,
+       "mid_750k_1.5m": 82,
+       "upper_1.5m_3m": 44,
+       "luxury_3m_10m": 24,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 126,
+      "n_3m_plus": 26,
+      "n_5m_plus": 14,
+      "n_10m_plus": 2
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "n": 79,
+      "median": 1700000,
+      "tiers": {
+       "entry_lt750k": 8,
+       "mid_750k_1.5m": 26,
+       "upper_1.5m_3m": 31,
+       "luxury_3m_10m": 11,
+       "ultra_10m_plus": 3
+      },
+      "n_1m_plus": 56,
+      "n_3m_plus": 14,
+      "n_5m_plus": 7,
+      "n_10m_plus": 3
+     }
+    },
+    "by_district_type": {
+     "Central (Kahului/Wailuku)": {
+      "house": {
+       "n": 234,
+       "median": 1217500.0,
+       "tiers": {
+        "entry_lt750k": 15,
+        "mid_750k_1.5m": 191,
+        "upper_1.5m_3m": 28,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 170,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 14,
+       "median": 562500.0,
+       "tiers": {
+        "entry_lt750k": 10,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 10,
+       "median": 2312500.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 4,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 4,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      }
+     },
+     "Haiku/Paia/Hana": {
+      "house": {
+       "n": 58,
+       "median": 1400000.0,
+       "tiers": {
+        "entry_lt750k": 4,
+        "mid_750k_1.5m": 29,
+        "upper_1.5m_3m": 16,
+        "luxury_3m_10m": 9,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 45,
+       "n_3m_plus": 9,
+       "n_5m_plus": 4,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 21,
+       "median": 800000,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 10,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 8,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 5,
+       "median": 2168037,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 5,
+       "n_3m_plus": 2,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Lanai": {
+      "house": {
+       "n": 11,
+       "median": 745000,
+       "tiers": {
+        "entry_lt750k": 7,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Molokai": {
+      "house": {
+       "n": 30,
+       "median": 512500.0,
+       "tiers": {
+        "entry_lt750k": 25,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 15,
+       "median": 127500,
+       "tiers": {
+        "entry_lt750k": 15,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 255000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "house": {
+       "n": 115,
+       "median": 1640000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 51,
+        "upper_1.5m_3m": 44,
+        "luxury_3m_10m": 18,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 108,
+       "n_3m_plus": 20,
+       "n_5m_plus": 8,
+       "n_10m_plus": 2
+      },
+      "land": {
+       "n": 11,
+       "median": 1550000,
+       "tiers": {
+        "entry_lt750k": 2,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 3,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 7,
+       "n_3m_plus": 3,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 1900000.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 2,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Upcountry": {
+      "house": {
+       "n": 122,
+       "median": 1349500.0,
+       "tiers": {
+        "entry_lt750k": 4,
+        "mid_750k_1.5m": 74,
+        "upper_1.5m_3m": 39,
+        "luxury_3m_10m": 5,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 96,
+       "n_3m_plus": 5,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 42,
+       "median": 2125000.0,
+       "tiers": {
+        "entry_lt750k": 12,
+        "mid_750k_1.5m": 6,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 18,
+        "ultra_10m_plus": 2
+       },
+       "n_1m_plus": 27,
+       "n_3m_plus": 20,
+       "n_5m_plus": 14,
+       "n_10m_plus": 2
+      },
+      "other_improved": {
+       "n": 4,
+       "median": 1422500.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "house": {
+       "n": 53,
+       "median": 1999216,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 12,
+        "upper_1.5m_3m": 29,
+        "luxury_3m_10m": 9,
+        "ultra_10m_plus": 3
+       },
+       "n_1m_plus": 48,
+       "n_3m_plus": 12,
+       "n_5m_plus": 6,
+       "n_10m_plus": 3
+      },
+      "land": {
+       "n": 25,
+       "median": 825000,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 14,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 7,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 2600000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     }
+    }
+   },
+   "2025": {
+    "all": {
+     "n": 341,
+     "median": 1315000,
+     "tiers": {
+      "entry_lt750k": 49,
+      "mid_750k_1.5m": 158,
+      "upper_1.5m_3m": 95,
+      "luxury_3m_10m": 35,
+      "ultra_10m_plus": 4
+     },
+     "n_1m_plus": 244,
+     "n_3m_plus": 39,
+     "n_5m_plus": 21,
+     "n_10m_plus": 4
+    },
+    "by_type": {
+     "house": {
+      "n": 281,
+      "median": 1335000,
+      "tiers": {
+       "entry_lt750k": 24,
+       "mid_750k_1.5m": 146,
+       "upper_1.5m_3m": 81,
+       "luxury_3m_10m": 28,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 214,
+      "n_3m_plus": 30,
+      "n_5m_plus": 16,
+      "n_10m_plus": 2
+     },
+     "land": {
+      "n": 50,
+      "median": 772500.0,
+      "tiers": {
+       "entry_lt750k": 25,
+       "mid_750k_1.5m": 11,
+       "upper_1.5m_3m": 9,
+       "luxury_3m_10m": 4,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 20,
+      "n_3m_plus": 5,
+      "n_5m_plus": 3,
+      "n_10m_plus": 1
+     },
+     "other_improved": {
+      "n": 10,
+      "median": 2390000.0,
+      "tiers": {
+       "entry_lt750k": 0,
+       "mid_750k_1.5m": 1,
+       "upper_1.5m_3m": 5,
+       "luxury_3m_10m": 3,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 10,
+      "n_3m_plus": 4,
+      "n_5m_plus": 2,
+      "n_10m_plus": 1
+     }
+    },
+    "by_district": {
+     "Central (Kahului/Wailuku)": {
+      "n": 125,
+      "median": 1175000,
+      "tiers": {
+       "entry_lt750k": 19,
+       "mid_750k_1.5m": 81,
+       "upper_1.5m_3m": 21,
+       "luxury_3m_10m": 2,
+       "ultra_10m_plus": 2
+      },
+      "n_1m_plus": 82,
+      "n_3m_plus": 4,
+      "n_5m_plus": 2,
+      "n_10m_plus": 2
+     },
+     "Haiku/Paia/Hana": {
+      "n": 34,
+      "median": 1725000.0,
+      "tiers": {
+       "entry_lt750k": 1,
+       "mid_750k_1.5m": 13,
+       "upper_1.5m_3m": 19,
+       "luxury_3m_10m": 1,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 26,
+      "n_3m_plus": 1,
+      "n_5m_plus": 1,
+      "n_10m_plus": 0
+     },
+     "Lanai": {
+      "n": 1,
+      "median": 825000,
+      "tiers": {
+       "entry_lt750k": 0,
+       "mid_750k_1.5m": 1,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "Molokai": {
+      "n": 19,
+      "median": 520000,
+      "tiers": {
+       "entry_lt750k": 17,
+       "mid_750k_1.5m": 2,
+       "upper_1.5m_3m": 0,
+       "luxury_3m_10m": 0,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 0,
+      "n_3m_plus": 0,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "n": 62,
+      "median": 1668000.0,
+      "tiers": {
+       "entry_lt750k": 0,
+       "mid_750k_1.5m": 26,
+       "upper_1.5m_3m": 23,
+       "luxury_3m_10m": 12,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 57,
+      "n_3m_plus": 13,
+      "n_5m_plus": 9,
+      "n_10m_plus": 1
+     },
+     "Upcountry": {
+      "n": 58,
+      "median": 1365000.0,
+      "tiers": {
+       "entry_lt750k": 5,
+       "mid_750k_1.5m": 27,
+       "upper_1.5m_3m": 23,
+       "luxury_3m_10m": 3,
+       "ultra_10m_plus": 0
+      },
+      "n_1m_plus": 45,
+      "n_3m_plus": 3,
+      "n_5m_plus": 0,
+      "n_10m_plus": 0
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "n": 42,
+      "median": 2050000.0,
+      "tiers": {
+       "entry_lt750k": 7,
+       "mid_750k_1.5m": 8,
+       "upper_1.5m_3m": 9,
+       "luxury_3m_10m": 17,
+       "ultra_10m_plus": 1
+      },
+      "n_1m_plus": 34,
+      "n_3m_plus": 18,
+      "n_5m_plus": 9,
+      "n_10m_plus": 1
+     }
+    },
+    "by_district_type": {
+     "Central (Kahului/Wailuku)": {
+      "house": {
+       "n": 106,
+       "median": 1167500.0,
+       "tiers": {
+        "entry_lt750k": 11,
+        "mid_750k_1.5m": 79,
+        "upper_1.5m_3m": 16,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 72,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 12,
+       "median": 635000.0,
+       "tiers": {
+        "entry_lt750k": 8,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      },
+      "other_improved": {
+       "n": 7,
+       "median": 1980000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 4,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 7,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 1
+      }
+     },
+     "Haiku/Paia/Hana": {
+      "house": {
+       "n": 29,
+       "median": 1650000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 12,
+        "upper_1.5m_3m": 16,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 23,
+       "n_3m_plus": 1,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 5,
+       "median": 1800000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 3,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Lanai": {
+      "house": {
+       "n": 1,
+       "median": 825000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 1,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "Molokai": {
+      "house": {
+       "n": 14,
+       "median": 560000.0,
+       "tiers": {
+        "entry_lt750k": 12,
+        "mid_750k_1.5m": 2,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 5,
+       "median": 134000,
+       "tiers": {
+        "entry_lt750k": 5,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 0,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "South Maui (Kihei/Wailea/Makena)": {
+      "house": {
+       "n": 53,
+       "median": 1636000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 22,
+        "upper_1.5m_3m": 22,
+        "luxury_3m_10m": 8,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 51,
+       "n_3m_plus": 9,
+       "n_5m_plus": 6,
+       "n_10m_plus": 1
+      },
+      "land": {
+       "n": 7,
+       "median": 1050000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 4,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 4,
+       "n_3m_plus": 2,
+       "n_5m_plus": 2,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 2,
+       "median": 6132500.0,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 0,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 2,
+       "n_3m_plus": 2,
+       "n_5m_plus": 1,
+       "n_10m_plus": 0
+      }
+     },
+     "Upcountry": {
+      "house": {
+       "n": 49,
+       "median": 1345000,
+       "tiers": {
+        "entry_lt750k": 1,
+        "mid_750k_1.5m": 27,
+        "upper_1.5m_3m": 19,
+        "luxury_3m_10m": 2,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 40,
+       "n_3m_plus": 2,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "land": {
+       "n": 8,
+       "median": 1150000.0,
+       "tiers": {
+        "entry_lt750k": 4,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 3,
+        "luxury_3m_10m": 1,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 4,
+       "n_3m_plus": 1,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      },
+      "other_improved": {
+       "n": 1,
+       "median": 1600000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 0,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 1,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     },
+     "West Maui (Lahaina/Kaanapali/Kapalua)": {
+      "house": {
+       "n": 29,
+       "median": 3795000,
+       "tiers": {
+        "entry_lt750k": 0,
+        "mid_750k_1.5m": 3,
+        "upper_1.5m_3m": 8,
+        "luxury_3m_10m": 17,
+        "ultra_10m_plus": 1
+       },
+       "n_1m_plus": 28,
+       "n_3m_plus": 18,
+       "n_5m_plus": 9,
+       "n_10m_plus": 1
+      },
+      "land": {
+       "n": 13,
+       "median": 695000,
+       "tiers": {
+        "entry_lt750k": 7,
+        "mid_750k_1.5m": 5,
+        "upper_1.5m_3m": 1,
+        "luxury_3m_10m": 0,
+        "ultra_10m_plus": 0
+       },
+       "n_1m_plus": 6,
+       "n_3m_plus": 0,
+       "n_5m_plus": 0,
+       "n_10m_plus": 0
+      }
+     }
+    }
+   }
+  },
+  "top10_2025_JanJun_all_types": [
+   {
+    "price": 20000000,
+    "date": "2025-04-08",
+    "district": "Central (Kahului/Wailuku)",
+    "type": "land",
+    "saletype": "Vacant",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 601383
+   },
+   {
+    "price": 16300000,
+    "date": "2025-05-29",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604865
+   },
+   {
+    "price": 14470000,
+    "date": "2025-02-21",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600315
+   },
+   {
+    "price": 13250000,
+    "date": "2025-05-27",
+    "district": "Central (Kahului/Wailuku)",
+    "type": "other_improved",
+    "saletype": "Fix",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604276
+   },
+   {
+    "price": 9165000,
+    "date": "2025-06-30",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "other_improved",
+    "saletype": "Fix",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 605262
+   },
+   {
+    "price": 8500000,
+    "date": "2025-04-01",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 601181
+   },
+   {
+    "price": 7875000,
+    "date": "2025-02-28",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600501
+   },
+   {
+    "price": 7600000,
+    "date": "2025-05-29",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604582
+   },
+   {
+    "price": 7350000,
+    "date": "2025-05-14",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "land",
+    "saletype": "Vacant",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604087
+   },
+   {
+    "price": 6900000,
+    "date": "2025-03-07",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600485
+   }
+  ],
+  "top10_2025_JanJun_houses": [
+   {
+    "price": 16300000,
+    "date": "2025-05-29",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604865
+   },
+   {
+    "price": 14470000,
+    "date": "2025-02-21",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600315
+   },
+   {
+    "price": 8500000,
+    "date": "2025-04-01",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 601181
+   },
+   {
+    "price": 7875000,
+    "date": "2025-02-28",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600501
+   },
+   {
+    "price": 7600000,
+    "date": "2025-05-29",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604582
+   },
+   {
+    "price": 6900000,
+    "date": "2025-03-07",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600485
+   },
+   {
+    "price": 6400000,
+    "date": "2025-03-07",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600517
+   },
+   {
+    "price": 6205000,
+    "date": "2025-05-14",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604098
+   },
+   {
+    "price": 6100000,
+    "date": "2025-04-28",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 602222
+   },
+   {
+    "price": 6000000,
+    "date": "2025-01-09",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid mult bldgs",
+    "n_parcels": 1,
+    "salekey": 598750
+   }
+  ],
+  "top10_Jul2024_Jun2025_all_types": [
+   {
+    "price": 26450000,
+    "date": "2024-10-16",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 595004
+   },
+   {
+    "price": 20000000,
+    "date": "2025-04-08",
+    "district": "Central (Kahului/Wailuku)",
+    "type": "land",
+    "saletype": "Vacant",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 601383
+   },
+   {
+    "price": 17000000,
+    "date": "2024-08-09",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 592954
+   },
+   {
+    "price": 16300000,
+    "date": "2025-05-29",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604865
+   },
+   {
+    "price": 16000000,
+    "date": "2024-09-23",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid mult bldgs",
+    "n_parcels": 1,
+    "salekey": 593888
+   },
+   {
+    "price": 14470000,
+    "date": "2025-02-21",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 600315
+   },
+   {
+    "price": 13250000,
+    "date": "2025-05-27",
+    "district": "Central (Kahului/Wailuku)",
+    "type": "other_improved",
+    "saletype": "Fix",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 604276
+   },
+   {
+    "price": 12350000,
+    "date": "2024-12-10",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "house",
+    "saletype": "Improved",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 597885
+   },
+   {
+    "price": 9165000,
+    "date": "2025-06-30",
+    "district": "South Maui (Kihei/Wailea/Makena)",
+    "type": "other_improved",
+    "saletype": "Fix",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 605262
+   },
+   {
+    "price": 8750000,
+    "date": "2024-11-21",
+    "district": "West Maui (Lahaina/Kaanapali/Kapalua)",
+    "type": "land",
+    "saletype": "Vacant",
+    "salecode": "Valid Sale",
+    "n_parcels": 1,
+    "salekey": 597630
+   }
+  ]
+ },
+ "hawaii": {
+  "status": "not_obtained"
+ },
+ "kauai": {
+  "status": "not_obtained"
+ }
+}
