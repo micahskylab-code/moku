@@ -50,8 +50,9 @@ def instate_row():
         out+=f'<td><b>Elsewhere in Hawaiʻi</b><span class="mn">{round(n):,} a year · ${round(agi)}K avg income · {sub}</span></td>'
     return out+'</tr>'
 V=json.load(open(f'{S}/an/vis_cbsa.json'))['islands']
+VJ_M=json.load(open(f'{S}/an/vis_cbsa.json'))['metros']
 VK={'Oahu':'Oahu','Maui':'Maui','Kauai':'Kauai','Hawaii Island':'Hawaii'}
-MN_={'Washington-Arlington-Alexandria DC-VA-MD-WV':'Washington DC','Baltimore-Columbia-Towson MD':'Baltimore','San Antonio-New Braunfels TX':'San Antonio','Minneapolis-St. Paul-Bloomington MN-WI':'Minneapolis–St. Paul','Chicago-Naperville-Elgin IL-IN-WI':'Chicago','Dallas-Fort Worth-Arlington TX':'Dallas–Fort Worth','Denver-Aurora-Lakewood CO':'Denver','Anchorage AK':'Anchorage','Portland-Vancouver-Hillsboro OR-WA':'Portland','New York-Newark-Jersey City NY-NJ-PA':'New York','Salt Lake City–Provo–Ogden UT':'Salt Lake City–Provo–Ogden'}
+MN_={'Los Angeles-Long Beach-Anaheim CA':'Los Angeles–OC','San Francisco-Oakland-Hayward CA':'SF–Oakland','Seattle-Tacoma-Bellevue WA':'Seattle','San Diego-Carlsbad CA':'San Diego','Washington-Arlington-Alexandria DC-VA-MD-WV':'Washington DC','Baltimore-Columbia-Towson MD':'Baltimore','San Antonio-New Braunfels TX':'San Antonio','Minneapolis-St. Paul-Bloomington MN-WI':'Minneapolis–St. Paul','Chicago-Naperville-Elgin IL-IN-WI':'Chicago','Dallas-Fort Worth-Arlington TX':'Dallas–Fort Worth','Denver-Aurora-Lakewood CO':'Denver','Anchorage AK':'Anchorage','Portland-Vancouver-Hillsboro OR-WA':'Portland','New York-Newark-Jersey City NY-NJ-PA':'New York','Salt Lake City–Provo–Ogden UT':'Salt Lake City–Provo–Ogden'}
 def mshort(m):
     return MN_.get(m, m.rsplit(' ',1)[0].split('-')[0])
 def overrow(minn):
@@ -79,8 +80,27 @@ st=TG['State']; ho=TG['Honolulu']
 local_d=dollar_share(st,'local'); local_ho=dollar_share(ho,'local')
 for_n=st['n_foreign']; for_pct=100*st['n_foreign']/st['n_total']
 
+TGC={'Oahu':'Honolulu','Maui':'Maui','Kauai':'Kauai','Hawaii Island':'Hawaii'}
+STATES={'Oahu':'Florida 88, Washington 83, Texas 60, Nevada 54 (Jan–Sep)','Maui':'Washington 21, Colorado 13 (Jan–Jun)','Kauai':'Colorado, Washington, Texas: 12–14 each (Jan–Jun)','Hawaii Island':'Washington 80, Oregon 57, Alaska 49, Texas 44 (Jan–Sep)'}
+CA={'Oahu':'505 (Jan–Sep)','Maui':'53 (Jan–Jun)','Kauai':'51 (Jan–Jun)','Hawaii Island':'313 (Jan–Sep)'}
+def pc(x):
+    return '<1%' if 0<x<0.5 else f'{x:.0f}%'
+def buyrows():
+    out='<tr><td class="rk"></td>'
+    for i in ISL:
+        r=TG[TGC[i]]; n=r['n_total']
+        out+=f"<td><b>{pc(100*r['n_local']/n)} local · {pc(100*r['n_mainland']/n)} mainland · {pc(100*r['n_foreign']/n)} foreign</b><span class=\"mn\">{n:,} buyers in 2025</span></td>"
+    out+='</tr><tr><td class="rk"></td>'
+    for i in ISL: out+=f'<td><b>California {CA[i]}</b><span class="mn">#1 out-of-state buyer state</span></td>'
+    out+='</tr><tr><td class="rk"></td>'
+    for i in ISL: out+=f'<td><b>Next buyer states</b><span class="mn">{STATES[i]}</span></td>'
+    out+='</tr><tr><td class="rk"></td>'
+    for i in ISL:
+        top=sorted(VJ_M,key=lambda r:-r[VK[i]])[:4]
+        out+='<td><b>Biggest visitor metros</b><span class="mn">'+' · '.join(f'{html.escape(mshort(r["metro"]))} {round(r[VK[i]]/1000):,}K' for r in top)+'</span></td>'
+    return out+'</tr>'
 tpl=open(f'{S}/brief/brief.tpl.html').read()
-out=(tpl.replace('{{TILES}}',tiles).replace('{{HEAD}}',head).replace('{{IN}}',instate_row()+rows('in')).replace('{{OVER}}',overrow({'Oahu':20000,'Maui':20000,'Kauai':10000,'Hawaii Island':15000})).replace('{{OUT}}',rows('out'))
+out=(tpl.replace('{{TILES}}',tiles).replace('{{HEAD}}',head).replace('{{BUY}}',buyrows()).replace('{{OVER}}',overrow({'Oahu':20000,'Maui':20000,'Kauai':10000,'Hawaii Island':15000})).replace('{{OUT}}',rows('out'))
      .replace('{{CALHEAD}}',''.join(f'<th>{m}</th>' for m in MN)).replace('{{CAL}}',cal)
      .replace('{{LOCAL_D}}',f'{local_d:.0f}').replace('{{LOCAL_HO}}',f'{local_ho:.0f}').replace('{{FOR_N}}',f'{for_n:,}').replace('{{FOR_PCT}}',f'{for_pct:.1f}'))
 assert '{{' not in out
