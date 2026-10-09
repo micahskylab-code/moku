@@ -1,0 +1,2361 @@
+{
+ "key": "hmda",
+ "title": "HMDA home-purchase originations, Hawaii four counties, 2025 vs 2019",
+ "generated_utc": "2026-10-08",
+ "source": {
+  "publisher": "Federal Financial Institutions Examination Council (FFIEC) / Consumer Financial Protection Bureau (CFPB), HMDA Data Browser API",
+  "api_docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "data_dictionary": "https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields",
+  "latest_year_available": "2025 (API returned 2025 data; a 2026 request returned HTTP 400, see raw/hmda/probe_2026_15003.json)",
+  "edition": {
+   "2025": "Data Browser data for activity year 2025. The 2025 Snapshot National Loan-Level Dataset file on files.ffiec.cfpb.gov carries Last-Modified 2026-06-23 (raw/hmda/snapshot_head_2025.txt), consistent with the Data Browser serving the 2025 snapshot. The API itself does not label the edition.",
+   "2019": "Data Browser data for activity year 2019. The API does not state whether it serves the snapshot, one-year or three-year edition for 2019; edition differences are typically small but mean counts may not match a specific static file exactly."
+  },
+  "downloads": {
+   "hmda_2025_hi4_orig_purchase.csv": {
+    "url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?counties=15001,15003,15007,15009&years=2025&actions_taken=1&loan_purposes=1",
+    "downloaded_utc": "2026-10-08T05:48:14Z",
+    "bytes": 3821788,
+    "sha256": "4e457ce05d68d3a43aa5b34d4e8871f7201d07d7cbe3c58cf4b9c2da3a9fda11"
+   },
+   "hmda_2019_hi4_orig_purchase.csv": {
+    "url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?counties=15001,15003,15007,15009&years=2019&actions_taken=1&loan_purposes=1",
+    "downloaded_utc": "2026-10-08T05:48:20Z",
+    "bytes": 5516407,
+    "sha256": "0f030ebd91b6dc2662ebdd12ea6a0817dd62c9ff6b4da1c52e713139b5914248"
+   }
+  },
+  "cross_check_aggregation_api_counts_action1_purpose1": {
+   "2019": {
+    "15001": 2221,
+    "15003": 8844,
+    "15007": 782,
+    "15009": 2012
+   },
+   "2025": {
+    "15001": 1775,
+    "15003": 6771,
+    "15007": 473,
+    "15009": 889
+   }
+  },
+  "cross_check_result": "Aggregation API county counts (actions_taken=1, loan_purposes=1) sum to the CSV row count in both years (2025: 9,908; 2019: 13,859).",
+  "raw_dir": "raw/hmda/ (MANIFEST.txt lists every file with URL, UTC download time, bytes and sha256)",
+  "scripts": "pull/hmda/analyze.py (computation), pull/hmda/finalize.py (adds source/notes), pull/hmda/manifest.py"
+ },
+ "universe": {
+  "geography": {
+   "15001": "Hawaii County",
+   "15003": "Honolulu County",
+   "15007": "Kauai County",
+   "15009": "Maui County"
+  },
+  "filters": [
+   "action_taken = 1 (loan originated)",
+   "loan_purpose = 1 (home purchase)",
+   "construction_method = 1 (site-built) AND total_units in {1,2,3,4}; equivalent to derived_dwelling_category = \"Single Family (1-4 Units):Site-Built\""
+  ],
+  "included_without_further_filtering": "first and subordinate liens, business-purpose loans, open-end lines, the few reverse mortgages; counts for each are reported so users can re-filter",
+  "unit_of_observation": "one HMDA loan record (not one property sale). A purchase financed with a first mortgage plus a piggyback second appears twice; n_first_lien is the closer proxy for financed purchases. Cash purchases are not in HMDA."
+ },
+ "years": {
+  "2025": {
+   "filter_funnel": {
+    "rows_in_download": 9908,
+    "originated_home_purchase": 9908,
+    "by_dwelling_category_before_filter": {
+     "Single Family (1-4 Units):Site-Built": 9875,
+     "Multifamily:Site-Built": 32,
+     "Single Family (1-4 Units):Manufactured": 1
+    },
+    "site_built_1to4_units": 9875,
+    "dropped_manufactured": 1,
+    "dropped_5plus_units_site_built": 32,
+    "in_universe_by_county": {
+     "15001": 1774,
+     "15003": 6746,
+     "15007": 469,
+     "15009": 886
+    },
+    "rows_outside_four_counties": 0,
+    "reverse_mortgage_in_universe": 2,
+    "total_units_in_universe": {
+     "1": 9686,
+     "2": 136,
+     "3": 34,
+     "4": 19
+    }
+   },
+   "counties": {
+    "15001": {
+     "name": "Hawaii County (Big Island)",
+     "n_loans": 1774,
+     "n_first_lien": 1746,
+     "lien_status": {
+      "counts": {
+       "first_lien": 1746,
+       "subordinate_lien": 28
+      },
+      "shares": {
+       "first_lien": 0.9842,
+       "subordinate_lien": 0.0158
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 1220,
+       "second_residence": 149,
+       "investment_property": 405
+      },
+      "shares": {
+       "principal_residence": 0.6877,
+       "second_residence": 0.084,
+       "investment_property": 0.2283
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 554,
+      "share": 0.3123,
+      "investment_only_share": 0.2283
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 1194,
+       "second_residence": 149,
+       "investment_property": 403
+      },
+      "shares": {
+       "principal_residence": 0.6838,
+       "second_residence": 0.0853,
+       "investment_property": 0.2308
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 1393,
+       "fha": 174,
+       "va": 191,
+       "usda_rhs_fsa": 16
+      },
+      "shares": {
+       "conventional": 0.7852,
+       "fha": 0.0981,
+       "va": 0.1077,
+       "usda_rhs_fsa": 0.009
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 1582,
+      "p25": 99.0,
+      "median": 144.0,
+      "p75": 239.75,
+      "n_income_na": 192,
+      "n_income_le_zero": 19,
+      "median_excluding_le_zero": 146.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 1186,
+      "p25": 94.0,
+      "median": 130.5,
+      "p75": 196.75,
+      "n_loans": 1194
+     },
+     "loan_amount_usd": {
+      "n": 1774,
+      "p25": 305000.0,
+      "median": 435000.0,
+      "p75": 655000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 1746,
+      "p25": 315000.0,
+      "median": 440000.0,
+      "p75": 655000.0
+     },
+     "property_value_usd": {
+      "n": 1753,
+      "p25": 395000.0,
+      "median": 555000.0,
+      "p75": 905000.0,
+      "n_na": 13,
+      "n_exempt": 8
+     },
+     "property_value_usd_first_lien": {
+      "n": 1726,
+      "p25": 397500.0,
+      "median": 560000.0,
+      "p75": 905000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 35,
+       "25-34": 294,
+       "35-44": 418,
+       "45-54": 357,
+       "55-64": 298,
+       "65-74": 186,
+       ">74": 66,
+       "not_applicable_8888": 120
+      },
+      "shares": {
+       "<25": 0.0197,
+       "25-34": 0.1657,
+       "35-44": 0.2356,
+       "45-54": 0.2012,
+       "55-64": 0.168,
+       "65-74": 0.1048,
+       ">74": 0.0372,
+       "not_applicable_8888": 0.0676
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0212,
+       "25-34": 0.1778,
+       "35-44": 0.2527,
+       "45-54": 0.2158,
+       "55-64": 0.1802,
+       "65-74": 0.1125,
+       ">74": 0.0399
+      },
+      "n_reported_age": 1654
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 1682,
+       "nonconforming_jumbo": 92,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9481,
+       "nonconforming_jumbo": 0.0519,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 1282,
+       "nonconforming_jumbo": 83,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9392,
+       "nonconforming_jumbo": 0.0608,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 1365
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 335,
+      "share_yes": 0.1888,
+      "count_exempt_1111": 8
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 1358,
+      "median": 6.875
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 1194,
+       "median_loan_amount_usd": 445000.0,
+       "median_property_value_usd": 545000.0,
+       "median_income_thousands_usd": 130.5
+      },
+      "second_residence": {
+       "n_first_lien": 149,
+       "median_loan_amount_usd": 475000.0,
+       "median_property_value_usd": 690000.0,
+       "median_income_thousands_usd": 293.0
+      },
+      "investment_property": {
+       "n_first_lien": 403,
+       "median_loan_amount_usd": 405000.0,
+       "median_property_value_usd": 615000.0,
+       "median_income_thousands_usd": 209.5
+      }
+     }
+    },
+    "15003": {
+     "name": "Honolulu County (Oahu)",
+     "n_loans": 6746,
+     "n_first_lien": 6623,
+     "lien_status": {
+      "counts": {
+       "first_lien": 6623,
+       "subordinate_lien": 123
+      },
+      "shares": {
+       "first_lien": 0.9818,
+       "subordinate_lien": 0.0182
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 5685,
+       "second_residence": 202,
+       "investment_property": 859
+      },
+      "shares": {
+       "principal_residence": 0.8427,
+       "second_residence": 0.0299,
+       "investment_property": 0.1273
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 1061,
+      "share": 0.1573,
+      "investment_only_share": 0.1273
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 5577,
+       "second_residence": 198,
+       "investment_property": 848
+      },
+      "shares": {
+       "principal_residence": 0.8421,
+       "second_residence": 0.0299,
+       "investment_property": 0.128
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 4642,
+       "fha": 252,
+       "va": 1830,
+       "usda_rhs_fsa": 22
+      },
+      "shares": {
+       "conventional": 0.6881,
+       "fha": 0.0374,
+       "va": 0.2713,
+       "usda_rhs_fsa": 0.0033
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 6415,
+      "p25": 116.0,
+      "median": 164.0,
+      "p75": 240.0,
+      "n_income_na": 331,
+      "n_income_le_zero": 90,
+      "median_excluding_le_zero": 165.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 5524,
+      "p25": 114.0,
+      "median": 158.0,
+      "p75": 223.0,
+      "n_loans": 5577
+     },
+     "loan_amount_usd": {
+      "n": 6746,
+      "p25": 395000.0,
+      "median": 575000.0,
+      "p75": 845000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 6623,
+      "p25": 395000.0,
+      "median": 585000.0,
+      "p75": 855000.0
+     },
+     "property_value_usd": {
+      "n": 6653,
+      "p25": 525000.0,
+      "median": 745000.0,
+      "p75": 1085000.0,
+      "n_na": 68,
+      "n_exempt": 25
+     },
+     "property_value_usd_first_lien": {
+      "n": 6530,
+      "p25": 525000.0,
+      "median": 745000.0,
+      "p75": 1075000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 260,
+       "25-34": 1982,
+       "35-44": 1869,
+       "45-54": 1233,
+       "55-64": 770,
+       "65-74": 400,
+       ">74": 119,
+       "not_applicable_8888": 113
+      },
+      "shares": {
+       "<25": 0.0385,
+       "25-34": 0.2938,
+       "35-44": 0.2771,
+       "45-54": 0.1828,
+       "55-64": 0.1141,
+       "65-74": 0.0593,
+       ">74": 0.0176,
+       "not_applicable_8888": 0.0168
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0392,
+       "25-34": 0.2988,
+       "35-44": 0.2818,
+       "45-54": 0.1859,
+       "55-64": 0.1161,
+       "65-74": 0.0603,
+       ">74": 0.0179
+      },
+      "n_reported_age": 6633
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 6309,
+       "nonconforming_jumbo": 437,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9352,
+       "nonconforming_jumbo": 0.0648,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 4257,
+       "nonconforming_jumbo": 264,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9416,
+       "nonconforming_jumbo": 0.0584,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 4521
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 654,
+      "share_yes": 0.0969,
+      "count_exempt_1111": 25
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 4493,
+      "median": 6.5
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 5577,
+       "median_loan_amount_usd": 595000.0,
+       "median_property_value_usd": 735000.0,
+       "median_income_thousands_usd": 158.0
+      },
+      "second_residence": {
+       "n_first_lien": 198,
+       "median_loan_amount_usd": 580000.0,
+       "median_property_value_usd": 930000.0,
+       "median_income_thousands_usd": 366.0
+      },
+      "investment_property": {
+       "n_first_lien": 848,
+       "median_loan_amount_usd": 485000.0,
+       "median_property_value_usd": 775000.0,
+       "median_income_thousands_usd": 204.0
+      }
+     }
+    },
+    "15007": {
+     "name": "Kauai County",
+     "n_loans": 469,
+     "n_first_lien": 461,
+     "lien_status": {
+      "counts": {
+       "first_lien": 461,
+       "subordinate_lien": 8
+      },
+      "shares": {
+       "first_lien": 0.9829,
+       "subordinate_lien": 0.0171
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 282,
+       "second_residence": 43,
+       "investment_property": 144
+      },
+      "shares": {
+       "principal_residence": 0.6013,
+       "second_residence": 0.0917,
+       "investment_property": 0.307
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 187,
+      "share": 0.3987,
+      "investment_only_share": 0.307
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 274,
+       "second_residence": 43,
+       "investment_property": 144
+      },
+      "shares": {
+       "principal_residence": 0.5944,
+       "second_residence": 0.0933,
+       "investment_property": 0.3124
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 410,
+       "fha": 33,
+       "va": 25,
+       "usda_rhs_fsa": 1
+      },
+      "shares": {
+       "conventional": 0.8742,
+       "fha": 0.0704,
+       "va": 0.0533,
+       "usda_rhs_fsa": 0.0021
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 418,
+      "p25": 135.25,
+      "median": 208.5,
+      "p75": 362.75,
+      "n_income_na": 51,
+      "n_income_le_zero": 25,
+      "median_excluding_le_zero": 214.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 271,
+      "p25": 135.5,
+      "median": 185.0,
+      "p75": 273.0,
+      "n_loans": 274
+     },
+     "loan_amount_usd": {
+      "n": 469,
+      "p25": 485000.0,
+      "median": 715000.0,
+      "p75": 985000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 461,
+      "p25": 495000.0,
+      "median": 725000.0,
+      "p75": 995000.0
+     },
+     "property_value_usd": {
+      "n": 464,
+      "p25": 775000.0,
+      "median": 975000.0,
+      "p75": 1355000.0,
+      "n_na": 4,
+      "n_exempt": 1
+     },
+     "property_value_usd_first_lien": {
+      "n": 456,
+      "p25": 782500.0,
+      "median": 975000.0,
+      "p75": 1355000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 6,
+       "25-34": 65,
+       "35-44": 149,
+       "45-54": 106,
+       "55-64": 70,
+       "65-74": 58,
+       ">74": 10,
+       "not_applicable_8888": 5
+      },
+      "shares": {
+       "<25": 0.0128,
+       "25-34": 0.1386,
+       "35-44": 0.3177,
+       "45-54": 0.226,
+       "55-64": 0.1493,
+       "65-74": 0.1237,
+       ">74": 0.0213,
+       "not_applicable_8888": 0.0107
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0129,
+       "25-34": 0.1401,
+       "35-44": 0.3211,
+       "45-54": 0.2284,
+       "55-64": 0.1509,
+       "65-74": 0.125,
+       ">74": 0.0216
+      },
+      "n_reported_age": 464
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 401,
+       "nonconforming_jumbo": 68,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.855,
+       "nonconforming_jumbo": 0.145,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 340,
+       "nonconforming_jumbo": 62,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8458,
+       "nonconforming_jumbo": 0.1542,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 402
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 111,
+      "share_yes": 0.2367,
+      "count_exempt_1111": 1
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 401,
+      "median": 6.875
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 274,
+       "median_loan_amount_usd": 755000.0,
+       "median_property_value_usd": 905000.0,
+       "median_income_thousands_usd": 185.0
+      },
+      "second_residence": {
+       "n_first_lien": 43,
+       "median_loan_amount_usd": 895000.0,
+       "median_property_value_usd": 1405000.0,
+       "median_income_thousands_usd": 667.0
+      },
+      "investment_property": {
+       "n_first_lien": 144,
+       "median_loan_amount_usd": 610000.0,
+       "median_property_value_usd": 1020000.0,
+       "median_income_thousands_usd": 228.5
+      }
+     }
+    },
+    "15009": {
+     "name": "Maui County",
+     "n_loans": 886,
+     "n_first_lien": 877,
+     "lien_status": {
+      "counts": {
+       "first_lien": 877,
+       "subordinate_lien": 9
+      },
+      "shares": {
+       "first_lien": 0.9898,
+       "subordinate_lien": 0.0102
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 581,
+       "second_residence": 87,
+       "investment_property": 218
+      },
+      "shares": {
+       "principal_residence": 0.6558,
+       "second_residence": 0.0982,
+       "investment_property": 0.246
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 305,
+      "share": 0.3442,
+      "investment_only_share": 0.246
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 574,
+       "second_residence": 87,
+       "investment_property": 216
+      },
+      "shares": {
+       "principal_residence": 0.6545,
+       "second_residence": 0.0992,
+       "investment_property": 0.2463
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 744,
+       "fha": 98,
+       "va": 42,
+       "usda_rhs_fsa": 2
+      },
+      "shares": {
+       "conventional": 0.8397,
+       "fha": 0.1106,
+       "va": 0.0474,
+       "usda_rhs_fsa": 0.0023
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 815,
+      "p25": 146.0,
+      "median": 217.0,
+      "p75": 337.5,
+      "n_income_na": 71,
+      "n_income_le_zero": 26,
+      "median_excluding_le_zero": 223.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 567,
+      "p25": 140.0,
+      "median": 191.0,
+      "p75": 266.0,
+      "n_loans": 574
+     },
+     "loan_amount_usd": {
+      "n": 886,
+      "p25": 485000.0,
+      "median": 735000.0,
+      "p75": 1045000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 877,
+      "p25": 485000.0,
+      "median": 745000.0,
+      "p75": 1045000.0
+     },
+     "property_value_usd": {
+      "n": 871,
+      "p25": 695000.0,
+      "median": 1005000.0,
+      "p75": 1395000.0,
+      "n_na": 6,
+      "n_exempt": 9
+     },
+     "property_value_usd_first_lien": {
+      "n": 862,
+      "p25": 687500.0,
+      "median": 1000000.0,
+      "p75": 1395000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 17,
+       "25-34": 128,
+       "35-44": 225,
+       "45-54": 232,
+       "55-64": 148,
+       "65-74": 94,
+       ">74": 25,
+       "not_applicable_8888": 17
+      },
+      "shares": {
+       "<25": 0.0192,
+       "25-34": 0.1445,
+       "35-44": 0.254,
+       "45-54": 0.2619,
+       "55-64": 0.167,
+       "65-74": 0.1061,
+       ">74": 0.0282,
+       "not_applicable_8888": 0.0192
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0196,
+       "25-34": 0.1473,
+       "35-44": 0.2589,
+       "45-54": 0.267,
+       "55-64": 0.1703,
+       "65-74": 0.1082,
+       ">74": 0.0288
+      },
+      "n_reported_age": 869
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 790,
+       "nonconforming_jumbo": 96,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8916,
+       "nonconforming_jumbo": 0.1084,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 646,
+       "nonconforming_jumbo": 89,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8789,
+       "nonconforming_jumbo": 0.1211,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 735
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 171,
+      "share_yes": 0.193,
+      "count_exempt_1111": 9
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 727,
+      "median": 6.75
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 574,
+       "median_loan_amount_usd": 780000.0,
+       "median_property_value_usd": 995000.0,
+       "median_income_thousands_usd": 191.0
+      },
+      "second_residence": {
+       "n_first_lien": 87,
+       "median_loan_amount_usd": 845000.0,
+       "median_property_value_usd": 1255000.0,
+       "median_income_thousands_usd": 507.0
+      },
+      "investment_property": {
+       "n_first_lien": 216,
+       "median_loan_amount_usd": 605000.0,
+       "median_property_value_usd": 965000.0,
+       "median_income_thousands_usd": 308.0
+      }
+     }
+    },
+    "four_county_total": {
+     "name": "Hawaii, four counties combined (excl. Kalawao 15005)",
+     "n_loans": 9875,
+     "n_first_lien": 9707,
+     "lien_status": {
+      "counts": {
+       "first_lien": 9707,
+       "subordinate_lien": 168
+      },
+      "shares": {
+       "first_lien": 0.983,
+       "subordinate_lien": 0.017
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 7768,
+       "second_residence": 481,
+       "investment_property": 1626
+      },
+      "shares": {
+       "principal_residence": 0.7866,
+       "second_residence": 0.0487,
+       "investment_property": 0.1647
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 2107,
+      "share": 0.2134,
+      "investment_only_share": 0.1647
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 7619,
+       "second_residence": 477,
+       "investment_property": 1611
+      },
+      "shares": {
+       "principal_residence": 0.7849,
+       "second_residence": 0.0491,
+       "investment_property": 0.166
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 7189,
+       "fha": 557,
+       "va": 2088,
+       "usda_rhs_fsa": 41
+      },
+      "shares": {
+       "conventional": 0.728,
+       "fha": 0.0564,
+       "va": 0.2114,
+       "usda_rhs_fsa": 0.0042
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 9230,
+      "p25": 115.0,
+      "median": 166.0,
+      "p75": 249.0,
+      "n_income_na": 645,
+      "n_income_le_zero": 160,
+      "median_excluding_le_zero": 168.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 7548,
+      "p25": 112.75,
+      "median": 157.0,
+      "p75": 225.0,
+      "n_loans": 7619
+     },
+     "loan_amount_usd": {
+      "n": 9875,
+      "p25": 375000.0,
+      "median": 565000.0,
+      "p75": 855000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 9707,
+      "p25": 385000.0,
+      "median": 565000.0,
+      "p75": 855000.0
+     },
+     "property_value_usd": {
+      "n": 9741,
+      "p25": 515000.0,
+      "median": 745000.0,
+      "p75": 1105000.0,
+      "n_na": 91,
+      "n_exempt": 43
+     },
+     "property_value_usd_first_lien": {
+      "n": 9574,
+      "p25": 515000.0,
+      "median": 745000.0,
+      "p75": 1105000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 318,
+       "25-34": 2469,
+       "35-44": 2661,
+       "45-54": 1928,
+       "55-64": 1286,
+       "65-74": 738,
+       ">74": 220,
+       "not_applicable_8888": 255
+      },
+      "shares": {
+       "<25": 0.0322,
+       "25-34": 0.25,
+       "35-44": 0.2695,
+       "45-54": 0.1952,
+       "55-64": 0.1302,
+       "65-74": 0.0747,
+       ">74": 0.0223,
+       "not_applicable_8888": 0.0258
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0331,
+       "25-34": 0.2567,
+       "35-44": 0.2766,
+       "45-54": 0.2004,
+       "55-64": 0.1337,
+       "65-74": 0.0767,
+       ">74": 0.0229
+      },
+      "n_reported_age": 9620
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 9182,
+       "nonconforming_jumbo": 693,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9298,
+       "nonconforming_jumbo": 0.0702,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 6525,
+       "nonconforming_jumbo": 498,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9291,
+       "nonconforming_jumbo": 0.0709,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 7023
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 1271,
+      "share_yes": 0.1287,
+      "count_exempt_1111": 43
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 6979,
+      "median": 6.625
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 7619,
+       "median_loan_amount_usd": 585000.0,
+       "median_property_value_usd": 735000.0,
+       "median_income_thousands_usd": 157.0
+      },
+      "second_residence": {
+       "n_first_lien": 477,
+       "median_loan_amount_usd": 605000.0,
+       "median_property_value_usd": 970000.0,
+       "median_income_thousands_usd": 384.5
+      },
+      "investment_property": {
+       "n_first_lien": 1611,
+       "median_loan_amount_usd": 495000.0,
+       "median_property_value_usd": 775000.0,
+       "median_income_thousands_usd": 217.0
+      }
+     }
+    }
+   }
+  },
+  "2019": {
+   "filter_funnel": {
+    "rows_in_download": 13859,
+    "originated_home_purchase": 13859,
+    "by_dwelling_category_before_filter": {
+     "Single Family (1-4 Units):Site-Built": 13797,
+     "Single Family (1-4 Units):Manufactured": 1,
+     "Multifamily:Site-Built": 61
+    },
+    "site_built_1to4_units": 13797,
+    "dropped_manufactured": 1,
+    "dropped_5plus_units_site_built": 61,
+    "in_universe_by_county": {
+     "15001": 2220,
+     "15003": 8786,
+     "15007": 781,
+     "15009": 2010
+    },
+    "rows_outside_four_counties": 0,
+    "reverse_mortgage_in_universe": 5,
+    "total_units_in_universe": {
+     "1": 13610,
+     "2": 153,
+     "3": 22,
+     "4": 12
+    }
+   },
+   "counties": {
+    "15001": {
+     "name": "Hawaii County (Big Island)",
+     "n_loans": 2220,
+     "n_first_lien": 2202,
+     "lien_status": {
+      "counts": {
+       "first_lien": 2202,
+       "subordinate_lien": 18
+      },
+      "shares": {
+       "first_lien": 0.9919,
+       "subordinate_lien": 0.0081
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 1553,
+       "second_residence": 434,
+       "investment_property": 233
+      },
+      "shares": {
+       "principal_residence": 0.6995,
+       "second_residence": 0.1955,
+       "investment_property": 0.105
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 667,
+      "share": 0.3005,
+      "investment_only_share": 0.105
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 1538,
+       "second_residence": 433,
+       "investment_property": 231
+      },
+      "shares": {
+       "principal_residence": 0.6985,
+       "second_residence": 0.1966,
+       "investment_property": 0.1049
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 1719,
+       "fha": 122,
+       "va": 242,
+       "usda_rhs_fsa": 137
+      },
+      "shares": {
+       "conventional": 0.7743,
+       "fha": 0.055,
+       "va": 0.109,
+       "usda_rhs_fsa": 0.0617
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 2194,
+      "p25": 70.0,
+      "median": 101.0,
+      "p75": 163.0,
+      "n_income_na": 26,
+      "n_income_le_zero": 4,
+      "median_excluding_le_zero": 101.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 1529,
+      "p25": 64.0,
+      "median": 88.0,
+      "p75": 122.0,
+      "n_loans": 1538
+     },
+     "loan_amount_usd": {
+      "n": 2220,
+      "p25": 225000.0,
+      "median": 315000.0,
+      "p75": 465000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 2202,
+      "p25": 225000.0,
+      "median": 320000.0,
+      "p75": 465000.0
+     },
+     "property_value_usd": {
+      "n": 2168,
+      "p25": 275000.0,
+      "median": 405000.0,
+      "p75": 595000.0,
+      "n_na": 31,
+      "n_exempt": 21
+     },
+     "property_value_usd_first_lien": {
+      "n": 2150,
+      "p25": 275000.0,
+      "median": 405000.0,
+      "p75": 595000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 38,
+       "25-34": 352,
+       "35-44": 508,
+       "45-54": 476,
+       "55-64": 501,
+       "65-74": 287,
+       ">74": 53,
+       "not_applicable_8888": 5
+      },
+      "shares": {
+       "<25": 0.0171,
+       "25-34": 0.1586,
+       "35-44": 0.2288,
+       "45-54": 0.2144,
+       "55-64": 0.2257,
+       "65-74": 0.1293,
+       ">74": 0.0239,
+       "not_applicable_8888": 0.0023
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0172,
+       "25-34": 0.1589,
+       "35-44": 0.2293,
+       "45-54": 0.2149,
+       "55-64": 0.2262,
+       "65-74": 0.1296,
+       ">74": 0.0239
+      },
+      "n_reported_age": 2215
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 2094,
+       "nonconforming_jumbo": 126,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.9432,
+       "nonconforming_jumbo": 0.0568,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 1587,
+       "nonconforming_jumbo": 114,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.933,
+       "nonconforming_jumbo": 0.067,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 1701
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 102,
+      "share_yes": 0.0459,
+      "count_exempt_1111": 21
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 1678,
+      "median": 4.25
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 1538,
+       "median_loan_amount_usd": 315000.0,
+       "median_property_value_usd": 385000.0,
+       "median_income_thousands_usd": 88.0
+      },
+      "second_residence": {
+       "n_first_lien": 433,
+       "median_loan_amount_usd": 345000.0,
+       "median_property_value_usd": 515000.0,
+       "median_income_thousands_usd": 187.0
+      },
+      "investment_property": {
+       "n_first_lien": 231,
+       "median_loan_amount_usd": 275000.0,
+       "median_property_value_usd": 445000.0,
+       "median_income_thousands_usd": 144.0
+      }
+     }
+    },
+    "15003": {
+     "name": "Honolulu County (Oahu)",
+     "n_loans": 8786,
+     "n_first_lien": 8374,
+     "lien_status": {
+      "counts": {
+       "first_lien": 8374,
+       "subordinate_lien": 412
+      },
+      "shares": {
+       "first_lien": 0.9531,
+       "subordinate_lien": 0.0469
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 7532,
+       "second_residence": 346,
+       "investment_property": 908
+      },
+      "shares": {
+       "principal_residence": 0.8573,
+       "second_residence": 0.0394,
+       "investment_property": 0.1033
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 1254,
+      "share": 0.1427,
+      "investment_only_share": 0.1033
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 7152,
+       "second_residence": 339,
+       "investment_property": 883
+      },
+      "shares": {
+       "principal_residence": 0.8541,
+       "second_residence": 0.0405,
+       "investment_property": 0.1054
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 6047,
+       "fha": 371,
+       "va": 2205,
+       "usda_rhs_fsa": 163
+      },
+      "shares": {
+       "conventional": 0.6883,
+       "fha": 0.0422,
+       "va": 0.251,
+       "usda_rhs_fsa": 0.0186
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 8597,
+      "p25": 88.0,
+      "median": 119.0,
+      "p75": 171.0,
+      "n_income_na": 189,
+      "n_income_le_zero": 8,
+      "median_excluding_le_zero": 119.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 7079,
+      "p25": 85.0,
+      "median": 112.0,
+      "p75": 155.0,
+      "n_loans": 7152
+     },
+     "loan_amount_usd": {
+      "n": 8786,
+      "p25": 325000.0,
+      "median": 485000.0,
+      "p75": 665000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 8374,
+      "p25": 345000.0,
+      "median": 505000.0,
+      "p75": 675000.0
+     },
+     "property_value_usd": {
+      "n": 8651,
+      "p25": 425000.0,
+      "median": 615000.0,
+      "p75": 815000.0,
+      "n_na": 19,
+      "n_exempt": 116
+     },
+     "property_value_usd_first_lien": {
+      "n": 8245,
+      "p25": 425000.0,
+      "median": 605000.0,
+      "p75": 795000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 343,
+       "25-34": 2599,
+       "35-44": 2511,
+       "45-54": 1665,
+       "55-64": 982,
+       "65-74": 478,
+       ">74": 158,
+       "not_applicable_8888": 50
+      },
+      "shares": {
+       "<25": 0.039,
+       "25-34": 0.2958,
+       "35-44": 0.2858,
+       "45-54": 0.1895,
+       "55-64": 0.1118,
+       "65-74": 0.0544,
+       ">74": 0.018,
+       "not_applicable_8888": 0.0057
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0393,
+       "25-34": 0.2975,
+       "35-44": 0.2874,
+       "45-54": 0.1906,
+       "55-64": 0.1124,
+       "65-74": 0.0547,
+       ">74": 0.0181
+      },
+      "n_reported_age": 8736
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 7547,
+       "nonconforming_jumbo": 1239,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.859,
+       "nonconforming_jumbo": 0.141,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 4886,
+       "nonconforming_jumbo": 749,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8671,
+       "nonconforming_jumbo": 0.1329,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 5635
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 499,
+      "share_yes": 0.0568,
+      "count_exempt_1111": 117
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 5521,
+      "median": 4.0
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 7152,
+       "median_loan_amount_usd": 525000.0,
+       "median_property_value_usd": 605000.0,
+       "median_income_thousands_usd": 112.0
+      },
+      "second_residence": {
+       "n_first_lien": 339,
+       "median_loan_amount_usd": 475000.0,
+       "median_property_value_usd": 675000.0,
+       "median_income_thousands_usd": 229.0
+      },
+      "investment_property": {
+       "n_first_lien": 883,
+       "median_loan_amount_usd": 355000.0,
+       "median_property_value_usd": 555000.0,
+       "median_income_thousands_usd": 157.0
+      }
+     }
+    },
+    "15007": {
+     "name": "Kauai County",
+     "n_loans": 781,
+     "n_first_lien": 763,
+     "lien_status": {
+      "counts": {
+       "first_lien": 763,
+       "subordinate_lien": 18
+      },
+      "shares": {
+       "first_lien": 0.977,
+       "subordinate_lien": 0.023
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 480,
+       "second_residence": 151,
+       "investment_property": 150
+      },
+      "shares": {
+       "principal_residence": 0.6146,
+       "second_residence": 0.1933,
+       "investment_property": 0.1921
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 301,
+      "share": 0.3854,
+      "investment_only_share": 0.1921
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 469,
+       "second_residence": 150,
+       "investment_property": 144
+      },
+      "shares": {
+       "principal_residence": 0.6147,
+       "second_residence": 0.1966,
+       "investment_property": 0.1887
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 652,
+       "fha": 71,
+       "va": 50,
+       "usda_rhs_fsa": 8
+      },
+      "shares": {
+       "conventional": 0.8348,
+       "fha": 0.0909,
+       "va": 0.064,
+       "usda_rhs_fsa": 0.0102
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 766,
+      "p25": 96.0,
+      "median": 143.5,
+      "p75": 240.75,
+      "n_income_na": 15,
+      "n_income_le_zero": 5,
+      "median_excluding_le_zero": 144.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 467,
+      "p25": 88.0,
+      "median": 114.0,
+      "p75": 161.5,
+      "n_loans": 469
+     },
+     "loan_amount_usd": {
+      "n": 781,
+      "p25": 385000.0,
+      "median": 505000.0,
+      "p75": 635000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 763,
+      "p25": 405000.0,
+      "median": 505000.0,
+      "p75": 645000.0
+     },
+     "property_value_usd": {
+      "n": 773,
+      "p25": 505000.0,
+      "median": 625000.0,
+      "p75": 835000.0,
+      "n_na": 1,
+      "n_exempt": 7
+     },
+     "property_value_usd_first_lien": {
+      "n": 755,
+      "p25": 505000.0,
+      "median": 625000.0,
+      "p75": 820000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 10,
+       "25-34": 121,
+       "35-44": 185,
+       "45-54": 192,
+       "55-64": 167,
+       "65-74": 81,
+       ">74": 17,
+       "not_applicable_8888": 8
+      },
+      "shares": {
+       "<25": 0.0128,
+       "25-34": 0.1549,
+       "35-44": 0.2369,
+       "45-54": 0.2458,
+       "55-64": 0.2138,
+       "65-74": 0.1037,
+       ">74": 0.0218,
+       "not_applicable_8888": 0.0102
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0129,
+       "25-34": 0.1565,
+       "35-44": 0.2393,
+       "45-54": 0.2484,
+       "55-64": 0.216,
+       "65-74": 0.1048,
+       ">74": 0.022
+      },
+      "n_reported_age": 773
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 682,
+       "nonconforming_jumbo": 99,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8732,
+       "nonconforming_jumbo": 0.1268,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 539,
+       "nonconforming_jumbo": 95,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8502,
+       "nonconforming_jumbo": 0.1498,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 634
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 69,
+      "share_yes": 0.0883,
+      "count_exempt_1111": 7
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 627,
+      "median": 4.25
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 469,
+       "median_loan_amount_usd": 515000.0,
+       "median_property_value_usd": 595000.0,
+       "median_income_thousands_usd": 114.0
+      },
+      "second_residence": {
+       "n_first_lien": 150,
+       "median_loan_amount_usd": 540000.0,
+       "median_property_value_usd": 715000.0,
+       "median_income_thousands_usd": 266.0
+      },
+      "investment_property": {
+       "n_first_lien": 144,
+       "median_loan_amount_usd": 480000.0,
+       "median_property_value_usd": 705000.0,
+       "median_income_thousands_usd": 217.0
+      }
+     }
+    },
+    "15009": {
+     "name": "Maui County",
+     "n_loans": 2010,
+     "n_first_lien": 1973,
+     "lien_status": {
+      "counts": {
+       "first_lien": 1973,
+       "subordinate_lien": 37
+      },
+      "shares": {
+       "first_lien": 0.9816,
+       "subordinate_lien": 0.0184
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 1313,
+       "second_residence": 328,
+       "investment_property": 369
+      },
+      "shares": {
+       "principal_residence": 0.6532,
+       "second_residence": 0.1632,
+       "investment_property": 0.1836
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 697,
+      "share": 0.3468,
+      "investment_only_share": 0.1836
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 1278,
+       "second_residence": 327,
+       "investment_property": 368
+      },
+      "shares": {
+       "principal_residence": 0.6477,
+       "second_residence": 0.1657,
+       "investment_property": 0.1865
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 1747,
+       "fha": 161,
+       "va": 90,
+       "usda_rhs_fsa": 12
+      },
+      "shares": {
+       "conventional": 0.8692,
+       "fha": 0.0801,
+       "va": 0.0448,
+       "usda_rhs_fsa": 0.006
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 1965,
+      "p25": 92.0,
+      "median": 132.0,
+      "p75": 222.0,
+      "n_income_na": 45,
+      "n_income_le_zero": 4,
+      "median_excluding_le_zero": 132.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 1270,
+      "p25": 84.0,
+      "median": 112.0,
+      "p75": 153.0,
+      "n_loans": 1278
+     },
+     "loan_amount_usd": {
+      "n": 2010,
+      "p25": 325000.0,
+      "median": 495000.0,
+      "p75": 645000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 1973,
+      "p25": 335000.0,
+      "median": 495000.0,
+      "p75": 645000.0
+     },
+     "property_value_usd": {
+      "n": 1996,
+      "p25": 455000.0,
+      "median": 635000.0,
+      "p75": 805000.0,
+      "n_na": 2,
+      "n_exempt": 12
+     },
+     "property_value_usd_first_lien": {
+      "n": 1960,
+      "p25": 455000.0,
+      "median": 635000.0,
+      "p75": 795000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 21,
+       "25-34": 290,
+       "35-44": 570,
+       "45-54": 459,
+       "55-64": 422,
+       "65-74": 185,
+       ">74": 49,
+       "not_applicable_8888": 14
+      },
+      "shares": {
+       "<25": 0.0104,
+       "25-34": 0.1443,
+       "35-44": 0.2836,
+       "45-54": 0.2284,
+       "55-64": 0.21,
+       "65-74": 0.092,
+       ">74": 0.0244,
+       "not_applicable_8888": 0.007
+      },
+      "shares_among_reported_age": {
+       "<25": 0.0105,
+       "25-34": 0.1453,
+       "35-44": 0.2856,
+       "45-54": 0.23,
+       "55-64": 0.2114,
+       "65-74": 0.0927,
+       ">74": 0.0245
+      },
+      "n_reported_age": 1996
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 1764,
+       "nonconforming_jumbo": 246,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8776,
+       "nonconforming_jumbo": 0.1224,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 1482,
+       "nonconforming_jumbo": 228,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8667,
+       "nonconforming_jumbo": 0.1333,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 1710
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 132,
+      "share_yes": 0.0657,
+      "count_exempt_1111": 12
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 1699,
+      "median": 4.25
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 1278,
+       "median_loan_amount_usd": 515000.0,
+       "median_property_value_usd": 625000.0,
+       "median_income_thousands_usd": 112.0
+      },
+      "second_residence": {
+       "n_first_lien": 327,
+       "median_loan_amount_usd": 515000.0,
+       "median_property_value_usd": 695000.0,
+       "median_income_thousands_usd": 272.5
+      },
+      "investment_property": {
+       "n_first_lien": 368,
+       "median_loan_amount_usd": 375000.0,
+       "median_property_value_usd": 585000.0,
+       "median_income_thousands_usd": 201.5
+      }
+     }
+    },
+    "four_county_total": {
+     "name": "Hawaii, four counties combined (excl. Kalawao 15005)",
+     "n_loans": 13797,
+     "n_first_lien": 13312,
+     "lien_status": {
+      "counts": {
+       "first_lien": 13312,
+       "subordinate_lien": 485
+      },
+      "shares": {
+       "first_lien": 0.9648,
+       "subordinate_lien": 0.0352
+      }
+     },
+     "occupancy_type": {
+      "counts": {
+       "principal_residence": 10878,
+       "second_residence": 1259,
+       "investment_property": 1660
+      },
+      "shares": {
+       "principal_residence": 0.7884,
+       "second_residence": 0.0913,
+       "investment_property": 0.1203
+      }
+     },
+     "non_owner_occupied": {
+      "definition": "occupancy_type in {2 second residence, 3 investment}",
+      "count": 2919,
+      "share": 0.2116,
+      "investment_only_share": 0.1203
+     },
+     "occupancy_type_first_lien": {
+      "counts": {
+       "principal_residence": 10437,
+       "second_residence": 1249,
+       "investment_property": 1626
+      },
+      "shares": {
+       "principal_residence": 0.784,
+       "second_residence": 0.0938,
+       "investment_property": 0.1221
+      }
+     },
+     "loan_type": {
+      "counts": {
+       "conventional": 10165,
+       "fha": 725,
+       "va": 2587,
+       "usda_rhs_fsa": 320
+      },
+      "shares": {
+       "conventional": 0.7368,
+       "fha": 0.0525,
+       "va": 0.1875,
+       "usda_rhs_fsa": 0.0232
+      }
+     },
+     "applicant_income_thousands_usd": {
+      "n": 13522,
+      "p25": 86.0,
+      "median": 119.0,
+      "p75": 179.0,
+      "n_income_na": 275,
+      "n_income_le_zero": 21,
+      "median_excluding_le_zero": 119.0
+     },
+     "applicant_income_thousands_usd_owner_occupant_first_lien": {
+      "n": 10345,
+      "p25": 82.0,
+      "median": 108.0,
+      "p75": 151.0,
+      "n_loans": 10437
+     },
+     "loan_amount_usd": {
+      "n": 13797,
+      "p25": 305000.0,
+      "median": 455000.0,
+      "p75": 635000.0
+     },
+     "loan_amount_usd_first_lien": {
+      "n": 13312,
+      "p25": 325000.0,
+      "median": 465000.0,
+      "p75": 645000.0
+     },
+     "property_value_usd": {
+      "n": 13588,
+      "p25": 405000.0,
+      "median": 585000.0,
+      "p75": 785000.0,
+      "n_na": 53,
+      "n_exempt": 156
+     },
+     "property_value_usd_first_lien": {
+      "n": 13110,
+      "p25": 405000.0,
+      "median": 585000.0,
+      "p75": 775000.0
+     },
+     "applicant_age": {
+      "counts": {
+       "<25": 412,
+       "25-34": 3362,
+       "35-44": 3774,
+       "45-54": 2792,
+       "55-64": 2072,
+       "65-74": 1031,
+       ">74": 277,
+       "not_applicable_8888": 77
+      },
+      "shares": {
+       "<25": 0.0299,
+       "25-34": 0.2437,
+       "35-44": 0.2735,
+       "45-54": 0.2024,
+       "55-64": 0.1502,
+       "65-74": 0.0747,
+       ">74": 0.0201,
+       "not_applicable_8888": 0.0056
+      },
+      "shares_among_reported_age": {
+       "<25": 0.03,
+       "25-34": 0.245,
+       "35-44": 0.2751,
+       "45-54": 0.2035,
+       "55-64": 0.151,
+       "65-74": 0.0751,
+       ">74": 0.0202
+      },
+      "n_reported_age": 13720
+     },
+     "conforming_loan_limit_all_loans": {
+      "counts": {
+       "conforming": 12087,
+       "nonconforming_jumbo": 1710,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8761,
+       "nonconforming_jumbo": 0.1239,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      }
+     },
+     "conforming_loan_limit_conventional_first_lien": {
+      "counts": {
+       "conforming": 8494,
+       "nonconforming_jumbo": 1186,
+       "undetermined": 0,
+       "not_applicable": 0
+      },
+      "shares": {
+       "conforming": 0.8775,
+       "nonconforming_jumbo": 0.1225,
+       "undetermined": 0.0,
+       "not_applicable": 0.0
+      },
+      "n": 9680
+     },
+     "business_or_commercial_purpose": {
+      "count_yes": 802,
+      "share_yes": 0.0581,
+      "count_exempt_1111": 157
+     },
+     "interest_rate_pct_conventional_first_lien": {
+      "n": 9525,
+      "median": 4.125
+     },
+     "first_lien_medians_by_occupancy": {
+      "principal_residence": {
+       "n_first_lien": 10437,
+       "median_loan_amount_usd": 485000.0,
+       "median_property_value_usd": 585000.0,
+       "median_income_thousands_usd": 108.0
+      },
+      "second_residence": {
+       "n_first_lien": 1249,
+       "median_loan_amount_usd": 455000.0,
+       "median_property_value_usd": 635000.0,
+       "median_income_thousands_usd": 229.0
+      },
+      "investment_property": {
+       "n_first_lien": 1626,
+       "median_loan_amount_usd": 365000.0,
+       "median_property_value_usd": 565000.0,
+       "median_income_thousands_usd": 170.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "change_2019_to_2025": {
+  "15001": {
+   "n_loans": {
+    "2019": 2220,
+    "2025": 1774,
+    "diff": -446,
+    "pct_change": -0.2009
+   },
+   "n_first_lien": {
+    "2019": 2202,
+    "2025": 1746,
+    "diff": -456,
+    "pct_change": -0.2071
+   },
+   "median_income_thousands_usd": {
+    "2019": 101.0,
+    "2025": 144.0,
+    "diff": 43.0,
+    "pct_change": 0.4257
+   },
+   "median_loan_amount_usd_first_lien": {
+    "2019": 320000.0,
+    "2025": 440000.0,
+    "diff": 120000.0,
+    "pct_change": 0.375
+   },
+   "median_property_value_usd": {
+    "2019": 405000.0,
+    "2025": 555000.0,
+    "diff": 150000.0,
+    "pct_change": 0.3704
+   },
+   "non_owner_occupied_share": {
+    "2019": 0.3005,
+    "2025": 0.3123,
+    "diff": 0.0118,
+    "pct_change": 0.0393
+   },
+   "investment_share": {
+    "2019": 0.105,
+    "2025": 0.2283,
+    "diff": 0.1233,
+    "pct_change": 1.1743
+   },
+   "second_home_share": {
+    "2019": 0.1955,
+    "2025": 0.084,
+    "diff": -0.1115,
+    "pct_change": -0.5703
+   },
+   "va_share": {
+    "2019": 0.109,
+    "2025": 0.1077,
+    "diff": -0.0013,
+    "pct_change": -0.0119
+   },
+   "jumbo_share_conventional_first_lien": {
+    "2019": 0.067,
+    "2025": 0.0608,
+    "diff": -0.0062,
+    "pct_change": -0.0925
+   }
+  },
+  "15003": {
+   "n_loans": {
+    "2019": 8786,
+    "2025": 6746,
+    "diff": -2040,
+    "pct_change": -0.2322
+   },
+   "n_first_lien": {
+    "2019": 8374,
+    "2025": 6623,
+    "diff": -1751,
+    "pct_change": -0.2091
+   },
+   "median_income_thousands_usd": {
+    "2019": 119.0,
+    "2025": 164.0,
+    "diff": 45.0,
+    "pct_change": 0.3782
+   },
+   "median_loan_amount_usd_first_lien": {
+    "2019": 505000.0,
+    "2025": 585000.0,
+    "diff": 80000.0,
+    "pct_change": 0.1584
+   },
+   "median_property_value_usd": {
+    "2019": 615000.0,
+    "2025": 745000.0,
+    "diff": 130000.0,
+    "pct_change": 0.2114
+   },
+   "non_owner_occupied_share": {
+    "2019": 0.1427,
+    "2025": 0.1573,
+    "diff": 0.0146,
+    "pct_change": 0.1023
+   },
+   "investment_share": {
+    "2019": 0.1033,
+    "2025": 0.1273,
+    "diff": 0.024,
+    "pct_change": 0.2323
+   },
+   "second_home_share": {
+    "2019": 0.0394,
+    "2025": 0.0299,
+    "diff": -0.0095,
+    "pct_change": -0.2411
+   },
+   "va_share": {
+    "2019": 0.251,
+    "2025": 0.2713,
+    "diff": 0.0203,
+    "pct_change": 0.0809
+   },
+   "jumbo_share_conventional_first_lien": {
+    "2019": 0.1329,
+    "2025": 0.0584,
+    "diff": -0.0745,
+    "pct_change": -0.5606
+   }
+  },
+  "15007": {
+   "n_loans": {
+    "2019": 781,
+    "2025": 469,
+    "diff": -312,
+    "pct_change": -0.3995
+   },
+   "n_first_lien": {
+    "2019": 763,
+    "2025": 461,
+    "diff": -302,
+    "pct_change": -0.3958
+   },
+   "median_income_thousands_usd": {
+    "2019": 143.5,
+    "2025": 208.5,
+    "diff": 65.0,
+    "pct_change": 0.453
+   },
+   "median_loan_amount_usd_first_lien": {
+    "2019": 505000.0,
+    "2025": 725000.0,
+    "diff": 220000.0,
+    "pct_change": 0.4356
+   },
+   "median_property_value_usd": {
+    "2019": 625000.0,
+    "2025": 975000.0,
+    "diff": 350000.0,
+    "pct_change": 0.56
+   },
+   "non_owner_occupied_share": {
+    "2019": 0.3854,
+    "2025": 0.3987,
+    "diff": 0.0133,
+    "pct_change": 0.0345
+   },
+   "investment_share": {
+    "2019": 0.1921,
+    "2025": 0.307,
+    "diff": 0.1149,
+    "pct_change": 0.5981
+   },
+   "second_home_share": {
+    "2019": 0.1933,
+    "2025": 0.0917,
+    "diff": -0.1016,
+    "pct_change": -0.5256
+   },
+   "va_share": {
+    "2019": 0.064,
+    "2025": 0.0533,
+    "diff": -0.0107,
+    "pct_change": -0.1672
+   },
+   "jumbo_share_conventional_first_lien": {
+    "2019": 0.1498,
+    "2025": 0.1542,
+    "diff": 0.0044,
+    "pct_change": 0.0294
+   }
+  },
+  "15009": {
+   "n_loans": {
+    "2019": 2010,
+    "2025": 886,
+    "diff": -1124,
+    "pct_change": -0.5592
+   },
+   "n_first_lien": {
+    "2019": 1973,
+    "2025": 877,
+    "diff": -1096,
+    "pct_change": -0.5555
+   },
+   "median_income_thousands_usd": {
+    "2019": 132.0,
+    "2025": 217.0,
+    "diff": 85.0,
+    "pct_change": 0.6439
+   },
+   "median_loan_amount_usd_first_lien": {
+    "2019": 495000.0,
+    "2025": 745000.0,
+    "diff": 250000.0,
+    "pct_change": 0.5051
+   },
+   "median_property_value_usd": {
+    "2019": 635000.0,
+    "2025": 1005000.0,
+    "diff": 370000.0,
+    "pct_change": 0.5827
+   },
+   "non_owner_occupied_share": {
+    "2019": 0.3468,
+    "2025": 0.3442,
+    "diff": -0.0026,
+    "pct_change": -0.0075
+   },
+   "investment_share": {
+    "2019": 0.1836,
+    "2025": 0.246,
+    "diff": 0.0624,
+    "pct_change": 0.3399
+   },
+   "second_home_share": {
+    "2019": 0.1632,
+    "2025": 0.0982,
+    "diff": -0.065,
+    "pct_change": -0.3983
+   },
+   "va_share": {
+    "2019": 0.0448,
+    "2025": 0.0474,
+    "diff": 0.0026,
+    "pct_change": 0.058
+   },
+   "jumbo_share_conventional_first_lien": {
+    "2019": 0.1333,
+    "2025": 0.1211,
+    "diff": -0.0122,
+    "pct_change": -0.0915
+   }
+  },
+  "four_county_total": {
+   "n_loans": {
+    "2019": 13797,
+    "2025": 9875,
+    "diff": -3922,
+    "pct_change": -0.2843
+   },
+   "n_first_lien": {
+    "2019": 13312,
+    "2025": 9707,
+    "diff": -3605,
+    "pct_change": -0.2708
+   },
+   "median_income_thousands_usd": {
+    "2019": 119.0,
+    "2025": 166.0,
+    "diff": 47.0,
+    "pct_change": 0.395
+   },
+   "median_loan_amount_usd_first_lien": {
+    "2019": 465000.0,
+    "2025": 565000.0,
+    "diff": 100000.0,
+    "pct_change": 0.2151
+   },
+   "median_property_value_usd": {
+    "2019": 585000.0,
+    "2025": 745000.0,
+    "diff": 160000.0,
+    "pct_change": 0.2735
+   },
+   "non_owner_occupied_share": {
+    "2019": 0.2116,
+    "2025": 0.2134,
+    "diff": 0.0018,
+    "pct_change": 0.0085
+   },
+   "investment_share": {
+    "2019": 0.1203,
+    "2025": 0.1647,
+    "diff": 0.0444,
+    "pct_change": 0.3691
+   },
+   "second_home_share": {
+    "2019": 0.0913,
+    "2025": 0.0487,
+    "diff": -0.0426,
+    "pct_change": -0.4666
+   },
+   "va_share": {
+    "2019": 0.1875,
+    "2025": 0.2114,
+    "diff": 0.0239,
+    "pct_change": 0.1275
+   },
+   "jumbo_share_conventional_first_lien": {
+    "2019": 0.1225,
+    "2025": 0.0709,
+    "diff": -0.0516,
+    "pct_change": -0.4212
+   }
+  }
+ },
+ "notes": [
+  "Definitions (HMDA public LAR codes): occupancy_type 1 = principal residence, 2 = second residence, 3 = investment property. \"non_owner_occupied\" here = occupancy_type 2 or 3 (not the applicant's principal residence); \"investment_only_share\" = occupancy_type 3 alone.",
+  "loan_type 1 = conventional, 2 = FHA, 3 = VA, 4 = USDA Rural Housing Service / Farm Service Agency.",
+  "conforming_loan_limit is the FFIEC-derived flag comparing loan_amount with the FHFA conforming loan limit for the county and year: C = conforming, NC = nonconforming (reported here as \"jumbo\"), U = undetermined, NA = not applicable. The jumbo split is given for all loans and for conventional first-lien loans only; for FHA/VA/USDA loans an NC flag only means the amount exceeds the GSE conforming limit (e.g. large VA loans), not a private jumbo product. County dollar limits are not reproduced here.",
+  "Jumbo shares are not like-for-like across years: the conforming limit rose much more between 2019 and 2025 than many loan sizes did, which moves loans from NC to C without any change in the loan itself.",
+  "income = gross annual income relied on in the credit decision, in thousands of USD, rounded to the nearest thousand. It is NA when not relied on (e.g. non-natural-person borrowers, some investor and DSCR-style loans). Income NA rose from 275 loans (2019) to 645 (2025) in the four-county universe. Quartiles use all numeric values including zero or negative incomes; median_excluding_le_zero is also given.",
+  "loan_amount and property_value in the public data are the midpoint of the $10,000 interval containing the true value (e.g. 445000 = $440,000 to $449,999). property_value is NA or Exempt (small-filer partial exemption) for some records, and those records are excluded from property-value statistics; n is reported.",
+  "Quantile method: linear interpolation between closest ranks (numpy default / Excel PERCENTILE.INC). Medians of even-sized sets can fall between two $10k-interval midpoints.",
+  "applicant_age is the primary applicant's age band; 8888 = not applicable (applicant is not a natural person, e.g. an LLC or trust). Shares are given both over all loans (8888 shown as its own category) and over loans with a reported age.",
+  "interest_rate_pct_conventional_first_lien.median is an added context metric (median note rate, conventional first-lien purchase loans, Exempt/NA excluded).",
+  "Second home vs investment coding moved sharply between years (four-county second-home share 9.1% to 4.9%; investment 12.0% to 16.5%) while the combined non-owner-occupied share was nearly flat (21.2% to 21.3%). The split depends on how lenders classify the loan. The causes were not tested here; possible contributors include the GSE second-home pricing and eligibility changes after 2021 and more business-purpose and DSCR investor lending (business_or_commercial_purpose = 1 in the four-county universe rose from 802 loans, 5.8%, in 2019 to 1,271, 12.9%, in 2025). Use the combined share for trend comparisons.",
+  "Maui County 2025 volume (886 loans vs 2,010 in 2019) reflects the post-August-2023 Lahaina wildfire market as well as interest rates. HMDA cannot separate these effects.",
+  "Kalawao County (15005) is excluded as requested. No race, ethnicity or sex fields were analyzed or output.",
+  "The CSV downloads were filtered server-side to actions_taken=1 and loan_purposes=1. Dwelling-type filtering was done locally, and the drops are reported in filter_funnel (2025: 32 multifamily and 1 manufactured removed; 2019: 61 and 1).",
+  "The Data Browser error message for out-of-range years still says \"range of 2018-2023\", but 2024 and 2025 both returned data. This looks like stale message text."
+ ]
+}

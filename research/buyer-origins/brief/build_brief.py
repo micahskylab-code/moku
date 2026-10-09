@@ -15,7 +15,7 @@ MK={
  'Oahu':dict(mos='5.2',verdict='Balanced',vcls='bal',sub='Houses ~3 months: a seller\'s market. Condos favor buyers.',act='3,483',yoy='+6.4%',cut='14.3%',
    play='Price houses to the market. Condos are where buyers can negotiate.'),
  'Maui':dict(mos='9.6',verdict="Buyer's market",vcls='buy',sub='The deepest buyer\'s market, but tightening: 11.1 months a year earlier, and January–August recorded sales up 10% (DBEDT).',act='1,367',yoy='+5.2%',cut='12.5%',
-   play='Prospect out-of-state condo owners, but never in ZIPs 96761, 96767 or 96790 (Lahaina and Kula). Price to sell.'),
+   play='The deepest buyer\'s market of the four. Condo prices are falling as the vacation-rental phase-out approaches.'),
  'Kauai':dict(mos='8.4',verdict="Buyer's market",vcls='buy',sub='Sales down sharply, condos most.',act='385',yoy='+8.1%',cut='15.2% (Aug)',
    play='Mainland buyers bring half the purchase dollars. Work Southern California.'),
  'Hawaii Island':dict(mos='6.5',verdict="Buyer's market",vcls='buy',sub='Fastest-rising inventory, highest share of price cuts.',act='1,365',yoy='+24.9%',cut='16.7%',

@@ -1,0 +1,3 @@
+# MANIFEST mm_oahu_tiers (columns: file, url, download_time_utc, bytes, sha256). Checked for an Oahu sales/conveyance layer; none found.
+svc_Cadastral_Tables_by_TMK.json	https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/Cadastral_Tables_by_TMK/FeatureServer?f=json	2026-10-08T06:04:59Z	3177	d281d1162f447b040ff8d9498abf35b15cd2ea469f1967b48873561e65f3d9fa
+svc_All_Parcels.json	https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/All_Parcels/FeatureServer?f=json	2026-10-08T06:05:00Z	4142	80b34a511a89671872bb6468e0825aaa637f6e90ff0cab13cd7afe1c1b78158b

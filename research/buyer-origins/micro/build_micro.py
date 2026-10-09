@@ -8,9 +8,12 @@ mj = J('an/who/maui_join.json'); lux = J('an/mm/luxury.json'); own = J('an/owner
 PD = J('an/page_data.json')
 
 def pct(x, d=0): return f'{100*x:.{d}f}%'
+from decimal import Decimal, ROUND_HALF_UP
+def hu(x, q='1'): return Decimal(str(x)).quantize(Decimal(q), rounding=ROUND_HALF_UP)
 def money(n):
     if n is None: return '—'
-    return f'${n/1e6:.2f}M' if n >= 999500 else f'${round(n/1000):,}K'
+    return f'${hu(Decimal(str(n))/Decimal(1000000), "0.01")}M' if n >= 999500 else f'${int(hu(Decimal(str(n))/Decimal(1000))):,}K'
+def ph(num, den): return f'{hu(Decimal(100)*Decimal(num)/Decimal(den))}%' if den else '—'
 def esc(s): return html.escape(str(s))
 
 ISL = [('Oahu', 'Oʻahu', 'Honolulu', 'Oahu', '15003'), ('Maui County', 'Maui County', 'Maui', 'Maui County', '15009'),
@@ -44,7 +47,7 @@ for key, name, cty, tgk, fips in ISL:
         pct(occ['second_residence'] + occ['investment_property']),
         f"{l25['all_3m']} · {l25['all_10m_plus']}", pct(u['str_share_of_housing'], 1), offv]))
 LBL = ['Active listings, Sep 2026', 'Median list price', 'Median days on market', 'Listings with a price cut', 'Buyers 2025: local · mainland · foreign',
-       'Out-of-state buyers 2025: houses · condos', 'Mortgaged buyers who won\'t live there (2025)', '$3M+ sales 2025 · of which $10M+', 'Vacation rentals, share of homes', 'Homes owned from outside Hawaiʻi (Oʻahu: off-island)']
+       'Out-of-state buyers 2025: houses · condos', 'Mortgaged buyers not buying a main home (2025)', '$3M+ sales 2025 · of which $10M+', 'Vacation rentals, share of homes', 'Homes owned from outside Hawaiʻi (Oʻahu: off-island)']
 gl = '<div class="tw"><table class="gl"><thead><tr><th></th>' + ''.join(f"<th class=\"num\">{c['name']}</th>" for c in cols) + '</tr></thead><tbody>'
 for i, lb in enumerate(LBL):
     gl += f'<tr><td>{lb}</td>' + ''.join(f"<td class=\"num\">{c['rows'][i]}</td>" for c in cols) + '</tr>'
@@ -79,8 +82,13 @@ for k, lab, mk, hk in tiers:
         inc = h['income_thousands_usd']['median']; incs = f"${inc/1000:.2f}M" if inc >= 1000 else f"${inc:.0f}K"
         small = ' (n&lt;20)' if h['n_loans'] < 20 else ''
         no = oc['second_home'] + oc['investment']
-        htxt = (f"<b>{pct(no)}</b> won't live there ({pct(oc['second_home'])} second home, {pct(oc['investment'])} investor)<br><span class=\"why\">{h['n_loans']:,} loans{small}; median income {incs}"
-                + (f"; 2019: {pct(oc19['second_home'] + oc19['investment'])} won't live there</span>" if oc19 else '</span>'))
+        if h['n_loans'] < 20:
+            cc = h['occupancy_counts']; c19 = h19.get('occupancy_counts') if h19 else None
+            htxt = (f"<b>{cc['second_home'] + cc['investment']} of {h['n_loans']}</b> loans: {cc['second_home']} second homes, {cc['investment']} investments<br><span class=\"why\">too few to quote as a rate; median income {incs}"
+                    + (f"; 2019: {c19['second_home'] + c19['investment']} of {h19['n_loans']}</span>" if c19 else '</span>'))
+        else:
+            htxt = (f"<b>{pct(no)}</b> second home or investment ({pct(oc['second_home'])} second home, {pct(oc['investment'])} investor)<br><span class=\"why\">{h['n_loans']:,} loans; median income {incs}"
+                    + (f"; 2019: {pct(oc19['second_home'] + oc19['investment'])}</span>" if oc19 else '</span>'))
     trows += f"<tr><td><b>{lab}</b></td><td class=\"num\">{100*o['hawaii_total']:.0f}% · {100*o['mainland_us']:.0f}% · {100*o['foreign']:.0f}%<br><span class=\"why\">{o['n']:,} sales{flag}</span></td><td class=\"num\">{mtxt}</td><td>{htxt}</td></tr>"
 
 # ---------- 3. type
@@ -116,10 +124,10 @@ for isl in ['Oahu', 'Maui County', 'Hawaii Island', 'Kauai']:
     for r in rr:
         a = r['2025FY']; b = r.get('2026H1') or {}
         sm = ' <span class="why">(under 20 sales)</span>' if a['total_lt20'] else ''
-        bar = f'<span class="mbar"><i style="width:{a["other_us_pct"]:.0f}%"></i></span>'
+        bar = f'<span class="mbar"><i style="width:{ph(a["other_us"], a["total_sales"])}"></i></span>'
         drows += (f'<tr><td>{esc(TDN.get(r["district"], r["district"]))}{sm}</td><td class="num">{a["total_sales"]:,}</td>'
-                  f'<td class="num">{a["hawaii_pct"]:.0f}% · <b>{a["other_us_pct"]:.0f}%</b> · {a["foreign_pct"]:.0f}%</td><td>{bar}</td>'
-                  f'<td class="num">{(str(round(b["other_us_pct"])) + "%") if b.get("other_us_pct") is not None else "—"}<br><span class="why">{b.get("total_sales", 0):,} sales</span></td></tr>')
+                  f'<td class="num">{ph(a["hawaii"], a["total_sales"])} · <b>{ph(a["other_us"], a["total_sales"])}</b> · {ph(a["foreign"], a["total_sales"])}</td><td>{bar}</td>'
+                  f'<td class="num">{ph(b["other_us"], b["total_sales"]) if b.get("total_sales") else "—"}<br><span class="why">{b.get("total_sales", 0):,} sales</span></td></tr>')
 HC = J('an/gap/hmda_tract.json')['data']
 C25 = HC['years']['2025']['by_ccd']; CCH = HC['ccd_change_2019_2025']
 crows = ''
@@ -132,7 +140,9 @@ for isl in ['Oahu', 'Maui County', 'Hawaii Island', 'Kauai']:
     for k, v in rr:
         c = CCH.get(k, {}); o19 = c.get('share_second_plus_investment_2019')
         inc = v.get('median_income_k'); incs = '—' if inc is None else (f'${inc/1000:.2f}M' if inc >= 1000 else f'${inc:.0f}K')
-        crows += (f'<tr><td>{esc(v["ccd_name"].replace(" CCD", ""))}</td><td class="num">{v["n_loans"]:,}</td>'
+        CCDL = {'Lahaina': 'West Maui (Lahaina subdivision)', 'Kula': 'Kula (incl. part of Wailea)', 'Ewa': 'ʻEwa district (Hālawa to Kapolei, incl. Pearl City, Waipahu, Mililani)'}
+        nm = v["ccd_name"].replace(" CCD", "")
+        crows += (f'<tr><td>{esc(CCDL.get(nm, nm))}</td><td class="num">{v["n_loans"]:,}</td>'
                   f'<td class="num"><b>{pct(v["share_second_plus_investment"])}</b>' + (f' <span class="why">2019: {pct(o19)}</span>' if o19 is not None and not c.get('low_n_flag') else '') + '</td>'
                   f'<td class="num">{pct(v["share_va"])}</td><td class="num">{incs}</td><td class="num">{money(v.get("median_property_value"))}</td></tr>')
 lowc = sorted(v['ccd_name'].replace(' CCD', '') for v in C25.values() if v['low_n_flag'])
@@ -147,10 +157,10 @@ def ziptable(key):
         if not L or L.get('thin_lt10_active') or (L.get('active_listing_count') or 0) < 10: continue
         u = UZ.get(z['zip'], {})
         ch = None
-        if Y and Y.get('median_listing_price') and L.get('median_listing_price'):
+        if Y and Y.get('median_listing_price') and L.get('median_listing_price') and (Y.get('active_listing_count') or 0) >= 10:
             ch = L['median_listing_price'] / Y['median_listing_price'] - 1
         oos = u.get('out_of_state_share'); oz = OZ.get(z['zip'])
-        fl = '<sup>†</sup>' if L.get('quality_flag') == 1 else ''
+        fl = '<sup>†</sup>' if (L.get('quality_flag') == 1 or (Y or {}).get('quality_flag') == 1) else ''
         fire = ' <span class="why">fire area: no unsolicited offers</span>' if z['zip'] in ('96761', '96767', '96790') else ''
         rows.append((L['active_listing_count'], f"<tr><td><span class=\"geo\">{z['zip']}</span> {esc(z['place'])}{fl}{fire}</td><td class=\"num\">{L['active_listing_count']:,}</td>"
             f"<td class=\"num\">{money(L.get('median_listing_price'))}</td><td class=\"num\">{'—' if ch is None else ('0%' if abs(ch) < 0.005 else (('+' if ch>=0 else '−')+f'{abs(100*ch):.0f}%'))}</td>"
@@ -195,7 +205,7 @@ def dytd(key):
     rows.sort(key=lambda x: -x[0])
     T = lambda X: (f'<td class="num"><b>{X["n26"]:,}</b> <span class="why">{chg(X["n26"], X["n25"])}</span></td>'
                    f'<td class="num"><b>{money(X["med26"])}</b> <span class="why">{chg(X["med26"], X["med25"])}</span></td>')
-    tot = f'<tr><td><b>Whole island</b></td>{T(h["TOTAL"])}{T(c["TOTAL"])}</tr>'
+    tot = f'<tr><td><b>{"All Maui County" if key == "Maui County" else "Whole island"}</b></td>{T(h["TOTAL"])}{T(c["TOTAL"])}</tr>'
     head = ('<tr><th>District</th><th class="num">Houses sold</th><th class="num">House median</th>'
             '<th class="num">Condos sold</th><th class="num">Condo median</th></tr>')
     Hh, Cc = h['TOTAL'], c['TOTAL']
@@ -207,7 +217,7 @@ def dytd(key):
                f"Condos are flat: sales {pc(Cc['n26']/Cc['n25']-1)}, median {money(Cc['med26'])}.")
     elif key == 'Maui County':
         say = (f"Buyers are back for condos, but at lower prices: condo sales are up {pa(Cc['n26']/Cc['n25']-1)} while the median fell {pa(g(c,'TOTAL'))} to {money(Cc['med26'])}. "
-               f"Resort condos fell most: Wailea/Mākena {pc(g(c,'Wailea/Makena'))}, Kapalua {pc(g(c,'Kapalua'))}, Kīhei {pc(g(c,'Kihei'))}, Nāpili/Kahana {pc(g(c,'Napili/Kahana/Honokowai'))}.")
+               f"Resort condos fell most: Māʻalaea {pc(g(c,'Maalaea'))}, Wailea/Mākena {pc(g(c,'Wailea/Makena'))}, Kapalua {pc(g(c,'Kapalua'))}, Kīhei {pc(g(c,'Kihei'))}, Nāpili/Kahana {pc(g(c,'Napili/Kahana/Honokowai'))}.")
     elif key == 'Kauai':
         say = (f"Fewer sales (houses {pc(Hh['n26']/Hh['n25']-1)}, condos {pc(Cc['n26']/Cc['n25']-1)}), but the house median rose {pa(g(h,'TOTAL'))} to {money(Hh['med26'])}, "
                f"pulled up by Kōloa and Poʻipū ({pc(g(h,'KOLOA'))}). The mix shifted toward expensive homes.")
@@ -223,7 +233,7 @@ isl_secs = ''
 NOTES = {
  'Oahu': ('Oʻahu by ZIP', 'Town condos sell to locals; Waikīkī, the North Shore and Turtle Bay sell to the mainland.'),
  'Maui County': ('Maui County by ZIP and district', 'West Maui and Wailea are owned from away; Upcountry and Central Maui are local.'),
- 'Kauai': ('Kauaʻi by ZIP', 'The North Shore and Poʻipū are second-home markets; Līhuʻe and the West Side are local.'),
+ 'Kauai': ('Kauaʻi by ZIP', 'Out-of-state buyers dominate the North Shore and are a large minority in Poʻipū; Līhuʻe and the West Side are local.'),
  'Hawaii Island': ('Hawaiʻi Island by ZIP', 'Kohala and Kona draw the mainland; Hilo and Puna are local and affordable.'),
 }
 for key, name, cty, tgk, fips in ISL:
@@ -244,7 +254,7 @@ for key, name, cty, tgk, fips in ISL:
   <section id="mm-{key.split()[0].lower()}">
     <div class="head col"><span class="sec-n">{NOTES[key][0]}</span><h2>{NOTES[key][1]}</h2></div>
     {t}
-    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings ({n} shown) {P}. † Realtor.com flags this ZIP's figures as lower quality for September 2026; treat the year-over-year change as rough.{' Price cuts are left blank for Kauaʻi because Realtor.com’s field is nearly empty there.' if key == 'Kauai' else ''} House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) {O}.{(' Owned from off-island: Honolulu owner roll, residential parcels, October 2026 '+P+'.') if key=='Oahu' else ''}</p>
+    <p class="src">Listings: Realtor.com ZIP inventory, September 2026 vs September 2025, ZIPs with 10 or more active listings ({n} shown) {P}. † Realtor.com flags this ZIP's figures as lower quality for September 2026 or September 2025; treat the year-over-year change as rough. Changes are left out where September 2025 had fewer than 10 listings.{' Price cuts are left blank for Kauaʻi because Realtor.com’s field is nearly empty there.' if key == 'Kauai' else ''} House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026 (2025 sales; out-of-state = the buyer's deed address is outside Hawaiʻi) {O}.{(' Owned from off-island: Honolulu owner roll, residential parcels, October 2026 '+P+'.') if key=='Oahu' else ''}</p>
     {dytd(key)}
     {extra}
     <!--WHY:mm-{key.split()[0].lower()}-->
@@ -257,13 +267,13 @@ chapter = f'''
     <div class="head col"><span class="sec-n">All Hawaiʻi, island by island</span><h2>Four islands, four different markets</h2>
       <p class="muted">The latest listings (September 2026), who bought in 2025, and how much of each island is owned or bought from away.</p></div>
     {gl}
-    <p class="src">Listings: Realtor.com county data, September 2026 {P}. † Realtor.com has flagged Maui County's data as lower quality every month since December 2025, so read its listing price with care. ‡ Kauaʻi's September price-cut share (4.8%) looks like a data gap in Realtor.com's file, so August's figure is shown. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
+    <p class="src">Listings: Realtor.com county data, September 2026 {P}. † Realtor.com has flagged Maui County's data as lower quality every month since December 2025, so read its listing price with care. ‡ Kauaʻi's September price-cut share (4.8%) looks like a data gap in Realtor.com's file, so August's figure is shown. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not buying a main home: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
     <!--WHY:mm-glance-->
   </section>
   <section id="mm-tiers">
-    <div class="head col"><span class="sec-n">Who buys at each price</span><h2>Oʻahu buyers are mostly local up to $10 million. On Maui, buyers who won't live in the home take half or more at every price.</h2></div>
+    <div class="head col"><span class="sec-n">Who buys at each price</span><h2>Oʻahu buyers are mostly local up to $10 million. On Maui, buyers without a homeowner exemption take about half or more of sales at every price.</h2></div>
     <div class="tw"><table><thead><tr><th>Price tier</th><th class="num">Oʻahu buyers 2023–25<br>local · mainland · foreign</th><th class="num">Maui County: buyers without a homeowner exemption, FY2024–26</th><th>Statewide mortgaged buyers, 2025: second homes and investors</th></tr></thead><tbody>{trows}</tbody></table></div>
-    <p class="src">Oʻahu: 2023–2025 sales matched to the October 2026 owner roll by the buyer's mailing address; excludes addresses shared by 10+ parcels; within about 1–4 points of Title Guaranty's island totals {P}. Maui: conveyance-tax schedule (homeowner vs non-homeowner rate), sales by price band; the entry cut is $800K in this source {O}. Statewide: HMDA first-lien purchase loans by property value {P}.</p>
+    <p class="src">Oʻahu: 2023–2025 sales matched to the October 2026 owner roll by the buyer's mailing address; excludes addresses shared by 10+ parcels; within about 1–4 points of Title Guaranty's island totals {P}. Maui: conveyance-tax schedule (homeowner vs non-homeowner rate), sales by price band; the entry cut is $800K in this source {O}. Statewide: HMDA first-lien purchase loans by property value {P}. Tiers are in current dollars; at price-adjusted cut-offs, 2019 shares were close to 2025's.</p>
     <!--WHY:mm-tiers-->
   </section>
   <section id="mm-type">
@@ -282,7 +292,7 @@ chapter = f'''
     <div class="col"><ul class="tight" style="margin-top:16px">
       <li><b>Who buys it:</b> on Oʻahu, $3M+ buyers in 2023–25 were 67% local, 27% mainland (led by the Bay Area, Los Angeles and Seattle) and 6% foreign, almost all from Japan {P}. On Maui, 81% of $3–10M sales and 89% of $10M+ sales went to buyers without a homeowner exemption {O}. In January–June 2026, 15 of the state's 22 single-family sales at $10M+ were on Hawaiʻi Island {R}.</li>
       <li><b>Resort enclaves:</b> Mauna Kea Resort recorded 30 sales worth $159M in 2025 (average $6.8M); South Kohala had 42 sales at $3M+ {R}. On Oʻahu, $5M+ condo sales in Q2 2026 clustered in Park Lane (4) and Waiea (3) {R}.</li>
-      <li><b>Financed luxury is rare and changing:</b> only 150 mortgaged purchases statewide were $3–10M in 2025; the share bought as a second home or investment fell from {pct(hm_tier(HT19,'luxury')['occupancy_share']['second_home']+hm_tier(HT19,'luxury')['occupancy_share']['investment'])} in 2019 to {pct(hm_tier(HT,'luxury')['occupancy_share']['second_home']+hm_tier(HT,'luxury')['occupancy_share']['investment'])} {P}. HMDA coded second homes differently in the two years, so only the combined share is compared.</li>
+      <li><b>Financed luxury is rare:</b> only 150 mortgaged purchases statewide were $3–10M in 2025, and {pct(hm_tier(HT,'luxury')['occupancy_share']['second_home']+hm_tier(HT,'luxury')['occupancy_share']['investment'])} were second homes or investments {P}. The 2019 figure ({pct(hm_tier(HT19,'luxury')['occupancy_share']['second_home']+hm_tier(HT19,'luxury')['occupancy_share']['investment'])}) is not like-for-like: Hawaiʻi prices rose about 47% since then (FHFA), and at price-adjusted cut-offs the 2019 share was about 54%. HMDA also coded second homes differently in the two years, so only the combined share is compared.</li>
     </ul></div>
     <p class="src">Hawaiʻi Life luxury reports (2025 year-end, 2026 midyear), island figures summed here {R}. List Sotheby's Oʻahu Q2 2026 {R}. Oʻahu buyer origin: owner-roll match {P}. Maui: conveyance-tax schedule {O}. HMDA 2025 {P}.</p>
     <!--WHY:mm-luxury-->
@@ -295,10 +305,10 @@ chapter = f'''
     <!--WHY:mm-districts-->
   </section>
   <section id="mm-loans">
-    <div class="head col"><span class="sec-n">Mortgaged buyers, area by area</span><h2>In Poʻipū, Hanalei and Lahaina, 7 in 10 mortgaged buyers won't live in the home. In ʻEwa, 44% use a VA loan.</h2>
-      <p class="muted">2025 home-purchase loans by census county subdivision: the share bought as a second home or investment, the VA share, and buyers' incomes.</p></div>
-    <div class="tw"><table class="td"><thead><tr><th>Area</th><th class="num">Loans 2025</th><th class="num">Won't live there</th><th class="num">VA loans</th><th class="num">Median income</th><th class="num">Median value</th></tr></thead><tbody>{crows}</tbody></table></div>
-    <p class="src">HMDA 2025 (and 2019) originated home-purchase loans on 1–4 unit site-built homes, mapped from census tract to county subdivision by housing units; tracts sit inside one subdivision almost everywhere {P}. "Won't live there" = second home plus investment; the two were coded differently in 2019, so only the combined share is compared. HMDA has no cash purchases. Areas with fewer than 20 loans are left out: {', '.join(lowc)}.</p>
+    <div class="head col"><span class="sec-n">Mortgaged buyers, area by area</span><h2>In Kōloa–Poʻipū, Hanalei and West Maui, about 7 in 10 mortgaged buyers are buying a second home or investment. In the ʻEwa district, 44% use a VA loan.</h2>
+      <p class="muted">2025 home-purchase loans by census county subdivision: the share that is a second home or investment, the VA share, and buyers' incomes.</p></div>
+    <div class="tw"><table class="td"><thead><tr><th>Area</th><th class="num">Loans 2025</th><th class="num">Not a main home</th><th class="num">VA loans</th><th class="num">Median income</th><th class="num">Median value</th></tr></thead><tbody>{crows}</tbody></table></div>
+    <p class="src">HMDA 2025 (and 2019) originated home-purchase loans on 1–4 unit site-built homes, mapped from census tract to county subdivision by housing units; tracts sit inside one subdivision almost everywhere {P}. "Not a main home" = second home plus investment; the two were coded differently in 2019, so only the combined share is compared. HMDA has no cash purchases. West Maui is the Census Lahaina subdivision: Kāʻanapali, Nāpili, Kapalua and Lahaina town; Lahaina town alone had 21 loans in 2025 (10 second home or investment), down from 145 in 2019. The Kula subdivision includes part of Wailea: 51 of its 97 loans, 30 of them a second home or investment; Kula itself had 8 of 46 (17%). Areas with fewer than 20 loans are left out: {', '.join(lowc)}.</p>
     <!--WHY:mm-loans-->
   </section>
 {isl_secs}

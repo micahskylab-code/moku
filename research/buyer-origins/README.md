@@ -1,5 +1,7 @@
 # Hawaiʻi buyer-origin report — data and build scripts
 
+**Handoff for the Hawaii Intelligence site: see `handoff/HANDOFF.md`** (outline, source registry, metric catalog, data layers, verification, gaps).
+
 `../hawaii-buyer-origins.html` is generated from `page_data.json`, which these scripts build:
 
 - `irs_decade.py` — IRS SOI county-to-county inflow (2014–15 … 2022–23) into the four Hawaiʻi counties: different-state totals, top origin counties, metro roll-ups. Input CSVs: IRS SOI `countyinflowYYYY.csv`; their SHA-256 are in `irs_sha256.txt` and match an independent record of direct irs.gov downloads.
@@ -47,18 +49,6 @@ The report's micro-markets chapter (all Hawaiʻi and each island, by price tier,
 - `gap/owner_fields.json` records the search for owner mailing fields for Hawaiʻi County and Kauaʻi. Nothing public was found. It lists what to request from each county.
 
 `hawaii-buyer-origins.src.html` is the page template. The build replaces `__DATA__` with `page_data.json` and inserts the micro-markets chapter.
-
-## Go-to-market plan
-
-`../hawaii-go-to-market.html` is the plan for selling the report to brokerages. It covers:
-
-- the offer, price anchors and revenue scenarios;
-- why Hawaii Life is the first target, and who to approach;
-- a 90-day pilot;
-- RESPA-safe sponsorship and compliance guardrails;
-- the checklist to clear before selling.
-
-Its opening figures compare 2024 and 2025 on Title Guaranty's own counts for both years. DBEDT's 2024 count runs about 8% higher.
 
 ## Why boxes
 

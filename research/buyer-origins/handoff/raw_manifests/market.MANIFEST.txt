@@ -1,0 +1,41 @@
+# raw/market MANIFEST - market data pull for Hawaii home-buying report (KEY=market)
+# columns (tab-separated): file, download_time_utc, http_status, bytes, sha256, url
+# files are untrusted downloads, stored unmodified (RAM PDFs renamed from .bin to .pdf after download)
+dbedt_2026-08-state.xlsx	2026-10-08T06:10:42Z	HTTP 200	296131 bytes	sha256=9673014ef6ec78f8e43e6324733fbc1a98a1d0262e990b252ed75881aa505139	https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-state.xlsx
+dbedt_mei-08p-2026.pdf	2026-10-08T06:10:41Z	HTTP 200	278429 bytes	sha256=b54db8a6c5366660e43f49191940a01ff8a48418bc4671995139d95596275e47	https://files.hawaii.gov/dbedt/economic/data_reports/mei/mei-08p-2026.pdf
+dbedt_mei-08p-2026.xlsx	2026-10-08T06:10:42Z	HTTP 200	75121 bytes	sha256=b8bf7af48fb30b6e77ef7acfe6eec09c78fbf17a11469b310ba34b56946a0835	https://files.hawaii.gov/dbedt/economic/data_reports/mei/mei-08p-2026.xlsx
+dbedt_mei-08p-2026s.pdf	2026-10-08T06:10:41Z	HTTP 200	629396 bytes	sha256=ce72d7ebfe63a9ede80b11a7339c1a2bde5ca67e42327e792e4c286d37b3fe9b	https://files.hawaii.gov/dbedt/economic/data_reports/mei/mei-08p-2026s.pdf
+dbedt_mei_index.html	2026-10-08T06:10:35Z	HTTP 200	60798 bytes	sha256=0737768fef9bfd88ffcf4768bbdd73e5618bb12df728e3e96e6637e0c2fb7b64	https://dbedt.hawaii.gov/economic/mei/
+freddiemac_historicalweeklydata.xlsx	2026-10-08T06:11:19Z	HTTP 200	218720 bytes	sha256=a033587b6b0b185a9487c1536ea9709252a8cd65c852c086de915e8c90cda97f	https://www.freddiemac.com/pmms/docs/historicalweeklydata.xlsx
+freddiemac_pmms.html	2026-10-08T06:11:12Z	HTTP 200	103841 bytes	sha256=f80ed2784461e620831357c4746d4f4747be51973050cdb26c937a9e54885417	https://www.freddiemac.com/pmms
+hicentral_home.html	2026-10-08T06:02:37Z	HTTP 200	49935 bytes	sha256=6ac03b4fee3f6e0268f18b538a4cd0a4415ccc8ca60774f6b0808d1aa6a34fbf	https://www.hicentral.com/
+hicentral_mpr-2025-09.php.html	2026-10-08T06:03:22Z	HTTP 200	21658 bytes	sha256=3309ebe6fadcb275411be99140efb89dae944506e1b3949f8e06851962d57dd0	https://www.hicentral.com/mpr/mpr-2025-09.php
+hicentral_mpr-2026-07.php.html	2026-10-08T06:02:48Z	HTTP 200	24766 bytes	sha256=2ebf9017f86f8128377e5c032e7f37c71461c1fe733d6f9b1d8423e8fa6f4c2c	https://www.hicentral.com/mpr/mpr-2026-07.php
+hicentral_mpr-2026-08.php.html	2026-10-08T06:02:48Z	HTTP 200	24845 bytes	sha256=1451bea440dfff09f72e01ed70b2830e8648fa2d98af28b6cf163b9fbb41a9e6	https://www.hicentral.com/mpr/mpr-2026-08.php
+hicentral_mpr-2026-09.php.html	2026-10-08T06:02:47Z	HTTP 404	14040 bytes	sha256=e926f30707b5b4a693375ba779b77b6382e484c7d881380431ac3ab3fc0dad49	https://www.hicentral.com/mpr/mpr-2026-09.php
+hicentral_oahu-historical-data.html	2026-10-08T06:03:11Z	HTTP 200	73085 bytes	sha256=69fa9b1a20d10a23848e29d7679190ae03d1bde5282f3d588df5f93714f6442a	https://www.hicentral.com/oahu-historical-data.php
+hicentral_press_index.html	2026-10-08T06:02:37Z	HTTP 200	40821 bytes	sha256=7ce9c0e956cf0df43f6aacf538448db97e4dab149ebd5dc3e68aa40683309f63	https://www.hicentral.com/market-press-releases.php
+oahure_07-2026-Jul-B-LMU.pdf	2026-10-08T06:07:37Z	HTTP 200	1512355 bytes	sha256=6274e12831fbb49bb6d8d2ac6c7f41427e8c5577de1d8a436e2ce414989d8b9a	https://www.oahure.com/Statistics/07-2026-Jul-B-LMU.pdf
+prezly_aug2026.html	2026-10-08T06:04:19Z	HTTP 200	135731 bytes	sha256=29c8a88d612b6cf175ade3ada00f09c7a12496503472daec522b06c5faf9977e	https://honolulu-board-of-realtors.prezly.com/nearly-half-of-august-condo-sales-on-oahu-closed-below-500000
+prezly_aug2026.json	2026-10-08T06:04:18Z	HTTP 200	14742 bytes	sha256=8c542890cd63988dcc8a16d589fc4ed10ee9159bf48130d4e6ae7bccdf93cf93	https://honolulu-board-of-realtors.prezly.com/nearly-half-of-august-condo-sales-on-oahu-closed-below-500000.json
+prezly_feed.xml	2026-10-08T06:11:34Z	HTTP 200	4817 bytes	sha256=f860c136b500ee3d9357a85e5652e541ae35611286f2fde3d4d028774793b6c8	https://honolulu-board-of-realtors.prezly.com/feed
+prezly_home.html	2026-10-08T06:04:12Z	HTTP 200	156905 bytes	sha256=391bb9825e3d381876f869dd0c4d88cc3f3805da47b087293d09e559900e93ce	https://honolulu-board-of-realtors.prezly.com/
+prezly_jul2026.json	2026-10-08T06:11:35Z	HTTP 200	14060 bytes	sha256=94af79c7464e94e99d8e42ee6e04f83f28bd9e2c389ee475273124916775e63e	https://honolulu-board-of-realtors.prezly.com/oahu-single-family-home-sales-jump-205-in-july-as-median-price-rises.json
+prezly_sep2025.json	2026-10-08T06:11:34Z	HTTP 200	11294 bytes	sha256=589125a9c73b660d618d63b4f4002715262057ee96386c334f5fcb876fe26727	https://honolulu-board-of-realtors.prezly.com/september-brings-sales-gains-for-oahus-housing-market.json
+ram_2025-09_report.pdf	2026-10-08T06:08:28Z	HTTP 200	1147025 bytes	sha256=476ac3b7a5387842fa366972a9c2262199c1ac3663d596b718444af381f61ede	https://media.salecore.com/GetFile.ashx?p=DQoagVEFwWh
+ram_2026-08_report.pdf	2026-10-08T06:08:26Z	HTTP 200	948686 bytes	sha256=70f867726c1ab519b49e5bafa8ffe7cae0fd39c72cee40a8099cd614c16d98af	https://media.salecore.com/GetFile.ashx?p=VdJvjegbJbEh
+ram_2026-09_report.pdf	2026-10-08T06:08:23Z	HTTP 200	948957 bytes	sha256=cce8dc9ded054edbb2bfaea1642628c83a3b3c9154fb5be2f3f754889c763cac	https://media.salecore.com/GetFile.ashx?p=MoWFLulfqmtt
+ramaui_home.html	2026-10-08T06:08:00Z	HTTP 200	108421 bytes	sha256=8e3511cad71e69bf360489a0936840848f6e40e4705a3590836ff0b8e774019e	https://www.ramaui.com/
+ramaui_housing-statistics.html	2026-10-08T06:08:07Z	HTTP 200	70324 bytes	sha256=5699c2396c32710f1ba1526cfdd7f8090fa8e0c6b0d9bfb2f1a96c6e1f242f0f	https://www.ramaui.com/housing-statistics
+ramaui_market-statistics.html	2026-10-08T06:08:08Z	HTTP 200	70324 bytes	sha256=5c8a99cdc858feaa0ea430e27cdfd002e1fdc66dc50d6003f800b2912cea7c5f	https://www.ramaui.com/market-statistics
+tg_8.2026-Statewide-Housing-Statistics.pdf	2026-10-08T06:06:30Z	HTTP 200	441889 bytes	sha256=16791f469528c9f6ce484af6f7f45ba83cc688de3846b5d18a9e862f7175a695	https://www.tghawaii.com/wp-content/uploads/8.2026-Statewide-Housing-Statistics.pdf
+tg_RSR_Hawaii_8.2026.pdf	2026-10-08T06:05:36Z	HTTP 200	3941219 bytes	sha256=4a2d50ebcd5a882dd1caf05696485f1793e647f4b2b7869a710efc966adbde1b	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-8.2026.pdf
+tg_RSR_Hawaii_9.2026.pdf	2026-10-08T06:05:38Z	HTTP 200	3939657 bytes	sha256=03d003d3c202dd4dfab1540225a7e36b65eb9dbbb8333df49049b6660866a138	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-9.2026.pdf
+tg_RSR_Kauai-Island_8.2026.pdf	2026-10-08T06:05:33Z	HTTP 200	3639109 bytes	sha256=777457380e9072b502ea276dc7bb1635394962657edafe07cc9825c6b1461670	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-8.2026.pdf
+tg_RSR_Kauai-Island_9.2026.pdf	2026-10-08T06:05:34Z	HTTP 200	3637676 bytes	sha256=be894ae64b15cacf30eabee696d16474a2271407158ee713091e8d7f729682ed	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-9.2026.pdf
+tg_RSR_Maui-Island_8.2026.pdf	2026-10-08T06:05:29Z	HTTP 200	3699689 bytes	sha256=0de50449d5da3376a6edfea7c3525e051cb86dcb55f0c18517fac336842effa4	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-8.2026.pdf
+tg_RSR_Maui-Island_9.2026.pdf	2026-10-08T06:05:31Z	HTTP 200	3700170 bytes	sha256=618a4ca32fe1795b1dee64b5d687f6d3b3a65b7ca98fd12e849e0b50689c1b38	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-9.2026.pdf
+tg_RSR_Oahu-Island_8.2026.pdf	2026-10-08T06:05:26Z	HTTP 200	3848679 bytes	sha256=c300edd5ea72ca18d6e4e1b8cf247029b1211f329059856b443d8c80a5fc8c0d	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-8.2026.pdf
+tg_RSR_Oahu-Island_9.2025.pdf	2026-10-08T06:05:39Z	HTTP 200	3869197 bytes	sha256=ee2c898a50cdc8f4279dc560a562366687b86fcedcbff5820a2961f79bb2c7f2	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-9.2025.pdf
+tg_RSR_Oahu-Island_9.2026.pdf	2026-10-08T06:05:28Z	HTTP 200	3849547 bytes	sha256=a1be71975584c198116bd4d8121cf093476810522ce59ca3e6be0ef825d20d62	https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-9.2026.pdf
+tg_market_index.html	2026-10-08T06:06:11Z	HTTP 200	349325 bytes	sha256=ecb3b4070e828218ee33e99b647deda350aefb3651fad907ab497875b294abd7	https://www.tghawaii.com/market/

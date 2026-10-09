@@ -1,0 +1,67 @@
+{
+ "layer_1_raw_immutable": {
+  "rule": "Never edited. Raw downloads are stored outside the repo (some are large or owner-level); the repo keeps each download’s URL, UTC time, bytes and sha256 so files can be re-fetched and checked.",
+  "paths": [
+   "research/buyer-origins/handoff/raw_manifests/*.MANIFEST.txt",
+   "research/buyer-origins/irs_sha256.txt",
+   "research/buyer-origins/irs_outflow_sha256.txt",
+   "oahu-sales.json (repo root; Honolulu sales extract used as an input)"
+  ]
+ },
+ "layer_2_normalized_observations": {
+  "rule": "Source values parsed to JSON with source/method/notes; no cross-source arithmetic beyond what the source defines.",
+  "paths": [
+   "research/buyer-origins/sources/databook.json",
+   "research/buyer-origins/sources/tg.json",
+   "research/buyer-origins/gap/tg_districts.json",
+   "research/buyer-origins/sources/hmda.json",
+   "research/buyer-origins/sources/uhero.json",
+   "research/buyer-origins/sources/market.json",
+   "research/buyer-origins/sources/visitors.json",
+   "research/buyer-origins/sources/irs.json",
+   "research/buyer-origins/sources/owners_oahu.json",
+   "research/buyer-origins/sources/owners_oahu_aggregates.json",
+   "research/buyer-origins/sources/owners_neighbor.json",
+   "research/buyer-origins/micro/rdc_zip.json",
+   "research/buyer-origins/micro/district_stats.json",
+   "research/buyer-origins/micro/district_ytd.json",
+   "research/buyer-origins/micro/luxury.json"
+  ]
+ },
+ "layer_3_calculated_comparisons": {
+  "rule": "Derived by scripts in this folder from layers 1–2; rerun the script to refresh.",
+  "paths": [
+   "research/buyer-origins/page_data.json (built by build.py, prep.py, locals.py, irs_20yr.py, irs_decade.py, irs_states.py, moku_index.py, rate_model.py)",
+   "research/buyer-origins/moku_index.json",
+   "research/buyer-origins/irs_instate.json",
+   "research/buyer-origins/vis_cbsa.json",
+   "research/buyer-origins/owners/oahu_individual.json (owners/oahu_ind.py)",
+   "research/buyer-origins/micro/oahu_join.json",
+   "research/buyer-origins/micro/maui_join.json",
+   "research/buyer-origins/micro/oahu_tiers.json",
+   "research/buyer-origins/micro/neighbor_sales.json",
+   "research/buyer-origins/micro/hmda_tiers.json",
+   "research/buyer-origins/gap/hmda_tract.json",
+   "research/buyer-origins/micro/tg_prices.json",
+   "research/buyer-origins/micro/luxury_buyers.json",
+   "research/buyer-origins/micro/district_say.json"
+  ]
+ },
+ "layer_4_report_narrative": {
+  "rule": "Text and layout; every figure should trace to layer 2 or 3 via metric_catalog.json.",
+  "paths": [
+   "research/buyer-origins/hawaii-buyer-origins.src.html (template; __DATA__ = page_data.json)",
+   "research/buyer-origins/micro/build_micro.py → micro/micro_chapter.html",
+   "research/buyer-origins/why/why_result.json (checked research), why/why_curated.json (visible text), why/build_why.py → why/why_boxes.json",
+   "research/buyer-origins/micro/assemble.py (inserts chapter + Why boxes, injects data)",
+   "research/hawaii-buyer-origins.html (built, self-contained)",
+   "research/hawaii-broker-brief.html (built; broker-facing; not for port)"
+  ]
+ },
+ "excluded_or_archived": {
+  "paths": [
+   "research/archive/full-report-2026-10-09-pre-handoff/ (frozen snapshot; internal; not source of truth)",
+   "research/buyer-origins/gap/owner_fields.json (search log; no data)"
+  ]
+ }
+}

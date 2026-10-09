@@ -1,0 +1,1182 @@
+[
+ {
+  "part": "micro",
+  "checked": [
+   "mm-districts table: I recomputed all 26 district rows from the counts in an/gap/tg_districts.json. Sales 2025 and the Hawaiʻi · mainland · foreign shares match, except the rounding cases listed in the findings. Island sums match: Oʻahu 11,097, Maui County 1,247, Hawaiʻi Island 3,675, Kauaʻi 890. The sort order, the 'under 20 sales' flags (East Maui 16, Lānaʻi 10) and the Jan–Jun 2026 sales counts all check out.",
+   "mm-districts headline: Central Oʻahu is 93/1,733 = 5.4%, shown as 5%, and it is the lowest district. Hanalei is 90/136 = 66.2% ('two-thirds'), and it is the highest. The source-note claim that foreign counts outside Honolulu are all under 20 is true: the largest is 13.",
+   "mm-loans table: all 33 county-subdivision rows match an/gap/hmda_tract.json by_ccd. That covers loans, the second-home-plus-investment share, the 2019 share from ccd_change_2019_2025, the VA share, median income and median value. I recomputed every share from occupancy_counts and loan_type_counts. No row shown has fewer than 20 loans in 2019; the smallest is Papaikou-Wailea with 32.",
+   "mm-loans headline numbers: Koloa-Poipu 72.3% (n=83), Hanalei 71.2% (n=80), Lahaina 68.0% (n=122), Ewa VA 44.1% (n=2,618). The excluded-area list (East Molokai, Hana, Honokaa-Kukuihaele, Kaumakani-Hanapepe, Lanai, North Hilo, Paauhau-Paauilo, West Molokai) matches exactly the 8 subdivisions with low_n_flag.",
+   "mm-tiers HMDA column (an/who/hmda_tiers.json, all_four_counties). Combined 2025 vs 2019 shares: entry 19.4% vs 19.6%; mid 19.9% vs 23.7%; upper 32.3% vs 42.7%; luxury 52.0% vs 71.2%; ultra 100% (n=6) vs 75% (n=4). The second-home/investor splits, loan counts (4,836 / 3,718 / 864 / 150 / 6) and median incomes ($123K, $202K, $343K, $1.02M, $2.85M) also match.",
+   "mm-luxury bullet: 150 mortgaged $3–10M purchases in 2025. The share fell from 71% (52 of 73 loans) in 2019 to 52% (78 of 150), first-lien basis.",
+   "Oʻahu scorecard: every house and condo count and median in all 21 districts matches the Fidelity August 2026 Oʻahu text (pull/mm_district_stats-verify/txt/fntic_FINAL-Oahu-Stats-AUGUST-2026_1.txt). The district rows sum to 1,950/1,842 houses and 2,834/2,881 condos. The summary checks: houses +5.9%, median +4.4% to $1.19M, condos −1.6%, median $512K. The HBR August MSR also shows SF YTD 1,950 vs 1,842 (+5.9%).",
+   "Kauaʻi scorecard: all 5 districts match the Fidelity August 2026 Kauaʻi text, and the rows sum to 239/261 houses and 152/193 condos. The summary checks: houses −8.4%, condos −21.2%, median +10.6% to $1.30M, Kōloa +47.2%. Kōloa lost about 27 lower-priced sales, which supports 'mix shifted'.",
+   "Hawaiʻi Island scorecard: all 9 districts match the Fidelity August 2026 Big Island text, and the rows sum to 1,335/1,353 houses and 347/357 condos. The summary checks: houses −1.3%, median $564K, house volume $1,489.1M vs $1,258.5M = +18.3%, South Kohala +47.7%, North Kona +29.2%.",
+   "Maui scorecard: I parsed all 26 RAM areas from ram_2026-09_report.txt (single-family and total condo YTD tables), and every count and median matches an/mm/district_ytd.json. The rows sum to 537/527 and 620/512. The summary checks: condo sales +21.1%, median −6.8% to $655K, Wailea −16.6%, Kapalua −16.2%, Kīhei −11.7%, Nāpili −11.9%.",
+   "Short-answer sentence in hawaii-buyer-origins.src.html: Oʻahu house sales Jan–Aug 2026 are +5.9% (1,950 vs 1,842), and Maui County condo sales Jan–Sep 2026 are +21.1% (620 vs 512) at a median −6.8% ($655,000 vs $702,500). This matches the now_2026 Why box ('up 21% at about 7% lower prices').",
+   "† flags in all four ZIP tables match Realtor.com quality_flag=1 for September 2026 in an/mm/rdc_zip.json. Row counts match: 26, 12, 7 and 15 ZIPs shown.",
+   "Glance-table † note: the Realtor.com county history (raw/mm_rdc_zip/RDC_Inventory_Core_Metrics_County_History.csv) shows Maui County (15009) flagged every month from 202512 through 202609, and not flagged in 202511. ‡ note: Kauaʻi's price-reduced share fell from 15.2% (Aug 2026) to 4.8% (Sep 2026).",
+   "Fire-area labels: 96761 and 96790 are labeled, matching the ZIPs in the Thirty-second Wildfire Proclamation (skeptic_dl/p32.txt). 96767 has no listings row.",
+   "Glance-table HMDA row (16% / 34% / 40% / 31%) matches an/new/hmda.json 2025 county occupancy: 15.72 / 34.42 / 39.87 / 31.23. Kauaʻi's buyer split 68% · 32% · <1% matches page_data (604/284/2 of 890).",
+   "Why box investors_military: 'ʻEwa, Waiʻanae and Wahiawā … 36–44% … VA' and 'Wailuku, Kahului and Makawao … close to Oʻahu's' are both consistent with the mm-loans table (44/37/36% VA; 14/12/17% vs Oʻahu 15.7%). Its 'resort areas 29–54% investor' is consistent with investment-only shares of Koloa-Poipu 54%, Lahaina 53% and Hanalei 50%.",
+   "The micro chapter in hawaii-buyer-origins.src.html matches an/micro_chapter.html word for word, apart from the WHY placeholders."
+  ],
+  "findings": [
+   {
+    "quote": "In Poʻipū, Hanalei and Lahaina, 7 in 10 mortgaged buyers won't live in the home. In ʻEwa, 44% use a VA loan.",
+    "problem": "'Lahaina' here is the Census Lahaina county subdivision, which covers all of West Maui. Its 68% comes from the Kāʻanapali, Nāpili and Kapalua resort tracts, not from Lahaina town. In Lahaina town itself, 10 of 21 loans (48%) were second homes or investments. The row in the table ('Lahaina 122 · 68% · 2019: 48%') also suggests a post-fire shift toward outside buyers. In fact most of the rise comes from the fire wiping out in-town owner-occupant purchases (145 loans in 2019 down to 21). Local readers will take 'Lahaina' to mean the burn-zone town, so the headline states a wrong fact about the most sensitive place in the report.",
+    "evidence": "an/gap/hmda_tract.json, data.years.2025.by_primary_place, Lahaina CCD: Napili-Honokowai CDP 45 loans (28 second home/investment), Kaanapali CDP 45 (37), Kapalua/Napili mixed 11 (8), Lahaina CDP 21 (10). Total 83/122 = 68.0%, but Lahaina CDP alone is 10/21 = 47.6%. For 2019 (data.years.2019.by_primary_place): Lahaina CDP 145 loans, 28 = 19.3%; resort places 290 loans, 180 = 62%. So the town's share of the subdivision's loans fell from 33% to 17%. The hmda_tract notes say: 'Lahaina CCD 2025 counts are post-August-2023 wildfire; low counts in Lahaina-town tracts reflect destroyed stock. No causal analysis was done.'",
+    "fix": "Headline: 'In Poʻipū, on Kauaʻi's North Shore and on West Maui's resort coast (Kāʻanapali–Nāpili–Kapalua), about 7 in 10 mortgaged buyers are buying a second home or investment. In the ʻEwa district, 44% use a VA loan.' Rename the table row 'Lahaina' to 'West Maui (Lahaina subdivision: Kāʻanapali, Nāpili, Kapalua, Lahaina town)'. Add to the source note: 'Lahaina town alone: 10 of 21 loans (48%) in 2025; in 2019 it had 145 loans (19%). Most of West Maui's rise from 48% to 68% reflects the fire's loss of in-town owner-occupant purchases, not a measured change in who buys.'",
+    "severity": "high"
+   },
+   {
+    "quote": "<tr><td>Kula</td><td class=\"num\">97</td><td class=\"num\"><b>39%</b> <span class=\"why\">2019: 43%</span></td><td class=\"num\">2%</td><td class=\"num\">$325K</td><td class=\"num\">$1.66M</td></tr>",
+    "problem": "The Census Kula subdivision includes part of Wailea. More than half its loans (51 of 97) are in the Wailea place group. Those loans drive the row's 39% second-home/investment share and its $325K median income. The Wailea tract alone has a $509.5K median income and a $1.655M median value, and the row shows $1.66M. Upcountry Kula itself is 17%. Readers will take this row as Upcountry Kula.",
+    "evidence": "an/gap/hmda_tract.json, years.2025.by_primary_place, Kula CCD: Wailea CDP 51 loans, 30 second home/investment (58.8%); Kula CDP 46 loans, 8 (17.4%). by_tract_n_ge_20: the Wailea tract (95.5% Wailea CDP, ZCTA 96753) has 38 loans, 65.8%, median income $509.5K. key_figures notes: 'Maui: Kula $325k (Wailea tract 303.07 in Kula CCD $509.5k)'. The 2019 figure is the same mix: Wailea 100 loans at 67%, Kula CDP 74 at 12%.",
+    "fix": "Rename the row to 'Kula (incl. upper Wailea)' and add to the source note: 'The Kula subdivision includes part of Wailea: 51 of its 97 loans, 59% second home or investment. Kula town alone: 8 of 46 (17%).'",
+    "severity": "medium"
+   },
+   {
+    "quote": "Won't live there",
+    "problem": "The 'won't live there' label covers HMDA occupancy codes 2 and 3. Code 2 (second residence) means the borrower will occupy the home part of the time, so second-home buyers do live there. The label therefore overstates the evidence wherever second homes are a large share. It appears in the mm-loans column header and headline ('won't live in the home'), in the tier-table cells (for example 'Luxury … 52% won't live there (29% second home, …)') and in the glance row 'Mortgaged buyers who won't live there (2025)'.",
+    "evidence": "an/new/hmda.json and an/who/hmda_tiers.json method: occupancy_type 2 = 'second residence', 3 = 'investment property'. Second homes are 17 of 80 loans in Hanalei, 15 of 83 in Koloa-Poipu and 18 of 122 in Lahaina subdivision (hmda_tract.json by_ccd occupancy_counts), and 29% of the statewide $3–10M tier (44 of 150).",
+    "fix": "Rename the column to 'Second home or investment' and the glance row to 'Mortgaged buyers: second home or investment (2025)'. Tier cells: '52% second home or investment (29% second home, 23% investor)' and '2019: 71%'. mm-loans headline: '… about 7 in 10 mortgaged buyers are buying a second home or investment, not a main home.'",
+    "severity": "medium"
+   },
+   {
+    "quote": "Locals buy the first $3 million. Above it, the mainland and the world take over.",
+    "problem": "The headline is not supported by its own table. On Oʻahu, locals bought 69% of $3–10M sales, so the mainland and the world do not 'take over' above $3M; they are the majority only at $10M+, on 14 sales. On Maui, buyers without a homeowner exemption are 58%, 50% and 63% of the three tiers below $3M. Statewide, 48% of mortgaged $3–10M buyers were buying a main home.",
+    "evidence": "an/who/oahu_join.json headline.tier_share: luxury_3m_10m hawaii_total 0.6863 (n=255); ultra hawaii_total 0.3571 (n=14). an/who/maui_join.json, pooled FY2024–FY2026 nonowner_share_of_sales: entry 0.585, mid 0.4956, upper 0.6283. an/who/hmda_tiers.json 2025 luxury principal share 0.48.",
+    "fix": "'On Oʻahu, locals buy over 80% of homes under $3 million and still about 7 in 10 at $3–10 million; only above $10 million are outside buyers the majority. On Maui, half or more of sales in every tier go to buyers without a homeowner exemption.'",
+    "severity": "medium"
+   },
+   {
+    "quote": "† Realtor.com flags this ZIP's figures as lower quality for September 2026; treat the year-over-year change as rough.",
+    "problem": "The † marks only ZIPs flagged in September 2026. But the 'vs Sep 2025' column also depends on the September 2025 base month. Twenty ZIPs shown without a † have a flagged Sep 2025 base, so their year-over-year change is just as rough. That includes the biggest unflagged moves: Mountain View +33%, Kahuku +29%, Līhuʻe +23%, Maunaloa +22%, Kāneʻohe +19% and Kīlauea +18%. Kahuku's base month also had only 8 active listings, below the report's own 10-listing minimum.",
+    "evidence": "an/mm/rdc_zip.json zips[].months.yoy.quality_flag = 1 with latest.quality_flag = 0 for: Oʻahu 96701, 96707, 96731 (yoy active_listing_count 8), 96744, 96782, 96792, 96797, 96821, 96825, 96826; Maui 96732, 96770, 96790; Kauaʻi 96722, 96754, 96766; Hawaiʻi 96704, 96725, 96737, 96771.",
+    "fix": "Put † on every ZIP flagged in either month, and show '—' for the change where the base month had fewer than 10 listings (96731). Note text: '† Realtor.com flags this ZIP's figures as lower quality for September 2026 or September 2025; treat the year-over-year change as rough. Changes are left out where September 2025 had fewer than 10 listings.'",
+    "severity": "medium"
+   },
+   {
+    "quote": "Resort condos fell most: Wailea/Mākena −17%, Kapalua −16%, Kīhei −12%, Nāpili/Kahana −12%.",
+    "problem": "Māʻalaea's condo median fell the most of any area with 10 or more sales in both years: −18%, on 14 sales each year. It is left out of a list that claims to name the steepest drops, and the scorecard right below shows 'Maalaea … $512K −18%'.",
+    "evidence": "an/mm/district_ytd.json Maui condo: Maalaea 512,500 vs 624,500 = −17.9% (n 14/14). The RAM text (ram_2026-09_report.txt, Total Condominium Sales YTD) shows Maalaea −17.9%. Wailea/Makena −16.6%, Kapalua −16.2%, Napili −11.9%, Kihei −11.7%.",
+    "fix": "'Resort condos fell most: Māʻalaea −18%, Wailea/Mākena −17%, Kapalua −16%, Kīhei and Nāpili/Kahana −12%.'",
+    "severity": "low"
+   },
+   {
+    "quote": "<tr><td>Hāmākua</td><td class=\"num\">52</td><td class=\"num\">86% · <b>14%</b> · 0%</td>",
+    "problem": "The table rounds already-rounded 1-decimal values, and Python rounds halves to even, so some cells disagree with the counts. Hāmākua is 45/52 = 86.5% and 7/52 = 13.5%, so it should read 87% · 13%. Kaʻū foreign is 1/189 = 0.53%, so 1% rather than 0%. Kohala Coast Jan–Jun 2026 is 153/329 = 46.50%, so 47% rather than the 46% shown. North Shore Oʻahu Jan–Jun 2026 is 26/80 = 32.5%, which rounds half-up to 33% rather than the 32% shown.",
+    "evidence": "an/gap/tg_districts.json district_summary counts. The code in an/build_micro.py formats a['hawaii_pct'] (stored as 86.5) with :.0f and calls round(b['other_us_pct']) on the stored 46.5.",
+    "fix": "Hāmākua row: '87% · <b>13%</b> · 0%' (bar width 13%). Kaʻū: '65% · <b>35%</b> · 1%'. Kohala Coast Jan–Jun 2026: '47%'. North Shore (Oʻahu) Jan–Jun 2026: '33%'. In the code, compute percentages from the counts with half-up rounding.",
+    "severity": "low"
+   },
+   {
+    "quote": "<tr><td>Mililani</td><td class=\"num\">124 <span class=\"why\">+25%</span></td><td class=\"num\">$1.12M",
+    "problem": "money() rounds through binary floats, so published medians ending in 5,000 or 500 come out rounded down and no longer match the board figures. Examples: Mililani $1,125,000 shows as $1.12M, Waiʻalae–Kāhala $2,655,000 as $2.65M, North Shore $1,575,000 as $1.57M, Hanalei $2,525,000 as $2.52M, North Kohala $1,615,000 as $1.61M, Wailuku $1,025,000 as $1.02M, Haʻikū $1,325,000 as $1.32M, Wailea condos $2,085,000 as $2.08M, and Kauaʻi condos $852,500 as $852K. Eighteen scorecard rows have at least one such median.",
+    "evidence": "The Fidelity Oʻahu, Kauaʻi and Big Island text and the RAM text show these exact medians. I recomputed every scorecard cell with Decimal half-up rounding and compared it with an/micro_chapter.html; 18 rows differ only in this rounding.",
+    "fix": "Use Decimal ROUND_HALF_UP in money(), or show three decimals for medians that land on a half (for example '$1.125M'). Corrected examples: Mililani $1.13M, Waiʻalae–Kāhala $2.66M, North Shore $1.58M, Hanalei $2.53M, North Kohala $1.62M, Wailuku $1.03M, Haʻikū $1.33M, Wailea condo $2.09M, Kauaʻi condo $853K.",
+    "severity": "low"
+   },
+   {
+    "quote": "<b>100%</b> won't live there (50% second home, 50% investor)<br><span class=\"why\">6 loans (n&lt;20); median income $2.85M; 2019: 75% won't live there</span>",
+    "problem": "A bold 100% is quoted from 6 loans, and the 2019 figure of 75% comes from 4 loans with no small-sample flag. The source file says flagged cells must not be quoted as rates.",
+    "evidence": "an/who/hmda_tiers.json: by_year 2025 ultra n_loans 6, by_year 2019 ultra n_loans 4. Its method says: 'Small cells: … n < 20. Do not quote percentages from flagged cells as rates.'",
+    "fix": "'6 of 6 loans were second homes (3) or investments (3); 2019: 3 of 4. Too few to quote as a rate.'",
+    "severity": "low"
+   },
+   {
+    "quote": "the share bought as a second home or investment fell from 71% in 2019 to 52%",
+    "problem": "The tiers are fixed in nominal dollars, and Hawaiʻi prices rose 30–140% between 2019 and 2025. A $3M purchase in 2025 is roughly a $2M purchase in 2019, so the $3M line now takes in many main-home buyers who sat in the 2019 'upper' tier, where only 43% were second home or investment. Without that caveat, 'changing' reads as a change in who buys, when it may largely be inflation. The same applies to the tier table's '2019: …' figures.",
+    "evidence": "an/who/hmda_tiers.json: $3–10M main-home loans rose from 21 to 72 (×3.4), while second-home and investment loans rose only from 52 to 78 (×1.5). Tier loan shares moved a lot (entry 72.5% → 50.5%; luxury 0.6% → 1.6%). The micro chapter's own type table shows average house prices 2019 → 2025: Oʻahu $967K → $1.35M, Maui $865K → $1.57M, Kauaʻi $722K → $1.71M.",
+    "fix": "'… fell from 71% in 2019 to 52%. The tiers are in current dollars, and prices rose sharply over those years, so more main-home buyers now cross $3M; part of the drop reflects that, not just a change in who buys.' Add 'Tiers in nominal dollars' to the tier-table source note.",
+    "severity": "low"
+   },
+   {
+    "quote": "Kahuku tops the ZIP list only because Turtle Bay is half of a tiny ZIP.",
+    "problem": "This Why box sits inside the mm-oahu section and contradicts the ZIP table right above it. The table's 'Owned from off-island' column ranks 96815 Honolulu first (28%) and 96731 Kahuku second (26%). Kahuku ranks first only on the mainland-only share, which the table does not show.",
+    "evidence": "an/owners/oahu_individual.json situs_zip: 96815 mainland 0.2266 + foreign 0.0566 = 28.3%; 96731 0.255 + 0.0095 = 26.5%. The micro chapter Oʻahu ZIP table shows 96815 at 28% and 96731 at 26%. The research question also lists Waikiki 28% before Kahuku 26%. (Source: an/why_curated.json micro_hotspots.lead.)",
+    "fix": "'Kahuku ranks second, just behind Waikīkī, only because Turtle Bay is half of a tiny ZIP.'",
+    "severity": "low"
+   },
+   {
+    "quote": "<tr><td><b>Whole island</b></td><td class=\"num\"><b>537</b>",
+    "problem": "The Maui scorecard total is labeled 'Whole island', but it is RAM's 'All MLS' total for Maui County. It includes the Lānaʻi and Molokaʻi rows listed above it.",
+    "evidence": "an/mm/district_ytd.json Maui County house rows sum to 537 only when Lanai (6) and Molokai (20) are included. The RAM text labels this row 'All MLS'.",
+    "fix": "Label the Maui total row 'Maui County (all areas)'. For Maui, change the build_micro.py 'Whole island' string accordingly.",
+    "severity": "low"
+   },
+   {
+    "quote": "<tr><td>Ewa</td><td class=\"num\">2,618</td><td class=\"num\"><b>8%</b> <span class=\"why\">2019: 8%</span></td><td class=\"num\">44%</td>",
+    "problem": "The headline's 'In ʻEwa, 44% use a VA loan' and this row refer to the Census ʻEwa subdivision. It runs from Hālawa, ʻAiea and Pearl City to Kapolei and Ko ʻOlina, and includes Mililani and Waipahu. Many local readers will take 'ʻEwa' to mean ʻEwa Beach, where the VA share is 22%. The ʻEwa Plain subdivisions are far higher: Ocean Pointe 71%, ʻEwa Gentry 60%.",
+    "evidence": "an/gap/hmda_tract.json years.2025.by_primary_place for Ewa CCD (23 place groups, 2,618 loans): Pearl City CDP 191 (VA 29.8%), Mililani Town 181 (47.5%), Waipahu 127 (12.6%), Aiea 43 (23.3%), Halawa 50 (22.0%), Ewa Beach CDP 54 (22.2%), Ocean Pointe 158 (70.9%), Ewa Gentry 280 (60.0%).",
+    "fix": "Rename the row 'ʻEwa district (ʻAiea–Pearl City to Kapolei, incl. Mililani and Waipahu)'. In the headline, write 'In the ʻEwa district, 44% use a VA loan (over 60% in Ocean Pointe and ʻEwa Gentry).'",
+    "severity": "low"
+   }
+  ],
+  "verdicts": [
+   {
+    "quote": "In Poʻipū, Hanalei and Lahaina, 7 in 10 mortgaged buyers won't live in the home. In ʻEwa, 44% use a VA loan.",
+    "real": true,
+    "reason": "Confirmed (medium-high; high is defensible given the fire). an/gap/hmda_tract.json 2025 by_primary_place, Lahaina CCD has four place groups: Napili-Honokowai 28/45, Kaanapali 37/45, Kapalua/Napili 8/11 and Lahaina CDP 10/21. Total 83/122 = 68.0%; Lahaina town alone is 47.6%. The same chapter's RAM scorecard uses 'Lahaina' for the town only (separate from Kaanapali, Napili and Kapalua), and the Maui owner table splits West Maui N from Lahaina town. So 'Lahaina' means two different places within one chapter. The auditor's causal claim is wrong and must not go in the fix. 2019: town 28/145 (19.3%), resort places 180/290 (62.1%). 2025: town 47.6%, resort places 73/101 (72.3%). Holding 2019 rates at 2025 weights gives 54.7%, so composition explains about 7 of the 20 points (about 4 using 2019 weights). Most of the rise is within the resort places themselves, not the loss of town loans. The 68% figure itself is correct for the subdivision.",
+    "fix": "Headline: 'In Kōloa–Poʻipū, Hanalei and West Maui, about 7 in 10 mortgaged buyers are buying a second home or investment. In the ʻEwa district, 44% use a VA loan.' Table row label 'Lahaina' → 'West Maui (Lahaina subdivision)'. Add to the source note: 'West Maui is the Census Lahaina subdivision: Kāʻanapali, Nāpili, Kapalua and Lahaina town. Lahaina town alone had 21 loans in 2025 (10 second home or investment), down from 145 in 2019.' Do NOT add a sentence attributing the 48%→68% rise to the fire; the data does not support it."
+   },
+   {
+    "quote": "<tr><td>Kula</td><td class=\"num\">97</td><td class=\"num\"><b>39%</b> <span class=\"why\">2019: 43%</span></td><td class=\"num\">2%</td><td class=\"num\">$325K</td><td class=\"num\">$1.66M</td></tr>",
+    "real": true,
+    "reason": "Confirmed (medium). Kula CCD 2025: Wailea CDP place group has 51 loans, 30 of them second home or investment (58.8%), median income $470K. Kula CDP has 46 loans, 8 of them second home or investment (17.4%), income $258K. Together that is 38/97 = 39.2%, with a CCD median income of $325K. The 2019 figure is the same mix: Wailea 67/100, Kula 9/74. Two corrections to the finding. (1) The $1.66M median value is not Wailea-driven: Kula CDP alone is $1.625M. (2) 'Upper Wailea' is unverified and probably wrong. Tract 15009030307 (2020 Gazetteer) has its interior point at 20.646, -156.428 and 4.99 sq mi of water, so it is coastal south Wailea toward Mākena. Use 'part of Wailea'.",
+    "fix": "Row label: 'Kula (incl. part of Wailea)'. Add to the source note: 'The Kula subdivision includes part of Wailea: 51 of its 97 loans, 30 of them a second home or investment. Kula itself: 8 of 46 (17%).'"
+   },
+   {
+    "quote": "Won't live there",
+    "real": true,
+    "reason": "Confirmed (medium). HMDA occupancy_type 2 is 'second residence' (an/who/hmda_tiers.json method), which the borrower occupies for part of the year, so 'won't live there' is false for those buyers. Second homes are a large part of the combined figure: Hanalei 17/80, Koloa-Poipu 15/83, Lahaina CCD 18/122 (hmda_tract by_ccd), and the $3–10M tier 44/150 = 29% of 52%. The same label is applied to the Maui column, which counts buyers without a homeowner exemption, and the headline there says 'won't live in the home'. an/who/maui_join.json shows 8.2% of non-homeowner-rate buyers (18.6% of house buyers) now hold the exemption. That headline also says 'half or more at every price', but the mid tier is 1,017/2,052 = 49.6%.",
+    "fix": "Column header 'Won't live there' → 'Not a main home'. Glance row → 'Mortgaged buyers not buying a main home (2025)'. Glance source note 'Mortgaged buyers not living there' → 'Mortgaged buyers not buying a main home'. Tier cells: '52% second home or investment (29% second home, 23% investor)' and '2019: 71%' (same pattern for every tier). CCD source note: '\"Not a main home\" = second home plus investment'. Tier headline: 'Oʻahu buyers are mostly local up to $10 million. On Maui, buyers without a homeowner exemption take about half or more of sales at every price.' The mm-loans headline is given under the first finding."
+   },
+   {
+    "quote": "Locals buy the first $3 million. Above it, the mainland and the world take over.",
+    "real": false,
+    "reason": "Stale. This text no longer appears in an/micro_chapter.html, hawaii-buyer-origins.src.html or the built hawaii-buyer-origins.html; it survives only in backups (an/src_backup_pre_*.html, an/build_micro_pre_*.py). The current headline is 'Oʻahu buyers are mostly local up to $10 million. On Maui, buyers who won't live in the home take half or more at every price.' Its Oʻahu half is supported: 83%, 87%, 82% and 69% local through $10M (oahu_join tier_share). The Maui half has two small problems, covered under the 'Won't live there' finding. The mid tier is 49.6% (1,017/2,052), which is not 'half or more'. And the measure is buyers without a homeowner exemption, not buyers who won't live there.",
+    "fix": "No change for the quoted text. Residual fix to the current headline: 'Oʻahu buyers are mostly local up to $10 million. On Maui, buyers without a homeowner exemption take about half or more of sales at every price.'"
+   },
+   {
+    "quote": "† Realtor.com flags this ZIP's figures as lower quality for September 2026; treat the year-over-year change as rough.",
+    "real": true,
+    "reason": "Confirmed (low-medium). an/mm/rdc_zip.json has exactly 20 shown ZIPs with yoy.quality_flag=1 and latest=0. Oʻahu: 96701, 96707, 96731, 96744, 96782, 96792, 96797, 96821, 96825, 96826. Maui: 96732, 96770, 96790. Kauaʻi: 96722, 96754, 96766. Hawaiʻi: 96704, 96725, 96737, 96771. The Realtor.com history file (raw/mm_rdc_zip/RDC_Inventory_Core_Metrics_Zip_History.csv) shows the flag runs over consecutive months, for example Kāneʻohe flagged Jan–Oct 2025. That makes it a data-quality flag on the month's level, so a flagged base month makes the change rough too. One correction: Kahuku is not the only thin base. September 2025 had fewer than 10 listings at 96731 (8), 96755 Kapaʻau (5) and 96795 Waimānalo (4).",
+    "fix": "Put † on every ZIP flagged in either month (add the 20 listed). Show '—' for 'vs Sep 2025' at 96731, 96755 and 96795. Note text: '† Realtor.com flags this ZIP's figures as lower quality for September 2026 or September 2025; treat the year-over-year change as rough. Changes are left out where September 2025 had fewer than 10 listings.'"
+   },
+   {
+    "quote": "Resort condos fell most: Wailea/Mākena −17%, Kapalua −16%, Kīhei −12%, Nāpili/Kahana −12%.",
+    "real": true,
+    "reason": "Confirmed (low). an/mm/district_ytd.json Maui condo: Maalaea $512,500 vs $624,500 = −17.9% on 14/14 sales. The RAM text (pull/mm_district_stats-verify/txt/ram_2026-09_report.txt, line 1058) shows −17.9%. That is the largest drop among areas with 10 or more sales in both years; Kahului's −21% has only 9 sales in 2025. Others: Wailea/Makena −16.6%, Kapalua −16.2%, Napili −11.9%, Kihei −11.7%. Māʻalaea is an apartment-zoned vacation-rental condo strip, so 'resort condos' fits.",
+    "fix": "'Resort condos fell most: Māʻalaea −18%, Wailea/Mākena −17%, Kapalua −16%, Kīhei and Nāpili/Kahana −12%.'"
+   },
+   {
+    "quote": "<tr><td>Hāmākua</td><td class=\"num\">52</td><td class=\"num\">86% · <b>14%</b> · 0%</td>",
+    "real": true,
+    "reason": "Confirmed (low). Recomputed from an/gap/tg_districts.json counts with half-up rounding. Hāmākua 45/52 = 86.5% → 87%, and 7/52 = 13.5% → 13% (shown 86/14). Kaʻū foreign 1/189 = 0.53% → 1% (shown 0%). Kohala Coast Jan–Jun 2026: 153/329 = 46.50% → 47% (shown 46%). North Shore Oʻahu Jan–Jun 2026: 26/80 = 32.5% → 33% (shown 32%). The cause is build_micro.py formatting the stored 1-decimal values with :.0f and round(). The other 21 districts match.",
+    "fix": "Hāmākua: '87% · <b>13%</b> · 0%', bar width 13%. Kaʻū: '65% · <b>35%</b> · 1%'. Kohala Coast Jan–Jun 2026: '47%'. North Shore (Oʻahu) Jan–Jun 2026: '33%'. In build_micro.py, compute shares from the counts with Decimal ROUND_HALF_UP."
+   },
+   {
+    "quote": "<tr><td>Mililani</td><td class=\"num\">124 <span class=\"why\">+25%</span></td><td class=\"num\">$1.12M",
+    "real": true,
+    "reason": "Confirmed (low). money() uses float :.2f and Python round(), so values ending in 5 round down: some are exact halves rounded to even, others are float artifacts such as 2.655 → 2.65. Recomputing every displayed scorecard median with Decimal half-up finds 19 cells in 18 rows that differ. Oʻahu: Ala Moana $952K→$953K, Makakilo $1.01M→$1.02M, Mililani $1.12M→$1.13M, North Shore $1.57M→$1.58M, Waiʻalae–Kāhala $2.65M→$2.66M, Kailua condo $752K→$753K. Hawaiʻi: North Kohala $1.61M→$1.62M, Kaʻū $332K→$333K, South Hilo condo $292K→$293K, North Kona condo $572K→$573K. Kauaʻi: Līhuʻe $1.11M→$1.12M and condo $622K→$623K, Hanalei $2.52M→$2.53M, island condo $852K→$853K. Maui: Haʻikū $1.32M→$1.33M, Wailuku $1.02M→$1.03M, Lānaʻi $672K→$673K, Māʻalaea condo $512K→$513K, Wailea condo $2.08M→$2.09M. The same function also misrounds ZIP-table cells, for example 96741 list price $1,595,000 shown as $1.59M and UHERO 96712 $1,785,000 shown as $1.78M.",
+    "fix": "In money(), round with Decimal ROUND_HALF_UP and regenerate the chapter. Example corrections: Mililani $1.13M, Waiʻalae–Kāhala $2.66M, North Shore $1.58M, Hanalei $2.53M, North Kohala $1.62M, Wailuku $1.03M, Haʻikū $1.33M, Wailea condo $2.09M, Kauaʻi condo $853K, 96741 Kalāheo $1.60M."
+   },
+   {
+    "quote": "<b>100%</b> won't live there (50% second home, 50% investor)<br><span class=\"why\">6 loans (n&lt;20); median income $2.85M; 2019: 75% won't live there</span>",
+    "real": true,
+    "reason": "Confirmed (low). an/who/hmda_tiers.json: 2025 ultra n_loans = 6 (0 principal, 3 second home, 3 investment); 2019 ultra n_loans = 4 (1 principal, 3 second home), with no small-sample flag shown. The file's method says: 'Do not quote percentages from flagged cells as rates.'",
+    "fix": "'<b>6 of 6</b> loans: 3 second homes, 3 investments<br><span class=\"why\">too few to quote as a rate; median income $2.85M; 2019: 3 of 4</span>'"
+   },
+   {
+    "quote": "the share bought as a second home or investment fell from 71% in 2019 to 52%",
+    "real": true,
+    "reason": "Confirmed, and more serious than 'low' (medium). The 'changing' claim is mostly an artifact of nominal tiers. I rebuilt the hmda_tiers universe from raw/hmda CSVs (originated, purchase, first lien, 1–4 units, site-built) and reproduced 2019 $3–10M = 52/73 = 71.2%. The FHFA all-transactions HPI for Hawaiʻi (ws_dl_fhfa/hpi_at_state.csv) averaged 632.05 in 2019 and 926.71 in 2025, a ratio of 1.466. With 2019 cut-offs scaled by that ratio, 2019's share was 100/184 = 54.3%, against 52.0% in 2025. Upper tier: 32.2% at adjusted cut-offs vs 32% in 2025 (nominal 2019: 43%). So most of the 71%→52% drop reflects prices pushing main homes over $3M. The tier table's '2019:' figures have the same problem.",
+    "fix": "Replace the sentence with: 'Financed luxury is rare: only 150 mortgaged purchases statewide were $3–10M in 2025, and 52% were second homes or investments. The 2019 figure (71%) is not like-for-like: Hawaiʻi prices rose about 47% since then (FHFA), and at price-adjusted cut-offs the 2019 share was about 54%.' Add to the tier-table source note: 'Tiers are in current dollars. At price-adjusted cut-offs, 2019 shares were close to 2025's.'"
+   },
+   {
+    "quote": "Kahuku tops the ZIP list only because Turtle Bay is half of a tiny ZIP.",
+    "real": true,
+    "reason": "Confirmed (low). an/owners/oahu_individual.json situs_zip: 96815 = 22.66% + 5.66% = 28.3%; 96731 = 25.5% + 0.95% = 26.5%. The mm-oahu ZIP table directly above the box (28% vs 26%) and the owners table (src.html line 455: Waikīkī 28% first, Kahuku · Turtle Bay 26% second) both rank Kahuku second. The box's expanded checked answer repeats the error: 'Kahuku tops the list because Turtle Bay makes up half of a tiny ZIP.'",
+    "fix": "Lead (why_curated micro_hotspots.lead): '…against 2–5% in Kahuku town, and Kahuku ranks second, behind only Waikīkī, because Turtle Bay is half of a tiny ZIP.' Expanded text: 'Kahuku ranks second, behind only Waikīkī, because Turtle Bay makes up half of a tiny ZIP.'"
+   },
+   {
+    "quote": "<tr><td><b>Whole island</b></td><td class=\"num\"><b>537</b>",
+    "real": true,
+    "reason": "Confirmed (low). an/mm/district_ytd.json Maui County: house districts sum to 537 and condos to 620 only when Lanai (6/5) and Molokai (20/24) are included. Without them the totals are 511 and 591. The RAM text labels this row 'All MLS' (ram_2026-09_report.txt, lines 1013 and 1082). 'Whole island' is still correct for Oʻahu, Kauaʻi and Hawaiʻi Island.",
+    "fix": "For Maui only, label the total row 'All Maui County'. In build_micro.py dytd(): label = 'All Maui County' if key == 'Maui County' else 'Whole island'."
+   },
+   {
+    "quote": "<tr><td>Ewa</td><td class=\"num\">2,618</td><td class=\"num\"><b>8%</b> <span class=\"why\">2019: 8%</span></td><td class=\"num\">44%</td>",
+    "real": true,
+    "reason": "Confirmed (low). The Ewa CCD has 23 place groups and 2,618 loans, from Hālawa, ʻAiea and Pearl City to Kapolei and Ko Olina, including Waipahu and Mililani. VA share is 44.1%, but ʻEwa Beach CDP is 12/54 = 22%. The ʻEwa Plain groups are higher: Ocean Pointe 112/158 = 70.9%, Ewa Gentry 168/280 = 60.0%. The auditor's proposed 'over 60% in Ocean Pointe and ʻEwa Gentry' is wrong: Ewa Gentry is exactly 60.0%.",
+    "fix": "Row label: 'ʻEwa district (Hālawa to Kapolei, incl. Pearl City, Waipahu, Mililani)'. Headline: 'In the ʻEwa district, 44% use a VA loan.' If sub-areas are named, write 'Ocean Pointe 71%, ʻEwa Gentry 60%', not 'over 60%'."
+   }
+  ]
+ },
+ {
+  "part": "whyA",
+  "checked": [
+   "California 1,271 buyers in 2025 = 38.4% of 3,314 out-of-state US buyers, 4.6x Washington (278): an/new/tg.json 2025FY Statewide",
+   "California is #1 out-of-state on all four islands in 2024, 2025 and Jan-Jun 2026 (box title 'leads on every island'): an/new/tg.json island editions",
+   "Per-million rates, 2025, recomputed with Census V2025 (ws_dl_pop/NST-EST2025-ALLDATA.csv): CA 32.3, WA 34.7, NV 40.8, OR 31.1, UT 29.7, CO 22.6, AZ 11.1, FL 6.8, TX 5.5. '30-41' is correct. CA/TX = 5.9x and CA/FL = 4.8x, so 'five to six times' is acceptable rounding",
+   "California -14% (639 to 552) and Washington +17% (150 to 175), Jan-Jun 2026 vs Jan-Jun 2025, same-edition basis (Q2 2025 edition not revised): tg.json comparison_editions 2025H1 vs editions 2026H1",
+   "Californians about 6% of 2025 Oahu purchases: 656/11,097 = 5.9%",
+   "California about 38% of US visitors (DBEDT 2025 T19: 37.7%) and its share of buyers matches (38.4%)",
+   "California average price vs local buyers, 2025: Oahu 1.18x ($1.03M vs $0.87M, 'close to local prices'), Maui County 2.02x, Kauai 2.79x, Hawaii Island 3.57x",
+   "Visitors per 100 residents, 2025 (DBEDT T19/T53 over Census V2025): WA 8.88, OR 7.50, UT 6.50, TX 1.05. The box figures 8.9 / 7.5 / 6.5 / 1.1 are correct",
+   "West lead: per resident, AK (>=74.6/M, Hawaii Island alone), NV, WA, OR, UT and CO buy 3.3x (CO vs FL) to more than 13x (AK vs TX) the TX/FL rate, so 'three to more than ten times' is correct",
+   "Colorado's 2025 Kauai count of 24 includes 12 Hanalei purchases for $5.5M in Jan-Jun 2025 (ws_txt/Kauai-Q2-2025.txt), so 'largely' (half) is acceptable",
+   "Oregon on Hawaii Island in 2025: Puna 29 ($272K avg), Kona 24, Kohala Coast 15 (an/gap/tg_districts.json). Washington Puna 34. Supports the Oregon broker advice and 'some compete ... for cheap Puna lots'",
+   "Seattle nonstops to all four main airports and Anchorage-Kona winter service: supported by the skeptic's re-check (DBEDT T101)",
+   "Japan 202 + Korea 87 = 289 of 11,097 Oahu purchases = 2.60% (tg.json 2025FY Oahu)",
+   "Oahu Japanese purchases were 32 in Q1 2026 (tg.json 2026Q1 Oahu)",
+   "Japanese purchases on Oahu: H1 2026 133 vs H1 2025 84 (+49). With 61 Japan-billed owners at The Park Ward Village, 'mostly one tower' and 'flat to slightly down' (about 72 vs 84) match the checked answer",
+   "98% of Japanese visitors on Oahu (731,979/749,596 = 97.6%)",
+   "About 2,000 Japan-billed Oahu parcels (2,024). Nearly all are condos: 3,051 of 3,251 foreign-mailing parcels are CPR units, so at least 90% of Japan's are (an/new/owners_oahu.json)",
+   "Japanese and Korean 2025 Oahu average prices ($1.15M and $1.07M) are well above the Oahu condo median",
+   "Korean jumps at Victoria Place (Q4 2024, 31 of 40) and The Park on Keeaumoku (H2 2025, 79 of 87) match the corrected verdict",
+   "Canada fell 106 to 64 in 2025. Neighbor islands fell 75 to 29 while Oahu rose 31 to 35, so the drop 'happened on the neighbor islands' (tg.json)",
+   "South Maui Canadian purchases fell 33 to 6 (an/gap/tg_districts.json, 2024 restated vs 2025FY South Side)",
+   "Canada had 11 of 1,247 Maui County sales and 17 of 3,675 Hawaii Island sales in 2025 (tg.json)",
+   "About 1,600 Maui County parcels mail tax bills to Canada: 1,602 = 87.3% of 1,835 foreign (an/new/owners_neighbor.json)",
+   "Canadian visitors to Maui island fell 166,125 to 158,780 (-4.4%) and Maui County Canadian purchases fell 39 to 11 (-72%): raw/visitors 2024 and 2025 workbooks, Table 24",
+   "Strength badges: build_why.py aligns verdicts to drivers by index, and each label matches its driver for all four keys. The refuted 'no state income tax' driver is correctly dropped (null label, Ruled out). Weakened drivers are moved down one level as designed",
+   "Japan/Korea and Canada lead strengths (tower closings Strong; Oahu links Strong; developer channel, weak yen, political shock and Maui slump Moderate; the rest Weak) are consistent with the verdicts",
+   "Fair housing: the Japan/Korea broker note ('Any marketing aimed at one country needs a fair-housing review') and the west_states families note ('A buyer's home state can't be screened') are present and appropriate. State-of-residence marketing in the California and west_states boxes is not a protected-class issue",
+   "Main text (buyers section) agrees with the boxes on the 2025 and H1 2026 counts, on Canada leading by number on Hawaii Island (17) and Maui (11), and on the Japanese H1 2026 rise being mostly The Park Ward Village"
+  ],
+  "findings": [
+   {
+    "quote": "Canadian demand on the neighbor islands has settled at about 18 closings per half-year since early 2025. Budget for that, not a rebound.",
+    "problem": "The number is wrong for one of the three half-years it covers. Neighbor-island Canadian closings were 18 in Jan-Jun 2025, 11 in Jul-Dec 2025 and 18 in Jan-Jun 2026, so demand has not 'settled at about 18'. The same error is in the skeptic's final_answer, which contradicts the skeptic's own verdict (Maui second half 17 to 3; Hawaii Island lost 12 of 16 after March). Brokers are told to budget on this figure.",
+    "evidence": "an/new/tg.json Canada by island: 2025H1 (Q2 2025 edition): Hawaii Island 9 + Maui 8 + Kauai 1 = 18. 2025FY: 17 + 11 + 1 = 29, so H2 2025 = 29 - 18 = 11. 2026H1: 9 + 7 + 2 = 18. The 2025H1 totals were not revised in the Q2 2026 edition (revisions_between_editions difference 0).",
+    "fix": "Canadian closings on the neighbor islands have run at 11 to 18 per half-year since early 2025 (18 in January–June 2025, 11 in July–December 2025, 18 in January–June 2026). Budget for that, not a rebound.",
+    "severity": "high"
+   },
+   {
+    "quote": "About 1,600 Maui County properties send their tax bills to Canada, many of them South Maui condos facing Bill 9.",
+    "problem": "'Facing Bill 9' comes from the pre-challenge research, and the skeptic marked it as a fact error. The foreign-mailing condos are class-11 short-term-rental units. Only about 6,108 of the 13,269 class-11 condo units are on the Minatoya list that Bill 9 phases out, so the number of Canadian-owned units facing Bill 9 is unknown and 'probably much lower'. The final_answer dropped 'facing Bill 9'. The sentence also tells brokers to solicit listings by owner country, but unlike the Japan/Korea box it carries no fair-housing caution.",
+    "evidence": "an/why_result.json canada, verdict 5 fact_errors: \"'About 1,170 foreign-mailing units are STR condos facing Bill 9' is wrong ... far fewer than 1,170 foreign units are likely affected.\" The final_answer reads: 'about 1,600 Maui County properties already send their tax bills to Canada, many of them South Maui condos' (no Bill 9). The count of 1,602 is confirmed in an/new/owners_neighbor.json.",
+    "fix": "About 1,600 Maui County properties send their tax bills to Canada, many of them South Maui condos; check each unit's zoning, since only apartment-zoned (Minatoya-list) units face the Bill 9 phase-out. Contact owners by property and mailing address, and have any country-targeted outreach reviewed for fair-housing compliance.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Canadian visits have held up far better than Canadian buying (Maui visitors −4.4%, purchases −72%), so the effect on tourism jobs has been small so far.",
+    "problem": "Neither the checked answer nor the data supports the tourism-jobs conclusion; there is no jobs evidence at all. Canadian visitors statewide fell 12.7%, Canadian visitors to Hawaii Island fell 10.4%, and Canadian visitor-days fell about 21% on Hawaii Island and 9% on Maui. The research's for_locals said the opposite ('should expect softer winter seasons'). 'Maui visitors' is also ambiguous: the figure covers Canadian visitors only.",
+    "evidence": "raw/visitors/2024-annual-visitor.xlsx and 2025-annual-visitor.xlsx, Table 24 (Canada): Maui island 166,125 to 158,780 (-4.4%), stay 10.46 to 9.93 days (visitor-days -9.2%). Hawaii Island 77,678 to 69,597 (-10.4%), stay 9.81 to 8.67 days (visitor-days -20.8%). Statewide 445,984 to 389,241 (-12.7%).",
+    "fix": "Canadian visits fell far less than Canadian buying (Canadian visitors to Maui −4.4% in 2025, Canadian purchases in Maui County −72%), though Canadian visitors to Hawaiʻi Island fell 10%, so winter tourism businesses that serve Canadians have felt part of the pullback.",
+    "severity": "medium"
+   },
+   {
+    "quote": "The 2025 drop, from 106 to 64 purchases, happened on the neighbor islands, mostly among South Maui condo buyers (33 to 6).",
+    "problem": "33 to 6 counts all Canadian purchases in Title Guaranty's South Side district; it is not a count of condo buyers. The skeptic found the lost deals averaged about $2.1M, 'closer to Wailea than budget Kihei', and that 'nothing shows that they were Minatoya-list units'. The final_answer says only 'Canadians in South Maui (33 to 6)'.",
+    "evidence": "an/gap/tg_districts.json, Maui South Side Canada: 2024 restated 33 ($89.5M), 2025FY 6 ($32.4M). The district panels have no property-type split. an/why_result.json canada, verdict 5 reason (e).",
+    "fix": "The 2025 drop, from 106 to 64 purchases, happened on the neighbor islands, mostly among South Maui buyers (33 to 6).",
+    "severity": "medium"
+   },
+   {
+    "quote": "California has supplied about 38% of mainland buyers since at least 2008, so that demand will not vanish with a tax change or a rate cycle.",
+    "problem": "This repeats a claim the skeptic marked as a fact error. The 'since at least 2008' continuity rests on two endpoints, 2008-15 pooled (38.6%) and 2024-26. Title Guaranty state counts for 2016-2023 are not in hand, and recent years range from 37.0% to 45.6%.",
+    "evidence": "an/why_result.json california, verdict 1 fact_errors[2]. tg.json: 2024 1,731/3,799 = 45.6%; 2025 1,271/3,314 = 38.4%; 2026H1 552/1,491 = 37.0%.",
+    "fix": "California supplied about 38% of mainland buyers in 2008–15 and 37–46% in 2024–26 (Title Guaranty did not publish state counts for the years between), so that demand will not vanish with a tax change or a rate cycle.",
+    "severity": "medium"
+   },
+   {
+    "quote": "On the neighbor islands it lands mostly at the top of the market.",
+    "problem": "This holds for dollars but not for purchases. On Hawaii Island in 2025, 112 of California's 406 purchases (28%) were Puna properties averaging about $230K, near the $188K local Puna average; only 132 (33%) were on the Kohala Coast. The skeptic noted that Californians bought more Puna lots than Oregon and Washington combined. The sentence also conflicts with the west_states box, which presents cheap-lot competition as a Northwest pattern.",
+    "evidence": "an/gap/tg_districts.json 2025FY Hawaii Island: Puna CA 112 / $25.8M (avg $230K), HI-resident 1,133 / $213.5M ($188K); Kona CA 109 / $92.1M; Kohala Coast CA 132 / $555.2M. tg.json: CA Hawaii Island total 406 / $705.4M. an/why_result.json west_states, verdict 4 reason.",
+    "fix": "On the neighbor islands most California dollars go to the top of the market, though not every purchase: on Hawaiʻi Island in 2025, 112 of California's 406 purchases were Puna properties averaging about $230K, close to the $188K local buyers paid there.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Why Washington, Oregon, Alaska, Colorado and Utah come next",
+    "problem": "The box title (TITLES['west_states'] in an/build_why.py) states a premise that the checked answer rejects: 'The question's premise only partly holds.' It also contradicts the main text, which lists the 2025 order as California, Washington, Texas, Florida, Colorado, Nevada. Oregon ranks 8th and Utah 9th, and Alaska is not in the statewide top 10.",
+    "evidence": "tg.json 2025FY Statewide: CA 1,271, WA 278, TX 175, FL 159, CO 136, NV 134, OR 133, UT 105, AZ 85 (AK absent). hawaii-buyer-origins.src.html buyers section: 'Statewide, 2025: the top buyer states by number of purchases were California (1,271), Washington (278), Texas (175), Florida (159), Colorado (136) and Nevada (134)'. west_states final_answer, first sentence.",
+    "fix": "Why Washington, Oregon, Alaska, Colorado and Utah buy more per resident than Texas or Florida",
+    "severity": "medium"
+   },
+   {
+    "quote": "By raw count, Texas and Florida still outrank Colorado, Oregon and Utah.",
+    "problem": "'Still' implies the latest data, but this is true only for 2025. In Jan-Jun 2026, the most recent period in the report, Florida (41) ranked below Colorado (61), Oregon (50) and Utah (44). In 2024 Florida only tied Oregon (112).",
+    "evidence": "tg.json Statewide: 2025FY TX 175, FL 159, CO 136, OR 133, UT 105. 2026H1 TX 94, CO 61, OR 50, UT 44, FL 41. 2024FY TX 172, FL 112, OR 112, CO 110, UT 99.",
+    "fix": "By raw count in 2025, Texas (175) and Florida (159) outranked Colorado (136), Oregon (133) and Utah (105); in January–June 2026 Texas still did, but Florida fell behind all three.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Rank target markets by visitors per resident, not population. Washington sends 8.9 visitors per 100 residents a year, Oregon 7.5 and Utah 6.5; Texas sends 1.1.",
+    "problem": "This advice contradicts the checked answer. The skeptic found that within the West, visitor rates do not predict which state buys more (r 0.16-0.32, Spearman about 0). Nevada has the highest buyer rate after Alaska (41 per million) but only 4.9 visitors per 100 residents, below Colorado (5.1). Ranking by visitors per resident would misorder western targets. The box's own label calls the visitor link 'a correlation, not proof'.",
+    "evidence": "an/why_result.json west_states, verdict 1 reason and missing_drivers[0]. Recomputed: NV 159,647 visitors / 3,282,188 residents = 4.86 per 100; NV 134 buyers = 40.8 per million (DBEDT 2025 T19, Census V2025, tg.json).",
+    "fix": "Rank target markets by buyers per resident, not population: in 2025 Nevada bought 41 Hawaiʻi homes per million residents, Washington 35, Oregon 31 and Utah 30, against about 6 for Texas and 7 for Florida. Visitor rates (Washington 8.9 visitors per 100 residents a year, Oregon 7.5, Utah 6.5, Texas 1.1) separate the West from the rest but do not rank the western states.",
+    "severity": "medium"
+   },
+   {
+    "quote": "On Kauaʻi, Colorado and Utah buyers are mostly in Poʻipū and Princeville, well above local budgets.",
+    "problem": "This is wrong for Colorado and contradicts the same box's broker note about 12 sub-$500K Hanalei purchases. The skeptic marked the pre-challenge '$1.8–2M' claim for Colorado as a fact error: Colorado's 2025 Kauai average was about $1.12M, close to the $0.99M Kauai local-buyer average, and its Hanalei purchases averaged $736K, below the $2.32M that Hawaii-resident buyers paid in Hanalei. Only Utah (about $1.9M) is well above local budgets.",
+    "evidence": "tg.json 2025FY Kauai: CO 24 / $26.8M ($1.117M), UT 16 / $30.5M ($1.906M), HI 604 / $595.4M ($0.986M). an/gap/tg_districts.json 2025FY Kauai: Hanalei CO 14 / $10.3M ($736K), HI 45 / $104.6M ($2.32M); Koloa UT 9 / $18.6M. an/why_result.json west_states, verdict 4 fact_errors[1].",
+    "fix": "On Kauaʻi, Utah buyers are mostly in Poʻipū and paid about $1.9M on average in 2025, well above local budgets; Colorado buyers averaged about $1.1M, close to the $1.0M local-buyer average, and their Hanalei purchases averaged about $740K.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Church ties: Lāʻie on Oʻahu explains where some Utah owners are",
+    "problem": "The badge is Strong, and sorting puts this second in a box about why these states buy. The skeptic rated it 'Strength: strong locally, weak statewide'. The final_answer says the tie 'is small: 55 of 944 Laie parcels' and 'explains where some Utah owners are, not Utah's statewide rank'. build_why.py keeps Strong because the verdict was 'supported', so the badge overstates its weight. A Strong badge on a religious link also invites church-network targeting, which is a fair-housing concern (religion is a protected class).",
+    "evidence": "an/why_result.json west_states, verdict 5 corrected_wording ('Strength: strong locally, weak statewide') and final_answer. an/why_boxes.json west_states: <span class=\"wb-s s3\">Strong</span> on this label.",
+    "fix": "Show this driver with a Weak badge (override the strength in build_why.py) and relabel it: \"Church ties: Lāʻie on Oʻahu explains where some Utah owners are, not why Utah ranks\"",
+    "severity": "medium"
+   },
+   {
+    "quote": "With the yen near ¥158, price new Japanese demand conservatively.",
+    "problem": "The intended meaning is 'forecast conservatively', but 'price ... Japanese demand' can read as advice to set prices or terms by buyer nationality. Under the Fair Housing Act, setting terms of sale by national origin is unlawful, and this box is the most nationality-sensitive in the report.",
+    "evidence": "an/why_curated.json japan_korea.brokers. The research for_brokers said 'price new-contract Japanese demand conservatively', meaning a forecast.",
+    "fix": "With the yen near ¥158, forecast new contracts from Japan conservatively.",
+    "severity": "medium"
+   },
+   {
+    "quote": "On the neighbor islands, California buyers pay two to nearly four times what local buyers pay",
+    "problem": "The top ratio is 3.6x, which is not 'nearly four'. The checked answer says '2-3.6 times'. The sentence also has no period: in Jan-Jun 2026 the Maui ratio was only 1.5x.",
+    "evidence": "tg.json 2025FY: Maui County CA $2.206M vs HI $1.093M = 2.02x; Kauai $2.750M vs $0.986M = 2.79x; Hawaii Island $1.737M vs $0.486M = 3.57x. 2026H1 Maui $1.640M vs $1.082M = 1.52x.",
+    "fix": "In 2025, California buyers on the neighbor islands paid two to three and a half times what local buyers paid (Maui County 2.0×, Kauaʻi 2.8×, Hawaiʻi Island 3.6×)",
+    "severity": "low"
+   },
+   {
+    "quote": "On Oʻahu they pay close to local prices; that is relocation, family and military business.",
+    "problem": "This states as fact a mix the checked answer calls unmeasurable. The skeptic said the near-local Oahu price 'fits family, relocation or military buyers but does not single out family', that military is 'not quantifiable', and that 'these links cannot be measured separately'. The research also listed condo investors.",
+    "evidence": "an/why_result.json california, verdict 6 reason, missing_drivers[0] and final_answer. tg.json 2025FY Oahu: CA $1.028M vs HI $0.869M (1.18x).",
+    "fix": "On Oʻahu they pay close to local prices ($1.03M vs $0.87M in 2025), which fits relocation, family and military moves more than second homes.",
+    "severity": "low"
+   },
+   {
+    "quote": "Remote work: a 2020–22 boost, not the reason for the ranking",
+    "problem": "Wrong period. The corrected wording says remote work 'lifted mainland buying in 2021-22', and the skeptic flagged the 2019-20 IRS pair as mostly pre-pandemic. The main text says mainland purchases fell 14% in 2020 to 'the lowest count and share since at least 2008'.",
+    "evidence": "an/why_result.json california, verdict 7 corrected_wording and fact_errors. hawaii-buyer-origins.src.html: 'Mainland purchases fell 14%, to 3,225 (17.4%), the lowest count and share since at least 2008.'",
+    "fix": "Remote work: a 2021–22 boost, not the reason for the ranking",
+    "severity": "low"
+   },
+   {
+    "quote": "Size and location: the biggest state in the West, where people buy at about five times the rate of the rest of the US",
+    "problem": "This keeps the pre-challenge 'West' framing that the skeptic flagged as too broad: Arizona (11.1/M) and Colorado (22.6/M) buy at one-third to two-thirds of California's rate. The corrected wording replaced it with 'most populous state within about 2,400-2,700 miles'. The '5x' figure is also not right: the census West outside Hawaii buys at 6.5x to 11x the rest of the US.",
+    "evidence": "an/why_result.json california, verdict 1 fact_errors[1] and corrected_wording. Recomputed with Census V2025: known western buyers (CA, WA, NV, OR, UT, CO, AZ = 2,142, plus AK >= 55, other western states <= 84 each) over 78.7M people gives 27.9-32.5 per million; the rest of the other-US buyers over 261.6M gives 2.9-4.3 per million.",
+    "fix": "Size and location: the most populous state within about 2,400–2,700 miles, buying per resident like Washington, Nevada, Oregon and Utah",
+    "severity": "low"
+   },
+   {
+    "quote": "California is simply the biggest pool of people within about 2,500 miles of Hawaiʻi. Per resident, Californians buy at the same rate as people in Washington, Nevada, Oregon and Utah (30–41 buyers per million in 2025)",
+    "problem": "Two small overstatements against the corrected wording ('about 2,400-2,700 miles'; 'about the same rate'). LAX (2,553 mi), SAN (2,610) and Seattle (2,677) lie beyond 2,500 miles. Nevada's rate (40.8) is 26% above California's (32.3), so 'the same rate' is too strong.",
+    "evidence": "an/why_result.json california, verdict 1 corrected_wording and distance evidence. Rates recomputed from tg.json and NST-EST2025-ALLDATA.csv.",
+    "fix": "California is simply the biggest pool of people within about 2,400–2,700 miles of Hawaiʻi. Per resident, Californians buy at about the same rate as people in Washington, Nevada, Oregon and Utah (30–41 buyers per million in 2025)",
+    "severity": "low"
+   },
+   {
+    "quote": "Wealth: within flying range, income decides how many buy and how much they spend",
+    "problem": "The badge does not match the text. The lead calls income one of the two deciding factors ('income decides who buys within it'), and the skeptic's corrected wording says income 'strongly drives both how many buy and how much they spend'. But build_why.py mechanically lowers this weakened driver to Moderate. The skeptic weakened the original claim (wealth explains spending more than counts) and in fact strengthened wealth's role.",
+    "evidence": "an/why_result.json california, verdict 4 reason and corrected_wording. an/why_boxes.json california: Moderate badge on this label.",
+    "fix": "Show the wealth driver with a Strong badge (override the automatic downgrade in build_why.py), keeping the label as written.",
+    "severity": "low"
+   },
+   {
+    "quote": "Don't budget on Colorado's 2025 Kauaʻi spike: it came largely from 12 sub-$500K Hanalei purchases in one half-year.",
+    "problem": "Title Guaranty publishes only the total for the 12 purchases ($5.5M, an average of $458K), not individual prices, so it cannot be said that each was under $500K.",
+    "evidence": "ws_txt/Kauai-Q2-2025.txt, Hanalei panel: 'CO 12 $5.5M'. 5.5/12 = $0.458M average.",
+    "fix": "Don't budget on Colorado's 2025 Kauaʻi spike: it came largely from 12 Hanalei purchases averaging about $460K in one half-year.",
+    "severity": "low"
+   },
+   {
+    "quote": "Family and migration ties: real for Nevada, Washington, Oregon and Alaska",
+    "problem": "Badges are inconsistent with the corrected strengths. This label is shown as Weak, but the corrected wording rates it 'moderate for NV/WA/AK, weak for UT/CO', and the label covers only the moderate group. Likewise the price label ('shapes where Alaskans and Oregonians buy') is shown as Weak, but the corrected wording says 'moderate for price tier, weak for state selection', and the label is about price tier.",
+    "evidence": "an/why_result.json west_states, verdicts 4 and 6 corrected_wording. an/why_boxes.json west_states: both labels carry <span class=\"wb-s s1\">Weak</span>.",
+    "fix": "Show both 'Family and migration ties: real for Nevada, Washington, Oregon and Alaska' and 'Price: Hawaiʻi Island is cheapest, which shapes where Alaskans and Oregonians buy, not whether they buy' with Moderate badges.",
+    "severity": "low"
+   },
+   {
+    "quote": "Japanese and Korean buyers made about 2.6% of Oʻahu purchases in 2025 (289 of 11,097).",
+    "problem": "Title Guaranty classifies buyers by the address on the deed, not by nationality, and the research says the counts are a floor on national-origin buying. In Hawaii, with its large Japanese-American and Korean-American population, 'Japanese and Korean buyers' can be read as ethnic, which raises accuracy and fair-housing (national origin) concerns. The same applies to the box title ('Why Japanese and Korean buyers concentrate on Oʻahu').",
+    "evidence": "an/why_result.json japan_korea, research counter_evidence[0] ('Buyer origin is a proxy ... classifies by the buyer's address on deed documents'). tg.json 2025FY Oahu: Japan 202, Korea 87, total 11,097.",
+    "fix": "Buyers with home addresses in Japan or Korea made about 2.6% of Oʻahu purchases in 2025 (289 of 11,097).",
+    "severity": "low"
+   },
+   {
+    "quote": "Wealth and diversification out of the yen and won helped buyers close; they did not add new buying",
+    "problem": "This states as fact what the skeptic called untested. The corrected wording says these factors 'may help explain why nearly all pre-sale buyers closed', and the verdict reason adds 'That is untested.'",
+    "evidence": "an/why_result.json japan_korea, verdict 4 reason and corrected_wording.",
+    "fix": "Wealth and diversification out of the yen and won may have helped pre-sale buyers close (untested); they did not add new buying",
+    "severity": "low"
+   },
+   {
+    "quote": "Canadians were never a large share of island buying: 11 of 1,247 Maui County sales and 17 of 3,675 Hawaiʻi Island sales in 2025.",
+    "problem": "'Never' is a historical claim the data does not support. In 2011-12, foreign buyers (largely Canadian, by the report's own narrative of 'a Canadian dollar near par') made up 9.4-9.7% of Maui County sales. Even in 2015, Canadians alone were about 3% of Maui sales, against 0.9% in 2025.",
+    "evidence": "an/page_data.json tg, Maui: 2011 274 of 2,921 foreign (9.4%), 2012 252 of 2,585 (9.7%). why_result canada evidence: TG Maui Canadian 80 in 2015, of 2,569 sales (3.1%). Main text: 'a Canadian dollar near par drew Asian and Canadian buyers'.",
+    "fix": "Canadians are a small share of island buying today: 11 of 1,247 Maui County sales and 17 of 3,675 Hawaiʻi Island sales in 2025.",
+    "severity": "low"
+   },
+   {
+    "quote": "Canadians top foreign buying on Maui and Hawaiʻi Island because Japan's much larger buyer base stays on Oʻahu",
+    "problem": "Canada leads by number of sales only. The skeptic's fact error notes that on Hawaii Island in 2025 Japan's 10 purchases ($38.1M) beat Canada's 17 ($37.1M) by value. The main text correctly says 'by number of purchases'.",
+    "evidence": "tg.json 2025FY Hawaii Island countries: Canada 17 / $37.1M, Japan 10 / $38.1M. an/why_result.json canada, verdict 1 fact_errors[0].",
+    "fix": "Canadians lead foreign buying by number of sales on Maui and Hawaiʻi Island because Japan's much larger buyer base stays on Oʻahu",
+    "severity": "low"
+   }
+  ],
+  "verdicts": [
+   {
+    "quote": "Canadian demand on the neighbor islands has settled at about 18 closings per half-year since early 2025. Budget for that, not a rebound.",
+    "real": true,
+    "reason": "Confirmed (severity high). an/new/tg.json, Canada counts by island. Jan-Jun 2025 (Q2 2025 edition): Hawaii Island 9 + Maui 8 + Kauai 1 = 18. Full year 2025: 17 + 11 + 1 = 29, so Jul-Dec 2025 = 11. Cross-check: statewide 64 - 49 = 15, minus Oahu 35 - 31 = 4, gives 11. Jan-Jun 2026: 9 + 7 + 2 = 18. The Jan-Jun 2025 totals were not revised in the Q2 2026 edition. The series is 18, 11, 18, so 'settled at about 18' is wrong. The skeptic's own verdict says Maui's second half went from 17 to 3. The same sentence also appears in the checked-answer panel (src line 651, from why_result canada final_answer) and needs the same fix.",
+    "fix": "Canadian closings on the neighbor islands have run at 11 to 18 per half-year since early 2025 (18 in January–June 2025, 11 in July–December 2025, 18 in January–June 2026). Budget for that, not a rebound."
+   },
+   {
+    "quote": "About 1,600 Maui County properties send their tax bills to Canada, many of them South Maui condos facing Bill 9.",
+    "real": true,
+    "reason": "Confirmed (severity medium). The count of 1,602 is right (owners_neighbor.json top20_foreign_countries; 1,099 of the foreign-mailing parcels are in South Maui). 'Facing Bill 9' is not supported. Foreign-mailing condo units total 1,173 of 13,269 short-term-rental condo units, and only about 6,108 of those 13,269 are Minatoya-list units. The data never shows how many Canadian-owned units are on the list. The skeptic marked this as a fact error (canada verdict 5), and the final_answer drops 'facing Bill 9'. The research for_brokers also told readers to have country-targeted outreach reviewed for fair housing. The curated text dropped that caution, although the Japan/Korea box keeps one.",
+    "fix": "About 1,600 Maui County properties send their tax bills to Canada, many of them South Maui condos; only the apartment-zoned (Minatoya-list) units among them face the Bill 9 phase-out, and their number is not known. Have any outreach aimed at owners in one country reviewed for fair-housing compliance."
+   },
+   {
+    "quote": "Canadian visits have held up far better than Canadian buying (Maui visitors −4.4%, purchases −72%), so the effect on tourism jobs has been small so far.",
+    "real": true,
+    "reason": "Confirmed (severity medium). The numbers are right: raw/visitors/2025-annual-visitor.xlsx TABLE 24 shows Canadian visitors to Maui at 166,125 to 158,780 (-4.4%), and Maui County Canadian purchases fell from 39 to 11 (-72%). Nothing in the data or the checked answer covers tourism jobs. The same table shows Canadian visitors down 12.7% statewide and 10.4% on Hawaii Island, and Canadian visitor-days down 11.3% statewide and about 21% on Hawaii Island (69,597 x 8.67 vs 77,678 x 9.81). The research for_locals said families should expect softer winter seasons. The jobs conclusion is unsupported and should be removed.",
+    "fix": "Canadian visits held up far better than Canadian buying in 2025 (Canadian visitors to Maui −4.4%, Canadian purchases in Maui County −72%), though Canadian visitors statewide fell 12.7%."
+   },
+   {
+    "quote": "The 2025 drop, from 106 to 64 purchases, happened on the neighbor islands, mostly among South Maui condo buyers (33 to 6).",
+    "real": true,
+    "reason": "Confirmed (severity low). an/gap/tg_districts.json shows South Side Canada at 33 ($89.5M) in 2024 restated and 6 ($32.4M) in 2025. The district panels have no property-type split. The lost deals averaged about $2.1M, and the skeptic says nothing shows they were Minatoya-list condos. The checked answer says only 'Canadians in South Maui (33 to 6)'. The counts and 'mostly' hold: 27 of the 46 neighbor-island purchases lost.",
+    "fix": "The 2025 drop, from 106 to 64 purchases, happened on the neighbor islands, mostly among South Maui buyers (33 to 6)."
+   },
+   {
+    "quote": "California has supplied about 38% of mainland buyers since at least 2008, so that demand will not vanish with a tax change or a rate cycle.",
+    "real": true,
+    "reason": "Confirmed (severity low to medium). Only two endpoints are in hand: 2008-15 pooled at 38.6% (DBEDT), and 2024-26 from tg.json. California's share was 1,731/3,799 = 45.6% in 2024, 1,271/3,314 = 38.4% in 2025 and 552/1,491 = 37.0% in Jan-Jun 2026. Nothing in hand covers 2016-2023, and the skeptic flagged the continuity claim as a fact error (california verdict 1). I left out the finding's claim that Title Guaranty 'did not publish' the in-between years, because that is unverified.",
+    "fix": "California supplied about 38% of mainland buyers in 2008–15 and 37–46% in 2024–26, so that demand will not vanish with a tax change or a rate cycle."
+   },
+   {
+    "quote": "On the neighbor islands it lands mostly at the top of the market.",
+    "real": true,
+    "reason": "Confirmed for purchase counts (severity low to medium). Recomputed from tg_districts.json for 2025. California made 615 neighbor-island purchases. Only 294 (48%) were in clearly high-end districts: Kohala Coast 132, Maui South/West/North Shore/Upcountry/Lanai 92, and Kauai Hanalei plus Koloa 70. Those districts took about 85% of California dollars ($1,035.5M of $1,221.9M). On Hawaii Island, 112 of California's 406 purchases were in Puna at about $230K each ($25.8M), close to the $188K local average there ($213.5M/1,133). The statement holds for dollars but not for purchases.",
+    "fix": "On the neighbor islands most California dollars go to the top of the market, but not all purchases: on Hawaiʻi Island in 2025, 112 of California's 406 purchases were Puna properties averaging about $230K, close to the $188K local buyers paid there."
+   },
+   {
+    "quote": "Why Washington, Oregon, Alaska, Colorado and Utah come next",
+    "real": true,
+    "reason": "Confirmed (severity medium). Statewide 2025 counts in tg.json: CA 1,271, WA 278, TX 175, FL 159, CO 136, NV 134, OR 133, UT 105, AZ 85. Alaska is not in the statewide top 10. The main text a few lines above the box lists California, Washington, Texas, Florida, Colorado and Nevada. The checked answer says 'The question's premise only partly holds.' The title is TITLES['west_states'] in build_why.py. The replacement is verified: per million residents in 2025, WA 34.7, OR 31.1, UT 29.7, CO 22.6 and AK at least 75, against TX 5.5 and FL 6.8 (Census V2025). It also holds for Jan-Jun 2026 annualized.",
+    "fix": "Why Washington, Oregon, Alaska, Colorado and Utah buy more per resident than Texas or Florida"
+   },
+   {
+    "quote": "By raw count, Texas and Florida still outrank Colorado, Oregon and Utah.",
+    "real": true,
+    "reason": "Confirmed (severity medium; a period mismatch). tg.json Statewide 2025: TX 175, FL 159, CO 136, OR 133, UT 105, so the claim is true for 2025. In Jan-Jun 2026, the latest period: TX 94, CO 61, OR 50, UT 44, FL 41, so Florida is below all three. In 2024 Florida only tied Oregon (112). The checked answer ties the claim to 2025, and the lead dropped the year while adding 'still'.",
+    "fix": "By raw count in 2025, Texas (175) and Florida (159) outranked Colorado (136), Oregon (133) and Utah (105); in January–June 2026 Florida (41) fell behind all three."
+   },
+   {
+    "quote": "Rank target markets by visitors per resident, not population. Washington sends 8.9 visitors per 100 residents a year, Oregon 7.5 and Utah 6.5; Texas sends 1.1.",
+    "real": true,
+    "reason": "Confirmed (severity medium). The checked answer (west_states verdict 1 and missing_drivers[0]) says visitor rates separate the West from the rest but do not rank the western states (r 0.16-0.32, Spearman about 0). Nevada has 4.9 visitors per 100 residents yet the highest buyer rate after Alaska. Ranking by visitor rate would push Nevada below Colorado. The buyer rates in the fix were recomputed from tg.json 2025 and Census NST-EST2025: NV 134/3,282,188 = 40.8, WA 34.7, OR 31.1, UT 29.7, TX 5.5, FL 6.8 per million. Drop the visitor-rate sentence; the rest of the broker note stays.",
+    "fix": "Rank target markets by buyers per resident, not population: in 2025 Nevada bought 41 Hawaiʻi homes per million residents, Washington 35, Oregon 31 and Utah 30, against about 6 for Texas and 7 for Florida."
+   },
+   {
+    "quote": "On Kauaʻi, Colorado and Utah buyers are mostly in Poʻipū and Princeville, well above local budgets.",
+    "real": true,
+    "reason": "Confirmed for Colorado (severity medium). tg.json 2025 Kauai: CO 24 purchases for $26.8M ($1.117M average), against HI buyers 604 for $595.4M ($0.986M), only 13% above. In tg_districts.json, Colorado's 14 Hanalei-district purchases averaged $736K, below the local average. That clashes with the same box's broker note about the low-priced Hanalei cluster. The skeptic marked the '$1.8-2M' Colorado claim as a fact error. Utah holds up: 16 purchases for $30.5M ($1.906M), 14 of them in the Koloa (9) and Hanalei (5) districts.",
+    "fix": "On Kauaʻi, Utah buyers are mostly in Poʻipū and Princeville and paid about $1.9M on average in 2025, well above local budgets; Colorado buyers averaged about $1.1M, close to the $1.0M local-buyer average."
+   },
+   {
+    "quote": "Church ties: Lāʻie on Oʻahu explains where some Utah owners are",
+    "real": false,
+    "reason": "This text is not in the content. The rendered label (why_boxes.json and src.html) reads 'Lāʻie and BYU–Hawaiʻi ties explain where some Utah owners are'. build_why.py's sanitizer removed the church wording, and the box gives no targeting advice. The Strong badge fits what the label claims: it is limited to where some Utah owners are, and the skeptic rated that 'strong locally, weak statewide' with a 'supported' verdict. The detail panel and checked answer say plainly that it does not explain Utah's rank.",
+    "fix": "No change needed."
+   },
+   {
+    "quote": "With the yen near ¥158, price new Japanese demand conservatively.",
+    "real": true,
+    "reason": "Confirmed as a wording risk (severity low). The yen figure is right: ¥157.81 on Oct 2, 2026 and ¥158.2 for the Jan-Jun 2026 average (H.10, per why_result). But 'price ... Japanese demand' can be read as setting prices by buyer nationality, and it breaks the box's own address-based framing ('buyers with Japan or Korea addresses'). The intended meaning is a forecast.",
+    "fix": "With the yen near ¥158, forecast new contracts from Japan conservatively."
+   },
+   {
+    "quote": "On the neighbor islands, California buyers pay two to nearly four times what local buyers pay",
+    "real": true,
+    "reason": "Confirmed (severity low). tg.json 2025: Maui County CA $236.0M/107 = $2.21M vs HI $1.0B/915 = $1.09M (2.0x). Kauai: $2.75M vs $0.99M (2.8x). Hawaii Island: $705.4M/406 = $1.74M vs $1.2B/2,467 = $0.49M (3.6x). The checked answer says '2-3.6 times', so 'nearly four' overstates. No year is given, and in Jan-Jun 2026 the ratios were 1.5x (Maui), 2.9x (Kauai) and 3.0x (Hawaii Island).",
+    "fix": "In 2025, California buyers on the neighbor islands paid on average 2 to 3.6 times what local buyers paid (Maui County 2.0×, Kauaʻi 2.8×, Hawaiʻi Island 3.6×)"
+   },
+   {
+    "quote": "On Oʻahu they pay close to local prices; that is relocation, family and military business.",
+    "real": true,
+    "reason": "Confirmed (severity low). The prices are right: tg.json 2025 Oahu CA $674.5M/656 = $1.03M vs HI $8.0B/9,202 = $0.87M (1.18x). The checked answer says this 'fits family, relocation or military buyers' and that 'these links cannot be measured separately'. The research also lists condo investors. Stating the mix as fact overstates the evidence.",
+    "fix": "On Oʻahu they pay close to local prices (about $1.03M against $0.87M in 2025), which fits relocation, family and military moves, though that mix cannot be measured."
+   },
+   {
+    "quote": "Remote work: a 2020–22 boost, not the reason for the ranking",
+    "real": true,
+    "reason": "Confirmed (severity low). page_data.json tg State: mainland purchases fell from 3,747 (2019) to 3,225 (2020), then rose to 5,806 (2021) and 4,735 (2022). The main text says the 2020 level was 'the lowest count and share since at least 2008'. The skeptic's corrected wording says remote work 'lifted mainland buying in 2021-22' and flags the 2019-20 IRS pair as mostly pre-pandemic.",
+    "fix": "Remote work: a 2021–22 boost, not the reason for the ranking"
+   },
+   {
+    "quote": "Size and location: the biggest state in the West, where people buy at about five times the rate of the rest of the US",
+    "real": true,
+    "reason": "Confirmed (severity low). The '5x' came from comparing the WA/NV/OR/UT average (about 34 per million) with TX/FL (about 6), not the West with the rest of the US. Recomputed from tg.json 2025 and Census V2025: listed western buyers number 2,142, plus Alaska at 55 or more, over 78.7M people, which gives 27.9-32.2 per million. The rest of the other-US buyers over 261.6M people give 3.0-4.3 per million. The ratio is 6.5-10.8x. The skeptic also called the 'West' framing too broad (AZ 11.1, CO 22.6 per million) and rewrote it as 'most populous state within about 2,400-2,700 miles'. The detail panel shows that corrected text under this very label.",
+    "fix": "Size and location: the most populous state within about 2,400–2,700 miles, buying per resident like Washington, Nevada, Oregon and Utah"
+   },
+   {
+    "quote": "California is simply the biggest pool of people within about 2,500 miles of Hawaiʻi. Per resident, Californians buy at the same rate as people in Washington, Nevada, Oregon and Utah (30–41 buyers per million in 2025)",
+    "real": true,
+    "reason": "A minor overstatement, confirmed (severity low). Rates recomputed: CA 32.3, WA 34.7, NV 40.8, OR 31.1, UT 29.7 per million, so Nevada is 26% above California and 'the same rate' is too strong. The checked answer says 'about the same rate'. Distances per the skeptic's recomputation: SFO 2,396, LAX 2,553 and SEA 2,677 miles. 'About 2,500' is close, but switching to the checked answer's '2,400–2,700' keeps the wording consistent with the label fix.",
+    "fix": "California is simply the biggest pool of people within about 2,400–2,700 miles of Hawaiʻi. Per resident, Californians buy at about the same rate as people in Washington, Nevada, Oregon and Utah (30–41 buyers per million in 2025)"
+   },
+   {
+    "quote": "Wealth: within flying range, income decides how many buy and how much they spend",
+    "real": false,
+    "reason": "The label text matches the skeptic's corrected wording. The Moderate badge follows the rule stated in every box ('weakened ones are marked down a level'): the research rated wealth strong and the verdict was 'weakened'. Unlike other drivers, the skeptic gave no explicit strength rating for the corrected claim, so nothing in the checked answer says Strong. The checked answer puts confidence at 'medium on how much each mechanism contributes'. The badge does not mislead, and overriding it would be a judgment the check did not make.",
+    "fix": "No change needed."
+   },
+   {
+    "quote": "Don't budget on Colorado's 2025 Kauaʻi spike: it came largely from 12 sub-$500K Hanalei purchases in one half-year.",
+    "real": true,
+    "reason": "Confirmed (severity low). ws_txt/Kauai-Q2-2025.txt, Hanalei panel: 'CO 12 $5.5M' (2024: 3, $11.2M). Title Guaranty gives only the total ($458K average), so it cannot show that every purchase was under $500K. 'Largely' holds: Colorado Kauai buying went 11 (2024), 24 (2025), 4 (Jan-Jun 2026). The same 'sub-$500k' phrase appears twice in the west_states checked-answer panel (final_answer and the Kauai driver's corrected wording) and needs the same fix.",
+    "fix": "Don't budget on Colorado's 2025 Kauaʻi spike: it came largely from 12 Hanalei purchases averaging about $460K in one half-year."
+   },
+   {
+    "quote": "Family and migration ties: real for Nevada, Washington, Oregon and Alaska",
+    "real": true,
+    "reason": "Confirmed (severity low; an inconsistency inside the box). Both labels carry Weak badges, but the box's own detail text gives explicit checked strengths that match each label's scope. Family ties: 'Strength: moderate for NV/WA/AK, weak for UT/CO'; the label covers only the states where ties are real, and Oregon's per-resident flow (2.2 per 1,000) is close to Washington's (2.7). Price: 'Strength: moderate for price tier, weak for state selection'; the label is about where Alaskans and Oregonians buy, which is price tier. The Weak badges come mechanically from build_why.py's DOWN rule and contradict the detail lines a reader sees in the same box.",
+    "fix": "Show both 'Family and migration ties: real for Nevada, Washington, Oregon and Alaska' and 'Price: Hawaiʻi Island is cheapest, which shapes where Alaskans and Oregonians buy, not whether they buy' with Moderate badges (override the automatic downgrade for these two drivers in build_why.py)."
+   },
+   {
+    "quote": "Japanese and Korean buyers made about 2.6% of Oʻahu purchases in 2025 (289 of 11,097).",
+    "real": false,
+    "reason": "This text is not in the content. why_curated.json, why_boxes.json and src.html already read 'Buyers with Japan or Korea addresses made about 2.6% of Oʻahu purchases in 2025 (289 of 11,097).' The box title is 'Why buyers from Japan and Korea concentrate on Oʻahu...', not 'Japanese and Korean buyers'. The numbers check out: tg.json Oahu 2025 shows Japan 202 + Korea 87 = 289 of 11,097, or 2.6%.",
+    "fix": "No change needed."
+   },
+   {
+    "quote": "Canadians were never a large share of island buying: 11 of 1,247 Maui County sales and 17 of 3,675 Hawaiʻi Island sales in 2025.",
+    "real": true,
+    "reason": "Confirmed (severity low). The evidence offered covers only 2025. page_data.json tg Maui shows foreign buyers at 274 of 2,921 sales (9.4%) in 2011 and 252 of 2,585 (9.7%) in 2012. In 2015-2024, Canada was 85-93% of Maui's foreign buyers (2015: 80 of 87; 2024: 39 of 42), so Canadians were probably about 8% of Maui sales then. The report's own text credits a near-par Canadian dollar with drawing Canadian buyers in that period. 'Never' cannot be supported. The 2025 figures are right.",
+    "fix": "Canadians are a small share of island buying today: 11 of 1,247 Maui County sales and 17 of 3,675 Hawaiʻi Island sales in 2025."
+   },
+   {
+    "quote": "Canadians top foreign buying on Maui and Hawaiʻi Island because Japan's much larger buyer base stays on Oʻahu",
+    "real": true,
+    "reason": "Confirmed as a precision issue (severity low). tg.json 2025 Hawaii Island: Canada 17 purchases for $37.1M, Japan 10 for $38.1M. Canada leads by count but not by dollars. The skeptic listed 'No. 1 foreign buyer holds by count only' as a fact error (canada verdict 1), and the main text already says 'by number of purchases'. Matching that wording removes the ambiguity.",
+    "fix": "Canadians lead foreign buying by number of sales on Maui and Hawaiʻi Island because Japan's much larger buyer base stays on Oʻahu"
+   }
+  ]
+ },
+ {
+  "part": "whyB",
+  "checked": [
+   "Embedded Why boxes in hawaii-buyer-origins.src.html are byte-identical to an/why_boxes.json for all six keys",
+   "maui_decline: Maui mainland share 2010 = 1,768/3,418 = 51.7%, 2025 = 316/1,247 = 25.3% (page_data tg = QSER G-55)",
+   "maui_decline: Q3 2018 break reproduced from raw/databook/qser/G-select-county-tables.xlsx G-55: Q2 2018 324/840 = 38.6%, Q3 2018 186/639 = 29.1%. TG condo count vs MLS condo sales (G-51 vs page_data islands.Maui) is 1.01 in 2018Q2 and 0.74 in 2018Q3, then 0.69-0.88",
+   "maui_decline: conveyance-tax non-owner share from page_data maui_fy: FY2016 54.2, FY2017 57.4, FY2018 56.1, FY2019 55.2, FY2020 55.5, FY2022 64.5, FY2025 57.0, FY2026 56.7 (supports 'about 57% in FY2025-26' and 64.5%->57%)",
+   "maui_decline: TG mainland 1,069->316 (-70%) vs local 1,975->915 (-54%), 2021-2025; H1 2026 179/643 = 27.8% vs H1 2025 175/613 = 28.5%; UHERO Maui condo out-of-state 54.5% in 2025 (an/new/uhero.json)",
+   "affordability: page_data ext.afford shares reproduce exactly (80% LTV, 30-yr P&I, /income): Oahu 41.0->66.2, Maui 42.4->78.2, Kauai 37.0->76.3; payment factor at 6.60% vs 3.93% = +34.9% ('35%')",
+   "affordability lead ranges: two-order decomposition with income counted last. Oahu price-first P 18.0/R 20.6, rate-first R 14.3/P 24.3, so 'each added 14-24' holds. Maui P 30.3/R 25.4 and R 14.8/P 40.8; Kauai P 30.8/R 23.7 and R 12.9/P 41.5, so 'prices 30-41, rates 13-25' holds",
+   "affordability panel vs lead: 3-factor Shapley averages give prices 19.3 (Oahu), 31.8 (Maui), 33.0 (Kauai); rates 15.9/17.9/16.7; income -10.0/-13.9/-10.3. These match the panel's '19', '32-33', '16-18' and '10-14' and sit inside the lead's ranges, so there is no numeric contradiction",
+   "affordability: 2021->2025 Oahu rate effect 22.9 of a 22.5-pt rise ('nearly all since 2021'); income growth Oahu +20.3%, Kauai +19.7%, Maui +25.3%, Hawaii +12.5%; Oahu out-of-state 12.9%->17.1%; payment +75.5% Oahu, +95.7% Maui 2021-25",
+   "affordability: at 7.40% with 2026 YTD prices and 2024 income, 75.4% Oahu / 82.3% Maui / 88.7% Kauai; each 1-pt rate change moves the payment 9.7-11.0% in the 6-7.4% range; PMMS peak 7.79% on 2023-10-26; 5.98% on 2026-02-26 is the first sub-6% week since Sep 2022 (sk/dl/pmms.csv)",
+   "leavers: Las Vegas 2019-20..2022-23 all islands: 1,656.5 out vs 688.8 in a year, ratio 2.41 (page_data irs20)",
+   "leavers/main text: growth 2011-14 (2011-12..2013-14) to 2019-23: Las Vegas +60.3%, Phoenix +35.7%, Salt Lake City +34.6%, Denver +29.8%, Portland +24.8%, Bay Area -20.3%. Las Vegas is the fastest of all 16 metros. The 2004-08 base figures (Denver +74.8, SLC +68.1, Portland +54.7, Phoenix +47.7, Texas +46.1, Seattle +45.8, Las Vegas +31.6) also match the main text",
+   "leavers: SLC 179/yr and Denver 359/yr out ('180-360'); out/in ratios 1.27-1.48; ZORI Aug 2026 Honolulu $3,020, Las Vegas $1,742, Phoenix $1,722, so the gaps are $1,278/$1,298 (skeptic_leavers/dl/zori.csv)",
+   "investors_military: Honolulu VA loans 1,830/6,746 = 27.1%. Ewa CCD 44.1% (n=2,618), Waianae 37.1% (n=294), Wahiawa 36.4% (n=99) from an/gap/hmda_tract.json by_ccd, matching the main-text table",
+   "investors_military: DBEDT Data Book 2025 Table 1.22 (Mar 31, 2026) lists Oahu personnel 43,719 and dependents 44,123, with 874 on all other islands",
+   "investors_military: the 47-ZIP loan-weighted R^2 is 0.634 (skeptic/zipreg.py). Resort ZIP investor shares are 29.1-54.2%; Kahului, Wailuku, Kalaheo, Mililani, Ewa and Waipahu are 3.5-12.4%. Oahu investor share excluding VA is 845/4,916 = 17.2%. County investor shares are 30.7/24.6/22.8/12.7%",
+   "investors_military: Wailuku 14%, Kahului 12% and Makawao-Paia 17% won't-live-there, against Oahu 15.7%",
+   "now_2026: Oahu H1 4,613->5,032 = +9.1%; less 527 Park Ward Village units = -2.3%. HHH Q2 2026 supplemental shows 527 units closed in Q2 2026 and 0 in Q2 2025. Kauai 489->325 = -33.5%. Kauai Q2 2025 TG condos were 161 against 65-91 in other quarters; adjusting gives -18.5% to -20.5%",
+   "now_2026: payment +13.5% at 7.28% vs 6.05%, i.e. 11.9% less house; Oahu SF Aug 2026: 794 listings vs 1,086 in Aug 2019 (-26.9%), 17 DOM, 100% of list; H1 average rate 6.27% (2026) vs 6.80% (2025)",
+   "micro_hotspots: Oahu hotel-and-resort class 51.95% non-Hawaii-addressed (an/new/owners_oahu.json). Kuilima plat 47.5-53%, Kahuku town plats 2.4-5.2% (research evidence). Hauula mainland median $438,556 (an/who/oahu_join.json). Laie ZIP 85.1% local, 96816 94.2% local",
+   "micro_hotspots: 86%/82% reproduce only as regional map shares (Hawaii Island 48/56, Maui 58/71) from an/mm/luxury.json"
+  ],
+  "findings": [
+   {
+    "quote": "Kuilima/Turtle Bay is about half off-island, against 2–5% in Kahuku town, and Kahuku tops the ZIP list only because Turtle Bay is half of a tiny ZIP.",
+    "problem": "Kahuku does not top the ZIP list. Waikīkī (96815) is first and Kahuku second, both in the report's own off-island table next to this box and in the list the research question used (Waikiki 28%, Kahuku 26%, Hauula 19%, North Shore 17%). The checked answer repeats the error: 'Kahuku tops the list because Turtle Bay makes up half of a tiny ZIP.'",
+    "evidence": "an/owners/oahu_individual.json situs_zip: 96815 off-island 1-0.714 = 28.6% (n=17,053); 96731 26.5% (n=945). The template table at line ~455 ('About 23,000 Oʻahu homes are owned from off-island') lists 96815 Waikīkī 28% first and 96731 Kahuku · Turtle Bay 26% second.",
+    "fix": "Kuilima/Turtle Bay is about half off-island, against 2–5% in Kahuku town, and Kahuku ranks second only to Waikīkī on the ZIP list because Turtle Bay is about half of a tiny ZIP. (Make the same change in the checked answer: 'Kahuku ranks second only to Waikīkī because Turtle Bay makes up half of a tiny ZIP.')",
+    "severity": "high"
+   },
+   {
+    "quote": "Neighbor-island luxury sits where luxury was built: master-planned resort and club communities took about 86% of Hawaiʻi Island's and 82% of Maui's $3M+ house sales in 2025.",
+    "problem": "The 86% and 82% are shares of whole map regions, not of resort and club communities. On Hawaiʻi Island the count is all of South Kohala plus all of North Kona, including Kailua-Kona town. On Maui it is all of West Maui and South Maui, including Kīhei (7), Lahaina (4) and Nāpili–Honokōwai (7). The named master-planned resorts on Maui (Kapalua, Kāʻanapali, Wailea–Mākena) account for only 40 of 71 sales, or 56%. The checked answer and the driver panel repeat the overstatement ('A brokerage's map counts put about 86% ... there').",
+    "evidence": "an/mm/luxury.json hawaii_life.submarkets_sf_3m_plus_from_maps['2025']. Hawaii Island: South Kohala 17 + North Kona (Kailua-Kona, incl. Kuki'o/Hualalai/Kohanaiki) 31 = 48 of 56 = 85.7%. Maui: West Maui 38 (Kapalua 11, Napili-Honokowai 7, Ka'anapali 16, Lahaina 4) + South Maui 20 (Kihei 7, Wailea-Makena 13) = 58 of 71 = 81.7%. Kapalua 11 + Ka'anapali 16 + Wailea-Makena 13 = 40/71 = 56.3%. The verdict reason in why_result.json states the regional sums.",
+    "fix": "Neighbor-island luxury sits where luxury was built: the resort coasts took about 86% of Hawaiʻi Island's $3M+ house sales in 2025 (South Kohala and North Kona) and 82% of Maui's (West and South Maui), and on Maui the Kapalua, Kāʻanapali and Wailea–Mākena resorts alone took 40 of 71 (56%). (Use matching wording in the checked answer and the 'Master-planned resort and club communities' panel text.)",
+    "severity": "high"
+   },
+   {
+    "quote": "Second, mortgage rates rose from about 3.9% to 6.6% between 2022 and 2023, raising the payment on every borrowed dollar by 35%.",
+    "problem": "This sentence in the visible checked answer (affordability) attaches the wrong period to the numbers. 3.9% is the 2019 annual average and 6.6% is the 2025 average. Rates did not move from 3.9% to 6.6% between 2022 and 2023: the annual averages were 2.96% (2021), 5.33% (2022) and 6.79% (2023). The 35% payment rise is the 2019-to-2025 comparison, which the lead states correctly.",
+    "evidence": "an/page_data.json mortgage (monthly PMMS) annual means: 2019 3.932, 2021 2.956, 2022 5.325, 2023 6.794, 2025 6.596; ext.afford rate fields 3.93 (2019) and 6.6 (2025). pf(6.60)/pf(3.93) = 1.349.",
+    "fix": "Second, mortgage rates jumped in 2022–23, from a 2.96% average in 2021 to 6.79% in 2023, and still averaged 6.6% in 2025 against 3.9% in 2019, which raises the payment on every borrowed dollar by 35%.",
+    "severity": "medium"
+   },
+   {
+    "quote": "In resort areas 29–54% of loans go to investors, against 3–12% in non-resort towns on every island.",
+    "problem": "This overstates the pattern. On Hawaiʻi Island the main non-resort towns, Hilo and Puna, run well above 12% investor loans. Only Waimea (7.8%) fits the 3–12% range there. The checked driver text names the exception ('Exceptions are Puna and Hilo on Hawaii Island (19–48%)'), but the lead drops it.",
+    "evidence": "skeptic/zipreg.py on an/gap/hmda_tract.json by_primary_zcta (2025 HMDA purchase loans, investment share): 96720 Hilo 18.6%, 96749 Hawaiian Paradise Park 24.8%, 96778 Hawaiian Beaches 23.3%, 96785 Volcano 23.0%, 96771 Mountain View 16.7%. Pahoa-Kalapana CCD investment alone is 47.6% (hmda_tract key_figures). By contrast 96732 Kahului 9.9%, 96793 Wailuku 12.4%, 96741 Kalaheo 5.8%, 96789 Mililani 5.9%, 96706 Ewa 3.5%, 96797 Waipahu 6.3%.",
+    "fix": "In resort areas 29–54% of loans go to investors, against 3–12% in non-resort towns such as Kahului, Wailuku, Kalāheo, Mililani, ʻEwa and Waipahu. Puna and Hilo on Hawaiʻi Island are the exception (17–48%), because cheap homes there pay as long-term rentals.",
+    "severity": "medium"
+   },
+   {
+    "quote": "On the neighbor islands, investor competition is concentrated in resort areas.",
+    "problem": "This misleads Hawaiʻi Island families. The heaviest non-resident competition in the island's entry-level market is in Puna and Hilo, which are not resort areas. The report's own micro-market HMDA table shows Pahoa-Kalapana at 52% 'won't live there', Keaau-Mountain View 26% and Hilo 24%, against Oʻahu's 16%. The box's own label 'Long-term rents rarely cover a financed payment, except in Puna' points the same way.",
+    "evidence": "Main text and micro chapter table 'Area · Loans 2025 · Won't live there': Pahoa-Kalapana 82 loans, 52% (2019: 28%); Keaau-Mountain View 615, 26%; Hilo 194, 24%. an/gap/hmda_tract.json key_figures: Pahoa-Kalapana CCD investment alone 47.6%.",
+    "fix": "On the neighbor islands, investor competition is concentrated in resort areas and, on Hawaiʻi Island, in Puna and Hilo, where low prices let homes pay as long-term rentals.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Kahuku town, Lāʻie and Hauʻula houses, and Kahala are 85–98% locally owned, so a mainland pitch there misreads the market.",
+    "problem": "The Kahala figure is the whole 96816 ZIP (Kahala plus Kaimukī, Pālolo, St. Louis Heights and Diamond Head), not Kahala itself; the skeptic flagged this as a fact error. At Kahala's trophy tier the local story fails: 84% of Oʻahu homes assessed at $10M+ have no homeowner exemption, and 62% of those are entity-held. The researcher's broker note said 'treat $10M+ as a global, entity-held tier', but the curated text dropped that caveat, so it now tells brokers a mainland pitch for a Kahala estate misreads the market.",
+    "evidence": "an/owners/oahu_individual.json situs_zip 96816: 94.2% Hawaii-addressed (n=12,891). an/mm/luxury.json oahu_stock_not_owner_occupied_by_assessed_value $10M+: share_not_owner_occupied 0.841, entity_held 0.623. why_result.json micro_hotspots Kahala verdict: 'ZIP-LEVEL FIGURES DON'T ISOLATE KAHALA', with fact error \"'Only about 6% of homes are owned off-island' describes ZIP 96816, not Kahala proper\". The research for_brokers text includes 'treat $10M+ as a global, entity-held tier'.",
+    "fix": "Kahuku town, Lāʻie and Hauʻula houses, and the wider Kahala–Kaimukī ZIP are 85–98% locally owned, so a mainland pitch there misreads the market below the trophy tier. Treat $10M+ Kahala estates as a global, often entity-held market.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Vacation-rental policy risk fits the 2024–25 drop in out-of-state buyers in South Maui condos: other-US buyers fell from 193 to 113 while Hawai'i buyers there fell only 13%.",
+    "problem": "There are three problems. (1) Title Guaranty's South Side district counts all home sales, houses and condos alike, so the data cannot show a condo-specific drop; the visible label 'visible in South Maui condos' and the checked answer ('South Maui condos, where out-of-state buyers fell from 193 to 113') overstate. (2) The comparison mixes editions. 193 is the 2024 figure first published in the Q4 2024 edition, but the Q4 2025 edition that supplies the 113 restates 2024 as 179 other-US and 222 Hawaiʻi buyers, which gives -37% and -15%. (3) The checked answer calls the 193 'out-of-state' buyers, but the figure covers other-US buyers only; foreign buyers (34 to 7) are excluded.",
+    "evidence": "an/gap/tg_districts.json revisions: South Side 2024, earlier edition other_us 193, hawaii 217; later (Q4 2025) edition other_us 179, hawaii 222. yoy_2025_vs_2024_restated South Side: other_us [179, 113], foreign [34, 7], total [435, 309]. Hawaii buyers 222->189 = -14.9% (217->189 = -12.9%).",
+    "fix": "Vacation-rental policy risk fits the 2024–25 drop in other-US buyers in Title Guaranty's South Side district (houses and condos together): 179 to 113 in the Q4 2025 edition (first published as 193), while Hawaiʻi buyers there fell 15%. Change the label to 'Vacation-rental policy risk (Bill 9), visible in South Maui', and in the checked answer write 'shows up in South Maui, where other-US buyers fell from 179 to 113'.",
+    "severity": "medium"
+   },
+   {
+    "quote": "Rates drive the late-2026 cooling: they rose from 6.05% in February to 7.28% on October 1.",
+    "problem": "This mixes a monthly average (6.05%, February 2026) with a weekly reading (7.28%, Oct 1) without saying so. It also conflicts with the affordability box in the same report, which says rates 'first dipped below 6% on Feb 26, 2026' (weekly 5.98%) and uses the October 8 rate of 7.40%. The report is dated Oct 8, so 7.28% is a week stale. The main-text line 'The 30-year rate rose from 6.05% (February average) to 7.28% on Oct 1, after six straight weekly increases' has the same staleness. Oct 8 makes seven straight weekly increases.",
+    "evidence": "sk/dl/pmms.csv weekly: 2026-02-26 5.98 (2026 low), 2026-10-01 7.28, 2026-10-08 7.40; weekly rises 8/27 6.66, 9/3 6.71, 9/10 6.76, 9/17 6.95, 9/24 7.03, 10/1 7.28, 10/8 7.40. page_data mortgage 2026-02 = 6.05 (monthly).",
+    "fix": "Rates drive the late-2026 cooling: the 30-year rate rose from a 6.05% February average (weekly low 5.98% on February 26) to 7.40% on October 8. (Update the main-text line to '...to 7.40% on Oct 8, after seven straight weekly increases', and the panel's '13.5%' payment rise to 14.9%.)",
+    "severity": "low"
+   },
+   {
+    "quote": "House listings are 27% below 2019, and the rate rise since February means the same payment buys about 12% less house.",
+    "problem": "The 12% uses the stale Oct 1 rate (7.28%). At the Oct 8 rate of 7.40%, which the affordability box uses, the same payment buys 12.9% less house than at the 6.05% February average (13.6% less than at the 5.98% weekly low).",
+    "evidence": "Payment factor P&I 30-yr: 1 - pf(6.05)/pf(7.28) = 11.9%; 1 - pf(6.05)/pf(7.40) = 12.9%; 1 - pf(5.98)/pf(7.40) = 13.6% (computed from sk/dl/pmms.csv and page_data mortgage).",
+    "fix": "House listings are 27% below 2019, and the rate rise since February means the same payment buys about 13% less house.",
+    "severity": "low"
+   },
+   {
+    "quote": "At the October 8 rate of 7.40%, the report's formula gives about 75% of income on Oʻahu, 82% on Maui and 89% on Kauaʻi.",
+    "problem": "The figures are correct only with 2026 year-to-date median prices and 2024 income, and the sentence does not say so. Readers will assume the 2025 basis used for the 66%/78%/76% headline. On 2025 prices the results differ and Maui and Kauaʻi swap order (72% / 85% / 83%).",
+    "evidence": "page_data ext.afford 2026 prices (Oahu 1,193,750; Maui 1,253,247; Kauai 1,309,312), 2024 income held: 0.8*P*pf(7.40)*12/I = 75.4 / 82.3 / 88.7. With 2025 prices (1,136,083; 1,291,068; 1,221,875): 71.8 / 84.8 / 82.8.",
+    "fix": "At the October 8 rate of 7.40%, the report's formula, using 2026-to-date median prices and 2024 incomes, gives about 75% of income on Oʻahu, 82% on Maui and 89% on Kauaʻi.",
+    "severity": "low"
+   },
+   {
+    "quote": "First, prices jumped in 2020–22, while rates were near 3% and listings had nearly vanished.",
+    "problem": "Rates were near 3% only in 2020–21; the 2022 average was 5.33%. On Oʻahu about 38% of the 2019–22 price rise came in 2022 (median $985,667 to $1,105,495), while rates were climbing from 3.4% to 6.9%.",
+    "evidence": "page_data mortgage annual means: 2020 3.11, 2021 2.96, 2022 5.33 (monthly 3.44 in Jan to 6.90 in Oct 2022). ext.afford Oahu price: 2019 789,375; 2021 985,667; 2022 1,105,495; (1,105,495-985,667)/(1,105,495-789,375) = 38%.",
+    "fix": "First, prices jumped in 2020–22, mostly while rates were near 3% (2020–21) and listings had nearly vanished.",
+    "severity": "low"
+   },
+   {
+    "quote": "County tax records over the same period show buyers without a homeowner exemption steady at 55–56%.",
+    "problem": "This disagrees with the main text, which says 'steady at 55–57%' for the same evidence, and the sentence names no fiscal years. FY2017 was 57.4% and FY2016 54.2%. The box range holds only for FY2018–FY2020.",
+    "evidence": "page_data maui_fy non-owner share: FY2016 1,814/3,348 = 54.2%; FY2017 57.4%; FY2018 56.1%; FY2019 55.2%; FY2020 55.5%. The main text (Maui paragraph, 'see the Why box below the island charts') reads 'steady at 55–57%'.",
+    "fix": "County tax records over the same period show buyers without a homeowner exemption steady at 55–56% (FY2018–FY2020). (Change the main text to '55–56% (FY2018–FY2020)' to match.)",
+    "severity": "low"
+   },
+   {
+    "quote": "Third, after the 2021–22 surge, outside buying fell faster than local buying, but only back to its pre-pandemic level.",
+    "problem": "The sentence does not say which measure returned to pre-pandemic level, and the box's headline measure contradicts it. Title Guaranty's mainland share in 2025 (25.3%) is below 2019 (28.3%). The 'back to pre-pandemic level' finding rests on the conveyance-tax non-owner share.",
+    "evidence": "page_data tg Maui: 2019 712/2,520 = 28.3%, 2025 316/1,247 = 25.3%. page_data maui_fy: FY2025 57.0% against FY2016–20 54.2–57.4%. why_result maui_decline verdict 3: 'brought it back to its pre-pandemic level, not below it' refers to the conveyance-tax share.",
+    "fix": "Third, after the 2021–22 surge, outside buying fell faster than local buying, but in county tax records the non-homeowner share only returned to its pre-pandemic level (57% in FY2025, against 54–57% in FY2016–20).",
+    "severity": "low"
+   },
+   {
+    "quote": "Investor buying follows where vacation renting is legal, not the island line.",
+    "problem": "The 47-ZIP evidence measures the share of homes listed as short-term rentals, legal or not, not legality. The checked answer calls it 'an association, not proof that zoning alone causes it'. The micro_hotspots box labels the same kind of evidence '(an association, not proof)', but this box labels it 'Where vacation rentals are legal' at Strong, so the two boxes treat the same evidence differently.",
+    "evidence": "skeptic/zipreg.py uses an/new/uhero.json zip_rows str_share_of_housing (listings share). why_result micro_hotspots fact_errors: 'The vacation-rental share counts listed units whether or not they are legal (DBEDT). It is not a measure of where STRs are legal.' The investors_military final_answer says '...this is an association, not proof that zoning alone causes it.'",
+    "fix": "Investor buying tracks where vacation rentals operate, not the island line. (Change the label to 'Where vacation rentals operate (an association, not proof)'.)",
+    "severity": "low"
+   },
+   {
+    "quote": "Kahala is the exception, an older local enclave with no rental product.",
+    "problem": "Two parts overstate the checked answer. It says Kahala's top estates are 'not reliably local' ($10M+ homes are mostly not owner-occupied and often entity-held). It also says 'No resort ... product' is inaccurate because the Kahala Hotel & Resort is there; what Kahala lacks is short-stay rental housing.",
+    "evidence": "why_result micro_hotspots Kahala verdict, corrected_wording: '...in a residential zone where short-stay rentals are barred ... Kahala's top estates are not reliably local'; fact error on the Kahala Hotel & Resort (1964). an/mm/luxury.json: 84% of $10M+ Oahu homes not owner-occupied.",
+    "fix": "Kahala is the exception: an older enclave of large lots where short-stay rentals are barred and buyers below the $10M tier are mostly local.",
+    "severity": "low"
+   },
+   {
+    "quote": "Do not prospect in ZIPs 96761, 96767 or 96790.",
+    "problem": "The broker instruction gives no reason or legal basis, in a box otherwise about Oʻahu, so readers cannot tell it is a Maui wildfire rule or when to recheck it. The researcher's and checked text tied it to the emergency ban on unsolicited offers (32nd Wildfire Proclamation, Aug 24, 2026, through Oct 23, 2026 unless extended); the curated text dropped that.",
+    "evidence": "why_result micro_hotspots final_answer: 'The ban on unsolicited offers in ZIPs 96761, 96767 and 96790 remains in the Thirty-Second Wildfire Proclamation (signed Aug 24, 2026) through Oct 23, 2026 unless extended.' Research for_brokers: '...while the emergency ban on unsolicited offers remains in force.' The micro chapter's Maui ZIP table marks 96761/96790 'fire area: no unsolicited offers'.",
+    "fix": "In the Maui fire ZIPs 96761, 96767 and 96790 (Lahaina and Kula), the governor's wildfire proclamation bars unsolicited offers to buy property (32nd proclamation, through Oct 23, 2026 unless extended), so keep them off every prospecting list.",
+    "severity": "low"
+   },
+   {
+    "quote": "Off-island competition is sharpest for older condos in Waikīkī and Punaluʻu, which are often a family's first purchase; in Hauʻula, mainland buyers paid a median of about $439K.",
+    "problem": "The median gives no period or sample size. It covers 2023–25 deals and only 28 mainland buyers.",
+    "evidence": "an/who/oahu_join.json results.by_situs_zip_ge_40_deals['96717']: median_price_usd.mainland_us 438,555.5, median_price_n.mainland_us 28 (2023–25 sales joined to the owner roll).",
+    "fix": "Off-island competition is sharpest for older condos in Waikīkī and Punaluʻu, which are often a family's first purchase; in Hauʻula, mainland buyers in 2023–25 paid a median of about $439K (28 sales).",
+    "severity": "low"
+   },
+   {
+    "quote": "The flow to Las Vegas fell 38% when Nevada's economy collapsed in 2008–10.",
+    "problem": "The period label does not match the computation. The 38% runs from the 2006–07 pre-collapse peak (1,379) to 2009–10 (855). Measured over the collapse itself, from 2007–08 (1,235), the drop is 31%.",
+    "evidence": "page_data irs20, all-island outflow to Las Vegas: 2006-07 1,379; 2007-08 1,235; 2008-09 956; 2009-10 855; 2010-11 850. 855/1,379 - 1 = -38.0%; 855/1,235 - 1 = -30.8%. The verdict reason reads '38% (1,379 to 855)'.",
+    "fix": "The flow to Las Vegas fell 38% from its 2006–07 peak to 2009–10, as Nevada's economy collapsed.",
+    "severity": "low"
+   },
+   {
+    "quote": "About 1,650 households a year go there, roughly 2.4 for every one that comes back.",
+    "problem": "No period is given. The figures are IRS filing-year averages for 2019–20 through 2022–23 (moves from about 2019 to early 2023), not current flows.",
+    "evidence": "page_data irs20, sum over the four islands of out/in metros['Las Vegas'][0], 2019-20..2022-23: out 1,656.5/yr, in 688.8/yr, ratio 2.41.",
+    "fix": "About 1,650 households a year went there in 2019–23 (IRS), roughly 2.4 for every one that came back.",
+    "severity": "low"
+   },
+   {
+    "quote": "In August 2026 a typical Honolulu asking rent was about $1,300 a month above Las Vegas or Phoenix.",
+    "problem": "The figure is correct but has no source in the box. It comes from Zillow's Observed Rent Index, and the Sources list has no Zillow entry. The only listing source shown is Realtor.com's for-sale inventory file, so readers could take the rent gap to come from for-sale listings.",
+    "evidence": "skeptic_leavers/dl/zori.csv 2026-08-31: Urban Honolulu 3,019.7; Las Vegas 1,742.0; Phoenix 1,722.0, giving gaps of $1,278 and $1,298. why_boxes.json leavers sources contain no 'Zillow'/'ZORI'. The verdict fact_errors cite https://files.zillowstatic.com/research/public_csvs/zori/Metro_zori_uc_sfrcondomfr_sm_month.csv.",
+    "fix": "In August 2026 a typical Honolulu rent (Zillow Observed Rent Index) was about $1,300 a month above Las Vegas or Phoenix. (Add 'Zillow Observed Rent Index, metro, August 2026 (retrieved 2026-10-08)' to the box's Sources.)",
+    "severity": "low"
+   },
+   {
+    "quote": "Keep a standing referral partner in Las Vegas, the steadiest one-way corridor.",
+    "problem": "'Steadiest' is not in the checked answer and conflicts with the families note in the same box, which calls Las Vegas among 'the most volatile job markets' and says the flow fell 38% in the bust. The checked answer calls it 'the only strongly one-way corridor'.",
+    "evidence": "why_result leavers final_answer: 'Las Vegas is also the only strongly one-way corridor'. Same box, families: 'The flow to Las Vegas fell 38%...'. page_data irs20 Las Vegas outflow ranges 850–1,925 a year.",
+    "fix": "Keep a standing referral partner in Las Vegas, the strongest one-way corridor.",
+    "severity": "low"
+   },
+   {
+    "quote": "Military orders: about 9–18% of Oʻahu's leavers go to counties dominated by bases",
+    "problem": "The label stretches 'counties dominated by bases' over the whole range. Base-dominated counties take about 9%; the 18% upper figure adds mixed civilian-military metros (Tacoma, San Antonio, El Paso) that are not base-dominated.",
+    "evidence": "why_result leavers final_answer: 'Counties dominated by bases take about 9% of O'ahu's leavers, up to about 18% if Tacoma, San Antonio and El Paso are counted'; verdict: 'rising to about 18% if mixed civilian-military metros ... are included'.",
+    "fix": "Military orders: about 9% of Oʻahu's leavers go to base-dominated counties, about 18% counting Tacoma, San Antonio and El Paso",
+    "severity": "low"
+   },
+   {
+    "quote": "If you might return, weigh renting out your home instead of selling it, keeping in mind that you would lose the homeowner exemption.",
+    "problem": "The advice names only the homeowner exemption and omits the larger cost for most families. Renting the home out for more than three years forfeits the federal home-sale capital-gains exclusion, which requires 2 of the last 5 years as a principal residence (IRC §121). A later sale while living out of state also triggers Hawaiʻi's HARPTA withholding of 7.25% of the sale price.",
+    "evidence": "26 U.S.C. §121(a) (ownership and use as principal residence for periods aggregating 2 years during the 5 years before sale); HRS §235-68 (HARPTA withholding, 7.25% of amount realized for nonresident transferors). Nothing in why_result leavers addresses either.",
+    "fix": "If you might return, weigh renting out your home instead of selling it. You would lose the homeowner exemption, and after three years of renting you would also lose the federal capital-gains exclusion on a later sale, so get tax advice first.",
+    "severity": "low"
+   }
+  ],
+  "verdicts": [
+   {
+    "quote": "Kuilima/Turtle Bay is about half off-island, against 2–5% in Kahuku town, and Kahuku tops the ZIP list only because Turtle Bay is half of a tiny ZIP.",
+    "real": true,
+    "reason": "Confirmed (high: wrong fact). an/owners/oahu_individual.json situs_zip: 96815 off-island 1-0.7135 = 28.6% (n=17,053); 96731 1-0.7354 = 26.5% (n=945). The report's own off-island table (src line 455) and the research question both rank Waikīkī first and Kahuku second. Kahuku leads only on the mainland-owner column (25.5% vs 22.7%), but the sentence is about off-island share. The checked answer repeats the error ('Kahuku tops the list'). The 'half of a tiny ZIP' part holds: the Kuilima plat is 436 of 945 residential parcels (46%), or 508 of 948 across all classes.",
+    "fix": "Kuilima/Turtle Bay is about half off-island, against 2–5% in Kahuku town, and Kahuku ranks second on the ZIP list, behind Waikīkī, only because Turtle Bay is about half of a tiny ZIP. (In the checked answer write: 'Kahuku ranks second, behind Waikīkī, because Turtle Bay makes up half of a tiny ZIP.')"
+   },
+   {
+    "quote": "Neighbor-island luxury sits where luxury was built: master-planned resort and club communities took about 86% of Hawaiʻi Island's and 82% of Maui's $3M+ house sales in 2025.",
+    "real": true,
+    "reason": "Confirmed (medium: the numbers are right but describe the wrong category). an/mm/luxury.json hawaii_life.submarkets_sf_3m_plus_from_maps['2025']: on Hawaiʻi Island, South Kohala (map label 'Waimea', which includes Waimea town) 17 + North Kona ('Kailua-Kona, incl. Kuki'o/Hualalai/Kohanaiki') 31 = 48 of 56 = 85.7%. On Maui, West Maui 38 + South Maui 20 = 58 of 71 = 81.7%, which includes Kīhei 7, Lahaina 4 and Nāpili–Honokōwai 7. These are whole map regions, not resort or club communities. The research answer itself said 'in South Kohala and North Kona' and 'in West and South Maui'. The named Maui resorts (Kapalua 11 + Kāʻanapali 16 + Wailea–Mākena 13) are 40 of 71 = 56%. The checked answer ('they took') and the driver panel ('put ... there') carry the same overstatement.",
+    "fix": "Neighbor-island luxury sits where luxury was built: by a brokerage's map counts, South Kohala and North Kona, home to the resort and club communities, took about 86% of Hawaiʻi Island's $3M+ house sales in 2025, and West and South Maui took 82% of Maui's. (Use the same regional wording in the checked answer and in the 'Master-planned resort and club communities' panel: 'A brokerage's map counts put about 86% of Hawaiʻi Island's 2025 $3M+ house sales in South Kohala and North Kona and 82% of Maui's in West and South Maui; on Maui the Kapalua, Kāʻanapali and Wailea–Mākena resorts alone took 40 of 71.')"
+   },
+   {
+    "quote": "Second, mortgage rates rose from about 3.9% to 6.6% between 2022 and 2023, raising the payment on every borrowed dollar by 35%.",
+    "real": true,
+    "reason": "Confirmed (medium: period mismatch in the visible checked answer). Annual means of page_data.json mortgage: 2019 3.932, 2021 2.956, 2022 5.325, 2023 6.794, 2025 6.596. 3.9% is the 2019 average and 6.6% the 2025 average, and pf(6.60)/pf(3.93) = 1.349 (+35%) is the 2019-to-2025 comparison. Rates did not go from 3.9% to 6.6% between 2022 and 2023. The lead and the rates driver panel state the period correctly, so the box also contradicts itself.",
+    "fix": "Second, mortgage rates jumped in 2022–23; they averaged 6.6% in 2025 against 3.9% in 2019, which raised the payment on every borrowed dollar by 35%."
+   },
+   {
+    "quote": "In resort areas 29–54% of loans go to investors, against 3–12% in non-resort towns on every island.",
+    "real": true,
+    "reason": "Confirmed (medium: overstated generalization that the checked verdict flagged as a fact error). an/gap/hmda_tract.json 2025: Hilo CCD 18.6% investment (36/194), Keaau–Mountain View CCD 19.7% (121/615), Pahoa–Kalapana CCD 47.6% (39/82). By ZCTA: Hawaiian Paradise Park 24.8%, Hawaiian Beaches 23.3%, Volcano 23.0%. Ala Moana/Ward 96814 is 29.5% at a 1.4% STR share. The resort range checks out: Kona 29.1, Waikoloa 31.9, Kīhei 32.1, Waikīkī 44.7, Princeville 52.5, Lahaina 53.3, Kōloa 54.2. The named non-resort towns also check: Kahului 9.9, Wailuku 12.4, Kalāheo 5.8, Mililani 5.9, ʻEwa 3.5, Waipahu 6.3. The skeptic's fact error says the resort-versus-everywhere-else split 'does not hold on Hawaii Island', and the driver panel names the exceptions, but the lead drops them.",
+    "fix": "In resort areas 29–54% of loans go to investors, against 3–12% in non-resort towns such as Kahului, Wailuku, Kalāheo, Mililani, ʻEwa and Waipahu. The exceptions are Puna and Hilo on Hawaiʻi Island (19–48%) and Ala Moana–Ward on Oʻahu (30%)."
+   },
+   {
+    "quote": "On the neighbor islands, investor competition is concentrated in resort areas.",
+    "real": true,
+    "reason": "Confirmed (medium: misleads Hawaiʻi Island families). Hawaii County 2025 HMDA investment loans by CCD (an/gap/hmda_tract.json by_ccd): Puna (Keaau–Mountain View 121 + Pahoa–Kalapana 39) + Hilo 36 = 196 of the county's 405 investor loans (48%). North Kona 120 + South Kohala 57 = 177 (44%). So on Hawaiʻi Island more investor loans fall outside the resort districts than inside them. The checked answer itself says much of Hawaiʻi Island's gap 'sits in Puna'.",
+    "fix": "On Maui and Kauaʻi, investor competition is concentrated in resort areas; on Hawaiʻi Island it is just as heavy in Puna and Hilo."
+   },
+   {
+    "quote": "Kahuku town, Lāʻie and Hauʻula houses, and Kahala are 85–98% locally owned, so a mainland pitch there misreads the market.",
+    "real": true,
+    "reason": "Confirmed (medium). The Kahala figure is ZIP 96816 (94.2% Hawaiʻi-addressed, n=12,891, an/owners/oahu_individual.json), which also covers Kaimukī, Pālolo, St. Louis Heights and Diamond Head. The skeptic listed this as a fact error ('describes ZIP 96816, not Kahala proper'). an/mm/luxury.json: 84.1% of Oʻahu homes assessed at $10M+ have no home exemption, and 62.3% of those are entity-held. The research for_brokers said 'treat $10M+ as a global, entity-held tier', but the curated text dropped that caveat. The rest of the 85–98% range holds: Kahuku town plats 95–98% local, Lāʻie 85%, Hauʻula houses 87%. The checked answer's families paragraph repeats 'and Kahala'.",
+    "fix": "Kahuku town, Lāʻie and Hauʻula houses, and the wider Kahala–Kaimukī ZIP are 85–98% locally owned, so a mainland pitch there misreads the market. The exception is the $10M+ tier: most Oʻahu homes at that level are not owner-occupied and are often held by entities. (In the checked answer's families paragraph, replace 'and Kahala' with 'and the wider Kahala–Kaimukī ZIP'.)"
+   },
+   {
+    "quote": "Vacation-rental policy risk fits the 2024–25 drop in out-of-state buyers in South Maui condos: other-US buyers fell from 193 to 113 while Hawai'i buyers there fell only 13%.",
+    "real": true,
+    "reason": "Confirmed (medium). an/gap/tg_districts.json covers all Title Guaranty home sales by district, houses and condos together, so it cannot isolate condos. The South Side 2024 figures were revised: the Q4 2024 edition had other-US 193 and Hawaiʻi 217; the Q4 2025 edition, which supplies 2025 (other-US 113, Hawaiʻi 189), restates 2024 as 179 and 222. On one edition the changes are −37% for other-US and 222→189 = −14.9% for Hawaiʻi. The quoted −13% (217→189) mixes editions. 'Out-of-state' in the checked answer is also wrong for an other-US-only count, since foreign buyers (34→7) are excluded.",
+    "fix": "Vacation-rental policy risk fits the 2024–25 drop in other-US buyers in Title Guaranty's South Side district (houses and condos together): 179 to 113 on the restated 2024 count, while Hawaiʻi buyers there fell 15%. (Change the label to 'Vacation-rental policy risk (Bill 9), visible in South Maui', and in the checked answer write 'shows up in South Maui, where other-US buyers fell from 179 to 113'.)"
+   },
+   {
+    "quote": "Rates drive the late-2026 cooling: they rose from 6.05% in February to 7.28% on October 1.",
+    "real": true,
+    "reason": "Confirmed (low: stale and inconsistent with the affordability box). sk/dl/pmms.csv has 10/8/2026 at 7.40, and the affordability box uses 'the October 8 rate of 7.40%'. 6.05% is the February monthly average (weekly 6.11, 6.09, 6.01, 5.98, mean 6.0475), shown without that label. 'Six straight weekly increases' (main text line 375) was right as of Oct 1; with Oct 8 it is seven (8/27 through 10/8). pf(7.40)/pf(6.05) − 1 = 14.9%, against the 13.5% stated in the checked answer and driver panel.",
+    "fix": "Rates drive the late-2026 cooling: the 30-year rate rose from a 6.05% February average to 7.40% on October 8. (Main text: 'The 30-year rate rose from 6.05% (February average) to 7.40% on Oct 8, after seven straight weekly increases.' Checked answer and driver panel: 'to 7.40% on Oct 8, which raises the payment on the same loan 14.9%'.)"
+   },
+   {
+    "quote": "House listings are 27% below 2019, and the rate rise since February means the same payment buys about 12% less house.",
+    "real": true,
+    "reason": "Confirmed (low; a follow-on to the 7.40% update). 1 − pf(6.05)/pf(7.28) = 11.9%, which is consistent with the box's own Oct 1 rate. At the Oct 8 rate of 7.40% that the report uses elsewhere, 1 − pf(6.05)/pf(7.40) = 12.9%. Change it together with the rate line so the two boxes agree.",
+    "fix": "House listings are 27% below 2019, and the rate rise since February means the same payment buys about 13% less house."
+   },
+   {
+    "quote": "At the October 8 rate of 7.40%, the report's formula gives about 75% of income on Oʻahu, 82% on Maui and 89% on Kauaʻi.",
+    "real": true,
+    "reason": "Confirmed (low: missing basis). With page_data ext.afford 2026 YTD prices (Oʻahu 1,193,750; Maui 1,253,247; Kauaʻi 1,309,312) and 2024 income held: 0.8·P·pf(7.40)·12/I = 75.4 / 82.3 / 88.7. On the 2025 basis behind the box's 66/78/76 headline, the same rate gives 71.8 / 84.8 / 82.8, and Maui and Kauaʻi swap order. Unlabeled, the sentence implies the rate alone moved the 2025 headline. The same sentence appears in the checked answer and the rates driver panel.",
+    "fix": "At the October 8 rate of 7.40%, the report's formula, using 2026-to-date median prices and 2024 incomes, gives about 75% of income on Oʻahu, 82% on Maui and 89% on Kauaʻi."
+   },
+   {
+    "quote": "First, prices jumped in 2020–22, while rates were near 3% and listings had nearly vanished.",
+    "real": true,
+    "reason": "Confirmed (low). page_data mortgage annual means: 2020 3.11, 2021 2.96, 2022 5.33 (monthly 3.44 in Jan to 6.90 in Oct 2022). ext.afford Oʻahu medians: 2019 789,375; 2021 985,667; 2022 1,105,495. 38% of Oʻahu's 2019–22 rise came in 2022 (Maui 31%, Kauaʻi 15%, Hawaiʻi Island 17%), while rates averaged 5.3%. Most of the rise did come in 2020–21 at about 3%. The checked answer and the price driver panel ('Almost all of it came in 2020–22, while rates were near 3%') need the same qualifier.",
+    "fix": "First, prices jumped in 2020–22, mostly while rates were near 3% (2020–21) and listings had nearly vanished."
+   },
+   {
+    "quote": "County tax records over the same period show buyers without a homeowner exemption steady at 55–56%.",
+    "real": true,
+    "reason": "Confirmed (low: internal mismatch). page_data maui_fy non-owner share: FY2016 54.2%, FY2017 57.4%, FY2018 56.1%, FY2019 55.2%, FY2020 55.5%. 55–56% holds only for FY2018–FY2020, the years around the Q3 2018 break. The main text (line 365) says 'steady at 55–57%' and points to this box. The checked answer applies 55–56% to 'between 2015 and 2019', where the range is 54–57%.",
+    "fix": "County tax records over the same period show buyers without a homeowner exemption steady at 55–56% (FY2018–FY2020). (Main text line 365: 'steady at 55–56% in FY2018–FY2020'. In the checked answer, add '(FY2018–FY2020)' after '55–56%'.)"
+   },
+   {
+    "quote": "Third, after the 2021–22 surge, outside buying fell faster than local buying, but only back to its pre-pandemic level.",
+    "real": true,
+    "reason": "Confirmed (low: unnamed measure). The lead's headline measure is Title Guaranty's mainland share: page_data tg Maui 2019 712/2,520 = 28.3%, 2020 28.3%, 2025 316/1,247 = 25.3%. That is 3 points below pre-pandemic, not back to it. 'Back to pre-pandemic' holds only for the conveyance-tax non-owner share: FY2025 57.0% against 54.2–57.4% in FY2016–20. The skeptic's verdict 3 rests on that measure.",
+    "fix": "Third, after the 2021–22 surge, outside buying fell faster than local buying, but in county tax records the share of buyers without a homeowner exemption only returned to its pre-pandemic level (57% in FY2025, against 54–57% in FY2016–20)."
+   },
+   {
+    "quote": "Investor buying follows where vacation renting is legal, not the island line.",
+    "real": true,
+    "reason": "Confirmed (low: overstates the evidence). The 47-ZIP regression (skeptic/zipreg.py) uses an/new/uhero.json str_share_of_housing, a count of DBEDT-listed vacation rentals that the skeptic notes 'does not determine or differentiate between units that are permitted or unpermitted'. The checked answer says the gap 'follows where vacation renting happens' and calls it 'an association, not proof'. Puna's high investor share where new unhosted STVRs are barred cuts against 'legal'. The micro_hotspots box marks the same evidence '(an association, not proof)', but this box's label 'Where vacation rentals are legal' carries no such caveat.",
+    "fix": "Investor buying follows where vacation renting happens, not the island line. (Change the label to 'Where vacation rentals operate (an association, not proof)'.)"
+   },
+   {
+    "quote": "Kahala is the exception, an older local enclave with no rental product.",
+    "real": true,
+    "reason": "Confirmed (low). The checked answer limits the local claim: 'buyers below roughly $5–10M are mostly local', and Oʻahu $10M+ homes are 84% without a home exemption and 62% of those entity-held (an/mm/luxury.json). The skeptic corrected 'no resort or rental product' to 'no short-stay product': the Kahala Hotel & Resort exists, and long-term rentals are legal. 'Local enclave' and 'no rental product' both go beyond the checked wording. The label 'Kahala: older local wealth, large lots, no rental product' has the same 'rental product' wording.",
+    "fix": "Kahala is the exception: an older enclave of large lots where short-stay rentals are barred and buyers below roughly $5–10M are mostly local. (Label: 'Kahala: older wealth, large lots, no short-stay rentals'.)"
+   },
+   {
+    "quote": "Do not prospect in ZIPs 96761, 96767 or 96790.",
+    "real": true,
+    "reason": "Partly confirmed (low: clarity, not a factual error). The instruction is correct and compliant. The report's rules section (src line 1086) and this box's checked answer cite the wildfire proclamation ban on unsolicited offers. But the brokers panel, in a box mostly about Oʻahu, gives no reason, so readers cannot tell it is a Maui legal ban rather than a market judgment. The research for_brokers text tied it to the ban. A short reason fixes this without dating the text.",
+    "fix": "Do not prospect in the Maui fire-area ZIPs 96761, 96767 or 96790, where the governor's wildfire proclamation bans unsolicited offers to buy property."
+   },
+   {
+    "quote": "Off-island competition is sharpest for older condos in Waikīkī and Punaluʻu, which are often a family's first purchase; in Hauʻula, mainland buyers paid a median of about $439K.",
+    "real": true,
+    "reason": "Confirmed (low: no period or sample size). an/who/oahu_join.json results.by_situs_zip_ge_40_deals['96717']: median_price_usd.mainland_us 438,555.5, median_price_n.mainland_us 28. The source covers 2023–25 recorded sales (latest 2025-09-26) joined to the current owner roll. With 28 sales and no period, the figure reads as current and robust.",
+    "fix": "Off-island competition is sharpest for older condos in Waikīkī and Punaluʻu, which are often a family's first purchase; in Hauʻula, mainland buyers in 2023–25 paid a median of about $439K (28 sales)."
+   },
+   {
+    "quote": "The flow to Las Vegas fell 38% when Nevada's economy collapsed in 2008–10.",
+    "real": true,
+    "reason": "Confirmed (low: period mismatch). page_data irs20, all-island outflow to Las Vegas: 2006-07 1,379; 2007-08 1,235; 2008-09 956; 2009-10 855. The 38% is the 2006-07 peak to 2009-10 (855/1,379 − 1 = −38.0%), the base named in the verdict ('1,379 to 855'). Measured from 2007-08, the last pair before 2008, the drop is 31%. The phrase '2008–10' does not match the 38% window. The same wording is in the checked answer and the Las Vegas driver panel.",
+    "fix": "The flow to Las Vegas fell 38% from its 2006–07 peak to 2009–10 (IRS years), as Nevada's economy collapsed."
+   },
+   {
+    "quote": "About 1,650 households a year go there, roughly 2.4 for every one that comes back.",
+    "real": true,
+    "reason": "Confirmed (low: no period; the present tense implies current flows). page_data irs20, four islands, IRS pairs 2019-20 to 2022-23: Las Vegas out 6,626/4 = 1,656.5 a year, in 2,755/4 = 688.8 a year, ratio 2.41. The checked answer notes that the IRS data stop in early 2023.",
+    "fix": "About 1,650 households a year went there in 2019–23 (IRS data), roughly 2.4 for every one that came back."
+   },
+   {
+    "quote": "In August 2026 a typical Honolulu asking rent was about $1,300 a month above Las Vegas or Phoenix.",
+    "real": true,
+    "reason": "Confirmed (low: correct figure, missing source). skeptic_leavers/dl/zori.csv 2026-08-31: Urban Honolulu 3,019.7, Las Vegas 1,742.0, Phoenix 1,722.0, gaps $1,278 and $1,298. why_boxes.json leavers contains no 'Zillow' or 'ZORI'. Its first listed source is Realtor.com's for-sale listing inventory file, so readers could attribute the rent gap to it. The verdict's fact_errors give the ZORI URL.",
+    "fix": "In August 2026 a typical Honolulu asking rent (Zillow Observed Rent Index) was about $1,300 a month above Las Vegas or Phoenix. (Add to Sources: 'Zillow Observed Rent Index, metro, August 2026 (retrieved 2026-10-08)', https://files.zillowstatic.com/research/public_csvs/zori/Metro_zori_uc_sfrcondomfr_sm_month.csv)"
+   },
+   {
+    "quote": "Keep a standing referral partner in Las Vegas, the steadiest one-way corridor.",
+    "real": true,
+    "reason": "Confirmed (low). The checked answer says 'the only strongly one-way corridor' and does not say steadiest. The Las Vegas outflow is among the most variable: page_data irs20 ranges 850 (2010-11) to 1,925 (2016-17) a year. The same box's families note calls Las Vegas's job market volatile and cites the 38% drop.",
+    "fix": "Keep a standing referral partner in Las Vegas, the only strongly one-way corridor."
+   },
+   {
+    "quote": "Military orders: about 9–18% of Oʻahu's leavers go to counties dominated by bases",
+    "real": true,
+    "reason": "Confirmed (low). The checked answer and verdict say counties strictly dominated by bases take 9.1%; the 18% adds mixed civilian-military metros (Pierce/Tacoma, Bexar/San Antonio, El Paso TX and others, +8.6 points) that the skeptic says are not base-dominated. The label applies 'counties dominated by bases' to the whole 9–18% range.",
+    "fix": "Military orders: about 9% of Oʻahu's leavers go to base-dominated counties, about 18% counting Tacoma, San Antonio and El Paso"
+   },
+   {
+    "quote": "If you might return, weigh renting out your home instead of selling it, keeping in mind that you would lose the homeowner exemption.",
+    "real": true,
+    "reason": "Confirmed (low: misleading by omission in advice to families). The advice is not in the checked answer. The research version also warned of 'landlord obligations', which the curated text dropped. Under 26 U.S.C. §121(a), the home-sale gain exclusion ($250K/$500K) requires use as a principal residence for at least 2 of the 5 years before sale. Renting the home out for more than three years after moving loses it, which for most Oʻahu owners costs far more than the homeowner exemption. HARPTA withholding (HRS §235-68, 7.25%) is a prepayment, not an added tax, so it can be left out.",
+    "fix": "If you might return, weigh renting out your home instead of selling it. You would lose the homeowner exemption, and renting it out for more than three years would also cost you the federal capital-gains exclusion on a later sale, so get tax advice first."
+   }
+  ]
+ },
+ {
+  "part": "edits_gtm",
+  "checked": [
+   "Affordability bullet: P&I on 80% of price, 30-yr, from page_data ext.afford reproduces the payments (Oahu 2019 $2,989 vs $2,990; 2025 $5,805 vs $5,802). Holding income at 2019, Oahu price-first gives price +18.0 and rate +20.6; rate-first gives rate +14.3 and price +24.3. So 'each 14–24 points' and 'about equally' hold. Maui: price 30.3–40.8 vs rate 14.8–25.4. Kauai: price 30.8–41.5 vs rate 12.9–23.7 (41.498 rounds to 41). Prices pushed harder on both, which matches the Why lead's '30–41 against 13–25'. The 2019 shares are 41/42/37% ('about 40%'), rates 3.93%→6.6%, and the rate factor is 1.349 ('35%'). Income took back 13–20 points (2025 income held at 2024 per the income_held flag).",
+   "Affordability Why 'brokers' figures recompute on 2026 prices at 7.40%: Oahu 75.4%, Maui 82.3%, Kauai 88.7%.",
+   "Leavers bullet and corridors bullet, from page_data irs20 metros (equal to irs_20yr metros20, the 20-household rule). 2004–08 → 2019–23: Denver +74.8%, SLC +68.1%, Portland +54.7%, Phoenix +47.7%, Texas +46.1%, Seattle +45.8%, Las Vegas +31.6%, Bay Area −20.1%. 2011–14 (2011-12 to 2013-14) → 2019–23: Las Vegas +60.3% (fastest of the 16 metros), Phoenix +35.7%, SLC +34.6%, Denver +29.8%, Portland +24.8%, Bay Area −20.3%.",
+   "Net −31,821 statewide with Oahu −45,422, and the neighbor islands net positive. Clark County is the #1 2019–23 destination from every island. Las Vegas 2019–23 out 1,656.5 vs in 688.75 = 2.4:1. LV flow fell 38% from 1,379 (2006-07) to 855 (2009-10).",
+   "Playbook row: Portland/Denver/SLC +55/+75/+68% since 2004–08 and +25/+30/+35% since 2011–14. Leaving per yr 636/359/179. Nets −3,029/−1,535/−598 from page_data corridors. Idaho +39.5% (191.7→267.3, state_corr 2011–14 vs 2020–23, rounds to 39).",
+   "Now-section: 7,738 vs 7,622 (+1.5%); mainland 19.2% (21.8%); foreign 2.9% (2.3%); Oahu 5,032/4,613 = +9.1%; Big Island −8.9%; Kauai 325/489 = −33.5% (page_data tg_h1). Ex-tower Oahu (5,032−527)/4,613 = −2.3%. Kauai adjusted 325/(489−80) = −20.5% and outside Lihue −18.8%, so 18–21% holds. 527 units and 0 a year earlier come from the HHH 8-K Ex. 99.2 (why_result now_2026).",
+   "Japanese purchases 91→138 (TG 2025H1 vs 2026H1 statewide). Oahu 84→133 (32+101). ¥112–123 = H.10 half-year averages 2021H2 ¥111.8 and 2022H1 ¥123.1 (why_result japan_korea).",
+   "Maui note: Q3 2018 break and TG condo/MLS ratio 1.01→0.74 (why_result maui_decline). Mainland 2025 316/1,247 = 25.3%.",
+   "'November 20, 2026 (IRS tentative schedule)': the IRS SOI public release list (raw/irs-verify/soi-public-release-list.xlsx) gives Excel serial 46346 = 2026-11-20 for 'Individuals, State and County Migration data', program year 2023-2024. 2023–24 (filing years 2023/2024) is the first year spanning the Aug 2023 fire.",
+   "GTM TG arithmetic: 4,253 = 3,799+454 and 3,721 = 3,314+407 (−12.51%). 12,463→13,188 (+5.82%). 16,716→16,909 (+1.15%). Oahu +4.62%, Maui −15.23%, Kauai +28.43%, Hawaii Island −6.84%. Shares 22% of sales and 30% of dollars (TG 20+2 / 27+3). $15.6B→$15.5B. Out-of-state $ 34%×15.6 = $5.30B → 30%×15.5 = $4.65B.",
+   "GTM DBEDT figures (page_data tg 2025): mainland avg $1,259,806, local $818,264; Oahu local 9,202/11,097 = 82.9%; Maui non-local 332/1,247 = 26.6%, mainland $2,237,541 vs local $1,102,874 (2.03x); Kauai mainland 284/890 = 31.9%; Hawaii Island 1,175/3,675 = 32.0%, local avg $497,181. DBEDT 2024 18,007 is 7.7% above TG 16,716; DBEDT 2024→2025 −6.1%. TG's own restated 2024 is 16,709, so TG-to-TG is like-for-like.",
+   "Hilo caveat: 232 CA transfers, $35.0M ≈ $151K each (an/gap/tg_districts.json). Restated 2024 other-US 3,798 − 279 = 3,519; 3,314 − 88 = 3,226 (−8.3%).",
+   "Waikīkī 96815: mainland 22.66% + foreign 5.66% = 28.3% (an/owners/oahu_individual.json situs_zip).",
+   "Kauai CO/UT and Hawaii Island AK/OR are over-represented against statewide shares (CO 2.7% vs 0.8%, UT 1.8% vs 0.6%, OR 2.1% vs 0.8%, AK 1.5% vs <0.5%).",
+   "Revenue scenarios: 48+0+9+10+0 = 67; 90+36+19+20 = 165; 108+96+70+50+38 = 362. Seats 20/40/150 × $39 × 12 = $9.4K/$18.7K/$70.2K. Custom studies within $7.5–20K each. Corridors + 2 islands $38K within $24–54K. HL $48K/$90K/$108K within tier ranges.",
+   "Seat ceiling 14,181 × 1% × $468 = $66.4K and × 5% = $331.8K. Tier 1 at 300 agents = $10.0–16.7/agent/mo. Avg side $1.91B/1,136 = $1.681M; × 2.5% = $42.0K; Tier 1 0.86–1.43 sides; Enterprise 1.7–2.6 sides.",
+   "HL 5.4% = $1.685B / (2 × $15.5B). −13.5% = $1.685B/$1.947B. 'Over $3B in 2021', '50% of $30M+ sides 2014–24', No. 153, 20 offices (5 Maui, 15 neighbor islands), Q2 2026 update by agent Denise Drake citing 'Locations Hawaiʻi Housing Market Reports' (v2/dl/hl_q2.txt), Maui Q4 'compiled from Trendgraphix', Beall FGP chair, Luckett principal broker and immediate past president of the Kauaʻi Board, Abreu Maui BIC, LeadingRE 3-month sprint/sponsor/champion format, Q4 report Jan 20: all supported by ev/gtm_result.json verdicts and local copies.",
+   "Legal statements at a high level: RESPA §8 and 12 CFR 1024.14(d) 'services at special or free rates'; §8(d)(2) treble damages; 2023 CFPB Freedom Mortgage $1.75M / Realty Connect $200K over a ~$300/mo data subscription; Lighthouse Title >$5 log; HRS 467-14 bars licensees from paying unlicensed persons for referrals; TCPA 8am–9pm; Meta/Google housing-ad limits; OIP Op. Ltr. 11-01 on owner mailing addresses; fire ZIPs 96761/96767/96790 and the 32nd proclamation (Aug 24, 2026, 60 days → Oct 23, 2026)."
+  ],
+  "findings": [
+   {
+    "quote": "Title Guaranty permission: received. Its buyer statistics carry \"all rights reserved; no reproduction without prior written consent,\" and Hawaiʻi Intelligence has that consent. Keep the written permission on file and credit Title Guaranty on every edition.It also allows quarterly refreshes",
+    "problem": "This states as fact that Hawaiʻi Intelligence holds Title Guaranty's written consent covering a paid product and quarterly refreshes. Section 10 repeats it ('Quarterly Title Guaranty refreshes, now permitted'). Nothing in the workspace supports this. The only documented permission belongs to a different entity (Hawaiʻi Appleseed) and is for use and publication, not commercial resale. If the scope is wrong, selling licenses built on TG data is an IP and contract risk. The page's own cited source (54) carries the 'no reproduction' notice.",
+    "evidence": "dl/appleseed/repo/CONVEYANCE_TAX_SCOPE.md: 'Hawaiʻi Appleseed has Title Guaranty's permission to use and publish data from these reports (confirmed 2026-09-25)'. /home/user/moku/research/buyer-origins/README.md: 'via Hawaiʻi Appleseed, published with Title Guaranty's permission'. The prior draft an/gtm_pre_brand.html line 330 said 'Ask for a written license. Until one is signed, the paid edition uses DBEDT county data'. No file records consent naming Hawaiʻi Intelligence or covering paid licenses or quarterly refreshes.",
+    "fix": "Title Guaranty permission: confirm scope in writing. Its buyer statistics carry \"all rights reserved; no reproduction without prior written consent.\" The permission on file (Hawaiʻi Appleseed, confirmed Sept 25, 2026) covers using and publishing the data. Before the first invoice, get written consent that names Hawaiʻi Intelligence and covers paid licenses and quarterly refreshes. Until then, paid editions use DBEDT county data. [Also change 'Title Guaranty permission is in hand. Four items remain' to 'Five items remain, starting with Title Guaranty's written scope', and 'Quarterly Title Guaranty refreshes, now permitted' to 'Quarterly Title Guaranty refreshes, once the written scope covers them'.]",
+    "severity": "high"
+   },
+   {
+    "quote": "No other Hawaiʻi report shows, ZIP by ZIP, where those buyers come from, what they buy and where sellers go next. This one does.",
+    "problem": "This uniqueness claim is contradicted by the report's own sources. The ZIP-level 'Out-of-state buyers 2025' column in the micro-markets chapter is taken from UHERO's public Housing Factbook 2026, and Hawaii Life's own Kauaʻi post already cites UHERO ZIP shares. Buyer origin by place (state or metro) is published only by island and TG district, not by ZIP. 'Where sellers go next' is IRS county-level household migration. The report itself says it is 'not buyers or sellers'. The hero line 'Hawaiʻi's only report that combines buyer origin, seller destinations and micro-markets' overstates the same way. These are marketing claims to a named prospect, so they carry false-advertising risk.",
+    "evidence": "an/micro_chapter.html Oʻahu-by-ZIP source note: 'House median sale and out-of-state buyers: UHERO Hawaiʻi Housing Factbook 2026'. ev/gtm_result.json fact: HL Kauaʻi post 'cites the UHERO Hawaii Housing Factbook 2025: out-of-state buyers make up about 3 in 5 home sales in the Princeville and Kōloa ZIPs'. Report corridors note: 'These are tax-filing households that moved, not buyers or sellers.'",
+    "fix": "No other Hawaiʻi report we know of puts buyer origin by island and district, ZIP-level micro-markets and the counties departing households move to in one place. This one does. [Hero: 'Sell a report that combines buyer origin, departing-household destinations and micro-markets to brokerages.']",
+    "severity": "medium"
+   },
+   {
+    "quote": "Most of the 2025 slowdown came from out-of-state buyers, and they are the buyers who pay the most.",
+    "problem": "There was no 2025 slowdown in the like-for-like data the page uses. TG sales rose 1.2% (16,716→16,909), and dollar volume was roughly flat ($15.6B→$15.5B), as the table itself says. Out-of-state dollars fell about $0.6B against a total change of about −$0.1B, so outside buyers fell while everyone else rose. The pitch contradicts the table above it.",
+    "evidence": "an/new/tg.json quick_view: 2024FY total 16,716 / $15.6B; 2025FY 16,909 / $15.5B; out-of-state 4,253→3,721; Hawaiʻi buyers 12,463→13,188.",
+    "fix": "In 2025 total sales edged up 1.2%, but out-of-state buyers' share fell from 25% to 22%, and they are the buyers who pay the most.",
+    "severity": "medium"
+   },
+   {
+    "quote": "In 2025, out-of-state buyers fell 12.5% while local buyers rose 5.8%, and that change hits Neighbor Island and luxury offices hardest.",
+    "problem": "The page now says 2024 includes a one-off batch of 232 Hilo transfers to California addresses and tells readers to 'lead with the share … rather than the count'. Yet the hero stat ('−12.5% Out-of-state buyers, 4,253 → 3,721') and the first outreach message still lead with the count. Excluding Hilo in both years, out-of-state buyers fell about 8.6%, not 12.5%. This is an internal contradiction in the number that goes to a prospect.",
+    "evidence": "an/new/tg.json Hawaii Island 2024FY districts: Hilo other_us 279 (CA 232, $35.0M), foreign 0. 2025FY Hilo other_us 88, foreign 1. Out-of-state ex-Hilo: (4,253−279)=3,974 → (3,721−89)=3,632 = −8.6%. Share ex-Hilo: 3,974/16,048 = 24.8% → 3,632/16,453 = 22.1%.",
+    "fix": "\"In 2025, out-of-state buyers fell from 25% to 22% of Hawaiʻi home purchases while local buyers rose 5.8%, and that change hits Neighbor Island and luxury offices hardest.\" [Hero stat: '25% → 22%: out-of-state buyers' share of sales, 2024 to 2025' in place of '−12.5%'. Or keep −12.5% with 'about −9% excluding a one-off 2024 Hilo batch'.]",
+    "severity": "medium"
+   },
+   {
+    "quote": "Payback assumes Hawaii Life's 2024 average side of about $1.68M ($1.91B over 1,136 sides) and an assumed 2.5% commission, or about $42K of gross commission per side.",
+    "problem": "The 'Pays for itself at' column measures brokerage-paid products against gross commission per side. A brokerage recoups a license only from its company dollar after agent splits, which is typically a fraction of GCI. The column therefore overstates payback several-fold. 'About 1–1.5 extra sides a year' for Tier 1 is closer to 3–7 at the brokerage level. The mean side ($1.68M) is also lifted by luxury deals.",
+    "evidence": "$1.91B/1,136 = $1.681M; × 2.5% = $42.0K. At an assumed 20–30% company dollar ($8.4K–$12.6K per side): pilot $9–15K = 0.7–1.8 sides; Tier 1 $36–60K = 2.9–7.1; Enterprise $72–108K = 5.7–12.9.",
+    "fix": "Payback assumes Hawaii Life's 2024 average side of about $1.68M ($1.91B over 1,136 sides) and an assumed 2.5% commission, or about $42K of gross commission per side. That is before agent splits. At an assumed 20–30% company dollar, the brokerage nets about $8K–$13K per side, so Tier 1 pays for itself at about 3–7 extra sides a year and the enterprise bundle at about 6–13. [Update the 'Pays for itself at' column to match.]",
+    "severity": "medium"
+   },
+   {
+    "quote": "He runs training, agent adoption of the company's tools, and its internal systems.",
+    "problem": "This overstates a named person's role. The cited announcement says Snyder 'focuses on supporting agent training and helping drive adoption of the company's technology platforms, while also assisting in the development of internal systems'. The plan's own Section 4 also says he 'helps develop' them. Pitching him as the owner of systems he assists with is inaccurate and could embarrass the approach.",
+    "evidence": "v2/dl/hl_blog_lead.txt (Hawaii Life, 2026-03-25, source 24), lines 185–190. ev/gtm_result.json verdict quoting PRWeb 2026-03-12: 'part of the team developing and improving several internal platforms used by agents'.",
+    "fix": "He supports agent training, helps drive adoption of the company's technology platforms and assists in developing its internal systems.",
+    "severity": "medium"
+   },
+   {
+    "quote": "and it has no in-house research team.",
+    "problem": "This is stated as fact about a named company, but the evidence is only an absence of findings. The page's own supporting line says 'We found no research lead or economist on staff', and the research shows agent-written reports, not a confirmed lack of staff.",
+    "evidence": "gtm-plan.html Section 4: 'We found no research lead or economist on staff.24'. ev/gtm_result.json verdict: 'I did not re-check Jan Nores and found no research director.'",
+    "fix": "and we found no in-house research team.",
+    "severity": "medium"
+   },
+   {
+    "quote": "A counsel memo covering the RESPA structure, fair-housing copy, Do-Not-Call rules, HRS 467, and whether selling data to brokerages requires a Hawaiʻi license.",
+    "problem": "The memo scope drops county data terms, and the checklist treats owner rolls as cleared ('These are public government data and are already in the report'). But the 'owner counts and lists' add-on resells owner mailing lists commercially. The research flagged county portal terms of use for commercial resale as unverified, and the underlying plan text included 'county data terms' in the counsel memo. OIP 11-01 makes addresses public. It does not settle each portal's terms of use for bulk resale.",
+    "evidence": "ev/gtm_result.json research gaps: '(3) County terms of use for commercial resale of owner data (Honolulu realpropertyhonolulu / qPublic; Maui real property tax site …): not found. Read each portal's disclaimer and terms of use before reselling'. ev/gtm_plan.txt Week 1: 'counsel memo covering RESPA structure, fair-housing copy, Do-Not-Call rules, HRS 467, county data terms, …'.",
+    "fix": "A counsel memo covering the RESPA structure, fair-housing copy, Do-Not-Call rules, HRS 467, each county's terms of use for reselling owner mailing lists, and whether selling data to brokerages requires a Hawaiʻi license. [And in the next item, replace 'These are public government data and are already in the report.' with 'These are public government data; confirm each county portal's terms before selling owner lists.']",
+    "severity": "medium"
+   },
+   {
+    "quote": "That is mostly closings at The Park Ward Village, on contracts signed in 2021–22 when the yen was ¥112–123; outside that tower, Japanese buying was flat to slightly down (see the Why box in Chapter 2).",
+    "problem": "1. 'That' follows '138 purchases', but only about 61 of 138 (44%) can be tied to the tower, so it is the rise (+47), not the purchases, that is mostly the tower. 2. 'Flat to slightly down' softens about −14% (Oʻahu ex-tower 72 vs 84). 3. TG counts buyers by address, not nationality. The Japan Why box's broker and family text now says 'buyers with Japan addresses', and the GTM guardrail says never to label buyers by nationality. This addition still says 'Japanese buying', which is a fair-housing labeling risk (national origin).",
+    "evidence": "an/new/tg.json: statewide Japan 91→138; Oʻahu 84 (H1 2025) → 32+101 = 133. why_result japan_korea: 61 Japan-billed owners in the tower; 'Outside that building, Japanese buying ran about 72 in H1 2026 against 84'; '61 … should be stated as approximate'. 72/84 = −14%.",
+    "fix": "The rise is mostly closings at The Park Ward Village, on contracts signed in 2021–22 when the yen was ¥112–123; outside that tower, Oʻahu purchases by buyers with Japan addresses were about 72, against 84 a year earlier (an approximate match; see the Why box in Chapter 2).",
+    "severity": "medium"
+   },
+   {
+    "quote": "DBEDT's own 2024 count (18,007) runs about 8% above Title Guaranty's, so a DBEDT-to-DBEDT comparison would overstate the 2025 drop (it shows −6.1%).",
+    "problem": "The like-for-like TG count rose 1.2%, so there is no 2025 drop to overstate. DBEDT-to-DBEDT would show a false decline. The new caveat in the same note also mixes labels: 'mainland buyers fell about 8% (3,519 → 3,226), so lead with the share (25% → 22% of sales)'. But 25%→22% is the out-of-state share including foreign buyers. The mainland-only share is 22.7%→19.6%.",
+    "evidence": "page_data tg: State 2024 18,007, 2025 16,909 → −6.1%. TG 16,716→16,909 = +1.2%. 4,253/16,716 = 25.4%, 3,721/16,909 = 22.0%; 3,799/16,716 = 22.7%, 3,314/16,909 = 19.6%.",
+    "fix": "DBEDT's own 2024 count (18,007) runs about 8% above Title Guaranty's, so a DBEDT-to-DBEDT comparison would show a 6.1% drop where Title Guaranty's like-for-like count rose 1.2%. [In the caveat: '…so lead with the out-of-state share (25% → 22% of sales, unchanged when Hilo is excluded) rather than the count.']",
+    "severity": "low"
+   },
+   {
+    "quote": "Steepest fall. 27% of buyers are from out of state, and they pay about twice what locals pay ($2.24M vs $1.10M)",
+    "problem": "Label mismatch. 27% counts mainland plus foreign buyers (332/1,247), but $2.24M is the mainland-only average. The combined out-of-state average is about $2.32M.",
+    "evidence": "page_data tg Maui 2025: n_mainland 316 @ $2,237,541, n_foreign 16 @ $3,983,125, local $1,102,874. Combined (316×2.2375M + 16×3.9831M)/332 = $2.32M.",
+    "fix": "Steepest fall. 27% of buyers are from out of state, and mainland buyers pay about twice what locals pay ($2.24M vs $1.10M)",
+    "severity": "low"
+   },
+   {
+    "quote": "Hawaiʻi Island | 3,945 | 3,675 | −6.8%",
+    "problem": "Given the page's own Hilo caveat, most of Hawaiʻi Island's −6.8% is the one-off 2024 Hilo batch. Excluding Hilo, the island fell 1.8%. The row gives brokers no hint of this.",
+    "evidence": "an/new/tg.json: Hawaii Island 3,945→3,675; Hilo 668→456. Ex-Hilo 3,277→3,219 = −1.8%.",
+    "fix": "Add to the Hawaiʻi Island 'What it means' cell: 'Most of the −6.8% is a one-off 2024 batch of Hilo transfers; excluding Hilo, sales fell about 2%.'",
+    "severity": "low"
+   },
+   {
+    "quote": "Off-island owners hold 28% of Waikīkī (96815) homes",
+    "problem": "The measure is the tax-bill mailing address outside Hawaiʻi (mainland 22.7% + foreign 5.7%) across residential parcels. In Hawaiʻi, 'off-island' can read as including owners on other islands, and a mailing address is not proof of residence.",
+    "evidence": "an/owners/oahu_individual.json situs_zip['96815']: mainland 0.2266, foreign 0.0566, hawaii 0.7135 (n = 17,053); categories come from mailing address (an/owners/oahu_ind.py).",
+    "fix": "Owners whose tax bills go outside Hawaiʻi hold 28% of Waikīkī (96815) homes",
+    "severity": "low"
+   },
+   {
+    "quote": "Two one-offs drive the island gap. Most of Oʻahu's rise is one tower:",
+    "problem": "Without the tower, Oʻahu's recorded sales fell about 2%, so all of the rise (and more) is the tower. The Why box says it 'came from one tower'. The checked answer also says the Līhuʻe excess should be called 'concentrated in Q2 2025, not strictly one-time' (Līhuʻe stayed above its 2024 pace in H2 2025).",
+    "evidence": "page_data tg_h1: Honolulu 4,613→5,032 (+419) vs 527 tower units; (5,032−527)/4,613 = −2.3%. why_result now_2026 fact_errors: 'Call it concentrated in Q2 2025, not strictly one-time.'",
+    "fix": "Two unusual batches drive the island gap. All of Oʻahu's rise is one tower:",
+    "severity": "low"
+   },
+   {
+    "quote": "while county tax records show buyers without a homeowner exemption steady at 55–57% (see the Why box below the island charts).",
+    "problem": "The Why box it points to says '55–56%' for the same series, and the data for FY2016–FY2020 run 54.2–57.4%. Main text and Why box should give one range and a period.",
+    "evidence": "page_data maui_fy non-owner share: FY2016 54.2%, FY2017 57.4%, FY2018 56.1%, FY2019 55.2%, FY2020 55.5%. why_curated maui_decline lead: 'steady at 55–56%'. why_result verdict: 'stayed at 54–57% of home sales in FY2016–FY2020'.",
+    "fix": "while county tax records show buyers without a homeowner exemption steady at 54–57% of Maui home sales in FY2016–FY2020 (see the Why box below the island charts). [Use the same range in the Why box lead.]",
+    "severity": "low"
+   },
+   {
+    "quote": "That added 16–18 points on Oahu, Maui and Kauai, and almost all of the increase since 2021.",
+    "problem": "In the same affordability Why box, the lead now gives rates 14–24 points on Oʻahu and 13–25 on Maui/Kauaʻi depending on order. The 'as checked' text still gives single figures (rates 16–18; prices 'about 19 of Oahu's 25-point rise'). Those figures are averages over all orderings including income, but the box doesn't say so, so the numbers look inconsistent.",
+    "evidence": "Three-factor Shapley from page_data ext.afford 2019→2025: Oahu price 19.3, rate 15.9, income −10.0; Maui 31.8/17.9/−13.8; Kauai 33.0/16.6/−10.3. Two-factor ranges at 2019 income: Oahu rate 14.3–20.6, price 18.0–24.3.",
+    "fix": "Averaged over the possible orderings, that added 16–18 points on Oahu, Maui and Kauai (14–21 on Oʻahu and 13–25 on Maui and Kauaʻi depending on which is counted first), and almost all of the increase since 2021.",
+    "severity": "low"
+   },
+   {
+    "quote": "Any phone list needs a Do-Not-Call scrub and a documented exemption.",
+    "problem": "At a high level this is imprecise. An exemption (established business relationship or written permission) is needed only to call numbers on the National DNC Registry. The bigger TCPA exposure, autodialed or prerecorded calls and marketing texts to cell phones without prior express written consent, is not mentioned.",
+    "evidence": "47 USC 227(b)–(c); 47 CFR 64.1200(a)(2), (c)(2), (f)(5). The page cites 47 USC 227 (source 53).",
+    "fix": "Any phone list must be scrubbed against the National Do-Not-Call Registry and the brokerage's internal list; call a registered number only with an established business relationship or the owner's written permission, and never use an autodialer, prerecorded voice or marketing texts to a cell phone without prior express written consent.",
+    "severity": "low"
+   },
+   {
+    "quote": "Hawaiʻi law adds protected classes beyond the federal list (HRS §515-3).52",
+    "problem": "Wrong citation. Footnote 52 is 42 USC 3604 (federal), and the source list has no entry for HRS §515-3. The claim is right, but the cited source doesn't support it.",
+    "evidence": "gtm-plan.html source list: id s52 = '42 USC 3604 — uscode.house.gov'. No HRS 515 entry.",
+    "fix": "Hawaiʻi law adds protected classes beyond the federal list, including age, marital status, sexual orientation, gender identity or expression, and HIV status (HRS §515-3). [Add a source entry for HRS §515-3 at capitol.hawaii.gov and cite it here.]",
+    "severity": "low"
+   },
+   {
+    "quote": "Week 1. Clear the rest of the checklist in section 9: a counsel memo and the fire-ZIP status after Oct 23.",
+    "problem": "Timing contradiction. Week 1 is Oct 8–14, so the fire-ZIP status 'after Oct 23' cannot be cleared then. Day labels are also off by one: Days 1–30 starting Oct 8 end Nov 6, not Nov 7 (and 61–90 run Dec 7–Jan 5).",
+    "evidence": "Oct 8 + 29 days = Nov 6. The 32nd proclamation expires Oct 23, 2026 (ev/gtm_result.json).",
+    "fix": "Week 1. Commission the counsel memo, then build a two-page market-position memo and Kauaʻi and Maui sample briefs. Check the fire-ZIP status on Oct 24, before any Maui outreach.",
+    "severity": "low"
+   },
+   {
+    "quote": "Corcoran Pacific: 100–150 agents and 9 offices, now under Compass.",
+    "problem": "This is misleading about a named company. Corcoran Pacific is an independently owned Corcoran franchisee. Compass owns the franchisor (through Anywhere/Compass International Holdings), not the Hawaiʻi firm.",
+    "evidence": "ev/gtm_result.json verdict: 'It is still the exclusive Hawaii Corcoran franchisee'. Compass closed its Anywhere acquisition on 2026-01-09 (realestatenews.com).",
+    "fix": "Corcoran Pacific: 100–150 agents and 9 offices; an independently owned Corcoran franchisee, whose franchisor Compass now owns.",
+    "severity": "low"
+   },
+   {
+    "quote": "Rhonda Hay (Kauaʻi senior broker)",
+    "problem": "The cited sources (24, and HousingWire/PRWeb) describe her as a senior broker and mentor and as Luckett's former co-managing broker. None places her on Kauaʻi or as a Kauaʻi island lead.",
+    "evidence": "v2/dl/hl_blog_lead.txt lines 175 and 184; v2/dl/hw_pb.txt line 160 ('co-managing broker, alongside Rhonda Hay').",
+    "fix": "Rhonda Hay (senior broker and mentor)",
+    "severity": "low"
+   },
+   {
+    "quote": "20 offices, 15 of them on the Neighbor Islands.",
+    "problem": "Sources the page cites elsewhere (3, 4: HousingWire 2026-03-16 and PRWeb 2026-03-12) give 23 offices. The 20 comes from the office index (source 8). The figures conflict without explanation.",
+    "evidence": "ev/gtm_result.json verdicts: office index (modified 2025-12-01) lists 20 offices; 'The press boilerplate says 23.'",
+    "fix": "20 offices on its office list (its March 2026 release says 23), 15 of the 20 on the Neighbor Islands.",
+    "severity": "low"
+   }
+  ],
+  "verdicts": [
+   {
+    "quote": "Title Guaranty permission: received. Its buyer statistics carry \"all rights reserved; no reproduction without prior written consent,\" and Hawaiʻi Intelligence has that consent. Keep the written permission on file and credit Title Guaranty on every edition.It also allows quarterly refreshes",
+    "real": false,
+    "reason": "The finding missed the user's own answer. At 2026-10-08T23:59 in this session the user was asked, \"Have you contacted Title Guaranty about permission to resell their buyer statistics?\" and chose \"Yes, I have permission\". The same answer named hawaiiintelligence.com as the brand. The page records that answer; nothing in it was made up. The Appleseed note the finding cites covers a different party and does not contradict this. The proposed fix (paid editions on DBEDT data until consent arrives) would override what the user said. Whether the consent is in writing and covers quarterly editions is for the user to confirm, and the refresh sentence is already tagged Assumption.",
+    "fix": "None. The user confirmed in this session that they have permission to resell Title Guaranty's statistics."
+   },
+   {
+    "quote": "No other Hawaiʻi report shows, ZIP by ZIP, where those buyers come from, what they buy and where sellers go next. This one does.",
+    "real": true,
+    "reason": "Confirmed: the report does not show this ZIP by ZIP. (1) The only ZIP-level buyer figure is the out-of-state share, taken from UHERO's public Factbook (micro_chapter.html source notes), so another Hawaiʻi report already publishes it. (2) Origin states and metros appear only by island and TG district. oahu_join by_situs_zip_ge_40_deals gives only Hawaiʻi, mainland and foreign shares, and owner metros are island-wide. (3) Destinations come from IRS county flows, which the report itself calls 'tax-filing households that moved, not buyers or sellers.' 'This one does' is false. The hero's 'only report ... seller destinations' overstates in the same way.",
+    "fix": "No other Hawaiʻi report we know of combines buyer origin by island and Title Guaranty district, ZIP-level micro-markets and where departing households move. This one does. [Hero: 'Sell brokerages a report that combines buyer origin, where departing households move and micro-markets; we know of no other Hawaiʻi report that does.']"
+   },
+   {
+    "quote": "Most of the 2025 slowdown came from out-of-state buyers, and they are the buyers who pay the most.",
+    "real": true,
+    "reason": "Confirmed from an/new/tg.json. On the page's own like-for-like basis, statewide sales rose 16,716 → 16,909 (+1.2%), and dollar volume was about flat at $15.6B → $15.5B. Out-of-state buyers fell 4,253 → 3,721 while Hawaiʻi buyers rose 12,463 → 13,188. There was no 2025 slowdown to attribute, so the pitch contradicts the table directly above it. 'Pay the most' holds: DBEDT 2025 shows mainland buyers at $1.26M and foreign at $1.32M against $818K for locals.",
+    "fix": "In 2025, out-of-state buyers fell from 25% to 22% of sales while total sales held steady, and they are the buyers who pay the most."
+   },
+   {
+    "quote": "In 2025, out-of-state buyers fell 12.5% while local buyers rose 5.8%, and that change hits Neighbor Island and luxury offices hardest.",
+    "real": true,
+    "reason": "Confirmed internal contradiction. The note under the table says 2024 includes a one-off batch of 232 Hilo transfers to California addresses and to 'lead with the share (25% → 22% of sales) rather than the count'. Yet the hero stat and the first outreach message both lead with the count. From tg.json: Hilo 2024 other-US 279 and foreign 0; 2025 other-US 88 and foreign 1. Excluding Hilo, out-of-state buyers went 3,974 → 3,632 (−8.6%), not −12.5%. The share is 24.8% → 22.1% excluding Hilo, so 25% → 22% holds either way. Local +5.8% (12,463 → 13,188) is not inflated by Hilo: excluding it gives +6.2%.",
+    "fix": "In 2025, out-of-state buyers fell from 25% to 22% of Hawaiʻi home sales while local buyers rose 5.8%, and that change hits Neighbor Island and luxury offices hardest. [Hero stat: replace '−12.5% / Out-of-state buyers, 4,253 → 3,721 sales' with '25% → 22% / Out-of-state buyers' share of sales, 2024 to 2025 (4,253 → 3,721 sales; about −9% excluding a one-off 2024 Hilo batch)'.]"
+   },
+   {
+    "quote": "Payback assumes Hawaii Life's 2024 average side of about $1.68M ($1.91B over 1,136 sides) and an assumed 2.5% commission, or about $42K of gross commission per side.",
+    "real": true,
+    "reason": "The arithmetic is right: $1.91B / 1,136 = $1.681M, × 2.5% = $42.0K, so Tier 1 at $36K–$60K = 0.86–1.43 sides and Enterprise at $72K–$108K = 1.7–2.6. The problem is the yardstick. The pilot, Tier 1, Enterprise and add-ons are paid by the brokerage, which recovers the cost only from its share of each side after agent splits, not from gross commission. The 'Pays for itself at' column therefore overstates the brokerage's payback by the inverse of its split share, which is several-fold at any company-dollar share of about 35% or less. A broker-owner would discount the figure on sight. I did not add a specific split percentage because none is sourced.",
+    "fix": "Payback assumes Hawaii Life's 2024 average side of about $1.68M ($1.91B over 1,136 sides) and an assumed 2.5% commission, or about $42K of gross commission per side. That is before agent splits: the brokerage keeps only its share of each side, so its own payback takes several times as many sides as shown. [Rename the column 'Pays for itself at (gross commission)'.]"
+   },
+   {
+    "quote": "He runs training, agent adoption of the company's tools, and its internal systems.",
+    "real": true,
+    "reason": "Confirmed against the cited source. v2/dl/hl_blog_lead.txt (source 24) says Snyder 'focuses on supporting agent training and helping drive adoption of the company's technology platforms, while also assisting in the development of internal systems'. The PRWeb release (v2/dl/prweb.txt) says he 'helps ensure agents are supported and well trained ... part of the team developing and improving several internal platforms'. 'Runs' overstates his role. Section 4 of the same page already says 'helps develop'.",
+    "fix": "He supports agent training, helps drive adoption of the company's technology platforms and assists in developing its internal systems."
+   },
+   {
+    "quote": "and it has no in-house research team.",
+    "real": true,
+    "reason": "Confirmed. The evidence is an absence of findings. ev/gtm_result.json says 'No in-house economist or research director was found', and the page's own supporting bullet says 'We found no research lead or economist on staff.' Stating it as fact about a named company overstates the evidence.",
+    "fix": "and we found no in-house research team."
+   },
+   {
+    "quote": "A counsel memo covering the RESPA structure, fair-housing copy, Do-Not-Call rules, HRS 467, and whether selling data to brokerages requires a Hawaiʻi license.",
+    "real": true,
+    "reason": "Confirmed. ev/gtm_result.json research gap (3) says county terms of use for commercial resale of owner data (Honolulu and Maui portals) were 'not found. Read each portal's disclaimer and terms of use before reselling'. ev/gtm_plan.txt put 'county data terms' in the counsel memo and held the owner-list add-on until they were cleared. The page now sells owner lists ('Oʻahu and Maui are ready now'). The owner data came from county ArcGIS services (HoLIS OWNINFO and Maui Parcel_Fabric; see the source fields in who/oahu_join.json and who/maui_join.json), whose resale terms were never checked. OIP 11-01 makes the addresses public records, but it does not settle each portal's terms of use for bulk resale.",
+    "fix": "A counsel memo covering the RESPA structure, fair-housing copy, Do-Not-Call rules, HRS 467, each county's terms for reselling owner mailing lists, and whether selling data to brokerages requires a Hawaiʻi license. [Next item: replace 'These are public government data and are already in the report.' with 'These are public government data; confirm each county portal's terms before selling owner lists.']"
+   },
+   {
+    "quote": "That is mostly closings at The Park Ward Village, on contracts signed in 2021–22 when the yen was ¥112–123; outside that tower, Japanese buying was flat to slightly down (see the Why box in Chapter 2).",
+    "real": true,
+    "reason": "Partly confirmed, low severity. tg.json shows Oʻahu Japan purchases of 84 in H1 2025 and 133 in H1 2026. Taking out the 61 Japan-billed tower owners leaves about 72, down 14%. Statewide it is 138 − 61 = 77 against 91 (−15%). The checked answer's wealth-effect verdict says buying 'actually slipped'. 'Flat' is not supported; the Why box lead repeats the same phrase, so fix both. Two parts of the finding I reject. 'That' naturally refers to the rise of 47, which the 61 tower closings more than cover. And the nationality wording is a report-wide shorthand used in descriptive statistics, not a fair-housing preference. Still, the data counts Japan addresses, so the place-based label is more accurate.",
+    "fix": "The rise is mostly closings at The Park Ward Village, on contracts signed in 2021–22 when the yen was ¥112–123; outside that tower, Oʻahu purchases by buyers with Japan addresses fell to about 72 from 84 a year earlier (an approximate match; see the Why box in Chapter 2). [Why box japan_korea lead: replace 'Outside that building, Japanese buying was flat to slightly down.' with 'Outside that building, purchases by buyers with Japan addresses fell to about 72 on Oʻahu, from 84 a year earlier.']"
+   },
+   {
+    "quote": "DBEDT's own 2024 count (18,007) runs about 8% above Title Guaranty's, so a DBEDT-to-DBEDT comparison would overstate the 2025 drop (it shows −6.1%).",
+    "real": true,
+    "reason": "Confirmed, low. DBEDT gives 18,007 → 16,909 (−6.1%), while TG like-for-like gives 16,716 → 16,909 (+1.2%). There is no drop to overstate; DBEDT-to-DBEDT would show a false one. In the same note, 'mainland buyers fell about 8% (3,519 → 3,226), so lead with the share (25% → 22% of sales)' mixes labels. 25.4% → 22.0% is the out-of-state share (4,253 and 3,721), while the mainland share is 22.7% → 19.6%. The 3,519 figure checks: restated 2024 other-US 3,798 − 279 for Hilo.",
+    "fix": "DBEDT's own 2024 count (18,007) runs about 8% above Title Guaranty's, so a DBEDT-to-DBEDT comparison would show a 6.1% drop, where Title Guaranty's like-for-like count rose 1.2%. [Caveat: '...so lead with the out-of-state share (25% → 22% of sales, the same when Hilo is excluded) rather than the count.']"
+   },
+   {
+    "quote": "Steepest fall. 27% of buyers are from out of state, and they pay about twice what locals pay ($2.24M vs $1.10M)",
+    "real": true,
+    "reason": "Confirmed label mismatch, low. page_data tg Maui 2025: mainland 316 at $2,237,541, foreign 16 at $3,983,125, local 915 at $1,102,874, total 1,247. 27% = (316 + 16) / 1,247 = 26.6%, which counts out-of-state buyers. $2.24M is the mainland-only average; the out-of-state average is $2.32M. 'About twice' holds either way.",
+    "fix": "Steepest fall. 27% of buyers are from out of state, and mainland buyers pay about twice what locals pay ($2.24M vs $1.10M)"
+   },
+   {
+    "quote": "Hawaiʻi Island | 3,945 | 3,675 | −6.8%",
+    "real": true,
+    "reason": "Confirmed, low. tg.json: island 3,945 → 3,675 (−270); Hilo 668 → 456, with Hilo other-US at 78 (2023), 279 (2024) and 88 (2025). Excluding Hilo, the island went 3,277 → 3,219 (−1.8%), so about three-quarters of the drop is the 2024 batch. The note under the table mentions the batch only for mainland buyers, so the island row reads as a broad decline.",
+    "fix": "Add to the Hawaiʻi Island 'What it means' cell: 'Most of the −6.8% is a one-off 2024 batch of Hilo transfers; excluding Hilo, sales fell about 2%.'"
+   },
+   {
+    "quote": "Off-island owners hold 28% of Waikīkī (96815) homes",
+    "real": false,
+    "reason": "The figure is right: 22.66% mainland + 5.66% foreign = 28.3% of 17,053 residential parcels (owners/oahu_individual.json). The wording follows the report's own convention. Its Waikīkī table defines 'Off-island total' as owner on the mainland plus owner abroad (23% + 5.7% = 28%), and the micro chapter writes 'Homes owned from outside Hawaiʻi (Oʻahu: off-island)'. Neighbor-island owners would add only a point or so. The source line already says the figure comes from the owner roll, which is built from mailing addresses. Immaterial.",
+    "fix": "None."
+   },
+   {
+    "quote": "Two one-offs drive the island gap. Most of Oʻahu's rise is one tower:",
+    "real": true,
+    "reason": "Confirmed, low. page_data tg_h1: Honolulu 4,613 → 5,032 (+419) against 527 tower units, so 4,505 excluding the tower (−2.3%). The same sentence says that without the tower sales 'fell about 2%', so the tower is all of the rise, not 'most'. The now_2026 checked answer says Oʻahu's gain 'came from' the tower. Its fact_errors also say to call the Līhuʻe excess 'concentrated in Q2 2025, not strictly one-time', which contradicts 'two one-offs'.",
+    "fix": "Two concentrated batches of sales drive the island gap. All of Oʻahu's rise is one tower:"
+   },
+   {
+    "quote": "while county tax records show buyers without a homeowner exemption steady at 55–57% (see the Why box below the island charts).",
+    "real": true,
+    "reason": "Confirmed minor inconsistency. From page_data maui_fy, the non-owner share is FY2016 54.2%, FY2017 57.4%, FY2018 56.1%, FY2019 55.2% and FY2020 55.5%. The main text says 55–57% with no period; the Why box it points to says 55–56% 'over the same period' as the Q3 2018 break. Around the break (FY2018–FY2020) the data run 55.2–56.1%, which matches the Why box. Adding the period to the main text aligns the two without touching the box.",
+    "fix": "while county tax records show buyers without a homeowner exemption steady at 55–56% of Maui home sales from FY2018 to FY2020 (see the Why box below the island charts)."
+   },
+   {
+    "quote": "That added 16–18 points on Oahu, Maui and Kauai, and almost all of the increase since 2021.",
+    "real": false,
+    "reason": "I recomputed from page_data ext.afford for 2019 → 2025. The three-factor averages for rates are Oʻahu 15.9, Maui 17.9 and Kauaʻi 16.6, so 16–18 is correct. The price figures (19.3 of 25.2; 31.8 of 35.8 and 33.0 of 39.4) and the income figures (−10.0 and −10.3) also match the driver text. The lead's ranges (Oʻahu 14.3–24.3; Maui and Kauaʻi rates 12.9–25.4, prices 30.3–41.5 at 2019 income) contain these averages. There is no contradiction, only a central estimate inside a stated range.",
+    "fix": "None."
+   },
+   {
+    "quote": "Any phone list needs a Do-Not-Call scrub and a documented exemption.",
+    "real": true,
+    "reason": "Confirmed omission, low severity. The card is titled 'Calls and texts', but it leaves out the main TCPA rule for marketing to cell phones. 47 CFR 64.1200(a)(2) requires prior express written consent for telemarketing calls made with an autodialer or a prerecorded voice to wireless numbers, and texts count as calls. The existing sentence is also loose: an exemption is needed only for numbers on the Registry. The 8am–9pm limit is correct under 64.1200(c)(1).",
+    "fix": "Any phone list must be scrubbed against the National Do-Not-Call Registry and the brokerage's own do-not-call list; call a registered number only with an established business relationship or the owner's written permission. No autodialed or prerecorded calls or texts to a cell phone without prior express written consent."
+   },
+   {
+    "quote": "Hawaiʻi law adds protected classes beyond the federal list (HRS §515-3).52",
+    "real": false,
+    "reason": "The claim is correct: HRS §515-3 adds classes such as age, marital status, sexual orientation, gender identity or expression, and HIV infection. The statute is named inline, and footnote 52 (42 USC 3604) supports the 'federal list' half of the sentence. This is a footnote-placement nit with no factual error. Immaterial.",
+    "fix": "None."
+   },
+   {
+    "quote": "Week 1. Clear the rest of the checklist in section 9: a counsel memo and the fire-ZIP status after Oct 23.",
+    "real": true,
+    "reason": "Confirmed, low. Week 1 runs Oct 8–14, so the fire-ZIP status 'after Oct 23' cannot be cleared then (the 32nd proclamation, dated Aug 24, 2026, runs to about Oct 23). The day labels are also off by one. Counting Oct 8 as day 1, day 30 is Nov 6, not Nov 7, and the later blocks shift to Nov 7–Dec 6 and Dec 7–Jan 5. 'Day 120, early February' still holds (Feb 4).",
+    "fix": "Week 1. Commission the counsel memo in section 9, then build a two-page market-position memo and Kauaʻi and Maui sample briefs. On Oct 24, check whether a 33rd wildfire proclamation renews the ban. [Date labels: 'Oct 8 – Nov 6, 2026', 'Nov 7 – Dec 6', 'Dec 7 – Jan 5, 2027'.]"
+   },
+   {
+    "quote": "Rhonda Hay (Kauaʻi senior broker)",
+    "real": true,
+    "reason": "Confirmed. Source 24 (v2/dl/hl_blog_lead.txt) calls her a mentor and a senior broker, and HousingWire says Luckett had been co-managing broker alongside her. No source puts her on Kauaʻi. A web search found a Maui Now article (Feb 2017) saying she had been Broker-in-Charge on Maui before becoming Director of Operations, which points away from Kauaʻi.",
+    "fix": "Rhonda Hay (senior broker and mentor)"
+   },
+   {
+    "quote": "20 offices, 15 of them on the Neighbor Islands.",
+    "real": true,
+    "reason": "Partly right, low. The cited office index (source 8, modified 2025-12-01) does list 20 offices: Oʻahu 5, Maui 5, Kauaʻi 4, Hawaiʻi Island 5 and Molokaʻi 1, so 15 are on the Neighbor Islands. But the company's newer March 2026 release (sources 3 and 4, which the page cites elsewhere) says 23. An earlier version of the index also listed Ewa Beach, Mauna Kea and Hokuliʻa, which would make 23. Stating 20 flatly to this prospect risks a visible error.",
+    "fix": "20 offices on its office list, 15 of them on the Neighbor Islands (its March 2026 release says 23)."
+   },
+   {
+    "quote": "Corcoran Pacific: 100–150 agents and 9 offices, now under Compass.",
+    "real": true,
+    "reason": "Confirmed, low. ev/gtm_result.json says it 'is still the exclusive Hawaii Corcoran franchisee'. Saved Corcoran pages state that franchised offices 'are independently owned and operated'. Compass bought the franchisor (Anywhere, closed 2026-01-09), not the Hawaiʻi firm, so 'now under Compass' implies ownership it does not have.",
+    "fix": "Corcoran Pacific: 100–150 agents and 9 offices; an independently owned Corcoran franchisee, and Compass now owns the Corcoran brand."
+   }
+  ]
+ }
+]

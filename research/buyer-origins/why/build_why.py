@@ -8,7 +8,7 @@ E = lambda s: html.escape(str(s or ''), quote=True)
 
 TITLES = {
   'california': 'Why California leads on every island',
-  'west_states': 'Why Washington, Oregon, Alaska, Colorado and Utah come next',
+  'west_states': 'Why Washington, Oregon, Alaska, Colorado and Utah buy more per resident than Texas or Florida',
   'japan_korea': 'Why buyers from Japan and Korea concentrate on Oʻahu, and why they jumped in 2026',
   'canada': 'Why Canadians buy on Maui and Hawaiʻi Island, and why they pulled back',
   'maui_decline': 'Why Maui’s mainland buyer share fell',
@@ -53,7 +53,7 @@ def md(text):
 
 
 # ---- client-facing sanitizing: no process notes, file paths, or religion/ancestry/building-by-country details
-DROP_SENT = re.compile(r'(web[- ]search|search budget|quota|Verification note|cached earlier|this session|were blocked|sites were blocked|this agent|re-checked in this pass|budget ran out|re-checks used direct downloads|Outside facts were re-checked)', re.I)
+DROP_SENT = re.compile(r'(^For brokers|^\*\*For brokers|For brokers[,:]|web[- ]search|search budget|quota|Verification note|cached earlier|this session|were blocked|sites were blocked|this agent|re-checked in this pass|budget ran out|re-checks used direct downloads|Outside facts were re-checked)', re.I)
 REPL = [
   ('home to about 95,000 Native Hawaiians, which adds', 'home to a large community with Hawaiʻi roots, which adds'),
   ("Utah's distinctive tie is the Church community in Laie on Oahu, but it is small: 55 of 944 Laie parcels, 19 of them mailed to the Church headquarters ZIP.", "Utah's distinctive tie is the community around BYU–Hawaiʻi in Lāʻie on Oʻahu, but it is small: 55 of 944 Lāʻie parcels."),
@@ -70,10 +70,28 @@ REPL = [
   ('A few policy details (Honolulu Ordinance 25-44, Act 17, Maui\'s September 2026 rezoning vote) were not re-verified.', 'Policy details (Honolulu Ordinance 25-44, Act 17 and Maui\'s September 2026 rezoning vote) are as reported.'),
   ('Japanese purchases fell from 581 in 2018', 'Japanese purchases on Oʻahu fell from 581 in 2018'),
   ("Moku's", "the City and County of Honolulu's"),
+  ('Second, mortgage rates rose from about 3.9% to 6.6% between 2022 and 2023, raising the payment on every borrowed dollar by 35%.', 'Second, mortgage rates jumped in 2022–23; they averaged 6.6% in 2025 against 3.9% in 2019, which raised the payment on every borrowed dollar by 35%.'),
+  ('They rose from about 6.05% in February to 7.28% on Oct 1, which raises the payment on the same loan 13.5%.', 'The 30-year rate rose from a 6.05% February average to 7.40% on Oct 8, which raises the payment on the same loan 14.9%.'),
+  ('Since February (6.05%) rates have risen to 7.28% (week of Oct 1), raising the payment on the same loan 13.5%.', 'Since February (6.05% average) rates have risen to 7.40% (week of Oct 8), raising the payment on the same loan 14.9%.'),
+  ('Kahuku tops the list because Turtle Bay makes up half of a tiny ZIP.', 'Kahuku ranks second, behind Waikīkī, because Turtle Bay makes up half of a tiny ZIP.'),
+  ("By a brokerage's map counts, they took about 86% of Hawai'i Island's and 82% of Maui's 2025 $3M+ house sales.", "By a brokerage's map counts, South Kohala and North Kona took about 86% of Hawai'i Island's 2025 $3M+ house sales, and West and South Maui took 82% of Maui's; on Maui the Kapalua, Kāʻanapali and Wailea–Mākena resorts alone took 40 of 71."),
+  ("A brokerage's map counts put about 86% of Hawai'i Island's and 82% of Maui's 2025 $3M+ house sales there.", "A brokerage's map counts put about 86% of Hawai'i Island's 2025 $3M+ house sales in South Kohala and North Kona and 82% of Maui's in West and South Maui; on Maui the Kapalua, Kāʻanapali and Wailea–Mākena resorts alone took 40 of 71."),
+  ("including Kahuku town, Lā'ie and Hau'ula houses, and Kahala.", "including Kahuku town, Lā'ie and Hau'ula houses, and the wider Kahala–Kaimukī ZIP."),
+  ('Yet county conveyance-tax records show buyers without a homeowner exemption steady at 55–56% of Maui home sales.', 'Yet county conveyance-tax records show buyers without a homeowner exemption steady at 55–56% of Maui home sales (FY2018–FY2020).'),
+  ('The vacation-rental phase-out (Bill 9) shows up in South Maui condos, where out-of-state buyers fell from 193 to 113.', "The vacation-rental phase-out (Bill 9) shows up in South Maui, where other-US buyers in Title Guaranty's South Side district fell from 179 to 113 (restated 2024 count; houses and condos together)."),
+  ('Vacation-rental policy risk fits the 2024–25 drop in out-of-state buyers in South Maui condos: other-US buyers fell from 193 to 113 while Hawai\'i buyers there fell only 13%.', "Vacation-rental policy risk fits the 2024–25 drop in other-US buyers in Title Guaranty's South Side district (houses and condos together): 179 to 113 on the restated 2024 count, while Hawaiʻi buyers there fell 15%."),
+  ('Outside that tower, Japanese buying was roughly 72 in H1 2026 vs 84 in H1 2025.', 'Outside that tower, purchases by buyers with Japan addresses were roughly 72 in H1 2026 vs 84 in H1 2025.'),
+  ('They did not raise underlying Japanese buying, which slipped.', 'They did not raise underlying buying from Japan, which slipped.'),
+  ('Outside that building, Japanese buying ran about 72 in H1 2026 against 84 a year earlier: flat to slightly down.', 'Outside that building, purchases by buyers with Japan addresses on Oʻahu ran about 72 in H1 2026 against 84 a year earlier.'),
 ]
+ADDR = [('Canadian and Japanese buyers', 'buyers from Canada and Japan'), ('Japanese buyers', 'buyers from Japan'), ('Korean buyers', 'buyers from Korea'), ('Canadian buyers', 'buyers from Canada'),
+        ('Japanese purchases', 'purchases by buyers from Japan'), ('Korean purchases', 'purchases by buyers from Korea'), ('Canadian purchases', 'purchases by buyers from Canada'),
+        ('Japanese buying', 'buying from Japan'), ('Korean buying', 'buying from Korea'), ('Canadian buying', 'buying from Canada'),
+        ('Japanese owners', 'owners with Japan addresses'), ('Canadian owners', 'owners with Canada addresses'), ('Canadian and Japanese buyers', 'buyers from Canada and Japan')]
 def clean(t):
     t = t or ''
     for a, b in REPL: t = t.replace(a, b)
+    for a, b in ADDR: t = t.replace(a, b).replace(a[0].lower() + a[1:], b)
     out = []
     for para in re.split(r'(\n\s*\n)', t):
         if re.fullmatch(r'\n\s*\n', para): out.append(para); continue
@@ -104,6 +122,7 @@ def render(item, cur):
         verdict = (v or {}).get('verdict', 'unchecked')
         st = d.get('strength', 'moderate')
         if verdict == 'weakened': st = DOWN[st]
+        st = (cur.get('strength_override') or {}).get(str(i), st)
         text = clean((v or {}).get('corrected_wording') or d['driver'])
         lab = labels[i]
         if verdict == 'refuted' or lab is None:
@@ -119,7 +138,7 @@ def render(item, cur):
         o.append(f'<li><span class="wb-s {cls}">{nm}</span><span class="wb-x">{E(lab)}</span></li>')
         detail.append(f'<li><b>{E(lab)}</b> <span class="wb-v">({nm.lower()}; {VERD[verdict]})</span>. {E(text)}</li>')
     o.append('</ol>')
-    o.append(f'<div class="wb-so"><div><b>For brokers</b><p>{E(cur["brokers"])}</p></div><div><b>For local families</b><p>{E(cur["families"])}</p></div></div>')
+    o.append(f'<div class="wb-so"><div><b>Reading the data</b><p>{E(cur["brokers"])}</p></div><div><b>For local families</b><p>{E(cur["families"])}</p></div></div>')
     # sources from surviving drivers (source names and links only; facts are restated in the checked answer)
     seen, src = set(), []
     for _, _l, _s, _v, _t, ev in rows:
@@ -127,6 +146,8 @@ def render(item, cur):
             u = (e.get('url') or '').strip(); key = u
             if not u.startswith('http') or BAD_HOST.search(u + ' ' + (e.get('source') or '')) or key in seen: continue
             seen.add(key); src.append(e)
+    for e in cur.get('extra_sources') or []:
+        if e['url'] not in seen: seen.add(e['url']); src.append(e)
     miss = c.get('missing_drivers') or []
     o.append(f'<details class="wb-ev"><summary>The full explanation, each driver as checked, and {len(src)} sources</summary>')
     o.append('<p class="wb-h">The checked answer</p>' + md(clean(c.get('final_answer') or r.get('answer'))))

@@ -1,0 +1,2 @@
+file	url	downloaded_utc	bytes	sha256
+historicalweeklydata.xlsx	https://www.freddiemac.com/pmms/docs/historicalweeklydata.xlsx	2026-10-09T01:01:03Z	218746	9ab1fd61a6ca280c677df107ce118c0c9048712c5b11ea35a01ad93bda8dbb89

@@ -1,0 +1,19 @@
+# HMDA raw downloads (FFIEC/CFPB HMDA Data Browser API). Times are file mtimes (UTC) = time curl finished writing.
+# CSV/JSON bodies were requested with curl --compressed; stored bytes are the decoded (gunzipped) body.
+file	url	downloaded_utc	bytes	sha256
+agg_2019_15001_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2019&counties=15001&actions_taken=1&loan_purposes=1	2026-10-08T05:48:50Z	182	273d578d27bf250bfcf7f94a73846e455ecf3c1dacc52b845276bd16a92d4052
+agg_2019_15003_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2019&counties=15003&actions_taken=1&loan_purposes=1	2026-10-08T05:48:50Z	181	cf5841da79fd3cccd9e077f1edeb565832ce52452646f9bae6fe9ef77b14aefb
+agg_2019_15007_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2019&counties=15007&actions_taken=1&loan_purposes=1	2026-10-08T05:48:50Z	180	3b651f8770a7780ac9ec4e34d4cca316da1c3dddb9f79976fffbd18237cb2341
+agg_2019_15009_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2019&counties=15009&actions_taken=1&loan_purposes=1	2026-10-08T05:48:50Z	182	a09e3b9109d40f84bda37edb2c47114f2c97eec7c1501fa70ca1de53ce3804a1
+agg_2025_15001_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2025&counties=15001&actions_taken=1&loan_purposes=1	2026-10-08T05:48:49Z	183	239c85ffc391faa0987ffd91c3e6c758a757b4cd4be0b61b2ef5b33787c0b1c0
+agg_2025_15003_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2025&counties=15003&actions_taken=1&loan_purposes=1	2026-10-08T05:48:49Z	183	cd74da06a370fb9dacafd1732f64425ba158fe293bf9e890dd025140cea6c54e
+agg_2025_15007_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2025&counties=15007&actions_taken=1&loan_purposes=1	2026-10-08T05:48:49Z	181	cca2dc94ed779bd14885abc106a2e2e778b838e697131d8a017e5ceb9113de6f
+agg_2025_15009_orig_purchase.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2025&counties=15009&actions_taken=1&loan_purposes=1	2026-10-08T05:48:49Z	181	e40a88b7bf859a661074c0723332d15d90436a7ae62f2e81a6db20dd4f8b4e54
+agg_urls.txt	(list of aggregation URLs, written locally)	2026-10-08T05:51:09Z	1170	ef6042b39be5fed302ff8dd89462d8de0e365587ac36467d849e8105db5cccdd
+hdr_2019.txt	(HTTP response headers of the 2019 CSV request above)	2026-10-08T05:48:15Z	1450	928ea187b28b7c1906607b057414b3ae5df15aa2b2e9b84400eb0fee076618ab
+hdr_2025.txt	(HTTP response headers of the 2025 CSV request above)	2026-10-08T05:48:12Z	1450	0a7a29d9f7668bbd8b90b1b19ef4fff9b37e53ea20274cc438d54bd52aaf33e6
+hmda_2019_hi4_orig_purchase.csv	https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?counties=15001,15003,15007,15009&years=2019&actions_taken=1&loan_purposes=1	2026-10-08T05:48:20Z	5516407	0f030ebd91b6dc2662ebdd12ea6a0817dd62c9ff6b4da1c52e713139b5914248
+hmda_2025_hi4_orig_purchase.csv	https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?counties=15001,15003,15007,15009&years=2025&actions_taken=1&loan_purposes=1	2026-10-08T05:48:14Z	3821788	4e457ce05d68d3a43aa5b34d4e8871f7201d07d7cbe3c58cf4b9c2da3a9fda11
+probe_2026_15003.json	https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations?years=2026&counties=15003&actions_taken=1&loan_purposes=1	2026-10-08T05:51:09Z	72	3bd3cda88eb9c68c6e610c298ee98c029d2d54ed1b58db241f4f0bd636268288
+snapshot_head_2019.txt	HEAD https://files.ffiec.cfpb.gov/static-data/snapshot/2019/2019_public_lar_csv.zip	2026-10-08T05:50:05Z	613	4ad48e36d4b2127f8b03272151e2d3c89ff3058c09b45626bc22dce857bdf8d8
+snapshot_head_2025.txt	HEAD https://files.ffiec.cfpb.gov/static-data/snapshot/2025/2025_public_lar_csv.zip	2026-10-08T05:50:05Z	614	cea47c6d99a807df1e9b9843c55e4f996b169cf4afe2c77e21dc2a95456689ee

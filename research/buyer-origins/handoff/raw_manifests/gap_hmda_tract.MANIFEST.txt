@@ -1,0 +1,21 @@
+# Census geography downloads for gap_hmda_tract. time = UTC when curl finished.
+file	url	downloaded_utc	bytes	sha256
+baf2020_BlockAssign_ST15_HI.zip	https://www2.census.gov/geo/docs/maps-data/data/baf2020/BlockAssign_ST15_HI.zip	2026-10-08T18:53:54Z	225019	99ff6595ad6566804cc4682c9e73b9d854ae127154bffb9b0f2e6e97a7fa8147
+baf2010_BlockAssign_ST15_HI.zip	https://www2.census.gov/geo/docs/maps-data/data/baf/BlockAssign_ST15_HI.zip	2026-10-08T18:53:55Z	537701	74bafd4bb178f54ce33355adee02cc11568eddf24bad68efa64b26c104f02ba6
+2020_gaz_cousubs_15.txt	https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_gaz_cousubs_15.txt	2026-10-08T18:53:55Z	9035	8a748a7deec838179b7175cdb1dd59d0c09da6981bd696f40e1f5266b65c4d8d
+2020_gaz_place_15.txt	https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_gaz_place_15.txt	2026-10-08T18:53:55Z	32954	1818b3be87cabcd4398d623a72c67673a23e1b2bbc82838a03daafebbc3d62a5
+2020_gaz_tracts_15.txt	https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_gaz_tracts_15.txt	2026-10-08T18:53:56Z	92852	eb4fe6761297aedfa04deb8af04b7aed6635954c8ab08b88f85f2cfe30bebb3f
+tl_2020_15_tabblock20.zip	https://www2.census.gov/geo/tiger/TIGER2020/TABBLOCK20/tl_2020_15_tabblock20.zip	2026-10-08T18:53:57Z	24070539	c29683118cd7eada4bd4672e30de6bdd5638a752c1d0f7f795b4dd580c02259e
+tabblock2010_15_pophu.zip	https://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/tabblock2010_15_pophu.zip	2026-10-08T18:53:58Z	17812608	ab8943d2a4a85771bc2b29e25982576d1188fa9fb169adffcfb0b8083377c2cc
+tl_2010_15_cousub10.zip	https://www2.census.gov/geo/tiger/TIGER2010/COUSUB/2010/tl_2010_15_cousub10.zip	2026-10-08T18:53:59Z	527414	1e3497347710a76650daad1eb3537533dd21d64ce30435a363331c165d06bce6
+tl_2010_15_place10.zip	https://www2.census.gov/geo/tiger/TIGER2010/PLACE/2010/tl_2010_15_place10.zip	2026-10-08T18:53:59Z	692420	ac843c50101dea16d885db7ffb2109f15edc2d6abb0f8b1d4f3dfd77cf46b52c
+tl_2020_15001_faces.zip	https://www2.census.gov/geo/tiger/TIGER2020/FACES/tl_2020_15001_faces.zip	2026-10-08T18:54:49Z	7191078	e62f5e67aaf981b5033f9f88565222ad51e6b50cf48bf30364f3d9650a394da5
+tl_2020_15003_faces.zip	https://www2.census.gov/geo/tiger/TIGER2020/FACES/tl_2020_15003_faces.zip	2026-10-08T18:54:50Z	5204032	5286fde7090f469362c0d68a6fc4af54d561c64aebb538e08c674c2f897a1017
+tl_2020_15005_faces.zip	https://www2.census.gov/geo/tiger/TIGER2020/FACES/tl_2020_15005_faces.zip	2026-10-08T18:54:50Z	87862	b171a8bd51d872cfac5ba1494a2bca080882fc1072f8e45f665c4da94f9424c3
+tl_2020_15007_faces.zip	https://www2.census.gov/geo/tiger/TIGER2020/FACES/tl_2020_15007_faces.zip	2026-10-08T18:54:51Z	2854354	b3fee634f36cde7a3efeea3f0be1374c71b619fc559243a3ba8aaa3c8b24a4ae
+tl_2020_15009_faces.zip	https://www2.census.gov/geo/tiger/TIGER2020/FACES/tl_2020_15009_faces.zip	2026-10-08T18:54:52Z	4346180	8136445db65a2c647ed6d7427968936b10bf864eacbd97a0480a20d2a18d2b3a
+tl_2010_15001_faces.zip	https://www2.census.gov/geo/tiger/TIGER2010/FACES/tl_2010_15001_faces.zip	2026-10-08T18:55:11Z	7994687	701a0f4f2226820ac4962d58d043b72da84b22428514cd5c0a82571b139d7b70
+tl_2010_15003_faces.zip	https://www2.census.gov/geo/tiger/TIGER2010/FACES/tl_2010_15003_faces.zip	2026-10-08T18:55:13Z	5615690	5b0c64d107e3d15ca48a3c70b37f5552a5553e9b110d9a8d1aa1269de2e4b482
+tl_2010_15005_faces.zip	https://www2.census.gov/geo/tiger/TIGER2010/FACES/tl_2010_15005_faces.zip	2026-10-08T18:55:13Z	82286	4b6da967ed57bf3e67c3229d1a16b05224f5694f704a111b3ed3335ad1ba7490
+tl_2010_15007_faces.zip	https://www2.census.gov/geo/tiger/TIGER2010/FACES/tl_2010_15007_faces.zip	2026-10-08T18:55:14Z	3634385	44895571aa4a351d2c02ba2f61a3ea2aea91d2aba928f1059cf7725b7ac60f41
+tl_2010_15009_faces.zip	https://www2.census.gov/geo/tiger/TIGER2010/FACES/tl_2010_15009_faces.zip	2026-10-08T18:55:16Z	4863914	5c8e75647611f373910a78a9e30920c3bcfa81c436e919e359ed4f2e22f6ebe9
