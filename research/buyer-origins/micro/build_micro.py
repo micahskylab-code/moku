@@ -39,7 +39,7 @@ for key, name, cty, tgk, fips in ISL:
     elif key == 'Maui County':
         stt = mj['results']['b_owner_origin_stock_and_inferred_acquirers']['stock_all_residential']['share']; offv = pct(stt['non_hawaii_total'], 1)
     else:
-        offv = '<span class="why">county file not public</span>'
+        offv = '<span class="why">owner addresses not published; see the island section</span>'
     cols.append(dict(name=name, rows=[
         f"{int(pub['active_listing_count']):,}", money(pub['median_listing_price']) + ('<sup>†</sup>' if pub.get('quality_flag') == 1 else ''), str(int(pub['median_days_on_market'])), ('15.2% (Aug)<sup>‡</sup>' if key == 'Kauai' else f"{int(pub['price_reduced_share']*1000+0.5+1e-9)/10:.1f}%"),
         f"{sh3(r['n_local']/n)} · {sh3(r['n_mainland']/n)} · {sh3(r['n_foreign']/n)}",
@@ -229,6 +229,40 @@ def dytd(key):
             f'<div class="tw"><table class="dy"><thead>{head}</thead><tbody>{"".join(r for _, r in rows)}{tot}</tbody></table></div>'
             f'<p class="src">{esc(D["source"])} {O}; district rows sum to the island totals. Grey figures are the change from the same months of 2025; median changes are left out where either year had fewer than 10 sales. MLS resales only, so totals differ from recorded-deed counts.</p>')
 
+OCC = json.load(open(f'{S}/an/up/occupancy_kh_final.json'))['results']
+def occ_extra(key):
+    if key == 'Kauai':
+        K = OCC['kauai']; I = K['island']; rows = ''
+        for z, v in K['by_district'].items():
+            cu = v['condo_units_(CPRX)']
+            cc = (ph(cu['owner_occupied'], cu['units']) if cu['units'] >= 20 else f"{cu['owner_occupied']} of {cu['units']} <span class=\"why\">(few units)</span>") if cu['units'] else '—'
+            rows += (f"<tr><td>{esc(v['district'])}</td><td class=\"num\">{v['units']:,}</td><td class=\"num\"><b>{ph(v['owner_occupied'], v['units'])}</b></td>"
+                     f"<td class=\"num\">{ph(v['vacation_rental_class'], v['units'])}</td><td class=\"num\">{ph(v['other_non_owner_occupied'], v['units'])}</td><td class=\"num\">{cc}</td></tr>")
+        C = K['island_condo_units_only']
+        rows += (f"<tr><td><b>All Kauaʻi</b></td><td class=\"num\"><b>{I['units']:,}</b></td><td class=\"num\"><b>{ph(I['owner_occupied'], I['units'])}</b></td>"
+                 f"<td class=\"num\"><b>{ph(I['vacation_rental_class'], I['units'])}</b></td><td class=\"num\"><b>{ph(I['other_non_owner_occupied'], I['units'])}</b></td><td class=\"num\"><b>{ph(C['owner_occupied'], C['units'])}</b></td></tr>")
+        T = K['by_tier_market_value_MODTOT']['3M_plus_(luxury+ultra)']
+        po = next(z for z in K['top15_zone_sections_by_non_owner_occupied_share'] if z['zone_section'] == '2-8')
+        return f'''<h3 style="margin-top:24px">Kauaʻi districts: how many homes are taxed as owner-occupied</h3>
+    <p class="col" style="margin:0 0 12px">About half of Kauaʻi's homes ({ph(I['owner_occupied'], I['units'])}) are in an owner-occupied tax class, and only {ph(C['owner_occupied'], C['units'])} of condo units. Hanalei ({ph(K['by_district']['zone_5_Hanalei']['owner_occupied'], K['by_district']['zone_5_Hanalei']['units'])}) and Kōloa ({ph(K['by_district']['zone_2_Kōloa']['owner_occupied'], K['by_district']['zone_2_Kōloa']['units'])}) are the only districts below half. In the Poʻipū area, {ph(po['units'] - po['owner_occupied'], po['units'])} of {po['units']:,} homes are not owner-occupied and {ph(po['vacation_rental_class'], po['units'])} are in the vacation-rental class. Of homes with a county market value of $3M or more, {ph(T['units'] - T['owner_occupied'], T['units'])} ({T['units']:,} homes) are not owner-occupied.</p>
+    <div class="tw"><table><thead><tr><th>District</th><th class="num">Homes</th><th class="num">Owner-occupied class</th><th class="num">Vacation-rental class</th><th class="num">Other, not owner-occupied</th><th class="num">Condo units owner-occupied</th></tr></thead><tbody>{rows}</tbody></table></div>
+    <p class="src">County of Kauaʻi tax year 2026–27 property-tax layer: residential tax classes as defined in Kauaʻi County Code 5A-9.1; each condo unit counted once {P}. Owner-occupied = the Owner-Occupied and Owner-Occupied Mixed-Use classes. "Other, not owner-occupied" (non-owner-occupied residential and long-term affordable rental classes) includes long-term rentals, local landlords, family-held and second homes, and vacant residential lots; it is not a measure of off-island ownership, since Kauaʻi does not publish owner mailing addresses. Left out: 1,531 fully exempt records (1,032 of them State or County land, including Hawaiian Home Lands) and 3,512 condo units taxed as Hotel &amp; Resort; counting those units as not owner-occupied would lower the island figure to 45.0%. If every class-1 lot without a 2020 building record is vacant, the owner-occupied share of homes could be up to about 55%. The State's 2026–27 summary of the same roll gives 50.4% {O}. Poʻipū area = tax zone-section 2-8. $3M+ uses the county's market-value field.</p>'''
+    if key == 'Hawaii Island':
+        H = OCC['hawaii_county']; I = H['island_residential_plus_agricultural_class']; rows = ''
+        for z, v in sorted(H['by_district'].items(), key=lambda kv: kv[1]['share_owner_occupied']):
+            r = v['residential_class_only_PITT100']
+            rows += (f"<tr><td>{esc(v['district'])}</td><td class=\"num\">{v['units']:,}</td><td class=\"num\"><b>{ph(v['owner_occupied'], v['units'])}</b></td>"
+                     f"<td class=\"num\">{ph(r['owner_occupied'], r['units'])}</td><td class=\"num\">{pct(v['share_of_housing_parcels_in_agricultural_class'])}</td></tr>")
+        R = H['island_residential_class_only_PITT100']
+        rows += (f"<tr><td><b>Hawaiʻi County</b></td><td class=\"num\"><b>{I['units']:,}</b></td><td class=\"num\"><b>{ph(I['owner_occupied'], I['units'])}</b></td>"
+                 f"<td class=\"num\"><b>{ph(R['owner_occupied'], R['units'])}</b></td><td class=\"num\"><b>{ph(H['island_agricultural_class_only_PITT500']['units'], I['units'])}</b></td></tr>")
+        T = H['by_tier_assessed_land_plus_building']; t3 = T['3M_plus_(luxury+ultra)']; t10 = T['ultra_10M+']
+        return f'''<h3 style="margin-top:24px">Hawaiʻi Island districts: how many house lots carry a homeowner exemption</h3>
+    <p class="col" style="margin:0 0 12px">{ph(I['owner_occupied'], I['units'])} of house lots have a homeowner exemption. Kaʻū, South Kona and Puna are lowest; in Puna's residential class alone it is under half. At the top end the pattern flips: {ph(t3['units'] - t3['owner_occupied'], t3['units'])} of the {t3['units']:,} house lots assessed at $3M or more have no homeowner exemption, and {ph(t10['units'] - t10['owner_occupied'], t10['units'])} of the {t10['units']:,} at $10M or more.</p>
+    <div class="tw"><table><thead><tr><th>District</th><th class="num">House lots</th><th class="num">With a homeowner exemption</th><th class="num">Residential class only</th><th class="num">Lots in the agricultural class</th></tr></thead><tbody>{rows}</tbody></table></div>
+    <p class="src">County of Hawaiʻi certified 2026 real property roll (April 2026), homeowner-exemption flag {P}. House lot = a Residential- or Agricultural-class parcel with a building. Each record is a whole lot, not a unit: 1,029 apartment and multi-use lots are left out because condo units are not separate records in the public file, so the island figure probably overstates owner-occupancy across all homes. The county has no vacation-rental class. Lots without an exemption include long-term rentals, local landlords, family-held and second homes, and vacation rentals; this is not a measure of off-island ownership, since the county does not publish owner mailing addresses. Left out: 3,822 fully exempt lots without a home exemption, about 58% of them Hawaiian Home Lands or other government land. Tiers use the whole lot's assessed value; a few lots hold more than one home. Some agricultural-class buildings may not be houses.</p>'''
+    return ''
+
 isl_secs = ''
 NOTES = {
  'Oahu': ('Oʻahu by ZIP', 'Town condos sell to locals; Waikīkī, the North Shore and Turtle Bay sell to the mainland.'),
@@ -238,7 +272,7 @@ NOTES = {
 }
 for key, name, cty, tgk, fips in ISL:
     t, n = ziptable(key)
-    extra = ''
+    extra = occ_extra(key)
     if key == 'Maui County':
         sd = st['stock_by_district']; ac = st['acquirers_by_district']; mv = st['median_assessed_value_by_district_residential']
         mrows = ''

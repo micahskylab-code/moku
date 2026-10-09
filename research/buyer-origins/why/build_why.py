@@ -112,6 +112,20 @@ def clean_src(name):
     return name.strip(' ,;')
 
 
+# Citation dates checked against Title Guaranty's posting dates (HST), 2026-10-09
+def fix_date(name, date):
+    n = name or ''; d = date or ''
+    if 'Kauai Q4 2024, Q2 2025, Q4 2025 and Q2 2026 district panels' in n: return '2026-02-12; 2026-08-31'
+    if 'Oahu Q4 2025 and Q2 2026 district panels' in n: return '2026-02-12; 2026-08-31'
+    if 'Q1–Q3 2024 editions' in n and d.startswith('2024-10-03'): return 'posted through 2025-01-09 (Q3 2024 edition)'
+    if 'Howard Hughes Q4 2024 release' in n and d == '2025-02': return '2025-02 (Howard Hughes); 2025-03-10 (Title Guaranty)'
+    if 'NST-EST2025-ALLDATA' in n and d == '2026-01-27': return '2026-01-27 (Census); 2026-02-12 (Title Guaranty Q4 2025)'
+    if 'Q4 editions 2015–2025' in n and d.startswith('2025-03-10'): return 'posted through 2026-02-12 (Q4 2025 edition); series accessed 2026-10-08'
+    if 'Title Guaranty' in n and 'Q4 2025' in n and d == '2026-01': return '2026-02-12'
+    if 'Title Guaranty' in n and d == '2026-02-13': return '2026-02-12'
+    return date
+
+
 def render(item, cur):
     k = item['key']; r = item['research']; c = item.get('challenge') or {}
     ver = c.get('verdicts', []); drs = r.get('drivers', [])
@@ -156,7 +170,8 @@ def render(item, cur):
     for e in src:
         nm = E(clean_src(e.get('source'))); u = (e.get('url') or '').strip()
         if u.startswith('http'): nm = f'<a href="{E(u)}" target="_blank" rel="noopener">{nm}</a>'
-        lis.append(f'<li>{nm}{(", " + E(e["date"])) if e.get("date") else ""}</li>')
+        dt = fix_date(e.get('source'), e.get('date'))
+        lis.append(f'<li>{nm}{(", " + E(dt)) if dt else ""}</li>')
     o.append(f'<p class="wb-h">Sources</p><ul class="wb-src">{"".join(lis)}</ul>')
     o.append(f'<p class="wb-cf">How this was built: one researcher gathered the evidence, and a second tried to refute every driver by re-checking its facts and looking for other explanations. '
              f'Refuted drivers are dropped; weakened ones are marked down a level. Overall confidence: <b>{E(r.get("confidence"))}</b>.</p></details>')

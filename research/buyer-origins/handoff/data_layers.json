@@ -25,7 +25,10 @@
    "research/buyer-origins/micro/rdc_zip.json",
    "research/buyer-origins/micro/district_stats.json",
    "research/buyer-origins/micro/district_ytd.json",
-   "research/buyer-origins/micro/luxury.json"
+   "research/buyer-origins/micro/luxury.json",
+   "research/buyer-origins/sources/visitors_2025.json",
+   "research/buyer-origins/sources/market_oct.json",
+   "research/buyer-origins/sources/official_sources_check.json"
   ]
  },
  "layer_3_calculated_comparisons": {
@@ -44,7 +47,8 @@
    "research/buyer-origins/gap/hmda_tract.json",
    "research/buyer-origins/micro/tg_prices.json",
    "research/buyer-origins/micro/luxury_buyers.json",
-   "research/buyer-origins/micro/district_say.json"
+   "research/buyer-origins/micro/district_say.json",
+   "research/buyer-origins/sources/occupancy_kh.json (built by owners/occupancy_kh.py from the Kauaʻi and Hawaiʻi County rolls; aggregates only)"
   ]
  },
  "layer_4_report_narrative": {

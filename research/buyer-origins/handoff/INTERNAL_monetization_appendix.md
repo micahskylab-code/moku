@@ -6,7 +6,7 @@
 
 **Where the earlier work lives:**
 - The full go-to-market plan and the draft sales page from this session are archived, unchanged, in `research/archive/full-report-2026-10-09-pre-handoff/` (`hawaii-go-to-market.html`, `hawaii-intelligence-offer.html`).
-- The final audit found 14 corrections to those pages: named-person roles, payback math, office counts and similar. They are listed in `handoff/verification_final_audit.json` (part `edits_gtm`) and have **not** been applied to the archived copies. Fix them before reusing either page.
+- The final audit found 15 corrections that apply only to those pages: named-person roles, payback math, office counts and similar. They are listed in `handoff/verification_final_audit.json` (part `edits_gtm`) and have **not** been applied to the archived copies. Fix them before reusing either page.
 
 ## What gives the product value
 

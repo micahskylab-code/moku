@@ -1,0 +1,18 @@
+# raw/up_market_oct-verify MANIFEST (verifier re-fetches for KEY=market_oct). columns: file, url, approx_retrieved_utc, bytes, sha256
+www.hicentral.com_mpr_mpr-2026-09.php	https://www.hicentral.com/mpr/mpr-2026-09.php	2026-10-09T01:46:46Z	14040	e926f30707b5b4a693375ba779b77b6382e484c7d881380431ac3ab3fc0dad49
+www.hicentral.com_market-press-releases.php	https://www.hicentral.com/market-press-releases.php	2026-10-09T01:46:47Z	40821	60f362ad7ca6398f6a39b7004afc06e7761a8b27184cb1304215602029afeb7b
+honolulu-board-of-realtors.prezly.com_feed	https://honolulu-board-of-realtors.prezly.com/feed	2026-10-09T01:46:47Z	4817	f860c136b500ee3d9357a85e5652e541ae35611286f2fde3d4d028774793b6c8
+www.oahure.com_Statistics_09-2026-Sep-A-MSR.pdf	https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf	2026-10-09T01:46:48Z	2430258	a6a5d1e79c8744e785d7ff5ebf0cb14f97dd601939765ac597fb51b3cbbc1040
+www.kauaiboard.com_.html	https://www.kauaiboard.com/	2026-10-09T01:50:34Z	227690	23805318d3afd5071faede865c566ec22abf34fb8e8d036792f5affa16935026
+www.hawaiiislandrealtors.org_.html	https://www.hawaiiislandrealtors.org/	2026-10-09T01:50:35Z	128204	5455a46fdef40ec5455517082ad119444b62edf5972125b5869d744a54593b53
+www.hawaiiinformation.com_.html	https://www.hawaiiinformation.com/	2026-10-09T01:50:35Z	202984	ef68b28372c59bdbf0a64469d628cf0462787e491c6eb047733e24c6468c7cd0
+www.kauaiboard.com_mls-sales-statistics_.html	https://www.kauaiboard.com/mls-sales-statistics/	2026-10-09T01:50:54Z	132961	cdcfac4cea5b9eae06e9709f7d7fab0bf012c96b4c796113e53448ba2c28a068
+www.hawaiiislandrealtors.org_hawaii-island-statistics_.html	https://www.hawaiiislandrealtors.org/hawaii-island-statistics/	2026-10-09T01:50:55Z	81598	837f47bed1cb332bdf8ee9d8b398b5b982d193cef4af66b006a77f1ec1c624ad
+www.hawaiiinformation.com_monthly-market-statistics_.html	https://www.hawaiiinformation.com/monthly-market-statistics/	2026-10-09T01:50:55Z	137215	c985cf19dc09b2925a6972ee53311e65508027cd6fcee17f3c6863dea0ca8138
+www.kauaiboard.com_wp-content_uploads_2026_10_2026-09-Kauai-All.pdf	https://www.kauaiboard.com/wp-content/uploads/2026/10/2026-09-Kauai-All.pdf	2026-10-09T01:51:03Z	130182	395236b3a6d0582bd44215db5f66993ad8a0084955f6a1a3a6590ef0565a2ed5
+www.hawaiiislandrealtors.org_wp-content_uploads_2026_10_2026-09-Hawaii-Island-All-scaled.png	https://www.hawaiiislandrealtors.org/wp-content/uploads/2026/10/2026-09-Hawaii-Island-All-scaled.png	2026-10-09T01:51:03Z	610048	c26e1ff9c9dd4de1d0266ea83d6dfc276e43289baba95e0e382f83200b059474
+www.hawaiiinformation.com_wp-content_uploads_2026_10_2026-09-Hawaii-Island-All-scaled.png	https://www.hawaiiinformation.com/wp-content/uploads/2026/10/2026-09-Hawaii-Island-All-scaled.png	2026-10-09T01:51:04Z	537990	3b48ee8136cc5067779c16cb45333fea791a5e788af3e083fc3f77441415856d
+www.hawaiiinformation.com_wp-content_uploads_2026_10_2026-09-Kauai-All-scaled.png	https://www.hawaiiinformation.com/wp-content/uploads/2026/10/2026-09-Kauai-All-scaled.png	2026-10-09T01:51:04Z	517473	f01c84a60ef7ca26b929f72cd7af9539058518b22966a4da5cd8a5965bc2d6ec
+www.hawaiiinformation.com_wp-content_uploads_2026_09_2026-08-Hawaii-Island-All-scaled.png	https://www.hawaiiinformation.com/wp-content/uploads/2026/09/2026-08-Hawaii-Island-All-scaled.png	2026-10-09T01:53:38Z	527979	35a9a3c40fc74cfca8e2e967f68816fdcd272635ede04fe6edf243d377bbe8aa
+prezly_sitemap.xml	https://honolulu-board-of-realtors.prezly.com/sitemap.xml	2026-10-09T01:54Z	19695	e01e7f7dd5c209aff0e64f52a53b258ad7af630f5dcc7948916cf9afd9f8b91a
+prezly_home.html	https://honolulu-board-of-realtors.prezly.com/	2026-10-09T01:54Z	155148	1f76a2fb2aa0da6d077838d680a1ce2dedb95da3d3828115170d1d28a815506f

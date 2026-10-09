@@ -118,7 +118,7 @@
    "newest_period": "August 2026",
    "recommended_surface": "monthly",
    "class": "historical evidence",
-   "do_not_mix": "Monthly medians are not annual medians; do not average them into an annual median.",
+   "do_not_mix": "Monthly medians are not annual medians; do not average them into an annual median. The September 2026 board figures in #now are a first look (BOARD_MLS_STATS); keep DBEDT_MEI canonical for the monthly series once September lands (about 2026-10-29).",
    "validation_status": "verified",
    "refresh_class": "PUBLISHER-TIMED, MONTHLY — show “as of <month>” and the next expected release from source_registry.json"
   },
@@ -130,7 +130,7 @@
    "geography": "Board districts on all four islands",
    "canonical_source": "BOARD_MLS_STATS",
    "canonical_dataset": "micro/district_ytd.json",
-   "newest_period": "Jan–Aug 2026 (Maui Jan–Sep)",
+   "newest_period": "Jan–Aug 2026 (Maui Jan–Sep); island-level September 2026 in sources/market_oct.json",
    "recommended_surface": "monthly",
    "class": "historical evidence",
    "do_not_mix": "Recorded (TG/DBEDT) and MLS counts differ (developer closings); quote separately.",
@@ -178,7 +178,7 @@
    "newest_period": "August 2026",
    "recommended_surface": "monthly",
    "class": "market-influence indicator (context; correlation, not causation)",
-   "do_not_mix": "Maui board’s own figure differs (11.0 overall; houses 7.8, condos 12.1) from the report’s 9.6: label the method on every display; prefer board data for Maui.",
+   "do_not_mix": "Maui board’s own figure differs (11.0 overall; houses 7.8, condos 12.1) from the report’s 9.6: label the method on every display; prefer board data for Maui. September 2026 board figures: Oʻahu houses 3.2 / condos 7.0 (HBR), Maui houses 7.8 / condos 12.1 (RAM); boards use active ÷ 12-month average closed. The report's method rolled to September (provisional, until DBEDT September): Oʻahu 5.2, Maui 10.4, Kauaʻi 9.6, Hawaiʻi Island 7.1.",
    "validation_status": "verified (method); Maui competing figure documented",
    "refresh_class": "DERIVED, MIXED CADENCE — live inventory ÷ publisher-timed DBEDT monthly sales; show both as-of dates; never label as live."
   },
@@ -279,12 +279,12 @@
    "denominator": "All listed metros",
    "geography": "Islands × US metros",
    "canonical_source": "DBEDT_VISITOR_ANNUAL",
-   "canonical_dataset": "vis_cbsa.json; sources/visitors.json",
-   "newest_period": "2024",
+   "canonical_dataset": "sources/visitors_2025.json (2025, current); vis_cbsa.json and sources/visitors.json (2024 history)",
+   "newest_period": "2025",
    "recommended_surface": "annual",
    "class": "market-influence indicator (context; correlation, not causation)",
-   "do_not_mix": "Visitors signal interest, not buyers. 2025 workbook exists but is not integrated (future work).",
-   "validation_status": "verified (2024)",
+   "do_not_mix": "Visitors signal interest, not buyers. Show the 2025 lists as current; show 2024 only as history with its year. Rankings shift from year to year (Maui: Minneapolis 1.31× in 2024, 1.09× in 2025).",
+   "validation_status": "verified (2024 and 2025)",
    "refresh_class": "PUBLISHER-TIMED, ANNUAL / HISTORICAL"
   },
   {
@@ -328,7 +328,7 @@
    "newest_period": "Oct 2026",
    "recommended_surface": "annual/historical",
    "class": "historical evidence",
-   "do_not_mix": "Stock of ownership, not purchases. Aggregates only. Kauaʻi and Hawaiʻi County mailing addresses are not public. Homeowner-exemption status does not prove a home’s use.",
+   "do_not_mix": "Stock of ownership, not purchases. Aggregates only. Kauaʻi and Hawaiʻi County mailing addresses are not public; their owner-occupancy figures (owner_occupancy_kauai_hawaii) are a different measure and do not go in this row. Homeowner-exemption status does not prove a home’s use.",
    "validation_status": "verified",
    "refresh_class": "PUBLISHER-TIMED, ANNUAL / HISTORICAL"
   },
@@ -389,7 +389,7 @@
    "recommended_surface": "context (update when inputs change)",
    "class": "context",
    "do_not_mix": "Correlation/context unless the box says otherwise; drivers marked “an association, not proof” must keep that label.",
-   "validation_status": "verified: final audit confirmed 73 findings; 59 applied to the report; the other 14 concerned the internal go-to-market page, now archived and not ported",
+   "validation_status": "verified: final audit confirmed 73 findings; 58 applied to the report; the other 15 concerned only the internal go-to-market page, now archived and not ported. Citation dates re-checked 2026-10-09.",
    "refresh_class": "NARRATIVE — revise when the underlying metrics change"
   },
   {
@@ -406,6 +406,36 @@
    "do_not_mix": "Must be re-checked around 2026-10-23.",
    "validation_status": "verified 2026-10-08",
    "refresh_class": "EVENT-DRIVEN — re-check on the publisher’s schedule"
+  },
+  {
+   "id": "owner_occupancy_kauai_hawaii",
+   "name": "Homes taxed as owner-occupied (Kauaʻi) / house lots with a homeowner exemption (Hawaiʻi County)",
+   "definition": "Kauaʻi: residential tax records in the owner-occupied classes ÷ residential tax records (condo units counted once each). Hawaiʻi County: house lots with a homeowner exemption ÷ house lots (Residential or Agricultural class with a building).",
+   "denominator": "Kauaʻi: 27,097 residential records; Hawaiʻi County: 66,761 house lots",
+   "geography": "Kauaʻi (5 districts, zone-sections); Hawaiʻi County (9 districts)",
+   "canonical_source": "KAUAI_TAX_ROLL; HAWAII_COUNTY_ROLL (cross-check STATE_DOTAX_RPT_SUMMARY)",
+   "canonical_dataset": "sources/occupancy_kh.json",
+   "newest_period": "Kauaʻi TY2026–27; Hawaiʻi County certified April 2026",
+   "recommended_surface": "annual/historical",
+   "do_not_mix": "Not an origin measure and not off-island ownership: \"not owner-occupied\" includes local landlords, long-term rentals, family-held and second homes and vacation rentals. The two counties use different units (Kauaʻi per unit by tax class; Hawaiʻi County per lot by exemption), so do not compare them directly or with Oʻahu/Maui origin shares. Never present a missing exemption as proof of a second home.",
+   "validation_status": "verified (independent re-derivation; corrections applied 2026-10-09)",
+   "refresh_class": "PUBLISHER-TIMED, ANNUAL / HISTORICAL",
+   "class": "historical evidence (stock)"
+  },
+  {
+   "id": "board_monthly_first_look",
+   "name": "Island sales and medians, latest month (board reports)",
+   "definition": "Single-family and condo closed sales, medians and board months of supply for the latest month, from each island board",
+   "denominator": "Same month a year earlier",
+   "geography": "Four islands",
+   "canonical_source": "BOARD_MLS_STATS (Hawaiʻi Island year-over-year from TG_RSR)",
+   "canonical_dataset": "sources/market_oct.json",
+   "newest_period": "September 2026",
+   "recommended_surface": "monthly",
+   "class": "historical evidence",
+   "do_not_mix": "A first look ahead of DBEDT_MEI; once DBEDT publishes the month, the monthly series uses DBEDT. Kauaʻi monthly counts are under 20; quote counts, not rates.",
+   "validation_status": "verified 2026-10-09",
+   "refresh_class": "PUBLISHER-TIMED, MONTHLY — show “as of <month>”"
   }
  ],
  "live_vs_publisher_timed": "Only the two LIVE metrics come from Hawaiʻi Intelligence’s existing feeds. Do not add a competing live dataset from this report. Everything else is publisher-timed: display its period and next release; never label it live."
