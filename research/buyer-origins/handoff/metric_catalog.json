@@ -114,11 +114,11 @@
    "denominator": "—",
    "geography": "Four counties",
    "canonical_source": "DBEDT_MEI",
-   "canonical_dataset": "page_data.json#islands, #months, #twenty",
+   "canonical_dataset": "handoff/refresh/state/last_good/dbedt_mei_county_housing.json (automated; supersedes the page_data.json#islands snapshot for months after 2026-08)",
    "newest_period": "August 2026",
    "recommended_surface": "monthly",
    "class": "historical evidence",
-   "do_not_mix": "Monthly medians are not annual medians; do not average them into an annual median. The September 2026 board figures in #now are a first look (BOARD_MLS_STATS); keep DBEDT_MEI canonical for the monthly series once September lands (about 2026-10-29).",
+   "do_not_mix": "Monthly medians are not annual medians; do not average them into an annual median. The September 2026 board figures in #now are a first look (BOARD_MLS_STATS); keep DBEDT_MEI canonical for the monthly series once September lands (about 2026-10-29). YTD: show DBEDT's published YTD (ytd_published); the sum of monthly rows is lower for the current year on the neighbor islands. Never derive a statewide median.",
    "validation_status": "verified",
    "refresh_class": "PUBLISHER-TIMED, MONTHLY — show “as of <month>” and the next expected release from source_registry.json"
   },

@@ -21,6 +21,7 @@
 | Micro-markets chapter (generated) and its builder | `research/buyer-origins/micro/micro_chapter.html`, `micro/build_micro.py` |
 | Why boxes: checked research, visible text, rendered HTML | `research/buyer-origins/why/why_result.json`, `why/why_curated.json`, `why/why_boxes.json` (built by `why/build_why.py`) |
 | Assembler (inserts chapter + Why boxes, injects data) | `research/buyer-origins/micro/assemble.py`; `micro/wrap.py` adds the document wrapper for the built report |
+| **Monthly refresh package** (DBEDT county resales and medians: discovery, extraction, validation, revisions, last-good) | `research/buyer-origins/handoff/refresh/` (see its `README.md`; capability map in `CAPABILITY_MAP.md`) |
 | Data upgrades of 2026-10-09 (normalized) | `sources/occupancy_kh.json` (Kauaʻi and Hawaiʻi County owner-occupancy; builder `owners/occupancy_kh.py`), `sources/visitors_2025.json`, `sources/market_oct.json` (September 2026 board and Title Guaranty figures), `sources/official_sources_check.json` (IRS, Title Guaranty and PMMS re-pulls) |
 | **Source registry** (one row per source) | `research/buyer-origins/handoff/source_registry.json` (+ `.csv`) |
 | **Metric catalog** (one canonical dataset per metric) | `research/buyer-origins/handoff/metric_catalog.json` (+ `.csv`) |
@@ -107,6 +108,8 @@ For both:
 - The report's own values are dated snapshots, not live data: Realtor.com September 2026 inventory, and PMMS 7.40% on Oct 8, 2026, verified against Freddie Mac's file on 2026-10-09.
 - Do not add a competing live dataset from this report.
 - In `page_data.json`, the October 2026 point of the monthly `mortgage` series (7.28%) covers only the first week. Recompute it when the month closes, or drop it in favor of the live feed.
+
+**Automated publisher-timed refresh:** `refresh/run_refresh.py` checks DBEDT's page, promotes a new month only after every check passes, keeps the last good dataset on any failure, and lists revisions to earlier months. Output: `refresh/state/last_good/`. It does not touch report text.
 
 **(b) Publisher-timed.** Never label these live:
 

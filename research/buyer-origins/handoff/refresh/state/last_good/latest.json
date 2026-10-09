@@ -1,0 +1,269 @@
+{
+ "counties": {
+  "hawaii": {
+   "month": {
+    "condo_median": 493000,
+    "condo_sales": 31,
+    "sf_median": 580000,
+    "sf_sales": 153
+   },
+   "name": "Hawaiʻi County",
+   "year_ago_month": {
+    "condo_median": 572500,
+    "condo_sales": 37,
+    "sf_median": 523500,
+    "sf_sales": 166
+   },
+   "ytd_published": {
+    "current": {
+     "condo_median": 625000,
+     "condo_sales": 346,
+     "sf_median": 564000,
+     "sf_sales": 1335
+    },
+    "prior_year_same_months": {
+     "condo_median": 630000,
+     "condo_sales": 357,
+     "sf_median": 560000,
+     "sf_sales": 1355
+    },
+    "prior_year_through": "2025-08",
+    "through": "2026-08"
+   },
+   "ytd_sum_of_monthly_counts": {
+    "current": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 343
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 1317
+     },
+     "through": "2026-08"
+    },
+    "prior_year_same_months": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 357
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 1355
+     },
+     "through": "2025-08"
+    }
+   }
+  },
+  "honolulu": {
+   "month": {
+    "condo_median": 510000,
+    "condo_sales": 365,
+    "sf_median": 1240000,
+    "sf_sales": 264
+   },
+   "name": "Honolulu County",
+   "year_ago_month": {
+    "condo_median": 515000,
+    "condo_sales": 391,
+    "sf_median": 1105500,
+    "sf_sales": 259
+   },
+   "ytd_published": {
+    "current": {
+     "condo_median": 512000,
+     "condo_sales": 2834,
+     "sf_median": 1190000,
+     "sf_sales": 1950
+    },
+    "prior_year_same_months": {
+     "condo_median": 505000,
+     "condo_sales": 2881,
+     "sf_median": 1140000,
+     "sf_sales": 1842
+    },
+    "prior_year_through": "2025-08",
+    "through": "2026-08"
+   },
+   "ytd_sum_of_monthly_counts": {
+    "current": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 2834
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 1950
+     },
+     "through": "2026-08"
+    },
+    "prior_year_same_months": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 2881
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 1842
+     },
+     "through": "2025-08"
+    }
+   }
+  },
+  "kauai": {
+   "month": {
+    "condo_median": 999999,
+    "condo_sales": 15,
+    "sf_median": 1088000,
+    "sf_sales": 28,
+    "small_sample": [
+     "condo_median"
+    ]
+   },
+   "name": "Kauaʻi County",
+   "year_ago_month": {
+    "condo_median": 680000,
+    "condo_sales": 26,
+    "sf_median": 1185000,
+    "sf_sales": 28
+   },
+   "ytd_published": {
+    "current": {
+     "condo_median": 850000,
+     "condo_sales": 153,
+     "sf_median": 1300000,
+     "sf_sales": 239
+    },
+    "prior_year_same_months": {
+     "condo_median": 825000,
+     "condo_sales": 203,
+     "sf_median": 1175000,
+     "sf_sales": 261
+    },
+    "prior_year_through": "2025-08",
+    "through": "2026-08"
+   },
+   "ytd_sum_of_monthly_counts": {
+    "current": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 149
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 236
+     },
+     "through": "2026-08"
+    },
+    "prior_year_same_months": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 203
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 261
+     },
+     "through": "2025-08"
+    }
+   }
+  },
+  "maui": {
+   "month": {
+    "condo_median": 564950,
+    "condo_sales": 68,
+    "sf_median": 1200000,
+    "sf_sales": 64
+   },
+   "name": "Maui County",
+   "year_ago_month": {
+    "condo_median": 650000,
+    "condo_sales": 57,
+    "sf_median": 1302500,
+    "sf_sales": 62
+   },
+   "ytd_published": {
+    "current": {
+     "condo_median": 650000,
+     "condo_sales": 546,
+     "sf_median": 1225000,
+     "sf_sales": 485
+    },
+    "prior_year_same_months": {
+     "condo_median": 711000,
+     "condo_sales": 466,
+     "sf_median": 1300000,
+     "sf_sales": 471
+    },
+    "prior_year_through": "2025-08",
+    "through": "2026-08"
+   },
+   "ytd_sum_of_monthly_counts": {
+    "current": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 545
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 483
+     },
+     "through": "2026-08"
+    },
+    "prior_year_same_months": {
+     "condo_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 466
+     },
+     "sf_sales": {
+      "complete": true,
+      "months": 8,
+      "value": 471
+     },
+     "through": "2025-08"
+    }
+   }
+  }
+ },
+ "dataset": "dbedt_mei_county_housing",
+ "observation_month": "2026-08",
+ "page_statements": [
+  "Monthly Economic Indicators (MEI) through August 2026 was released on October 1st including the BLS/DBEDT-LRB seasonally-adjusted Honolulu and Maui LAUS data.",
+  "Monthly Economic Indicators (MEI) through September 2026 will be released on/about October 29th and will include the BLS/DBEDT-LRB seasonally-adjusted Honolulu and Maui LAUS data."
+ ],
+ "publication_date": "2026-10-01",
+ "refresh_class": "PUBLISHER-TIMED, MONTHLY (not live): show \"as of <observation month>\" and the publication date",
+ "release_id": "2026-08_175114d893df",
+ "retrieved_utc": "2026-10-09T02:48:49Z",
+ "revisions_in_this_release": [],
+ "schema_version": 1,
+ "state_counts": {
+  "month": {
+   "condo_sales": 479,
+   "sf_sales": 509
+  },
+  "year_ago_month": {
+   "condo_sales": 511,
+   "sf_sales": 515
+  }
+ },
+ "statewide_median": null,
+ "statewide_median_note": "DBEDT publishes no statewide median (\"(NA)\"); none is derived from county medians.",
+ "validation_status": "pass",
+ "ytd_note": "DBEDT's own YTD counts and YTD medians from its summary workbook (canonical for YTD display). For the current year they can exceed the sum of the monthly rows because they include sales reported late; the prior year's monthly rows have been updated and match."
+}

@@ -67,8 +67,8 @@
    "next_expected": "September 2026 data about 2026-10-29 (the August edition was released 2026-10-01)",
    "reuse": "Public government data.",
    "raw": "handoff/raw_manifests/market.MANIFEST.txt",
-   "normalized": "page_data.json keys months, islands, arr_dom, arr_intl, twenty; sources/market.json",
-   "validation": "Matches Honolulu Board of REALTORS and REALTORS Association of Maui on all figures checked; Kauaʻi and Big Island have no monthly sales counts Mar 2006–Dec 2012 and no monthly medians Mar 2006–Dec 2007."
+   "normalized": "page_data.json keys months, islands, arr_dom, arr_intl, twenty; sources/market.json; handoff/refresh/state/last_good/dbedt_mei_county_housing.json (automated refresh, latest.json for the site)",
+   "validation": "Matches Honolulu Board of REALTORS and REALTORS Association of Maui on all figures checked; Kauaʻi and Big Island have no monthly sales counts Mar 2006–Dec 2012 and no monthly medians Mar 2006–Dec 2007. Automated refresh (handoff/refresh): every baseline value through 2026-08 reproduced from the August 2026 workbooks; published YTD exceeds the sum of monthly rows for Maui, Kauaʻi and Hawaiʻi County in the current year (late-reported sales); the July→August 2026 editions revised 5 earlier values; the publication date is set only when the workbook and summary titles agree."
   },
   {
    "id": "DBEDT_VISITOR_ANNUAL",
