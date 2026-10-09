@@ -9,7 +9,7 @@ E = lambda s: html.escape(str(s or ''), quote=True)
 TITLES = {
   'california': 'Why California leads on every island',
   'west_states': 'Why Washington, Oregon, Alaska, Colorado and Utah come next',
-  'japan_korea': 'Why Japanese and Korean buyers concentrate on Oʻahu, and why they jumped in 2026',
+  'japan_korea': 'Why buyers from Japan and Korea concentrate on Oʻahu, and why they jumped in 2026',
   'canada': 'Why Canadians buy on Maui and Hawaiʻi Island, and why they pulled back',
   'maui_decline': 'Why Maui’s mainland buyer share fell',
   'investors_military': 'Why investors cluster on the neighbor islands and VA loans on Oʻahu',
@@ -52,6 +52,48 @@ def md(text):
     return ''.join(out)
 
 
+# ---- client-facing sanitizing: no process notes, file paths, or religion/ancestry/building-by-country details
+DROP_SENT = re.compile(r'(web[- ]search|search budget|quota|Verification note|cached earlier|this session|were blocked|sites were blocked|this agent|re-checked in this pass|budget ran out|re-checks used direct downloads|Outside facts were re-checked)', re.I)
+REPL = [
+  ('home to about 95,000 Native Hawaiians, which adds', 'home to a large community with Hawaiʻi roots, which adds'),
+  ("Utah's distinctive tie is the Church community in Laie on Oahu, but it is small: 55 of 944 Laie parcels, 19 of them mailed to the Church headquarters ZIP.", "Utah's distinctive tie is the community around BYU–Hawaiʻi in Lāʻie on Oʻahu, but it is small: 55 of 944 Lāʻie parcels."),
+  ('(55 of 118, 19 of them mailed to the Church headquarters ZIP)', '(55 of 118)'),
+  ('Japan-billed owners already hold about 2,000 Oahu parcels', 'Owners with Japan mailing addresses already hold about 2,000 Oʻahu parcels'),
+  (', and the county roll now shows 61 Japan-billed owners in the tower.', '.'),
+  ('; that building holds 80 Korea-billed units today.', '.'),
+  ('The county roll now shows 61 Japan-billed owners there.', ''),
+  (' (80 Korea-billed units today)', ''),
+  ('Today the recent Ward Village towers are about 11-12% Japan-billed on the tax roll, against 1.3% at The Park on Keeaumoku.', ''),
+  ('Native Hawaiian population growth by state does not line up', 'the growth of communities with Hawaiʻi roots by state does not line up'),
+  ('including church addresses', 'including institutional addresses'),
+  ("Some are church-related institutions and some are likely families tied to BYU-Hawai'i.", "Some are institutions and some are likely families tied to BYU–Hawaiʻi."),
+  ('A few policy details (Honolulu Ordinance 25-44, Act 17, Maui\'s September 2026 rezoning vote) were not re-verified.', 'Policy details (Honolulu Ordinance 25-44, Act 17 and Maui\'s September 2026 rezoning vote) are as reported.'),
+  ('Japanese purchases fell from 581 in 2018', 'Japanese purchases on Oʻahu fell from 581 in 2018'),
+  ("Moku's", "the City and County of Honolulu's"),
+]
+def clean(t):
+    t = t or ''
+    for a, b in REPL: t = t.replace(a, b)
+    out = []
+    for para in re.split(r'(\n\s*\n)', t):
+        if re.fullmatch(r'\n\s*\n', para): out.append(para); continue
+        sents = re.split(r'(?<=[.!?)])\s+(?=[A-Z(])', para)
+        keep = [x for x in sents if not DROP_SENT.search(x)]
+        out.append(' '.join(keep))
+    t = ''.join(out)
+    t = re.sub(r'\(\s*\)', '', t)
+    return re.sub(r'[ \t]{2,}', ' ', t).strip()
+BAD_HOST = re.compile(r'(legalclarity|veteran\.com|vetcalc|wikipedia|msyxorap|github)', re.I)
+def clean_src(name):
+    name = re.sub(r'\s*\((?:[^()]*?(?:local file|search excerpt|\.json|\.csv|blocked|mirror|computed here|cached|seen in a search)[^()]*)\)', '', name or '', flags=re.I)
+    name = re.sub(r',?\s*local file[^,;]*', '', name, flags=re.I)
+    name = re.sub(r',?\s*aggregated in [\w./-]+\.json', '', name, flags=re.I)
+    name = re.sub(r"computed in the report.s [\w./-]+\.json", 'computed for this report', name, flags=re.I)
+    name = re.sub(r'\s*\((?:summarized via search|via search)\)', '', name, flags=re.I)
+    name = name.replace('Moku recorded-sales file', 'Honolulu recorded-sales file').replace('Moku repeat-sales index', 'Repeat-sales index').replace("Moku's", "City and County of Honolulu").replace('Moku', 'Honolulu sales records')
+    return name.strip(' ,;')
+
+
 def render(item, cur):
     k = item['key']; r = item['research']; c = item.get('challenge') or {}
     ver = c.get('verdicts', []); drs = r.get('drivers', [])
@@ -62,7 +104,7 @@ def render(item, cur):
         verdict = (v or {}).get('verdict', 'unchecked')
         st = d.get('strength', 'moderate')
         if verdict == 'weakened': st = DOWN[st]
-        text = (v or {}).get('corrected_wording') or d['driver']
+        text = clean((v or {}).get('corrected_wording') or d['driver'])
         lab = labels[i]
         if verdict == 'refuted' or lab is None:
             ruled.append(f'<li><b>Ruled out:</b> {E(text)}</li>')
@@ -82,18 +124,16 @@ def render(item, cur):
     seen, src = set(), []
     for _, _l, _s, _v, _t, ev in rows:
         for e in ev:
-            u = (e.get('url') or '').strip(); key = u or e.get('source')
-            if not key or key in seen: continue
+            u = (e.get('url') or '').strip(); key = u
+            if not u.startswith('http') or BAD_HOST.search(u + ' ' + (e.get('source') or '')) or key in seen: continue
             seen.add(key); src.append(e)
     miss = c.get('missing_drivers') or []
-    o.append(f'<details class="wb-ev"><summary>Full explanation, every driver as checked, and {len(src)} sources</summary>')
-    o.append('<p class="wb-h">The checked answer</p>' + md(c.get('final_answer') or r.get('answer')))
+    o.append(f'<details class="wb-ev"><summary>The full explanation, each driver as checked, and {len(src)} sources</summary>')
+    o.append('<p class="wb-h">The checked answer</p>' + md(clean(c.get('final_answer') or r.get('answer'))))
     o.append('<p class="wb-h">Each driver, as checked</p><ul>' + ''.join(detail) + '</ul>')
-    if miss:
-        o.append('<p class="wb-h">Other factors the check raised (not fully tested)</p><ul>' + ''.join(f'<li>{E(m)}</li>' for m in miss) + '</ul>')
     lis = []
     for e in src:
-        nm = E(e.get('source')); u = (e.get('url') or '').strip()
+        nm = E(clean_src(e.get('source'))); u = (e.get('url') or '').strip()
         if u.startswith('http'): nm = f'<a href="{E(u)}" target="_blank" rel="noopener">{nm}</a>'
         lis.append(f'<li>{nm}{(", " + E(e["date"])) if e.get("date") else ""}</li>')
     o.append(f'<p class="wb-h">Sources</p><ul class="wb-src">{"".join(lis)}</ul>')

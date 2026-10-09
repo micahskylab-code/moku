@@ -38,7 +38,7 @@ for key, name, cty, tgk, fips in ISL:
     else:
         offv = '<span class="why">county file not public</span>'
     cols.append(dict(name=name, rows=[
-        f"{int(pub['active_listing_count']):,}", money(pub['median_listing_price']) + ('<sup>†</sup>' if pub.get('quality_flag') == 1 else ''), str(int(pub['median_days_on_market'])), pct(pub['price_reduced_share'], 1) + ('<sup>‡</sup>' if key == 'Kauai' else ''),
+        f"{int(pub['active_listing_count']):,}", money(pub['median_listing_price']) + ('<sup>†</sup>' if pub.get('quality_flag') == 1 else ''), str(int(pub['median_days_on_market'])), ('15.2% (Aug)<sup>‡</sup>' if key == 'Kauai' else f"{int(pub['price_reduced_share']*1000+0.5+1e-9)/10:.1f}%"),
         f"{sh3(r['n_local']/n)} · {sh3(r['n_mainland']/n)} · {sh3(r['n_foreign']/n)}",
         f"{pct(u['out_of_state_share_sf'])} · {pct(u['out_of_state_share_condo'])}",
         pct(occ['second_residence'] + occ['investment_property']),
@@ -257,11 +257,11 @@ chapter = f'''
     <div class="head col"><span class="sec-n">All Hawaiʻi, island by island</span><h2>Four islands, four different markets</h2>
       <p class="muted">The latest listings (September 2026), who bought in 2025, and how much of each island is owned or bought from away.</p></div>
     {gl}
-    <p class="src">Listings: Realtor.com county data, September 2026 {P}. † Realtor.com has flagged Maui County's data as lower quality every month since December 2025, so read its listing price with care. ‡ Realtor.com's price-cut field is nearly empty for most Kauaʻi ZIPs, so Kauaʻi's share is probably understated. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
+    <p class="src">Listings: Realtor.com county data, September 2026 {P}. † Realtor.com has flagged Maui County's data as lower quality every month since December 2025, so read its listing price with care. ‡ Kauaʻi's September price-cut share (4.8%) looks like a data gap in Realtor.com's file, so August's figure is shown. Buyers: DBEDT/Title Guaranty 2025 {O}. Out-of-state buyers by type and vacation-rental share: UHERO Hawaiʻi Housing Factbook 2026 {O}. Mortgaged buyers not living there: HMDA 2025 home-purchase loans, second-home plus investment occupancy {P}. $3M+ sales: Hawaiʻi Life luxury report 2025 {R}. Owner shares: county owner rolls, October 2026 {P}.</p>
     <!--WHY:mm-glance-->
   </section>
   <section id="mm-tiers">
-    <div class="head col"><span class="sec-n">Who buys at each price</span><h2>Locals buy the first $3 million. Above it, the mainland and the world take over.</h2></div>
+    <div class="head col"><span class="sec-n">Who buys at each price</span><h2>Oʻahu buyers are mostly local up to $10 million. On Maui, buyers who won't live in the home take half or more at every price.</h2></div>
     <div class="tw"><table><thead><tr><th>Price tier</th><th class="num">Oʻahu buyers 2023–25<br>local · mainland · foreign</th><th class="num">Maui County: buyers without a homeowner exemption, FY2024–26</th><th>Statewide mortgaged buyers, 2025: second homes and investors</th></tr></thead><tbody>{trows}</tbody></table></div>
     <p class="src">Oʻahu: 2023–2025 sales matched to the October 2026 owner roll by the buyer's mailing address; excludes addresses shared by 10+ parcels; within about 1–4 points of Title Guaranty's island totals {P}. Maui: conveyance-tax schedule (homeowner vs non-homeowner rate), sales by price band; the entry cut is $800K in this source {O}. Statewide: HMDA first-lien purchase loans by property value {P}.</p>
     <!--WHY:mm-tiers-->
