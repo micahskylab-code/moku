@@ -1,0 +1,3318 @@
+{
+ "key": "owners_oahu",
+ "title": "Honolulu (Oahu) real property owner roll - primary owner mailing-address geography",
+ "generated_utc": "2026-10-08T05:47:00Z",
+ "source": {
+  "primary": {
+   "name": "City & County of Honolulu HoLIS ArcGIS - OWNINFO (combined OWNDAT + OWNMLT RPA owner tables)",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/OWNINFO/FeatureServer/0",
+   "item_id": "be7d54695ee14f80915a1adc83658ca0",
+   "data_last_edit_utc": "2026-10-05T22:33:17Z",
+   "tax_year_field": 2027,
+   "records": 587662,
+   "pages": 294,
+   "page_size": 2000,
+   "sha256_concat_pages": "d32074f52b69ea67038e8da38dde98c5374bf2b4408b01f8b864f8ba979da40d",
+   "fields_pulled": "objectid,parid,owntble,ownseq,address1,address2,address3,pctowned,owntype_desc,has_cpr"
+  },
+  "tax_class": {
+   "name": "HoLIS CadastralTables - ASMTPITT (Real Property Assessment Tax Class (Pitt) Code Table)",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/10",
+   "data_last_edit_utc": "2026-10-02T15:13:21Z",
+   "tax_year_field": 2026,
+   "records": 327161,
+   "sha256_concat_pages": "698b05d1ca4cef703b6e4a30e0532dc395e8cea92e28f77b625520cf6ed8f993"
+  },
+  "situs_zip": {
+   "name": "HoLIS LEGDAT_ADDRESS (RPAD LEGDAT with situs address)",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/LEGDAT_ADDRESS/FeatureServer/1",
+   "data_last_edit_utc": "2023-10-27T03:04:08Z",
+   "tax_year_field": 2024,
+   "records": 320771,
+   "sha256_concat_pages": "56cd2d135e0dd408c0d854f6bfadf137921165ba2d6e8e03f2e056b043026afe"
+  },
+  "crosscheck": {
+   "name": "HoLIS CadastralTables - OWNDAT (first owner by TMK; structured tax-bill city/state/country/zip)",
+   "url": "https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/CadastralTables/FeatureServer/6",
+   "data_last_edit_utc": "2026-10-05T21:49:43Z",
+   "records": 326870,
+   "sha256_concat_pages": "25adeeb2094a6152591b23fa0315ea4adfed9e339f9ac5a430505905c199f116",
+   "fields_pulled": "objectid,parid,seq,taxyr,taxbillcity,taxbillstate,taxbillcountry,taxbillzip5,cltaddrtype"
+  },
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/owners_oahu",
+  "manifest": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/owners_oahu/MANIFEST.txt",
+  "sha256_concat_pages_definition": "sha256 of the page files bytes concatenated in filename order (prefix_0000.json, prefix_0001.json, ...); per-page URL, time, size and sha256 are in MANIFEST.txt",
+  "build_script": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/owners_oahu/build.py",
+  "license": "City and County of Honolulu public-records disclaimer (see item licenseInfo); data derived from RPAD records that change weekly."
+ },
+ "notes": [
+  "DATA DATE: OWNINFO layer dataLastEditDate = 2026-10-05T22:33:17Z (weekly RPAD refresh; records carry taxyr 2027). Pulled 2026-10-08 via 294 pages of 2000 rows ordered by objectid; 587,662 rows, 587,662 unique objectids (matches returnCountOnly).",
+  "PRIMARY OWNER: lowest ownseq per parid. In this layer the OWNDAT (tax-bill/first) owner has ownseq 0 (one row per parcel) and OWNMLT co-owners/lessees have ownseq >= 1, so 'lowest' = ownseq 0, not 1. 24 parids have both a Co-op Master and a Fee Owner row at ownseq 0; the Fee Owner row was used.",
+  "UNIT OF COUNT: parcels (parid = TMK + 4-digit CPR suffix), so each condo/CPR unit counts as one parcel. 4,439 condo/co-op MASTER records (common-element/land records whose mailing line is 'CONDO MASTER' or owner type Condo/Co-op Master) are excluded; analyzed universe = 322,431 parcels.",
+  "MAILING ADDRESS: the last non-empty line of address1-3 is parsed: 'CITY ST 12345[-6789]' -> US state/ZIP; else country keywords (normalized aliases, e.g. KOREA/REPUBLIC OF KOREA -> South Korea; REPUBLIC OF CHINA/TAIPEI -> Taiwan) or Canadian province+postcode -> foreign. 'Other US state' = 49 states + DC (excludes HI); US territories/freely associated USPS codes (GU, MP, AS, PR, FM, MH, PW) and military APO/FPO/DPO (AA/AE/AP) are separate buckets and count as non-Hawaii in 'non_hawaii_total'.",
+  "FALLBACK: 30,000+ ownseq-0 records have a blank mailing address. When blank (or a non-address placeholder such as 'COOP'/'>'), the lowest-ownseq OWNMLT record with an owner-type of Fee Owner/Owner/Owner-Multiclaimant/Owner-A/S and a non-blank address is used (12,486 parcels). Lessee addresses are NOT used. 'all_parcels_strict_ownseq0_only' gives the no-fallback result; headline shares move by <0.3 pt.",
+  "GAPS: 17,824 analyzed parcels (5.5%) still have no fee-owner mailing address (concentrated in industrial, preservation and commercial classes and leasehold parcels where only a lessee address exists). 'share_of_classified' excludes them; 'share_of_all_parcels_lower_bound' keeps them in the denominator. 62 addresses were unparseable and 65 were placeholders.",
+  "VALIDATION: the OWNINFO free-text parse was cross-checked against the structured taxbillstate/taxbillcountry/taxbillzip5 fields of RPAD OWNDAT (CadastralTables layer 6, same refresh). On 291,778 parcels where both have an address the hawaii / other-state / foreign / territory / military category agrees 100%; US state agrees on 288,066 and ZIP5 on 288,736. OWNDAT's blank-address set matches OWNINFO's, so the structured table cannot fill the gaps.",
+  "TMK ZONE: parid in this layer has NO county prefix (county is the separate 'jur' field, always '1'); parid = zone(1) + section(1) + plat(3) + parcel(3) + CPR(4). Zone is therefore the FIRST digit of parid (the 'second digit' rule applies only to 13-digit statewide TMKs with a county prefix). Zone place labels are approximate.",
+  "CONDO FLAGS: has_cpr is TMK-level ('Y' if the TMK has any CPR number other than 0000), so it also flags the land record of a CPR'd lot. 'by_cpr_unit_record' uses suffix != 0000 (an individual CPR unit). CPR units include high-rise condo apartments AND CPR'd house lots (common on Oahu); the data cannot separate them.",
+  "TAX CLASS (residential vs other): ASMTPITT (Real Property Assessment Tax Class 'Pitt' table, taxyr 2026, refreshed 2026-10-02) has a numeric taxratecode with NO published code-to-label lookup in the layer or item metadata. Labels are INFERRED from the data: code 1 = 91% of rows, 57% carry exemptions -> Residential (probably includes Residential A; ovrclass '11' on 30,510 code-1 rows is undocumented); code 7 = 73% in TMK 2-6 (Waikiki), 97% CPR units, ~1% exempt -> Hotel & Resort; code 3 Commercial; code 4 concentrated in zones 1/9 -> Industrial; code 5 rural, 67% no building -> Agricultural; code 6 84% no building -> Preservation; code 9 100% fully exempt -> Public Service; codes 0 and 22 unlabeled. Each parcel takes the class of its highest-value ASMTPITT row (1,549 parcels have >1 class row). Verify labels against RPAD before publishing.",
+  "OWNER-OCCUPANCY PROXY: 'residential_class1_any_exemption_by_owner_location' = share of residential (code 1) parcels with any land or building exemption > 0 in ASMTPITT. Most such exemptions are home exemptions but the field does not distinguish exemption types.",
+  "SITUS ZIP: from LEGDAT_ADDRESS (RPAD LEGDAT situs address, taxyr 2024, layer last edited 2023-10-27); matched for 310,073 of 322,431 analyzed parcels. Parcels created since 2023 are missing. Only ZIPs with >= 100 parcels are shown.",
+  "METROS: ZIP3 -> metro is a hand-built APPROXIMATE mapping of USPS 3-digit prefixes to metro/CSA-like regions (e.g. 940-951 + 954 -> 'San Francisco Bay Area'; 900-918 + 926-928 -> 'Los Angeles-Long Beach-Anaheim'). It is not an official ZIP-to-CBSA crosswalk; prefixes straddling metro lines are assigned to the dominant metro; unmapped prefixes are labeled 'Other <state> (not mapped)'.",
+  "INSTITUTIONAL OWNERS: several top out-of-state ZIPs are dominated by single mailing addresses that receive many tax bills (see parcels_at_addresses_with_10plus_parcels per ZIP and mailing_address_concentration). These are developers, timeshare/hotel operators, trusts, corporate or agent addresses rather than individual second-home owners. 'all_parcels_excluding_addresses_with_10plus_parcels' and 'residential_class1_excluding_addresses_with_10plus_parcels' remove parcels at any mailing address shared by >= 10 parcels.",
+  "INTERPRETATION: a mailing address is where the tax bill goes, not proof of residence. Out-of-state addresses can be trustees, lenders or agents for local owners; conversely, absentee owners who use a Hawaii property manager or attorney appear as Hawaii. Treat non-Hawaii shares as a floor on non-resident ownership.",
+  "NEIGHBOR ISLAND: Hawaii mailing addresses are split by ZIP: 968xx plus 96701/06/07/09/12/17/30/31/34/44/59/62/82/86/89/91/92/95/97 = Oahu; other 967xx = neighbor islands.",
+  "pctowned is 0 on every primary record, so ownership percentages are not available. No owner names or street addresses are included in this file; raw pages (which do contain address lines) are kept only in the raw folder."
+ ],
+ "results": {
+  "universe": {
+   "owninfo_records": 587662,
+   "distinct_parcels_parid": 326870,
+   "condo_or_coop_master_records_excluded": 4439,
+   "parcels_analyzed_excluding_masters": 322431,
+   "parcels_with_tied_lowest_ownseq": 24,
+   "mailing_address_source": {
+    "primary": 292058,
+    "none": 17887,
+    "fallback_fee_owner_ownmlt": 12486
+   }
+  },
+  "all_parcels": {
+   "parcels": 322431,
+   "with_classified_mailing_address": 304480,
+   "counts": {
+    "hawaii": 274651,
+    "other_us_state": 25877,
+    "foreign": 3251,
+    "us_territory": 189,
+    "us_military_apo_fpo": 512,
+    "no_address": 17824,
+    "placeholder_nonaddress": 65,
+    "unparsed": 62,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.902,
+    "other_us_state": 0.085,
+    "foreign": 0.0107,
+    "us_territory": 0.0006,
+    "us_military_apo_fpo": 0.0017,
+    "non_hawaii_total": 0.098
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.0803,
+    "foreign": 0.0101,
+    "non_hawaii_total": 0.0925
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 271752,
+    "neighbor_island_zip": 2899,
+    "neighbor_island_share_of_hawaii": 0.0106
+   }
+  },
+  "all_parcels_strict_ownseq0_only": {
+   "parcels": 322431,
+   "with_classified_mailing_address": 292003,
+   "counts": {
+    "hawaii": 262678,
+    "other_us_state": 25402,
+    "foreign": 3232,
+    "us_territory": 185,
+    "us_military_apo_fpo": 506,
+    "no_address": 30310,
+    "placeholder_nonaddress": 63,
+    "unparsed": 55,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.8996,
+    "other_us_state": 0.087,
+    "foreign": 0.0111,
+    "us_territory": 0.0006,
+    "us_military_apo_fpo": 0.0017,
+    "non_hawaii_total": 0.1004
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.0788,
+    "foreign": 0.01,
+    "non_hawaii_total": 0.0909
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 259879,
+    "neighbor_island_zip": 2799,
+    "neighbor_island_share_of_hawaii": 0.0107
+   }
+  },
+  "top25_states_incl_hawaii": [
+   {
+    "state": "HI",
+    "name": "Hawaii",
+    "parcels": 274651
+   },
+   {
+    "state": "CA",
+    "name": "California",
+    "parcels": 11989
+   },
+   {
+    "state": "WA",
+    "name": "Washington",
+    "parcels": 2048
+   },
+   {
+    "state": "FL",
+    "name": "Florida",
+    "parcels": 1294
+   },
+   {
+    "state": "TX",
+    "name": "Texas",
+    "parcels": 1192
+   },
+   {
+    "state": "NV",
+    "name": "Nevada",
+    "parcels": 1150
+   },
+   {
+    "state": "NY",
+    "name": "New York",
+    "parcels": 891
+   },
+   {
+    "state": "VA",
+    "name": "Virginia",
+    "parcels": 693
+   },
+   {
+    "state": "OR",
+    "name": "Oregon",
+    "parcels": 581
+   },
+   {
+    "state": "CO",
+    "name": "Colorado",
+    "parcels": 562
+   },
+   {
+    "state": "UT",
+    "name": "Utah",
+    "parcels": 533
+   },
+   {
+    "state": "AZ",
+    "name": "Arizona",
+    "parcels": 514
+   },
+   {
+    "state": "MA",
+    "name": "Massachusetts",
+    "parcels": 481
+   },
+   {
+    "state": "IL",
+    "name": "Illinois",
+    "parcels": 381
+   },
+   {
+    "state": "MD",
+    "name": "Maryland",
+    "parcels": 328
+   },
+   {
+    "state": "NJ",
+    "name": "New Jersey",
+    "parcels": 278
+   },
+   {
+    "state": "NC",
+    "name": "North Carolina",
+    "parcels": 227
+   },
+   {
+    "state": "AK",
+    "name": "Alaska",
+    "parcels": 221
+   },
+   {
+    "state": "GA",
+    "name": "Georgia",
+    "parcels": 197
+   },
+   {
+    "state": "PA",
+    "name": "Pennsylvania",
+    "parcels": 192
+   },
+   {
+    "state": "MI",
+    "name": "Michigan",
+    "parcels": 185
+   },
+   {
+    "state": "OH",
+    "name": "Ohio",
+    "parcels": 160
+   },
+   {
+    "state": "TN",
+    "name": "Tennessee",
+    "parcels": 145
+   },
+   {
+    "state": "CT",
+    "name": "Connecticut",
+    "parcels": 125
+   },
+   {
+    "state": "MN",
+    "name": "Minnesota",
+    "parcels": 124
+   }
+  ],
+  "top25_out_of_state": [
+   {
+    "state": "CA",
+    "name": "California",
+    "parcels": 11989,
+    "share_of_out_of_state": 0.4633
+   },
+   {
+    "state": "WA",
+    "name": "Washington",
+    "parcels": 2048,
+    "share_of_out_of_state": 0.0791
+   },
+   {
+    "state": "FL",
+    "name": "Florida",
+    "parcels": 1294,
+    "share_of_out_of_state": 0.05
+   },
+   {
+    "state": "TX",
+    "name": "Texas",
+    "parcels": 1192,
+    "share_of_out_of_state": 0.0461
+   },
+   {
+    "state": "NV",
+    "name": "Nevada",
+    "parcels": 1150,
+    "share_of_out_of_state": 0.0444
+   },
+   {
+    "state": "NY",
+    "name": "New York",
+    "parcels": 891,
+    "share_of_out_of_state": 0.0344
+   },
+   {
+    "state": "VA",
+    "name": "Virginia",
+    "parcels": 693,
+    "share_of_out_of_state": 0.0268
+   },
+   {
+    "state": "OR",
+    "name": "Oregon",
+    "parcels": 581,
+    "share_of_out_of_state": 0.0225
+   },
+   {
+    "state": "CO",
+    "name": "Colorado",
+    "parcels": 562,
+    "share_of_out_of_state": 0.0217
+   },
+   {
+    "state": "UT",
+    "name": "Utah",
+    "parcels": 533,
+    "share_of_out_of_state": 0.0206
+   },
+   {
+    "state": "AZ",
+    "name": "Arizona",
+    "parcels": 514,
+    "share_of_out_of_state": 0.0199
+   },
+   {
+    "state": "MA",
+    "name": "Massachusetts",
+    "parcels": 481,
+    "share_of_out_of_state": 0.0186
+   },
+   {
+    "state": "IL",
+    "name": "Illinois",
+    "parcels": 381,
+    "share_of_out_of_state": 0.0147
+   },
+   {
+    "state": "MD",
+    "name": "Maryland",
+    "parcels": 328,
+    "share_of_out_of_state": 0.0127
+   },
+   {
+    "state": "NJ",
+    "name": "New Jersey",
+    "parcels": 278,
+    "share_of_out_of_state": 0.0107
+   },
+   {
+    "state": "NC",
+    "name": "North Carolina",
+    "parcels": 227,
+    "share_of_out_of_state": 0.0088
+   },
+   {
+    "state": "AK",
+    "name": "Alaska",
+    "parcels": 221,
+    "share_of_out_of_state": 0.0085
+   },
+   {
+    "state": "GA",
+    "name": "Georgia",
+    "parcels": 197,
+    "share_of_out_of_state": 0.0076
+   },
+   {
+    "state": "PA",
+    "name": "Pennsylvania",
+    "parcels": 192,
+    "share_of_out_of_state": 0.0074
+   },
+   {
+    "state": "MI",
+    "name": "Michigan",
+    "parcels": 185,
+    "share_of_out_of_state": 0.0071
+   },
+   {
+    "state": "OH",
+    "name": "Ohio",
+    "parcels": 160,
+    "share_of_out_of_state": 0.0062
+   },
+   {
+    "state": "TN",
+    "name": "Tennessee",
+    "parcels": 145,
+    "share_of_out_of_state": 0.0056
+   },
+   {
+    "state": "CT",
+    "name": "Connecticut",
+    "parcels": 125,
+    "share_of_out_of_state": 0.0048
+   },
+   {
+    "state": "MN",
+    "name": "Minnesota",
+    "parcels": 124,
+    "share_of_out_of_state": 0.0048
+   },
+   {
+    "state": "MO",
+    "name": "Missouri",
+    "parcels": 99,
+    "share_of_out_of_state": 0.0038
+   }
+  ],
+  "territories_and_military": {
+   "us_territory_by_code": {
+    "GU": 129,
+    "MP": 20,
+    "AS": 16,
+    "PR": 8,
+    "FM": 7,
+    "MH": 6,
+    "PW": 3
+   },
+   "military_by_code": {
+    "AP": 320,
+    "AE": 187,
+    "AA": 5
+   }
+  },
+  "top50_out_of_state_zips": [
+   {
+    "zip5": "90017",
+    "state": "CA",
+    "parcels": 588,
+    "zip3": "900",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 583,
+    "distinct_mailing_addresses": 6
+   },
+   {
+    "zip5": "95014",
+    "state": "CA",
+    "parcels": 271,
+    "zip3": "950",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 182,
+    "distinct_mailing_addresses": 63
+   },
+   {
+    "zip5": "32835",
+    "state": "FL",
+    "parcels": 270,
+    "zip3": "328",
+    "metro_approx": "Orlando FL",
+    "parcels_at_addresses_with_10plus_parcels": 264,
+    "distinct_mailing_addresses": 5
+   },
+   {
+    "zip5": "10022",
+    "state": "NY",
+    "parcels": 255,
+    "zip3": "100",
+    "metro_approx": "New York City NY-NJ",
+    "parcels_at_addresses_with_10plus_parcels": 241,
+    "distinct_mailing_addresses": 16
+   },
+   {
+    "zip5": "02458",
+    "state": "MA",
+    "parcels": 236,
+    "zip3": "024",
+    "metro_approx": "Boston MA",
+    "parcels_at_addresses_with_10plus_parcels": 208,
+    "distinct_mailing_addresses": 20
+   },
+   {
+    "zip5": "32839",
+    "state": "FL",
+    "parcels": 211,
+    "zip3": "328",
+    "metro_approx": "Orlando FL",
+    "parcels_at_addresses_with_10plus_parcels": 209,
+    "distinct_mailing_addresses": 3
+   },
+   {
+    "zip5": "91108",
+    "state": "CA",
+    "parcels": 209,
+    "zip3": "911",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 187,
+    "distinct_mailing_addresses": 16
+   },
+   {
+    "zip5": "92647",
+    "state": "CA",
+    "parcels": 202,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 180,
+    "distinct_mailing_addresses": 22
+   },
+   {
+    "zip5": "89135",
+    "state": "NV",
+    "parcels": 138,
+    "zip3": "891",
+    "metro_approx": "Las Vegas NV",
+    "parcels_at_addresses_with_10plus_parcels": 91,
+    "distinct_mailing_addresses": 42
+   },
+   {
+    "zip5": "94010",
+    "state": "CA",
+    "parcels": 118,
+    "zip3": "940",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 100
+   },
+   {
+    "zip5": "90210",
+    "state": "CA",
+    "parcels": 106,
+    "zip3": "902",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 90,
+    "distinct_mailing_addresses": 17
+   },
+   {
+    "zip5": "98004",
+    "state": "WA",
+    "parcels": 97,
+    "zip3": "980",
+    "metro_approx": "Seattle-Tacoma WA",
+    "parcels_at_addresses_with_10plus_parcels": 50,
+    "distinct_mailing_addresses": 44
+   },
+   {
+    "zip5": "91364",
+    "state": "CA",
+    "parcels": 88,
+    "zip3": "913",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 56,
+    "distinct_mailing_addresses": 27
+   },
+   {
+    "zip5": "94122",
+    "state": "CA",
+    "parcels": 85,
+    "zip3": "941",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 60
+   },
+   {
+    "zip5": "90274",
+    "state": "CA",
+    "parcels": 84,
+    "zip3": "902",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 23,
+    "distinct_mailing_addresses": 52
+   },
+   {
+    "zip5": "89121",
+    "state": "NV",
+    "parcels": 80,
+    "zip3": "891",
+    "metro_approx": "Las Vegas NV",
+    "parcels_at_addresses_with_10plus_parcels": 41,
+    "distinct_mailing_addresses": 21
+   },
+   {
+    "zip5": "94404",
+    "state": "CA",
+    "parcels": 76,
+    "zip3": "944",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 64
+   },
+   {
+    "zip5": "90401",
+    "state": "CA",
+    "parcels": 74,
+    "zip3": "904",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 63,
+    "distinct_mailing_addresses": 13
+   },
+   {
+    "zip5": "94539",
+    "state": "CA",
+    "parcels": 74,
+    "zip3": "945",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 60
+   },
+   {
+    "zip5": "84117",
+    "state": "UT",
+    "parcels": 73,
+    "zip3": "841",
+    "metro_approx": "Salt Lake City UT",
+    "parcels_at_addresses_with_10plus_parcels": 62,
+    "distinct_mailing_addresses": 5
+   },
+   {
+    "zip5": "75034",
+    "state": "TX",
+    "parcels": 71,
+    "zip3": "750",
+    "metro_approx": "Dallas-Fort Worth TX",
+    "parcels_at_addresses_with_10plus_parcels": 68,
+    "distinct_mailing_addresses": 4
+   },
+   {
+    "zip5": "94080",
+    "state": "CA",
+    "parcels": 71,
+    "zip3": "940",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 15,
+    "distinct_mailing_addresses": 53
+   },
+   {
+    "zip5": "92660",
+    "state": "CA",
+    "parcels": 68,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 53
+   },
+   {
+    "zip5": "95070",
+    "state": "CA",
+    "parcels": 67,
+    "zip3": "950",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 51
+   },
+   {
+    "zip5": "95120",
+    "state": "CA",
+    "parcels": 65,
+    "zip3": "951",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 51
+   },
+   {
+    "zip5": "92649",
+    "state": "CA",
+    "parcels": 63,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 32,
+    "distinct_mailing_addresses": 28
+   },
+   {
+    "zip5": "94030",
+    "state": "CA",
+    "parcels": 60,
+    "zip3": "940",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 49
+   },
+   {
+    "zip5": "84150",
+    "state": "UT",
+    "parcels": 59,
+    "zip3": "841",
+    "metro_approx": "Salt Lake City UT",
+    "parcels_at_addresses_with_10plus_parcels": 42,
+    "distinct_mailing_addresses": 14
+   },
+   {
+    "zip5": "98006",
+    "state": "WA",
+    "parcels": 58,
+    "zip3": "980",
+    "metro_approx": "Seattle-Tacoma WA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 55
+   },
+   {
+    "zip5": "91754",
+    "state": "CA",
+    "parcels": 57,
+    "zip3": "917",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 38
+   },
+   {
+    "zip5": "94121",
+    "state": "CA",
+    "parcels": 56,
+    "zip3": "941",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 40
+   },
+   {
+    "zip5": "90275",
+    "state": "CA",
+    "parcels": 55,
+    "zip3": "902",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 51
+   },
+   {
+    "zip5": "94109",
+    "state": "CA",
+    "parcels": 54,
+    "zip3": "941",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 48
+   },
+   {
+    "zip5": "80027",
+    "state": "CO",
+    "parcels": 53,
+    "zip3": "800",
+    "metro_approx": "Denver-Boulder CO",
+    "parcels_at_addresses_with_10plus_parcels": 25,
+    "distinct_mailing_addresses": 26
+   },
+   {
+    "zip5": "97232",
+    "state": "OR",
+    "parcels": 53,
+    "zip3": "972",
+    "metro_approx": "Portland OR-WA",
+    "parcels_at_addresses_with_10plus_parcels": 48,
+    "distinct_mailing_addresses": 5
+   },
+   {
+    "zip5": "98165",
+    "state": "WA",
+    "parcels": 53,
+    "zip3": "981",
+    "metro_approx": "Seattle-Tacoma WA",
+    "parcels_at_addresses_with_10plus_parcels": 51,
+    "distinct_mailing_addresses": 2
+   },
+   {
+    "zip5": "94501",
+    "state": "CA",
+    "parcels": 52,
+    "zip3": "945",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 47
+   },
+   {
+    "zip5": "94116",
+    "state": "CA",
+    "parcels": 52,
+    "zip3": "941",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 47
+   },
+   {
+    "zip5": "90024",
+    "state": "CA",
+    "parcels": 51,
+    "zip3": "900",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 31,
+    "distinct_mailing_addresses": 16
+   },
+   {
+    "zip5": "92615",
+    "state": "CA",
+    "parcels": 49,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 47,
+    "distinct_mailing_addresses": 3
+   },
+   {
+    "zip5": "94024",
+    "state": "CA",
+    "parcels": 49,
+    "zip3": "940",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 42
+   },
+   {
+    "zip5": "32826",
+    "state": "FL",
+    "parcels": 49,
+    "zip3": "328",
+    "metro_approx": "Orlando FL",
+    "parcels_at_addresses_with_10plus_parcels": 49,
+    "distinct_mailing_addresses": 1
+   },
+   {
+    "zip5": "94022",
+    "state": "CA",
+    "parcels": 48,
+    "zip3": "940",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 17,
+    "distinct_mailing_addresses": 29
+   },
+   {
+    "zip5": "92620",
+    "state": "CA",
+    "parcels": 48,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 38
+   },
+   {
+    "zip5": "92651",
+    "state": "CA",
+    "parcels": 47,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 16,
+    "distinct_mailing_addresses": 25
+   },
+   {
+    "zip5": "92618",
+    "state": "CA",
+    "parcels": 47,
+    "zip3": "926",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 38
+   },
+   {
+    "zip5": "94118",
+    "state": "CA",
+    "parcels": 47,
+    "zip3": "941",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 45
+   },
+   {
+    "zip5": "90505",
+    "state": "CA",
+    "parcels": 47,
+    "zip3": "905",
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 38
+   },
+   {
+    "zip5": "94402",
+    "state": "CA",
+    "parcels": 46,
+    "zip3": "944",
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels_at_addresses_with_10plus_parcels": 0,
+    "distinct_mailing_addresses": 41
+   },
+   {
+    "zip5": "32836",
+    "state": "FL",
+    "parcels": 46,
+    "zip3": "328",
+    "metro_approx": "Orlando FL",
+    "parcels_at_addresses_with_10plus_parcels": 45,
+    "distinct_mailing_addresses": 2
+   }
+  ],
+  "out_of_state_by_metro_approx": [
+   {
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels": 5086,
+    "share_of_out_of_state": 0.1965
+   },
+   {
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels": 4610,
+    "share_of_out_of_state": 0.1782
+   },
+   {
+    "metro_approx": "Seattle-Tacoma WA",
+    "parcels": 1683,
+    "share_of_out_of_state": 0.065
+   },
+   {
+    "metro_approx": "New York City NY-NJ",
+    "parcels": 1020,
+    "share_of_out_of_state": 0.0394
+   },
+   {
+    "metro_approx": "Las Vegas NV",
+    "parcels": 985,
+    "share_of_out_of_state": 0.0381
+   },
+   {
+    "metro_approx": "San Diego CA",
+    "parcels": 948,
+    "share_of_out_of_state": 0.0366
+   },
+   {
+    "metro_approx": "Washington DC-MD-VA",
+    "parcels": 667,
+    "share_of_out_of_state": 0.0258
+   },
+   {
+    "metro_approx": "Orlando FL",
+    "parcels": 666,
+    "share_of_out_of_state": 0.0257
+   },
+   {
+    "metro_approx": "Portland OR-WA",
+    "parcels": 533,
+    "share_of_out_of_state": 0.0206
+   },
+   {
+    "metro_approx": "Boston MA",
+    "parcels": 431,
+    "share_of_out_of_state": 0.0167
+   },
+   {
+    "metro_approx": "Dallas-Fort Worth TX",
+    "parcels": 424,
+    "share_of_out_of_state": 0.0164
+   },
+   {
+    "metro_approx": "Sacramento CA",
+    "parcels": 423,
+    "share_of_out_of_state": 0.0163
+   },
+   {
+    "metro_approx": "Phoenix AZ",
+    "parcels": 420,
+    "share_of_out_of_state": 0.0162
+   },
+   {
+    "metro_approx": "Denver-Boulder CO",
+    "parcels": 418,
+    "share_of_out_of_state": 0.0162
+   },
+   {
+    "metro_approx": "Salt Lake City UT",
+    "parcels": 414,
+    "share_of_out_of_state": 0.016
+   },
+   {
+    "metro_approx": "Chicago IL",
+    "parcels": 328,
+    "share_of_out_of_state": 0.0127
+   },
+   {
+    "metro_approx": "Houston TX",
+    "parcels": 282,
+    "share_of_out_of_state": 0.0109
+   },
+   {
+    "metro_approx": "Riverside-San Bernardino CA (Inland Empire)",
+    "parcels": 234,
+    "share_of_out_of_state": 0.009
+   },
+   {
+    "metro_approx": "San Antonio TX",
+    "parcels": 183,
+    "share_of_out_of_state": 0.0071
+   },
+   {
+    "metro_approx": "Reno-Tahoe NV/CA",
+    "parcels": 182,
+    "share_of_out_of_state": 0.007
+   },
+   {
+    "metro_approx": "Anchorage AK",
+    "parcels": 175,
+    "share_of_out_of_state": 0.0068
+   },
+   {
+    "metro_approx": "Miami-Fort Lauderdale-West Palm Beach FL",
+    "parcels": 172,
+    "share_of_out_of_state": 0.0066
+   },
+   {
+    "metro_approx": "Other FL (not mapped)",
+    "parcels": 166,
+    "share_of_out_of_state": 0.0064
+   },
+   {
+    "metro_approx": "Oxnard-Ventura CA",
+    "parcels": 147,
+    "share_of_out_of_state": 0.0057
+   },
+   {
+    "metro_approx": "Baltimore MD",
+    "parcels": 137,
+    "share_of_out_of_state": 0.0053
+   },
+   {
+    "metro_approx": "Other VA (not mapped)",
+    "parcels": 136,
+    "share_of_out_of_state": 0.0053
+   },
+   {
+    "metro_approx": "Austin TX",
+    "parcels": 134,
+    "share_of_out_of_state": 0.0052
+   },
+   {
+    "metro_approx": "Other NC (not mapped)",
+    "parcels": 131,
+    "share_of_out_of_state": 0.0051
+   },
+   {
+    "metro_approx": "Atlanta GA",
+    "parcels": 127,
+    "share_of_out_of_state": 0.0049
+   },
+   {
+    "metro_approx": "Philadelphia PA-NJ",
+    "parcels": 122,
+    "share_of_out_of_state": 0.0047
+   },
+   {
+    "metro_approx": "Virginia Beach-Norfolk VA",
+    "parcels": 120,
+    "share_of_out_of_state": 0.0046
+   },
+   {
+    "metro_approx": "Detroit MI",
+    "parcels": 115,
+    "share_of_out_of_state": 0.0044
+   },
+   {
+    "metro_approx": "Stockton-Modesto CA",
+    "parcels": 108,
+    "share_of_out_of_state": 0.0042
+   },
+   {
+    "metro_approx": "Salinas-Monterey CA",
+    "parcels": 108,
+    "share_of_out_of_state": 0.0042
+   },
+   {
+    "metro_approx": "Minneapolis-St. Paul MN",
+    "parcels": 105,
+    "share_of_out_of_state": 0.0041
+   },
+   {
+    "metro_approx": "Colorado Springs CO",
+    "parcels": 98,
+    "share_of_out_of_state": 0.0038
+   },
+   {
+    "metro_approx": "Other SC (not mapped)",
+    "parcels": 96,
+    "share_of_out_of_state": 0.0037
+   },
+   {
+    "metro_approx": "Tampa-St. Petersburg FL",
+    "parcels": 91,
+    "share_of_out_of_state": 0.0035
+   },
+   {
+    "metro_approx": "Olympia WA",
+    "parcels": 89,
+    "share_of_out_of_state": 0.0034
+   },
+   {
+    "metro_approx": "Other NY (not mapped)",
+    "parcels": 84,
+    "share_of_out_of_state": 0.0032
+   }
+  ],
+  "top50_zips_rolled_up_by_metro": [
+   {
+    "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+    "parcels": 1883
+   },
+   {
+    "metro_approx": "San Francisco Bay Area CA",
+    "parcels": 1291
+   },
+   {
+    "metro_approx": "Orlando FL",
+    "parcels": 576
+   },
+   {
+    "metro_approx": "New York City NY-NJ",
+    "parcels": 255
+   },
+   {
+    "metro_approx": "Boston MA",
+    "parcels": 236
+   },
+   {
+    "metro_approx": "Las Vegas NV",
+    "parcels": 218
+   },
+   {
+    "metro_approx": "Seattle-Tacoma WA",
+    "parcels": 208
+   },
+   {
+    "metro_approx": "Salt Lake City UT",
+    "parcels": 132
+   },
+   {
+    "metro_approx": "Dallas-Fort Worth TX",
+    "parcels": 71
+   },
+   {
+    "metro_approx": "Denver-Boulder CO",
+    "parcels": 53
+   },
+   {
+    "metro_approx": "Portland OR-WA",
+    "parcels": 53
+   }
+  ],
+  "mailing_address_concentration": {
+   "hawaii": {
+    "parcels": 274651,
+    "at_addresses_with_2plus_parcels": 75406,
+    "at_addresses_with_10plus_parcels": 24467,
+    "at_addresses_with_50plus_parcels": 18678,
+    "distinct_mailing_addresses": 220142
+   },
+   "other_us_state": {
+    "parcels": 25877,
+    "at_addresses_with_2plus_parcels": 7590,
+    "at_addresses_with_10plus_parcels": 3329,
+    "at_addresses_with_50plus_parcels": 2343,
+    "distinct_mailing_addresses": 20037
+   },
+   "foreign": {
+    "parcels": 3251,
+    "at_addresses_with_2plus_parcels": 340,
+    "at_addresses_with_10plus_parcels": 41,
+    "at_addresses_with_50plus_parcels": 0,
+    "distinct_mailing_addresses": 3030
+   }
+  },
+  "all_parcels_excluding_addresses_with_10plus_parcels": {
+   "parcels": 294594,
+   "with_classified_mailing_address": 276643,
+   "counts": {
+    "hawaii": 250184,
+    "other_us_state": 22548,
+    "foreign": 3210,
+    "us_territory": 189,
+    "us_military_apo_fpo": 512,
+    "no_address": 17824,
+    "placeholder_nonaddress": 65,
+    "unparsed": 62,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.9044,
+    "other_us_state": 0.0815,
+    "foreign": 0.0116,
+    "us_territory": 0.0007,
+    "us_military_apo_fpo": 0.0019,
+    "non_hawaii_total": 0.0956
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.0765,
+    "foreign": 0.0109,
+    "non_hawaii_total": 0.0898
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 247714,
+    "neighbor_island_zip": 2470,
+    "neighbor_island_share_of_hawaii": 0.0099
+   }
+  },
+  "residential_class1_excluding_addresses_with_10plus_parcels": {
+   "parcels": 274523,
+   "with_classified_mailing_address": 263434,
+   "counts": {
+    "hawaii": 240590,
+    "other_us_state": 19757,
+    "foreign": 2406,
+    "us_territory": 175,
+    "us_military_apo_fpo": 506,
+    "no_address": 10977,
+    "placeholder_nonaddress": 65,
+    "unparsed": 47,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.9133,
+    "other_us_state": 0.075,
+    "foreign": 0.0091,
+    "us_territory": 0.0007,
+    "us_military_apo_fpo": 0.0019,
+    "non_hawaii_total": 0.0867
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.072,
+    "foreign": 0.0088,
+    "non_hawaii_total": 0.0832
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 238414,
+    "neighbor_island_zip": 2176,
+    "neighbor_island_share_of_hawaii": 0.009
+   }
+  },
+  "top20_foreign_countries": [
+   {
+    "country": "Japan",
+    "parcels": 2024,
+    "share_of_foreign": 0.6226
+   },
+   {
+    "country": "Canada",
+    "parcels": 500,
+    "share_of_foreign": 0.1538
+   },
+   {
+    "country": "South Korea",
+    "parcels": 275,
+    "share_of_foreign": 0.0846
+   },
+   {
+    "country": "Hong Kong",
+    "parcels": 70,
+    "share_of_foreign": 0.0215
+   },
+   {
+    "country": "Singapore",
+    "parcels": 63,
+    "share_of_foreign": 0.0194
+   },
+   {
+    "country": "Taiwan",
+    "parcels": 58,
+    "share_of_foreign": 0.0178
+   },
+   {
+    "country": "China",
+    "parcels": 52,
+    "share_of_foreign": 0.016
+   },
+   {
+    "country": "Australia",
+    "parcels": 50,
+    "share_of_foreign": 0.0154
+   },
+   {
+    "country": "Germany",
+    "parcels": 32,
+    "share_of_foreign": 0.0098
+   },
+   {
+    "country": "New Zealand",
+    "parcels": 26,
+    "share_of_foreign": 0.008
+   },
+   {
+    "country": "Thailand",
+    "parcels": 14,
+    "share_of_foreign": 0.0043
+   },
+   {
+    "country": "United Kingdom",
+    "parcels": 14,
+    "share_of_foreign": 0.0043
+   },
+   {
+    "country": "French Polynesia",
+    "parcels": 11,
+    "share_of_foreign": 0.0034
+   },
+   {
+    "country": "Philippines",
+    "parcels": 10,
+    "share_of_foreign": 0.0031
+   },
+   {
+    "country": "Sweden",
+    "parcels": 7,
+    "share_of_foreign": 0.0022
+   },
+   {
+    "country": "Malaysia",
+    "parcels": 6,
+    "share_of_foreign": 0.0018
+   },
+   {
+    "country": "Switzerland",
+    "parcels": 6,
+    "share_of_foreign": 0.0018
+   },
+   {
+    "country": "France",
+    "parcels": 5,
+    "share_of_foreign": 0.0015
+   },
+   {
+    "country": "Cayman Islands",
+    "parcels": 3,
+    "share_of_foreign": 0.0009
+   },
+   {
+    "country": "Ireland",
+    "parcels": 2,
+    "share_of_foreign": 0.0006
+   }
+  ],
+  "foreign_country_count": 37,
+  "by_tmk_zone": {
+   "1": {
+    "parcels": 28442,
+    "with_classified_mailing_address": 24462,
+    "counts": {
+     "hawaii": 23320,
+     "other_us_state": 1083,
+     "foreign": 19,
+     "us_territory": 8,
+     "us_military_apo_fpo": 32,
+     "no_address": 3976,
+     "placeholder_nonaddress": 0,
+     "unparsed": 4,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9533,
+     "other_us_state": 0.0443,
+     "foreign": 0.0008,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0013,
+     "non_hawaii_total": 0.0467
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0381,
+     "foreign": 0.0007,
+     "non_hawaii_total": 0.0402
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 23126,
+     "neighbor_island_zip": 194,
+     "neighbor_island_share_of_hawaii": 0.0083
+    },
+    "label_approx": "Zone 1 - Honolulu (Kalihi/Moanalua/Salt Lake/airport side)"
+   },
+   "2": {
+    "parcels": 90404,
+    "with_classified_mailing_address": 84536,
+    "counts": {
+     "hawaii": 69792,
+     "other_us_state": 11877,
+     "foreign": 2673,
+     "us_territory": 101,
+     "us_military_apo_fpo": 93,
+     "no_address": 5842,
+     "placeholder_nonaddress": 3,
+     "unparsed": 23,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8256,
+     "other_us_state": 0.1405,
+     "foreign": 0.0316,
+     "us_territory": 0.0012,
+     "us_military_apo_fpo": 0.0011,
+     "non_hawaii_total": 0.1744
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1314,
+     "foreign": 0.0296,
+     "non_hawaii_total": 0.1631
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 68297,
+     "neighbor_island_zip": 1495,
+     "neighbor_island_share_of_hawaii": 0.0214
+    },
+    "label_approx": "Zone 2 - Honolulu (Downtown/Makiki/Ala Moana/Waikiki/Manoa)"
+   },
+   "3": {
+    "parcels": 36834,
+    "with_classified_mailing_address": 34986,
+    "counts": {
+     "hawaii": 32569,
+     "other_us_state": 2204,
+     "foreign": 178,
+     "us_territory": 15,
+     "us_military_apo_fpo": 20,
+     "no_address": 1780,
+     "placeholder_nonaddress": 60,
+     "unparsed": 8,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9309,
+     "other_us_state": 0.063,
+     "foreign": 0.0051,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0006,
+     "non_hawaii_total": 0.0691
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0598,
+     "foreign": 0.0048,
+     "non_hawaii_total": 0.0656
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 32325,
+     "neighbor_island_zip": 244,
+     "neighbor_island_share_of_hawaii": 0.0075
+    },
+    "label_approx": "Zone 3 - Honolulu (Kaimuki/Kahala/Aina Haina/Hawaii Kai)"
+   },
+   "4": {
+    "parcels": 33965,
+    "with_classified_mailing_address": 32234,
+    "counts": {
+     "hawaii": 29858,
+     "other_us_state": 2203,
+     "foreign": 90,
+     "us_territory": 8,
+     "us_military_apo_fpo": 75,
+     "no_address": 1723,
+     "placeholder_nonaddress": 0,
+     "unparsed": 8,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9263,
+     "other_us_state": 0.0683,
+     "foreign": 0.0028,
+     "us_territory": 0.0002,
+     "us_military_apo_fpo": 0.0023,
+     "non_hawaii_total": 0.0737
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0649,
+     "foreign": 0.0026,
+     "non_hawaii_total": 0.07
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 29645,
+     "neighbor_island_zip": 213,
+     "neighbor_island_share_of_hawaii": 0.0071
+    },
+    "label_approx": "Zone 4 - Koolaupoko (Kailua/Kaneohe/Waimanalo)"
+   },
+   "5": {
+    "parcels": 6494,
+    "with_classified_mailing_address": 5912,
+    "counts": {
+     "hawaii": 4687,
+     "other_us_state": 1194,
+     "foreign": 26,
+     "us_territory": 3,
+     "us_military_apo_fpo": 2,
+     "no_address": 580,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.7928,
+     "other_us_state": 0.202,
+     "foreign": 0.0044,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0003,
+     "non_hawaii_total": 0.2072
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1839,
+     "foreign": 0.004,
+     "non_hawaii_total": 0.1886
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 4603,
+     "neighbor_island_zip": 84,
+     "neighbor_island_share_of_hawaii": 0.0179
+    },
+    "label_approx": "Zone 5 - Koolauloa (Kahuku/Laie/Hauula)"
+   },
+   "6": {
+    "parcels": 4509,
+    "with_classified_mailing_address": 4145,
+    "counts": {
+     "hawaii": 3615,
+     "other_us_state": 514,
+     "foreign": 9,
+     "us_territory": 4,
+     "us_military_apo_fpo": 3,
+     "no_address": 361,
+     "placeholder_nonaddress": 0,
+     "unparsed": 3,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8721,
+     "other_us_state": 0.124,
+     "foreign": 0.0022,
+     "us_territory": 0.001,
+     "us_military_apo_fpo": 0.0007,
+     "non_hawaii_total": 0.1279
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.114,
+     "foreign": 0.002,
+     "non_hawaii_total": 0.1175
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 3562,
+     "neighbor_island_zip": 53,
+     "neighbor_island_share_of_hawaii": 0.0147
+    },
+    "label_approx": "Zone 6 - Waialua (North Shore/Haleiwa)"
+   },
+   "7": {
+    "parcels": 5476,
+    "with_classified_mailing_address": 5171,
+    "counts": {
+     "hawaii": 4924,
+     "other_us_state": 216,
+     "foreign": 25,
+     "us_territory": 2,
+     "us_military_apo_fpo": 4,
+     "no_address": 304,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9522,
+     "other_us_state": 0.0418,
+     "foreign": 0.0048,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.0478
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0394,
+     "foreign": 0.0046,
+     "non_hawaii_total": 0.0451
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 4895,
+     "neighbor_island_zip": 29,
+     "neighbor_island_share_of_hawaii": 0.0059
+    },
+    "label_approx": "Zone 7 - Wahiawa (Wahiawa/Mililani)"
+   },
+   "8": {
+    "parcels": 13506,
+    "with_classified_mailing_address": 12868,
+    "counts": {
+     "hawaii": 11666,
+     "other_us_state": 1114,
+     "foreign": 76,
+     "us_territory": 6,
+     "us_military_apo_fpo": 6,
+     "no_address": 636,
+     "placeholder_nonaddress": 2,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9066,
+     "other_us_state": 0.0866,
+     "foreign": 0.0059,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0005,
+     "non_hawaii_total": 0.0934
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0825,
+     "foreign": 0.0056,
+     "non_hawaii_total": 0.089
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 11583,
+     "neighbor_island_zip": 83,
+     "neighbor_island_share_of_hawaii": 0.0071
+    },
+    "label_approx": "Zone 8 - Waianae (Waianae Coast)"
+   },
+   "9": {
+    "parcels": 102801,
+    "with_classified_mailing_address": 100166,
+    "counts": {
+     "hawaii": 94220,
+     "other_us_state": 5472,
+     "foreign": 155,
+     "us_territory": 42,
+     "us_military_apo_fpo": 277,
+     "no_address": 2622,
+     "placeholder_nonaddress": 0,
+     "unparsed": 13,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9406,
+     "other_us_state": 0.0546,
+     "foreign": 0.0015,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0028,
+     "non_hawaii_total": 0.0594
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0532,
+     "foreign": 0.0015,
+     "non_hawaii_total": 0.0578
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 93716,
+     "neighbor_island_zip": 504,
+     "neighbor_island_share_of_hawaii": 0.0053
+    },
+    "label_approx": "Zone 9 - Ewa (Ewa/Kapolei/Waipahu/Pearl City/Aiea)"
+   }
+  },
+  "by_tmk_zone_residential_class1": {
+   "1": {
+    "parcels": 23211,
+    "with_classified_mailing_address": 22076,
+    "counts": {
+     "hawaii": 21196,
+     "other_us_state": 821,
+     "foreign": 19,
+     "us_territory": 8,
+     "us_military_apo_fpo": 32,
+     "no_address": 1131,
+     "placeholder_nonaddress": 0,
+     "unparsed": 4,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9601,
+     "other_us_state": 0.0372,
+     "foreign": 0.0009,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.0399
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0354,
+     "foreign": 0.0008,
+     "non_hawaii_total": 0.0379
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 21017,
+     "neighbor_island_zip": 179,
+     "neighbor_island_share_of_hawaii": 0.0084
+    }
+   },
+   "2": {
+    "parcels": 77616,
+    "with_classified_mailing_address": 73466,
+    "counts": {
+     "hawaii": 63118,
+     "other_us_state": 8306,
+     "foreign": 1864,
+     "us_territory": 90,
+     "us_military_apo_fpo": 88,
+     "no_address": 4128,
+     "placeholder_nonaddress": 3,
+     "unparsed": 19,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8591,
+     "other_us_state": 0.1131,
+     "foreign": 0.0254,
+     "us_territory": 0.0012,
+     "us_military_apo_fpo": 0.0012,
+     "non_hawaii_total": 0.1409
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.107,
+     "foreign": 0.024,
+     "non_hawaii_total": 0.1333
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 62225,
+     "neighbor_island_zip": 893,
+     "neighbor_island_share_of_hawaii": 0.0141
+    }
+   },
+   "3": {
+    "parcels": 35901,
+    "with_classified_mailing_address": 34171,
+    "counts": {
+     "hawaii": 31773,
+     "other_us_state": 2185,
+     "foreign": 178,
+     "us_territory": 15,
+     "us_military_apo_fpo": 20,
+     "no_address": 1662,
+     "placeholder_nonaddress": 60,
+     "unparsed": 8,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9298,
+     "other_us_state": 0.0639,
+     "foreign": 0.0052,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0006,
+     "non_hawaii_total": 0.0702
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0609,
+     "foreign": 0.005,
+     "non_hawaii_total": 0.0668
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 31536,
+     "neighbor_island_zip": 237,
+     "neighbor_island_share_of_hawaii": 0.0075
+    }
+   },
+   "4": {
+    "parcels": 32450,
+    "with_classified_mailing_address": 31143,
+    "counts": {
+     "hawaii": 28851,
+     "other_us_state": 2120,
+     "foreign": 90,
+     "us_territory": 8,
+     "us_military_apo_fpo": 74,
+     "no_address": 1302,
+     "placeholder_nonaddress": 0,
+     "unparsed": 5,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9264,
+     "other_us_state": 0.0681,
+     "foreign": 0.0029,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0024,
+     "non_hawaii_total": 0.0736
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0653,
+     "foreign": 0.0028,
+     "non_hawaii_total": 0.0706
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 28651,
+     "neighbor_island_zip": 200,
+     "neighbor_island_share_of_hawaii": 0.0069
+    }
+   },
+   "5": {
+    "parcels": 5608,
+    "with_classified_mailing_address": 5226,
+    "counts": {
+     "hawaii": 4191,
+     "other_us_state": 1005,
+     "foreign": 25,
+     "us_territory": 3,
+     "us_military_apo_fpo": 2,
+     "no_address": 381,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.802,
+     "other_us_state": 0.1923,
+     "foreign": 0.0048,
+     "us_territory": 0.0006,
+     "us_military_apo_fpo": 0.0004,
+     "non_hawaii_total": 0.198
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1792,
+     "foreign": 0.0045,
+     "non_hawaii_total": 0.1846
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 4136,
+     "neighbor_island_zip": 55,
+     "neighbor_island_share_of_hawaii": 0.0131
+    }
+   },
+   "6": {
+    "parcels": 3153,
+    "with_classified_mailing_address": 3047,
+    "counts": {
+     "hawaii": 2646,
+     "other_us_state": 389,
+     "foreign": 8,
+     "us_territory": 1,
+     "us_military_apo_fpo": 3,
+     "no_address": 105,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8684,
+     "other_us_state": 0.1277,
+     "foreign": 0.0026,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.1316
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1234,
+     "foreign": 0.0025,
+     "non_hawaii_total": 0.1272
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 2604,
+     "neighbor_island_zip": 42,
+     "neighbor_island_share_of_hawaii": 0.0159
+    }
+   },
+   "7": {
+    "parcels": 5081,
+    "with_classified_mailing_address": 4861,
+    "counts": {
+     "hawaii": 4638,
+     "other_us_state": 192,
+     "foreign": 25,
+     "us_territory": 2,
+     "us_military_apo_fpo": 4,
+     "no_address": 219,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9541,
+     "other_us_state": 0.0395,
+     "foreign": 0.0051,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.0459
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0378,
+     "foreign": 0.0049,
+     "non_hawaii_total": 0.0439
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 4610,
+     "neighbor_island_zip": 28,
+     "neighbor_island_share_of_hawaii": 0.006
+    }
+   },
+   "8": {
+    "parcels": 12483,
+    "with_classified_mailing_address": 12113,
+    "counts": {
+     "hawaii": 10965,
+     "other_us_state": 1063,
+     "foreign": 73,
+     "us_territory": 6,
+     "us_military_apo_fpo": 6,
+     "no_address": 368,
+     "placeholder_nonaddress": 2,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9052,
+     "other_us_state": 0.0878,
+     "foreign": 0.006,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0005,
+     "non_hawaii_total": 0.0948
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0852,
+     "foreign": 0.0058,
+     "non_hawaii_total": 0.092
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 10889,
+     "neighbor_island_zip": 76,
+     "neighbor_island_share_of_hawaii": 0.0069
+    }
+   },
+   "9": {
+    "parcels": 97261,
+    "with_classified_mailing_address": 95572,
+    "counts": {
+     "hawaii": 90316,
+     "other_us_state": 4800,
+     "foreign": 137,
+     "us_territory": 42,
+     "us_military_apo_fpo": 277,
+     "no_address": 1681,
+     "placeholder_nonaddress": 0,
+     "unparsed": 8,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.945,
+     "other_us_state": 0.0502,
+     "foreign": 0.0014,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0029,
+     "non_hawaii_total": 0.055
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0494,
+     "foreign": 0.0014,
+     "non_hawaii_total": 0.054
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 89850,
+     "neighbor_island_zip": 466,
+     "neighbor_island_share_of_hawaii": 0.0052
+    }
+   }
+  },
+  "waikiki_tmk_2_6_all": {
+   "parcels": 23475,
+   "with_classified_mailing_address": 21049,
+   "counts": {
+    "hawaii": 13101,
+    "other_us_state": 6473,
+    "foreign": 1411,
+    "us_territory": 33,
+    "us_military_apo_fpo": 31,
+    "no_address": 2413,
+    "placeholder_nonaddress": 3,
+    "unparsed": 10,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.6224,
+    "other_us_state": 0.3075,
+    "foreign": 0.067,
+    "us_territory": 0.0016,
+    "us_military_apo_fpo": 0.0015,
+    "non_hawaii_total": 0.3776
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.2757,
+    "foreign": 0.0601,
+    "non_hawaii_total": 0.3386
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 12431,
+    "neighbor_island_zip": 670,
+    "neighbor_island_share_of_hawaii": 0.0511
+   }
+  },
+  "by_has_cpr_flag": {
+   "N": {
+    "parcels": 167463,
+    "with_classified_mailing_address": 157856,
+    "counts": {
+     "hawaii": 149715,
+     "other_us_state": 7688,
+     "foreign": 200,
+     "us_territory": 50,
+     "us_military_apo_fpo": 203,
+     "no_address": 9578,
+     "placeholder_nonaddress": 2,
+     "unparsed": 27,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9484,
+     "other_us_state": 0.0487,
+     "foreign": 0.0013,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0013,
+     "non_hawaii_total": 0.0516
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0459,
+     "foreign": 0.0012,
+     "non_hawaii_total": 0.0486
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 148811,
+     "neighbor_island_zip": 904,
+     "neighbor_island_share_of_hawaii": 0.006
+    }
+   },
+   "Y": {
+    "parcels": 154968,
+    "with_classified_mailing_address": 146624,
+    "counts": {
+     "hawaii": 124936,
+     "other_us_state": 18189,
+     "foreign": 3051,
+     "us_territory": 139,
+     "us_military_apo_fpo": 309,
+     "no_address": 8246,
+     "placeholder_nonaddress": 63,
+     "unparsed": 35,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8521,
+     "other_us_state": 0.1241,
+     "foreign": 0.0208,
+     "us_territory": 0.0009,
+     "us_military_apo_fpo": 0.0021,
+     "non_hawaii_total": 0.1479
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1174,
+     "foreign": 0.0197,
+     "non_hawaii_total": 0.14
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 122941,
+     "neighbor_island_zip": 1995,
+     "neighbor_island_share_of_hawaii": 0.016
+    }
+   }
+  },
+  "by_cpr_unit_record": {
+   "cpr_unit_suffix_ne_0000": {
+    "parcels": 154671,
+    "with_classified_mailing_address": 146547,
+    "counts": {
+     "hawaii": 124863,
+     "other_us_state": 18185,
+     "foreign": 3051,
+     "us_territory": 139,
+     "us_military_apo_fpo": 309,
+     "no_address": 8028,
+     "placeholder_nonaddress": 62,
+     "unparsed": 34,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.852,
+     "other_us_state": 0.1241,
+     "foreign": 0.0208,
+     "us_territory": 0.0009,
+     "us_military_apo_fpo": 0.0021,
+     "non_hawaii_total": 0.148
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1176,
+     "foreign": 0.0197,
+     "non_hawaii_total": 0.1402
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 122869,
+     "neighbor_island_zip": 1994,
+     "neighbor_island_share_of_hawaii": 0.016
+    }
+   },
+   "non_cpr_parcel_suffix_0000": {
+    "parcels": 167760,
+    "with_classified_mailing_address": 157933,
+    "counts": {
+     "hawaii": 149788,
+     "other_us_state": 7692,
+     "foreign": 200,
+     "us_territory": 50,
+     "us_military_apo_fpo": 203,
+     "no_address": 9796,
+     "placeholder_nonaddress": 3,
+     "unparsed": 28,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9484,
+     "other_us_state": 0.0487,
+     "foreign": 0.0013,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0013,
+     "non_hawaii_total": 0.0516
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0459,
+     "foreign": 0.0012,
+     "non_hawaii_total": 0.0486
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 148883,
+     "neighbor_island_zip": 905,
+     "neighbor_island_share_of_hawaii": 0.006
+    }
+   }
+  },
+  "residential_class1_by_cpr_unit": {
+   "cpr_unit_suffix_ne_0000": {
+    "parcels": 137404,
+    "with_classified_mailing_address": 132916,
+    "counts": {
+     "hawaii": 115811,
+     "other_us_state": 14445,
+     "foreign": 2227,
+     "us_territory": 129,
+     "us_military_apo_fpo": 304,
+     "no_address": 4396,
+     "placeholder_nonaddress": 62,
+     "unparsed": 30,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8713,
+     "other_us_state": 0.1087,
+     "foreign": 0.0168,
+     "us_territory": 0.001,
+     "us_military_apo_fpo": 0.0023,
+     "non_hawaii_total": 0.1287
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.1051,
+     "foreign": 0.0162,
+     "non_hawaii_total": 0.1245
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 114425,
+     "neighbor_island_zip": 1386,
+     "neighbor_island_share_of_hawaii": 0.012
+    }
+   },
+   "non_cpr_parcel_suffix_0000": {
+    "parcels": 155360,
+    "with_classified_mailing_address": 148759,
+    "counts": {
+     "hawaii": 141883,
+     "other_us_state": 6436,
+     "foreign": 192,
+     "us_territory": 46,
+     "us_military_apo_fpo": 202,
+     "no_address": 6581,
+     "placeholder_nonaddress": 3,
+     "unparsed": 17,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9538,
+     "other_us_state": 0.0433,
+     "foreign": 0.0013,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.0462
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0414,
+     "foreign": 0.0012,
+     "non_hawaii_total": 0.0443
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 141093,
+     "neighbor_island_zip": 790,
+     "neighbor_island_share_of_hawaii": 0.0056
+    }
+   }
+  },
+  "by_tax_class_code": {
+   "1 (inferred Residential)": {
+    "parcels": 292764,
+    "with_classified_mailing_address": 281675,
+    "counts": {
+     "hawaii": 257694,
+     "other_us_state": 20881,
+     "foreign": 2419,
+     "us_territory": 175,
+     "us_military_apo_fpo": 506,
+     "no_address": 10977,
+     "placeholder_nonaddress": 65,
+     "unparsed": 47,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9149,
+     "other_us_state": 0.0741,
+     "foreign": 0.0086,
+     "us_territory": 0.0006,
+     "us_military_apo_fpo": 0.0018,
+     "non_hawaii_total": 0.0851
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0713,
+     "foreign": 0.0083,
+     "non_hawaii_total": 0.0819
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 255518,
+     "neighbor_island_zip": 2176,
+     "neighbor_island_share_of_hawaii": 0.0084
+    }
+   },
+   "7 (inferred Hotel & Resort)": {
+    "parcels": 8563,
+    "with_classified_mailing_address": 7991,
+    "counts": {
+     "hawaii": 3840,
+     "other_us_state": 3321,
+     "foreign": 816,
+     "us_territory": 9,
+     "us_military_apo_fpo": 5,
+     "no_address": 571,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.4805,
+     "other_us_state": 0.4156,
+     "foreign": 0.1021,
+     "us_territory": 0.0011,
+     "us_military_apo_fpo": 0.0006,
+     "non_hawaii_total": 0.5195
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.3878,
+     "foreign": 0.0953,
+     "non_hawaii_total": 0.4848
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 3264,
+     "neighbor_island_zip": 576,
+     "neighbor_island_share_of_hawaii": 0.15
+    }
+   },
+   "3 (inferred Commercial)": {
+    "parcels": 7868,
+    "with_classified_mailing_address": 5944,
+    "counts": {
+     "hawaii": 5240,
+     "other_us_state": 691,
+     "foreign": 10,
+     "us_territory": 2,
+     "us_military_apo_fpo": 1,
+     "no_address": 1915,
+     "placeholder_nonaddress": 0,
+     "unparsed": 9,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8816,
+     "other_us_state": 0.1163,
+     "foreign": 0.0017,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0002,
+     "non_hawaii_total": 0.1184
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0878,
+     "foreign": 0.0013,
+     "non_hawaii_total": 0.0895
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 5196,
+     "neighbor_island_zip": 44,
+     "neighbor_island_share_of_hawaii": 0.0084
+    }
+   },
+   "4 (inferred Industrial)": {
+    "parcels": 6365,
+    "with_classified_mailing_address": 3452,
+    "counts": {
+     "hawaii": 2909,
+     "other_us_state": 542,
+     "foreign": 1,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 2913,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8427,
+     "other_us_state": 0.157,
+     "foreign": 0.0003,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1573
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0852,
+     "foreign": 0.0002,
+     "non_hawaii_total": 0.0853
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 2881,
+     "neighbor_island_zip": 28,
+     "neighbor_island_share_of_hawaii": 0.0096
+    }
+   },
+   "5 (inferred Agricultural)": {
+    "parcels": 3569,
+    "with_classified_mailing_address": 2865,
+    "counts": {
+     "hawaii": 2502,
+     "other_us_state": 355,
+     "foreign": 5,
+     "us_territory": 3,
+     "us_military_apo_fpo": 0,
+     "no_address": 701,
+     "placeholder_nonaddress": 0,
+     "unparsed": 3,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8733,
+     "other_us_state": 0.1239,
+     "foreign": 0.0017,
+     "us_territory": 0.001,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1267
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0995,
+     "foreign": 0.0014,
+     "non_hawaii_total": 0.1017
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 2443,
+     "neighbor_island_zip": 59,
+     "neighbor_island_share_of_hawaii": 0.0236
+    }
+   },
+   "no_ASMTPITT_match": {
+    "parcels": 1406,
+    "with_classified_mailing_address": 1388,
+    "counts": {
+     "hawaii": 1379,
+     "other_us_state": 9,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 18,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9935,
+     "other_us_state": 0.0065,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0065
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0064,
+     "foreign": 0.0,
+     "non_hawaii_total": 0.0064
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 1379,
+     "neighbor_island_zip": 0,
+     "neighbor_island_share_of_hawaii": 0.0
+    }
+   },
+   "6 (inferred Preservation)": {
+    "parcels": 1374,
+    "with_classified_mailing_address": 665,
+    "counts": {
+     "hawaii": 592,
+     "other_us_state": 73,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 707,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8902,
+     "other_us_state": 0.1098,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1098
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0531,
+     "foreign": 0.0,
+     "non_hawaii_total": 0.0531
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 576,
+     "neighbor_island_zip": 16,
+     "neighbor_island_share_of_hawaii": 0.027
+    }
+   },
+   "9 (inferred Public Service; all fully exempt)": {
+    "parcels": 452,
+    "with_classified_mailing_address": 433,
+    "counts": {
+     "hawaii": 429,
+     "other_us_state": 4,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 19,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9908,
+     "other_us_state": 0.0092,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0092
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0088,
+     "foreign": 0.0,
+     "non_hawaii_total": 0.0088
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 429,
+     "neighbor_island_zip": 0,
+     "neighbor_island_share_of_hawaii": 0.0
+    }
+   },
+   "0 (unlabeled; mostly vacant rural)": {
+    "parcels": 68,
+    "with_classified_mailing_address": 65,
+    "counts": {
+     "hawaii": 64,
+     "other_us_state": 1,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 3,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9846,
+     "other_us_state": 0.0154,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0154
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0147,
+     "foreign": 0.0,
+     "non_hawaii_total": 0.0147
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 64,
+     "neighbor_island_zip": 0,
+     "neighbor_island_share_of_hawaii": 0.0
+    }
+   },
+   "22 (unlabeled)": {
+    "parcels": 2,
+    "with_classified_mailing_address": 2,
+    "counts": {
+     "hawaii": 2,
+     "other_us_state": 0,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 0,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 1.0,
+     "other_us_state": 0.0,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.0
+    },
+    "share_of_all_parcels_lower_bound": {
+     "other_us_state": 0.0,
+     "foreign": 0.0,
+     "non_hawaii_total": 0.0
+    },
+    "hawaii_mailing_split": {
+     "oahu_zip": 2,
+     "neighbor_island_zip": 0,
+     "neighbor_island_share_of_hawaii": 0.0
+    }
+   }
+  },
+  "residential_class1": {
+   "parcels": 292764,
+   "with_classified_mailing_address": 281675,
+   "counts": {
+    "hawaii": 257694,
+    "other_us_state": 20881,
+    "foreign": 2419,
+    "us_territory": 175,
+    "us_military_apo_fpo": 506,
+    "no_address": 10977,
+    "placeholder_nonaddress": 65,
+    "unparsed": 47,
+    "condo_master_placeholder": 0
+   },
+   "share_of_classified": {
+    "hawaii": 0.9149,
+    "other_us_state": 0.0741,
+    "foreign": 0.0086,
+    "us_territory": 0.0006,
+    "us_military_apo_fpo": 0.0018,
+    "non_hawaii_total": 0.0851
+   },
+   "share_of_all_parcels_lower_bound": {
+    "other_us_state": 0.0713,
+    "foreign": 0.0083,
+    "non_hawaii_total": 0.0819
+   },
+   "hawaii_mailing_split": {
+    "oahu_zip": 255518,
+    "neighbor_island_zip": 2176,
+    "neighbor_island_share_of_hawaii": 0.0084
+   }
+  },
+  "residential_class1_any_exemption_by_owner_location": {
+   "hawaii": {
+    "parcels": 257694,
+    "with_any_exemption": 159924,
+    "share_with_any_exemption": 0.6206
+   },
+   "other_us_state": {
+    "parcels": 20881,
+    "with_any_exemption": 1318,
+    "share_with_any_exemption": 0.0631
+   },
+   "foreign": {
+    "parcels": 2419,
+    "with_any_exemption": 37,
+    "share_with_any_exemption": 0.0153
+   }
+  },
+  "by_situs_zip": {
+   "96701": {
+    "parcels": 13461,
+    "with_classified_mailing_address": 12996,
+    "counts": {
+     "hawaii": 12362,
+     "other_us_state": 587,
+     "foreign": 10,
+     "us_territory": 7,
+     "us_military_apo_fpo": 30,
+     "no_address": 458,
+     "placeholder_nonaddress": 0,
+     "unparsed": 7,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9512,
+     "other_us_state": 0.0452,
+     "foreign": 0.0008,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0023,
+     "non_hawaii_total": 0.0488
+    }
+   },
+   "96706": {
+    "parcels": 21800,
+    "with_classified_mailing_address": 21526,
+    "counts": {
+     "hawaii": 20201,
+     "other_us_state": 1204,
+     "foreign": 25,
+     "us_territory": 7,
+     "us_military_apo_fpo": 89,
+     "no_address": 272,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9384,
+     "other_us_state": 0.0559,
+     "foreign": 0.0012,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0041,
+     "non_hawaii_total": 0.0616
+    }
+   },
+   "96707": {
+    "parcels": 14464,
+    "with_classified_mailing_address": 13982,
+    "counts": {
+     "hawaii": 12350,
+     "other_us_state": 1495,
+     "foreign": 82,
+     "us_territory": 9,
+     "us_military_apo_fpo": 46,
+     "no_address": 482,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8833,
+     "other_us_state": 0.1069,
+     "foreign": 0.0059,
+     "us_territory": 0.0006,
+     "us_military_apo_fpo": 0.0033,
+     "non_hawaii_total": 0.1167
+    }
+   },
+   "96712": {
+    "parcels": 2747,
+    "with_classified_mailing_address": 2544,
+    "counts": {
+     "hawaii": 2140,
+     "other_us_state": 393,
+     "foreign": 8,
+     "us_territory": 3,
+     "us_military_apo_fpo": 0,
+     "no_address": 202,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8412,
+     "other_us_state": 0.1545,
+     "foreign": 0.0031,
+     "us_territory": 0.0012,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1588
+    }
+   },
+   "96717": {
+    "parcels": 1866,
+    "with_classified_mailing_address": 1645,
+    "counts": {
+     "hawaii": 1354,
+     "other_us_state": 281,
+     "foreign": 9,
+     "us_territory": 0,
+     "us_military_apo_fpo": 1,
+     "no_address": 220,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8231,
+     "other_us_state": 0.1708,
+     "foreign": 0.0055,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0006,
+     "non_hawaii_total": 0.1769
+    }
+   },
+   "96730": {
+    "parcels": 621,
+    "with_classified_mailing_address": 584,
+    "counts": {
+     "hawaii": 525,
+     "other_us_state": 57,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 2,
+     "no_address": 37,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.899,
+     "other_us_state": 0.0976,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0034,
+     "non_hawaii_total": 0.101
+    }
+   },
+   "96731": {
+    "parcels": 1255,
+    "with_classified_mailing_address": 1146,
+    "counts": {
+     "hawaii": 779,
+     "other_us_state": 359,
+     "foreign": 8,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 108,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.6798,
+     "other_us_state": 0.3133,
+     "foreign": 0.007,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3202
+    }
+   },
+   "96734": {
+    "parcels": 14078,
+    "with_classified_mailing_address": 13488,
+    "counts": {
+     "hawaii": 12078,
+     "other_us_state": 1306,
+     "foreign": 62,
+     "us_territory": 3,
+     "us_military_apo_fpo": 39,
+     "no_address": 590,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8955,
+     "other_us_state": 0.0968,
+     "foreign": 0.0046,
+     "us_territory": 0.0002,
+     "us_military_apo_fpo": 0.0029,
+     "non_hawaii_total": 0.1045
+    }
+   },
+   "96744": {
+    "parcels": 17288,
+    "with_classified_mailing_address": 16463,
+    "counts": {
+     "hawaii": 15574,
+     "other_us_state": 824,
+     "foreign": 26,
+     "us_territory": 5,
+     "us_military_apo_fpo": 34,
+     "no_address": 819,
+     "placeholder_nonaddress": 0,
+     "unparsed": 6,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.946,
+     "other_us_state": 0.0501,
+     "foreign": 0.0016,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0021,
+     "non_hawaii_total": 0.054
+    }
+   },
+   "96762": {
+    "parcels": 884,
+    "with_classified_mailing_address": 849,
+    "counts": {
+     "hawaii": 728,
+     "other_us_state": 118,
+     "foreign": 3,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 35,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8575,
+     "other_us_state": 0.139,
+     "foreign": 0.0035,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.1425
+    }
+   },
+   "96782": {
+    "parcels": 10095,
+    "with_classified_mailing_address": 9729,
+    "counts": {
+     "hawaii": 9317,
+     "other_us_state": 393,
+     "foreign": 5,
+     "us_territory": 5,
+     "us_military_apo_fpo": 9,
+     "no_address": 366,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9577,
+     "other_us_state": 0.0404,
+     "foreign": 0.0005,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0009,
+     "non_hawaii_total": 0.0423
+    }
+   },
+   "96786": {
+    "parcels": 5392,
+    "with_classified_mailing_address": 5134,
+    "counts": {
+     "hawaii": 4887,
+     "other_us_state": 216,
+     "foreign": 25,
+     "us_territory": 2,
+     "us_military_apo_fpo": 4,
+     "no_address": 257,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9519,
+     "other_us_state": 0.0421,
+     "foreign": 0.0049,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.0481
+    }
+   },
+   "96789": {
+    "parcels": 18246,
+    "with_classified_mailing_address": 18046,
+    "counts": {
+     "hawaii": 17161,
+     "other_us_state": 795,
+     "foreign": 16,
+     "us_territory": 4,
+     "us_military_apo_fpo": 70,
+     "no_address": 198,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.951,
+     "other_us_state": 0.0441,
+     "foreign": 0.0009,
+     "us_territory": 0.0002,
+     "us_military_apo_fpo": 0.0039,
+     "non_hawaii_total": 0.049
+    }
+   },
+   "96791": {
+    "parcels": 2772,
+    "with_classified_mailing_address": 2575,
+    "counts": {
+     "hawaii": 2242,
+     "other_us_state": 319,
+     "foreign": 7,
+     "us_territory": 4,
+     "us_military_apo_fpo": 3,
+     "no_address": 195,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8707,
+     "other_us_state": 0.1239,
+     "foreign": 0.0027,
+     "us_territory": 0.0016,
+     "us_military_apo_fpo": 0.0012,
+     "non_hawaii_total": 0.1293
+    }
+   },
+   "96792": {
+    "parcels": 13197,
+    "with_classified_mailing_address": 12601,
+    "counts": {
+     "hawaii": 11409,
+     "other_us_state": 1105,
+     "foreign": 76,
+     "us_territory": 6,
+     "us_military_apo_fpo": 5,
+     "no_address": 594,
+     "placeholder_nonaddress": 2,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9054,
+     "other_us_state": 0.0877,
+     "foreign": 0.006,
+     "us_territory": 0.0005,
+     "us_military_apo_fpo": 0.0004,
+     "non_hawaii_total": 0.0946
+    }
+   },
+   "96795": {
+    "parcels": 2470,
+    "with_classified_mailing_address": 2178,
+    "counts": {
+     "hawaii": 2104,
+     "other_us_state": 71,
+     "foreign": 2,
+     "us_territory": 0,
+     "us_military_apo_fpo": 1,
+     "no_address": 290,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.966,
+     "other_us_state": 0.0326,
+     "foreign": 0.0009,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0005,
+     "non_hawaii_total": 0.034
+    }
+   },
+   "96797": {
+    "parcels": 18320,
+    "with_classified_mailing_address": 17995,
+    "counts": {
+     "hawaii": 17212,
+     "other_us_state": 740,
+     "foreign": 11,
+     "us_territory": 7,
+     "us_military_apo_fpo": 25,
+     "no_address": 323,
+     "placeholder_nonaddress": 0,
+     "unparsed": 2,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9565,
+     "other_us_state": 0.0411,
+     "foreign": 0.0006,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.0435
+    }
+   },
+   "96813": {
+    "parcels": 14324,
+    "with_classified_mailing_address": 13293,
+    "counts": {
+     "hawaii": 12285,
+     "other_us_state": 937,
+     "foreign": 51,
+     "us_territory": 9,
+     "us_military_apo_fpo": 11,
+     "no_address": 1027,
+     "placeholder_nonaddress": 0,
+     "unparsed": 4,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9242,
+     "other_us_state": 0.0705,
+     "foreign": 0.0038,
+     "us_territory": 0.0007,
+     "us_military_apo_fpo": 0.0008,
+     "non_hawaii_total": 0.0758
+    }
+   },
+   "96814": {
+    "parcels": 20523,
+    "with_classified_mailing_address": 19660,
+    "counts": {
+     "hawaii": 16012,
+     "other_us_state": 2583,
+     "foreign": 1002,
+     "us_territory": 36,
+     "us_military_apo_fpo": 27,
+     "no_address": 856,
+     "placeholder_nonaddress": 0,
+     "unparsed": 7,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.8144,
+     "other_us_state": 0.1314,
+     "foreign": 0.051,
+     "us_territory": 0.0018,
+     "us_military_apo_fpo": 0.0014,
+     "non_hawaii_total": 0.1856
+    }
+   },
+   "96815": {
+    "parcels": 26686,
+    "with_classified_mailing_address": 23694,
+    "counts": {
+     "hawaii": 15635,
+     "other_us_state": 6527,
+     "foreign": 1463,
+     "us_territory": 34,
+     "us_military_apo_fpo": 35,
+     "no_address": 2912,
+     "placeholder_nonaddress": 63,
+     "unparsed": 17,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.6599,
+     "other_us_state": 0.2755,
+     "foreign": 0.0617,
+     "us_territory": 0.0014,
+     "us_military_apo_fpo": 0.0015,
+     "non_hawaii_total": 0.3401
+    }
+   },
+   "96816": {
+    "parcels": 14911,
+    "with_classified_mailing_address": 14171,
+    "counts": {
+     "hawaii": 13385,
+     "other_us_state": 720,
+     "foreign": 56,
+     "us_territory": 3,
+     "us_military_apo_fpo": 7,
+     "no_address": 740,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9445,
+     "other_us_state": 0.0508,
+     "foreign": 0.004,
+     "us_territory": 0.0002,
+     "us_military_apo_fpo": 0.0005,
+     "non_hawaii_total": 0.0555
+    }
+   },
+   "96817": {
+    "parcels": 12085,
+    "with_classified_mailing_address": 11024,
+    "counts": {
+     "hawaii": 10586,
+     "other_us_state": 424,
+     "foreign": 9,
+     "us_territory": 2,
+     "us_military_apo_fpo": 3,
+     "no_address": 1057,
+     "placeholder_nonaddress": 0,
+     "unparsed": 4,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9603,
+     "other_us_state": 0.0385,
+     "foreign": 0.0008,
+     "us_territory": 0.0002,
+     "us_military_apo_fpo": 0.0003,
+     "non_hawaii_total": 0.0397
+    }
+   },
+   "96818": {
+    "parcels": 1896,
+    "with_classified_mailing_address": 1566,
+    "counts": {
+     "hawaii": 1519,
+     "other_us_state": 44,
+     "foreign": 1,
+     "us_territory": 1,
+     "us_military_apo_fpo": 1,
+     "no_address": 330,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.97,
+     "other_us_state": 0.0281,
+     "foreign": 0.0006,
+     "us_territory": 0.0006,
+     "us_military_apo_fpo": 0.0006,
+     "non_hawaii_total": 0.03
+    }
+   },
+   "96819": {
+    "parcels": 17006,
+    "with_classified_mailing_address": 15285,
+    "counts": {
+     "hawaii": 14445,
+     "other_us_state": 783,
+     "foreign": 15,
+     "us_territory": 9,
+     "us_military_apo_fpo": 33,
+     "no_address": 1721,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.945,
+     "other_us_state": 0.0512,
+     "foreign": 0.001,
+     "us_territory": 0.0006,
+     "us_military_apo_fpo": 0.0022,
+     "non_hawaii_total": 0.055
+    }
+   },
+   "96821": {
+    "parcels": 7197,
+    "with_classified_mailing_address": 6892,
+    "counts": {
+     "hawaii": 6582,
+     "other_us_state": 287,
+     "foreign": 21,
+     "us_territory": 2,
+     "us_military_apo_fpo": 0,
+     "no_address": 305,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.955,
+     "other_us_state": 0.0416,
+     "foreign": 0.003,
+     "us_territory": 0.0003,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.045
+    }
+   },
+   "96822": {
+    "parcels": 14212,
+    "with_classified_mailing_address": 13510,
+    "counts": {
+     "hawaii": 12682,
+     "other_us_state": 788,
+     "foreign": 25,
+     "us_territory": 6,
+     "us_military_apo_fpo": 9,
+     "no_address": 701,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9387,
+     "other_us_state": 0.0583,
+     "foreign": 0.0019,
+     "us_territory": 0.0004,
+     "us_military_apo_fpo": 0.0007,
+     "non_hawaii_total": 0.0613
+    }
+   },
+   "96825": {
+    "parcels": 11690,
+    "with_classified_mailing_address": 11482,
+    "counts": {
+     "hawaii": 10529,
+     "other_us_state": 882,
+     "foreign": 51,
+     "us_territory": 9,
+     "us_military_apo_fpo": 11,
+     "no_address": 207,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.917,
+     "other_us_state": 0.0768,
+     "foreign": 0.0044,
+     "us_territory": 0.0008,
+     "us_military_apo_fpo": 0.001,
+     "non_hawaii_total": 0.083
+    }
+   },
+   "96826": {
+    "parcels": 10331,
+    "with_classified_mailing_address": 10003,
+    "counts": {
+     "hawaii": 9127,
+     "other_us_state": 799,
+     "foreign": 54,
+     "us_territory": 14,
+     "us_military_apo_fpo": 9,
+     "no_address": 327,
+     "placeholder_nonaddress": 0,
+     "unparsed": 1,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.9124,
+     "other_us_state": 0.0799,
+     "foreign": 0.0054,
+     "us_territory": 0.0014,
+     "us_military_apo_fpo": 0.0009,
+     "non_hawaii_total": 0.0876
+    }
+   },
+   "96862": {
+    "parcels": 168,
+    "with_classified_mailing_address": 34,
+    "counts": {
+     "hawaii": 21,
+     "other_us_state": 13,
+     "foreign": 0,
+     "us_territory": 0,
+     "us_military_apo_fpo": 0,
+     "no_address": 134,
+     "placeholder_nonaddress": 0,
+     "unparsed": 0,
+     "condo_master_placeholder": 0
+    },
+    "share_of_classified": {
+     "hawaii": 0.6176,
+     "other_us_state": 0.3824,
+     "foreign": 0.0,
+     "us_territory": 0.0,
+     "us_military_apo_fpo": 0.0,
+     "non_hawaii_total": 0.3824
+    }
+   }
+  },
+  "situs_zip_coverage": {
+   "parcels_with_situs_zip": 310073,
+   "of": 322431
+  },
+  "crosscheck_vs_structured_OWNDAT": {
+   "method": "Compare category parsed from OWNINFO ownseq-0 free-text address with RPAD OWNDAT structured taxbillstate/taxbillcountry (same parid).",
+   "compared_parcels": 291778,
+   "category_agreement": 1.0,
+   "state_agreement_us": 288066,
+   "zip5_agreement": 288736,
+   "owndat_structured_category_counts_excl_masters": {
+    "HI": 262668,
+    "other_state": 25399,
+    "blank": 30646,
+    "country_nonblank": 3043,
+    "military": 502,
+    "territory": 168,
+    "other_code": 5
+   },
+   "confusion_top": [
+    {
+     "owninfo_parse": "hawaii",
+     "owndat": "hawaii",
+     "n": 262668
+    },
+    {
+     "owninfo_parse": "other_us_state",
+     "owndat": "other_us_state",
+     "n": 25398
+    },
+    {
+     "owninfo_parse": "foreign",
+     "owndat": "foreign",
+     "n": 3033
+    },
+    {
+     "owninfo_parse": "us_military_apo_fpo",
+     "owndat": "us_military_apo_fpo",
+     "n": 502
+    },
+    {
+     "owninfo_parse": "foreign",
+     "owndat": "owndat_blank_or_other",
+     "n": 199
+    },
+    {
+     "owninfo_parse": "us_territory",
+     "owndat": "us_territory",
+     "n": 176
+    },
+    {
+     "owninfo_parse": "hawaii",
+     "owndat": "owndat_blank_or_other",
+     "n": 10
+    },
+    {
+     "owninfo_parse": "us_territory",
+     "owndat": "owndat_blank_or_other",
+     "n": 8
+    },
+    {
+     "owninfo_parse": "other_us_state",
+     "owndat": "owndat_blank_or_other",
+     "n": 4
+    },
+    {
+     "owninfo_parse": "us_military_apo_fpo",
+     "owndat": "owndat_blank_or_other",
+     "n": 4
+    },
+    {
+     "owninfo_parse": "us_territory",
+     "owndat": "foreign",
+     "n": 1
+    }
+   ]
+  },
+  "_unparsed_count": 62,
+  "_parse_method_counts": {
+   "us_regex": 301212,
+   "no_address": 17824,
+   "country_word": 3248,
+   "unparsed": 62,
+   "placeholder_nonaddress": 65,
+   "canada_postcode": 1,
+   "territory_word": 12,
+   "country_word_2lines": 2,
+   "hi_zip_no_state": 5
+  }
+ }
+}

@@ -1,0 +1,4526 @@
+{
+ "key": "market_oct",
+ "title": "Market refresh, early October 2026: September 2026 board reports (Oahu HBR, Maui RAM), neighbor-island status, Title Guaranty September RSRs, and months-of-supply method comparison",
+ "generated": "2026-10-09T01:37:09Z",
+ "source": [
+  {
+   "name": "Honolulu Board of REALTORS, Oahu Monthly Statistical Report - September 2026 (35 pp; PDF author \"Honolulu Board of REALTORS\", created 2026-10-06)",
+   "type": "REPORTED: HBR-authored official report obtained from a brokerage site (oahure.com); not yet posted on hicentral.com",
+   "edition": "September 2026",
+   "file": "raw/up_market_oct/oahure_09-2026-Sep-A-MSR.pdf",
+   "url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "retrieved_utc": "2026-10-09T01:25:11Z",
+   "bytes": 2430258,
+   "sha256": "a6a5d1e79c8744e785d7ff5ebf0cb14f97dd601939765ac597fb51b3cbbc1040",
+   "http": "200",
+   "last_modified": "Tue, 06 Oct 2026 20:56:27 GMT",
+   "note": "Not yet linked from hicentral.com or the HBR Prezly newsroom at retrieval. Mirror fidelity: the same site's August 2026 MSR has numerically identical content to HBR's own Google-Drive copy (5,746 numeric tokens identical)."
+  },
+  {
+   "name": "HBR August 2026 MSR (mirror copy, for fidelity check)",
+   "type": "REPORTED: HBR-authored report via brokerage site",
+   "edition": "August 2026",
+   "file": "raw/up_market_oct/oahure_08-2026-Aug-A-MSR.pdf",
+   "url": "https://www.oahure.com/Statistics/08-2026-Aug-A-MSR.pdf",
+   "retrieved_utc": "2026-10-09T01:25:13Z",
+   "bytes": 2482770,
+   "sha256": "23b44e7a9cede837c3ecad7d50a4b70dac40ab6db3a1f437cf984bd28f7862de",
+   "http": "200",
+   "last_modified": "Sun, 06 Sep 2026 23:17:32 GMT"
+  },
+  {
+   "name": "hicentral.com market press releases index (latest listed: August 2026)",
+   "type": "official board site",
+   "file": "raw/up_market_oct/hic_market-press-releases.html",
+   "url": "https://www.hicentral.com/market-press-releases.php",
+   "retrieved_utc": "2026-10-09T01:20:44Z",
+   "bytes": 40821,
+   "sha256": "44ed9afd65509b290df322093f0b259beef46c560adc07c5cebb99951e3522e7",
+   "http": "200",
+   "last_modified": ""
+  },
+  {
+   "name": "hicentral.com /mpr/mpr-2026-09.php (HTTP 404)",
+   "type": "official board site",
+   "file": "raw/up_market_oct/hic_mpr_mpr-2026-09.html",
+   "url": "https://www.hicentral.com/mpr/mpr-2026-09.php",
+   "retrieved_utc": "2026-10-09T01:21:04Z",
+   "bytes": 14040,
+   "sha256": "e926f30707b5b4a693375ba779b77b6382e484c7d881380431ac3ab3fc0dad49",
+   "http": "404",
+   "last_modified": "Mon, 01 Dec 2025 00:07:47 GMT"
+  },
+  {
+   "name": "HBR Prezly newsroom RSS (latest item: August release, 2026-09-06)",
+   "type": "official board newsroom",
+   "file": "raw/up_market_oct/hbr_prezly_feed.xml",
+   "url": "https://honolulu-board-of-realtors.prezly.com/feed",
+   "retrieved_utc": "2026-10-09T01:21:21Z",
+   "bytes": 4817,
+   "sha256": "f860c136b500ee3d9357a85e5652e541ae35611286f2fde3d4d028774793b6c8",
+   "http": "200",
+   "last_modified": ""
+  },
+  {
+   "name": "REALTORS Association of Maui, Monthly Indicators - September 2026 (current as of October 1, 2026; ShowingTime Plus)",
+   "type": "official board report",
+   "edition": "September 2026",
+   "file": "raw/up_market_oct/ram_2026-09_report.pdf",
+   "url": "https://media.salecore.com/GetFile.ashx?p=MoWFLulfqmtt",
+   "retrieved_utc": "2026-10-09T01:23:42Z",
+   "bytes": 948957,
+   "sha256": "cce8dc9ded054edbb2bfaea1642628c83a3b3c9154fb5be2f3f754889c763cac",
+   "http": "200",
+   "last_modified": "",
+   "landing_page": "https://www.ramaui.com/housing-statistics",
+   "short_link": "https://i2u.io/aFDU6R"
+  },
+  {
+   "name": "RAM Monthly Indicators - August 2026 (current as of September 1, 2026)",
+   "type": "official board report",
+   "edition": "August 2026",
+   "file": "raw/up_market_oct/ram_2026-08_report.pdf",
+   "url": "https://media.salecore.com/GetFile.ashx?p=VdJvjegbJbEh",
+   "retrieved_utc": "2026-10-09T01:23:43Z",
+   "bytes": 948686,
+   "sha256": "70f867726c1ab519b49e5bafa8ffe7cae0fd39c72cee40a8099cd614c16d98af",
+   "http": "200",
+   "last_modified": "",
+   "short_link": "https://i2u.io/cPgS98"
+  },
+  {
+   "name": "RAM housing statistics page",
+   "type": "official board site",
+   "file": "raw/up_market_oct/ram_housing-statistics.html",
+   "url": "https://www.ramaui.com/housing-statistics",
+   "retrieved_utc": "2026-10-09T01:23:30Z",
+   "bytes": 70324,
+   "sha256": "c64e7332d6148bd4ae34074d53e88a9a88145869a2e6118a8c39940be8a1f7f7",
+   "http": "200",
+   "last_modified": ""
+  },
+  {
+   "name": "Title Guaranty Residential Sales Report Oahu September 2026",
+   "type": "title company (reported)",
+   "file": "raw/up_market_oct/tg_Residential-Sales-Report-Oahu-Island-9.2026.pdf",
+   "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-9.2026.pdf",
+   "retrieved_utc": "2026-10-09T01:22:13Z",
+   "bytes": 3849547,
+   "sha256": "a1be71975584c198116bd4d8121cf093476810522ce59ca3e6be0ef825d20d62",
+   "http": "200",
+   "last_modified": "Mon, 05 Oct 2026 18:14:50 GMT"
+  },
+  {
+   "name": "Title Guaranty Residential Sales Report Maui September 2026",
+   "type": "title company (reported)",
+   "file": "raw/up_market_oct/tg_Residential-Sales-Report-Maui-Island-9.2026.pdf",
+   "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-9.2026.pdf",
+   "retrieved_utc": "2026-10-09T01:22:16Z",
+   "bytes": 3700170,
+   "sha256": "618a4ca32fe1795b1dee64b5d687f6d3b3a65b7ca98fd12e849e0b50689c1b38",
+   "http": "200",
+   "last_modified": "Mon, 05 Oct 2026 18:14:37 GMT"
+  },
+  {
+   "name": "Title Guaranty Residential Sales Report Hawaii Island September 2026",
+   "type": "title company (reported)",
+   "file": "raw/up_market_oct/tg_Residential-Sales-Report-Hawaii-9.2026.pdf",
+   "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-9.2026.pdf",
+   "retrieved_utc": "2026-10-09T01:21:38Z",
+   "bytes": 3939657,
+   "sha256": "03d003d3c202dd4dfab1540225a7e36b65eb9dbbb8333df49049b6660866a138",
+   "http": "200",
+   "last_modified": "Mon, 05 Oct 2026 18:14:34 GMT"
+  },
+  {
+   "name": "Title Guaranty Residential Sales Report Kauai September 2026",
+   "type": "title company (reported)",
+   "file": "raw/up_market_oct/tg_Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+   "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+   "retrieved_utc": "2026-10-09T01:21:40Z",
+   "bytes": 3637676,
+   "sha256": "be894ae64b15cacf30eabee696d16474a2271407158ee713091e8d7f729682ed",
+   "http": "200",
+   "last_modified": "Mon, 05 Oct 2026 18:14:36 GMT"
+  },
+  {
+   "name": "Title Guaranty RSR August 2026 (Oahu, Maui, Hawaii, Kauai) for revision/universe checks",
+   "type": "title company (reported)",
+   "files": [
+    {
+     "file": "raw/up_market_oct/tg_Residential-Sales-Report-Oahu-Island-8.2026.pdf",
+     "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-8.2026.pdf",
+     "retrieved_utc": "2026-10-09T01:22:19Z",
+     "bytes": 3848679,
+     "sha256": "c300edd5ea72ca18d6e4e1b8cf247029b1211f329059856b443d8c80a5fc8c0d",
+     "http": "200",
+     "last_modified": "Thu, 03 Sep 2026 22:32:55 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/tg_Residential-Sales-Report-Maui-Island-8.2026.pdf",
+     "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-8.2026.pdf",
+     "retrieved_utc": "2026-10-09T01:22:22Z",
+     "bytes": 3699689,
+     "sha256": "0de50449d5da3376a6edfea7c3525e051cb86dcb55f0c18517fac336842effa4",
+     "http": "200",
+     "last_modified": "Thu, 03 Sep 2026 22:32:43 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/tg_Residential-Sales-Report-Hawaii-8.2026.pdf",
+     "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-8.2026.pdf",
+     "retrieved_utc": "2026-10-09T01:22:24Z",
+     "bytes": 3941219,
+     "sha256": "4a2d50ebcd5a882dd1caf05696485f1793e647f4b2b7869a710efc966adbde1b",
+     "http": "200",
+     "last_modified": "Thu, 03 Sep 2026 22:32:57 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/tg_Residential-Sales-Report-Kauai-Island-8.2026.pdf",
+     "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-8.2026.pdf",
+     "retrieved_utc": "2026-10-09T01:22:27Z",
+     "bytes": 3639109,
+     "sha256": "777457380e9072b502ea276dc7bb1635394962657edafe07cc9825c6b1461670",
+     "http": "200",
+     "last_modified": "Thu, 03 Sep 2026 22:32:41 GMT"
+    }
+   ]
+  },
+  {
+   "name": "Title Guaranty Statewide Housing Statistics August 2026 (\"Source: Respective Islands' board of REALTORS\")",
+   "type": "title company republication of board data (reported)",
+   "edition": "August 2026",
+   "file": "raw/up_market_oct/tg_8.2026-Statewide-Housing-Statistics.pdf",
+   "url": "https://www.tghawaii.com/wp-content/uploads/8.2026-Statewide-Housing-Statistics.pdf",
+   "retrieved_utc": "2026-10-09T01:22:29Z",
+   "bytes": 441889,
+   "sha256": "16791f469528c9f6ce484af6f7f45ba83cc688de3846b5d18a9e862f7175a695",
+   "http": "200",
+   "last_modified": "Fri, 25 Sep 2026 01:37:48 GMT"
+  },
+  {
+   "name": "Title Guaranty market page (lists RSR and statewide PDFs; no 9.2026 statewide edition)",
+   "type": "title company",
+   "file": "raw/up_market_oct/tg_market.html",
+   "url": "https://www.tghawaii.com/market/",
+   "retrieved_utc": "2026-10-09T01:21:56Z",
+   "bytes": 349325,
+   "sha256": "ecb3b4070e828218ee33e99b647deda350aefb3651fad907ab497875b294abd7",
+   "http": "200",
+   "last_modified": ""
+  },
+  {
+   "name": "Fidelity National Title, Kauai Real Estate Market Report August 2026 YTD (source: Kauai Board of REALTORS)",
+   "type": "title company republication of board data (reported)",
+   "file": "raw/up_market_oct/fntic_Kauai-Stats-AUGUST-2026.pdf",
+   "url": "https://hawaii.fntic.com/FNTRSHawaii/media/FNT-RS-Hawaii/PDF/Kauai-Stats-AUGUST-2026.pdf",
+   "retrieved_utc": "2026-10-09T01:25:00Z",
+   "bytes": 211931,
+   "sha256": "1f1dc5507e072c187011f13f20fb3804868e0bed9b21b823f640ecf993dad583",
+   "http": "200",
+   "last_modified": "Thu, 08 Oct 2026 22:27:35 GMT"
+  },
+  {
+   "name": "Fidelity National Title, Big Island Real Estate Market Overview August 2026 YTD (Hawaii Information Service MLS data)",
+   "type": "title company republication of MLS data (reported)",
+   "file": "raw/up_market_oct/fntic_FINAL-Big-Island-AUGUST-2026.pdf",
+   "url": "https://hawaii.fntic.com/FNTRSHawaii/media/FNT-RS-Hawaii/PDF/FINAL-Big-Island-AUGUST-2026.pdf",
+   "retrieved_utc": "2026-10-09T01:25:00Z",
+   "bytes": 398612,
+   "sha256": "394c09de867f7656019230ce6331a3691ae025829fdb5b3a12015cabab50cc17",
+   "http": "200",
+   "last_modified": "Tue, 22 Sep 2026 01:56:20 GMT"
+  },
+  {
+   "name": "Fidelity National Title monthly statistics index (no September 2026 editions)",
+   "type": "title company",
+   "file": "raw/up_market_oct/fntic_monthly-statistics_lc.html",
+   "url": "https://hawaii.fntic.com/customers/monthly-statistics",
+   "retrieved_utc": "2026-10-09T01:24:50Z",
+   "bytes": 58932,
+   "sha256": "6b58f9b0429f75b10c7892726f7862686aeb0e56f0a987deb1f935028fc3d9fa",
+   "http": "200",
+   "last_modified": ""
+  },
+  {
+   "name": "DBEDT Monthly Economic Indicators, county workbooks, August 2026 edition (released 2026-10-01; September due ~2026-10-29)",
+   "type": "official (State of Hawaii)",
+   "files": [
+    {
+     "file": "raw/up_market_oct/dbedt_2026-08-honolulu.xlsx",
+     "url": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-honolulu.xlsx",
+     "retrieved_utc": "2026-10-09T01:29:08Z",
+     "bytes": 278279,
+     "sha256": "36d311de37a37e31b9892de4d112160355b48aa706ea4e803f3320ec95b5d2d4",
+     "http": "200",
+     "last_modified": "Thu, 01 Oct 2026 15:16:37 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/dbedt_2026-08-maui.xlsx",
+     "url": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-maui.xlsx",
+     "retrieved_utc": "2026-10-09T01:29:09Z",
+     "bytes": 297241,
+     "sha256": "92df14e5612f024e6f1efcc41ae1815d8c66cd8864cf02c3961291bffc10375f",
+     "http": "200",
+     "last_modified": "Thu, 01 Oct 2026 17:01:51 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/dbedt_2026-08-kauai.xlsx",
+     "url": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-kauai.xlsx",
+     "retrieved_utc": "2026-10-09T01:29:11Z",
+     "bytes": 359799,
+     "sha256": "ca0e900cb08a95107b8405412c1ebae1eb56e1aa20ea69b9bc20a93d5c52d6ff",
+     "http": "200",
+     "last_modified": "Thu, 01 Oct 2026 15:17:20 GMT"
+    },
+    {
+     "file": "raw/up_market_oct/dbedt_2026-08-hawaii.xlsx",
+     "url": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-hawaii.xlsx",
+     "retrieved_utc": "2026-10-09T01:29:12Z",
+     "bytes": 208426,
+     "sha256": "9561fa1c798ba7dab6a22f495b9b5f52ed401985339ed4b2da5197c8180dd8d5",
+     "http": "200",
+     "last_modified": "Thu, 01 Oct 2026 19:38:07 GMT"
+    }
+   ],
+   "index": {
+    "file": "raw/up_market_oct/dbedt_mei_index.html",
+    "url": "https://dbedt.hawaii.gov/economic/mei/",
+    "retrieved_utc": "2026-10-09T01:29:04Z",
+    "bytes": 60798,
+    "sha256": "c18a22b305a52b608405e121977fb3c9b47d8f227f15550d40b813c9dee81712",
+    "http": "200",
+    "last_modified": "Fri, 09 Oct 2026 01:29:05 GMT"
+   }
+  },
+  {
+   "name": "Realtor.com Research, RDC_Inventory_Core_Metrics_County_History.csv (read from existing project download raw/mm_rdc_zip, fetched 2026-10-08T06:15:56Z)",
+   "type": "company data (reported)",
+   "url": "https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/RDC_Inventory_Core_Metrics_County_History.csv",
+   "file": "raw/mm_rdc_zip/RDC_Inventory_Core_Metrics_County_History.csv",
+   "sha256": "d2021d58077cbcad380f895685522b9b799783a38a7290ccaa6021f7bf651aa3"
+  },
+  {
+   "name": "Kauai Board of REALTORS (kauaiboard.com), Hawaii Island REALTORS (hawaiiislandrealtors.org), Hawaii Information Service (hawaiiinformation.com) home pages - HTTP 403 Forbidden",
+   "type": "official board/MLS sites (blocked)",
+   "files": [
+    {
+     "file": "raw/up_market_oct/kbor_kauaiboard_home.html",
+     "url": "https://www.kauaiboard.com/",
+     "retrieved_utc": "2026-10-09T01:24:38Z",
+     "bytes": 75198,
+     "sha256": "a73ad5f8ecfbc2359707d238ead0110aeeb7da0b4b509eb212e9e951f43abe0e",
+     "http": "403",
+     "last_modified": ""
+    },
+    {
+     "file": "raw/up_market_oct/hir_home.html",
+     "url": "https://www.hawaiiislandrealtors.org/",
+     "retrieved_utc": "2026-10-09T01:24:39Z",
+     "bytes": 75193,
+     "sha256": "ac4f780358ba4326a07c3a9bb83dff5a70cbb95a22be0f4c9385efe182cd722f",
+     "http": "403",
+     "last_modified": ""
+    },
+    {
+     "file": "raw/up_market_oct/his_home.html",
+     "url": "https://www.hawaiiinformation.com/",
+     "retrieved_utc": "2026-10-09T01:24:40Z",
+     "bytes": 76440,
+     "sha256": "726bfbd722a00de5ae8c6fe52ca18af05c3cc81c4d8264818c82bad894febe6e",
+     "http": "403",
+     "last_modified": ""
+    }
+   ]
+  }
+ ],
+ "method": [
+  "All downloads saved unmodified in raw/up_market_oct with url, UTC time, bytes and sha256 (MANIFEST.txt; failed fetches kept as evidence). PDFs converted with pdftotext -layout; all parsing in pull/up_market_oct/build.py run with python3 -I.",
+  "HBR September 2026: parsed pages 2 (month and YTD indicator tables), 5 (monthly closed sales), 11 (pending), 12 (active), 14 (months supply history), 26-27 (active by price range), 31-32 (months supply by price range). Months supply recomputed from pages 5 and 12 and matched to print.",
+  "RAM September 2026: parsed Single Family, Condominium and All Properties overview tables and the monthly Pending, Closed, Inventory and Months Supply tables; months supply recomputed (inventory / 12-month average pending) for SF and condo and matched to print.",
+  "Title Guaranty RSR: page 1 parsed for counts, medians, dollar volume, % changes (PDF arrow glyphs m/p = up, q = down; verified against rendered page images and against 309/278 = +11.2%), sidebar averages (rounded in source) and DOM. The DOM label differs by island on the rendered page: Oahu \"MEDIAN DOM\", Maui/Hawaii/Kauai \"AVERAGE DOM\" (text layer carries both labels; read from rendered images).",
+  "Report method reproduced: Realtor.com county active_listing_count / mean(DBEDT MEI SF + condo resales for the month and prior two months). Aug 2026 reproduces 5.2 / 9.6 / 8.4 / 6.5 exactly, and Jul 2026 matches page_data ext.mos.",
+  "Provisional September 2026 value by the report method uses Realtor.com Sep active listings and substitutes board (HBR, RAM) or Title Guaranty (Kauai, Hawaii Island) September sales for the not-yet-published DBEDT September rows.",
+  "Definition sensitivity matrix (derived): for Oahu and Maui, board active inventory divided by (a) 3-month average closed, (b) 12-month average closed (HBR definition) and (c) 12-month average pending (RAM definition), from the boards' own monthly tables."
+ ],
+ "notes": [
+  "HBR September 2026 numbers come from the HBR-authored PDF hosted at oahure.com (a brokerage site). HBR's own channels had not posted the September release at retrieval (hicentral /mpr/mpr-2026-09.php 404; Prezly RSS newest = August, 2026-09-06). HBR normally releases on the 6th. Treat as official HBR data from a mirror; re-confirm against hicentral when posted.",
+  "Months-of-supply definitions differ: HBR = active (A status) inventory / rolling 12-month average CLOSED sales; RAM (ShowingTime) = inventory at month end / 12-month average PENDING sales; the report = Realtor.com active listings (all listing types combined, county level) / 3-month average DBEDT closed SF+condo resales. Same-month figures are not interchangeable.",
+  "HBR days on market = median days from first listed to offer ACCEPTED. RAM \"Days on Market Until Sale\" = AVERAGE days from listing to CLOSE. Title Guaranty prints \"MEDIAN DOM\" for Oahu and \"AVERAGE DOM\" for the other islands, undefined. Do not compare DOM across these sources.",
+  "HBR \"% of original list price received\" is a median vs ORIGINAL list price; RAM \"Percent of List Price Received\" is an average vs MOST RECENT list price.",
+  "RAM All Properties Combined exceeds SF + condo (Sep 2026: inventory 1,511 vs 457 + 822 = 1,279; pending 120 vs 109; closed 132 vs 124). The report does not say which other property types are included.",
+  "RAM revises prior months: the Sep report shows Aug 2026 SF inventory 477 / MSI 8.2 and condo 844 / 12.3, against 473 / 8.1 and 839 / 12.2 as first published on 2026-09-01.",
+  "The report text pairs the Aug 2026 report-method figure for Maui (9.6) with RAM's September board figures (11.0; houses 7.8, condos 12.1). RAM's August figures as first published were 11.1 (8.1 / 12.2); September is 11.0 (7.8 / 12.1). Either is fine if the month is labelled.",
+  "Title Guaranty RSRs do not state their data source. Maui RSR September month figures equal RAM exactly (count, median, dollar volume, SF average DOM); Maui condo average DOM (210 vs RAM 199) and YTD condo (619 / $657,500 vs RAM 620 / $655,000) differ slightly. Oahu RSR condo Sep 2025 count was 879 against HBR 408, which suggests TG includes closings outside HBR resales (e.g. new-project deliveries); this is an inference, not stated by TG. Kauai RSR Aug equalled the board/DBEDT figures. Oahu RSR differs from HBR (Sep SF 309 vs 293; condo 391 vs 375; Aug SF 274 in the Aug RSR, 278 in the Sep RSR chart, vs HBR 264), so it is a broader or differently timed universe. Hawaii Island RSR differs slightly from DBEDT (Aug SF 150 vs 153).",
+  "Title Guaranty sidebar values (average list/sold, max sold) are printed rounded (e.g. \"$1.4 M\"); usd_approx is the printed value expanded, not an exact figure.",
+  "Realtor.com flags Maui County (15009) with quality_flag = 1 in Jul, Aug and Sep 2026 (and per the earlier audit every month since Dec 2025). Treat the report-method Maui value as lower-confidence.",
+  "Cells with fewer than 20 units are flagged (flag_lt20): Kauai TG Sep SF 18 and condo 6; TG Statewide Aug Kauai SF/condo; HBR price brackets with fewer than 20 active listings or fewer than 20 implied average monthly closings (SF brackets below $800K and $3M+; condo below $150K and $1.5M+).",
+  "Aggregates only. No owner names, street addresses or TMKs. Title Guaranty neighborhood and \"top condominium\" tables were not extracted."
+ ],
+ "gaps": [
+  "Kauai Board of REALTORS (https://www.kauaiboard.com/): HTTP 403 Forbidden on 2026-10-09 (earlier: SiteGround captcha). Not bypassed. No board months of inventory, active listings or pending for Kauai.",
+  "Hawaii Island REALTORS (https://www.hawaiiislandrealtors.org/) and Hawaii Information Service (https://www.hawaiiinformation.com/): HTTP 403 Forbidden on 2026-10-09. Not bypassed. No board months of inventory for Hawaii Island.",
+  "Latest board-sourced neighbor-island data reachable: Title Guaranty Statewide Housing Statistics August 2026 (board counts and medians, month and YTD) and Fidelity National Title August 2026 YTD summaries (KBOR / HIS). Neither has inventory or months of supply. DBEDT MEI shows (NA) for Kauai and Hawaii County inventory.",
+  "No September 2026 board figures for Kauai or Hawaii Island were found. Title Guaranty RSR September 2026 counts/medians are the only September source (title company, reported).",
+  "Title Guaranty Statewide Housing Statistics September 2026 (9.2026) not posted (URL redirected to home page); Fidelity has no September 2026 editions yet.",
+  "HBR September 2026 Local Market Update (district/TMK tables) not found (oahure.com 09-2026-Sep-B-LMU.pdf and 08-2026-Aug-B-LMU.pdf return 404).",
+  "RAM All Properties monthly pending series is not printed, so the 11.0 all-properties months supply cannot be recomputed from the report.",
+  "Standard price tiers: HBR brackets do not split at $750K (inside $700-799K for SF; inside $700-999K for condos) or $10M ($3M+ top SF bracket; $2M+ top condo bracket), so tier-level months of supply cannot be computed; SF active listings by tier given with bounds.",
+  "DBEDT MEI September 2026 (due ~2026-10-29) not yet released, so the report-method September value is provisional."
+ ],
+ "key_figures": [
+  {
+   "id": "oahu_sep_closed",
+   "label": "Oahu closed sales, September 2026 (HBR)",
+   "value": {
+    "single_family": 293,
+    "condo": 375
+   },
+   "yoy_pct": {
+    "single_family": 6.2,
+    "condo": -8.1
+   },
+   "period": "Sep 2026",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "A count of properties that have closed in a given month (MLS resales).",
+   "rederive": "HBR Oahu Monthly Stats Report Sep 2026, p.2 \"Monthly Indicators\", row Closed Sales, Sep-26 column (also p.5 monthly table).",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "oahu_sep_median",
+   "label": "Oahu median sales price, September 2026 (HBR)",
+   "value": {
+    "single_family": 1110000,
+    "condo": 523000
+   },
+   "yoy_pct": {
+    "single_family": -3.9,
+    "condo": 2.8
+   },
+   "period": "Sep 2026",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "Median sales price of all closed properties in the month.",
+   "rederive": "HBR MSR Sep 2026 p.2, row Median Sales Price.",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "oahu_ytd",
+   "label": "Oahu YTD Jan-Sep 2026 closed sales and median (HBR)",
+   "value": {
+    "single_family_sales": 2243,
+    "single_family_median": 1180000,
+    "condo_sales": 3209,
+    "condo_median": 515000
+   },
+   "yoy_pct": {
+    "single_family_sales": 5.9,
+    "single_family_median": 3.1,
+    "condo_sales": -2.4,
+    "condo_median": 2.0
+   },
+   "period": "Jan-Sep 2026 vs Jan-Sep 2025",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "Year-to-date closed MLS resales; YTD median is the median of all YTD closings.",
+   "rederive": "HBR MSR Sep 2026 p.2 \"Year-to-Date\" table; YTD sales also = sum of Jan-26..Sep-26 rows on p.5 (2,243 SF; 3,209 condo).",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "oahu_dom",
+   "label": "Oahu median days on market (HBR; listing to offer accepted)",
+   "value": {
+    "sep_single_family": 16,
+    "sep_condo": 41,
+    "ytd_single_family": 16,
+    "ytd_condo": 42
+   },
+   "period": "Sep 2026 and YTD Jan-Sep 2026",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "Days on Market represents the number of days from when a property is first listed to when an offer is accepted; the Median Days on Market represents the median of all sales in a given month",
+   "rederive": "HBR MSR Sep 2026 p.2, row Median Days on Market (month and YTD tables).",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "oahu_mos_board",
+   "label": "Oahu months supply of active inventory, September 2026 (HBR definition)",
+   "value": {
+    "single_family": 3.2,
+    "condo": 7.0
+   },
+   "prior": {
+    "aug_2026": {
+     "single_family": 3.2,
+     "condo": 6.9
+    },
+    "sep_2025": {
+     "single_family": 3.4,
+     "condo": 6.4
+    }
+   },
+   "period": "end of Sep 2026",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "Compares active inventory to a rolling 12-month average closed sales",
+   "rederive": "Active inventory (p.12: 798 SF, 2,509 condo) / average monthly closed sales Oct-25..Sep-26 (p.5: 3,015/12 = 251.25 SF; 4,328/12 = 360.67 condo) = 3.18 and 6.96, printed 3.2 and 7.0.",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "oahu_active_pending",
+   "label": "Oahu active inventory and pending sales, September 2026 (HBR)",
+   "value": {
+    "active_single_family": 798,
+    "active_condo": 2509,
+    "pending_single_family": 236,
+    "pending_condo": 292
+   },
+   "yoy_pct": {
+    "active_single_family": 0.0,
+    "active_condo": 7.8,
+    "pending_single_family": -1.3,
+    "pending_condo": -28.6
+   },
+   "period": "Sep 2026",
+   "source_url": "https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf",
+   "definition": "Active = The number of properties in Active (A) status at the end of the given month. Pending = A measure of contract activity represented by a count of properties that have had offers accepted on them during a given month *Methodology updated as of 2021 to reflect a count of properties that entered contract within the given month and remain in escrow status at the end of the month (also applied to historical data shown above).",
+   "rederive": "HBR MSR Sep 2026 p.2 rows Active Inventory* and Pending Sales*.",
+   "source_status": "HBR-authored Monthly Stats Report, retrieved from brokerage mirror oahure.com (reported); HBR has not yet posted the September release on hicentral.com/Prezly; Aug mirror verified identical to HBR copy"
+  },
+  {
+   "id": "maui_mos_board",
+   "label": "Maui County months supply of inventory, September 2026 (RAM definition)",
+   "value": {
+    "all_properties": 11.0,
+    "single_family": 7.8,
+    "condo": 12.1
+   },
+   "prior": {
+    "sep_2025": {
+     "all_properties": 12.1,
+     "single_family": 8.2,
+     "condo": 15.2
+    },
+    "aug_2026_first_published": {
+     "all_properties": 11.1,
+     "single_family": 8.1,
+     "condo": 12.2
+    }
+   },
+   "period": "end of Sep 2026 (report current as of 2026-10-01)",
+   "source_url": "https://www.ramaui.com/housing-statistics (September 2026 Report link https://i2u.io/aFDU6R -> https://media.salecore.com/GetFile.ashx?p=MoWFLulfqmtt)",
+   "definition": "The inventory of homes for sale at the end of a given month, divided by the average monthly pending sales from the last 12 months.",
+   "rederive": "SF: 457 / (707 pending Oct-2025..Sep-2026 / 12 = 58.92) = 7.76 -> 7.8; condo: 822 / (818/12 = 68.17) = 12.06 -> 12.1 (RAM report pp.5, 12, 13). All-properties monthly pending is not printed, so 11.0 cannot be recomputed; it implies ~137 pending/month.",
+   "source_status": "official board report (RAM)"
+  },
+  {
+   "id": "maui_inventory_pending",
+   "label": "Maui County homes for sale and pending sales, September 2026 (RAM)",
+   "value": {
+    "inventory_single_family": 457,
+    "inventory_condo": 822,
+    "inventory_all_properties": 1511,
+    "pending_single_family": 59,
+    "pending_condo": 50,
+    "pending_all_properties": 120
+   },
+   "yoy_pct": {
+    "inventory_single_family": 1.6,
+    "inventory_condo": -5.6,
+    "inventory_all_properties": 0.3,
+    "pending_single_family": 9.3,
+    "pending_condo": -9.1,
+    "pending_all_properties": 1.7
+   },
+   "period": "Sep 2026",
+   "source_url": "https://media.salecore.com/GetFile.ashx?p=MoWFLulfqmtt",
+   "definition": "Inventory = The number of properties available for sale in active status at the end of a given month. Pending = A count of the properties on which offers have been accepted in a given month.",
+   "rederive": "RAM Sep 2026 report p.2 (SF), p.3 (condo), p.14 (All Properties Combined), rows Inventory of Homes for Sale and Pending Sales.",
+   "source_status": "official board report (RAM)"
+  },
+  {
+   "id": "report_method_aug_reproduced",
+   "label": "Report's months of supply, August 2026 (Realtor.com active listings / 3-month average DBEDT SF+condo sales), reproduced",
+   "value": {
+    "oahu": 5.2,
+    "maui": 9.6,
+    "kauai": 8.4,
+    "hawaii_island": 6.5
+   },
+   "period": "Aug 2026",
+   "source_url": "https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/RDC_Inventory_Core_Metrics_County_History.csv ; https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-{honolulu,maui,kauai,hawaii}.xlsx",
+   "definition": "Realtor.com county active_listing_count for the month / mean of DBEDT MEI single-family + condo resales for that month and the two before.",
+   "rederive": "Oahu 3,494 / mean(667, 716, 629) = 5.21; Maui 1,400 / mean(168, 137, 132) = 9.61; Kauai 414 / mean(51, 53, 43) = 8.45; Hawaii Island 1,387 / mean(231, 225, 184) = 6.50.",
+   "source_status": "derived from Realtor.com (company data, reported) and DBEDT (official)"
+  },
+  {
+   "id": "report_method_sep_provisional",
+   "label": "Report's method rolled to September 2026 (PROVISIONAL)",
+   "value": {
+    "oahu": 5.2,
+    "maui": 10.4,
+    "kauai": 9.6,
+    "hawaii_island": 7.1
+   },
+   "period": "Sep 2026",
+   "source_url": "Realtor.com county history (Sep 2026 rows) + DBEDT MEI Jul/Aug + board/TG September sales",
+   "definition": "Same as report method; September sales taken from HBR (Oahu), RAM (Maui), Title Guaranty RSR (Kauai, Hawaii Island) until DBEDT publishes September (~2026-10-29).",
+   "rederive": "Oahu 3,483 / mean(716, 629, 668); Maui 1,367 / mean(137, 132, 124); Kauai 385 / mean(53, 43, 24); Hawaii Island 1,365 / mean(225, 184, 167).",
+   "source_status": "derived from Realtor.com (company data, reported) and DBEDT (official)"
+  },
+  {
+   "id": "tg_sep_counts",
+   "label": "Title Guaranty Residential Sales Report, September 2026: sales and median by island",
+   "value": {
+    "oahu": {
+     "sf_sales": 309,
+     "sf_median": 1100000,
+     "condo_sales": 391,
+     "condo_median": 529000
+    },
+    "maui": {
+     "sf_sales": 52,
+     "sf_median": 1150000,
+     "condo_sales": 72,
+     "condo_median": 660000
+    },
+    "hawaii_island": {
+     "sf_sales": 135,
+     "sf_median": 499000,
+     "condo_sales": 32,
+     "condo_median": 604500
+    },
+    "kauai": {
+     "sf_sales": 18,
+     "sf_median": 1490000,
+     "condo_sales": 6,
+     "condo_median": 726500
+    }
+   },
+   "period": "Sep 2026 (information effective 10/1/2026)",
+   "source_url": "https://www.tghawaii.com/market/ (Residential-Sales-Report-{Oahu-Island,Maui-Island,Hawaii,Kauai-Island}-9.2026.pdf)",
+   "definition": "Title Guaranty monthly residential sales; the PDF does not state its data source. Maui matches RAM exactly; Oahu does not match HBR (309 vs 293 SF; 391 vs 375 condo).",
+   "rederive": "Page 1 of each RSR, \"# OF SALES\" and \"MEDIAN SALES PRICE\" under SINGLE FAMILY HOMES and CONDOMINIUM.",
+   "flags": {
+    "kauai_sf_lt20": true,
+    "kauai_condo_lt20": true
+   },
+   "source_status": "reported (title company)"
+  }
+ ],
+ "results": {
+  "a_oahu_hbr": {
+   "release_status": {
+    "hicentral_mpr_2026_09": "HTTP 404 at 2026-10-09T01:21:04Z",
+    "hicentral_index_latest": "August 2026",
+    "prezly_rss_latest": "Nearly Half of August Condo Sales on Oahu Closed Below $500,000 (2026-09-06)",
+    "msr_september_2026": "Available as HBR-authored PDF at https://www.oahure.com/Statistics/09-2026-Sep-A-MSR.pdf (Last-Modified Tue, 06 Oct 2026 20:56:27 GMT)"
+   },
+   "sep_2026_month": {
+    "single_family": {
+     "closed_sales": {
+      "sep_2026": 293,
+      "sep_2025": 276,
+      "yoy_pct": 6.2,
+      "aug_2026": 264,
+      "mom_pct": 11.0
+     },
+     "median_sales_price": {
+      "sep_2026": 1110000,
+      "sep_2025": 1155000,
+      "yoy_pct": -3.9,
+      "aug_2026": 1240000,
+      "mom_pct": -10.5
+     },
+     "average_sales_price": {
+      "sep_2026": 1378628,
+      "sep_2025": 1354522,
+      "yoy_pct": 1.8,
+      "aug_2026": 1405238,
+      "mom_pct": -1.9
+     },
+     "median_dom": {
+      "sep_2026": 16,
+      "sep_2025": 26,
+      "yoy_pct": -38.5,
+      "aug_2026": 17,
+      "mom_pct": -5.9
+     },
+     "pct_orig_list_received_median": {
+      "sep_2026": 99.4,
+      "sep_2025": 97.9,
+      "yoy_pct": 1.5,
+      "aug_2026": 100.0,
+      "mom_pct": -0.6
+     },
+     "new_listings": {
+      "sep_2026": 324,
+      "sep_2025": 330,
+      "yoy_pct": -1.8,
+      "aug_2026": 364,
+      "mom_pct": -11.0
+     },
+     "pending_sales": {
+      "sep_2026": 236,
+      "sep_2025": 239,
+      "yoy_pct": -1.3,
+      "aug_2026": 279,
+      "mom_pct": -15.4
+     },
+     "active_inventory": {
+      "sep_2026": 798,
+      "sep_2025": 798,
+      "yoy_pct": 0.0,
+      "aug_2026": 794,
+      "mom_pct": 0.5
+     },
+     "total_inventory_in_escrow": {
+      "sep_2026": 372,
+      "sep_2025": 434,
+      "yoy_pct": -14.3,
+      "aug_2026": 438,
+      "mom_pct": -15.1
+     },
+     "months_supply_active_inventory": {
+      "sep_2026": 3.2,
+      "sep_2025": 3.4,
+      "yoy_pct": -5.9,
+      "aug_2026": 3.2,
+      "mom_pct": 0.0
+     }
+    },
+    "condo": {
+     "closed_sales": {
+      "sep_2026": 375,
+      "sep_2025": 408,
+      "yoy_pct": -8.1,
+      "aug_2026": 365,
+      "mom_pct": 2.7
+     },
+     "median_sales_price": {
+      "sep_2026": 523000,
+      "sep_2025": 508750,
+      "yoy_pct": 2.8,
+      "aug_2026": 510000,
+      "mom_pct": 2.5
+     },
+     "average_sales_price": {
+      "sep_2026": 668132,
+      "sep_2025": 599603,
+      "yoy_pct": 11.4,
+      "aug_2026": 637812,
+      "mom_pct": 4.8
+     },
+     "median_dom": {
+      "sep_2026": 41,
+      "sep_2025": 40,
+      "yoy_pct": 2.5,
+      "aug_2026": 37,
+      "mom_pct": 10.8
+     },
+     "pct_orig_list_received_median": {
+      "sep_2026": 96.6,
+      "sep_2025": 96.4,
+      "yoy_pct": 0.2,
+      "aug_2026": 97.1,
+      "mom_pct": -0.5
+     },
+     "new_listings": {
+      "sep_2026": 610,
+      "sep_2025": 638,
+      "yoy_pct": -4.4,
+      "aug_2026": 684,
+      "mom_pct": -10.8
+     },
+     "pending_sales": {
+      "sep_2026": 292,
+      "sep_2025": 409,
+      "yoy_pct": -28.6,
+      "aug_2026": 393,
+      "mom_pct": -25.7
+     },
+     "active_inventory": {
+      "sep_2026": 2509,
+      "sep_2025": 2327,
+      "yoy_pct": 7.8,
+      "aug_2026": 2512,
+      "mom_pct": -0.1
+     },
+     "total_inventory_in_escrow": {
+      "sep_2026": 504,
+      "sep_2025": 630,
+      "yoy_pct": -20.0,
+      "aug_2026": 579,
+      "mom_pct": -13.0
+     },
+     "months_supply_active_inventory": {
+      "sep_2026": 7.0,
+      "sep_2025": 6.4,
+      "yoy_pct": 9.4,
+      "aug_2026": 6.9,
+      "mom_pct": 1.4
+     }
+    }
+   },
+   "ytd_jan_sep_2026": {
+    "single_family": {
+     "closed_sales": {
+      "ytd_2026": 2243,
+      "ytd_2025": 2118,
+      "chg_1yr_pct": 5.9,
+      "ytd_2024": 2101,
+      "chg_2yr_pct": 6.8
+     },
+     "median_sales_price": {
+      "ytd_2026": 1180000,
+      "ytd_2025": 1145000,
+      "chg_1yr_pct": 3.1,
+      "ytd_2024": 1100000,
+      "chg_2yr_pct": 7.3
+     },
+     "average_sales_price": {
+      "ytd_2026": 1404672,
+      "ytd_2025": 1402639,
+      "chg_1yr_pct": 0.1,
+      "ytd_2024": 1365012,
+      "chg_2yr_pct": 2.9
+     },
+     "median_dom": {
+      "ytd_2026": 16,
+      "ytd_2025": 23,
+      "chg_1yr_pct": -30.4,
+      "ytd_2024": 18,
+      "chg_2yr_pct": -11.1
+     },
+     "pct_orig_list_received_median": {
+      "ytd_2026": 99.4,
+      "ytd_2025": 98.5,
+      "chg_1yr_pct": 0.9,
+      "ytd_2024": 98.9,
+      "chg_2yr_pct": 0.5
+     },
+     "new_listings": {
+      "ytd_2026": 3146,
+      "ytd_2025": 3167,
+      "chg_1yr_pct": -0.7,
+      "ytd_2024": 2959,
+      "chg_2yr_pct": 6.3
+     },
+     "pending_sales": {
+      "ytd_2026": 2372,
+      "ytd_2025": 2364,
+      "chg_1yr_pct": 0.3,
+      "ytd_2024": 2312,
+      "chg_2yr_pct": 2.6
+     }
+    },
+    "condo": {
+     "closed_sales": {
+      "ytd_2026": 3209,
+      "ytd_2025": 3289,
+      "chg_1yr_pct": -2.4,
+      "ytd_2024": 3390,
+      "chg_2yr_pct": -5.3
+     },
+     "median_sales_price": {
+      "ytd_2026": 515000,
+      "ytd_2025": 505000,
+      "chg_1yr_pct": 2.0,
+      "ytd_2024": 510000,
+      "chg_2yr_pct": 1.0
+     },
+     "average_sales_price": {
+      "ytd_2026": 654969,
+      "ytd_2025": 638170,
+      "chg_1yr_pct": 2.6,
+      "ytd_2024": 609542,
+      "chg_2yr_pct": 7.5
+     },
+     "median_dom": {
+      "ytd_2026": 42,
+      "ytd_2025": 44,
+      "chg_1yr_pct": -4.5,
+      "ytd_2024": 29,
+      "chg_2yr_pct": 44.8
+     },
+     "pct_orig_list_received_median": {
+      "ytd_2026": 96.8,
+      "ytd_2025": 96.6,
+      "chg_1yr_pct": 0.2,
+      "ytd_2024": 98.0,
+      "chg_2yr_pct": -1.2
+     },
+     "new_listings": {
+      "ytd_2026": 6109,
+      "ytd_2025": 6307,
+      "chg_1yr_pct": -3.1,
+      "ytd_2024": 5633,
+      "chg_2yr_pct": 8.5
+     },
+     "pending_sales": {
+      "ytd_2026": 3373,
+      "ytd_2025": 3546,
+      "chg_1yr_pct": -4.9,
+      "ytd_2024": 3644,
+      "chg_2yr_pct": -7.4
+     }
+    }
+   },
+   "monthly_closed_sales_sf_condo_total": {
+    "2025-09": [
+     276,
+     408,
+     684
+    ],
+    "2025-10": [
+     261,
+     443,
+     704
+    ],
+    "2025-11": [
+     241,
+     316,
+     557
+    ],
+    "2025-12": [
+     270,
+     360,
+     630
+    ],
+    "2026-01": [
+     194,
+     297,
+     491
+    ],
+    "2026-02": [
+     177,
+     291,
+     468
+    ],
+    "2026-03": [
+     260,
+     351,
+     611
+    ],
+    "2026-04": [
+     230,
+     378,
+     608
+    ],
+    "2026-05": [
+     255,
+     339,
+     594
+    ],
+    "2026-06": [
+     270,
+     397,
+     667
+    ],
+    "2026-07": [
+     300,
+     416,
+     716
+    ],
+    "2026-08": [
+     264,
+     365,
+     629
+    ],
+    "2026-09": [
+     293,
+     375,
+     668
+    ]
+   },
+   "monthly_pending_sales_sf_condo": {
+    "2025-09": [
+     239,
+     409
+    ],
+    "2025-10": [
+     260,
+     323
+    ],
+    "2025-11": [
+     263,
+     340
+    ],
+    "2025-12": [
+     200,
+     282
+    ],
+    "2026-01": [
+     239,
+     375
+    ],
+    "2026-02": [
+     244,
+     354
+    ],
+    "2026-03": [
+     245,
+     394
+    ],
+    "2026-04": [
+     268,
+     405
+    ],
+    "2026-05": [
+     320,
+     414
+    ],
+    "2026-06": [
+     267,
+     386
+    ],
+    "2026-07": [
+     274,
+     360
+    ],
+    "2026-08": [
+     279,
+     393
+    ],
+    "2026-09": [
+     236,
+     292
+    ]
+   },
+   "monthly_active_inventory_sf_condo_total": {
+    "2025-09": [
+     798,
+     2327,
+     3125
+    ],
+    "2025-10": [
+     775,
+     2341,
+     3116
+    ],
+    "2025-11": [
+     724,
+     2284,
+     3008
+    ],
+    "2025-12": [
+     635,
+     2165,
+     2800
+    ],
+    "2026-01": [
+     674,
+     2210,
+     2884
+    ],
+    "2026-02": [
+     673,
+     2276,
+     2949
+    ],
+    "2026-03": [
+     691,
+     2294,
+     2985
+    ],
+    "2026-04": [
+     707,
+     2353,
+     3060
+    ],
+    "2026-05": [
+     730,
+     2387,
+     3117
+    ],
+    "2026-06": [
+     781,
+     2525,
+     3306
+    ],
+    "2026-07": [
+     802,
+     2554,
+     3356
+    ],
+    "2026-08": [
+     794,
+     2512,
+     3306
+    ],
+    "2026-09": [
+     798,
+     2509,
+     3307
+    ]
+   },
+   "months_supply_history_sf_condo": {
+    "2025-01": [
+     3.1,
+     5.6
+    ],
+    "2025-02": [
+     3.1,
+     5.8
+    ],
+    "2025-03": [
+     3.3,
+     6.2
+    ],
+    "2025-04": [
+     3.5,
+     6.8
+    ],
+    "2025-05": [
+     3.6,
+     7.1
+    ],
+    "2025-06": [
+     3.7,
+     7.0
+    ],
+    "2025-07": [
+     3.7,
+     6.8
+    ],
+    "2025-08": [
+     3.4,
+     6.7
+    ],
+    "2025-09": [
+     3.4,
+     6.4
+    ],
+    "2025-10": [
+     3.3,
+     6.4
+    ],
+    "2025-11": [
+     3.1,
+     6.3
+    ],
+    "2025-12": [
+     2.6,
+     5.9
+    ],
+    "2026-01": [
+     2.8,
+     6.0
+    ],
+    "2026-02": [
+     2.8,
+     6.2
+    ],
+    "2026-03": [
+     2.8,
+     6.3
+    ],
+    "2026-04": [
+     2.9,
+     6.5
+    ],
+    "2026-05": [
+     3.0,
+     6.6
+    ],
+    "2026-06": [
+     3.2,
+     7.0
+    ],
+    "2026-07": [
+     3.2,
+     7.0
+    ],
+    "2026-08": [
+     3.2,
+     6.9
+    ],
+    "2026-09": [
+     3.2,
+     7.0
+    ]
+   },
+   "months_supply_recomputed": {
+    "single_family_2026-08": {
+     "active": 794,
+     "closed_12mo_sum": 2998,
+     "avg_monthly_closed_12mo": 249.83,
+     "computed": 3.178,
+     "published": 3.2
+    },
+    "condo_2026-08": {
+     "active": 2512,
+     "closed_12mo_sum": 4361,
+     "avg_monthly_closed_12mo": 363.42,
+     "computed": 6.912,
+     "published": 6.9
+    },
+    "single_family_2026-09": {
+     "active": 798,
+     "closed_12mo_sum": 3015,
+     "avg_monthly_closed_12mo": 251.25,
+     "computed": 3.176,
+     "published": 3.2
+    },
+    "condo_2026-09": {
+     "active": 2509,
+     "closed_12mo_sum": 4328,
+     "avg_monthly_closed_12mo": 360.67,
+     "computed": 6.957,
+     "published": 7.0
+    }
+   },
+   "by_price_range_sep_2026": {
+    "single_family": [
+     {
+      "hbr_bracket": "$449,999 and below",
+      "months_supply_sep_2026": 5.0,
+      "months_supply_sep_2025": 4.3,
+      "months_supply_yoy_pct": 16.3,
+      "active_inventory_sep_2026": 15,
+      "active_inventory_sep_2025": 13,
+      "implied_avg_monthly_closed_12mo_approx": 3.0,
+      "flag_lt20": true,
+      "flag_note": "active listings < 20; implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$450,000 - $599,999",
+      "months_supply_sep_2026": 2.0,
+      "months_supply_sep_2025": 2.5,
+      "months_supply_yoy_pct": -20.0,
+      "active_inventory_sep_2026": 14,
+      "active_inventory_sep_2025": 15,
+      "implied_avg_monthly_closed_12mo_approx": 7.0,
+      "flag_lt20": true,
+      "flag_note": "active listings < 20; implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$600,000 - $699,999",
+      "months_supply_sep_2026": 3.0,
+      "months_supply_sep_2025": 4.0,
+      "months_supply_yoy_pct": -25.0,
+      "active_inventory_sep_2026": 27,
+      "active_inventory_sep_2025": 32,
+      "implied_avg_monthly_closed_12mo_approx": 9.0,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$700,000 - $799,999",
+      "months_supply_sep_2026": 2.9,
+      "months_supply_sep_2025": 3.4,
+      "months_supply_yoy_pct": -14.7,
+      "active_inventory_sep_2026": 40,
+      "active_inventory_sep_2025": 47,
+      "implied_avg_monthly_closed_12mo_approx": 13.8,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$800,000 - $899,999",
+      "months_supply_sep_2026": 2.4,
+      "months_supply_sep_2025": 1.9,
+      "months_supply_yoy_pct": 26.3,
+      "active_inventory_sep_2026": 62,
+      "active_inventory_sep_2025": 57,
+      "implied_avg_monthly_closed_12mo_approx": 25.8,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$900,000 - $999,999",
+      "months_supply_sep_2026": 2.0,
+      "months_supply_sep_2025": 2.3,
+      "months_supply_yoy_pct": -13.0,
+      "active_inventory_sep_2026": 60,
+      "active_inventory_sep_2025": 62,
+      "implied_avg_monthly_closed_12mo_approx": 30.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$1,000,000 - $1,499,999",
+      "months_supply_sep_2026": 2.3,
+      "months_supply_sep_2025": 2.5,
+      "months_supply_yoy_pct": -8.0,
+      "active_inventory_sep_2026": 225,
+      "active_inventory_sep_2025": 216,
+      "implied_avg_monthly_closed_12mo_approx": 97.8,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$1,500,000 - 1,999,999",
+      "months_supply_sep_2026": 3.9,
+      "months_supply_sep_2025": 4.1,
+      "months_supply_yoy_pct": -4.9,
+      "active_inventory_sep_2026": 134,
+      "active_inventory_sep_2025": 136,
+      "implied_avg_monthly_closed_12mo_approx": 34.4,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$2,000,000 - $2,999,999",
+      "months_supply_sep_2026": 4.6,
+      "months_supply_sep_2025": 6.1,
+      "months_supply_yoy_pct": -24.6,
+      "active_inventory_sep_2026": 92,
+      "active_inventory_sep_2025": 97,
+      "implied_avg_monthly_closed_12mo_approx": 20.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$3,000,000 and above",
+      "months_supply_sep_2026": 9.9,
+      "months_supply_sep_2025": 12.3,
+      "months_supply_yoy_pct": -19.5,
+      "active_inventory_sep_2026": 129,
+      "active_inventory_sep_2025": 123,
+      "implied_avg_monthly_closed_12mo_approx": 13.0,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "All Single-Family Homes",
+      "months_supply_sep_2026": 3.2,
+      "months_supply_sep_2025": 3.4,
+      "months_supply_yoy_pct": -5.9,
+      "active_inventory_sep_2026": 798,
+      "active_inventory_sep_2025": 798,
+      "implied_avg_monthly_closed_12mo_approx": 249.4,
+      "flag_lt20": false,
+      "flag_note": ""
+     }
+    ],
+    "condo": [
+     {
+      "hbr_bracket": "$149,999 and below",
+      "months_supply_sep_2026": 5.9,
+      "months_supply_sep_2025": 4.3,
+      "months_supply_yoy_pct": 37.2,
+      "active_inventory_sep_2026": 71,
+      "active_inventory_sep_2025": 56,
+      "implied_avg_monthly_closed_12mo_approx": 12.0,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$150,000 - $299,999",
+      "months_supply_sep_2026": 8.3,
+      "months_supply_sep_2025": 6.0,
+      "months_supply_yoy_pct": 38.3,
+      "active_inventory_sep_2026": 365,
+      "active_inventory_sep_2025": 252,
+      "implied_avg_monthly_closed_12mo_approx": 44.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$300,000 - $399,999",
+      "months_supply_sep_2026": 7.0,
+      "months_supply_sep_2025": 7.1,
+      "months_supply_yoy_pct": -1.4,
+      "active_inventory_sep_2026": 406,
+      "active_inventory_sep_2025": 419,
+      "implied_avg_monthly_closed_12mo_approx": 58.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$400,000 - $499,999",
+      "months_supply_sep_2026": 6.1,
+      "months_supply_sep_2025": 5.9,
+      "months_supply_yoy_pct": 3.4,
+      "active_inventory_sep_2026": 354,
+      "active_inventory_sep_2025": 343,
+      "implied_avg_monthly_closed_12mo_approx": 58.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$500,000 - $599,999",
+      "months_supply_sep_2026": 5.0,
+      "months_supply_sep_2025": 5.7,
+      "months_supply_yoy_pct": -12.3,
+      "active_inventory_sep_2026": 281,
+      "active_inventory_sep_2025": 316,
+      "implied_avg_monthly_closed_12mo_approx": 56.2,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$600,000 - $699,999",
+      "months_supply_sep_2026": 6.1,
+      "months_supply_sep_2025": 6.1,
+      "months_supply_yoy_pct": 0.0,
+      "active_inventory_sep_2026": 230,
+      "active_inventory_sep_2025": 230,
+      "implied_avg_monthly_closed_12mo_approx": 37.7,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$700,000 - $999,999",
+      "months_supply_sep_2026": 6.8,
+      "months_supply_sep_2025": 6.1,
+      "months_supply_yoy_pct": 11.5,
+      "active_inventory_sep_2026": 387,
+      "active_inventory_sep_2025": 354,
+      "implied_avg_monthly_closed_12mo_approx": 56.9,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$1,000,000 - $1,499,999",
+      "months_supply_sep_2026": 8.4,
+      "months_supply_sep_2025": 8.4,
+      "months_supply_yoy_pct": 0.0,
+      "active_inventory_sep_2026": 185,
+      "active_inventory_sep_2025": 177,
+      "implied_avg_monthly_closed_12mo_approx": 22.0,
+      "flag_lt20": false,
+      "flag_note": ""
+     },
+     {
+      "hbr_bracket": "$1,500,000 - $1,999,999",
+      "months_supply_sep_2026": 12.0,
+      "months_supply_sep_2025": 8.3,
+      "months_supply_yoy_pct": 44.6,
+      "active_inventory_sep_2026": 96,
+      "active_inventory_sep_2025": 75,
+      "implied_avg_monthly_closed_12mo_approx": 8.0,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "$2,000,000 and above",
+      "months_supply_sep_2026": 13.4,
+      "months_supply_sep_2025": 11.7,
+      "months_supply_yoy_pct": 14.5,
+      "active_inventory_sep_2026": 134,
+      "active_inventory_sep_2025": 105,
+      "implied_avg_monthly_closed_12mo_approx": 10.0,
+      "flag_lt20": true,
+      "flag_note": "implied 12-mo average closings < 20 per month (active / MOS; MOS is rounded)"
+     },
+     {
+      "hbr_bracket": "All Condos",
+      "months_supply_sep_2026": 7.0,
+      "months_supply_sep_2025": 6.4,
+      "months_supply_yoy_pct": 9.4,
+      "active_inventory_sep_2026": 2509,
+      "active_inventory_sep_2025": 2327,
+      "implied_avg_monthly_closed_12mo_approx": 358.4,
+      "flag_lt20": false,
+      "flag_note": ""
+     }
+    ]
+   },
+   "single_family_active_listings_by_standard_tier_sep_2026": {
+    "entry_lt_750k": {
+     "lower_bound": 56,
+     "upper_bound": 96,
+     "note": "$750K falls inside the HBR $700,000-$799,999 bracket (40 listings); bounds shown."
+    },
+    "mid_750k_1_5m": {
+     "lower_bound": 347,
+     "upper_bound": 387
+    },
+    "upper_1_5m_3m": {
+     "value": 226,
+     "hbr_months_supply_components": {
+      "$1.5M-1.999M": 3.9,
+      "$2M-2.999M": 4.6
+     }
+    },
+    "luxury_plus_ultra_3m_plus": {
+     "value": 129,
+     "hbr_months_supply": 9.9,
+     "note": "HBR top bracket is $3M+; luxury ($3-10M) and ultra ($10M+) cannot be split."
+    }
+   },
+   "definitions": {
+    "closed_sales": "A count of properties that have closed in a given month",
+    "median_dom": "Days on Market represents the number of days from when a property is first listed to when an offer is accepted; the Median Days on Market represents the median of all sales in a given month",
+    "pct_orig_list_received": "The percentage found when dividing a property's sales price by the original list price; reported percentage is the median of all sales for the period indicated",
+    "pending_sales": "A measure of contract activity represented by a count of properties that have had offers accepted on them during a given month",
+    "pending_sales_methodology_footnote": "*Methodology updated as of 2021 to reflect a count of properties that entered contract within the given month and remain in escrow status at the end of the month (also applied to historical data shown above).",
+    "active_inventory": "The number of properties in Active (A) status at the end of the given month",
+    "total_inventory_in_escrow": "The number of properties under contract at the end of the given month / combined listings in C and P status",
+    "months_supply_active_inventory": "Compares active inventory to a rolling 12-month average closed sales",
+    "months_supply_footnote": "Months of Inventory, in reports prior to 2021, reflect a comparison of active listings to average pending sales.",
+    "source_line": "SOURCE: Honolulu Board of REALTORS®, residential resales data compiled from HiCentral MLS, Ltd.®"
+   }
+  },
+  "b_maui_ram": {
+   "sep_2026": {
+    "single_family": {
+     "new_listings": {
+      "sep_2025": 86,
+      "sep_2026": 85,
+      "yoy_pct": -1.2,
+      "ytd_jan_sep_2025": 889,
+      "ytd_jan_sep_2026": 882,
+      "ytd_pct": -0.8
+     },
+     "pending_sales": {
+      "sep_2025": 54,
+      "sep_2026": 59,
+      "yoy_pct": 9.3,
+      "ytd_jan_sep_2025": 497,
+      "ytd_jan_sep_2026": 540,
+      "ytd_pct": 8.7
+     },
+     "closed_sales": {
+      "sep_2025": 56,
+      "sep_2026": 52,
+      "yoy_pct": -7.1,
+      "ytd_jan_sep_2025": 527,
+      "ytd_jan_sep_2026": 537,
+      "ytd_pct": 1.9
+     },
+     "days_on_market_avg": {
+      "sep_2025": 127,
+      "sep_2026": 134,
+      "yoy_pct": 5.5,
+      "ytd_jan_sep_2025": 136,
+      "ytd_jan_sep_2026": 139,
+      "ytd_pct": 2.2
+     },
+     "median_sales_price": {
+      "sep_2025": 1292500,
+      "sep_2026": 1150000,
+      "yoy_pct": -11.0,
+      "ytd_jan_sep_2025": 1300000,
+      "ytd_jan_sep_2026": 1219000,
+      "ytd_pct": -6.2
+     },
+     "average_sales_price": {
+      "sep_2025": 1754925,
+      "sep_2026": 1861394,
+      "yoy_pct": 6.1,
+      "ytd_jan_sep_2025": 1849390,
+      "ytd_jan_sep_2026": 1611901,
+      "ytd_pct": -12.8
+     },
+     "pct_list_received_avg": {
+      "sep_2025": 95.4,
+      "sep_2026": 94.7,
+      "yoy_pct": -0.7,
+      "ytd_jan_sep_2025": 96.0,
+      "ytd_jan_sep_2026": 95.6,
+      "ytd_pct": -0.4
+     },
+     "housing_affordability_index": {
+      "sep_2025": 33,
+      "sep_2026": 35,
+      "yoy_pct": 6.1,
+      "ytd_jan_sep_2025": 33,
+      "ytd_jan_sep_2026": 33,
+      "ytd_pct": 0.0
+     },
+     "inventory_homes_for_sale": {
+      "sep_2025": 450,
+      "sep_2026": 457,
+      "yoy_pct": 1.6,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "sep_2025": 8.2,
+      "sep_2026": 7.8,
+      "yoy_pct": -4.9,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     }
+    },
+    "condo": {
+     "new_listings": {
+      "sep_2025": 142,
+      "sep_2026": 106,
+      "yoy_pct": -25.4,
+      "ytd_jan_sep_2025": 1341,
+      "ytd_jan_sep_2026": 1217,
+      "ytd_pct": -9.2
+     },
+     "pending_sales": {
+      "sep_2025": 55,
+      "sep_2026": 50,
+      "yoy_pct": -9.1,
+      "ytd_jan_sep_2025": 517,
+      "ytd_jan_sep_2026": 633,
+      "ytd_pct": 22.4
+     },
+     "closed_sales": {
+      "sep_2025": 46,
+      "sep_2026": 72,
+      "yoy_pct": 56.5,
+      "ytd_jan_sep_2025": 512,
+      "ytd_jan_sep_2026": 620,
+      "ytd_pct": 21.1
+     },
+     "days_on_market_avg": {
+      "sep_2025": 127,
+      "sep_2026": 199,
+      "yoy_pct": 56.7,
+      "ytd_jan_sep_2025": 141,
+      "ytd_jan_sep_2026": 164,
+      "ytd_pct": 16.3
+     },
+     "median_sales_price": {
+      "sep_2025": 652500,
+      "sep_2026": 660000,
+      "yoy_pct": 1.1,
+      "ytd_jan_sep_2025": 702500,
+      "ytd_jan_sep_2026": 655000,
+      "ytd_pct": -6.8
+     },
+     "average_sales_price": {
+      "sep_2025": 945615,
+      "sep_2026": 984821,
+      "yoy_pct": 4.1,
+      "ytd_jan_sep_2025": 1177472,
+      "ytd_jan_sep_2026": 1003458,
+      "ytd_pct": -14.8
+     },
+     "pct_list_received_avg": {
+      "sep_2025": 93.6,
+      "sep_2026": 94.7,
+      "yoy_pct": 1.2,
+      "ytd_jan_sep_2025": 94.9,
+      "ytd_jan_sep_2026": 94.5,
+      "ytd_pct": -0.4
+     },
+     "housing_affordability_index": {
+      "sep_2025": 65,
+      "sep_2026": 60,
+      "yoy_pct": -7.7,
+      "ytd_jan_sep_2025": 60,
+      "ytd_jan_sep_2026": 61,
+      "ytd_pct": 1.7
+     },
+     "inventory_homes_for_sale": {
+      "sep_2025": 871,
+      "sep_2026": 822,
+      "yoy_pct": -5.6,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "sep_2025": 15.2,
+      "sep_2026": 12.1,
+      "yoy_pct": -20.4,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     }
+    },
+    "all_properties_combined": {
+     "new_listings": {
+      "sep_2025": 254,
+      "sep_2026": 223,
+      "yoy_pct": -12.2,
+      "ytd_jan_sep_2025": 2448,
+      "ytd_jan_sep_2026": 2333,
+      "ytd_pct": -4.7
+     },
+     "pending_sales": {
+      "sep_2025": 118,
+      "sep_2026": 120,
+      "yoy_pct": 1.7,
+      "ytd_jan_sep_2025": 1116,
+      "ytd_jan_sep_2026": 1259,
+      "ytd_pct": 12.8
+     },
+     "closed_sales": {
+      "sep_2025": 111,
+      "sep_2026": 132,
+      "yoy_pct": 18.9,
+      "ytd_jan_sep_2025": 1146,
+      "ytd_jan_sep_2026": 1248,
+      "ytd_pct": 8.9
+     },
+     "days_on_market_avg": {
+      "sep_2025": 135,
+      "sep_2026": 169,
+      "yoy_pct": 25.2,
+      "ytd_jan_sep_2025": 140,
+      "ytd_jan_sep_2026": 152,
+      "ytd_pct": 8.6
+     },
+     "median_sales_price": {
+      "sep_2025": 955000,
+      "sep_2026": 932125,
+      "yoy_pct": -2.4,
+      "ytd_jan_sep_2025": 1000000,
+      "ytd_jan_sep_2026": 934250,
+      "ytd_pct": -6.6
+     },
+     "average_sales_price": {
+      "sep_2025": 1346113,
+      "sep_2026": 1312255,
+      "yoy_pct": -2.5,
+      "ytd_jan_sep_2025": 1499181,
+      "ytd_jan_sep_2026": 1252038,
+      "ytd_pct": -16.5
+     },
+     "pct_list_received_avg": {
+      "sep_2025": 94.3,
+      "sep_2026": 94.6,
+      "yoy_pct": 0.3,
+      "ytd_jan_sep_2025": 95.3,
+      "ytd_jan_sep_2026": 95.0,
+      "ytd_pct": -0.3
+     },
+     "housing_affordability_index": {
+      "sep_2025": 44,
+      "sep_2026": 43,
+      "yoy_pct": -2.3,
+      "ytd_jan_sep_2025": 42,
+      "ytd_jan_sep_2026": 43,
+      "ytd_pct": 2.4
+     },
+     "inventory_homes_for_sale": {
+      "sep_2025": 1507,
+      "sep_2026": 1511,
+      "yoy_pct": 0.3,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "sep_2025": 12.1,
+      "sep_2026": 11.0,
+      "yoy_pct": -9.1,
+      "ytd_jan_sep_2025": null,
+      "ytd_jan_sep_2026": null,
+      "ytd_pct": null
+     }
+    }
+   },
+   "aug_2026_first_published": {
+    "single_family": {
+     "new_listings": {
+      "aug_2025": 97,
+      "aug_2026": 87,
+      "yoy_pct": -10.3,
+      "ytd_jan_aug_2025": 803,
+      "ytd_jan_aug_2026": 795,
+      "ytd_pct": -1.0
+     },
+     "pending_sales": {
+      "aug_2025": 50,
+      "aug_2026": 51,
+      "yoy_pct": 2.0,
+      "ytd_jan_aug_2025": 444,
+      "ytd_jan_aug_2026": 483,
+      "ytd_pct": 8.8
+     },
+     "closed_sales": {
+      "aug_2025": 62,
+      "aug_2026": 64,
+      "yoy_pct": 3.2,
+      "ytd_jan_aug_2025": 471,
+      "ytd_jan_aug_2026": 485,
+      "ytd_pct": 3.0
+     },
+     "days_on_market_avg": {
+      "aug_2025": 137,
+      "aug_2026": 128,
+      "yoy_pct": -6.6,
+      "ytd_jan_aug_2025": 137,
+      "ytd_jan_aug_2026": 140,
+      "ytd_pct": 2.2
+     },
+     "median_sales_price": {
+      "aug_2025": 1302500,
+      "aug_2026": 1200000,
+      "yoy_pct": -7.9,
+      "ytd_jan_aug_2025": 1300000,
+      "ytd_jan_aug_2026": 1225000,
+      "ytd_pct": -5.8
+     },
+     "average_sales_price": {
+      "aug_2025": 1870838,
+      "aug_2026": 1467570,
+      "yoy_pct": -21.6,
+      "ytd_jan_aug_2025": 1860622,
+      "ytd_jan_aug_2026": 1585152,
+      "ytd_pct": -14.8
+     },
+     "pct_list_received_avg": {
+      "aug_2025": 94.9,
+      "aug_2026": 96.9,
+      "yoy_pct": 2.1,
+      "ytd_jan_aug_2025": 96.0,
+      "ytd_jan_aug_2026": 95.7,
+      "ytd_pct": -0.3
+     },
+     "housing_affordability_index": {
+      "aug_2025": 32,
+      "aug_2026": 34,
+      "yoy_pct": 6.3,
+      "ytd_jan_aug_2025": 32,
+      "ytd_jan_aug_2026": 34,
+      "ytd_pct": 6.3
+     },
+     "inventory_homes_for_sale": {
+      "aug_2025": 453,
+      "aug_2026": 473,
+      "yoy_pct": 4.4,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "aug_2025": 8.1,
+      "aug_2026": 8.1,
+      "yoy_pct": 0.0,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     }
+    },
+    "condo": {
+     "new_listings": {
+      "aug_2025": 134,
+      "aug_2026": 118,
+      "yoy_pct": -11.9,
+      "ytd_jan_aug_2025": 1199,
+      "ytd_jan_aug_2026": 1108,
+      "ytd_pct": -7.6
+     },
+     "pending_sales": {
+      "aug_2025": 51,
+      "aug_2026": 79,
+      "yoy_pct": 54.9,
+      "ytd_jan_aug_2025": 462,
+      "ytd_jan_aug_2026": 582,
+      "ytd_pct": 26.0
+     },
+     "closed_sales": {
+      "aug_2025": 57,
+      "aug_2026": 68,
+      "yoy_pct": 19.3,
+      "ytd_jan_aug_2025": 466,
+      "ytd_jan_aug_2026": 546,
+      "ytd_pct": 17.2
+     },
+     "days_on_market_avg": {
+      "aug_2025": 168,
+      "aug_2026": 171,
+      "yoy_pct": 1.8,
+      "ytd_jan_aug_2025": 142,
+      "ytd_jan_aug_2026": 160,
+      "ytd_pct": 12.7
+     },
+     "median_sales_price": {
+      "aug_2025": 650000,
+      "aug_2026": 564950,
+      "yoy_pct": -13.1,
+      "ytd_jan_aug_2025": 711000,
+      "ytd_jan_aug_2026": 650000,
+      "ytd_pct": -8.6
+     },
+     "average_sales_price": {
+      "aug_2025": 1144168,
+      "aug_2026": 893388,
+      "yoy_pct": -21.9,
+      "ytd_jan_aug_2025": 1199364,
+      "ytd_jan_aug_2026": 988994,
+      "ytd_pct": -17.5
+     },
+     "pct_list_received_avg": {
+      "aug_2025": 94.0,
+      "aug_2026": 94.2,
+      "yoy_pct": 0.2,
+      "ytd_jan_aug_2025": 95.1,
+      "ytd_jan_aug_2026": 94.5,
+      "ytd_pct": -0.6
+     },
+     "housing_affordability_index": {
+      "aug_2025": 64,
+      "aug_2026": 73,
+      "yoy_pct": 14.1,
+      "ytd_jan_aug_2025": 58,
+      "ytd_jan_aug_2026": 63,
+      "ytd_pct": 8.6
+     },
+     "inventory_homes_for_sale": {
+      "aug_2025": 870,
+      "aug_2026": 839,
+      "yoy_pct": -3.6,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "aug_2025": 15.2,
+      "aug_2026": 12.2,
+      "yoy_pct": -19.7,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     }
+    },
+    "all_properties_combined": {
+     "new_listings": {
+      "aug_2025": 249,
+      "aug_2026": 233,
+      "yoy_pct": -6.4,
+      "ytd_jan_aug_2025": 2194,
+      "ytd_jan_aug_2026": 2102,
+      "ytd_pct": -4.2
+     },
+     "pending_sales": {
+      "aug_2025": 111,
+      "aug_2026": 137,
+      "yoy_pct": 23.4,
+      "ytd_jan_aug_2025": 999,
+      "ytd_jan_aug_2026": 1141,
+      "ytd_pct": 14.2
+     },
+     "closed_sales": {
+      "aug_2025": 128,
+      "aug_2026": 139,
+      "yoy_pct": 8.6,
+      "ytd_jan_aug_2025": 1035,
+      "ytd_jan_aug_2026": 1113,
+      "ytd_pct": 7.5
+     },
+     "days_on_market_avg": {
+      "aug_2025": 148,
+      "aug_2026": 149,
+      "yoy_pct": 0.7,
+      "ytd_jan_aug_2025": 141,
+      "ytd_jan_aug_2026": 151,
+      "ytd_pct": 7.1
+     },
+     "median_sales_price": {
+      "aug_2025": 957500,
+      "aug_2026": 897500,
+      "yoy_pct": -6.3,
+      "ytd_jan_aug_2025": 1014500,
+      "ytd_jan_aug_2026": 937500,
+      "ytd_pct": -7.6
+     },
+     "average_sales_price": {
+      "aug_2025": 1517484,
+      "aug_2026": 1148589,
+      "yoy_pct": -24.3,
+      "ytd_jan_aug_2025": 1515317,
+      "ytd_jan_aug_2026": 1237925,
+      "ytd_pct": -18.3
+     },
+     "pct_list_received_avg": {
+      "aug_2025": 94.7,
+      "aug_2026": 95.5,
+      "yoy_pct": 0.8,
+      "ytd_jan_aug_2025": 95.4,
+      "ytd_jan_aug_2026": 95.1,
+      "ytd_pct": -0.3
+     },
+     "housing_affordability_index": {
+      "aug_2025": 43,
+      "aug_2026": 46,
+      "yoy_pct": 7.0,
+      "ytd_jan_aug_2025": 41,
+      "ytd_jan_aug_2026": 44,
+      "ytd_pct": 7.3
+     },
+     "inventory_homes_for_sale": {
+      "aug_2025": 1526,
+      "aug_2026": 1533,
+      "yoy_pct": 0.5,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     },
+     "months_supply_of_inventory": {
+      "aug_2025": 12.1,
+      "aug_2026": 11.1,
+      "yoy_pct": -8.3,
+      "ytd_jan_aug_2025": null,
+      "ytd_jan_aug_2026": null,
+      "ytd_pct": null
+     }
+    }
+   },
+   "monthly_tables_from_sep_report": {
+    "pending_sales": {
+     "2025-10": {
+      "single_family": 57,
+      "single_family_yoy_pct": -3.4,
+      "condo": 70,
+      "condo_yoy_pct": 16.7
+     },
+     "2025-11": {
+      "single_family": 53,
+      "single_family_yoy_pct": -13.1,
+      "condo": 49,
+      "condo_yoy_pct": -2.0
+     },
+     "2025-12": {
+      "single_family": 57,
+      "single_family_yoy_pct": 42.5,
+      "condo": 66,
+      "condo_yoy_pct": 6.5
+     },
+     "2026-01": {
+      "single_family": 61,
+      "single_family_yoy_pct": 32.6,
+      "condo": 64,
+      "condo_yoy_pct": 3.2
+     },
+     "2026-02": {
+      "single_family": 69,
+      "single_family_yoy_pct": 23.2,
+      "condo": 83,
+      "condo_yoy_pct": 53.7
+     },
+     "2026-03": {
+      "single_family": 50,
+      "single_family_yoy_pct": -19.4,
+      "condo": 62,
+      "condo_yoy_pct": -4.6
+     },
+     "2026-04": {
+      "single_family": 64,
+      "single_family_yoy_pct": 1.6,
+      "condo": 67,
+      "condo_yoy_pct": 8.1
+     },
+     "2026-05": {
+      "single_family": 53,
+      "single_family_yoy_pct": -3.6,
+      "condo": 74,
+      "condo_yoy_pct": 29.8
+     },
+     "2026-06": {
+      "single_family": 69,
+      "single_family_yoy_pct": 43.8,
+      "condo": 77,
+      "condo_yoy_pct": 57.1
+     },
+     "2026-07": {
+      "single_family": 67,
+      "single_family_yoy_pct": 6.3,
+      "condo": 79,
+      "condo_yoy_pct": 27.4
+     },
+     "2026-08": {
+      "single_family": 48,
+      "single_family_yoy_pct": -4.0,
+      "condo": 77,
+      "condo_yoy_pct": 51.0
+     },
+     "2026-09": {
+      "single_family": 59,
+      "single_family_yoy_pct": 9.3,
+      "condo": 50,
+      "condo_yoy_pct": -9.1
+     },
+     "12_month_avg": {
+      "single_family": 59,
+      "single_family_yoy_pct": 7.3,
+      "condo": 68,
+      "condo_yoy_pct": 19.3
+     }
+    },
+    "closed_sales": {
+     "2025-10": {
+      "single_family": 64,
+      "single_family_yoy_pct": 20.8,
+      "condo": 61,
+      "condo_yoy_pct": -6.2
+     },
+     "2025-11": {
+      "single_family": 51,
+      "single_family_yoy_pct": -19.0,
+      "condo": 51,
+      "condo_yoy_pct": -3.8
+     },
+     "2025-12": {
+      "single_family": 65,
+      "single_family_yoy_pct": 20.4,
+      "condo": 78,
+      "condo_yoy_pct": 47.2
+     },
+     "2026-01": {
+      "single_family": 53,
+      "single_family_yoy_pct": -10.2,
+      "condo": 44,
+      "condo_yoy_pct": -20.0
+     },
+     "2026-02": {
+      "single_family": 46,
+      "single_family_yoy_pct": -4.2,
+      "condo": 65,
+      "condo_yoy_pct": 27.5
+     },
+     "2026-03": {
+      "single_family": 78,
+      "single_family_yoy_pct": 59.2,
+      "condo": 75,
+      "condo_yoy_pct": 23.0
+     },
+     "2026-04": {
+      "single_family": 50,
+      "single_family_yoy_pct": -28.6,
+      "condo": 70,
+      "condo_yoy_pct": 4.5
+     },
+     "2026-05": {
+      "single_family": 59,
+      "single_family_yoy_pct": 5.4,
+      "condo": 51,
+      "condo_yoy_pct": -20.3
+     },
+     "2026-06": {
+      "single_family": 78,
+      "single_family_yoy_pct": 16.4,
+      "condo": 91,
+      "condo_yoy_pct": 56.9
+     },
+     "2026-07": {
+      "single_family": 57,
+      "single_family_yoy_pct": -5.0,
+      "condo": 82,
+      "condo_yoy_pct": 54.7
+     },
+     "2026-08": {
+      "single_family": 64,
+      "single_family_yoy_pct": 3.2,
+      "condo": 70,
+      "condo_yoy_pct": 22.8
+     },
+     "2026-09": {
+      "single_family": 52,
+      "single_family_yoy_pct": -7.1,
+      "condo": 72,
+      "condo_yoy_pct": 56.5
+     },
+     "12_month_avg": {
+      "single_family": 60,
+      "single_family_yoy_pct": 3.4,
+      "condo": 68,
+      "condo_yoy_pct": 19.3
+     }
+    },
+    "days_on_market_avg": {
+     "2025-10": {
+      "single_family": 138,
+      "single_family_yoy_pct": -0.7,
+      "condo": 183,
+      "condo_yoy_pct": 31.7
+     },
+     "2025-11": {
+      "single_family": 148,
+      "single_family_yoy_pct": 1.4,
+      "condo": 158,
+      "condo_yoy_pct": 22.5
+     },
+     "2025-12": {
+      "single_family": 128,
+      "single_family_yoy_pct": 1.6,
+      "condo": 162,
+      "condo_yoy_pct": 38.5
+     },
+     "2026-01": {
+      "single_family": 184,
+      "single_family_yoy_pct": 52.1,
+      "condo": 166,
+      "condo_yoy_pct": 20.3
+     },
+     "2026-02": {
+      "single_family": 156,
+      "single_family_yoy_pct": 23.8,
+      "condo": 137,
+      "condo_yoy_pct": 4.6
+     },
+     "2026-03": {
+      "single_family": 129,
+      "single_family_yoy_pct": 3.2,
+      "condo": 152,
+      "condo_yoy_pct": 3.4
+     },
+     "2026-04": {
+      "single_family": 136,
+      "single_family_yoy_pct": 7.1,
+      "condo": 169,
+      "condo_yoy_pct": 17.4
+     },
+     "2026-05": {
+      "single_family": 132,
+      "single_family_yoy_pct": -8.3,
+      "condo": 153,
+      "condo_yoy_pct": 10.9
+     },
+     "2026-06": {
+      "single_family": 133,
+      "single_family_yoy_pct": -7.6,
+      "condo": 174,
+      "condo_yoy_pct": 42.6
+     },
+     "2026-07": {
+      "single_family": 133,
+      "single_family_yoy_pct": -21.3,
+      "condo": 153,
+      "condo_yoy_pct": 5.5
+     },
+     "2026-08": {
+      "single_family": 128,
+      "single_family_yoy_pct": -6.6,
+      "condo": 170,
+      "condo_yoy_pct": 1.2
+     },
+     "2026-09": {
+      "single_family": 134,
+      "single_family_yoy_pct": 5.5,
+      "condo": 199,
+      "condo_yoy_pct": 56.7
+     },
+     "12_month_avg": {
+      "single_family": 139,
+      "single_family_yoy_pct": 1.8,
+      "condo": 165,
+      "condo_yoy_pct": 19.9
+     }
+    },
+    "inventory_homes_for_sale": {
+     "2025-10": {
+      "single_family": 444,
+      "single_family_yoy_pct": 26.9,
+      "condo": 851,
+      "condo_yoy_pct": 23.0
+     },
+     "2025-11": {
+      "single_family": 459,
+      "single_family_yoy_pct": 24.4,
+      "condo": 909,
+      "condo_yoy_pct": 24.7
+     },
+     "2025-12": {
+      "single_family": 458,
+      "single_family_yoy_pct": 16.5,
+      "condo": 928,
+      "condo_yoy_pct": 19.3
+     },
+     "2026-01": {
+      "single_family": 471,
+      "single_family_yoy_pct": 13.8,
+      "condo": 933,
+      "condo_yoy_pct": 14.3
+     },
+     "2026-02": {
+      "single_family": 461,
+      "single_family_yoy_pct": 7.2,
+      "condo": 933,
+      "condo_yoy_pct": 9.5
+     },
+     "2026-03": {
+      "single_family": 453,
+      "single_family_yoy_pct": 1.6,
+      "condo": 937,
+      "condo_yoy_pct": 8.6
+     },
+     "2026-04": {
+      "single_family": 456,
+      "single_family_yoy_pct": 6.0,
+      "condo": 959,
+      "condo_yoy_pct": 4.1
+     },
+     "2026-05": {
+      "single_family": 456,
+      "single_family_yoy_pct": 2.7,
+      "condo": 924,
+      "condo_yoy_pct": 2.9
+     },
+     "2026-06": {
+      "single_family": 476,
+      "single_family_yoy_pct": 6.0,
+      "condo": 937,
+      "condo_yoy_pct": 3.8
+     },
+     "2026-07": {
+      "single_family": 481,
+      "single_family_yoy_pct": 6.7,
+      "condo": 888,
+      "condo_yoy_pct": 0.6
+     },
+     "2026-08": {
+      "single_family": 477,
+      "single_family_yoy_pct": 5.1,
+      "condo": 844,
+      "condo_yoy_pct": -3.1
+     },
+     "2026-09": {
+      "single_family": 457,
+      "single_family_yoy_pct": 1.6,
+      "condo": 822,
+      "condo_yoy_pct": -5.6
+     },
+     "12_month_avg": {
+      "single_family": 462,
+      "single_family_yoy_pct": 9.2,
+      "condo": 905,
+      "condo_yoy_pct": 7.7
+     }
+    },
+    "months_supply_of_inventory": {
+     "2025-10": {
+      "single_family": 8.1,
+      "single_family_yoy_pct": 47.3,
+      "condo": 14.6,
+      "condo_yoy_pct": 40.4
+     },
+     "2025-11": {
+      "single_family": 8.5,
+      "single_family_yoy_pct": 44.1,
+      "condo": 15.6,
+      "condo_yoy_pct": 39.3
+     },
+     "2025-12": {
+      "single_family": 8.3,
+      "single_family_yoy_pct": 27.7,
+      "condo": 15.9,
+      "condo_yoy_pct": 29.3
+     },
+     "2026-01": {
+      "single_family": 8.3,
+      "single_family_yoy_pct": 16.9,
+      "condo": 15.9,
+      "condo_yoy_pct": 18.7
+     },
+     "2026-02": {
+      "single_family": 8.0,
+      "single_family_yoy_pct": 8.1,
+      "condo": 15.3,
+      "condo_yoy_pct": 3.4
+     },
+     "2026-03": {
+      "single_family": 8.0,
+      "single_family_yoy_pct": 2.6,
+      "condo": 15.4,
+      "condo_yoy_pct": 0.7
+     },
+     "2026-04": {
+      "single_family": 8.0,
+      "single_family_yoy_pct": 3.9,
+      "condo": 15.7,
+      "condo_yoy_pct": -4.3
+     },
+     "2026-05": {
+      "single_family": 8.1,
+      "single_family_yoy_pct": 1.3,
+      "condo": 14.7,
+      "condo_yoy_pct": -7.5
+     },
+     "2026-06": {
+      "single_family": 8.2,
+      "single_family_yoy_pct": 0.0,
+      "condo": 14.4,
+      "condo_yoy_pct": -10.6
+     },
+     "2026-07": {
+      "single_family": 8.2,
+      "single_family_yoy_pct": 1.2,
+      "condo": 13.4,
+      "condo_yoy_pct": -13.5
+     },
+     "2026-08": {
+      "single_family": 8.2,
+      "single_family_yoy_pct": 1.2,
+      "condo": 12.3,
+      "condo_yoy_pct": -19.1
+     },
+     "2026-09": {
+      "single_family": 7.8,
+      "single_family_yoy_pct": -4.9,
+      "condo": 12.1,
+      "condo_yoy_pct": -20.4
+     },
+     "12_month_avg": {
+      "single_family": 8.1,
+      "single_family_yoy_pct": 10.1,
+      "condo": 14.6,
+      "condo_yoy_pct": 2.1
+     }
+    },
+    "new_listings": {
+     "2025-10": {
+      "single_family": 105,
+      "single_family_yoy_pct": 16.7,
+      "condo": 144,
+      "condo_yoy_pct": 17.1
+     },
+     "2025-11": {
+      "single_family": 110,
+      "single_family_yoy_pct": 15.8,
+      "condo": 174,
+      "condo_yoy_pct": 16.8
+     },
+     "2025-12": {
+      "single_family": 96,
+      "single_family_yoy_pct": -1.0,
+      "condo": 150,
+      "condo_yoy_pct": -11.8
+     },
+     "2026-01": {
+      "single_family": 119,
+      "single_family_yoy_pct": 12.3,
+      "condo": 150,
+      "condo_yoy_pct": -10.7
+     },
+     "2026-02": {
+      "single_family": 86,
+      "single_family_yoy_pct": -14.0,
+      "condo": 138,
+      "condo_yoy_pct": -4.2
+     },
+     "2026-03": {
+      "single_family": 86,
+      "single_family_yoy_pct": -21.1,
+      "condo": 129,
+      "condo_yoy_pct": -14.6
+     },
+     "2026-04": {
+      "single_family": 99,
+      "single_family_yoy_pct": 11.2,
+      "condo": 159,
+      "condo_yoy_pct": -19.3
+     },
+     "2026-05": {
+      "single_family": 93,
+      "single_family_yoy_pct": -18.4,
+      "condo": 139,
+      "condo_yoy_pct": -6.1
+     },
+     "2026-06": {
+      "single_family": 123,
+      "single_family_yoy_pct": 36.7,
+      "condo": 165,
+      "condo_yoy_pct": 26.0
+     },
+     "2026-07": {
+      "single_family": 104,
+      "single_family_yoy_pct": 6.1,
+      "condo": 113,
+      "condo_yoy_pct": -10.3
+     },
+     "2026-08": {
+      "single_family": 87,
+      "single_family_yoy_pct": -10.3,
+      "condo": 118,
+      "condo_yoy_pct": -11.9
+     },
+     "2026-09": {
+      "single_family": 85,
+      "single_family_yoy_pct": -1.2,
+      "condo": 106,
+      "condo_yoy_pct": -25.4
+     },
+     "12_month_avg": {
+      "single_family": 99,
+      "single_family_yoy_pct": 1.0,
+      "condo": 140,
+      "condo_yoy_pct": -6.0
+     }
+    },
+    "median_sales_price": {}
+   },
+   "months_supply_recomputed_sep_2026": {
+    "single_family": {
+     "inventory_sep_2026": 457,
+     "pending_12mo_oct2025_sep2026_sum": 707,
+     "avg_monthly_pending_12mo": 58.917,
+     "computed": 7.757,
+     "published": 7.8
+    },
+    "condo": {
+     "inventory_sep_2026": 822,
+     "pending_12mo_oct2025_sep2026_sum": 818,
+     "avg_monthly_pending_12mo": 68.167,
+     "computed": 12.059,
+     "published": 12.1
+    }
+   },
+   "all_properties_minus_sf_minus_condo_sep_2026": {
+    "inventory_homes_for_sale": 232,
+    "pending_sales": 11,
+    "closed_sales": 8,
+    "new_listings": 32,
+    "flag_lt20_fields": [
+     "pending_sales",
+     "closed_sales"
+    ],
+    "note": "Derived difference; property types not defined by RAM."
+   },
+   "all_properties_implied_avg_monthly_pending": 137.4,
+   "definitions": {
+    "pending_sales": "A count of the properties on which offers have been accepted in a given month.",
+    "closed_sales": "A count of the actual sales that closed in a given month.",
+    "days_on_market_avg": "Average number of days between when a property is listed and when it closed in a given month.",
+    "inventory_homes_for_sale": "The number of properties available for sale in active status at the end of a given month.",
+    "months_supply_of_inventory": "The inventory of homes for sale at the end of a given month, divided by the average monthly pending sales from the last 12 months.",
+    "new_listings": "A count of the properties that have been newly listed on the market in a given month.",
+    "median_sales_price": "Point at which half of the sales sold for more and half sold for less, not accounting for seller concessions, in a given month.",
+    "average_sales_price": "Average sales price for all closed sales, not accounting for seller concessions, in a given month.",
+    "pct_list_received_avg": "Percentage found when dividing a property’s sales price by its most recent list price, then taking the average for all properties sold in a given month, not accounting for seller concessions.",
+    "housing_affordability_index": "This index measures housing affordability for the region. For example, an index of 120 means the median household income is 120% of what is necessary to qualify for the median-priced home under prevailing interest rates. A higher number means greater affordability.",
+    "months_supply_12mo_avg_footnote": "* Months Supply for all properties from October 2025 through September 2026. This is not the average of the individual figures above.",
+    "source_line": "Current as of October 1, 2026. All data from the REALTORS® Association of Maui, Inc. Report © 2026 ShowingTime Plus, LLC.",
+    "header_note": "This is a research tool provided by the REALTORS® Association of Maui, Inc."
+   }
+  },
+  "c_kauai_hawaii_island": {
+   "board_sites": "Reachable 2026-10-09 with a standard client; the builder's HTTP 403s came from its custom user agent.",
+   "months_of_inventory_by_type": null,
+   "months_of_inventory_note": "See board_sep_2026 for derived values.",
+   "tg_statewide_board_stats_aug_2026": {
+    "source_line": "Source: Respective Islands’ board of REALTORS® Statistics provided by Title Guaranty. Information deemed reliable but not guaranteed. All rights to these materials are reserved; no reproduction without prior written consent.",
+    "single_family": {
+     "hawaii": {
+      "sales_aug_2026": 154,
+      "sales_aug_2025": 166,
+      "sales_month_chg_pct": -7.2,
+      "sales_ytd_2026": 1336,
+      "sales_ytd_2025": 1353,
+      "sales_ytd_chg_pct": -1.3,
+      "median_aug_2026": 577500,
+      "median_aug_2025": 523500,
+      "median_month_chg_pct": 10.3,
+      "median_ytd_2026": 563000,
+      "median_ytd_2025": 560000,
+      "median_ytd_chg_pct": 0.5,
+      "flag_lt20": false
+     },
+     "kauai": {
+      "sales_aug_2026": 28,
+      "sales_aug_2025": 28,
+      "sales_month_chg_pct": 0.0,
+      "sales_ytd_2026": 239,
+      "sales_ytd_2025": 261,
+      "sales_ytd_chg_pct": -8.4,
+      "median_aug_2026": 1088000,
+      "median_aug_2025": 1185000,
+      "median_month_chg_pct": -8.2,
+      "median_ytd_2026": 1300000,
+      "median_ytd_2025": 1175000,
+      "median_ytd_chg_pct": 10.6,
+      "flag_lt20": false
+     },
+     "maui": {
+      "sales_aug_2026": 64,
+      "sales_aug_2025": 62,
+      "sales_month_chg_pct": 3.2,
+      "sales_ytd_2026": 485,
+      "sales_ytd_2025": 471,
+      "sales_ytd_chg_pct": 3.0,
+      "median_aug_2026": 1200000,
+      "median_aug_2025": 1302500,
+      "median_month_chg_pct": -7.9,
+      "median_ytd_2026": 1225000,
+      "median_ytd_2025": 1300000,
+      "median_ytd_chg_pct": -5.8,
+      "flag_lt20": false
+     },
+     "oahu": {
+      "sales_aug_2026": 264,
+      "sales_aug_2025": 259,
+      "sales_month_chg_pct": 1.9,
+      "sales_ytd_2026": 1950,
+      "sales_ytd_2025": 1842,
+      "sales_ytd_chg_pct": 5.9,
+      "median_aug_2026": 1240000,
+      "median_aug_2025": 1105500,
+      "median_month_chg_pct": 12.2,
+      "median_ytd_2026": 1190000,
+      "median_ytd_2025": 1140000,
+      "median_ytd_chg_pct": 4.4,
+      "flag_lt20": false
+     },
+     "total": {
+      "sales_aug_2026": 510,
+      "sales_aug_2025": 515,
+      "sales_month_chg_pct": -1.0,
+      "sales_ytd_2026": 4010,
+      "sales_ytd_2025": 3927,
+      "sales_ytd_chg_pct": 2.1,
+      "flag_lt20": false
+     }
+    },
+    "condo": {
+     "hawaii": {
+      "sales_aug_2026": 32,
+      "sales_aug_2025": 37,
+      "sales_month_chg_pct": -13.5,
+      "sales_ytd_2026": 347,
+      "sales_ytd_2025": 357,
+      "sales_ytd_chg_pct": -2.8,
+      "median_aug_2026": 446450,
+      "median_aug_2025": 572500,
+      "median_month_chg_pct": -22.0,
+      "median_ytd_2026": 625000,
+      "median_ytd_2025": 630000,
+      "median_ytd_chg_pct": -0.8,
+      "flag_lt20": false
+     },
+     "kauai": {
+      "sales_aug_2026": 15,
+      "sales_aug_2025": 24,
+      "sales_month_chg_pct": -37.5,
+      "sales_ytd_2026": 152,
+      "sales_ytd_2025": 193,
+      "sales_ytd_chg_pct": -21.2,
+      "median_aug_2026": 999999,
+      "median_aug_2025": 782000,
+      "median_month_chg_pct": 27.9,
+      "median_ytd_2026": 852500,
+      "median_ytd_2025": 875000,
+      "median_ytd_chg_pct": -2.6,
+      "flag_lt20": true
+     },
+     "maui": {
+      "sales_aug_2026": 68,
+      "sales_aug_2025": 57,
+      "sales_month_chg_pct": 19.3,
+      "sales_ytd_2026": 546,
+      "sales_ytd_2025": 466,
+      "sales_ytd_chg_pct": 17.2,
+      "median_aug_2026": 564950,
+      "median_aug_2025": 650000,
+      "median_month_chg_pct": -13.1,
+      "median_ytd_2026": 650000,
+      "median_ytd_2025": 711000,
+      "median_ytd_chg_pct": -8.6,
+      "flag_lt20": false
+     },
+     "oahu": {
+      "sales_aug_2026": 365,
+      "sales_aug_2025": 391,
+      "sales_month_chg_pct": -6.6,
+      "sales_ytd_2026": 2834,
+      "sales_ytd_2025": 2881,
+      "sales_ytd_chg_pct": -1.6,
+      "median_aug_2026": 510000,
+      "median_aug_2025": 515000,
+      "median_month_chg_pct": -1.0,
+      "median_ytd_2026": 512000,
+      "median_ytd_2025": 505000,
+      "median_ytd_chg_pct": 1.4,
+      "flag_lt20": false
+     },
+     "total": {
+      "sales_aug_2026": 480,
+      "sales_aug_2025": 509,
+      "sales_month_chg_pct": -5.7,
+      "sales_ytd_2026": 3879,
+      "sales_ytd_2025": 3897,
+      "sales_ytd_chg_pct": -0.5,
+      "flag_lt20": false
+     }
+    }
+   },
+   "fidelity_ytd_jan_aug_2026": {
+    "kauai": {
+     "source_line": "*Source: Kauai Board of Realtors. Information deemed reliable, but not guaranteed.",
+     "homes": {
+      "pct_of_closings": 55,
+      "units_ytd_2026": 239,
+      "units_chg_pct": -8,
+      "median_ytd_2026": 1300000,
+      "median_chg_pct": 11
+     },
+     "condo": {
+      "pct_of_closings": 35,
+      "units_ytd_2026": 152,
+      "units_chg_pct": -21,
+      "median_ytd_2026": 852500,
+      "median_chg_pct": -3
+     }
+    },
+    "hawaii_island": {
+     "source_line": "All information taken from Hawaii Information Services. MLS Sales Data",
+     "homes": {
+      "pct_of_closings": 51,
+      "units_ytd_2026": 1335,
+      "units_chg_pct": -1,
+      "median_ytd_2026": 564000,
+      "median_chg_pct": 1
+     },
+     "condo": {
+      "pct_of_closings": 13,
+      "units_ytd_2026": 347,
+      "units_chg_pct": -3,
+      "median_ytd_2026": 625000,
+      "median_chg_pct": -1
+     }
+    }
+   },
+   "dbedt_mei_aug_2026": {
+    "kauai": {
+     "2026-01": {
+      "sf_resales": 18,
+      "sf_median": 987500,
+      "sf_inventory": null,
+      "condo_resales": 21,
+      "condo_median": 965000,
+      "condo_inventory": null,
+      "flag_lt20_fields": [
+       "sf_resales"
+      ]
+     },
+     "2026-02": {
+      "sf_resales": 32,
+      "sf_median": 1369000,
+      "sf_inventory": null,
+      "condo_resales": 11,
+      "condo_median": 636700,
+      "condo_inventory": null,
+      "flag_lt20_fields": [
+       "condo_resales"
+      ]
+     },
+     "2026-03": {
+      "sf_resales": 25,
+      "sf_median": 1550000,
+      "sf_inventory": null,
+      "condo_resales": 19,
+      "condo_median": 700000,
+      "condo_inventory": null,
+      "flag_lt20_fields": [
+       "condo_resales"
+      ]
+     },
+     "2026-04": {
+      "sf_resales": 32,
+      "sf_median": 1135000,
+      "sf_inventory": null,
+      "condo_resales": 21,
+      "condo_median": 875000,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-05": {
+      "sf_resales": 37,
+      "sf_median": 1550000,
+      "sf_inventory": null,
+      "condo_resales": 22,
+      "condo_median": 817500,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-06": {
+      "sf_resales": 29,
+      "sf_median": 1600000,
+      "sf_inventory": null,
+      "condo_resales": 22,
+      "condo_median": 989500,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-07": {
+      "sf_resales": 35,
+      "sf_median": 1195000,
+      "sf_inventory": null,
+      "condo_resales": 18,
+      "condo_median": 901938,
+      "condo_inventory": null,
+      "flag_lt20_fields": [
+       "condo_resales"
+      ]
+     },
+     "2026-08": {
+      "sf_resales": 28,
+      "sf_median": 1088000,
+      "sf_inventory": null,
+      "condo_resales": 15,
+      "condo_median": 999999,
+      "condo_inventory": null,
+      "flag_lt20_fields": [
+       "condo_resales"
+      ]
+     }
+    },
+    "hawaii": {
+     "2026-01": {
+      "sf_resales": 154,
+      "sf_median": 574500,
+      "sf_inventory": null,
+      "condo_resales": 41,
+      "condo_median": 615000,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-02": {
+      "sf_resales": 128,
+      "sf_median": 575000,
+      "sf_inventory": null,
+      "condo_resales": 40,
+      "condo_median": 736500,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-03": {
+      "sf_resales": 169,
+      "sf_median": 619000,
+      "sf_inventory": null,
+      "condo_resales": 54,
+      "condo_median": 777500,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-04": {
+      "sf_resales": 161,
+      "sf_median": 570000,
+      "sf_inventory": null,
+      "condo_resales": 52,
+      "condo_median": 582500,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-05": {
+      "sf_resales": 182,
+      "sf_median": 470000,
+      "sf_inventory": null,
+      "condo_resales": 39,
+      "condo_median": 479000,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-06": {
+      "sf_resales": 187,
+      "sf_median": 599800,
+      "sf_inventory": null,
+      "condo_resales": 44,
+      "condo_median": 535000,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-07": {
+      "sf_resales": 183,
+      "sf_median": 535000,
+      "sf_inventory": null,
+      "condo_resales": 42,
+      "condo_median": 838750,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     },
+     "2026-08": {
+      "sf_resales": 153,
+      "sf_median": 580000,
+      "sf_inventory": null,
+      "condo_resales": 31,
+      "condo_median": 493000,
+      "condo_inventory": null,
+      "flag_lt20_fields": []
+     }
+    }
+   },
+   "tg_rsr_sep_2026": {
+    "kauai": {
+     "island": "Kauai",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 18,
+       "flag_lt20": true,
+       "median_sales_price": 1490000,
+       "total_dollar_volume": 38632000,
+       "sales_count_mom_pct": -35.7,
+       "median_mom_pct": 36.9,
+       "volume_mom_pct": -25.8,
+       "sales_count_yoy_pct": -50.0,
+       "median_yoy_pct": 8.8,
+       "volume_yoy_pct": -48.6,
+       "avg_list_price_rounded": {
+        "printed": "$2.2 M",
+        "usd_approx": 2200000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$2.1 M",
+        "usd_approx": 2100000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$8.4 M",
+        "usd_approx": 8400000
+       },
+       "avg_price_per_sqft": 1060,
+       "pct_of_list_price_received": 95.7,
+       "average_dom": 110
+      },
+      "condo": {
+       "sales_count": 6,
+       "flag_lt20": true,
+       "median_sales_price": 726500,
+       "total_dollar_volume": 5052000,
+       "sales_count_mom_pct": -62.5,
+       "median_mom_pct": -26.3,
+       "volume_mom_pct": -69.1,
+       "sales_count_yoy_pct": -64.7,
+       "median_yoy_pct": -11.4,
+       "volume_yoy_pct": -60.2,
+       "avg_list_price_rounded": {
+        "printed": "$868.0 K",
+        "usd_approx": 868000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$842.0 K",
+        "usd_approx": 842000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$1.5 M",
+        "usd_approx": 1500000
+       },
+       "avg_price_per_sqft": 813,
+       "pct_of_list_price_received": 97.0,
+       "average_dom": 81
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 255,
+       "sales_count_yoy_pct": -14.1,
+       "median_ytd_2026": 1300000,
+       "median_yoy_pct": 8.3,
+       "volume_ytd_2026": 508396196,
+       "volume_yoy_pct": -9.9
+      },
+      "condo": {
+       "sales_count_ytd_2026": 158,
+       "sales_count_yoy_pct": -24.4,
+       "median_ytd_2026": 847500,
+       "median_yoy_pct": -3.1,
+       "volume_ytd_2026": 161473250,
+       "volume_yoy_pct": -24.5
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 48,
+       "sales_count_yoy_pct": -30.4,
+       "median_ytd_2026": 752554,
+       "median_yoy_pct": -20.8,
+       "volume_ytd_2026": 65871608,
+       "volume_yoy_pct": -54.2
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:21:40Z",
+      "bytes": 3637676,
+      "sha256": "be894ae64b15cacf30eabee696d16474a2271407158ee713091e8d7f729682ed",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:36 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom"
+    },
+    "hawaii_island": {
+     "island": "Hawaii Island",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 135,
+       "flag_lt20": false,
+       "median_sales_price": 499000,
+       "total_dollar_volume": 104968000,
+       "sales_count_mom_pct": -12.9,
+       "median_mom_pct": -13.2,
+       "volume_mom_pct": -47.0,
+       "sales_count_yoy_pct": -21.5,
+       "median_yoy_pct": -15.0,
+       "volume_yoy_pct": -32.9,
+       "avg_list_price_rounded": {
+        "printed": "$801.7 K",
+        "usd_approx": 801700
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$777.5 K",
+        "usd_approx": 777500
+       },
+       "max_sold_price_rounded": {
+        "printed": "$5.4 M",
+        "usd_approx": 5400000
+       },
+       "avg_price_per_sqft": 476.3,
+       "pct_of_list_price_received": 96.98,
+       "average_dom": 62
+      },
+      "condo": {
+       "sales_count": 32,
+       "flag_lt20": false,
+       "median_sales_price": 604500,
+       "total_dollar_volume": 30869010,
+       "sales_count_mom_pct": 0.0,
+       "median_mom_pct": 35.4,
+       "volume_mom_pct": -15.6,
+       "sales_count_yoy_pct": -34.7,
+       "median_yoy_pct": -5.5,
+       "volume_yoy_pct": -57.8,
+       "avg_list_price_rounded": {
+        "printed": "$1.0 M",
+        "usd_approx": 1000000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$964.7 K",
+        "usd_approx": 964700
+       },
+       "max_sold_price_rounded": {
+        "printed": "$4.2 M",
+        "usd_approx": 4200000
+       },
+       "avg_price_per_sqft": 737.34,
+       "pct_of_list_price_received": 96.18,
+       "average_dom": 96
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 1466,
+       "sales_count_yoy_pct": -3.2,
+       "median_ytd_2026": 555000,
+       "median_yoy_pct": -1.8,
+       "volume_ytd_2026": 1590593041,
+       "volume_yoy_pct": 12.9
+      },
+      "condo": {
+       "sales_count_ytd_2026": 378,
+       "sales_count_yoy_pct": -6.2,
+       "median_ytd_2026": 625000,
+       "median_yoy_pct": -2.3,
+       "volume_ytd_2026": 450183971,
+       "volume_yoy_pct": -9.8
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 1025,
+       "sales_count_yoy_pct": -22.2,
+       "median_ytd_2026": 58000,
+       "median_yoy_pct": 18.4,
+       "volume_ytd_2026": 275053630,
+       "volume_yoy_pct": 14.0
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Hawaii-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:21:38Z",
+      "bytes": 3939657,
+      "sha256": "03d003d3c202dd4dfab1540225a7e36b65eb9dbbb8333df49049b6660866a138",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:34 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom"
+    }
+   },
+   "board_sep_2026": {
+    "kauai": {
+     "source": "Kauai Board of REALTORS, 2026-09-Kauai-All.pdf (Hawaii Information Service MLS)",
+     "url": "https://www.kauaiboard.com/wp-content/uploads/2026/10/2026-09-Kauai-All.pdf",
+     "sha256": "395236b3a6d0582bd44215db5f66993ad8a0084955f6a1a3a6590ef0565a2ed5",
+     "single_family": {
+      "sold_2026": 18,
+      "sold_2025": 37,
+      "median": 1490000,
+      "dom": 110,
+      "active": 195,
+      "flag_lt20": true
+     },
+     "condo": {
+      "sold_2026": 6,
+      "sold_2025": 17,
+      "median": 726500,
+      "dom": 81,
+      "active": 171,
+      "flag_lt20": true
+     },
+     "land": {
+      "sold_2026": 5,
+      "sold_2025": 6,
+      "active": 104
+     }
+    },
+    "hawaii_island": {
+     "source": "Hawaii Island REALTORS / Hawaii Information Service, 2026-09-Hawaii-Island-All graphic",
+     "url": "https://www.hawaiiislandrealtors.org/wp-content/uploads/2026/10/2026-09-Hawaii-Island-All-scaled.png",
+     "sha256": "c26e1ff9c9dd4de1d0266ea83d6dfc276e43289baba95e0e382f83200b059474",
+     "single_family": {
+      "sold": 135,
+      "median": 499000,
+      "dom": 62,
+      "active": 1066
+     },
+     "condo": {
+      "sold": 32,
+      "median": 604500,
+      "dom": 96,
+      "active": 353
+     }
+    },
+    "note": "Counts and medians equal Title Guaranty's September Residential Sales Report exactly; year-over-year changes for Hawaii Island are taken from that report. The boards print no months-of-supply figure. Derived (active / 12-month average closed): Kauai SF 6.2, condo 9.2; Hawaii Island SF 6.6, condo 8.3."
+   }
+  },
+  "d_title_guaranty_rsr": {
+   "sep_2026": {
+    "oahu": {
+     "island": "Oahu",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 309,
+       "flag_lt20": false,
+       "median_sales_price": 1100000,
+       "total_dollar_volume": 419049913,
+       "sales_count_mom_pct": 11.2,
+       "median_mom_pct": -10.1,
+       "volume_mom_pct": 8.4,
+       "sales_count_yoy_pct": 8.8,
+       "median_yoy_pct": -5.2,
+       "volume_yoy_pct": 9.0,
+       "avg_list_price_rounded": {
+        "printed": "$1.4 M",
+        "usd_approx": 1400000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.4 M",
+        "usd_approx": 1400000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$16.5 M",
+        "usd_approx": 16500000
+       },
+       "avg_price_per_sqft": 736.45,
+       "pct_of_list_price_received": 98.94,
+       "median_dom": 17
+      },
+      "condo": {
+       "sales_count": 391,
+       "flag_lt20": false,
+       "median_sales_price": 529000,
+       "total_dollar_volume": 261659935,
+       "sales_count_mom_pct": -1.5,
+       "median_mom_pct": 0.8,
+       "volume_mom_pct": 3.0,
+       "sales_count_yoy_pct": -55.5,
+       "median_yoy_pct": -21.5,
+       "volume_yoy_pct": -57.1,
+       "avg_list_price_rounded": {
+        "printed": "$690.7 K",
+        "usd_approx": 690700
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$669.2 K",
+        "usd_approx": 669200
+       },
+       "max_sold_price_rounded": {
+        "printed": "$5.9 M",
+        "usd_approx": 5900000
+       },
+       "avg_price_per_sqft": 695.92,
+       "pct_of_list_price_received": 96.88,
+       "median_dom": 40
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 2332,
+       "sales_count_yoy_pct": 5.6,
+       "median_ytd_2026": 1173000,
+       "median_yoy_pct": 3.2,
+       "volume_ytd_2026": 3253878857,
+       "volume_yoy_pct": 5.3
+      },
+      "condo": {
+       "sales_count_ytd_2026": 3466,
+       "sales_count_yoy_pct": -10.8,
+       "median_ytd_2026": 525000,
+       "median_yoy_pct": -1.9,
+       "volume_ytd_2026": 2269836192,
+       "volume_yoy_pct": -10.4
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 33,
+       "sales_count_yoy_pct": -52.9,
+       "median_ytd_2026": 1100000,
+       "median_yoy_pct": 19.2,
+       "volume_ytd_2026": 39457000,
+       "volume_yoy_pct": -51.8
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Oahu-Island-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:13Z",
+      "bytes": 3849547,
+      "sha256": "a1be71975584c198116bd4d8121cf093476810522ce59ca3e6be0ef825d20d62",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:50 GMT"
+     },
+     "dom_label_on_rendered_page": "median dom"
+    },
+    "maui": {
+     "island": "Maui",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 52,
+       "flag_lt20": false,
+       "median_sales_price": 1150000,
+       "total_dollar_volume": 96792500,
+       "sales_count_mom_pct": -18.8,
+       "median_mom_pct": -4.2,
+       "volume_mom_pct": 3.1,
+       "sales_count_yoy_pct": -7.1,
+       "median_yoy_pct": -11.0,
+       "volume_yoy_pct": -1.5,
+       "avg_list_price_rounded": {
+        "printed": "$2.0 M",
+        "usd_approx": 2000000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.9 M",
+        "usd_approx": 1900000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$6.7 M",
+        "usd_approx": 6700000
+       },
+       "avg_price_per_sqft": 920.27,
+       "pct_of_list_price_received": 93.99,
+       "average_dom": 134
+      },
+      "condo": {
+       "sales_count": 72,
+       "flag_lt20": false,
+       "median_sales_price": 660000,
+       "total_dollar_volume": 70907100,
+       "sales_count_mom_pct": 2.9,
+       "median_mom_pct": 16.8,
+       "volume_mom_pct": -1.5,
+       "sales_count_yoy_pct": 56.5,
+       "median_yoy_pct": 1.9,
+       "volume_yoy_pct": 65.9,
+       "avg_list_price_rounded": {
+        "printed": "$1.0 M",
+        "usd_approx": 1000000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$984.8 K",
+        "usd_approx": 984800
+       },
+       "max_sold_price_rounded": {
+        "printed": "$4.9 M",
+        "usd_approx": 4900000
+       },
+       "avg_price_per_sqft": 920.22,
+       "pct_of_list_price_received": 94.18,
+       "average_dom": 210
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 537,
+       "sales_count_yoy_pct": 1.7,
+       "median_ytd_2026": 1219000,
+       "median_yoy_pct": -6.2,
+       "volume_ytd_2026": 865591047,
+       "volume_yoy_pct": -11.4
+      },
+      "condo": {
+       "sales_count_ytd_2026": 619,
+       "sales_count_yoy_pct": 21.4,
+       "median_ytd_2026": 657500,
+       "median_yoy_pct": -6.1,
+       "volume_ytd_2026": 621619016,
+       "volume_yoy_pct": 5.7
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 89,
+       "sales_count_yoy_pct": -11.0,
+       "median_ytd_2026": 628300,
+       "median_yoy_pct": -9.9,
+       "volume_ytd_2026": 76811550,
+       "volume_yoy_pct": -43.3
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Maui-Island-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:16Z",
+      "bytes": 3700170,
+      "sha256": "618a4ca32fe1795b1dee64b5d687f6d3b3a65b7ca98fd12e849e0b50689c1b38",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:37 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom"
+    },
+    "hawaii_island": {
+     "island": "Hawaii Island",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 135,
+       "flag_lt20": false,
+       "median_sales_price": 499000,
+       "total_dollar_volume": 104968000,
+       "sales_count_mom_pct": -12.9,
+       "median_mom_pct": -13.2,
+       "volume_mom_pct": -47.0,
+       "sales_count_yoy_pct": -21.5,
+       "median_yoy_pct": -15.0,
+       "volume_yoy_pct": -32.9,
+       "avg_list_price_rounded": {
+        "printed": "$801.7 K",
+        "usd_approx": 801700
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$777.5 K",
+        "usd_approx": 777500
+       },
+       "max_sold_price_rounded": {
+        "printed": "$5.4 M",
+        "usd_approx": 5400000
+       },
+       "avg_price_per_sqft": 476.3,
+       "pct_of_list_price_received": 96.98,
+       "average_dom": 62
+      },
+      "condo": {
+       "sales_count": 32,
+       "flag_lt20": false,
+       "median_sales_price": 604500,
+       "total_dollar_volume": 30869010,
+       "sales_count_mom_pct": 0.0,
+       "median_mom_pct": 35.4,
+       "volume_mom_pct": -15.6,
+       "sales_count_yoy_pct": -34.7,
+       "median_yoy_pct": -5.5,
+       "volume_yoy_pct": -57.8,
+       "avg_list_price_rounded": {
+        "printed": "$1.0 M",
+        "usd_approx": 1000000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$964.7 K",
+        "usd_approx": 964700
+       },
+       "max_sold_price_rounded": {
+        "printed": "$4.2 M",
+        "usd_approx": 4200000
+       },
+       "avg_price_per_sqft": 737.34,
+       "pct_of_list_price_received": 96.18,
+       "average_dom": 96
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 1466,
+       "sales_count_yoy_pct": -3.2,
+       "median_ytd_2026": 555000,
+       "median_yoy_pct": -1.8,
+       "volume_ytd_2026": 1590593041,
+       "volume_yoy_pct": 12.9
+      },
+      "condo": {
+       "sales_count_ytd_2026": 378,
+       "sales_count_yoy_pct": -6.2,
+       "median_ytd_2026": 625000,
+       "median_yoy_pct": -2.3,
+       "volume_ytd_2026": 450183971,
+       "volume_yoy_pct": -9.8
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 1025,
+       "sales_count_yoy_pct": -22.2,
+       "median_ytd_2026": 58000,
+       "median_yoy_pct": 18.4,
+       "volume_ytd_2026": 275053630,
+       "volume_yoy_pct": 14.0
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Hawaii-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:21:38Z",
+      "bytes": 3939657,
+      "sha256": "03d003d3c202dd4dfab1540225a7e36b65eb9dbbb8333df49049b6660866a138",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:34 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom"
+    },
+    "kauai": {
+     "island": "Kauai",
+     "edition": "September 2026",
+     "information_effective": "10/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 18,
+       "flag_lt20": true,
+       "median_sales_price": 1490000,
+       "total_dollar_volume": 38632000,
+       "sales_count_mom_pct": -35.7,
+       "median_mom_pct": 36.9,
+       "volume_mom_pct": -25.8,
+       "sales_count_yoy_pct": -50.0,
+       "median_yoy_pct": 8.8,
+       "volume_yoy_pct": -48.6,
+       "avg_list_price_rounded": {
+        "printed": "$2.2 M",
+        "usd_approx": 2200000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$2.1 M",
+        "usd_approx": 2100000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$8.4 M",
+        "usd_approx": 8400000
+       },
+       "avg_price_per_sqft": 1060,
+       "pct_of_list_price_received": 95.7,
+       "average_dom": 110
+      },
+      "condo": {
+       "sales_count": 6,
+       "flag_lt20": true,
+       "median_sales_price": 726500,
+       "total_dollar_volume": 5052000,
+       "sales_count_mom_pct": -62.5,
+       "median_mom_pct": -26.3,
+       "volume_mom_pct": -69.1,
+       "sales_count_yoy_pct": -64.7,
+       "median_yoy_pct": -11.4,
+       "volume_yoy_pct": -60.2,
+       "avg_list_price_rounded": {
+        "printed": "$868.0 K",
+        "usd_approx": 868000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$842.0 K",
+        "usd_approx": 842000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$1.5 M",
+        "usd_approx": 1500000
+       },
+       "avg_price_per_sqft": 813,
+       "pct_of_list_price_received": 97.0,
+       "average_dom": 81
+      }
+     },
+     "ytd_jan_sep_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 255,
+       "sales_count_yoy_pct": -14.1,
+       "median_ytd_2026": 1300000,
+       "median_yoy_pct": 8.3,
+       "volume_ytd_2026": 508396196,
+       "volume_yoy_pct": -9.9
+      },
+      "condo": {
+       "sales_count_ytd_2026": 158,
+       "sales_count_yoy_pct": -24.4,
+       "median_ytd_2026": 847500,
+       "median_yoy_pct": -3.1,
+       "volume_ytd_2026": 161473250,
+       "volume_yoy_pct": -24.5
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 48,
+       "sales_count_yoy_pct": -30.4,
+       "median_ytd_2026": 752554,
+       "median_yoy_pct": -20.8,
+       "volume_ytd_2026": 65871608,
+       "volume_yoy_pct": -54.2
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-9.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:21:40Z",
+      "bytes": 3637676,
+      "sha256": "be894ae64b15cacf30eabee696d16474a2271407158ee713091e8d7f729682ed",
+      "http": "200",
+      "last_modified": "Mon, 05 Oct 2026 18:14:36 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom"
+    }
+   },
+   "aug_2026": {
+    "oahu": {
+     "island": "Oahu",
+     "edition": "August 2026",
+     "information_effective": "9/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 274,
+       "flag_lt20": false,
+       "median_sales_price": 1225500,
+       "total_dollar_volume": 381994819,
+       "sales_count_mom_pct": -12.2,
+       "median_mom_pct": 1.8,
+       "volume_mom_pct": -15.4,
+       "sales_count_yoy_pct": 4.2,
+       "median_yoy_pct": 10.9,
+       "volume_yoy_pct": 6.4,
+       "avg_list_price_rounded": {
+        "printed": "$1.4 M",
+        "usd_approx": 1400000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.4 M",
+        "usd_approx": 1400000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$6.4 M",
+        "usd_approx": 6400000
+       },
+       "avg_price_per_sqft": 721.97,
+       "pct_of_list_price_received": 99.3,
+       "median_dom": 17
+      },
+      "condo": {
+       "sales_count": 387,
+       "flag_lt20": false,
+       "median_sales_price": 523000,
+       "total_dollar_volume": 247197378,
+       "sales_count_mom_pct": -12.8,
+       "median_mom_pct": 1.2,
+       "volume_mom_pct": -12.8,
+       "sales_count_yoy_pct": -5.1,
+       "median_yoy_pct": 0.1,
+       "volume_yoy_pct": -12.6,
+       "avg_list_price_rounded": {
+        "printed": "$657.3 K",
+        "usd_approx": 657300
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$638.8 K",
+        "usd_approx": 638800
+       },
+       "max_sold_price_rounded": {
+        "printed": "$10.5 M",
+        "usd_approx": 10500000
+       },
+       "avg_price_per_sqft": 664.63,
+       "pct_of_list_price_received": 97.18,
+       "median_dom": 37
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Oahu-Island-8.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-8.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:19Z",
+      "bytes": 3848679,
+      "sha256": "c300edd5ea72ca18d6e4e1b8cf247029b1211f329059856b443d8c80a5fc8c0d",
+      "http": "200",
+      "last_modified": "Thu, 03 Sep 2026 22:32:55 GMT"
+     },
+     "dom_label_on_rendered_page": "median dom",
+     "ytd_jan_aug_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 2019,
+       "sales_count_yoy_pct": 4.9,
+       "median_ytd_2026": 1180000,
+       "median_yoy_pct": 4.1,
+       "volume_ytd_2026": 2830093944,
+       "volume_yoy_pct": 4.6
+      },
+      "condo": {
+       "sales_count_ytd_2026": 3065,
+       "sales_count_yoy_pct": 2.0,
+       "median_ytd_2026": 525000,
+       "median_yoy_pct": 2.4,
+       "volume_ytd_2026": 2001358357,
+       "volume_yoy_pct": 4.1
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 28,
+       "sales_count_yoy_pct": -56.9,
+       "median_ytd_2026": 1200000,
+       "median_yoy_pct": 32.6,
+       "volume_ytd_2026": 33672000,
+       "volume_yoy_pct": -53.6
+      }
+     }
+    },
+    "maui": {
+     "island": "Maui",
+     "edition": "August 2026",
+     "information_effective": "9/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 64,
+       "flag_lt20": false,
+       "median_sales_price": 1200000,
+       "total_dollar_volume": 93924500,
+       "sales_count_mom_pct": 12.3,
+       "median_mom_pct": 4.3,
+       "volume_mom_pct": 4.7,
+       "sales_count_yoy_pct": 3.2,
+       "median_yoy_pct": -7.9,
+       "volume_yoy_pct": -19.0,
+       "avg_list_price_rounded": {
+        "printed": "$1.5 M",
+        "usd_approx": 1500000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.5 M",
+        "usd_approx": 1500000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$8.3 M",
+        "usd_approx": 8300000
+       },
+       "avg_price_per_sqft": 832.5,
+       "pct_of_list_price_received": 95.56,
+       "average_dom": 173
+      },
+      "condo": {
+       "sales_count": 68,
+       "flag_lt20": false,
+       "median_sales_price": 564950,
+       "total_dollar_volume": 60750400,
+       "sales_count_mom_pct": -17.1,
+       "median_mom_pct": -18.1,
+       "volume_mom_pct": -26.9,
+       "sales_count_yoy_pct": 19.3,
+       "median_yoy_pct": -13.1,
+       "volume_yoy_pct": -6.8,
+       "avg_list_price_rounded": {
+        "printed": "$940.3 K",
+        "usd_approx": 940300
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$893.4 K",
+        "usd_approx": 893400
+       },
+       "max_sold_price_rounded": {
+        "printed": "$12.5 M",
+        "usd_approx": 12500000
+       },
+       "avg_price_per_sqft": 821.62,
+       "pct_of_list_price_received": 95.01,
+       "average_dom": 171
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Maui-Island-8.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Maui-Island-8.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:22Z",
+      "bytes": 3699689,
+      "sha256": "0de50449d5da3376a6edfea7c3525e051cb86dcb55f0c18517fac336842effa4",
+      "http": "200",
+      "last_modified": "Thu, 03 Sep 2026 22:32:43 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom",
+     "ytd_jan_aug_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 485,
+       "sales_count_yoy_pct": 2.8,
+       "median_ytd_2026": 1225000,
+       "median_yoy_pct": -5.8,
+       "volume_ytd_2026": 768798547,
+       "volume_yoy_pct": -12.5
+      },
+      "condo": {
+       "sales_count_ytd_2026": 545,
+       "sales_count_yoy_pct": 17.5,
+       "median_ytd_2026": 650000,
+       "median_yoy_pct": -8.5,
+       "volume_ytd_2026": 539465916,
+       "volume_yoy_pct": -1.1
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 80,
+       "sales_count_yoy_pct": -12.1,
+       "median_ytd_2026": 629150,
+       "median_yoy_pct": -10.1,
+       "volume_ytd_2026": 71038550,
+       "volume_yoy_pct": -44.8
+      }
+     }
+    },
+    "hawaii_island": {
+     "island": "Hawaii Island",
+     "edition": "August 2026",
+     "information_effective": "9/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 150,
+       "flag_lt20": false,
+       "median_sales_price": 585000,
+       "total_dollar_volume": 195887282,
+       "sales_count_mom_pct": -18.9,
+       "median_mom_pct": 9.3,
+       "volume_mom_pct": -7.6,
+       "sales_count_yoy_pct": -8.5,
+       "median_yoy_pct": 10.7,
+       "volume_yoy_pct": 55.6,
+       "avg_list_price_rounded": {
+        "printed": "$1.4 M",
+        "usd_approx": 1400000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.3 M",
+        "usd_approx": 1300000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$38.2 M",
+        "usd_approx": 38200000
+       },
+       "avg_price_per_sqft": 531.25,
+       "pct_of_list_price_received": 93.66,
+       "average_dom": 67
+      },
+      "condo": {
+       "sales_count": 30,
+       "flag_lt20": false,
+       "median_sales_price": 496500,
+       "total_dollar_volume": 36197400,
+       "sales_count_mom_pct": -28.6,
+       "median_mom_pct": -40.8,
+       "volume_mom_pct": -45.3,
+       "sales_count_yoy_pct": -18.9,
+       "median_yoy_pct": -13.3,
+       "volume_yoy_pct": -20.8,
+       "avg_list_price_rounded": {
+        "printed": "$1.3 M",
+        "usd_approx": 1300000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.2 M",
+        "usd_approx": 1200000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$6.5 M",
+        "usd_approx": 6500000
+       },
+       "avg_price_per_sqft": 738.51,
+       "pct_of_list_price_received": 95.74,
+       "average_dom": 92
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Hawaii-8.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Hawaii-8.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:24Z",
+      "bytes": 3941219,
+      "sha256": "4a2d50ebcd5a882dd1caf05696485f1793e647f4b2b7869a710efc966adbde1b",
+      "http": "200",
+      "last_modified": "Thu, 03 Sep 2026 22:32:57 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom",
+     "ytd_jan_aug_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 1326,
+       "sales_count_yoy_pct": -1.2,
+       "median_ytd_2026": 560000,
+       "median_yoy_pct": -0.4,
+       "volume_ytd_2026": 1483365041,
+       "volume_yoy_pct": 18.4
+      },
+      "condo": {
+       "sales_count_ytd_2026": 344,
+       "sales_count_yoy_pct": -2.8,
+       "median_ytd_2026": 625000,
+       "median_yoy_pct": -2.0,
+       "volume_ytd_2026": 418935961,
+       "volume_yoy_pct": -1.6
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 949,
+       "sales_count_yoy_pct": -19.7,
+       "median_ytd_2026": 60000,
+       "median_yoy_pct": 24.4,
+       "volume_ytd_2026": 266994596,
+       "volume_yoy_pct": 30.8
+      }
+     }
+    },
+    "kauai": {
+     "island": "Kauai",
+     "edition": "August 2026",
+     "information_effective": "9/1/2026",
+     "month": {
+      "single_family": {
+       "sales_count": 28,
+       "flag_lt20": false,
+       "median_sales_price": 1088000,
+       "total_dollar_volume": 52053750,
+       "sales_count_mom_pct": -20.0,
+       "median_mom_pct": -9.0,
+       "volume_mom_pct": -15.0,
+       "sales_count_yoy_pct": 0.0,
+       "median_yoy_pct": -8.2,
+       "volume_yoy_pct": -30.6,
+       "avg_list_price_rounded": {
+        "printed": "$2.0 M",
+        "usd_approx": 2000000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.9 M",
+        "usd_approx": 1900000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$7.7 M",
+        "usd_approx": 7700000
+       },
+       "avg_price_per_sqft": 895,
+       "pct_of_list_price_received": 95.24,
+       "average_dom": 64
+      },
+      "condo": {
+       "sales_count": 15,
+       "flag_lt20": true,
+       "median_sales_price": 999999,
+       "total_dollar_volume": 15526499,
+       "sales_count_mom_pct": -21.1,
+       "median_mom_pct": 18.3,
+       "volume_mom_pct": -28.1,
+       "sales_count_yoy_pct": -37.5,
+       "median_yoy_pct": 27.9,
+       "volume_yoy_pct": -19.4,
+       "avg_list_price_rounded": {
+        "printed": "$1.1 M",
+        "usd_approx": 1100000
+       },
+       "avg_sold_price_rounded": {
+        "printed": "$1.0 M",
+        "usd_approx": 1000000
+       },
+       "max_sold_price_rounded": {
+        "printed": "$2.0 M",
+        "usd_approx": 2000000
+       },
+       "avg_price_per_sqft": 946,
+       "pct_of_list_price_received": 96.1,
+       "average_dom": 158
+      }
+     },
+     "source": {
+      "file": "raw/up_market_oct/tg_Residential-Sales-Report-Kauai-Island-8.2026.pdf",
+      "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Kauai-Island-8.2026.pdf",
+      "retrieved_utc": "2026-10-09T01:22:27Z",
+      "bytes": 3639109,
+      "sha256": "777457380e9072b502ea276dc7bb1635394962657edafe07cc9825c6b1461670",
+      "http": "200",
+      "last_modified": "Thu, 03 Sep 2026 22:32:41 GMT"
+     },
+     "dom_label_on_rendered_page": "average dom",
+     "ytd_jan_aug_2026": {
+      "single_family": {
+       "sales_count_ytd_2026": 237,
+       "sales_count_yoy_pct": -9.2,
+       "median_ytd_2026": 1300000,
+       "median_yoy_pct": 10.6,
+       "volume_ytd_2026": 469764196,
+       "volume_yoy_pct": -3.9
+      },
+      "condo": {
+       "sales_count_ytd_2026": 151,
+       "sales_count_yoy_pct": -21.4,
+       "median_ytd_2026": 855000,
+       "median_yoy_pct": -2.5,
+       "volume_ytd_2026": 155622250,
+       "volume_yoy_pct": -22.7
+      },
+      "vacant_land": {
+       "sales_count_ytd_2026": 43,
+       "sales_count_yoy_pct": -31.7,
+       "median_ytd_2026": 785000,
+       "median_yoy_pct": -17.4,
+       "volume_ytd_2026": 61116608,
+       "volume_yoy_pct": -40.4
+      }
+     }
+    }
+   },
+   "caveat": "Source not stated in the PDFs. Maui equals RAM MLS data; Oahu does not equal HBR resales. Sidebar dollar figures are rounded in print. DOM label: Oahu MEDIAN, others AVERAGE."
+  },
+  "e_months_supply_comparison": {
+   "report_method": {
+    "definition": "Realtor.com county active_listing_count / mean(DBEDT MEI single-family + condo resales, month and two prior months)",
+    "reproduced": {
+     "oahu": {
+      "2026-07": {
+       "realtor_com_active_listings": 3506,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-05": 594,
+        "2026-06": 667,
+        "2026-07": 716
+       },
+       "avg_3mo_sales": 659.0,
+       "months_supply": 5.32,
+       "months_supply_1dp": 5.3
+      },
+      "2026-08": {
+       "realtor_com_active_listings": 3494,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-06": 667,
+        "2026-07": 716,
+        "2026-08": 629
+       },
+       "avg_3mo_sales": 670.67,
+       "months_supply": 5.21,
+       "months_supply_1dp": 5.2
+      }
+     },
+     "maui": {
+      "2026-07": {
+       "realtor_com_active_listings": 1437,
+       "realtor_com_quality_flag": "1.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-05": 110,
+        "2026-06": 168,
+        "2026-07": 137
+       },
+       "avg_3mo_sales": 138.33,
+       "months_supply": 10.39,
+       "months_supply_1dp": 10.4
+      },
+      "2026-08": {
+       "realtor_com_active_listings": 1400,
+       "realtor_com_quality_flag": "1.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-06": 168,
+        "2026-07": 137,
+        "2026-08": 132
+       },
+       "avg_3mo_sales": 145.67,
+       "months_supply": 9.61,
+       "months_supply_1dp": 9.6
+      }
+     },
+     "kauai": {
+      "2026-07": {
+       "realtor_com_active_listings": 418,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-05": 59,
+        "2026-06": 51,
+        "2026-07": 53
+       },
+       "avg_3mo_sales": 54.33,
+       "months_supply": 7.69,
+       "months_supply_1dp": 7.7
+      },
+      "2026-08": {
+       "realtor_com_active_listings": 414,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-06": 51,
+        "2026-07": 53,
+        "2026-08": 43
+       },
+       "avg_3mo_sales": 49.0,
+       "months_supply": 8.45,
+       "months_supply_1dp": 8.4
+      }
+     },
+     "hawaii_island": {
+      "2026-07": {
+       "realtor_com_active_listings": 1350,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-05": 221,
+        "2026-06": 231,
+        "2026-07": 225
+       },
+       "avg_3mo_sales": 225.67,
+       "months_supply": 5.98,
+       "months_supply_1dp": 6.0
+      },
+      "2026-08": {
+       "realtor_com_active_listings": 1387,
+       "realtor_com_quality_flag": "0.0",
+       "dbedt_sf_plus_condo_sales_3mo": {
+        "2026-06": 231,
+        "2026-07": 225,
+        "2026-08": 184
+       },
+       "avg_3mo_sales": 213.33,
+       "months_supply": 6.5,
+       "months_supply_1dp": 6.5
+      }
+     }
+    },
+    "report_values_aug_2026": {
+     "oahu": 5.2,
+     "maui": 9.6,
+     "kauai": 8.4,
+     "hawaii_island": 6.5
+    }
+   },
+   "report_method_sep_2026_provisional": {
+    "oahu": {
+     "realtor_com_active_listings_sep_2026": 3483,
+     "realtor_com_quality_flag": "0.0",
+     "sf_plus_condo_sales_3mo": {
+      "2026-07": 716,
+      "2026-08": 629,
+      "2026-09": 668
+     },
+     "sep_2026_sales_source": "HBR Sep 2026 MSR closed sales SF 293 + condo 375 (DBEDT Honolulu rows equal HBR for Jun-Aug 2026)",
+     "avg_3mo_sales": 671.0,
+     "months_supply": 5.19,
+     "months_supply_1dp": 5.2,
+     "status": "PROVISIONAL - DBEDT MEI for September 2026 is due on/about 2026-10-29; September sales here are board/TG substitutes",
+     "flag_lt20": false,
+     "flag_note": ""
+    },
+    "maui": {
+     "realtor_com_active_listings_sep_2026": 1367,
+     "realtor_com_quality_flag": "1.0",
+     "sf_plus_condo_sales_3mo": {
+      "2026-07": 137,
+      "2026-08": 132,
+      "2026-09": 124
+     },
+     "sep_2026_sales_source": "RAM Sep 2026 closed sales SF 52 + condo 72 (DBEDT Maui = RAM/TG statewide for Aug 2026)",
+     "avg_3mo_sales": 131.0,
+     "months_supply": 10.44,
+     "months_supply_1dp": 10.4,
+     "status": "PROVISIONAL - DBEDT MEI for September 2026 is due on/about 2026-10-29; September sales here are board/TG substitutes",
+     "flag_lt20": false,
+     "flag_note": ""
+    },
+    "kauai": {
+     "realtor_com_active_listings_sep_2026": 385,
+     "realtor_com_quality_flag": "0.0",
+     "sf_plus_condo_sales_3mo": {
+      "2026-07": 53,
+      "2026-08": 43,
+      "2026-09": 24
+     },
+     "sep_2026_sales_source": "Title Guaranty RSR Kauai Sep 2026 SF 18 + condo 6 (board figure not reachable; TG RSR Kauai Aug 28/15 equalled board/DBEDT Aug 28/15)",
+     "avg_3mo_sales": 40.0,
+     "months_supply": 9.62,
+     "months_supply_1dp": 9.6,
+     "status": "PROVISIONAL - DBEDT MEI for September 2026 is due on/about 2026-10-29; September sales here are board/TG substitutes",
+     "flag_lt20": true,
+     "flag_note": "Kauai September components are 18 SF and 6 condo sales (both < 20)."
+    },
+    "hawaii_island": {
+     "realtor_com_active_listings_sep_2026": 1365,
+     "realtor_com_quality_flag": "0.0",
+     "sf_plus_condo_sales_3mo": {
+      "2026-07": 225,
+      "2026-08": 184,
+      "2026-09": 167
+     },
+     "sep_2026_sales_source": "Title Guaranty RSR Hawaii Sep 2026 SF 135 + condo 32 (board figure not reachable; TG RSR Hawaii Aug 150/30 vs DBEDT 153/31, so treat as approximate)",
+     "avg_3mo_sales": 192.0,
+     "months_supply": 7.11,
+     "months_supply_1dp": 7.1,
+     "status": "PROVISIONAL - DBEDT MEI for September 2026 is due on/about 2026-10-29; September sales here are board/TG substitutes",
+     "flag_lt20": false,
+     "flag_note": ""
+    }
+   },
+   "board_published_sep_2026": {
+    "oahu_hbr": {
+     "definition": "Compares active inventory to a rolling 12-month average closed sales",
+     "single_family": 3.2,
+     "condo": 7.0,
+     "aug_2026": {
+      "single_family": 3.2,
+      "condo": 6.9
+     },
+     "combined_published": null
+    },
+    "maui_ram": {
+     "definition": "The inventory of homes for sale at the end of a given month, divided by the average monthly pending sales from the last 12 months.",
+     "all_properties": 11.0,
+     "single_family": 7.8,
+     "condo": 12.1,
+     "aug_2026_first_published": {
+      "all_properties": 11.1,
+      "single_family": 8.1,
+      "condo": 12.2
+     }
+    },
+    "kauai": null,
+    "hawaii_island": null
+   },
+   "numerator_check_sep_2026": {
+    "oahu": {
+     "realtor_com_active": 3483,
+     "hbr_active_sf_plus_condo": 3307,
+     "diff": 176
+    },
+    "maui": {
+     "realtor_com_active": 1367,
+     "ram_inventory_sf_plus_condo": 1279,
+     "ram_inventory_all_properties": 1511,
+     "realtor_com_quality_flag": "1.0"
+    }
+   },
+   "definition_sensitivity_sep_2026_derived": {
+    "oahu": {
+     "sf": {
+      "board_active_inventory_sep_2026": 798,
+      "divided_by_3mo_avg_closed (report-style denominator)": 2.79,
+      "divided_by_12mo_avg_closed (HBR definition)": 3.18,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 3.09,
+      "published_by_board": 3.2
+     },
+     "condo": {
+      "board_active_inventory_sep_2026": 2509,
+      "divided_by_3mo_avg_closed (report-style denominator)": 6.51,
+      "divided_by_12mo_avg_closed (HBR definition)": 6.96,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 6.97,
+      "published_by_board": 7.0
+     },
+     "sf_plus_condo": {
+      "board_active_inventory_sep_2026": 3307,
+      "divided_by_3mo_avg_closed (report-style denominator)": 4.93,
+      "divided_by_12mo_avg_closed (HBR definition)": 5.4,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 5.35,
+      "published_by_board": null
+     }
+    },
+    "maui": {
+     "sf": {
+      "board_active_inventory_sep_2026": 457,
+      "divided_by_3mo_avg_closed (report-style denominator)": 7.92,
+      "divided_by_12mo_avg_closed (HBR definition)": 7.65,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 7.76,
+      "published_by_board": 7.8
+     },
+     "condo": {
+      "board_active_inventory_sep_2026": 822,
+      "divided_by_3mo_avg_closed (report-style denominator)": 11.01,
+      "divided_by_12mo_avg_closed (HBR definition)": 12.18,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 12.06,
+      "published_by_board": 12.1
+     },
+     "sf_plus_condo": {
+      "board_active_inventory_sep_2026": 1279,
+      "divided_by_3mo_avg_closed (report-style denominator)": 9.66,
+      "divided_by_12mo_avg_closed (HBR definition)": 10.05,
+      "divided_by_12mo_avg_pending (RAM/ShowingTime definition)": 10.06,
+      "published_by_board": null
+     }
+    },
+    "note": "Derived from board monthly tables; only the HBR-definition (Oahu) and RAM-definition (Maui) cells are published by the boards. HBR pending = contracts entered in the month still in escrow at month end; RAM pending = offers accepted in the month, so the pending-based Oahu cells are approximate analogues."
+   },
+   "reading": [
+    "Oahu: the report method (5.2 Aug; ~5.2 Sep provisional) sits between HBR houses (3.2) and condos (7.0); by HBR's own definition the SF+condo combination would be 5.40 (derived). Using HBR inventory with the report's 3-month denominator gives 4.93: Realtor.com counts about 176 more Oahu listings than HBR active SF+condo.",
+    "Maui: the report method gives 9.6 (Aug) / ~10.4 (Sep provisional) against RAM 11.0 all properties (houses 7.8, condos 12.1). Restricting RAM's own definition to SF + condo gives 10.06 (derived), so about one month of the gap is property-type scope (RAM all-properties inventory 1,511 vs SF+condo 1,279) and the rest is the denominator and Realtor.com's listing count (1,367, quality-flagged).",
+    "Kauai and Hawaii Island: no board months of supply reachable; only the report method exists (Aug 8.4 and 6.5; Sep provisional ~9.6 and ~7.1 using Title Guaranty September counts, Kauai on very small samples).",
+    "Whatever the denominator (3-month closed, 12-month closed, 12-month pending), Oahu houses come out at 2.8-3.2 months (seller territory) and Maui condos at 11.0-12.2 months (buyer territory); Oahu condos 6.5-7.0, Maui houses 7.7-7.9."
+   ]
+  },
+  "checks": [
+   {
+    "check": "HBR MOS single_family 2026-08: active/avg12 closed rounds to published",
+    "a": 3.2,
+    "b": 3.2,
+    "pass": true
+   },
+   {
+    "check": "HBR MOS condo 2026-08: active/avg12 closed rounds to published",
+    "a": 6.9,
+    "b": 6.9,
+    "pass": true
+   },
+   {
+    "check": "HBR MOS single_family 2026-09: active/avg12 closed rounds to published",
+    "a": 3.2,
+    "b": 3.2,
+    "pass": true
+   },
+   {
+    "check": "HBR MOS condo 2026-09: active/avg12 closed rounds to published",
+    "a": 7.0,
+    "b": 7.0,
+    "pass": true
+   },
+   {
+    "check": "HBR YTD Jan-Sep 2026 closed single_family = sum of monthly",
+    "a": 2243,
+    "b": 2243,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 active single_family: page 2 vs monthly table",
+    "a": 798,
+    "b": 798,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 MOS single_family: page 2 vs page 14",
+    "a": 3.2,
+    "b": 3.2,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 pending single_family: page 2 vs monthly table",
+    "a": 236,
+    "b": 236,
+    "pass": true
+   },
+   {
+    "check": "HBR YTD Jan-Sep 2026 closed condo = sum of monthly",
+    "a": 3209,
+    "b": 3209,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 active condo: page 2 vs monthly table",
+    "a": 2509,
+    "b": 2509,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 MOS condo: page 2 vs page 14",
+    "a": 7.0,
+    "b": 7.0,
+    "pass": true
+   },
+   {
+    "check": "HBR Sep 2026 pending condo: page 2 vs monthly table",
+    "a": 292,
+    "b": 292,
+    "pass": true
+   },
+   {
+    "check": "HBR SF active by price range sums to all",
+    "a": 798,
+    "b": 798,
+    "pass": true
+   },
+   {
+    "check": "HBR condo active by price range sums to all",
+    "a": 2509,
+    "b": 2509,
+    "pass": true
+   },
+   {
+    "check": "HBR SF tier active sums (lower bounds + b700) = all",
+    "a": 798,
+    "b": 798,
+    "pass": true
+   },
+   {
+    "check": "oahure.com Aug 2026 MSR numeric tokens identical to HBR Google-Drive Aug 2026 MSR (mirror fidelity)",
+    "a": true,
+    "b": true,
+    "pass": true
+   },
+   {
+    "check": "RAM MSI single_family Sep 2026: inventory / avg 12-mo pending rounds to published",
+    "a": 7.8,
+    "b": 7.8,
+    "pass": true
+   },
+   {
+    "check": "RAM single_family Sep 2026 inventory: overview vs monthly table",
+    "a": 457,
+    "b": 457,
+    "pass": true
+   },
+   {
+    "check": "RAM single_family Sep 2026 MSI: overview vs monthly table",
+    "a": 7.8,
+    "b": 7.8,
+    "pass": true
+   },
+   {
+    "check": "RAM single_family YTD closed = sum Jan-Sep monthly table",
+    "a": 537,
+    "b": 537,
+    "pass": true
+   },
+   {
+    "check": "RAM MSI condo Sep 2026: inventory / avg 12-mo pending rounds to published",
+    "a": 12.1,
+    "b": 12.1,
+    "pass": true
+   },
+   {
+    "check": "RAM condo Sep 2026 inventory: overview vs monthly table",
+    "a": 822,
+    "b": 822,
+    "pass": true
+   },
+   {
+    "check": "RAM condo Sep 2026 MSI: overview vs monthly table",
+    "a": 12.1,
+    "b": 12.1,
+    "pass": true
+   },
+   {
+    "check": "RAM condo YTD closed = sum Jan-Sep monthly table",
+    "a": 620,
+    "b": 620,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep SF count = RAM All MLS SF Sep",
+    "a": 52,
+    "b": 52,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep SF median = RAM",
+    "a": 1150000,
+    "b": 1150000,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep condo count = RAM",
+    "a": 72,
+    "b": 72,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep condo median = RAM",
+    "a": 660000,
+    "b": 660000,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep SF avg DOM = RAM SF Days on Market Until Sale",
+    "a": 134,
+    "b": 134,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui Sep condo avg DOM = RAM condo Days on Market Until Sale (expected mismatch?)",
+    "a": 210,
+    "b": 199,
+    "pass": false
+   },
+   {
+    "check": "TG RSR Oahu Sep SF count = HBR Sep SF closed (expected mismatch: different universe)",
+    "a": 309,
+    "b": 293,
+    "pass": false
+   },
+   {
+    "check": "TG RSR Oahu Sep condo count = HBR Sep condo closed (expected mismatch)",
+    "a": 391,
+    "b": 375,
+    "pass": false
+   },
+   {
+    "check": "TG RSR Oahu Aug SF count = HBR Aug SF closed (expected mismatch)",
+    "a": 274,
+    "b": 264,
+    "pass": false
+   },
+   {
+    "check": "TG RSR Maui YTD SF count = RAM YTD SF",
+    "a": 537,
+    "b": 537,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Maui YTD condo count = RAM YTD condo (expected mismatch: 619 vs 620)",
+    "a": 619,
+    "b": 620,
+    "pass": false
+   },
+   {
+    "check": "TG Statewide Aug Oahu SF = HBR Aug SF (MSR Sep report Aug column)",
+    "a": 264,
+    "b": 264,
+    "pass": true
+   },
+   {
+    "check": "TG Statewide Aug Maui SF = RAM Aug report SF closed",
+    "a": 64,
+    "b": 64,
+    "pass": true
+   },
+   {
+    "check": "Fidelity Kauai YTD Aug homes = TG Statewide Kauai SF YTD",
+    "a": 239,
+    "b": 239,
+    "pass": true
+   },
+   {
+    "check": "Fidelity Kauai YTD Aug condo = TG Statewide Kauai condo YTD",
+    "a": 152,
+    "b": 152,
+    "pass": true
+   },
+   {
+    "check": "Fidelity Big Island YTD Aug homes = TG Statewide Hawaii SF YTD (expected off by 1)",
+    "a": 1335,
+    "b": 1336,
+    "pass": false
+   },
+   {
+    "check": "Fidelity Big Island YTD Aug condo = TG Statewide Hawaii condo YTD",
+    "a": 347,
+    "b": 347,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu SF resales 2026-06 = HBR monthly table",
+    "a": 270,
+    "b": 270,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu condo resales 2026-06 = HBR monthly table",
+    "a": 397,
+    "b": 397,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu SF resales 2026-07 = HBR monthly table",
+    "a": 300,
+    "b": 300,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu condo resales 2026-07 = HBR monthly table",
+    "a": 416,
+    "b": 416,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu SF resales 2026-08 = HBR monthly table",
+    "a": 264,
+    "b": 264,
+    "pass": true
+   },
+   {
+    "check": "DBEDT Honolulu condo resales 2026-08 = HBR monthly table",
+    "a": 365,
+    "b": 365,
+    "pass": true
+   },
+   {
+    "check": "Report method reproduced Aug 2026 oahu",
+    "a": 5.2,
+    "b": 5.2,
+    "pass": true
+   },
+   {
+    "check": "Report method Aug 2026 oahu = page_data ext.mos last value",
+    "a": 5.2,
+    "b": 5.2,
+    "pass": true
+   },
+   {
+    "check": "Report method Jul 2026 oahu = page_data ext.mos second-to-last value",
+    "a": 5.3,
+    "b": 5.3,
+    "pass": true
+   },
+   {
+    "check": "Report method reproduced Aug 2026 maui",
+    "a": 9.6,
+    "b": 9.6,
+    "pass": true
+   },
+   {
+    "check": "Report method Aug 2026 maui = page_data ext.mos last value",
+    "a": 9.6,
+    "b": 9.6,
+    "pass": true
+   },
+   {
+    "check": "Report method Jul 2026 maui = page_data ext.mos second-to-last value",
+    "a": 10.4,
+    "b": 10.4,
+    "pass": true
+   },
+   {
+    "check": "Report method reproduced Aug 2026 kauai",
+    "a": 8.4,
+    "b": 8.4,
+    "pass": true
+   },
+   {
+    "check": "Report method Aug 2026 kauai = page_data ext.mos last value",
+    "a": 8.4,
+    "b": 8.4,
+    "pass": true
+   },
+   {
+    "check": "Report method Jul 2026 kauai = page_data ext.mos second-to-last value",
+    "a": 7.7,
+    "b": 7.7,
+    "pass": true
+   },
+   {
+    "check": "Report method reproduced Aug 2026 hawaii_island",
+    "a": 6.5,
+    "b": 6.5,
+    "pass": true
+   },
+   {
+    "check": "Report method Aug 2026 hawaii_island = page_data ext.mos last value",
+    "a": 6.5,
+    "b": 6.5,
+    "pass": true
+   },
+   {
+    "check": "Report method Jul 2026 hawaii_island = page_data ext.mos second-to-last value",
+    "a": 6.0,
+    "b": 6.0,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Kauai Aug SF = DBEDT Kauai Aug SF",
+    "a": 28,
+    "b": 28,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Kauai Aug condo = DBEDT Kauai Aug condo",
+    "a": 15,
+    "b": 15,
+    "pass": true
+   },
+   {
+    "check": "TG RSR Hawaii Aug SF = DBEDT Hawaii Aug SF (expected mismatch)",
+    "a": 150,
+    "b": 153,
+    "pass": false
+   },
+   {
+    "check": "Matrix Oahu SF HBR-definition reproduces published 3.2",
+    "a": 3.2,
+    "b": 3.2,
+    "pass": true
+   },
+   {
+    "check": "Matrix Maui condo RAM-definition reproduces published 12.1",
+    "a": 12.1,
+    "b": 12.1,
+    "pass": true
+   }
+  ],
+  "checks_summary": {
+   "total": 64,
+   "passed": 57,
+   "unexpected_failures": []
+  }
+ },
+ "verification": {
+  "verified": "2026-10-09",
+  "corrections": [
+   "Kauai and Hawaii Island September 2026 board figures are published (added as results.c_kauai_hawaii_island.board_sep_2026); the builder's gaps 1, 2 and 4 are superseded.",
+   "results.d_title_guaranty_rsr.aug_2026.*.ytd_jan_sep_2026 renamed ytd_jan_aug_2026 (it holds the August editions' Jan–Aug YTD).",
+   "Hawaii Island Aug YTD houses 1,335 at $564,000 is Fidelity/HIS; Title Guaranty statewide prints 1,336 at $563,000.",
+   "Title Guaranty first prints are revised in later charts (for example Hawaii SF Aug 150 to 155); prefer board figures for provisional monthly rolls.",
+   "HBR page references are printed page numbers (PDF page = printed + 1).",
+   "Oahu September figures come from the HBR-authored report as posted on oahure.com on 2026-10-06; HBR's own channels had not posted it as of 2026-10-09. The August mirror copy was numerically identical to HBR's own copy."
+  ]
+ }
+}

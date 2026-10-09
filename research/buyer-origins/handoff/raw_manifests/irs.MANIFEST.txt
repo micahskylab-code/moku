@@ -1,0 +1,20 @@
+# IRS SOI migration 2023-24 availability probe. Files are untrusted HTML; never executed.
+# file | url | http_status | download_time_utc(mtime) | bytes | sha256
+probe_countyinflow2324_GET.html | https://www.irs.gov/pub/irs-soi/countyinflow2324.csv | 404 (IRS "page not found" HTML, not CSV) | 2026-10-08T06:00:47Z | 85741 | 4146c7732dbfdbc8e03c67e098c8f5147c9b0975fce48a0d3981c9c2c85de22f
+probe_soi-tax-stats-migration-data-2022-2023.html | https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023 | 200 | 2026-10-08T06:00:55Z | 116738 | 6365e24af4e5d00ccfbd3572e52309b55c05d096d98984b23917e9f96bfa9b3e
+probe_soi-tax-stats-migration-data-2023-2024.html | https://www.irs.gov/statistics/soi-tax-stats-migration-data-2023-2024 | 404 (IRS "page not found" HTML) | 2026-10-08T05:59:46Z | 85765 | 2edc102362cbcc77d18844fa1057dd671d98b01257c70b0028d07fb180f1948e
+probe_soi-tax-stats-migration-data.html | https://www.irs.gov/statistics/soi-tax-stats-migration-data | 200 | 2026-10-08T05:59:45Z | 125406 | 0469cad7be9fe00f93844ca8380df4695b6d2e4c917ab5c9a4b5dc8f84d7108e
+probe_soi-tax-stats-whats-new.html | https://www.irs.gov/statistics/soi-tax-stats-whats-new | 200 | 2026-10-08T06:00:48Z | 319519 | 6bcf0577051b213abdb9125eecf068c49e21d26be95c6ac45688884638c98d9a
+# HEAD-only probes (no body saved), 2026-10-08T06:01Z:
+#   404 text/html; charset=UTF-8 len=85745 lm=Thu, 08 Oct 2026 06:01:18 GMT 2324inpublicmigdoc.pdf
+#   404 text/html; charset=UTF-8 len=85741 lm=Thu, 08 Oct 2026 04:46:28 GMT stateoutflow2324.csv
+#   404 text/html; charset=UTF-8 len=85739 lm=Thu, 08 Oct 2026 04:12:51 GMT stateinflow2324.csv
+#   404 text/html; charset=UTF-8 len=85743 lm=Thu, 08 Oct 2026 04:46:28 GMT countyoutflow2324.csv
+#   404 text/html; charset=UTF-8 len=85741 lm=Thu, 08 Oct 2026 04:46:28 GMT countyinflow2324.csv
+#   404 text/html; charset=UTF-8 len=85743 lm=Thu, 08 Oct 2026 06:01:20 GMT 2324migrationdata.zip
+#   200 application/pdf len=431090 lm=Thu, 19 Mar 2026 11:10:52 GMT 2223inpublicmigdoc.pdf
+#   200 text/csv len= lm=Thu, 19 Mar 2026 11:11:23 GMT stateoutflow2223.csv
+#   200 text/csv len= lm=Thu, 19 Mar 2026 11:11:22 GMT stateinflow2223.csv
+#   200 text/csv len= lm=Thu, 19 Mar 2026 11:11:21 GMT countyoutflow2223.csv
+#   200 text/csv len= lm=Thu, 19 Mar 2026 11:11:21 GMT countyinflow2223.csv
+#   404 text/html; charset=UTF-8 len=85743 lm=Thu, 08 Oct 2026 06:01:21 GMT 2223migrationdata.zip

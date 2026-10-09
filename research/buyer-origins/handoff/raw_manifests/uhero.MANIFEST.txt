@@ -1,0 +1,10 @@
+# MANIFEST for raw/uhero  (KEY=uhero)
+# file | url | downloaded_utc | bytes | sha256
+TheHawaiiHousingFactbook2026.pdf | https://uhero.hawaii.edu/wp-content/uploads/2026/05/TheHawaiiHousingFactbook2026.pdf?v=1778103398 | 2026-10-08T05:52:57Z | 26399862 | dcb61aa5c7ffa0cf47c3902617b6b1afc33b78dfdc5c3b46bd24fed2337291f3
+TheHawaiiHousingFactbook2026_DataBook.pdf | https://uhero.hawaii.edu/wp-content/uploads/2026/05/TheHawaiiHousingFactbook2026_DataBook.pdf?v=1778091530 | 2026-10-08T05:52:58Z | 24902628 | d68ff6656e51c5f6b221407d3f86724565f4183067fbc3db8f56fe1a4f8203cb
+cat_housing.html | https://uhero.hawaii.edu/category/housing/ | 2026-10-08T05:52:44Z | 199642 | 6fa42f6bbe47f4b9527343e32be66ebee98a91663e1fc057900014813eb83a5f
+factbook2026_page.html | https://uhero.hawaii.edu/the-hawaii-housing-factbook-2026/ | 2026-10-08T05:52:51Z | 390801 | 40c178769ba416fc80c4ee1752fba000afe5281eebe3b76eaa487057b537da3b
+search_factbook.html | https://uhero.hawaii.edu/?s=factbook | 2026-10-08T05:52:45Z | 414132 | 7cbd64e573b0a565f61740fb3c142d646ccd3fddafb4dd35d5a1ab661fe5b2a1
+uhero_home.html | https://uhero.hawaii.edu/ | 2026-10-08T05:52:35Z | 415894 | 1fcee927578e96c5a6277b5f60afb849808b6fdf38d7234c654bd0d0e7f3f10c
+wp_media_2026_05.json | https://uhero.hawaii.edu/wp-json/wp/v2/media?after=2026-04-15T00:00:00&before=2026-07-15T00:00:00&per_page=100 | 2026-10-08T05:54:50Z | 610795 | adb64ecb29c58044ad5c9e88218697d79150a7ca241c061afe3a2c0c6658a450
+wp_media_search_factbook.json | https://uhero.hawaii.edu/wp-json/wp/v2/media?search=factbook&per_page=100 | 2026-10-08T05:54:50Z | 243416 | f8b2f995bdf9e4d9a04e706d948cea89192c537b9b1a58c06d7f220f68b8e3e7

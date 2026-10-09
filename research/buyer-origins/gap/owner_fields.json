@@ -1,0 +1,1231 @@
+{
+ "key": "owner_fields",
+ "title": "Owner mailing-address data for Hawaii County and Kauai County - availability search, request guide, and partial public aggregates",
+ "generated_utc": "2026-10-08T19:17:40Z",
+ "status": {
+  "hawaii_county": "NOT FOUND - no public layer/table with owner mailing city/state/ZIP/country; County RPT services are token-gated and the RPT website is behind a Cloudflare challenge (not bypassed).",
+  "kauai_county": "NOT FOUND - no public layer/table with owner mailing fields; County RPA website (qPublic) and kauai.gov are blocked (connection reset / Akamai 403); County ArcGIS layers carry first owner NAME only (OWN1).",
+  "statewide": "NOT FOUND - State GIS Program (geodata.hawaii.gov, files.hawaii.gov OP downloads, geoportal.hawaii.gov, opendata.hawaii.gov) publishes county parcel layers without owner mailing fields; its metadata marks the county OWNER field 'NOT TO BE DISTRIBUTED TO PUBLIC'.",
+  "consequence": "The Oahu/Maui-style aggregates (Hawaii vs mainland vs foreign; top states; mainland metros via ZIP3; foreign countries; by district/ZIP; condo vs not; 10+ parcel institutional addresses) CANNOT be computed for Hawaii County or Kauai from public sources. Only the partial indicators in 'partial_public_aggregates' are available."
+ },
+ "source": {
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/gap_owner_fields",
+  "manifest": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/gap_owner_fields/MANIFEST.txt",
+  "manifest_lines": 3000,
+  "manifest_sha256": "5d329a5f5af3606345ce454ab1d0da489270757408e80bc9d98a4f35b2c4f41f",
+  "scripts_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/gap_owner_fields",
+  "build_script": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/gap_owner_fields/build.py",
+  "partial_sources": {
+   "regrid_tract_out_of_state": {
+    "name": "Regrid (alex_regrid on ArcGIS Online) - 'Owned Out of State Shapefile' / web map 'Housing Stock Owned Out of State or Outside Zip Code (2023)'",
+    "url": "https://services7.arcgis.com/KzeiCaQsMoeCfoCq/arcgis/rest/services/Owned_Out_of_State_Shapefile/FeatureServer/0",
+    "item_ids": [
+     "a5e0ae5a0a5d4368b0ae4d30ad5e158f",
+     "ced70e68885d4e55ad88d5660f920f59"
+    ],
+    "access_information": "Regrid.com",
+    "data_last_edit_utc": "2024-03-02",
+    "vintage": "Regrid parcel data, median county vintage September 2023 (per item description)",
+    "method_per_publisher": "Residential parcels with USPS RDI = 'Y' and >= 1 building; tax-bill mailing state (mail_state2) vs property state; mailing ZIP vs situs ZIP; grouped by census tract.",
+    "records_pulled": "376 rows matching census LIKE '15%' (372 valid 11-digit Hawaii tract GEOIDs; 4 malformed non-Hawaii IDs dropped: 15700, 15800, 1500, 15900); attributes only, no geometry"
+   },
+   "kauai_vacation_rental_ownership_2021": {
+    "name": "County of Kauai GIS - VAC_RENTAL_OWNERSHIP ('2021 VACATION RENTAL OWNERSHIP')",
+    "url": "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/VAC_RENTAL_OWNERSHIP/FeatureServer/3",
+    "item_id": "2b40c358e0f14d9e81215f18d33c8d53",
+    "data_last_edit_utc": "2021-06-03",
+    "pubdate_field": "12/16/20",
+    "method": "server-side groupBy counts of KAUAIOWN / HIOWN flags (no records downloaded)"
+   },
+   "kauai_llc_owner_tax_type_2025": {
+    "name": "County of Kauai GIS - COK_2025_LLC_OWNER_TAX_TYPE ('Housing Agency LLC Tax Type Review')",
+    "url": "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/COK_2025_LLC_OWNER_TAX_TYPE/FeatureServer/10",
+    "item_id": "f89e715e49804602990f2ae7d703f6b0",
+    "data_last_edit_utc": "2025-11-20",
+    "tax_year_field": 2025,
+    "method": "server-side groupBy counts by TAXCLASS / TYPE / ZONE (no records downloaded)"
+   },
+   "tract_to_district": "Tract centroid (returnCentroid from the Regrid layer) point-in-polygon against State GIS 'TMK Zones' (https://geodata.hawaii.gov/arcgis/rest/services/ParcelsZoning/MapServer/27), one query per tract."
+  }
+ },
+ "search_log": {
+  "county_arcgis_online_orgs": {
+   "hawaii_county": {
+    "org_id": "C2LPusZs5OXNGFDn",
+    "portal": "hawaiicountygis.maps.arcgis.com",
+    "public_items": 734,
+    "item_types": {
+     "Feature Service": 222,
+     "Image": 146,
+     "PDF": 96,
+     "Web Map": 64,
+     "Hub Page": 61,
+     "Form": 48,
+     "Dashboard": 26,
+     "StoryMap": 14,
+     "Web Mapping Application": 13,
+     "Web Experience": 12,
+     "Microsoft Word": 10,
+     "Image Service": 9,
+     "Group Layer": 5,
+     "Hub Site Application": 3,
+     "CSV": 3,
+     "GeoJson": 1,
+     "Web Scene": 1
+    },
+    "services_schema_scanned": 222,
+    "layers_and_tables_scanned": 272,
+    "layers_with_mailing_fields": [
+     {
+      "service": "20240601 Hilo Prep Fair ICS 205A Communications List_form",
+      "layer": "survey",
+      "fields": [
+       "e_mail_address"
+      ],
+      "verdict": "not an owner roll (Survey123 form / event registration / emergency-management table)"
+     }
+    ],
+    "owner_bearing_layers": "cohRPT/cohRPT2026 'County of Hawaii Properties as of April 2026' (MajorOwner, BigstOwner - names only); COUNTY-OWNED ... April 2025 view (owner, majorowner, bigstowner); Address_Points (situs TMK + ZIPCODE only); cohParcels views (OBJECTID, Name only). None has mailing street/city/state/ZIP/country."
+   },
+   "kauai_county": {
+    "org_id": "0DaVqrPt2eyXUS9g",
+    "portal": "kauaigis.maps.arcgis.com",
+    "public_items": 1622,
+    "item_types": {
+     "Feature Service": 591,
+     "Web Map": 264,
+     "Web Mapping Application": 224,
+     "PDF": 99,
+     "Image": 83,
+     "Shapefile": 69,
+     "Code Attachment": 64,
+     "Feature Collection": 53,
+     "Form": 46,
+     "Map Service": 25,
+     "StoryMap": 15,
+     "Service Definition": 14,
+     "Web Experience": 9,
+     "Hub Site Application": 8,
+     "Dashboard": 8,
+     "Vector Tile Service": 6,
+     "Image Service": 6,
+     "Hub Initiative": 6,
+     "Compact Tile Package": 5,
+     "File Geodatabase": 5,
+     "Hub Page": 4,
+     "StoryMap Theme": 4,
+     "Project Package": 3,
+     "Scene Service": 3,
+     "QuickCapture Project": 2,
+     "WFS": 2,
+     "Layer Package": 1,
+     "Web Scene": 1,
+     "Mobile Map Package": 1,
+     "CAD Drawing": 1
+    },
+    "services_schema_scanned": 616,
+    "layers_and_tables_scanned": 911,
+    "layers_with_mailing_fields": [
+     {
+      "service": "COK AF Final",
+      "layer": "Kauai_Arrival_Form_Final",
+      "fields": [
+       "TOWNCITY0",
+       "TOWNCITY1",
+       "TOWNCITY2",
+       "TOWNCITY3"
+      ],
+      "verdict": "not an owner roll (Survey123 form / event registration / emergency-management table)"
+     },
+     {
+      "service": "EKCCP Comment Form_form",
+      "layer": "survey",
+      "fields": [
+       "mailing_list"
+      ],
+      "verdict": "not an owner roll (Survey123 form / event registration / emergency-management table)"
+     },
+     {
+      "service": "COVID-19 Mitigation Protocols Submitted for Professional Organized Events_fieldworker",
+      "layer": "survey",
+      "fields": [
+       "mailing_address"
+      ],
+      "verdict": "not an owner roll (Survey123 form / event registration / emergency-management table)"
+     }
+    ],
+    "owner_bearing_layers": "TY26_PropertyTaxData, Parcels_and_CPRs, ALL_PARCELS_CPRS, Parcels, East_Kauai_Parcels_Tax_Information_2023, MktValChange_19to24, COK_2025_LLC_OWNER_TAX_TYPE, VAC_RENTAL_OWNERSHIP (OWN1 = first owner name only). CutOff_Properties / CutOff_WithLIVUNIT / Kukuiula_Area_NBHD_Codes carry CITYNAME/ZIP1 = SITUS (property) address fields with ADRNO/ADRSTR, not mailing. PermitTest ADDR_* = building-permit project address. Survey123 damage-assessment forms collect respondent addresses (not owner roll; not used)."
+   }
+  },
+  "county_servers_and_sites": [
+   {
+    "url": "https://gis.hawaiicounty.gov/arcgis/rest/services",
+    "result": "200 (ArcGIS Server 11.5). Folders RPT, Planning_TaxMapping, Planning, Planning_LRP, OHCD, Civil_Defense, Imagery, Public_Works, Public_Works_Engineering, Public_Works_Highways -> error 499 'Token Required'. Public folders Hosted (cohParcels_prod_pa11_VIEW: objectid/name/globalid; Zoning2; State_Maintained_Roads; a survey), DIT, Utilities, Wastewater, Public_Works_Traffic contain no owner/mailing layers."
+   },
+   {
+    "url": "https://gis.hawaiicounty.gov/server/rest/services and /portal/sharing/rest",
+    "result": "HTTP 500"
+   },
+   {
+    "url": "https://geoportal.hawaiicounty.gov/ , https://maps.hawaiicounty.gov/",
+    "result": "proxy tunnel/CONNECT failure (not reachable from this environment)"
+   },
+   {
+    "url": "https://www.hawaiipropertytax.com/ (Hawaii County RPT; historically hosts owner/mailing downloads)",
+    "result": "HTTP 403 'cf-mitigated: challenge' (Cloudflare JS challenge) - not bypassed"
+   },
+   {
+    "url": "https://qpublic.schneidercorp.com/Application.aspx?App=HawaiiCountyHI and ?App=KauaiCountyHI (per-parcel record pages, linked from qpub_link/LINKQ fields)",
+    "result": "HTTP 403 Cloudflare challenge - not bypassed (and per-parcel scraping would not be appropriate anyway)"
+   },
+   {
+    "url": "https://www.kauaipropertytax.com/",
+    "result": "connection reset by peer"
+   },
+   {
+    "url": "https://www.kauai.gov/Government/Departments-Agencies/Finance/Real-Property-Assessment",
+    "result": "HTTP 403 Akamai 'Access Denied'"
+   },
+   {
+    "url": "https://gis.kauai.gov/arcgis|server/rest/services, https://kauaigis.kauai.gov/arcgis/rest/services",
+    "result": "proxy tunnel failure (host not reachable)"
+   },
+   {
+    "url": "https://maps.kauai.gov/arcgis/rest/services",
+    "result": "HTTP 522 (Cloudflare origin timeout)"
+   },
+   {
+    "url": "Hub sites: kauai-open-data-kauaigis.hub.arcgis.com, county-of-kauai-long-range-planning-hub-1-KauaiGIS.hub.arcgis.com, hawaii-county-public-works-hawaiicountygis.hub.arcgis.com, hawaii-county-civil-defense-agency-hawaiicountygis.hub.arcgis.com (api/search/v1, q = owner, mailing, parcel, tmk, tax, real property, assessment)",
+    "result": "No dataset with owner mailing fields. Kauai hub lists 'Parcels and CPRs HUB' (OWN1 only), 'PARCEL AND CPR VIEWER', '2026 Property Tax Classifications' app; Hawaii County hubs list only Hub pages."
+   }
+  ],
+  "statewide": [
+   {
+    "url": "https://geodata.hawaii.gov/arcgis/rest/services (all folders/services, layer schemas scanned)",
+    "result": "ParcelsZoning/5 'Hawaii County Parcels' fields: tmk, cty_tmk, majorowner, land/bldg values+exemptions, pittcode, homeowner, nhoodcode, acres, qpub_link (no mailing). ParcelsZoning/9 'Kauai County Parcels': owner (name), alt_name, taxclass, restrict3, cdomstr, type, taxyr (no mailing). ParcelsZoning/25 'Statewide TMKs': geometry/TMK only. No layer in any folder has owner mailing fields (only facility address layers such as hospitals, Brightfields sites)."
+   },
+   {
+    "url": "https://planning.hawaii.gov/gis/download-gis-data-expanded/ -> files.hawaii.gov/dbedt/op/gis/data/hawtmk.shp.zip (27.6 MB, Last-Modified 2026-06-03), kauctytmk.shp.zip (9.3 MB), niparcels.pdf",
+    "result": "hawtmk.dbf 135,718 records; fields TMK, TMK_txt, cty_tmk, ZONE, SECTION, PLAT, PARCEL, MajorOwner, LandValue, LandExempt, BldgValue, BldgExempt, PittCode, Homeowner, NHoodCode, TaxAcres, GISAcres, qpub_link. kauctytmk.dbf 25,119 records; fields TMK, COTMK, PARID, ZONE..PARCEL, CDOMSTR, TYPE, OWNER, ALT_NAME, TAXCLASS, RESTRICT3, TAXACRES, GISACRES, TAXYR, qpub_link. Metadata (niparcels.pdf, 'Neighbor Island Parcels as of May 2026'; Hawaii County update 4/27/26, Kauai 4/28/26) lists 'OWNER  Owner Name (NOT TO BE DISTRIBUTED TO PUBLIC)'. No mailing fields in either."
+   },
+   {
+    "url": "https://files.hawaii.gov/dbedt/op/gis/data/ (directory listing)",
+    "result": "HTTP 403 (listing disabled)"
+   },
+   {
+    "url": "https://geoportal.hawaii.gov/api/search/v1 (q = owner, mailing, parcel, tmk, tax, real property, assessment)",
+    "result": "Only the geodata.hawaii.gov parcel/ownership layers above (Government Land Ownership, Parcels - Hawaii County / County of Kauai / Statewide, DoD leases)."
+   },
+   {
+    "url": "https://opendata.hawaii.gov/api/3/action/package_search (q = owner, parcel, real property tax)",
+    "result": "Same Office of Planning and Sustainability layers; no owner mailing dataset."
+   },
+   {
+    "url": "https://api.us.socrata.com/api/catalog/v1 (q = 'hawaii county property owner', 'kauai property')",
+    "result": "No Hawaii County/Kauai property-owner datasets (only campaign-finance and mainland assessor data)."
+   }
+  ],
+  "arcgis_online_keyword_searches": {
+   "queries": [
+    "Hawaii County parcels owner",
+    "Hawaii County parcels",
+    "Hawaii County TMK",
+    "Hawaii County real property tax",
+    "Hawaii County tax parcels",
+    "Big Island parcels",
+    "Hawaii Island parcels",
+    "Hawaii Island TMK owner",
+    "Kauai parcels",
+    "Kauai parcels owner",
+    "Kauai TMK",
+    "Kauai real property tax",
+    "Kauai County tax parcels",
+    "owner mailing address Hawaii",
+    "mailing address parcels Hawaii",
+    "Hawaii statewide parcels",
+    "Hawaii parcels owner",
+    "statewide TMK parcels",
+    "Hawaii TMK owner",
+    "Puna parcels",
+    "Kona parcels",
+    "Leilani Estates parcels",
+    "Kilauea eruption parcels",
+    "lower Puna parcels owner",
+    "Hawaii absentee owners",
+    "out of state owners Hawaii",
+    "Hawaii parcel owner zip",
+    "Hawaii real property assessment",
+    "Hawaii RPT parcels",
+    "cohRPT",
+    "Hawaii County RPAD",
+    "iasWorld Hawaii",
+    "Hawaii property tax mailing",
+    "Kauai owner address",
+    "Hawaii County owner address",
+    "TMK mailing",
+    "parcels mailing address owner state zip Hawaii",
+    "Hawaii parcel data owner",
+    "Hawaii housing parcels owner",
+    "Hawaii vacation rental owners",
+    "Hawaii County vacation rental",
+    "Kauai vacation rental owners",
+    "Hawaii Island land ownership",
+    "Hawaii land ownership",
+    "Hawaii landowners",
+    "Kauai landowners",
+    "Hawaii County landowners",
+    "Hawaii wildfire parcels",
+    "Hawaii County fire parcels owner",
+    "Waikoloa parcels",
+    "Hilo parcels",
+    "Kauai TMK owner address",
+    "Hawaii parcels 2025",
+    "Hawaii parcels 2026",
+    "Hawaii parcels 2024",
+    "regrid Hawaii",
+    "Hawaii LLC owner parcels",
+    "Hawaii foreign owners",
+    "Hawaii nonresident owners",
+    "fullowner",
+    "haitmk",
+    "hawtmk",
+    "kautmk",
+    "mautmk",
+    "hawaiitmk",
+    "kauaitmk",
+    "COMAILADRS",
+    "MAILSTADRS",
+    "tmk fullowner",
+    "tmk owner",
+    "TMK_owner",
+    "owner mailing",
+    "mailing address",
+    "hawaii tmk 2025",
+    "hawaii tmk 2026",
+    "hawaii tmk 2024",
+    "hawaii tmk 2023",
+    "kauai tmk 2024",
+    "kauai tmk 2025",
+    "cotmk",
+    "Hawaii_County_Parcels",
+    "Hawaii County Parcels 2020",
+    "hawaii county parcels 2024",
+    "hawaii county parcels 2025",
+    "BigstOwner",
+    "MajorOwner",
+    "OWN1 kauai",
+    "kauai parcels 2025",
+    "kauai parcels 2026",
+    "cohTMK",
+    "cohParcels",
+    "OwnerbyMail",
+    "Ownership by Mailing Address",
+    "owner by mail",
+    "owner residence Hawaii",
+    "owner state Hawaii parcels",
+    "nonresident ownership Kauai",
+    "Hawaii County owner state",
+    "owner zip code Kauai",
+    "property owners by state Hawaii",
+    "out-of-state property owners",
+    "STVR Hawaii County",
+    "short-term vacation rental Hawaii County",
+    "vacation rental Hawaii Island",
+    "VAC_RENTAL_OWNERSHIP",
+    "TVR kauai",
+    "nonconforming use certificate kauai",
+    "owner:alex_regrid",
+    "regrid out of state"
+   ],
+   "unique_services_schema_scanned": 1359,
+   "result": "Third-party layers with owner MAILING fields exist only for Maui County (e.g. PBR 'Hana_Basemap' mautmk_2023_04_fullowner; UH student Lahaina layers; Maui County staff copies of the parcel fabric) and Oahu (HoLIS). Third-party Hawaii County / Kauai parcel copies (State DLNR TMK_Hawaii/TMK_Kauai, DBEDT_PuuWaaWaa, School_Borders_Hawaii, South Kona scenarios, PBR kautmk_2018_5mile, UH Hawaii_County_Parcels_2020, jtsmolinski/509rbssga24 homeowner parcels) carry owner NAME / MajorOwner / homeowner only. Esri Living Atlas has no public owner-mailing parcel layer for Hawaii. The only public non-county source with a mailing-address-based measure is Regrid's tract-level aggregate (used below; it has no Kauai tracts)."
+  }
+ },
+ "how_to_request": {
+  "hawaii_county": {
+   "office": "County of Hawaii, Department of Finance - Real Property Tax Office (Hilo and Kona); GIS: County IT/Planning GIS (owner of the token-gated gis.hawaiicounty.gov RPT and Planning_TaxMapping services).",
+   "ask_for": "Bulk export of the current certified/working real property roll owner table with the tax-bill MAILING address split into fields (mailing street, city, state, ZIP5, country, care-of), keyed by 12/13-digit TMK incl. CPR unit, plus tax class (PittCode labels) and homeowner-exemption flag; or (privacy-preserving alternative) counts by TMK zone/section x mailing state/country x tax class x CPR-unit flag. Alternatively request a token / public view of the RPT folder services on gis.hawaiicounty.gov.",
+   "note": "hawaiipropertytax.com historically offered downloadable roll/owner files; it is behind a Cloudflare challenge from this environment, so a person with a normal browser may be able to download them directly (check the site's terms)."
+  },
+  "kauai_county": {
+   "office": "County of Kauai, Department of Finance - Real Property Assessment Division (Lihue); GIS: KauaiGIS (org 0DaVqrPt2eyXUS9g), which already publishes TY26_PropertyTaxData with OWN1.",
+   "ask_for": "Same fields as above from the iasWorld owner/address tables (OWNDAT-style: taxbill city/state/country/zip) for tax year 2026/2027 keyed by PARID incl. CPR_UNIT; or ask KauaiGIS to add mailing state/country/ZIP5 (not street) to TY26_PropertyTaxData, or to publish an 'ownership by mailing address' aggregate like Maui County's OwnerbyMail_2022/2023 layers. The 2021 VAC_RENTAL_OWNERSHIP layer shows the County already derives Kauai-owner / other-Hawaii-owner flags, so a county-wide version of those flags is a realistic ask.",
+   "note": "kauaipropertytax.com (qPublic) reset the connection and kauai.gov returned Akamai 403 from this environment."
+  },
+  "fallback_commercial": "Regrid, ATTOM, CoreLogic/Cotality and similar vendors license parcel files with mailing fields for both counties (not used; licensing required)."
+ },
+ "partial_public_aggregates": {
+  "regrid_tract_out_of_state_circa_2023": {
+   "caveats": [
+    "THIRD-PARTY, ~2023 vintage, not the county roll; definition = residential (USPS RDI 'Y') parcels with >= 1 building; 'out of state' = tax-bill mailing state != HI. Whether foreign addresses are counted as out-of-state is not documented (likely yes if mail_state is blank).",
+    "Kauai: the layer has ZERO Kauai (15007) tracts - no Kauai estimate is possible from it.",
+    "Hawaii County: only 35 tracts / 23277 homes are present. Zones with no tracts: Zone 3 - North Hilo, Zone 9 - Kau. Puna (zone 1) has 5 tracts with 771 homes vs 23139 improved parcels in cohRPT2026 (3% coverage). See coverage_homes_per_improved_parcel by zone. The county total is therefore NOT representative of the island.",
+    "Hawaii County parcels are 9-digit TMKs without CPR units, so condo units are not separate 'homes' in Regrid for Hawaii County (each condo lot counts once); no condo vs non-condo split is possible.",
+    "The layer's percent fields (peroutst/peroutzip/combo) are internally inconsistent (e.g. peroutzip = 1 - peroutst in some tracts); all shares here are recomputed from the count fields (outstate/homes; (outzip - outstate)/homes). outzip >= outstate held for all 372 Hawaii tracts, consistent with outzip counting all out-of-ZIP owners.",
+    "Tract-to-district assignment is by tract centroid; tracts straddling TMK zone lines are assigned wholly to one zone."
+   ],
+   "by_county": {
+    "Hawaii County": {
+     "tracts": 35,
+     "homes": 23277,
+     "owned_out_of_state": 2367,
+     "owned_in_state_outside_zip": 3145,
+     "share_out_of_state": 0.1017,
+     "share_in_state_outside_zip": 0.1351,
+     "flag_n_lt_20": false
+    },
+    "Honolulu (Oahu)": {
+     "tracts": 295,
+     "homes": 217037,
+     "owned_out_of_state": 15589,
+     "owned_in_state_outside_zip": 45980,
+     "share_out_of_state": 0.0718,
+     "share_in_state_outside_zip": 0.2119,
+     "flag_n_lt_20": false
+    },
+    "Kalawao": {
+     "tracts": 0,
+     "homes": 0,
+     "note": "no tracts for this county in the Regrid layer"
+    },
+    "Kauai County": {
+     "tracts": 0,
+     "homes": 0,
+     "note": "no tracts for this county in the Regrid layer"
+    },
+    "Maui County": {
+     "tracts": 42,
+     "homes": 42699,
+     "owned_out_of_state": 10408,
+     "owned_in_state_outside_zip": 5129,
+     "share_out_of_state": 0.2438,
+     "share_in_state_outside_zip": 0.1201,
+     "flag_n_lt_20": false
+    }
+   },
+   "hawaii_county_by_tmk_zone": {
+    "1": {
+     "tracts": 5,
+     "homes": 771,
+     "owned_out_of_state": 166,
+     "owned_in_state_outside_zip": 77,
+     "share_out_of_state": 0.2153,
+     "share_in_state_outside_zip": 0.0999,
+     "flag_n_lt_20": false,
+     "label": "Zone 1 - Puna",
+     "improved_parcels_cohRPT2026": 23139,
+     "coverage_homes_per_improved_parcel": 0.0333
+    },
+    "2": {
+     "tracts": 11,
+     "homes": 10797,
+     "owned_out_of_state": 489,
+     "owned_in_state_outside_zip": 1197,
+     "share_out_of_state": 0.0453,
+     "share_in_state_outside_zip": 0.1109,
+     "flag_n_lt_20": false,
+     "label": "Zone 2 - South Hilo",
+     "improved_parcels_cohRPT2026": 17223,
+     "coverage_homes_per_improved_parcel": 0.6269
+    },
+    "3": {
+     "tracts": 0,
+     "homes": 0,
+     "flag_n_lt_20": true,
+     "label": "Zone 3 - North Hilo",
+     "improved_parcels_cohRPT2026": 967,
+     "coverage_homes_per_improved_parcel": 0.0
+    },
+    "4": {
+     "tracts": 2,
+     "homes": 383,
+     "owned_out_of_state": 40,
+     "owned_in_state_outside_zip": 71,
+     "share_out_of_state": 0.1044,
+     "share_in_state_outside_zip": 0.1854,
+     "flag_n_lt_20": false,
+     "label": "Zone 4 - Hamakua",
+     "improved_parcels_cohRPT2026": 2537,
+     "coverage_homes_per_improved_parcel": 0.151
+    },
+    "5": {
+     "tracts": 1,
+     "homes": 171,
+     "owned_out_of_state": 7,
+     "owned_in_state_outside_zip": 30,
+     "share_out_of_state": 0.0409,
+     "share_in_state_outside_zip": 0.1754,
+     "flag_n_lt_20": false,
+     "label": "Zone 5 - North Kohala",
+     "improved_parcels_cohRPT2026": 2321,
+     "coverage_homes_per_improved_parcel": 0.0737
+    },
+    "6": {
+     "tracts": 4,
+     "homes": 3503,
+     "owned_out_of_state": 518,
+     "owned_in_state_outside_zip": 353,
+     "share_out_of_state": 0.1479,
+     "share_in_state_outside_zip": 0.1008,
+     "flag_n_lt_20": false,
+     "label": "Zone 6 - South Kohala",
+     "improved_parcels_cohRPT2026": 6485,
+     "coverage_homes_per_improved_parcel": 0.5402
+    },
+    "7": {
+     "tracts": 10,
+     "homes": 6382,
+     "owned_out_of_state": 981,
+     "owned_in_state_outside_zip": 1047,
+     "share_out_of_state": 0.1537,
+     "share_in_state_outside_zip": 0.1641,
+     "flag_n_lt_20": false,
+     "label": "Zone 7 - North Kona",
+     "improved_parcels_cohRPT2026": 12417,
+     "coverage_homes_per_improved_parcel": 0.514
+    },
+    "8": {
+     "tracts": 2,
+     "homes": 1270,
+     "owned_out_of_state": 166,
+     "owned_in_state_outside_zip": 370,
+     "share_out_of_state": 0.1307,
+     "share_in_state_outside_zip": 0.2913,
+     "flag_n_lt_20": false,
+     "label": "Zone 8 - South Kona",
+     "improved_parcels_cohRPT2026": 3643,
+     "coverage_homes_per_improved_parcel": 0.3486
+    },
+    "9": {
+     "tracts": 0,
+     "homes": 0,
+     "flag_n_lt_20": true,
+     "label": "Zone 9 - Kau",
+     "improved_parcels_cohRPT2026": 5068,
+     "coverage_homes_per_improved_parcel": 0.0
+    }
+   },
+   "hawaii_county_tracts": [
+    {
+     "tract_geoid": "15001021510",
+     "tmk_zone": "7",
+     "homes": 448,
+     "owned_out_of_state": 169,
+     "share_out_of_state": 0.3772,
+     "share_in_state_outside_zip": 0.0737,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021708",
+     "tmk_zone": "6",
+     "homes": 823,
+     "owned_out_of_state": 266,
+     "share_out_of_state": 0.3232,
+     "share_in_state_outside_zip": 0.0911,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021108",
+     "tmk_zone": "1",
+     "homes": 126,
+     "owned_out_of_state": 34,
+     "share_out_of_state": 0.2698,
+     "share_in_state_outside_zip": 0.0873,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021608",
+     "tmk_zone": "7",
+     "homes": 422,
+     "owned_out_of_state": 102,
+     "share_out_of_state": 0.2417,
+     "share_in_state_outside_zip": 0.1422,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021101",
+     "tmk_zone": "1",
+     "homes": 593,
+     "owned_out_of_state": 126,
+     "share_out_of_state": 0.2125,
+     "share_in_state_outside_zip": 0.0911,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021014",
+     "tmk_zone": "1",
+     "homes": 22,
+     "owned_out_of_state": 4,
+     "share_out_of_state": 0.1818,
+     "share_in_state_outside_zip": 0.0909,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021607",
+     "tmk_zone": "7",
+     "homes": 949,
+     "owned_out_of_state": 171,
+     "share_out_of_state": 0.1802,
+     "share_in_state_outside_zip": 0.1222,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021300",
+     "tmk_zone": "8",
+     "homes": 950,
+     "owned_out_of_state": 149,
+     "share_out_of_state": 0.1568,
+     "share_in_state_outside_zip": 0.3095,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021502",
+     "tmk_zone": "7",
+     "homes": 643,
+     "owned_out_of_state": 99,
+     "share_out_of_state": 0.154,
+     "share_in_state_outside_zip": 0.3437,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021511",
+     "tmk_zone": "7",
+     "homes": 160,
+     "owned_out_of_state": 23,
+     "share_out_of_state": 0.1437,
+     "share_in_state_outside_zip": 0.3187,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021606",
+     "tmk_zone": "7",
+     "homes": 363,
+     "owned_out_of_state": 50,
+     "share_out_of_state": 0.1377,
+     "share_in_state_outside_zip": 0.1377,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021707",
+     "tmk_zone": "6",
+     "homes": 1129,
+     "owned_out_of_state": 135,
+     "share_out_of_state": 0.1196,
+     "share_in_state_outside_zip": 0.0868,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021512",
+     "tmk_zone": "7",
+     "homes": 1053,
+     "owned_out_of_state": 125,
+     "share_out_of_state": 0.1187,
+     "share_in_state_outside_zip": 0.1235,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020100",
+     "tmk_zone": "2",
+     "homes": 276,
+     "owned_out_of_state": 31,
+     "share_out_of_state": 0.1123,
+     "share_in_state_outside_zip": 0.163,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001022000",
+     "tmk_zone": "4",
+     "homes": 90,
+     "owned_out_of_state": 10,
+     "share_out_of_state": 0.1111,
+     "share_in_state_outside_zip": 0.1333,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021513",
+     "tmk_zone": "7",
+     "homes": 1464,
+     "owned_out_of_state": 153,
+     "share_out_of_state": 0.1045,
+     "share_in_state_outside_zip": 0.1503,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021605",
+     "tmk_zone": "7",
+     "homes": 328,
+     "owned_out_of_state": 34,
+     "share_out_of_state": 0.1037,
+     "share_in_state_outside_zip": 0.2713,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021902",
+     "tmk_zone": "4",
+     "homes": 293,
+     "owned_out_of_state": 30,
+     "share_out_of_state": 0.1024,
+     "share_in_state_outside_zip": 0.2014,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021504",
+     "tmk_zone": "7",
+     "homes": 552,
+     "owned_out_of_state": 55,
+     "share_out_of_state": 0.0996,
+     "share_in_state_outside_zip": 0.1395,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020300",
+     "tmk_zone": "2",
+     "homes": 674,
+     "owned_out_of_state": 58,
+     "share_out_of_state": 0.0861,
+     "share_in_state_outside_zip": 0.1246,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020202",
+     "tmk_zone": "2",
+     "homes": 514,
+     "owned_out_of_state": 41,
+     "share_out_of_state": 0.0798,
+     "share_in_state_outside_zip": 0.1634,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021705",
+     "tmk_zone": "6",
+     "homes": 1049,
+     "owned_out_of_state": 80,
+     "share_out_of_state": 0.0763,
+     "share_in_state_outside_zip": 0.1173,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021706",
+     "tmk_zone": "6",
+     "homes": 502,
+     "owned_out_of_state": 37,
+     "share_out_of_state": 0.0737,
+     "share_in_state_outside_zip": 0.1135,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021015",
+     "tmk_zone": "1",
+     "homes": 14,
+     "owned_out_of_state": 1,
+     "share_out_of_state": 0.0714,
+     "share_in_state_outside_zip": 0.1429,
+     "flag_n_lt_20": true
+    },
+    {
+     "tract_geoid": "15001020500",
+     "tmk_zone": "2",
+     "homes": 685,
+     "owned_out_of_state": 43,
+     "share_out_of_state": 0.0628,
+     "share_in_state_outside_zip": 0.1664,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021107",
+     "tmk_zone": "1",
+     "homes": 16,
+     "owned_out_of_state": 1,
+     "share_out_of_state": 0.0625,
+     "share_in_state_outside_zip": 0.5,
+     "flag_n_lt_20": true
+    },
+    {
+     "tract_geoid": "15001021402",
+     "tmk_zone": "8",
+     "homes": 320,
+     "owned_out_of_state": 17,
+     "share_out_of_state": 0.0531,
+     "share_in_state_outside_zip": 0.2375,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020400",
+     "tmk_zone": "2",
+     "homes": 645,
+     "owned_out_of_state": 31,
+     "share_out_of_state": 0.0481,
+     "share_in_state_outside_zip": 0.1643,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020600",
+     "tmk_zone": "2",
+     "homes": 434,
+     "owned_out_of_state": 19,
+     "share_out_of_state": 0.0438,
+     "share_in_state_outside_zip": 0.0853,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020802",
+     "tmk_zone": "2",
+     "homes": 2254,
+     "owned_out_of_state": 96,
+     "share_out_of_state": 0.0426,
+     "share_in_state_outside_zip": 0.1029,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001021800",
+     "tmk_zone": "5",
+     "homes": 171,
+     "owned_out_of_state": 7,
+     "share_out_of_state": 0.0409,
+     "share_in_state_outside_zip": 0.1754,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020701",
+     "tmk_zone": "2",
+     "homes": 1219,
+     "owned_out_of_state": 47,
+     "share_out_of_state": 0.0386,
+     "share_in_state_outside_zip": 0.1157,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020900",
+     "tmk_zone": "2",
+     "homes": 1487,
+     "owned_out_of_state": 57,
+     "share_out_of_state": 0.0383,
+     "share_in_state_outside_zip": 0.1002,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020801",
+     "tmk_zone": "2",
+     "homes": 900,
+     "owned_out_of_state": 26,
+     "share_out_of_state": 0.0289,
+     "share_in_state_outside_zip": 0.0867,
+     "flag_n_lt_20": false
+    },
+    {
+     "tract_geoid": "15001020702",
+     "tmk_zone": "2",
+     "homes": 1709,
+     "owned_out_of_state": 40,
+     "share_out_of_state": 0.0234,
+     "share_in_state_outside_zip": 0.0743,
+     "flag_n_lt_20": false
+    }
+   ],
+   "validation_against_full_roll_counties": {
+    "county_level": {
+     "Oahu": {
+      "regrid_share_out_of_state_circa_2023": 0.0718,
+      "roll_2026_residential_class1_other_us_state": 0.0741,
+      "roll_2026_residential_class1_non_hawaii_total": 0.0851,
+      "regrid_homes": 217037,
+      "roll_residential_class1_parcels": 292764
+     },
+     "Maui County": {
+      "regrid_share_out_of_state_circa_2023": 0.2438,
+      "roll_2026_residential_other_us_state": 0.2777,
+      "roll_2026_residential_non_hawaii_total": 0.3059,
+      "regrid_homes": 42699,
+      "roll_residential_parcels": 64795
+     }
+    },
+    "zone_level": {
+     "Oahu": {
+      "1": {
+       "regrid_tracts": 36,
+       "regrid_homes": 19775,
+       "regrid_share_out_of_state": 0.0371,
+       "roll_parcels": 23211,
+       "roll_other_us_state": 0.0372,
+       "roll_non_hawaii_total": 0.0399,
+       "diff_pts_vs_roll_non_hawaii": -0.3,
+       "diff_pts_vs_roll_other_us_state": -0.0,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "2": {
+       "regrid_tracts": 62,
+       "regrid_homes": 51790,
+       "regrid_share_out_of_state": 0.1155,
+       "roll_parcels": 77616,
+       "roll_other_us_state": 0.1131,
+       "roll_non_hawaii_total": 0.1409,
+       "diff_pts_vs_roll_non_hawaii": -2.5,
+       "diff_pts_vs_roll_other_us_state": 0.2,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "3": {
+       "regrid_tracts": 39,
+       "regrid_homes": 28422,
+       "regrid_share_out_of_state": 0.0606,
+       "roll_parcels": 35901,
+       "roll_other_us_state": 0.0639,
+       "roll_non_hawaii_total": 0.0702,
+       "diff_pts_vs_roll_non_hawaii": -1.0,
+       "diff_pts_vs_roll_other_us_state": -0.3,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "4": {
+       "regrid_tracts": 27,
+       "regrid_homes": 21877,
+       "regrid_share_out_of_state": 0.0592,
+       "roll_parcels": 32450,
+       "roll_other_us_state": 0.0681,
+       "roll_non_hawaii_total": 0.0736,
+       "diff_pts_vs_roll_non_hawaii": -1.4,
+       "diff_pts_vs_roll_other_us_state": -0.9,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "5": {
+       "regrid_tracts": 7,
+       "regrid_homes": 2964,
+       "regrid_share_out_of_state": 0.1711,
+       "roll_parcels": 5608,
+       "roll_other_us_state": 0.1923,
+       "roll_non_hawaii_total": 0.198,
+       "diff_pts_vs_roll_non_hawaii": -2.7,
+       "diff_pts_vs_roll_other_us_state": -2.1,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "6": {
+       "regrid_tracts": 4,
+       "regrid_homes": 1910,
+       "regrid_share_out_of_state": 0.122,
+       "roll_parcels": 3153,
+       "roll_other_us_state": 0.1277,
+       "roll_non_hawaii_total": 0.1316,
+       "diff_pts_vs_roll_non_hawaii": -1.0,
+       "diff_pts_vs_roll_other_us_state": -0.6,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "7": {
+       "regrid_tracts": 9,
+       "regrid_homes": 4222,
+       "regrid_share_out_of_state": 0.041,
+       "roll_parcels": 5081,
+       "roll_other_us_state": 0.0395,
+       "roll_non_hawaii_total": 0.0459,
+       "diff_pts_vs_roll_non_hawaii": -0.5,
+       "diff_pts_vs_roll_other_us_state": 0.2,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "8": {
+       "regrid_tracts": 8,
+       "regrid_homes": 6238,
+       "regrid_share_out_of_state": 0.0694,
+       "roll_parcels": 12483,
+       "roll_other_us_state": 0.0878,
+       "roll_non_hawaii_total": 0.0948,
+       "diff_pts_vs_roll_non_hawaii": -2.5,
+       "diff_pts_vs_roll_other_us_state": -1.8,
+       "flag_n_lt_20": false,
+       "label": null
+      },
+      "9": {
+       "regrid_tracts": 89,
+       "regrid_homes": 71185,
+       "regrid_share_out_of_state": 0.0543,
+       "roll_parcels": 97261,
+       "roll_other_us_state": 0.0502,
+       "roll_non_hawaii_total": 0.055,
+       "diff_pts_vs_roll_non_hawaii": -0.1,
+       "diff_pts_vs_roll_other_us_state": 0.4,
+       "flag_n_lt_20": false,
+       "label": null
+      }
+     },
+     "Maui County": {
+      "1": {
+       "regrid_tracts": 1,
+       "regrid_homes": 11,
+       "regrid_share_out_of_state": 0.1818,
+       "roll_parcels": 2098,
+       "roll_other_us_state": 0.2904,
+       "roll_non_hawaii_total": 0.2932,
+       "diff_pts_vs_roll_non_hawaii": -11.1,
+       "diff_pts_vs_roll_other_us_state": -10.9,
+       "flag_n_lt_20": true,
+       "label": "Zone 1 - Hana district (East Maui)"
+      },
+      "2": {
+       "regrid_tracts": 12,
+       "regrid_homes": 11435,
+       "regrid_share_out_of_state": 0.2,
+       "roll_parcels": 20609,
+       "roll_other_us_state": 0.1939,
+       "roll_non_hawaii_total": 0.2171,
+       "diff_pts_vs_roll_non_hawaii": -1.7,
+       "diff_pts_vs_roll_other_us_state": 0.6,
+       "flag_n_lt_20": false,
+       "label": "Zone 2 - Makawao district (Upcountry/Paia/Haiku; includes Wailea-Makena, section 2-1)"
+      },
+      "3": {
+       "regrid_tracts": 19,
+       "regrid_homes": 21219,
+       "regrid_share_out_of_state": 0.1837,
+       "roll_parcels": 31835,
+       "roll_other_us_state": 0.2067,
+       "roll_non_hawaii_total": 0.2318,
+       "diff_pts_vs_roll_non_hawaii": -4.8,
+       "diff_pts_vs_roll_other_us_state": -2.3,
+       "flag_n_lt_20": false,
+       "label": "Zone 3 - Wailuku district (Wailuku/Kahului/Waikapu; includes Kihei, section 3-9)"
+      },
+      "4": {
+       "regrid_tracts": 7,
+       "regrid_homes": 7265,
+       "regrid_share_out_of_state": 0.4268,
+       "roll_parcels": 19765,
+       "roll_other_us_state": 0.523,
+       "roll_non_hawaii_total": 0.5527,
+       "diff_pts_vs_roll_non_hawaii": -12.6,
+       "diff_pts_vs_roll_other_us_state": -9.6,
+       "flag_n_lt_20": false,
+       "label": "Zone 4 - Lahaina district (West Maui; includes Lanai, section 4-9)"
+      },
+      "5": {
+       "regrid_tracts": 1,
+       "regrid_homes": 410,
+       "regrid_share_out_of_state": 0.3585,
+       "roll_parcels": 6142,
+       "roll_other_us_state": 0.2431,
+       "roll_non_hawaii_total": 0.2493,
+       "diff_pts_vs_roll_non_hawaii": 10.9,
+       "diff_pts_vs_roll_other_us_state": 11.5,
+       "flag_n_lt_20": false,
+       "label": "Zone 5 - Molokai"
+      }
+     },
+     "Oahu_summary": {
+      "zones_compared": 9,
+      "mean_abs_diff_pts_vs_roll_non_hawaii": 1.3,
+      "mean_abs_diff_pts_vs_roll_other_us_state": 0.7,
+      "homes_weighted_mean_diff_pts_vs_non_hawaii": -1.1,
+      "homes_weighted_mean_diff_pts_vs_other_us_state": -0.0,
+      "reading": "Regrid 'out of state' tracks the roll's OTHER-US-STATE share (foreign apparently excluded) closely on Oahu, but runs low on Maui, especially in condo-heavy zones (Lahaina, Kihei/Wailuku) where Regrid counts far fewer homes than the roll (condo units appear to be dropped by the residential/building filter). Expect the Hawaii County figures to understate non-Hawaii ownership in condo/resort areas (Kona, South Kohala)."
+     },
+     "Maui County_summary": {
+      "zones_compared": 5,
+      "mean_abs_diff_pts_vs_roll_non_hawaii": 8.2,
+      "mean_abs_diff_pts_vs_roll_other_us_state": 7.0,
+      "homes_weighted_mean_diff_pts_vs_non_hawaii": -5.2,
+      "homes_weighted_mean_diff_pts_vs_other_us_state": -2.7,
+      "reading": "Regrid 'out of state' tracks the roll's OTHER-US-STATE share (foreign apparently excluded) closely on Oahu, but runs low on Maui, especially in condo-heavy zones (Lahaina, Kihei/Wailuku) where Regrid counts far fewer homes than the roll (condo units appear to be dropped by the residential/building filter). Expect the Hawaii County figures to understate non-Hawaii ownership in condo/resort areas (Kona, South Kohala)."
+     }
+    }
+   }
+  },
+  "kauai_vacation_rentals_2021_owner_flags": {
+   "caveats": [
+    "County layer from 2021 (PUBDATE 12/16/20), vacation-rental class (CLASS = 2) records only; 1,029 records vs 3,974 TY26 vacation-rental-class records, so it is a subset (selection rule undocumented).",
+    "KAUAIOWN / HIOWN flag method is undocumented (presumably owner mailing address on Kauai / elsewhere in Hawaii). 'neither_flag' is therefore an UPPER-BOUND style proxy for non-Hawaii ownership, not a measured out-of-state share."
+   ],
+   "records": 1029,
+   "kauai_owner": 413,
+   "other_hawaii_owner": 44,
+   "neither_flag": 572,
+   "share_kauai_owner": 0.4014,
+   "share_other_hawaii_owner": 0.0428,
+   "share_neither_flag": 0.5559,
+   "multi_unit_complex_subset": {
+    "records": 80,
+    "by_flags": [
+     {
+      "n": 17,
+      "KAUAIOWN": 0,
+      "HIOWN": 0
+     },
+     {
+      "n": 60,
+      "KAUAIOWN": 1,
+      "HIOWN": 0
+     },
+     {
+      "n": 3,
+      "KAUAIOWN": 0,
+      "HIOWN": 1
+     }
+    ],
+    "flag_cells_lt_20": true
+   },
+   "records_with_cpr_unit_gt_0": {
+    "records": 194,
+    "kauai_owner": 93,
+    "other_hawaii_owner": 1,
+    "neither_flag": 100,
+    "cells_lt_20": [
+     "other_hawaii_owner"
+    ],
+    "note": "query where CPR_UNIT > 0 on layer 3"
+   },
+   "by_tmk_zone": {
+    "1": {
+     "label": "Waimea (West Kauai)",
+     "vr_records": 57,
+     "kauai_owner": 26,
+     "other_hawaii_owner": 4,
+     "neither_flag": 27,
+     "share_kauai_owner": 0.4561,
+     "share_other_hawaii_owner": 0.0702,
+     "share_neither_flag": 0.4737,
+     "flag_n_lt_20": false,
+     "cells_lt_20": [
+      "other_hawaii_owner"
+     ]
+    },
+    "2": {
+     "label": "Koloa (Poipu/Koloa/Kalaheo)",
+     "vr_records": 328,
+     "kauai_owner": 121,
+     "other_hawaii_owner": 7,
+     "neither_flag": 200,
+     "share_kauai_owner": 0.3689,
+     "share_other_hawaii_owner": 0.0213,
+     "share_neither_flag": 0.6098,
+     "flag_n_lt_20": false,
+     "cells_lt_20": [
+      "other_hawaii_owner"
+     ]
+    },
+    "3": {
+     "label": "Lihue",
+     "vr_records": 20,
+     "kauai_owner": 10,
+     "other_hawaii_owner": 1,
+     "neither_flag": 9,
+     "share_kauai_owner": 0.5,
+     "share_other_hawaii_owner": 0.05,
+     "share_neither_flag": 0.45,
+     "flag_n_lt_20": false,
+     "cells_lt_20": [
+      "kauai_owner",
+      "other_hawaii_owner",
+      "neither_flag"
+     ]
+    },
+    "4": {
+     "label": "Kawaihau (Kapaa/Wailua/Anahola)",
+     "vr_records": 143,
+     "kauai_owner": 92,
+     "other_hawaii_owner": 5,
+     "neither_flag": 46,
+     "share_kauai_owner": 0.6434,
+     "share_other_hawaii_owner": 0.035,
+     "share_neither_flag": 0.3217,
+     "flag_n_lt_20": false,
+     "cells_lt_20": [
+      "other_hawaii_owner"
+     ]
+    },
+    "5": {
+     "label": "Hanalei (North Shore/Princeville)",
+     "vr_records": 481,
+     "kauai_owner": 164,
+     "other_hawaii_owner": 27,
+     "neither_flag": 290,
+     "share_kauai_owner": 0.341,
+     "share_other_hawaii_owner": 0.0561,
+     "share_neither_flag": 0.6029,
+     "flag_n_lt_20": false,
+     "cells_lt_20": []
+    }
+   }
+  },
+  "kauai_llc_owned_parcels_2025": {
+   "caveats": [
+    "County Housing Agency review layer (tax year 2025): parcels/CPR units whose first owner is an LLC. Ownership TYPE, not mailing location. Class totals used for the approximate share come from TY26_PropertyTaxData (tax year 2026), so shares are approximate."
+   ],
+   "records": 2584,
+   "by_type": {
+    "CPR Unit": 838,
+    "TMK Parcel": 1746
+   },
+   "by_tmk_zone": {
+    "1": 105,
+    "2": 708,
+    "3": 392,
+    "4": 607,
+    "5": 772
+   },
+   "by_tax_class": {
+    "Non-Owner-Occupied Residential": {
+     "llc_owned_records": 935,
+     "ty26_class_records": 9858,
+     "llc_share_of_class_approx": 0.0948,
+     "flag_n_lt_20": false
+    },
+    "Agricultural": {
+     "llc_owned_records": 758,
+     "ty26_class_records": 2872,
+     "llc_share_of_class_approx": 0.2639,
+     "flag_n_lt_20": false
+    },
+    "Commercial": {
+     "llc_owned_records": 279,
+     "ty26_class_records": 1235,
+     "llc_share_of_class_approx": 0.2259,
+     "flag_n_lt_20": false
+    },
+    "Vacation Rental": {
+     "llc_owned_records": 270,
+     "ty26_class_records": 3974,
+     "llc_share_of_class_approx": 0.0679,
+     "flag_n_lt_20": false
+    },
+    "Industrial": {
+     "llc_owned_records": 173,
+     "ty26_class_records": 782,
+     "llc_share_of_class_approx": 0.2212,
+     "flag_n_lt_20": false
+    },
+    "Owner-Occupied": {
+     "llc_owned_records": 83,
+     "ty26_class_records": 11702,
+     "llc_share_of_class_approx": 0.0071,
+     "flag_n_lt_20": false
+    },
+    "Conservation": {
+     "llc_owned_records": 52,
+     "ty26_class_records": 442,
+     "llc_share_of_class_approx": 0.1176,
+     "flag_n_lt_20": false
+    },
+    "Hotel and Resort": {
+     "llc_owned_records": 25,
+     "ty26_class_records": 3597,
+     "llc_share_of_class_approx": 0.007,
+     "flag_n_lt_20": false
+    },
+    "Owner-Occupied Mixed Use": {
+     "llc_owned_records": 9,
+     "ty26_class_records": 2073,
+     "llc_share_of_class_approx": 0.0043,
+     "flag_n_lt_20": true
+    }
+   }
+  },
+  "existing_proxies_elsewhere": "Owner-occupancy (home exemption) proxies for both counties are already in an/new/owners_neighbor.json (counties.hawaii.proxy_homeowner_exemption_not_mailing; counties.kauai.proxy_tax_class_not_mailing)."
+ },
+ "notes": [
+  "PRIVACY: no owner names, street addresses or parcel ids are written. Kauai aggregates were computed server-side (groupBy counts) so no owner-name records were downloaded; the Regrid pull contains tract-level counts only. The State OP shapefiles downloaded to raw/ were only read for their DBF field lists (they contain MajorOwner/OWNER names).",
+  "BOT CHECKS: Cloudflare challenge (hawaiipropertytax.com, qPublic), Akamai 403 (kauai.gov) and token-gated ArcGIS folders (gis.hawaiicounty.gov RPT etc.) were recorded and not bypassed.",
+  "n<20 FLAGS: every count cell carries flag_n_lt_20 where applicable (tracts, zones, VR zone cells, LLC classes).",
+  "VALIDATION READING: compare regrid_share_out_of_state_circa_2023 with the roll-based shares in validation_against_full_roll_counties before using the Hawaii County tract figures; differences reflect Regrid's residential/building filter, condo treatment, ~2023 vintage vs 2026 rolls, and centroid zone assignment."
+ ]
+}

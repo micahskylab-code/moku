@@ -1,0 +1,6327 @@
+{
+ "key": "visitors",
+ "status": "published: DBEDT 2025 Annual Visitor Research Report and 2025 tables workbook are live (files last-modified 2026-09-28)",
+ "generated_at": "2026-10-08T06:11:45Z",
+ "source": {
+  "landing_page": "https://dbedt.hawaii.gov/visitor/visitor-research/ (redirects to https://dbedt.hawaii.gov/economic/tourism/annual-reports/)",
+  "edition": "2025 Annual Visitor Research Report (DBEDT READ Tourism Research Branch); PDF CreationDate 2026-09-28 23:27 UTC; HTTP Last-Modified xlsx Mon, 28 Sep 2026 23:43:50 GMT, pdf Mon, 28 Sep 2026 23:43:17 GMT",
+  "files": [
+   {
+    "url": "https://files.hawaii.gov/dbedt/economic/tourism/annual-reports/2025-annual-visitor.xlsx",
+    "local": "raw/visitors/2025-annual-visitor.xlsx",
+    "bytes": 1171485,
+    "sha256": "08b54f4bd135e94b2df5f96fd02e9d928cb21958c0a7dafd22c031311726175c"
+   },
+   {
+    "url": "https://files.hawaii.gov/dbedt/economic/tourism/annual-reports/2025-annual-visitor.pdf",
+    "local": "raw/visitors/2025-annual-visitor.pdf",
+    "bytes": 7246830,
+    "sha256": "1c705cb57dd9f438b47ede88fb8a7d1540479f6a63e3cd16538addada8d7fa6a"
+   },
+   {
+    "url": "https://files.hawaii.gov/dbedt/economic/archive/tourism/annual-reports/2024-annual-visitor.xlsx",
+    "local": "raw/visitors/2024-annual-visitor.xlsx",
+    "bytes": 1223704,
+    "sha256": "86bf9ca5711671f3a4333bba15a0da06d70df361269c68d8951cf94acad0a35c",
+    "role": "2024 comparison (same file as scratchpad/vis24/v2024.xlsx used by an/vis_cbsa.py)"
+   }
+  ],
+  "tables_used": {
+   "TABLE 56 (2025)": "2025 Domestic U.S. Air Visitor Arrivals by Island and Top CBSA",
+   "TABLE 57 (2025)": "Domestic U.S. Air Visitor Arrivals by Island and Top CBSA, % change 2025 vs 2024",
+   "TABLE 55 (2024 edition)": "2024 Domestic U.S. Air Visitor Arrivals by Island and Top CBSA (for idx_2024)",
+   "TABLE 21 (2025)": "Market Penetration for Top U.S. CBSA",
+   "TABLE 53 (2025)": "Domestic U.S. Air Visitor Arrivals by Island and State (coverage denominator)",
+   "TABLE 22/24 (2025)": "Japan / Canada MMA totals",
+   "TABLE 23 (2025)": "Japan by region",
+   "TABLE 25 (2025)": "Canada by province"
+  }
+ },
+ "method": {
+  "overindex": "Replicates an/vis_cbsa.py exactly: rows of the CBSA table with numeric TOTAL; Salt Lake City UT + Provo-Orem UT + Ogden-Clearfield UT summed into one metro \"Salt Lake City–Provo–Ogden UT\" (67 rows -> 65 metros); island columns O‘AHU, MAUI (island, not Maui County), KAUA‘I, HAWAI‘I ISLAND; base(island) = sum of island arrivals over the 65 metros / sum of metro TOTALs; share = metro island arrivals / metro TOTAL; idx = share / base. \"over\" list = metros with island arrivals n >= 10,000 ranked by idx, top 10; \"top\" = top 10 by n.",
+  "replica_check_against_prior_2024_vis_cbsa_json": true,
+  "japan_canada_overindex": "Same formula applied to Table 23 regions / Table 25 provinces: idx = (group visitors to island / group visitors) / (sum over groups of island visitors / sum of group visitors). Bonus, not in vis_cbsa.py."
+ },
+ "cbsa": {
+  "table_2025": "TABLE 56",
+  "n_rows_raw": 67,
+  "n_metros_combined": 65,
+  "sum_metro_totals": 5882366,
+  "sum_state_totals_table53": 7415500,
+  "coverage_share_of_us_domestic_flight_arrivals": 0.7933,
+  "metros_added_vs_2024": [],
+  "metros_dropped_vs_2024": [],
+  "islands": {
+   "Oahu": {
+    "base": 0.5262,
+    "base_2024": 0.536,
+    "top_by_count": [
+     {
+      "metro": "Los Angeles-Long Beach-Anaheim CA",
+      "n": 502085,
+      "share": 0.6055,
+      "idx": 1.1507
+     },
+     {
+      "metro": "San Francisco-Oakland-Hayward CA",
+      "n": 288580,
+      "share": 0.4606,
+      "idx": 0.8753
+     },
+     {
+      "metro": "Seattle-Tacoma-Bellevue WA",
+      "n": 252380,
+      "share": 0.5484,
+      "idx": 1.0422
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 140165,
+      "share": 0.6262,
+      "idx": 1.1902
+     },
+     {
+      "metro": "Riverside-San Bernardino-Ontario CA",
+      "n": 134434,
+      "share": 0.635,
+      "idx": 1.2067
+     },
+     {
+      "metro": "San Diego-Carlsbad CA",
+      "n": 126509,
+      "share": 0.4216,
+      "idx": 0.8012
+     },
+     {
+      "metro": "San Jose-Sunnyvale-Santa Clara CA",
+      "n": 105801,
+      "share": 0.4906,
+      "idx": 0.9323
+     },
+     {
+      "metro": "Salt Lake City–Provo–Ogden UT",
+      "n": 93383,
+      "share": 0.5078,
+      "idx": 0.9651
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 88065,
+      "share": 0.3681,
+      "idx": 0.6995
+     },
+     {
+      "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+      "n": 80914,
+      "share": 0.6548,
+      "idx": 1.2445
+     }
+    ],
+    "over_index_n_ge_10000": [
+     {
+      "metro": "Virginia Beach-Norfolk-Newport News VA-NC",
+      "n": 13030,
+      "share": 0.7296,
+      "idx": 1.3867
+     },
+     {
+      "metro": "Baltimore-Columbia-Towson MD",
+      "n": 20665,
+      "share": 0.7094,
+      "idx": 1.3483
+     },
+     {
+      "metro": "Atlanta-Sandy Springs-Roswell GA",
+      "n": 41068,
+      "share": 0.6642,
+      "idx": 1.2622
+     },
+     {
+      "metro": "San Antonio-New Braunfels TX",
+      "n": 21605,
+      "share": 0.6587,
+      "idx": 1.2519
+     },
+     {
+      "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+      "n": 80914,
+      "share": 0.6548,
+      "idx": 1.2445
+     },
+     {
+      "metro": "Bakersfield CA",
+      "n": 14603,
+      "share": 0.6412,
+      "idx": 1.2186
+     },
+     {
+      "metro": "Riverside-San Bernardino-Ontario CA",
+      "n": 134434,
+      "share": 0.635,
+      "idx": 1.2067
+     },
+     {
+      "metro": "Orlando-Kissimmee-Sanford FL",
+      "n": 17264,
+      "share": 0.6329,
+      "idx": 1.2029
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 45093,
+      "share": 0.6284,
+      "idx": 1.1943
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 140165,
+      "share": 0.6262,
+      "idx": 1.1902
+     }
+    ],
+    "over_index_2024_n_ge_10000": [
+     {
+      "metro": "Virginia Beach-Norfolk-Newport News VA-NC",
+      "n": 17518,
+      "share": 0.8103,
+      "idx": 1.5118
+     },
+     {
+      "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+      "n": 72570,
+      "share": 0.7143,
+      "idx": 1.3327
+     },
+     {
+      "metro": "Baltimore-Columbia-Towson MD",
+      "n": 21836,
+      "share": 0.7084,
+      "idx": 1.3217
+     },
+     {
+      "metro": "San Antonio-New Braunfels TX",
+      "n": 28806,
+      "share": 0.6906,
+      "idx": 1.2885
+     },
+     {
+      "metro": "Orlando-Kissimmee-Sanford FL",
+      "n": 18090,
+      "share": 0.6881,
+      "idx": 1.2839
+     },
+     {
+      "metro": "Tampa-St. Petersburg-Clearwater FL",
+      "n": 19042,
+      "share": 0.6672,
+      "idx": 1.2447
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 114391,
+      "share": 0.6654,
+      "idx": 1.2415
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 39190,
+      "share": 0.66,
+      "idx": 1.2313
+     },
+     {
+      "metro": "Miami-Fort Lauderdale-West Palm Beach FL",
+      "n": 25522,
+      "share": 0.6583,
+      "idx": 1.2282
+     },
+     {
+      "metro": "Atlanta-Sandy Springs-Roswell GA",
+      "n": 41507,
+      "share": 0.6465,
+      "idx": 1.2062
+     }
+    ]
+   },
+   "Maui": {
+    "base": 0.2893,
+    "base_2024": 0.2702,
+    "top_by_count": [
+     {
+      "metro": "Los Angeles-Long Beach-Anaheim CA",
+      "n": 192785,
+      "share": 0.2325,
+      "idx": 0.8036
+     },
+     {
+      "metro": "San Francisco-Oakland-Hayward CA",
+      "n": 182342,
+      "share": 0.291,
+      "idx": 1.0059
+     },
+     {
+      "metro": "Seattle-Tacoma-Bellevue WA",
+      "n": 124131,
+      "share": 0.2697,
+      "idx": 0.9323
+     },
+     {
+      "metro": "San Diego-Carlsbad CA",
+      "n": 100380,
+      "share": 0.3345,
+      "idx": 1.1563
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 84435,
+      "share": 0.3529,
+      "idx": 1.2199
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 74393,
+      "share": 0.3324,
+      "idx": 1.1489
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 61638,
+      "share": 0.3476,
+      "idx": 1.2017
+     },
+     {
+      "metro": "San Jose-Sunnyvale-Santa Clara CA",
+      "n": 60554,
+      "share": 0.2808,
+      "idx": 0.9706
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 48551,
+      "share": 0.3365,
+      "idx": 1.1631
+     },
+     {
+      "metro": "Sacramento--Roseville--Arden-Arcade CA",
+      "n": 48148,
+      "share": 0.3144,
+      "idx": 1.0869
+     }
+    ],
+    "over_index_n_ge_10000": [
+     {
+      "metro": "Boise City ID",
+      "n": 17561,
+      "share": 0.3634,
+      "idx": 1.2561
+     },
+     {
+      "metro": "Santa Rosa CA",
+      "n": 15604,
+      "share": 0.3607,
+      "idx": 1.2469
+     },
+     {
+      "metro": "Detroit-Warren-Dearborn MI",
+      "n": 15037,
+      "share": 0.3536,
+      "idx": 1.2222
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 84435,
+      "share": 0.3529,
+      "idx": 1.2199
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 61638,
+      "share": 0.3476,
+      "idx": 1.2017
+     },
+     {
+      "metro": "Spokane-Spokane Valley WA",
+      "n": 11690,
+      "share": 0.3461,
+      "idx": 1.1964
+     },
+     {
+      "metro": "Kansas City MO-KS",
+      "n": 11049,
+      "share": 0.3456,
+      "idx": 1.1947
+     },
+     {
+      "metro": "Reno NV",
+      "n": 12164,
+      "share": 0.3415,
+      "idx": 1.1804
+     },
+     {
+      "metro": "St. Louis MO-IL",
+      "n": 10134,
+      "share": 0.3375,
+      "idx": 1.1667
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 48551,
+      "share": 0.3365,
+      "idx": 1.1631
+     }
+    ],
+    "over_index_2024_n_ge_10000": [
+     {
+      "metro": "Detroit-Warren-Dearborn MI",
+      "n": 14253,
+      "share": 0.3616,
+      "idx": 1.338
+     },
+     {
+      "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+      "n": 25992,
+      "share": 0.3548,
+      "idx": 1.3129
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 44663,
+      "share": 0.337,
+      "idx": 1.2469
+     },
+     {
+      "metro": "St. Louis MO-IL",
+      "n": 11751,
+      "share": 0.3269,
+      "idx": 1.2097
+     },
+     {
+      "metro": "Santa Rosa CA",
+      "n": 13710,
+      "share": 0.316,
+      "idx": 1.1694
+     },
+     {
+      "metro": "Miami-Fort Lauderdale-West Palm Beach FL",
+      "n": 12102,
+      "share": 0.3121,
+      "idx": 1.1551
+     },
+     {
+      "metro": "Dallas-Fort Worth-Arlington TX",
+      "n": 42126,
+      "share": 0.3083,
+      "idx": 1.1407
+     },
+     {
+      "metro": "Philadelphia-Camden-Wilmington PA-NJ-DE-MD",
+      "n": 14534,
+      "share": 0.3039,
+      "idx": 1.1245
+     },
+     {
+      "metro": "Spokane-Spokane Valley WA",
+      "n": 10041,
+      "share": 0.3016,
+      "idx": 1.1162
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 51728,
+      "share": 0.3009,
+      "idx": 1.1135
+     }
+    ]
+   },
+   "Kauai": {
+    "base": 0.1587,
+    "base_2024": 0.1615,
+    "top_by_count": [
+     {
+      "metro": "Los Angeles-Long Beach-Anaheim CA",
+      "n": 96459,
+      "share": 0.1163,
+      "idx": 0.733
+     },
+     {
+      "metro": "San Francisco-Oakland-Hayward CA",
+      "n": 88706,
+      "share": 0.1416,
+      "idx": 0.8921
+     },
+     {
+      "metro": "Seattle-Tacoma-Bellevue WA",
+      "n": 50679,
+      "share": 0.1101,
+      "idx": 0.6939
+     },
+     {
+      "metro": "San Diego-Carlsbad CA",
+      "n": 49909,
+      "share": 0.1663,
+      "idx": 1.048
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 46890,
+      "share": 0.2645,
+      "idx": 1.6664
+     },
+     {
+      "metro": "Salt Lake City–Provo–Ogden UT",
+      "n": 42940,
+      "share": 0.2335,
+      "idx": 1.4714
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 39514,
+      "share": 0.1765,
+      "idx": 1.1125
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 35321,
+      "share": 0.1476,
+      "idx": 0.9302
+     },
+     {
+      "metro": "San Jose-Sunnyvale-Santa Clara CA",
+      "n": 30947,
+      "share": 0.1435,
+      "idx": 0.9042
+     },
+     {
+      "metro": "Phoenix-Mesa-Scottsdale AZ",
+      "n": 29955,
+      "share": 0.2171,
+      "idx": 1.3679
+     }
+    ],
+    "over_index_n_ge_10000": [
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 46890,
+      "share": 0.2645,
+      "idx": 1.6664
+     },
+     {
+      "metro": "Salt Lake City–Provo–Ogden UT",
+      "n": 42940,
+      "share": 0.2335,
+      "idx": 1.4714
+     },
+     {
+      "metro": "Boise City ID",
+      "n": 10745,
+      "share": 0.2223,
+      "idx": 1.4011
+     },
+     {
+      "metro": "Phoenix-Mesa-Scottsdale AZ",
+      "n": 29955,
+      "share": 0.2171,
+      "idx": 1.3679
+     },
+     {
+      "metro": "Austin-Round Rock TX",
+      "n": 11497,
+      "share": 0.2085,
+      "idx": 1.3141
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 14696,
+      "share": 0.2048,
+      "idx": 1.2905
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 29511,
+      "share": 0.2045,
+      "idx": 1.2888
+     },
+     {
+      "metro": "Houston-The Woodlands-Sugar Land TX",
+      "n": 21174,
+      "share": 0.2025,
+      "idx": 1.2763
+     },
+     {
+      "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+      "n": 16645,
+      "share": 0.1995,
+      "idx": 1.2569
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 39514,
+      "share": 0.1765,
+      "idx": 1.1125
+     }
+    ],
+    "over_index_2024_n_ge_10000": [
+     {
+      "metro": "Salt Lake City–Provo–Ogden UT",
+      "n": 40374,
+      "share": 0.2333,
+      "idx": 1.4448
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 27717,
+      "share": 0.2127,
+      "idx": 1.3172
+     },
+     {
+      "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+      "n": 15297,
+      "share": 0.2088,
+      "idx": 1.2931
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 25195,
+      "share": 0.1901,
+      "idx": 1.1772
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 11198,
+      "share": 0.1886,
+      "idx": 1.1679
+     },
+     {
+      "metro": "Phoenix-Mesa-Scottsdale AZ",
+      "n": 39033,
+      "share": 0.188,
+      "idx": 1.1643
+     },
+     {
+      "metro": "Austin-Round Rock TX",
+      "n": 11575,
+      "share": 0.1844,
+      "idx": 1.1418
+     },
+     {
+      "metro": "Oxnard-Thousand Oaks-Ventura CA",
+      "n": 11090,
+      "share": 0.181,
+      "idx": 1.1211
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 30545,
+      "share": 0.1777,
+      "idx": 1.1004
+     },
+     {
+      "metro": "Dallas-Fort Worth-Arlington TX",
+      "n": 24191,
+      "share": 0.177,
+      "idx": 1.0963
+     }
+    ]
+   },
+   "Hawaii": {
+    "base": 0.1823,
+    "base_2024": 0.1835,
+    "top_by_count": [
+     {
+      "metro": "San Francisco-Oakland-Hayward CA",
+      "n": 126431,
+      "share": 0.2018,
+      "idx": 1.1067
+     },
+     {
+      "metro": "Los Angeles-Long Beach-Anaheim CA",
+      "n": 118764,
+      "share": 0.1432,
+      "idx": 0.7855
+     },
+     {
+      "metro": "Seattle-Tacoma-Bellevue WA",
+      "n": 79568,
+      "share": 0.1729,
+      "idx": 0.9482
+     },
+     {
+      "metro": "San Diego-Carlsbad CA",
+      "n": 56710,
+      "share": 0.189,
+      "idx": 1.0365
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 54123,
+      "share": 0.2262,
+      "idx": 1.2407
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 49602,
+      "share": 0.2216,
+      "idx": 1.2155
+     },
+     {
+      "metro": "San Jose-Sunnyvale-Santa Clara CA",
+      "n": 40728,
+      "share": 0.1888,
+      "idx": 1.0358
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 31934,
+      "share": 0.1801,
+      "idx": 0.9878
+     },
+     {
+      "metro": "Riverside-San Bernardino-Ontario CA",
+      "n": 26961,
+      "share": 0.1273,
+      "idx": 0.6984
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 26584,
+      "share": 0.1842,
+      "idx": 1.0105
+     }
+    ],
+    "over_index_n_ge_10000": [
+     {
+      "metro": "Anchorage AK",
+      "n": 18492,
+      "share": 0.2579,
+      "idx": 1.4145
+     },
+     {
+      "metro": "Detroit-Warren-Dearborn MI",
+      "n": 10388,
+      "share": 0.2443,
+      "idx": 1.3397
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 17188,
+      "share": 0.2395,
+      "idx": 1.3137
+     },
+     {
+      "metro": "Santa Rosa CA",
+      "n": 10029,
+      "share": 0.2318,
+      "idx": 1.2716
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 54123,
+      "share": 0.2262,
+      "idx": 1.2407
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 49602,
+      "share": 0.2216,
+      "idx": 1.2155
+     },
+     {
+      "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+      "n": 18266,
+      "share": 0.2189,
+      "idx": 1.2005
+     },
+     {
+      "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+      "n": 25328,
+      "share": 0.205,
+      "idx": 1.1242
+     },
+     {
+      "metro": "San Francisco-Oakland-Hayward CA",
+      "n": 126431,
+      "share": 0.2018,
+      "idx": 1.1067
+     },
+     {
+      "metro": "Houston-The Woodlands-Sugar Land TX",
+      "n": 20935,
+      "share": 0.2003,
+      "idx": 1.0984
+     }
+    ],
+    "over_index_2024_n_ge_10000": [
+     {
+      "metro": "Anchorage AK",
+      "n": 17308,
+      "share": 0.2609,
+      "idx": 1.4221
+     },
+     {
+      "metro": "Philadelphia-Camden-Wilmington PA-NJ-DE-MD",
+      "n": 11534,
+      "share": 0.2412,
+      "idx": 1.3145
+     },
+     {
+      "metro": "Boston-Cambridge-Newton MA-NH",
+      "n": 14097,
+      "share": 0.2374,
+      "idx": 1.2941
+     },
+     {
+      "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+      "n": 17192,
+      "share": 0.2347,
+      "idx": 1.2792
+     },
+     {
+      "metro": "Portland-Vancouver-Hillsboro OR-WA",
+      "n": 47456,
+      "share": 0.2234,
+      "idx": 1.2178
+     },
+     {
+      "metro": "New York-Newark-Jersey City NY-NJ-PA",
+      "n": 38047,
+      "share": 0.2213,
+      "idx": 1.2064
+     },
+     {
+      "metro": "Atlanta-Sandy Springs-Roswell GA",
+      "n": 14149,
+      "share": 0.2204,
+      "idx": 1.2013
+     },
+     {
+      "metro": "Denver-Aurora-Lakewood CO",
+      "n": 28090,
+      "share": 0.2155,
+      "idx": 1.1749
+     },
+     {
+      "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+      "n": 27573,
+      "share": 0.208,
+      "idx": 1.1339
+     },
+     {
+      "metro": "Austin-Round Rock TX",
+      "n": 12572,
+      "share": 0.2003,
+      "idx": 1.0916
+     }
+    ]
+   }
+  },
+  "by_metro": [
+   {
+    "metro": "Los Angeles-Long Beach-Anaheim CA",
+    "total": 829276,
+    "Oahu": {
+     "n": 502085,
+     "share": 0.6055,
+     "idx": 1.1507,
+     "idx_2024": 1.0616
+    },
+    "Maui": {
+     "n": 192785,
+     "share": 0.2325,
+     "idx": 0.8036,
+     "idx_2024": 0.8949
+    },
+    "Kauai": {
+     "n": 96459,
+     "share": 0.1163,
+     "idx": 0.733,
+     "idx_2024": 0.8724
+    },
+    "Hawaii": {
+     "n": 118764,
+     "share": 0.1432,
+     "idx": 0.7855,
+     "idx_2024": 0.8058
+    },
+    "pct_change_total_vs_2024": -4.84
+   },
+   {
+    "metro": "San Francisco-Oakland-Hayward CA",
+    "total": 626588,
+    "Oahu": {
+     "n": 288580,
+     "share": 0.4606,
+     "idx": 0.8753,
+     "idx_2024": 0.934
+    },
+    "Maui": {
+     "n": 182342,
+     "share": 0.291,
+     "idx": 1.0059,
+     "idx_2024": 0.9957
+    },
+    "Kauai": {
+     "n": 88706,
+     "share": 0.1416,
+     "idx": 0.8921,
+     "idx_2024": 0.8998
+    },
+    "Hawaii": {
+     "n": 126431,
+     "share": 0.2018,
+     "idx": 1.1067,
+     "idx_2024": 0.9359
+    },
+    "pct_change_total_vs_2024": 6.06
+   },
+   {
+    "metro": "Seattle-Tacoma-Bellevue WA",
+    "total": 460243,
+    "Oahu": {
+     "n": 252380,
+     "share": 0.5484,
+     "idx": 1.0422,
+     "idx_2024": 0.879
+    },
+    "Maui": {
+     "n": 124131,
+     "share": 0.2697,
+     "idx": 0.9323,
+     "idx_2024": 1.0602
+    },
+    "Kauai": {
+     "n": 50679,
+     "share": 0.1101,
+     "idx": 0.6939,
+     "idx_2024": 0.8452
+    },
+    "Hawaii": {
+     "n": 79568,
+     "share": 0.1729,
+     "idx": 0.9482,
+     "idx_2024": 1.0704
+    },
+    "pct_change_total_vs_2024": 3.58
+   },
+   {
+    "metro": "San Diego-Carlsbad CA",
+    "total": 300098,
+    "Oahu": {
+     "n": 126509,
+     "share": 0.4216,
+     "idx": 0.8012,
+     "idx_2024": 0.9986
+    },
+    "Maui": {
+     "n": 100380,
+     "share": 0.3345,
+     "idx": 1.1563,
+     "idx_2024": 0.8874
+    },
+    "Kauai": {
+     "n": 49909,
+     "share": 0.1663,
+     "idx": 1.048,
+     "idx_2024": 1.0347
+    },
+    "Hawaii": {
+     "n": 56710,
+     "share": 0.189,
+     "idx": 1.0365,
+     "idx_2024": 0.8925
+    },
+    "pct_change_total_vs_2024": 2.74
+   },
+   {
+    "metro": "Portland-Vancouver-Hillsboro OR-WA",
+    "total": 239258,
+    "Oahu": {
+     "n": 88065,
+     "share": 0.3681,
+     "idx": 0.6995,
+     "idx_2024": 0.7744
+    },
+    "Maui": {
+     "n": 84435,
+     "share": 0.3529,
+     "idx": 1.2199,
+     "idx_2024": 1.0958
+    },
+    "Kauai": {
+     "n": 35321,
+     "share": 0.1476,
+     "idx": 0.9302,
+     "idx_2024": 0.9572
+    },
+    "Hawaii": {
+     "n": 54123,
+     "share": 0.2262,
+     "idx": 1.2407,
+     "idx_2024": 1.2178
+    },
+    "pct_change_total_vs_2024": 12.64
+   },
+   {
+    "metro": "New York-Newark-Jersey City NY-NJ-PA",
+    "total": 223824,
+    "Oahu": {
+     "n": 140165,
+     "share": 0.6262,
+     "idx": 1.1902,
+     "idx_2024": 1.2415
+    },
+    "Maui": {
+     "n": 74393,
+     "share": 0.3324,
+     "idx": 1.1489,
+     "idx_2024": 1.1135
+    },
+    "Kauai": {
+     "n": 39514,
+     "share": 0.1765,
+     "idx": 1.1125,
+     "idx_2024": 1.1004
+    },
+    "Hawaii": {
+     "n": 49602,
+     "share": 0.2216,
+     "idx": 1.2155,
+     "idx_2024": 1.2064
+    },
+    "pct_change_total_vs_2024": 30.2
+   },
+   {
+    "metro": "San Jose-Sunnyvale-Santa Clara CA",
+    "total": 215671,
+    "Oahu": {
+     "n": 105801,
+     "share": 0.4906,
+     "idx": 0.9323,
+     "idx_2024": 1.0283
+    },
+    "Maui": {
+     "n": 60554,
+     "share": 0.2808,
+     "idx": 0.9706,
+     "idx_2024": 0.9436
+    },
+    "Kauai": {
+     "n": 30947,
+     "share": 0.1435,
+     "idx": 0.9042,
+     "idx_2024": 0.7635
+    },
+    "Hawaii": {
+     "n": 40728,
+     "share": 0.1888,
+     "idx": 1.0358,
+     "idx_2024": 0.8918
+    },
+    "pct_change_total_vs_2024": -16.14
+   },
+   {
+    "metro": "Riverside-San Bernardino-Ontario CA",
+    "total": 211723,
+    "Oahu": {
+     "n": 134434,
+     "share": 0.635,
+     "idx": 1.2067,
+     "idx_2024": 1.1009
+    },
+    "Maui": {
+     "n": 47495,
+     "share": 0.2243,
+     "idx": 0.7754,
+     "idx_2024": 0.8358
+    },
+    "Kauai": {
+     "n": 23275,
+     "share": 0.1099,
+     "idx": 0.6927,
+     "idx_2024": 0.8798
+    },
+    "Hawaii": {
+     "n": 26961,
+     "share": 0.1273,
+     "idx": 0.6984,
+     "idx_2024": 0.7932
+    },
+    "pct_change_total_vs_2024": 7.06
+   },
+   {
+    "metro": "Salt Lake City–Provo–Ogden UT",
+    "total": 183893,
+    "Oahu": {
+     "n": 93383,
+     "share": 0.5078,
+     "idx": 0.9651,
+     "idx_2024": 0.942
+    },
+    "Maui": {
+     "n": 47517,
+     "share": 0.2584,
+     "idx": 0.8932,
+     "idx_2024": 0.8689
+    },
+    "Kauai": {
+     "n": 42940,
+     "share": 0.2335,
+     "idx": 1.4714,
+     "idx_2024": 1.4448
+    },
+    "Hawaii": {
+     "n": 23313,
+     "share": 0.1268,
+     "idx": 0.6953,
+     "idx_2024": 0.8787
+    },
+    "pct_change_total_vs_2024": 6.25
+   },
+   {
+    "metro": "Denver-Aurora-Lakewood CO",
+    "total": 177308,
+    "Oahu": {
+     "n": 66741,
+     "share": 0.3764,
+     "idx": 0.7154,
+     "idx_2024": 0.8239
+    },
+    "Maui": {
+     "n": 61638,
+     "share": 0.3476,
+     "idx": 1.2017,
+     "idx_2024": 1.0914
+    },
+    "Kauai": {
+     "n": 46890,
+     "share": 0.2645,
+     "idx": 1.6664,
+     "idx_2024": 1.3172
+    },
+    "Hawaii": {
+     "n": 31934,
+     "share": 0.1801,
+     "idx": 0.9878,
+     "idx_2024": 1.1749
+    },
+    "pct_change_total_vs_2024": 36.05
+   },
+   {
+    "metro": "Sacramento--Roseville--Arden-Arcade CA",
+    "total": 153127,
+    "Oahu": {
+     "n": 76792,
+     "share": 0.5015,
+     "idx": 0.9531,
+     "idx_2024": 0.8925
+    },
+    "Maui": {
+     "n": 48148,
+     "share": 0.3144,
+     "idx": 1.0869,
+     "idx_2024": 1.0971
+    },
+    "Kauai": {
+     "n": 18167,
+     "share": 0.1186,
+     "idx": 0.7476,
+     "idx_2024": 1.0222
+    },
+    "Hawaii": {
+     "n": 25876,
+     "share": 0.169,
+     "idx": 0.9269,
+     "idx_2024": 0.8544
+    },
+    "pct_change_total_vs_2024": -25.15
+   },
+   {
+    "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+    "total": 144297,
+    "Oahu": {
+     "n": 78900,
+     "share": 0.5468,
+     "idx": 1.0392,
+     "idx_2024": 1.0053
+    },
+    "Maui": {
+     "n": 48551,
+     "share": 0.3365,
+     "idx": 1.1631,
+     "idx_2024": 1.2469
+    },
+    "Kauai": {
+     "n": 29511,
+     "share": 0.2045,
+     "idx": 1.2888,
+     "idx_2024": 1.1772
+    },
+    "Hawaii": {
+     "n": 26584,
+     "share": 0.1842,
+     "idx": 1.0105,
+     "idx_2024": 1.1339
+    },
+    "pct_change_total_vs_2024": 8.86
+   },
+   {
+    "metro": "Phoenix-Mesa-Scottsdale AZ",
+    "total": 137993,
+    "Oahu": {
+     "n": 80695,
+     "share": 0.5848,
+     "idx": 1.1114,
+     "idx_2024": 0.9257
+    },
+    "Maui": {
+     "n": 32681,
+     "share": 0.2368,
+     "idx": 0.8187,
+     "idx_2024": 1.0747
+    },
+    "Kauai": {
+     "n": 29955,
+     "share": 0.2171,
+     "idx": 1.3679,
+     "idx_2024": 1.1643
+    },
+    "Hawaii": {
+     "n": 16729,
+     "share": 0.1212,
+     "idx": 0.6649,
+     "idx_2024": 0.9729
+    },
+    "pct_change_total_vs_2024": -33.54
+   },
+   {
+    "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+    "total": 123571,
+    "Oahu": {
+     "n": 80914,
+     "share": 0.6548,
+     "idx": 1.2445,
+     "idx_2024": 1.3327
+    },
+    "Maui": {
+     "n": 33818,
+     "share": 0.2737,
+     "idx": 0.946,
+     "idx_2024": 0.8371
+    },
+    "Kauai": {
+     "n": 20697,
+     "share": 0.1675,
+     "idx": 1.0554,
+     "idx_2024": 0.8515
+    },
+    "Hawaii": {
+     "n": 25328,
+     "share": 0.205,
+     "idx": 1.1242,
+     "idx_2024": 1.0449
+    },
+    "pct_change_total_vs_2024": 21.63
+   },
+   {
+    "metro": "Las Vegas-Henderson-Paradise NV",
+    "total": 112581,
+    "Oahu": {
+     "n": 70032,
+     "share": 0.6221,
+     "idx": 1.1822,
+     "idx_2024": 1.1706
+    },
+    "Maui": {
+     "n": 26394,
+     "share": 0.2344,
+     "idx": 0.8104,
+     "idx_2024": 0.8674
+    },
+    "Kauai": {
+     "n": 13612,
+     "share": 0.1209,
+     "idx": 0.7619,
+     "idx_2024": 0.7909
+    },
+    "Hawaii": {
+     "n": 15820,
+     "share": 0.1405,
+     "idx": 0.7707,
+     "idx_2024": 0.8328
+    },
+    "pct_change_total_vs_2024": -8.24
+   },
+   {
+    "metro": "Houston-The Woodlands-Sugar Land TX",
+    "total": 104537,
+    "Oahu": {
+     "n": 55083,
+     "share": 0.5269,
+     "idx": 1.0014,
+     "idx_2024": 1.1538
+    },
+    "Maui": {
+     "n": 32721,
+     "share": 0.313,
+     "idx": 1.082,
+     "idx_2024": 1.0358
+    },
+    "Kauai": {
+     "n": 21174,
+     "share": 0.2025,
+     "idx": 1.2763,
+     "idx_2024": 0.9617
+    },
+    "Hawaii": {
+     "n": 20935,
+     "share": 0.2003,
+     "idx": 1.0984,
+     "idx_2024": 1.0745
+    },
+    "pct_change_total_vs_2024": 13.97
+   },
+   {
+    "metro": "Dallas-Fort Worth-Arlington TX",
+    "total": 84007,
+    "Oahu": {
+     "n": 47019,
+     "share": 0.5597,
+     "idx": 1.0637,
+     "idx_2024": 1.0367
+    },
+    "Maui": {
+     "n": 27079,
+     "share": 0.3223,
+     "idx": 1.1143,
+     "idx_2024": 1.1407
+    },
+    "Kauai": {
+     "n": 13013,
+     "share": 0.1549,
+     "idx": 0.9761,
+     "idx_2024": 1.0963
+    },
+    "Hawaii": {
+     "n": 15853,
+     "share": 0.1887,
+     "idx": 1.0351,
+     "idx_2024": 1.0248
+    },
+    "pct_change_total_vs_2024": -38.53
+   },
+   {
+    "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+    "total": 83450,
+    "Oahu": {
+     "n": 41853,
+     "share": 0.5015,
+     "idx": 0.9532,
+     "idx_2024": 0.8584
+    },
+    "Maui": {
+     "n": 26389,
+     "share": 0.3162,
+     "idx": 1.0931,
+     "idx_2024": 1.3129
+    },
+    "Kauai": {
+     "n": 16645,
+     "share": 0.1995,
+     "idx": 1.2569,
+     "idx_2024": 1.2931
+    },
+    "Hawaii": {
+     "n": 18266,
+     "share": 0.2189,
+     "idx": 1.2005,
+     "idx_2024": 1.2792
+    },
+    "pct_change_total_vs_2024": 13.91
+   },
+   {
+    "metro": "Boston-Cambridge-Newton MA-NH",
+    "total": 71759,
+    "Oahu": {
+     "n": 45093,
+     "share": 0.6284,
+     "idx": 1.1943,
+     "idx_2024": 1.2313
+    },
+    "Maui": {
+     "n": 22914,
+     "share": 0.3193,
+     "idx": 1.1038,
+     "idx_2024": 1.0412
+    },
+    "Kauai": {
+     "n": 14696,
+     "share": 0.2048,
+     "idx": 1.2905,
+     "idx_2024": 1.1679
+    },
+    "Hawaii": {
+     "n": 17188,
+     "share": 0.2395,
+     "idx": 1.3137,
+     "idx_2024": 1.2941
+    },
+    "pct_change_total_vs_2024": 20.84
+   },
+   {
+    "metro": "Anchorage AK",
+    "total": 71702,
+    "Oahu": {
+     "n": 40769,
+     "share": 0.5686,
+     "idx": 1.0806,
+     "idx_2024": 1.0984
+    },
+    "Maui": {
+     "n": 14686,
+     "share": 0.2048,
+     "idx": 0.708,
+     "idx_2024": 0.6264
+    },
+    "Kauai": {
+     "n": 5860,
+     "share": 0.0817,
+     "idx": 0.515,
+     "idx_2024": 0.5133
+    },
+    "Hawaii": {
+     "n": 18492,
+     "share": 0.2579,
+     "idx": 1.4145,
+     "idx_2024": 1.4221
+    },
+    "pct_change_total_vs_2024": 8.08
+   },
+   {
+    "metro": "Atlanta-Sandy Springs-Roswell GA",
+    "total": 61835,
+    "Oahu": {
+     "n": 41068,
+     "share": 0.6642,
+     "idx": 1.2622,
+     "idx_2024": 1.2062
+    },
+    "Maui": {
+     "n": 17173,
+     "share": 0.2777,
+     "idx": 0.96,
+     "idx_2024": 1.064
+    },
+    "Kauai": {
+     "n": 8337,
+     "share": 0.1348,
+     "idx": 0.8496,
+     "idx_2024": 0.9475
+    },
+    "Hawaii": {
+     "n": 10469,
+     "share": 0.1693,
+     "idx": 0.9286,
+     "idx_2024": 1.2013
+    },
+    "pct_change_total_vs_2024": -3.69
+   },
+   {
+    "metro": "Oxnard-Thousand Oaks-Ventura CA",
+    "total": 57404,
+    "Oahu": {
+     "n": 28621,
+     "share": 0.4986,
+     "idx": 0.9476,
+     "idx_2024": 0.8994
+    },
+    "Maui": {
+     "n": 16209,
+     "share": 0.2824,
+     "idx": 0.976,
+     "idx_2024": 1.0125
+    },
+    "Kauai": {
+     "n": 8696,
+     "share": 0.1515,
+     "idx": 0.9546,
+     "idx_2024": 1.1211
+    },
+    "Hawaii": {
+     "n": 9354,
+     "share": 0.1629,
+     "idx": 0.8937,
+     "idx_2024": 0.8845
+    },
+    "pct_change_total_vs_2024": -6.3
+   },
+   {
+    "metro": "Austin-Round Rock TX",
+    "total": 55131,
+    "Oahu": {
+     "n": 28426,
+     "share": 0.5156,
+     "idx": 0.9799,
+     "idx_2024": 1.0332
+    },
+    "Maui": {
+     "n": 16858,
+     "share": 0.3058,
+     "idx": 1.057,
+     "idx_2024": 1.0574
+    },
+    "Kauai": {
+     "n": 11497,
+     "share": 0.2085,
+     "idx": 1.3141,
+     "idx_2024": 1.1418
+    },
+    "Hawaii": {
+     "n": 10704,
+     "share": 0.1941,
+     "idx": 1.0649,
+     "idx_2024": 1.0916
+    },
+    "pct_change_total_vs_2024": -12.19
+   },
+   {
+    "metro": "Boise City ID",
+    "total": 48327,
+    "Oahu": {
+     "n": 18000,
+     "share": 0.3725,
+     "idx": 0.7079,
+     "idx_2024": 0.7724
+    },
+    "Maui": {
+     "n": 17561,
+     "share": 0.3634,
+     "idx": 1.2561,
+     "idx_2024": 1.0537
+    },
+    "Kauai": {
+     "n": 10745,
+     "share": 0.2223,
+     "idx": 1.4011,
+     "idx_2024": 1.3419
+    },
+    "Hawaii": {
+     "n": 8578,
+     "share": 0.1775,
+     "idx": 0.9736,
+     "idx_2024": 1.0938
+    },
+    "pct_change_total_vs_2024": 5.93
+   },
+   {
+    "metro": "Fresno CA",
+    "total": 43444,
+    "Oahu": {
+     "n": 20584,
+     "share": 0.4738,
+     "idx": 0.9005,
+     "idx_2024": 0.993
+    },
+    "Maui": {
+     "n": 13998,
+     "share": 0.3222,
+     "idx": 1.1138,
+     "idx_2024": 1.0022
+    },
+    "Kauai": {
+     "n": 7101,
+     "share": 0.1634,
+     "idx": 1.0299,
+     "idx_2024": 0.8723
+    },
+    "Hawaii": {
+     "n": 6260,
+     "share": 0.1441,
+     "idx": 0.7903,
+     "idx_2024": 0.8163
+    },
+    "pct_change_total_vs_2024": 23.52
+   },
+   {
+    "metro": "Santa Rosa CA",
+    "total": 43258,
+    "Oahu": {
+     "n": 14384,
+     "share": 0.3325,
+     "idx": 0.632,
+     "idx_2024": 0.687
+    },
+    "Maui": {
+     "n": 15604,
+     "share": 0.3607,
+     "idx": 1.2469,
+     "idx_2024": 1.1694
+    },
+    "Kauai": {
+     "n": 7579,
+     "share": 0.1752,
+     "idx": 1.104,
+     "idx_2024": 1.2663
+    },
+    "Hawaii": {
+     "n": 10029,
+     "share": 0.2318,
+     "idx": 1.2716,
+     "idx_2024": 1.0591
+    },
+    "pct_change_total_vs_2024": -0.29
+   },
+   {
+    "metro": "Detroit-Warren-Dearborn MI",
+    "total": 42529,
+    "Oahu": {
+     "n": 23666,
+     "share": 0.5565,
+     "idx": 1.0576,
+     "idx_2024": 1.0815
+    },
+    "Maui": {
+     "n": 15037,
+     "share": 0.3536,
+     "idx": 1.2222,
+     "idx_2024": 1.338
+    },
+    "Kauai": {
+     "n": 8851,
+     "share": 0.2081,
+     "idx": 1.3114,
+     "idx_2024": 1.3419
+    },
+    "Hawaii": {
+     "n": 10388,
+     "share": 0.2443,
+     "idx": 1.3397,
+     "idx_2024": 1.2725
+    },
+    "pct_change_total_vs_2024": 7.89
+   },
+   {
+    "metro": "Philadelphia-Camden-Wilmington PA-NJ-DE-MD",
+    "total": 41284,
+    "Oahu": {
+     "n": 25678,
+     "share": 0.622,
+     "idx": 1.1821,
+     "idx_2024": 1.2008
+    },
+    "Maui": {
+     "n": 13363,
+     "share": 0.3237,
+     "idx": 1.1189,
+     "idx_2024": 1.1245
+    },
+    "Kauai": {
+     "n": 7306,
+     "share": 0.177,
+     "idx": 1.1152,
+     "idx_2024": 1.184
+    },
+    "Hawaii": {
+     "n": 9128,
+     "share": 0.2211,
+     "idx": 1.2127,
+     "idx_2024": 1.3145
+    },
+    "pct_change_total_vs_2024": -13.68
+   },
+   {
+    "metro": "Stockton-Lodi CA",
+    "total": 36536,
+    "Oahu": {
+     "n": 22723,
+     "share": 0.6219,
+     "idx": 1.182,
+     "idx_2024": 1.0616
+    },
+    "Maui": {
+     "n": 8252,
+     "share": 0.2259,
+     "idx": 0.7808,
+     "idx_2024": 0.9241
+    },
+    "Kauai": {
+     "n": 3751,
+     "share": 0.1027,
+     "idx": 0.6469,
+     "idx_2024": 0.7493
+    },
+    "Hawaii": {
+     "n": 4828,
+     "share": 0.1322,
+     "idx": 0.7248,
+     "idx_2024": 0.7585
+    },
+    "pct_change_total_vs_2024": -17.27
+   },
+   {
+    "metro": "Miami-Fort Lauderdale-West Palm Beach FL",
+    "total": 36323,
+    "Oahu": {
+     "n": 22530,
+     "share": 0.6203,
+     "idx": 1.1788,
+     "idx_2024": 1.2282
+    },
+    "Maui": {
+     "n": 11738,
+     "share": 0.3232,
+     "idx": 1.1171,
+     "idx_2024": 1.1551
+    },
+    "Kauai": {
+     "n": 6905,
+     "share": 0.1901,
+     "idx": 1.1979,
+     "idx_2024": 1.1189
+    },
+    "Hawaii": {
+     "n": 8731,
+     "share": 0.2404,
+     "idx": 1.3184,
+     "idx_2024": 1.2468
+    },
+    "pct_change_total_vs_2024": -6.31
+   },
+   {
+    "metro": "Reno NV",
+    "total": 35621,
+    "Oahu": {
+     "n": 13176,
+     "share": 0.3699,
+     "idx": 0.703,
+     "idx_2024": 0.7595
+    },
+    "Maui": {
+     "n": 12164,
+     "share": 0.3415,
+     "idx": 1.1804,
+     "idx_2024": 1.1011
+    },
+    "Kauai": {
+     "n": 7326,
+     "share": 0.2057,
+     "idx": 1.2961,
+     "idx_2024": 1.1428
+    },
+    "Hawaii": {
+     "n": 7043,
+     "share": 0.1977,
+     "idx": 1.0845,
+     "idx_2024": 1.1943
+    },
+    "pct_change_total_vs_2024": 6.16
+   },
+   {
+    "metro": "Colorado Springs CO",
+    "total": 34470,
+    "Oahu": {
+     "n": 17321,
+     "share": 0.5025,
+     "idx": 0.955,
+     "idx_2024": 1.0909
+    },
+    "Maui": {
+     "n": 9640,
+     "share": 0.2796,
+     "idx": 0.9667,
+     "idx_2024": 0.8505
+    },
+    "Kauai": {
+     "n": 8362,
+     "share": 0.2426,
+     "idx": 1.5286,
+     "idx_2024": 1.0712
+    },
+    "Hawaii": {
+     "n": 5919,
+     "share": 0.1717,
+     "idx": 0.9418,
+     "idx_2024": 1.0143
+    },
+    "pct_change_total_vs_2024": 24.82
+   },
+   {
+    "metro": "Spokane-Spokane Valley WA",
+    "total": 33776,
+    "Oahu": {
+     "n": 13653,
+     "share": 0.4042,
+     "idx": 0.7683,
+     "idx_2024": 0.7298
+    },
+    "Maui": {
+     "n": 11690,
+     "share": 0.3461,
+     "idx": 1.1964,
+     "idx_2024": 1.1162
+    },
+    "Kauai": {
+     "n": 5061,
+     "share": 0.1498,
+     "idx": 0.9441,
+     "idx_2024": 1.1027
+    },
+    "Hawaii": {
+     "n": 7493,
+     "share": 0.2219,
+     "idx": 1.2168,
+     "idx_2024": 1.1963
+    },
+    "pct_change_total_vs_2024": 1.46
+   },
+   {
+    "metro": "San Antonio-New Braunfels TX",
+    "total": 32799,
+    "Oahu": {
+     "n": 21605,
+     "share": 0.6587,
+     "idx": 1.2519,
+     "idx_2024": 1.2885
+    },
+    "Maui": {
+     "n": 7348,
+     "share": 0.224,
+     "idx": 0.7744,
+     "idx_2024": 0.7878
+    },
+    "Kauai": {
+     "n": 4831,
+     "share": 0.1473,
+     "idx": 0.9281,
+     "idx_2024": 0.8445
+    },
+    "Hawaii": {
+     "n": 4910,
+     "share": 0.1497,
+     "idx": 0.8211,
+     "idx_2024": 0.8811
+    },
+    "pct_change_total_vs_2024": -21.37
+   },
+   {
+    "metro": "Kansas City MO-KS",
+    "total": 31967,
+    "Oahu": {
+     "n": 17342,
+     "share": 0.5425,
+     "idx": 1.031,
+     "idx_2024": 0.9829
+    },
+    "Maui": {
+     "n": 11049,
+     "share": 0.3456,
+     "idx": 1.1947,
+     "idx_2024": 1.1044
+    },
+    "Kauai": {
+     "n": 6742,
+     "share": 0.2109,
+     "idx": 1.3291,
+     "idx_2024": 1.2736
+    },
+    "Hawaii": {
+     "n": 7255,
+     "share": 0.2269,
+     "idx": 1.2448,
+     "idx_2024": 1.1285
+    },
+    "pct_change_total_vs_2024": -14.44
+   },
+   {
+    "metro": "Santa Maria-Santa Barbara CA",
+    "total": 31898,
+    "Oahu": {
+     "n": 13295,
+     "share": 0.4168,
+     "idx": 0.7921,
+     "idx_2024": 0.7957
+    },
+    "Maui": {
+     "n": 9202,
+     "share": 0.2885,
+     "idx": 0.9972,
+     "idx_2024": 0.9707
+    },
+    "Kauai": {
+     "n": 7183,
+     "share": 0.2252,
+     "idx": 1.4189,
+     "idx_2024": 1.3444
+    },
+    "Hawaii": {
+     "n": 5531,
+     "share": 0.1734,
+     "idx": 0.951,
+     "idx_2024": 1.0487
+    },
+    "pct_change_total_vs_2024": 23.08
+   },
+   {
+    "metro": "Vallejo-Fairfield CA",
+    "total": 30225,
+    "Oahu": {
+     "n": 17859,
+     "share": 0.5909,
+     "idx": 1.123,
+     "idx_2024": 1.0638
+    },
+    "Maui": {
+     "n": 8087,
+     "share": 0.2675,
+     "idx": 0.9248,
+     "idx_2024": 0.8882
+    },
+    "Kauai": {
+     "n": 2865,
+     "share": 0.0948,
+     "idx": 0.5973,
+     "idx_2024": 0.8502
+    },
+    "Hawaii": {
+     "n": 3940,
+     "share": 0.1304,
+     "idx": 0.715,
+     "idx_2024": 0.7399
+    },
+    "pct_change_total_vs_2024": -20.74
+   },
+   {
+    "metro": "St. Louis MO-IL",
+    "total": 30024,
+    "Oahu": {
+     "n": 17251,
+     "share": 0.5746,
+     "idx": 1.092,
+     "idx_2024": 1.0252
+    },
+    "Maui": {
+     "n": 10134,
+     "share": 0.3375,
+     "idx": 1.1667,
+     "idx_2024": 1.2097
+    },
+    "Kauai": {
+     "n": 6392,
+     "share": 0.2129,
+     "idx": 1.3415,
+     "idx_2024": 1.2284
+    },
+    "Hawaii": {
+     "n": 6556,
+     "share": 0.2184,
+     "idx": 1.1976,
+     "idx_2024": 1.2377
+    },
+    "pct_change_total_vs_2024": -16.48
+   },
+   {
+    "metro": "Baltimore-Columbia-Towson MD",
+    "total": 29129,
+    "Oahu": {
+     "n": 20665,
+     "share": 0.7094,
+     "idx": 1.3483,
+     "idx_2024": 1.3217
+    },
+    "Maui": {
+     "n": 6924,
+     "share": 0.2377,
+     "idx": 0.8217,
+     "idx_2024": 0.8901
+    },
+    "Kauai": {
+     "n": 4732,
+     "share": 0.1624,
+     "idx": 1.0236,
+     "idx_2024": 0.9358
+    },
+    "Hawaii": {
+     "n": 5765,
+     "share": 0.1979,
+     "idx": 1.0856,
+     "idx_2024": 1.1153
+    },
+    "pct_change_total_vs_2024": -5.5
+   },
+   {
+    "metro": "Tampa-St. Petersburg-Clearwater FL",
+    "total": 29048,
+    "Oahu": {
+     "n": 18042,
+     "share": 0.6211,
+     "idx": 1.1805,
+     "idx_2024": 1.2447
+    },
+    "Maui": {
+     "n": 9695,
+     "share": 0.3337,
+     "idx": 1.1537,
+     "idx_2024": 1.0323
+    },
+    "Kauai": {
+     "n": 5914,
+     "share": 0.2036,
+     "idx": 1.283,
+     "idx_2024": 1.162
+    },
+    "Hawaii": {
+     "n": 7201,
+     "share": 0.2479,
+     "idx": 1.3597,
+     "idx_2024": 1.2188
+    },
+    "pct_change_total_vs_2024": 1.77
+   },
+   {
+    "metro": "Orlando-Kissimmee-Sanford FL",
+    "total": 27275,
+    "Oahu": {
+     "n": 17264,
+     "share": 0.6329,
+     "idx": 1.2029,
+     "idx_2024": 1.2839
+    },
+    "Maui": {
+     "n": 9088,
+     "share": 0.3332,
+     "idx": 1.1518,
+     "idx_2024": 1.0112
+    },
+    "Kauai": {
+     "n": 5020,
+     "share": 0.184,
+     "idx": 1.1597,
+     "idx_2024": 1.006
+    },
+    "Hawaii": {
+     "n": 5706,
+     "share": 0.2092,
+     "idx": 1.1474,
+     "idx_2024": 1.2059
+    },
+    "pct_change_total_vs_2024": 3.75
+   },
+   {
+    "metro": "Bend OR",
+    "total": 25887,
+    "Oahu": {
+     "n": 7562,
+     "share": 0.2921,
+     "idx": 0.5552,
+     "idx_2024": 0.5425
+    },
+    "Maui": {
+     "n": 9743,
+     "share": 0.3764,
+     "idx": 1.301,
+     "idx_2024": 1.2714
+    },
+    "Kauai": {
+     "n": 5205,
+     "share": 0.2011,
+     "idx": 1.267,
+     "idx_2024": 1.2935
+    },
+    "Hawaii": {
+     "n": 6302,
+     "share": 0.2435,
+     "idx": 1.3353,
+     "idx_2024": 1.4113
+    },
+    "pct_change_total_vs_2024": 23.45
+   },
+   {
+    "metro": "Bremerton-Silverdale WA",
+    "total": 25872,
+    "Oahu": {
+     "n": 15795,
+     "share": 0.6105,
+     "idx": 1.1602,
+     "idx_2024": 0.9547
+    },
+    "Maui": {
+     "n": 5481,
+     "share": 0.2118,
+     "idx": 0.7323,
+     "idx_2024": 0.8966
+    },
+    "Kauai": {
+     "n": 2939,
+     "share": 0.1136,
+     "idx": 0.7158,
+     "idx_2024": 0.9387
+    },
+    "Hawaii": {
+     "n": 4466,
+     "share": 0.1726,
+     "idx": 0.9468,
+     "idx_2024": 1.0332
+    },
+    "pct_change_total_vs_2024": 7.08
+   },
+   {
+    "metro": "Santa Cruz-Watsonville CA",
+    "total": 25570,
+    "Oahu": {
+     "n": 7829,
+     "share": 0.3062,
+     "idx": 0.5819,
+     "idx_2024": 0.7182
+    },
+    "Maui": {
+     "n": 7717,
+     "share": 0.3018,
+     "idx": 1.0432,
+     "idx_2024": 0.9893
+    },
+    "Kauai": {
+     "n": 6509,
+     "share": 0.2545,
+     "idx": 1.604,
+     "idx_2024": 1.4381
+    },
+    "Hawaii": {
+     "n": 5475,
+     "share": 0.2141,
+     "idx": 1.1743,
+     "idx_2024": 1.1102
+    },
+    "pct_change_total_vs_2024": -12.0
+   },
+   {
+    "metro": "Boulder CO",
+    "total": 25539,
+    "Oahu": {
+     "n": 7982,
+     "share": 0.3126,
+     "idx": 0.594,
+     "idx_2024": 0.6759
+    },
+    "Maui": {
+     "n": 8212,
+     "share": 0.3216,
+     "idx": 1.1115,
+     "idx_2024": 1.1436
+    },
+    "Kauai": {
+     "n": 7883,
+     "share": 0.3087,
+     "idx": 1.9451,
+     "idx_2024": 1.529
+    },
+    "Hawaii": {
+     "n": 5223,
+     "share": 0.2045,
+     "idx": 1.1217,
+     "idx_2024": 1.336
+    },
+    "pct_change_total_vs_2024": 39.11
+   },
+   {
+    "metro": "Salem OR",
+    "total": 25265,
+    "Oahu": {
+     "n": 8989,
+     "share": 0.3558,
+     "idx": 0.6762,
+     "idx_2024": 0.7533
+    },
+    "Maui": {
+     "n": 9190,
+     "share": 0.3637,
+     "idx": 1.2573,
+     "idx_2024": 1.1085
+    },
+    "Kauai": {
+     "n": 3662,
+     "share": 0.1449,
+     "idx": 0.9133,
+     "idx_2024": 0.9745
+    },
+    "Hawaii": {
+     "n": 5853,
+     "share": 0.2317,
+     "idx": 1.2706,
+     "idx_2024": 1.2566
+    },
+    "pct_change_total_vs_2024": 11.9
+   },
+   {
+    "metro": "San Luis Obispo-Paso Robles-Arroyo Grande CA",
+    "total": 24910,
+    "Oahu": {
+     "n": 7861,
+     "share": 0.3156,
+     "idx": 0.5997,
+     "idx_2024": 0.6799
+    },
+    "Maui": {
+     "n": 8342,
+     "share": 0.3349,
+     "idx": 1.1576,
+     "idx_2024": 1.1022
+    },
+    "Kauai": {
+     "n": 6627,
+     "share": 0.266,
+     "idx": 1.6763,
+     "idx_2024": 1.454
+    },
+    "Hawaii": {
+     "n": 4673,
+     "share": 0.1876,
+     "idx": 1.0289,
+     "idx_2024": 1.1396
+    },
+    "pct_change_total_vs_2024": 25.44
+   },
+   {
+    "metro": "Eugene OR",
+    "total": 24082,
+    "Oahu": {
+     "n": 6843,
+     "share": 0.2842,
+     "idx": 0.5401,
+     "idx_2024": 0.7028
+    },
+    "Maui": {
+     "n": 8395,
+     "share": 0.3486,
+     "idx": 1.205,
+     "idx_2024": 1.0336
+    },
+    "Kauai": {
+     "n": 4826,
+     "share": 0.2004,
+     "idx": 1.2629,
+     "idx_2024": 1.1818
+    },
+    "Hawaii": {
+     "n": 5967,
+     "share": 0.2478,
+     "idx": 1.3591,
+     "idx_2024": 1.3847
+    },
+    "pct_change_total_vs_2024": 25.47
+   },
+   {
+    "metro": "Olympia-Tumwater WA",
+    "total": 23296,
+    "Oahu": {
+     "n": 11591,
+     "share": 0.4976,
+     "idx": 0.9457,
+     "idx_2024": 0.9107
+    },
+    "Maui": {
+     "n": 6446,
+     "share": 0.2767,
+     "idx": 0.9565,
+     "idx_2024": 0.9666
+    },
+    "Kauai": {
+     "n": 2495,
+     "share": 0.1071,
+     "idx": 0.675,
+     "idx_2024": 0.8599
+    },
+    "Hawaii": {
+     "n": 4858,
+     "share": 0.2085,
+     "idx": 1.1438,
+     "idx_2024": 1.0939
+    },
+    "pct_change_total_vs_2024": 7.23
+   },
+   {
+    "metro": "Tucson AZ",
+    "total": 23197,
+    "Oahu": {
+     "n": 14321,
+     "share": 0.6174,
+     "idx": 1.1733,
+     "idx_2024": 0.9727
+    },
+    "Maui": {
+     "n": 5385,
+     "share": 0.2321,
+     "idx": 0.8024,
+     "idx_2024": 0.89
+    },
+    "Kauai": {
+     "n": 4209,
+     "share": 0.1815,
+     "idx": 1.1435,
+     "idx_2024": 1.1649
+    },
+    "Hawaii": {
+     "n": 3559,
+     "share": 0.1534,
+     "idx": 0.8416,
+     "idx_2024": 1.1966
+    },
+    "pct_change_total_vs_2024": -25.05
+   },
+   {
+    "metro": "Bakersfield CA",
+    "total": 22774,
+    "Oahu": {
+     "n": 14603,
+     "share": 0.6412,
+     "idx": 1.2186,
+     "idx_2024": 1.1064
+    },
+    "Maui": {
+     "n": 5084,
+     "share": 0.2233,
+     "idx": 0.7717,
+     "idx_2024": 0.7837
+    },
+    "Kauai": {
+     "n": 2209,
+     "share": 0.097,
+     "idx": 0.6112,
+     "idx_2024": 0.8497
+    },
+    "Hawaii": {
+     "n": 3210,
+     "share": 0.1409,
+     "idx": 0.773,
+     "idx_2024": 0.8032
+    },
+    "pct_change_total_vs_2024": 7.24
+   },
+   {
+    "metro": "Cincinnati OH-KY-IN",
+    "total": 22682,
+    "Oahu": {
+     "n": 11862,
+     "share": 0.523,
+     "idx": 0.994,
+     "idx_2024": 1.1199
+    },
+    "Maui": {
+     "n": 8123,
+     "share": 0.3581,
+     "idx": 1.238,
+     "idx_2024": 1.1636
+    },
+    "Kauai": {
+     "n": 5917,
+     "share": 0.2609,
+     "idx": 1.644,
+     "idx_2024": 1.349
+    },
+    "Hawaii": {
+     "n": 5832,
+     "share": 0.2571,
+     "idx": 1.4102,
+     "idx_2024": 1.3957
+    },
+    "pct_change_total_vs_2024": 10.8
+   },
+   {
+    "metro": "Cleveland-Elyria OH",
+    "total": 22351,
+    "Oahu": {
+     "n": 11700,
+     "share": 0.5235,
+     "idx": 0.9949,
+     "idx_2024": 1.1015
+    },
+    "Maui": {
+     "n": 8959,
+     "share": 0.4008,
+     "idx": 1.3856,
+     "idx_2024": 1.193
+    },
+    "Kauai": {
+     "n": 4775,
+     "share": 0.2136,
+     "idx": 1.3462,
+     "idx_2024": 1.2256
+    },
+    "Hawaii": {
+     "n": 5295,
+     "share": 0.2369,
+     "idx": 1.2994,
+     "idx_2024": 1.3093
+    },
+    "pct_change_total_vs_2024": 30.46
+   },
+   {
+    "metro": "Salinas CA",
+    "total": 22248,
+    "Oahu": {
+     "n": 10527,
+     "share": 0.4732,
+     "idx": 0.8993,
+     "idx_2024": 0.9756
+    },
+    "Maui": {
+     "n": 5625,
+     "share": 0.2528,
+     "idx": 0.874,
+     "idx_2024": 0.8535
+    },
+    "Kauai": {
+     "n": 4299,
+     "share": 0.1932,
+     "idx": 1.2175,
+     "idx_2024": 0.9857
+    },
+    "Hawaii": {
+     "n": 3857,
+     "share": 0.1733,
+     "idx": 0.9508,
+     "idx_2024": 0.9185
+    },
+    "pct_change_total_vs_2024": -1.92
+   },
+   {
+    "metro": "Nashville-Davidson--Murfreesboro--Franklin TN",
+    "total": 22174,
+    "Oahu": {
+     "n": 11836,
+     "share": 0.5338,
+     "idx": 1.0144,
+     "idx_2024": 1.0655
+    },
+    "Maui": {
+     "n": 6958,
+     "share": 0.3138,
+     "idx": 1.0848,
+     "idx_2024": 1.1702
+    },
+    "Kauai": {
+     "n": 4810,
+     "share": 0.2169,
+     "idx": 1.367,
+     "idx_2024": 1.1622
+    },
+    "Hawaii": {
+     "n": 5628,
+     "share": 0.2538,
+     "idx": 1.3921,
+     "idx_2024": 1.1624
+    },
+    "pct_change_total_vs_2024": -20.32
+   },
+   {
+    "metro": "Milwaukee-Waukesha WI",
+    "total": 21820,
+    "Oahu": {
+     "n": 10895,
+     "share": 0.4993,
+     "idx": 0.949,
+     "idx_2024": 1.0389
+    },
+    "Maui": {
+     "n": 8313,
+     "share": 0.381,
+     "idx": 1.317,
+     "idx_2024": 1.2469
+    },
+    "Kauai": {
+     "n": 5558,
+     "share": 0.2547,
+     "idx": 1.6049,
+     "idx_2024": 1.2975
+    },
+    "Hawaii": {
+     "n": 5252,
+     "share": 0.2407,
+     "idx": 1.3203,
+     "idx_2024": 1.262
+    },
+    "pct_change_total_vs_2024": 9.87
+   },
+   {
+    "metro": "Indianapolis-Carmel-Anderson IN",
+    "total": 21201,
+    "Oahu": {
+     "n": 10906,
+     "share": 0.5144,
+     "idx": 0.9776,
+     "idx_2024": 1.0613
+    },
+    "Maui": {
+     "n": 7223,
+     "share": 0.3407,
+     "idx": 1.1777,
+     "idx_2024": 1.1849
+    },
+    "Kauai": {
+     "n": 5038,
+     "share": 0.2376,
+     "idx": 1.4975,
+     "idx_2024": 1.273
+    },
+    "Hawaii": {
+     "n": 4994,
+     "share": 0.2356,
+     "idx": 1.292,
+     "idx_2024": 1.229
+    },
+    "pct_change_total_vs_2024": -9.0
+   },
+   {
+    "metro": "Modesto CA",
+    "total": 19780,
+    "Oahu": {
+     "n": 9555,
+     "share": 0.4831,
+     "idx": 0.9181,
+     "idx_2024": 0.931
+    },
+    "Maui": {
+     "n": 6877,
+     "share": 0.3477,
+     "idx": 1.2018,
+     "idx_2024": 1.0285
+    },
+    "Kauai": {
+     "n": 2138,
+     "share": 0.1081,
+     "idx": 0.6812,
+     "idx_2024": 0.8979
+    },
+    "Hawaii": {
+     "n": 2958,
+     "share": 0.1496,
+     "idx": 0.8203,
+     "idx_2024": 0.8327
+    },
+    "pct_change_total_vs_2024": -16.73
+   },
+   {
+    "metro": "Columbus OH",
+    "total": 18780,
+    "Oahu": {
+     "n": 10115,
+     "share": 0.5386,
+     "idx": 1.0237,
+     "idx_2024": 1.0789
+    },
+    "Maui": {
+     "n": 6786,
+     "share": 0.3614,
+     "idx": 1.2491,
+     "idx_2024": 1.1745
+    },
+    "Kauai": {
+     "n": 4048,
+     "share": 0.2156,
+     "idx": 1.3584,
+     "idx_2024": 1.2545
+    },
+    "Hawaii": {
+     "n": 4769,
+     "share": 0.2539,
+     "idx": 1.3927,
+     "idx_2024": 1.3312
+    },
+    "pct_change_total_vs_2024": -11.41
+   },
+   {
+    "metro": "Pittsburgh PA",
+    "total": 18291,
+    "Oahu": {
+     "n": 10171,
+     "share": 0.5561,
+     "idx": 1.0568,
+     "idx_2024": 1.1414
+    },
+    "Maui": {
+     "n": 6074,
+     "share": 0.3321,
+     "idx": 1.148,
+     "idx_2024": 1.1227
+    },
+    "Kauai": {
+     "n": 3534,
+     "share": 0.1932,
+     "idx": 1.2175,
+     "idx_2024": 1.1845
+    },
+    "Hawaii": {
+     "n": 4427,
+     "share": 0.2421,
+     "idx": 1.3276,
+     "idx_2024": 1.3541
+    },
+    "pct_change_total_vs_2024": 4.67
+   },
+   {
+    "metro": "Bellingham WA",
+    "total": 17928,
+    "Oahu": {
+     "n": 6979,
+     "share": 0.3893,
+     "idx": 0.7398,
+     "idx_2024": 0.6413
+    },
+    "Maui": {
+     "n": 6260,
+     "share": 0.3492,
+     "idx": 1.2071,
+     "idx_2024": 1.2058
+    },
+    "Kauai": {
+     "n": 2659,
+     "share": 0.1483,
+     "idx": 0.9345,
+     "idx_2024": 1.092
+    },
+    "Hawaii": {
+     "n": 3872,
+     "share": 0.216,
+     "idx": 1.1847,
+     "idx_2024": 1.305
+    },
+    "pct_change_total_vs_2024": 8.3
+   },
+   {
+    "metro": "Virginia Beach-Norfolk-Newport News VA-NC",
+    "total": 17858,
+    "Oahu": {
+     "n": 13030,
+     "share": 0.7296,
+     "idx": 1.3867,
+     "idx_2024": 1.5118
+    },
+    "Maui": {
+     "n": 3524,
+     "share": 0.1973,
+     "idx": 0.6821,
+     "idx_2024": 0.5855
+    },
+    "Kauai": {
+     "n": 2756,
+     "share": 0.1543,
+     "idx": 0.9725,
+     "idx_2024": 0.7468
+    },
+    "Hawaii": {
+     "n": 3159,
+     "share": 0.1769,
+     "idx": 0.9703,
+     "idx_2024": 0.802
+    },
+    "pct_change_total_vs_2024": -17.4
+   },
+   {
+    "metro": "Charlotte-Concord-Gastonia NC-SC",
+    "total": 15856,
+    "Oahu": {
+     "n": 9844,
+     "share": 0.6208,
+     "idx": 1.1799,
+     "idx_2024": 1.1521
+    },
+    "Maui": {
+     "n": 5816,
+     "share": 0.3668,
+     "idx": 1.268,
+     "idx_2024": 1.1376
+    },
+    "Kauai": {
+     "n": 2743,
+     "share": 0.173,
+     "idx": 1.0902,
+     "idx_2024": 1.0979
+    },
+    "Hawaii": {
+     "n": 3219,
+     "share": 0.203,
+     "idx": 1.1136,
+     "idx_2024": 1.2709
+    },
+    "pct_change_total_vs_2024": -28.6
+   },
+   {
+    "metro": "Albuquerque NM",
+    "total": 14496,
+    "Oahu": {
+     "n": 8315,
+     "share": 0.5736,
+     "idx": 1.0902,
+     "idx_2024": 0.9648
+    },
+    "Maui": {
+     "n": 3366,
+     "share": 0.2322,
+     "idx": 0.8026,
+     "idx_2024": 0.8678
+    },
+    "Kauai": {
+     "n": 2954,
+     "share": 0.2038,
+     "idx": 1.284,
+     "idx_2024": 1.2585
+    },
+    "Hawaii": {
+     "n": 2340,
+     "share": 0.1614,
+     "idx": 0.8852,
+     "idx_2024": 1.0711
+    },
+    "pct_change_total_vs_2024": -39.18
+   },
+   {
+    "metro": "Oklahoma City OK",
+    "total": 13297,
+    "Oahu": {
+     "n": 7571,
+     "share": 0.5693,
+     "idx": 1.0821,
+     "idx_2024": 1.0647
+    },
+    "Maui": {
+     "n": 3940,
+     "share": 0.2963,
+     "idx": 1.0243,
+     "idx_2024": 1.0498
+    },
+    "Kauai": {
+     "n": 2540,
+     "share": 0.191,
+     "idx": 1.2037,
+     "idx_2024": 1.0816
+    },
+    "Hawaii": {
+     "n": 2301,
+     "share": 0.173,
+     "idx": 0.9491,
+     "idx_2024": 1.1044
+    },
+    "pct_change_total_vs_2024": -24.98
+   }
+  ],
+  "raw_table56": [
+   {
+    "metro": "Albuquerque NM",
+    "total": 14496,
+    "oahu": 8315,
+    "maui_county": 3398,
+    "maui": 3366,
+    "molokai": 24,
+    "lanai": 15,
+    "kauai": 2954,
+    "hawaii_island": 2340,
+    "hilo": 974,
+    "kona": 1918
+   },
+   {
+    "metro": "Anchorage AK",
+    "total": 71702,
+    "oahu": 40769,
+    "maui_county": 15310,
+    "maui": 14686,
+    "molokai": 783,
+    "lanai": 92,
+    "kauai": 5860,
+    "hawaii_island": 18492,
+    "hilo": 3970,
+    "kona": 17118
+   },
+   {
+    "metro": "Atlanta-Sandy Springs-Roswell GA",
+    "total": 61835,
+    "oahu": 41068,
+    "maui_county": 17384,
+    "maui": 17173,
+    "molokai": 342,
+    "lanai": 315,
+    "kauai": 8337,
+    "hawaii_island": 10469,
+    "hilo": 3560,
+    "kona": 9544
+   },
+   {
+    "metro": "Austin-Round Rock TX",
+    "total": 55131,
+    "oahu": 28426,
+    "maui_county": 17019,
+    "maui": 16858,
+    "molokai": 100,
+    "lanai": 131,
+    "kauai": 11497,
+    "hawaii_island": 10704,
+    "hilo": 3445,
+    "kona": 9528
+   },
+   {
+    "metro": "Bakersfield CA",
+    "total": 22774,
+    "oahu": 14603,
+    "maui_county": 5130,
+    "maui": 5084,
+    "molokai": 48,
+    "lanai": 20,
+    "kauai": 2209,
+    "hawaii_island": 3210,
+    "hilo": 893,
+    "kona": 2877
+   },
+   {
+    "metro": "Baltimore-Columbia-Towson MD",
+    "total": 29129,
+    "oahu": 20665,
+    "maui_county": 7009,
+    "maui": 6924,
+    "molokai": 68,
+    "lanai": 70,
+    "kauai": 4732,
+    "hawaii_island": 5765,
+    "hilo": 2237,
+    "kona": 4910
+   },
+   {
+    "metro": "Bellingham WA",
+    "total": 17928,
+    "oahu": 6979,
+    "maui_county": 6291,
+    "maui": 6260,
+    "molokai": 33,
+    "lanai": 57,
+    "kauai": 2659,
+    "hawaii_island": 3872,
+    "hilo": 1067,
+    "kona": 3500
+   },
+   {
+    "metro": "Bend OR",
+    "total": 25887,
+    "oahu": 7562,
+    "maui_county": 9804,
+    "maui": 9743,
+    "molokai": 31,
+    "lanai": 63,
+    "kauai": 5205,
+    "hawaii_island": 6302,
+    "hilo": 1364,
+    "kona": 5968
+   },
+   {
+    "metro": "Boise City ID",
+    "total": 48327,
+    "oahu": 18000,
+    "maui_county": 17671,
+    "maui": 17561,
+    "molokai": 76,
+    "lanai": 124,
+    "kauai": 10745,
+    "hawaii_island": 8578,
+    "hilo": 2452,
+    "kona": 7651
+   },
+   {
+    "metro": "Boston-Cambridge-Newton MA-NH",
+    "total": 71759,
+    "oahu": 45093,
+    "maui_county": 23190,
+    "maui": 22914,
+    "molokai": 105,
+    "lanai": 351,
+    "kauai": 14696,
+    "hawaii_island": 17188,
+    "hilo": 6688,
+    "kona": 14827
+   },
+   {
+    "metro": "Boulder CO",
+    "total": 25539,
+    "oahu": 7982,
+    "maui_county": 8371,
+    "maui": 8212,
+    "molokai": 46,
+    "lanai": 172,
+    "kauai": 7883,
+    "hawaii_island": 5223,
+    "hilo": 1200,
+    "kona": 4860
+   },
+   {
+    "metro": "Bremerton-Silverdale WA",
+    "total": 25872,
+    "oahu": 15795,
+    "maui_county": 5578,
+    "maui": 5481,
+    "molokai": 81,
+    "lanai": 41,
+    "kauai": 2939,
+    "hawaii_island": 4466,
+    "hilo": 1118,
+    "kona": 4034
+   },
+   {
+    "metro": "Charlotte-Concord-Gastonia NC-SC",
+    "total": 15856,
+    "oahu": 9844,
+    "maui_county": 5908,
+    "maui": 5816,
+    "molokai": 61,
+    "lanai": 104,
+    "kauai": 2743,
+    "hawaii_island": 3219,
+    "hilo": 1260,
+    "kona": 2871
+   },
+   {
+    "metro": "Chicago-Naperville-Elgin IL-IN-WI",
+    "total": 144297,
+    "oahu": 78900,
+    "maui_county": 49029,
+    "maui": 48551,
+    "molokai": 246,
+    "lanai": 536,
+    "kauai": 29511,
+    "hawaii_island": 26584,
+    "hilo": 8882,
+    "kona": 23838
+   },
+   {
+    "metro": "Cincinnati OH-KY-IN",
+    "total": 22682,
+    "oahu": 11862,
+    "maui_county": 8304,
+    "maui": 8123,
+    "molokai": 107,
+    "lanai": 106,
+    "kauai": 5917,
+    "hawaii_island": 5832,
+    "hilo": 2393,
+    "kona": 5191
+   },
+   {
+    "metro": "Cleveland-Elyria OH",
+    "total": 22351,
+    "oahu": 11700,
+    "maui_county": 9022,
+    "maui": 8959,
+    "molokai": 14,
+    "lanai": 70,
+    "kauai": 4775,
+    "hawaii_island": 5295,
+    "hilo": 1723,
+    "kona": 4669
+   },
+   {
+    "metro": "Colorado Springs CO",
+    "total": 34470,
+    "oahu": 17321,
+    "maui_county": 9734,
+    "maui": 9640,
+    "molokai": 66,
+    "lanai": 73,
+    "kauai": 8362,
+    "hawaii_island": 5919,
+    "hilo": 2091,
+    "kona": 5165
+   },
+   {
+    "metro": "Columbus OH",
+    "total": 18780,
+    "oahu": 10115,
+    "maui_county": 6813,
+    "maui": 6786,
+    "molokai": 38,
+    "lanai": 58,
+    "kauai": 4048,
+    "hawaii_island": 4769,
+    "hilo": 1457,
+    "kona": 4222
+   },
+   {
+    "metro": "Dallas-Fort Worth-Arlington TX",
+    "total": 84007,
+    "oahu": 47019,
+    "maui_county": 27409,
+    "maui": 27079,
+    "molokai": 353,
+    "lanai": 220,
+    "kauai": 13013,
+    "hawaii_island": 15853,
+    "hilo": 5500,
+    "kona": 13770
+   },
+   {
+    "metro": "Denver-Aurora-Lakewood CO",
+    "total": 177308,
+    "oahu": 66741,
+    "maui_county": 62187,
+    "maui": 61638,
+    "molokai": 236,
+    "lanai": 679,
+    "kauai": 46890,
+    "hawaii_island": 31934,
+    "hilo": 8951,
+    "kona": 28629
+   },
+   {
+    "metro": "Detroit-Warren-Dearborn MI",
+    "total": 42529,
+    "oahu": 23666,
+    "maui_county": 15155,
+    "maui": 15037,
+    "molokai": 42,
+    "lanai": 163,
+    "kauai": 8851,
+    "hawaii_island": 10388,
+    "hilo": 3990,
+    "kona": 9285
+   },
+   {
+    "metro": "Eugene OR",
+    "total": 24082,
+    "oahu": 6843,
+    "maui_county": 8437,
+    "maui": 8395,
+    "molokai": 29,
+    "lanai": 56,
+    "kauai": 4826,
+    "hawaii_island": 5967,
+    "hilo": 2093,
+    "kona": 4799
+   },
+   {
+    "metro": "Fresno CA",
+    "total": 43444,
+    "oahu": 20584,
+    "maui_county": 14091,
+    "maui": 13998,
+    "molokai": 44,
+    "lanai": 83,
+    "kauai": 7101,
+    "hawaii_island": 6260,
+    "hilo": 1835,
+    "kona": 5457
+   },
+   {
+    "metro": "Houston-The Woodlands-Sugar Land TX",
+    "total": 104537,
+    "oahu": 55083,
+    "maui_county": 33074,
+    "maui": 32721,
+    "molokai": 216,
+    "lanai": 516,
+    "kauai": 21174,
+    "hawaii_island": 20935,
+    "hilo": 6688,
+    "kona": 18498
+   },
+   {
+    "metro": "Indianapolis-Carmel-Anderson IN",
+    "total": 21201,
+    "oahu": 10906,
+    "maui_county": 7287,
+    "maui": 7223,
+    "molokai": 53,
+    "lanai": 62,
+    "kauai": 5038,
+    "hawaii_island": 4994,
+    "hilo": 1750,
+    "kona": 4457
+   },
+   {
+    "metro": "Kansas City MO-KS",
+    "total": 31967,
+    "oahu": 17342,
+    "maui_county": 11121,
+    "maui": 11049,
+    "molokai": 45,
+    "lanai": 92,
+    "kauai": 6742,
+    "hawaii_island": 7255,
+    "hilo": 2785,
+    "kona": 6376
+   },
+   {
+    "metro": "Las Vegas-Henderson-Paradise NV",
+    "total": 112581,
+    "oahu": 70032,
+    "maui_county": 26802,
+    "maui": 26394,
+    "molokai": 208,
+    "lanai": 320,
+    "kauai": 13612,
+    "hawaii_island": 15820,
+    "hilo": 4843,
+    "kona": 13514
+   },
+   {
+    "metro": "Los Angeles-Long Beach-Anaheim CA",
+    "total": 829276,
+    "oahu": 502085,
+    "maui_county": 195227,
+    "maui": 192785,
+    "molokai": 867,
+    "lanai": 2444,
+    "kauai": 96459,
+    "hawaii_island": 118764,
+    "hilo": 29632,
+    "kona": 106924
+   },
+   {
+    "metro": "Miami-Fort Lauderdale-West Palm Beach FL",
+    "total": 36323,
+    "oahu": 22530,
+    "maui_county": 11889,
+    "maui": 11738,
+    "molokai": 56,
+    "lanai": 196,
+    "kauai": 6905,
+    "hawaii_island": 8731,
+    "hilo": 3082,
+    "kona": 7941
+   },
+   {
+    "metro": "Milwaukee-Waukesha WI",
+    "total": 21820,
+    "oahu": 10895,
+    "maui_county": 8397,
+    "maui": 8313,
+    "molokai": 61,
+    "lanai": 62,
+    "kauai": 5558,
+    "hawaii_island": 5252,
+    "hilo": 1923,
+    "kona": 4629
+   },
+   {
+    "metro": "Minneapolis-St. Paul-Bloomington MN-WI",
+    "total": 83450,
+    "oahu": 41853,
+    "maui_county": 26662,
+    "maui": 26389,
+    "molokai": 210,
+    "lanai": 127,
+    "kauai": 16645,
+    "hawaii_island": 18266,
+    "hilo": 5946,
+    "kona": 16712
+   },
+   {
+    "metro": "Modesto CA",
+    "total": 19780,
+    "oahu": 9555,
+    "maui_county": 6892,
+    "maui": 6877,
+    "molokai": 14,
+    "lanai": 9,
+    "kauai": 2138,
+    "hawaii_island": 2958,
+    "hilo": 891,
+    "kona": 2446
+   },
+   {
+    "metro": "Nashville-Davidson--Murfreesboro--Franklin TN",
+    "total": 22174,
+    "oahu": 11836,
+    "maui_county": 7003,
+    "maui": 6958,
+    "molokai": 15,
+    "lanai": 55,
+    "kauai": 4810,
+    "hawaii_island": 5628,
+    "hilo": 1752,
+    "kona": 4898
+   },
+   {
+    "metro": "New York-Newark-Jersey City NY-NJ-PA",
+    "total": 223824,
+    "oahu": 140165,
+    "maui_county": 75115,
+    "maui": 74393,
+    "molokai": 186,
+    "lanai": 1118,
+    "kauai": 39514,
+    "hawaii_island": 49602,
+    "hilo": 17056,
+    "kona": 43239
+   },
+   {
+    "metro": "Ogden-Clearfield UT",
+    "total": 46737,
+    "oahu": 23174,
+    "maui_county": 12131,
+    "maui": 11579,
+    "molokai": 511,
+    "lanai": 468,
+    "kauai": 12774,
+    "hawaii_island": 5904,
+    "hilo": 2131,
+    "kona": 5323
+   },
+   {
+    "metro": "Oklahoma City OK",
+    "total": 13297,
+    "oahu": 7571,
+    "maui_county": 3966,
+    "maui": 3940,
+    "molokai": 15,
+    "lanai": 19,
+    "kauai": 2540,
+    "hawaii_island": 2301,
+    "hilo": 777,
+    "kona": 2048
+   },
+   {
+    "metro": "Olympia-Tumwater WA",
+    "total": 23296,
+    "oahu": 11591,
+    "maui_county": 6484,
+    "maui": 6446,
+    "molokai": 40,
+    "lanai": 48,
+    "kauai": 2495,
+    "hawaii_island": 4858,
+    "hilo": 2022,
+    "kona": 4203
+   },
+   {
+    "metro": "Orlando-Kissimmee-Sanford FL",
+    "total": 27275,
+    "oahu": 17264,
+    "maui_county": 9215,
+    "maui": 9088,
+    "molokai": 159,
+    "lanai": 130,
+    "kauai": 5020,
+    "hawaii_island": 5706,
+    "hilo": 2157,
+    "kona": 4974
+   },
+   {
+    "metro": "Oxnard-Thousand Oaks-Ventura CA",
+    "total": 57404,
+    "oahu": 28621,
+    "maui_county": 16413,
+    "maui": 16209,
+    "molokai": 79,
+    "lanai": 180,
+    "kauai": 8696,
+    "hawaii_island": 9354,
+    "hilo": 2133,
+    "kona": 8522
+   },
+   {
+    "metro": "Philadelphia-Camden-Wilmington PA-NJ-DE-MD",
+    "total": 41284,
+    "oahu": 25678,
+    "maui_county": 13470,
+    "maui": 13363,
+    "molokai": 59,
+    "lanai": 219,
+    "kauai": 7306,
+    "hawaii_island": 9128,
+    "hilo": 3470,
+    "kona": 8033
+   },
+   {
+    "metro": "Phoenix-Mesa-Scottsdale AZ",
+    "total": 137993,
+    "oahu": 80695,
+    "maui_county": 32969,
+    "maui": 32681,
+    "molokai": 143,
+    "lanai": 260,
+    "kauai": 29955,
+    "hawaii_island": 16729,
+    "hilo": 6298,
+    "kona": 14026
+   },
+   {
+    "metro": "Pittsburgh PA",
+    "total": 18291,
+    "oahu": 10171,
+    "maui_county": 6116,
+    "maui": 6074,
+    "molokai": 26,
+    "lanai": 46,
+    "kauai": 3534,
+    "hawaii_island": 4427,
+    "hilo": 1489,
+    "kona": 3983
+   },
+   {
+    "metro": "Portland-Vancouver-Hillsboro OR-WA",
+    "total": 239258,
+    "oahu": 88065,
+    "maui_county": 85391,
+    "maui": 84435,
+    "molokai": 686,
+    "lanai": 770,
+    "kauai": 35321,
+    "hawaii_island": 54123,
+    "hilo": 14258,
+    "kona": 49001
+   },
+   {
+    "metro": "Provo-Orem UT",
+    "total": 57128,
+    "oahu": 30225,
+    "maui_county": 13812,
+    "maui": 13697,
+    "molokai": 61,
+    "lanai": 83,
+    "kauai": 12555,
+    "hawaii_island": 6277,
+    "hilo": 2121,
+    "kona": 5601
+   },
+   {
+    "metro": "Reno NV",
+    "total": 35621,
+    "oahu": 13176,
+    "maui_county": 12243,
+    "maui": 12164,
+    "molokai": 45,
+    "lanai": 60,
+    "kauai": 7326,
+    "hawaii_island": 7043,
+    "hilo": 1574,
+    "kona": 6513
+   },
+   {
+    "metro": "Riverside-San Bernardino-Ontario CA",
+    "total": 211723,
+    "oahu": 134434,
+    "maui_county": 47935,
+    "maui": 47495,
+    "molokai": 290,
+    "lanai": 285,
+    "kauai": 23275,
+    "hawaii_island": 26961,
+    "hilo": 7994,
+    "kona": 23854
+   },
+   {
+    "metro": "Sacramento--Roseville--Arden-Arcade CA",
+    "total": 153127,
+    "oahu": 76792,
+    "maui_county": 48485,
+    "maui": 48148,
+    "molokai": 289,
+    "lanai": 292,
+    "kauai": 18167,
+    "hawaii_island": 25876,
+    "hilo": 7397,
+    "kona": 23035
+   },
+   {
+    "metro": "Salem OR",
+    "total": 25265,
+    "oahu": 8989,
+    "maui_county": 9243,
+    "maui": 9190,
+    "molokai": 42,
+    "lanai": 25,
+    "kauai": 3662,
+    "hawaii_island": 5853,
+    "hilo": 1676,
+    "kona": 5279
+   },
+   {
+    "metro": "Salinas CA",
+    "total": 22248,
+    "oahu": 10527,
+    "maui_county": 5696,
+    "maui": 5625,
+    "molokai": 36,
+    "lanai": 43,
+    "kauai": 4299,
+    "hawaii_island": 3857,
+    "hilo": 931,
+    "kona": 3458
+   },
+   {
+    "metro": "Salt Lake City UT",
+    "total": 80027,
+    "oahu": 39983,
+    "maui_county": 22577,
+    "maui": 22241,
+    "molokai": 319,
+    "lanai": 181,
+    "kauai": 17611,
+    "hawaii_island": 11132,
+    "hilo": 3456,
+    "kona": 9537
+   },
+   {
+    "metro": "San Antonio-New Braunfels TX",
+    "total": 32799,
+    "oahu": 21605,
+    "maui_county": 7452,
+    "maui": 7348,
+    "molokai": 35,
+    "lanai": 98,
+    "kauai": 4831,
+    "hawaii_island": 4910,
+    "hilo": 2158,
+    "kona": 3978
+   },
+   {
+    "metro": "San Diego-Carlsbad CA",
+    "total": 300098,
+    "oahu": 126509,
+    "maui_county": 100981,
+    "maui": 100380,
+    "molokai": 410,
+    "lanai": 548,
+    "kauai": 49909,
+    "hawaii_island": 56710,
+    "hilo": 15048,
+    "kona": 50860
+   },
+   {
+    "metro": "San Francisco-Oakland-Hayward CA",
+    "total": 626588,
+    "oahu": 288580,
+    "maui_county": 184324,
+    "maui": 182342,
+    "molokai": 681,
+    "lanai": 2063,
+    "kauai": 88706,
+    "hawaii_island": 126431,
+    "hilo": 28692,
+    "kona": 115461
+   },
+   {
+    "metro": "San Jose-Sunnyvale-Santa Clara CA",
+    "total": 215671,
+    "oahu": 105801,
+    "maui_county": 61041,
+    "maui": 60554,
+    "molokai": 159,
+    "lanai": 502,
+    "kauai": 30947,
+    "hawaii_island": 40728,
+    "hilo": 10917,
+    "kona": 37025
+   },
+   {
+    "metro": "San Luis Obispo-Paso Robles-Arroyo Grande CA",
+    "total": 24910,
+    "oahu": 7861,
+    "maui_county": 8420,
+    "maui": 8342,
+    "molokai": 48,
+    "lanai": 65,
+    "kauai": 6627,
+    "hawaii_island": 4673,
+    "hilo": 968,
+    "kona": 4364
+   },
+   {
+    "metro": "Santa Cruz-Watsonville CA",
+    "total": 25570,
+    "oahu": 7829,
+    "maui_county": 7900,
+    "maui": 7717,
+    "molokai": 150,
+    "lanai": 61,
+    "kauai": 6509,
+    "hawaii_island": 5475,
+    "hilo": 1159,
+    "kona": 4991
+   },
+   {
+    "metro": "Santa Maria-Santa Barbara CA",
+    "total": 31898,
+    "oahu": 13295,
+    "maui_county": 9322,
+    "maui": 9202,
+    "molokai": 58,
+    "lanai": 101,
+    "kauai": 7183,
+    "hawaii_island": 5531,
+    "hilo": 1154,
+    "kona": 5096
+   },
+   {
+    "metro": "Santa Rosa CA",
+    "total": 43258,
+    "oahu": 14384,
+    "maui_county": 15785,
+    "maui": 15604,
+    "molokai": 71,
+    "lanai": 143,
+    "kauai": 7579,
+    "hawaii_island": 10029,
+    "hilo": 2870,
+    "kona": 8924
+   },
+   {
+    "metro": "Seattle-Tacoma-Bellevue WA",
+    "total": 460243,
+    "oahu": 252380,
+    "maui_county": 125646,
+    "maui": 124131,
+    "molokai": 943,
+    "lanai": 1190,
+    "kauai": 50679,
+    "hawaii_island": 79568,
+    "hilo": 21735,
+    "kona": 71226
+   },
+   {
+    "metro": "Spokane-Spokane Valley WA",
+    "total": 33776,
+    "oahu": 13653,
+    "maui_county": 11784,
+    "maui": 11690,
+    "molokai": 50,
+    "lanai": 79,
+    "kauai": 5061,
+    "hawaii_island": 7493,
+    "hilo": 2099,
+    "kona": 6950
+   },
+   {
+    "metro": "St. Louis MO-IL",
+    "total": 30024,
+    "oahu": 17251,
+    "maui_county": 10222,
+    "maui": 10134,
+    "molokai": 106,
+    "lanai": 98,
+    "kauai": 6392,
+    "hawaii_island": 6556,
+    "hilo": 2995,
+    "kona": 5578
+   },
+   {
+    "metro": "Stockton-Lodi CA",
+    "total": 36536,
+    "oahu": 22723,
+    "maui_county": 8448,
+    "maui": 8252,
+    "molokai": 17,
+    "lanai": 195,
+    "kauai": 3751,
+    "hawaii_island": 4828,
+    "hilo": 1418,
+    "kona": 4220
+   },
+   {
+    "metro": "Tampa-St. Petersburg-Clearwater FL",
+    "total": 29048,
+    "oahu": 18042,
+    "maui_county": 9748,
+    "maui": 9695,
+    "molokai": 59,
+    "lanai": 83,
+    "kauai": 5914,
+    "hawaii_island": 7201,
+    "hilo": 2686,
+    "kona": 6225
+   },
+   {
+    "metro": "Tucson AZ",
+    "total": 23197,
+    "oahu": 14321,
+    "maui_county": 5425,
+    "maui": 5385,
+    "molokai": 38,
+    "lanai": 19,
+    "kauai": 4209,
+    "hawaii_island": 3559,
+    "hilo": 1350,
+    "kona": 2877
+   },
+   {
+    "metro": "Vallejo-Fairfield CA",
+    "total": 30225,
+    "oahu": 17859,
+    "maui_county": 8129,
+    "maui": 8087,
+    "molokai": 23,
+    "lanai": 37,
+    "kauai": 2865,
+    "hawaii_island": 3940,
+    "hilo": 1217,
+    "kona": 3305
+   },
+   {
+    "metro": "Virginia Beach-Norfolk-Newport News VA-NC",
+    "total": 17858,
+    "oahu": 13030,
+    "maui_county": 3561,
+    "maui": 3524,
+    "molokai": 25,
+    "lanai": 53,
+    "kauai": 2756,
+    "hawaii_island": 3159,
+    "hilo": 1408,
+    "kona": 2689
+   },
+   {
+    "metro": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+    "total": 123571,
+    "oahu": 80914,
+    "maui_county": 34179,
+    "maui": 33818,
+    "molokai": 197,
+    "lanai": 440,
+    "kauai": 20697,
+    "hawaii_island": 25328,
+    "hilo": 9777,
+    "kona": 21358
+   }
+  ],
+  "market_penetration_table21": [
+   {
+    "rank": 1,
+    "metro_2023_name": "Los Angeles-Long Beach-Anaheim CA",
+    "arrivals_2025": 829276,
+    "arrivals_2024": 871445.22,
+    "pct_change": -4.84,
+    "population_000": 12844.44,
+    "per_1000": 64.56
+   },
+   {
+    "rank": 2,
+    "metro_2023_name": "San Francisco-Oakland-Fremont CA",
+    "arrivals_2025": 626588,
+    "arrivals_2024": 590791.88,
+    "pct_change": 6.06,
+    "population_000": 4630.04,
+    "per_1000": 135.33
+   },
+   {
+    "rank": 3,
+    "metro_2023_name": "Seattle-Tacoma-Bellevue WA",
+    "arrivals_2025": 460243,
+    "arrivals_2024": 444353.88,
+    "pct_change": 3.58,
+    "population_000": 4161.88,
+    "per_1000": 110.59
+   },
+   {
+    "rank": 4,
+    "metro_2023_name": "San Diego-Chula Vista-Carlsbad CA",
+    "arrivals_2025": 300098,
+    "arrivals_2024": 292106.27,
+    "pct_change": 2.74,
+    "population_000": 3282.25,
+    "per_1000": 91.43
+   },
+   {
+    "rank": 5,
+    "metro_2023_name": "San Jose-Sunnyvale-Santa Clara CA",
+    "arrivals_2025": 215671,
+    "arrivals_2024": 257187.61,
+    "pct_change": -16.14,
+    "population_000": 1984.47,
+    "per_1000": 108.68
+   },
+   {
+    "rank": 6,
+    "metro_2023_name": "Portland-Vancouver-Hillsboro OR-WA",
+    "arrivals_2025": 239258,
+    "arrivals_2024": 212413.93,
+    "pct_change": 12.64,
+    "population_000": 2542.28,
+    "per_1000": 94.11
+   },
+   {
+    "rank": 7,
+    "metro_2023_name": "Phoenix-Mesa-Chandler AZ",
+    "arrivals_2025": 137993,
+    "arrivals_2024": 207624.41,
+    "pct_change": -33.54,
+    "population_000": 5228.94,
+    "per_1000": 26.39
+   },
+   {
+    "rank": 8,
+    "metro_2023_name": "Sacramento--Roseville-Folsom CA",
+    "arrivals_2025": 153127,
+    "arrivals_2024": 204585.48,
+    "pct_change": -25.15,
+    "population_000": 2477.27,
+    "per_1000": 61.81
+   },
+   {
+    "rank": 9,
+    "metro_2023_name": "Riverside-San Bernardino-Ontario CA",
+    "arrivals_2025": 211723,
+    "arrivals_2024": 197763.92,
+    "pct_change": 7.06,
+    "population_000": 4769.01,
+    "per_1000": 44.4
+   },
+   {
+    "rank": 10,
+    "metro_2023_name": "New York-Newark-Jersey City NY-NJ",
+    "arrivals_2025": 223824,
+    "arrivals_2024": 171908.29,
+    "pct_change": 30.2,
+    "population_000": 20112.45,
+    "per_1000": 11.13
+   },
+   {
+    "rank": 11,
+    "metro_2023_name": "Dallas-Fort Worth-Arlington TX",
+    "arrivals_2025": 84007,
+    "arrivals_2024": 136656.39,
+    "pct_change": -38.53,
+    "population_000": 8477.16,
+    "per_1000": 9.91
+   },
+   {
+    "rank": 12,
+    "metro_2023_name": "Chicago-Naperville-Elgin IL-IN",
+    "arrivals_2025": 144297,
+    "arrivals_2024": 132549.27,
+    "pct_change": 8.86,
+    "population_000": 9434.12,
+    "per_1000": 15.3
+   },
+   {
+    "rank": 13,
+    "metro_2023_name": "Denver-Aurora-Centennial CO",
+    "arrivals_2025": 177308,
+    "arrivals_2024": 130322.96,
+    "pct_change": 36.05,
+    "population_000": 3092.04,
+    "per_1000": 57.34
+   },
+   {
+    "rank": 14,
+    "metro_2023_name": "Las Vegas-Henderson-North Las Vegas NV",
+    "arrivals_2025": 112581,
+    "arrivals_2024": 122688.49,
+    "pct_change": -8.24,
+    "population_000": 2407.23,
+    "per_1000": 46.77
+   },
+   {
+    "rank": 15,
+    "metro_2023_name": "Washington-Arlington-Alexandria DC-VA-MD-WV",
+    "arrivals_2025": 123571,
+    "arrivals_2024": 101593.51,
+    "pct_change": 21.63,
+    "population_000": 6465.72,
+    "per_1000": 19.11
+   },
+   {
+    "rank": 16,
+    "metro_2023_name": "Houston-Pasadena-The Woodlands TX",
+    "arrivals_2025": 104537,
+    "arrivals_2024": 91723.0,
+    "pct_change": 13.97,
+    "population_000": 7904.63,
+    "per_1000": 13.22
+   },
+   {
+    "rank": 17,
+    "metro_2023_name": "Salt Lake City-Murray UT",
+    "arrivals_2025": 80027,
+    "arrivals_2024": 78091.47,
+    "pct_change": 2.48,
+    "population_000": 1308.38,
+    "per_1000": 61.17
+   },
+   {
+    "rank": 18,
+    "metro_2023_name": "Minneapolis-St Paul-Bloomington MN-WI",
+    "arrivals_2025": 83450,
+    "arrivals_2024": 73262.71,
+    "pct_change": 13.91,
+    "population_000": 3790.3,
+    "per_1000": 22.02
+   },
+   {
+    "rank": 19,
+    "metro_2023_name": "Anchorage AK",
+    "arrivals_2025": 71702,
+    "arrivals_2024": 66342.36,
+    "pct_change": 8.08,
+    "population_000": 405.82,
+    "per_1000": 176.68
+   },
+   {
+    "rank": 20,
+    "metro_2023_name": "Atlanta-Sandy Springs-Roswell GA",
+    "arrivals_2025": 61835,
+    "arrivals_2024": 64201.73,
+    "pct_change": -3.69,
+    "population_000": 6482.18,
+    "per_1000": 9.54
+   },
+   {
+    "rank": 21,
+    "metro_2023_name": "Austin-Round Rock-San Marcos TX",
+    "arrivals_2025": 55131,
+    "arrivals_2024": 62782.05,
+    "pct_change": -12.19,
+    "population_000": 2620.95,
+    "per_1000": 21.03
+   },
+   {
+    "rank": 22,
+    "metro_2023_name": "Oxnard-Thousand Oaks-Ventura CA",
+    "arrivals_2025": 57404,
+    "arrivals_2024": 61263.37,
+    "pct_change": -6.3,
+    "population_000": 830.85,
+    "per_1000": 69.09
+   },
+   {
+    "rank": 23,
+    "metro_2023_name": "Boston-Cambridge-Newton MA-NH",
+    "arrivals_2025": 71759,
+    "arrivals_2024": 59381.23,
+    "pct_change": 20.84,
+    "population_000": 5034.22,
+    "per_1000": 14.25
+   },
+   {
+    "rank": 24,
+    "metro_2023_name": "Provo-Orem-Lehi UT",
+    "arrivals_2025": 57128,
+    "arrivals_2024": 54453.16,
+    "pct_change": 4.91,
+    "population_000": 773.43,
+    "per_1000": 73.86
+   },
+   {
+    "rank": 25,
+    "metro_2023_name": "Philadelphia-Camden-Wilmington PA-NJ-DE-MD",
+    "arrivals_2025": 41284,
+    "arrivals_2024": 47828.45,
+    "pct_change": -13.68,
+    "population_000": 6329.12,
+    "per_1000": 6.52
+   },
+   {
+    "rank": 26,
+    "metro_2023_name": "Boise City ID",
+    "arrivals_2025": 48327,
+    "arrivals_2024": 45620.93,
+    "pct_change": 5.93,
+    "population_000": 864.24,
+    "per_1000": 55.92
+   },
+   {
+    "rank": 27,
+    "metro_2023_name": "Stockton-Lodi CA",
+    "arrivals_2025": 36536,
+    "arrivals_2024": 44161.05,
+    "pct_change": -17.27,
+    "population_000": 823.82,
+    "per_1000": 44.35
+   },
+   {
+    "rank": 28,
+    "metro_2023_name": "Santa Rosa-Petaluma CA",
+    "arrivals_2025": 43258,
+    "arrivals_2024": 43382.38,
+    "pct_change": -0.29,
+    "population_000": 486.44,
+    "per_1000": 88.93
+   },
+   {
+    "rank": 29,
+    "metro_2023_name": "San Antonio-New Braunfels TX",
+    "arrivals_2025": 32799,
+    "arrivals_2024": 41711.65,
+    "pct_change": -21.37,
+    "population_000": 2813.14,
+    "per_1000": 11.66
+   },
+   {
+    "rank": 30,
+    "metro_2023_name": "Ogden UT",
+    "arrivals_2025": 46737,
+    "arrivals_2024": 40522.89,
+    "pct_change": 15.33,
+    "population_000": 672.78,
+    "per_1000": 69.47
+   },
+   {
+    "rank": 31,
+    "metro_2023_name": "Detroit-Warren-Dearborn MI",
+    "arrivals_2025": 42529,
+    "arrivals_2024": 39419.83,
+    "pct_change": 7.89,
+    "population_000": 4390.91,
+    "per_1000": 9.69
+   },
+   {
+    "rank": 32,
+    "metro_2023_name": "Miami-Fort Lauderdale-West Palm Beach FL",
+    "arrivals_2025": 36323,
+    "arrivals_2024": 38769.28,
+    "pct_change": -6.31,
+    "population_000": 6391.07,
+    "per_1000": 5.68
+   },
+   {
+    "rank": 33,
+    "metro_2023_name": "Vallejo CA",
+    "arrivals_2025": 30225,
+    "arrivals_2024": 38132.45,
+    "pct_change": -20.74,
+    "population_000": 455.38,
+    "per_1000": 66.37
+   },
+   {
+    "rank": 34,
+    "metro_2023_name": "Kansas City MO-KS",
+    "arrivals_2025": 31967,
+    "arrivals_2024": 37362.35,
+    "pct_change": -14.44,
+    "population_000": 2270.68,
+    "per_1000": 14.08
+   },
+   {
+    "rank": 35,
+    "metro_2023_name": "St Louis MO-IL",
+    "arrivals_2025": 30024,
+    "arrivals_2024": 35947.19,
+    "pct_change": -16.48,
+    "population_000": 2814.42,
+    "per_1000": 10.67
+   },
+   {
+    "rank": 36,
+    "metro_2023_name": "Fresno CA",
+    "arrivals_2025": 43444,
+    "arrivals_2024": 35172.97,
+    "pct_change": 23.52,
+    "population_000": 1203.38,
+    "per_1000": 36.1
+   },
+   {
+    "rank": 37,
+    "metro_2023_name": "Reno NV",
+    "arrivals_2025": 35621,
+    "arrivals_2024": 33552.91,
+    "pct_change": 6.16,
+    "population_000": 578.73,
+    "per_1000": 61.55
+   },
+   {
+    "rank": 38,
+    "metro_2023_name": "Spokane-Spokane Valley WA",
+    "arrivals_2025": 33776,
+    "arrivals_2024": 33288.83,
+    "pct_change": 1.46,
+    "population_000": 608.01,
+    "per_1000": 55.55
+   },
+   {
+    "rank": 39,
+    "metro_2023_name": "Tucson AZ",
+    "arrivals_2025": 23197,
+    "arrivals_2024": 30948.38,
+    "pct_change": -25.05,
+    "population_000": 1074.68,
+    "per_1000": 21.58
+   },
+   {
+    "rank": 40,
+    "metro_2023_name": "Baltimore-Columbia-Towson MD",
+    "arrivals_2025": 29129,
+    "arrivals_2024": 30823.37,
+    "pct_change": -5.5,
+    "population_000": 2857.78,
+    "per_1000": 7.97
+   },
+   {
+    "rank": 41,
+    "metro_2023_name": "Santa Cruz-Watsonville CA",
+    "arrivals_2025": 25570,
+    "arrivals_2024": 29056.67,
+    "pct_change": -12.0,
+    "population_000": 258.85,
+    "per_1000": 98.78
+   },
+   {
+    "rank": 42,
+    "metro_2023_name": "Tampa-St Petersburg-Clearwater FL",
+    "arrivals_2025": 29048,
+    "arrivals_2024": 28541.5,
+    "pct_change": 1.77,
+    "population_000": 3418.89,
+    "per_1000": 8.5
+   },
+   {
+    "rank": 43,
+    "metro_2023_name": "Nashville-Davidson--Murfreesboro--Franklin TN",
+    "arrivals_2025": 22174,
+    "arrivals_2024": 27827.94,
+    "pct_change": -20.32,
+    "population_000": 2197.42,
+    "per_1000": 10.09
+   },
+   {
+    "rank": 44,
+    "metro_2023_name": "Colorado Springs CO",
+    "arrivals_2025": 34470,
+    "arrivals_2024": 27616.09,
+    "pct_change": 24.82,
+    "population_000": 781.8,
+    "per_1000": 44.09
+   },
+   {
+    "rank": 45,
+    "metro_2023_name": "Orlando-Kissimmee-Sanford FL",
+    "arrivals_2025": 27275,
+    "arrivals_2024": 26289.16,
+    "pct_change": 3.75,
+    "population_000": 2957.67,
+    "per_1000": 9.22
+   },
+   {
+    "rank": 46,
+    "metro_2023_name": "Santa Maria-Santa Barbara CA",
+    "arrivals_2025": 31898,
+    "arrivals_2024": 25917.65,
+    "pct_change": 23.07,
+    "population_000": 442.06,
+    "per_1000": 72.16
+   },
+   {
+    "rank": 47,
+    "metro_2023_name": "Bremerton-Silverdale-Port Orchard WA",
+    "arrivals_2025": 25872,
+    "arrivals_2024": 24162.14,
+    "pct_change": 7.08,
+    "population_000": 283.37,
+    "per_1000": 91.3
+   },
+   {
+    "rank": 48,
+    "metro_2023_name": "Albuquerque, NM",
+    "arrivals_2025": 14496,
+    "arrivals_2024": 23835.31,
+    "pct_change": -39.18,
+    "population_000": 925.28,
+    "per_1000": 15.67
+   },
+   {
+    "rank": 49,
+    "metro_2023_name": "Modesto CA",
+    "arrivals_2025": 19780,
+    "arrivals_2024": 23753.62,
+    "pct_change": -16.73,
+    "population_000": 557.72,
+    "per_1000": 35.47
+   },
+   {
+    "rank": 50,
+    "metro_2023_name": "Indianapolis-Carmel-Greenwood IN",
+    "arrivals_2025": 21201,
+    "arrivals_2024": 23299.02,
+    "pct_change": -9.0,
+    "population_000": 2205.7,
+    "per_1000": 9.61
+   },
+   {
+    "rank": 51,
+    "metro_2023_name": "Salem OR",
+    "arrivals_2025": 25265,
+    "arrivals_2024": 22579.54,
+    "pct_change": 11.89,
+    "population_000": 445.81,
+    "per_1000": 56.67
+   },
+   {
+    "rank": 52,
+    "metro_2023_name": "Olympia-Lacey-Tumwater WA",
+    "arrivals_2025": 23296,
+    "arrivals_2024": 21725.22,
+    "pct_change": 7.23,
+    "population_000": 304.26,
+    "per_1000": 76.57
+   },
+   {
+    "rank": 53,
+    "metro_2023_name": "Virginia Beach-Chesapeake-Norfolk VA-NC",
+    "arrivals_2025": 17858,
+    "arrivals_2024": 21619.13,
+    "pct_change": -17.4,
+    "population_000": 1797.21,
+    "per_1000": 9.94
+   },
+   {
+    "rank": 54,
+    "metro_2023_name": "Columbus OH",
+    "arrivals_2025": 18780,
+    "arrivals_2024": 21198.34,
+    "pct_change": -11.41,
+    "population_000": 2242.03,
+    "per_1000": 8.38
+   },
+   {
+    "rank": 55,
+    "metro_2023_name": "Bend OR",
+    "arrivals_2025": 25887,
+    "arrivals_2024": 20969.04,
+    "pct_change": 23.45,
+    "population_000": 266.38,
+    "per_1000": 97.18
+   },
+   {
+    "rank": 56,
+    "metro_2023_name": "Cincinnati OH-KY-IN",
+    "arrivals_2025": 22682,
+    "arrivals_2024": 20470.44,
+    "pct_change": 10.8,
+    "population_000": 2312.86,
+    "per_1000": 9.81
+   },
+   {
+    "rank": 57,
+    "metro_2023_name": "Milwaukee-Waukesha WI",
+    "arrivals_2025": 21820,
+    "arrivals_2024": 19860.97,
+    "pct_change": 9.86,
+    "population_000": 1575.01,
+    "per_1000": 13.85
+   },
+   {
+    "rank": 58,
+    "metro_2023_name": "Eugene-Springfield OR",
+    "arrivals_2025": 24082,
+    "arrivals_2024": 19193.22,
+    "pct_change": 25.47,
+    "population_000": 381.58,
+    "per_1000": 63.11
+   },
+   {
+    "rank": 59,
+    "metro_2023_name": "Boulder CO",
+    "arrivals_2025": 25539,
+    "arrivals_2024": 18358.71,
+    "pct_change": 39.11,
+    "population_000": 328.56,
+    "per_1000": 77.73
+   },
+   {
+    "rank": 60,
+    "metro_2023_name": "Oklahoma City OK",
+    "arrivals_2025": 13297,
+    "arrivals_2024": 17723.66,
+    "pct_change": -24.98,
+    "population_000": 1512.81,
+    "per_1000": 8.79
+   },
+   {
+    "rank": 61,
+    "metro_2023_name": "Bellingham WA",
+    "arrivals_2025": 17928,
+    "arrivals_2024": 16553.53,
+    "pct_change": 8.3,
+    "population_000": 236.39,
+    "per_1000": 75.84
+   },
+   {
+    "rank": 62,
+    "metro_2023_name": "Omaha NE-IA",
+    "arrivals_2025": 17147,
+    "arrivals_2024": 15778.97,
+    "pct_change": 8.67,
+    "population_000": 1009.84,
+    "per_1000": 16.98
+   }
+  ]
+ },
+ "japan": {
+  "table": "TABLE 23. 2025 Japan MMA Visitors on International Flights Characteristics by Region",
+  "regions": [
+   "CHUBU",
+   "KINKI",
+   "TOHOKU",
+   "KANTO",
+   "CHUGOKU",
+   "SHIKOKU",
+   "KYUSHU",
+   "HOKKAIDO",
+   "OKINAWA"
+  ],
+  "visitor_counts": {
+   "CHUBU": 138804,
+   "KINKI": 160865,
+   "TOHOKU": 20310,
+   "KANTO": 343042,
+   "CHUGOKU": 20017,
+   "SHIKOKU": 9784,
+   "KYUSHU": 28175,
+   "HOKKAIDO": 19105,
+   "OKINAWA": 3513
+  },
+  "visitor_counts_2024": {
+   "CHUBU": 133576,
+   "KINKI": 164086,
+   "TOHOKU": 18755,
+   "KANTO": 301134,
+   "CHUGOKU": 21227,
+   "SHIKOKU": 10658,
+   "KYUSHU": 26724,
+   "HOKKAIDO": 20462,
+   "OKINAWA": 3279
+  },
+  "pct_change_vs_2024": {
+   "CHUBU": 3.91,
+   "KINKI": -1.96,
+   "TOHOKU": 8.29,
+   "KANTO": 13.92,
+   "CHUGOKU": -5.7,
+   "SHIKOKU": -8.2,
+   "KYUSHU": 5.43,
+   "HOKKAIDO": -6.63,
+   "OKINAWA": 7.13
+  },
+  "share_of_regions": {
+   "CHUBU": 0.1867,
+   "KINKI": 0.2163,
+   "TOHOKU": 0.0273,
+   "KANTO": 0.4613,
+   "CHUGOKU": 0.0269,
+   "SHIKOKU": 0.0132,
+   "KYUSHU": 0.0379,
+   "HOKKAIDO": 0.0257,
+   "OKINAWA": 0.0047
+  },
+  "sum_of_regions": 743614,
+  "japan_total_air_visitors_table22": 749596,
+  "japan_on_international_flights_table22": 743614,
+  "japan_on_domestic_flights_table22": 5982,
+  "island_overindex": {
+   "Oahu": {
+    "base": 0.9782,
+    "by_group": {
+     "CHUBU": {
+      "n": 135216,
+      "share": 0.9742,
+      "idx": 0.9959
+     },
+     "KINKI": {
+      "n": 158519,
+      "share": 0.9854,
+      "idx": 1.0074
+     },
+     "TOHOKU": {
+      "n": 20093,
+      "share": 0.9893,
+      "idx": 1.0114
+     },
+     "KANTO": {
+      "n": 334345,
+      "share": 0.9746,
+      "idx": 0.9964
+     },
+     "CHUGOKU": {
+      "n": 19707,
+      "share": 0.9845,
+      "idx": 1.0064
+     },
+     "SHIKOKU": {
+      "n": 9660,
+      "share": 0.9873,
+      "idx": 1.0093
+     },
+     "KYUSHU": {
+      "n": 27608,
+      "share": 0.9799,
+      "idx": 1.0017
+     },
+     "HOKKAIDO": {
+      "n": 18802,
+      "share": 0.9841,
+      "idx": 1.0061
+     },
+     "OKINAWA": {
+      "n": 3459,
+      "share": 0.9846,
+      "idx": 1.0066
+     }
+    }
+   },
+   "Maui": {
+    "base": 0.0193,
+    "by_group": {
+     "CHUBU": {
+      "n": 2636,
+      "share": 0.019,
+      "idx": 0.9838
+     },
+     "KINKI": {
+      "n": 2871,
+      "share": 0.0178,
+      "idx": 0.9246
+     },
+     "TOHOKU": {
+      "n": 174,
+      "share": 0.0086,
+      "idx": 0.4439
+     },
+     "KANTO": {
+      "n": 6948,
+      "share": 0.0203,
+      "idx": 1.0493
+     },
+     "CHUGOKU": {
+      "n": 327,
+      "share": 0.0163,
+      "idx": 0.8469
+     },
+     "SHIKOKU": {
+      "n": 189,
+      "share": 0.0193,
+      "idx": 0.9996
+     },
+     "KYUSHU": {
+      "n": 592,
+      "share": 0.021,
+      "idx": 1.0887
+     },
+     "HOKKAIDO": {
+      "n": 544,
+      "share": 0.0285,
+      "idx": 1.4752
+     },
+     "OKINAWA": {
+      "n": 72,
+      "share": 0.0206,
+      "idx": 1.0671
+     }
+    }
+   },
+   "Kauai": {
+    "base": 0.0094,
+    "by_group": {
+     "CHUBU": {
+      "n": 1450,
+      "share": 0.0104,
+      "idx": 1.1105
+     },
+     "KINKI": {
+      "n": 1748,
+      "share": 0.0109,
+      "idx": 1.1558
+     },
+     "TOHOKU": {
+      "n": 76,
+      "share": 0.0037,
+      "idx": 0.3956
+     },
+     "KANTO": {
+      "n": 2972,
+      "share": 0.0087,
+      "idx": 0.9213
+     },
+     "CHUGOKU": {
+      "n": 129,
+      "share": 0.0064,
+      "idx": 0.6839
+     },
+     "SHIKOKU": {
+      "n": 132,
+      "share": 0.0135,
+      "idx": 1.4376
+     },
+     "KYUSHU": {
+      "n": 255,
+      "share": 0.0091,
+      "idx": 0.9628
+     },
+     "HOKKAIDO": {
+      "n": 231,
+      "share": 0.0121,
+      "idx": 1.2875
+     },
+     "OKINAWA": {
+      "n": 0,
+      "share": 0.0,
+      "idx": 0.0
+     }
+    }
+   },
+   "Hawaii": {
+    "base": 0.0617,
+    "by_group": {
+     "CHUBU": {
+      "n": 8565,
+      "share": 0.0617,
+      "idx": 1.0007
+     },
+     "KINKI": {
+      "n": 9399,
+      "share": 0.0584,
+      "idx": 0.9475
+     },
+     "TOHOKU": {
+      "n": 844,
+      "share": 0.0416,
+      "idx": 0.6738
+     },
+     "KANTO": {
+      "n": 22084,
+      "share": 0.0644,
+      "idx": 1.044
+     },
+     "CHUGOKU": {
+      "n": 1001,
+      "share": 0.05,
+      "idx": 0.8108
+     },
+     "SHIKOKU": {
+      "n": 880,
+      "share": 0.09,
+      "idx": 1.4593
+     },
+     "KYUSHU": {
+      "n": 2029,
+      "share": 0.072,
+      "idx": 1.1679
+     },
+     "HOKKAIDO": {
+      "n": 872,
+      "share": 0.0456,
+      "idx": 0.7402
+     },
+     "OKINAWA": {
+      "n": 180,
+      "share": 0.0513,
+      "idx": 0.8324
+     }
+    }
+   }
+  },
+  "rows": {
+   "Visitor Counts": {
+    "CHUBU": 138803.9854,
+    "KINKI": 160864.5904,
+    "TOHOKU": 20309.9086,
+    "KANTO": 343042.2059,
+    "CHUGOKU": 20016.6785,
+    "SHIKOKU": 9784.0571,
+    "KYUSHU": 28174.6335,
+    "HOKKAIDO": 19105.2775,
+    "OKINAWA": 3512.6631
+   },
+   "PARTY SIZE | One": {
+    "CHUBU": 4527.9643,
+    "KINKI": 5480.1543,
+    "TOHOKU": 1067.3766,
+    "KANTO": 17048.9132,
+    "CHUGOKU": 781.4754,
+    "SHIKOKU": 395.4538,
+    "KYUSHU": 1109.5709,
+    "HOKKAIDO": 666.2105,
+    "OKINAWA": 360.9918
+   },
+   "PARTY SIZE | Two": {
+    "CHUBU": 61060.121,
+    "KINKI": 68205.6941,
+    "TOHOKU": 8436.1534,
+    "KANTO": 141447.709,
+    "CHUGOKU": 9925.752,
+    "SHIKOKU": 4766.3716,
+    "KYUSHU": 10493.879,
+    "HOKKAIDO": 7672.3206,
+    "OKINAWA": 1489.8574
+   },
+   "PARTY SIZE | Three or more": {
+    "CHUBU": 73215.9001,
+    "KINKI": 87178.742,
+    "TOHOKU": 10806.3786,
+    "KANTO": 184545.5837,
+    "CHUGOKU": 9309.4511,
+    "SHIKOKU": 4622.2317,
+    "KYUSHU": 16571.1836,
+    "HOKKAIDO": 10766.7464,
+    "OKINAWA": 1661.8139
+   },
+   "PARTY SIZE | Avg Party Size": {
+    "CHUBU": 2.6425,
+    "KINKI": 2.6519,
+    "TOHOKU": 2.5922,
+    "KANTO": 2.5609,
+    "CHUGOKU": 2.4903,
+    "SHIKOKU": 2.5226,
+    "KYUSHU": 2.7435,
+    "HOKKAIDO": 2.7446,
+    "OKINAWA": 2.3084
+   },
+   "VISIT STATUS | First-Time": {
+    "CHUBU": 46903.6541,
+    "KINKI": 45124.9106,
+    "TOHOKU": 7502.1509,
+    "KANTO": 86011.2592,
+    "CHUGOKU": 8581.9141,
+    "SHIKOKU": 3540.8158,
+    "KYUSHU": 10016.729,
+    "HOKKAIDO": 5598.5821,
+    "OKINAWA": 1471.6347
+   },
+   "VISIT STATUS | Repeat": {
+    "CHUBU": 91900.3313,
+    "KINKI": 115739.6798,
+    "TOHOKU": 12807.7577,
+    "KANTO": 257030.9467,
+    "CHUGOKU": 11434.7644,
+    "SHIKOKU": 6243.2413,
+    "KYUSHU": 18157.9045,
+    "HOKKAIDO": 13506.6954,
+    "OKINAWA": 2041.0284
+   },
+   "VISIT STATUS | Average # of Trips": {
+    "CHUBU": 5.19,
+    "KINKI": 5.8244,
+    "TOHOKU": 4.362,
+    "KANTO": 6.455,
+    "CHUGOKU": 4.3005,
+    "SHIKOKU": 4.9064,
+    "KYUSHU": 4.7916,
+    "HOKKAIDO": 5.8461,
+    "OKINAWA": 3.2799
+   },
+   "TRAVEL METHOD | Group Tour": {
+    "CHUBU": 19405.2096,
+    "KINKI": 22922.687,
+    "TOHOKU": 4733.9652,
+    "KANTO": 34217.1239,
+    "CHUGOKU": 3404.5252,
+    "SHIKOKU": 1740.2506,
+    "KYUSHU": 5836.2738,
+    "HOKKAIDO": 3652.269,
+    "OKINAWA": 276.1396
+   },
+   "TRAVEL METHOD | Package": {
+    "CHUBU": 64212.7034,
+    "KINKI": 67570.4495,
+    "TOHOKU": 9782.8629,
+    "KANTO": 129668.9847,
+    "CHUGOKU": 10271.9111,
+    "SHIKOKU": 4979.443,
+    "KYUSHU": 11894.4437,
+    "HOKKAIDO": 8221.4962,
+    "OKINAWA": 765.327
+   },
+   "TRAVEL METHOD | Group Tour & Pkg": {
+    "CHUBU": 13140.2607,
+    "KINKI": 15162.3641,
+    "TOHOKU": 2771.4281,
+    "KANTO": 21002.9305,
+    "CHUGOKU": 2146.1303,
+    "SHIKOKU": 1315.6682,
+    "KYUSHU": 3789.3401,
+    "HOKKAIDO": 2396.6792,
+    "OKINAWA": 148.6097
+   },
+   "TRAVEL METHOD | True Independent": {
+    "CHUBU": 68507.3123,
+    "KINKI": 85658.8636,
+    "TOHOKU": 8688.5892,
+    "KANTO": 199460.8236,
+    "CHUGOKU": 8556.9878,
+    "SHIKOKU": 4419.3827,
+    "KYUSHU": 14346.6854,
+    "HOKKAIDO": 9692.4088,
+    "OKINAWA": 2600.2922
+   },
+   "ISLANDS VISITED | O'ahu": {
+    "CHUBU": 135216.3454,
+    "KINKI": 158518.9609,
+    "TOHOKU": 20093.3972,
+    "KANTO": 334344.6692,
+    "CHUGOKU": 19706.7004,
+    "SHIKOKU": 9659.7428,
+    "KYUSHU": 27607.6461,
+    "HOKKAIDO": 18802.0195,
+    "OKINAWA": 3458.7285
+   },
+   "ISLANDS VISITED | Maui County": {
+    "CHUBU": 2669.7503,
+    "KINKI": 3001.4286,
+    "TOHOKU": 174.1255,
+    "KANTO": 7184.7727,
+    "CHUGOKU": 327.4232,
+    "SHIKOKU": 208.0687,
+    "KYUSHU": 603.2496,
+    "HOKKAIDO": 569.2518,
+    "OKINAWA": 98.2498
+   },
+   "ISLANDS VISITED | Maui": {
+    "CHUBU": 2635.7932,
+    "KINKI": 2871.019,
+    "TOHOKU": 174.003,
+    "KANTO": 6947.927,
+    "CHUGOKU": 327.1927,
+    "SHIKOKU": 188.7702,
+    "KYUSHU": 592.0728,
+    "HOKKAIDO": 544.0237,
+    "OKINAWA": 72.353
+   },
+   "ISLANDS VISITED | Moloka'i *": {
+    "CHUBU": 51.3563,
+    "KINKI": 243.694,
+    "TOHOKU": 0,
+    "KANTO": 109.112,
+    "CHUGOKU": 0,
+    "SHIKOKU": 0,
+    "KYUSHU": 11.6076,
+    "HOKKAIDO": 26.8025,
+    "OKINAWA": 27.8821
+   },
+   "ISLANDS VISITED | Lāna'i *": {
+    "CHUBU": 118.2409,
+    "KINKI": 72.7802,
+    "TOHOKU": 0,
+    "KANTO": 234.3984,
+    "CHUGOKU": 0,
+    "SHIKOKU": 18.3489,
+    "KYUSHU": 18.3489,
+    "HOKKAIDO": 0,
+    "OKINAWA": 0
+   },
+   "ISLANDS VISITED | Kaua'i": {
+    "CHUBU": 1449.6258,
+    "KINKI": 1748.4822,
+    "TOHOKU": 75.5587,
+    "KANTO": 2972.0329,
+    "CHUGOKU": 128.7443,
+    "SHIKOKU": 132.276,
+    "KYUSHU": 255.1186,
+    "HOKKAIDO": 231.3325,
+    "OKINAWA": 0
+   },
+   "ISLANDS VISITED | Hawai'i Island": {
+    "CHUBU": 8565.3764,
+    "KINKI": 9398.6315,
+    "TOHOKU": 843.8924,
+    "KANTO": 22083.907,
+    "CHUGOKU": 1000.7995,
+    "SHIKOKU": 880.4548,
+    "KYUSHU": 2029.0026,
+    "HOKKAIDO": 872.0645,
+    "OKINAWA": 180.2923
+   },
+   "ISLANDS VISITED | Hilo": {
+    "CHUBU": 3369.4319,
+    "KINKI": 3378.3646,
+    "TOHOKU": 328.6074,
+    "KANTO": 6306.6148,
+    "CHUGOKU": 410.9897,
+    "SHIKOKU": 424.9642,
+    "KYUSHU": 999.7233,
+    "HOKKAIDO": 194.2089,
+    "OKINAWA": 82.8191
+   },
+   "ISLANDS VISITED | Kona": {
+    "CHUBU": 6327.903,
+    "KINKI": 7113.6979,
+    "TOHOKU": 628.0774,
+    "KANTO": 18147.3486,
+    "CHUGOKU": 657.0581,
+    "SHIKOKU": 541.9579,
+    "KYUSHU": 1186.6854,
+    "HOKKAIDO": 725.6859,
+    "OKINAWA": 111.2448
+   },
+   "LENGTH OF STAY | O'ahu (days)": {
+    "CHUBU": 5.7492,
+    "KINKI": 5.8586,
+    "TOHOKU": 5.5881,
+    "KANTO": 5.9124,
+    "CHUGOKU": 5.7473,
+    "SHIKOKU": 5.4975,
+    "KYUSHU": 5.6955,
+    "HOKKAIDO": 6.0409,
+    "OKINAWA": 6.7587
+   },
+   "LENGTH OF STAY | Maui (days)": {
+    "CHUBU": 3.8794,
+    "KINKI": 3.7994,
+    "TOHOKU": 3.9643,
+    "KANTO": 4.5835,
+    "CHUGOKU": 4.6199,
+    "SHIKOKU": 2.8338,
+    "KYUSHU": 3.9314,
+    "HOKKAIDO": 3.1684,
+    "OKINAWA": 3.4466
+   },
+   "LENGTH OF STAY | Moloka'i (days)": {
+    "CHUBU": 1,
+    "KINKI": 1,
+    "TOHOKU": 0,
+    "KANTO": 3.8288,
+    "CHUGOKU": 0,
+    "SHIKOKU": 0,
+    "KYUSHU": 1,
+    "HOKKAIDO": 1,
+    "OKINAWA": 3
+   },
+   "LENGTH OF STAY | Lāna'i (days)": {
+    "CHUBU": 1,
+    "KINKI": 1.6752,
+    "TOHOKU": 0,
+    "KANTO": 1.948,
+    "CHUGOKU": 0,
+    "SHIKOKU": 1,
+    "KYUSHU": 1,
+    "HOKKAIDO": 0,
+    "OKINAWA": 0
+   },
+   "LENGTH OF STAY | Kaua'i (days)": {
+    "CHUBU": 3.1449,
+    "KINKI": 2.2466,
+    "TOHOKU": 1.779,
+    "KANTO": 2.9027,
+    "CHUGOKU": 2.1053,
+    "SHIKOKU": 2.5339,
+    "KYUSHU": 3.7669,
+    "HOKKAIDO": 2.8471,
+    "OKINAWA": 0
+   },
+   "LENGTH OF STAY | Hawai'i Island (days)": {
+    "CHUBU": 4.0334,
+    "KINKI": 4.0398,
+    "TOHOKU": 3.8902,
+    "KANTO": 4.5394,
+    "CHUGOKU": 3.3147,
+    "SHIKOKU": 3.2335,
+    "KYUSHU": 4.1018,
+    "HOKKAIDO": 5.114,
+    "OKINAWA": 3.4825
+   },
+   "LENGTH OF STAY | Hilo (days)": {
+    "CHUBU": 1.908,
+    "KINKI": 2.4004,
+    "TOHOKU": 2.0522,
+    "KANTO": 2.2115,
+    "CHUGOKU": 1.6257,
+    "SHIKOKU": 1.4305,
+    "KYUSHU": 3.2567,
+    "HOKKAIDO": 1.807,
+    "OKINAWA": 2.3968
+   },
+   "LENGTH OF STAY | Kona (days)": {
+    "CHUBU": 4.4274,
+    "KINKI": 4.1862,
+    "TOHOKU": 4.1409,
+    "KANTO": 4.7308,
+    "CHUGOKU": 4.0194,
+    "SHIKOKU": 4.1204,
+    "KYUSHU": 4.2947,
+    "HOKKAIDO": 5.6227,
+    "OKINAWA": 3.8663
+   },
+   "LENGTH OF STAY | Statewide (days)": {
+    "CHUBU": 5.963,
+    "KINKI": 6.1081,
+    "TOHOKU": 5.7304,
+    "KANTO": 6.1833,
+    "CHUGOKU": 5.9137,
+    "SHIKOKU": 5.8177,
+    "KYUSHU": 6.0027,
+    "HOKKAIDO": 6.3091,
+    "OKINAWA": 6.9262
+   },
+   "ACCOMMODATIONS | Hotel": {
+    "CHUBU": 112053.9095,
+    "KINKI": 124390.4762,
+    "TOHOKU": 16864.8179,
+    "KANTO": 261560.1464,
+    "CHUGOKU": 16854.736,
+    "SHIKOKU": 7964.002,
+    "KYUSHU": 22304.7594,
+    "HOKKAIDO": 14476.2536,
+    "OKINAWA": 2328.5954
+   },
+   "ACCOMMODATIONS | Hotel Only": {
+    "CHUBU": 108206.9055,
+    "KINKI": 118931.8793,
+    "TOHOKU": 16416.2615,
+    "KANTO": 247677.3333,
+    "CHUGOKU": 16374.0033,
+    "SHIKOKU": 7666.6223,
+    "KYUSHU": 21073.6433,
+    "HOKKAIDO": 13826.525,
+    "OKINAWA": 2177.1008
+   },
+   "ACCOMMODATIONS | Condo": {
+    "CHUBU": 16677.9178,
+    "KINKI": 23140.7673,
+    "TOHOKU": 2501.0725,
+    "KANTO": 54312.9464,
+    "CHUGOKU": 1933.9304,
+    "SHIKOKU": 1358.5061,
+    "KYUSHU": 3810.2788,
+    "HOKKAIDO": 3352.006,
+    "OKINAWA": 533.4643
+   },
+   "ACCOMMODATIONS | Condo Only": {
+    "CHUBU": 13909.4398,
+    "KINKI": 19069.225,
+    "TOHOKU": 2266.4394,
+    "KANTO": 43994.5152,
+    "CHUGOKU": 1587.7431,
+    "SHIKOKU": 1145.4662,
+    "KYUSHU": 2962.5588,
+    "HOKKAIDO": 2706.279,
+    "OKINAWA": 448.8023
+   },
+   "ACCOMMODATIONS | Timeshare": {
+    "CHUBU": 11941.8019,
+    "KINKI": 15833.5968,
+    "TOHOKU": 910.4498,
+    "KANTO": 32786.3223,
+    "CHUGOKU": 1274.7139,
+    "SHIKOKU": 514.1342,
+    "KYUSHU": 2472.2972,
+    "HOKKAIDO": 1637.3097,
+    "OKINAWA": 283.6443
+   },
+   "ACCOMMODATIONS | Timeshare Only": {
+    "CHUBU": 10326.804,
+    "KINKI": 13808.4099,
+    "TOHOKU": 823.7489,
+    "KANTO": 27606.0135,
+    "CHUGOKU": 1033.8524,
+    "SHIKOKU": 488.1503,
+    "KYUSHU": 2049.6714,
+    "HOKKAIDO": 1479.8396,
+    "OKINAWA": 282.5815
+   },
+   "ACCOMMODATIONS | Rental House": {
+    "CHUBU": 246.0752,
+    "KINKI": 401.8167,
+    "TOHOKU": 134.4989,
+    "KANTO": 1050.542,
+    "CHUGOKU": 64.7755,
+    "SHIKOKU": 78.7828,
+    "KYUSHU": 61.1096,
+    "HOKKAIDO": 0,
+    "OKINAWA": 54.4171
+   },
+   "ACCOMMODATIONS | Rental House Only": {
+    "CHUBU": 145.6516,
+    "KINKI": 245.3865,
+    "TOHOKU": 0,
+    "KANTO": 520.1013,
+    "CHUGOKU": 69.4994,
+    "SHIKOKU": 84.5282,
+    "KYUSHU": 33.4978,
+    "HOKKAIDO": 0,
+    "OKINAWA": 58.3856
+   },
+   "ACCOMMODATIONS | Hostel": {
+    "CHUBU": 141.7974,
+    "KINKI": 47.4535,
+    "TOHOKU": 18.3031,
+    "KANTO": 116.581,
+    "CHUGOKU": 32.0518,
+    "SHIKOKU": 11.9107,
+    "KYUSHU": 38.0166,
+    "HOKKAIDO": 0,
+    "OKINAWA": 14.7287
+   },
+   "ACCOMMODATIONS | Camping": {
+    "CHUBU": 0,
+    "KINKI": 38.0405,
+    "TOHOKU": 0,
+    "KANTO": 24.8077,
+    "CHUGOKU": 0,
+    "SHIKOKU": 0,
+    "KYUSHU": 0,
+    "HOKKAIDO": 0,
+    "OKINAWA": 0
+   },
+   "ACCOMMODATIONS | Private Room in Private Home**": {
+    "CHUBU": 209.5767,
+    "KINKI": 513.2664,
+    "TOHOKU": 20.5527,
+    "KANTO": 784.223,
+    "CHUGOKU": 32.6767,
+    "SHIKOKU": 59.7966,
+    "KYUSHU": 29.1929,
+    "HOKKAIDO": 0,
+    "OKINAWA": 17.5166
+   },
+   "ACCOMMODATIONS | Shared Room Space in Private Home **": {
+    "CHUBU": 252.6206,
+    "KINKI": 166.7566,
+    "TOHOKU": 0,
+    "KANTO": 198.439,
+    "CHUGOKU": 32.5018,
+    "SHIKOKU": 0,
+    "KYUSHU": 138.3045,
+    "HOKKAIDO": 22.8444,
+    "OKINAWA": 13.6271
+   },
+   "ACCOMMODATIONS | Bed & Breakfast": {
+    "CHUBU": 88.5763,
+    "KINKI": 260.1731,
+    "TOHOKU": 0,
+    "KANTO": 214.9738,
+    "CHUGOKU": 14.1584,
+    "SHIKOKU": 0,
+    "KYUSHU": 12.6686,
+    "HOKKAIDO": 0,
+    "OKINAWA": 0
+   },
+   "ACCOMMODATIONS | Cruise Ship": {
+    "CHUBU": 154.0719,
+    "KINKI": 298.7115,
+    "TOHOKU": 0,
+    "KANTO": 267.0165,
+    "CHUGOKU": 8.4534,
+    "SHIKOKU": 13.8043,
+    "KYUSHU": 19.8184,
+    "HOKKAIDO": 16.9068,
+    "OKINAWA": 0
+   },
+   "ACCOMMODATIONS | Friends or Relatives": {
+    "CHUBU": 1831.4113,
+    "KINKI": 1803.2347,
+    "TOHOKU": 528.1141,
+    "KANTO": 6364.2192,
+    "CHUGOKU": 385.2095,
+    "SHIKOKU": 156.6871,
+    "KYUSHU": 645.1933,
+    "HOKKAIDO": 319.075,
+    "OKINAWA": 384.3193
+   },
+   "ACCOMMODATIONS | Other accommodation": {
+    "CHUBU": 239.307,
+    "KINKI": 534.6177,
+    "TOHOKU": 9.1404,
+    "KANTO": 1080.1119,
+    "CHUGOKU": 147.6967,
+    "SHIKOKU": 27.469,
+    "KYUSHU": 245.889,
+    "HOKKAIDO": 0,
+    "OKINAWA": 78.5542
+   },
+   "PURPOSE OF TRIP | Pleasure (Net)": {
+    "CHUBU": 122634.8379,
+    "KINKI": 140844.4775,
+    "TOHOKU": 16051.8636,
+    "KANTO": 305113.1988,
+    "CHUGOKU": 16749.8169,
+    "SHIKOKU": 8345.8056,
+    "KYUSHU": 23423.0023,
+    "HOKKAIDO": 16319.1867,
+    "OKINAWA": 2738.8656
+   },
+   "PURPOSE OF TRIP | Vacation": {
+    "CHUBU": 104126.8192,
+    "KINKI": 126103.8381,
+    "TOHOKU": 13475.762,
+    "KANTO": 274668.3072,
+    "CHUGOKU": 13131.1819,
+    "SHIKOKU": 6542.3116,
+    "KYUSHU": 21137.3026,
+    "HOKKAIDO": 14592.7314,
+    "OKINAWA": 2378.5927
+   },
+   "PURPOSE OF TRIP | Honeymoon": {
+    "CHUBU": 19975.8944,
+    "KINKI": 15131.1294,
+    "TOHOKU": 2749.1726,
+    "KANTO": 32149.1637,
+    "CHUGOKU": 3864.9887,
+    "SHIKOKU": 1913.501,
+    "KYUSHU": 2163.6812,
+    "HOKKAIDO": 2012.5354,
+    "OKINAWA": 317.0105
+   },
+   "PURPOSE OF TRIP | Getting Married": {
+    "CHUBU": 1607.2345,
+    "KINKI": 1880.068,
+    "TOHOKU": 184.0088,
+    "KANTO": 3315.9476,
+    "CHUGOKU": 342.9364,
+    "SHIKOKU": 19.628,
+    "KYUSHU": 231.699,
+    "HOKKAIDO": 179.1431,
+    "OKINAWA": 96.5723
+   },
+   "PURPOSE OF TRIP | MC&I (Net)": {
+    "CHUBU": 9951.5237,
+    "KINKI": 12497.3531,
+    "TOHOKU": 2878.2661,
+    "KANTO": 17763.1905,
+    "CHUGOKU": 1583.6608,
+    "SHIKOKU": 998.5589,
+    "KYUSHU": 3297.1729,
+    "HOKKAIDO": 2054.328,
+    "OKINAWA": 373.3189
+   },
+   "PURPOSE OF TRIP | Convention/Conf.": {
+    "CHUBU": 1213.8507,
+    "KINKI": 1993.077,
+    "TOHOKU": 312.4169,
+    "KANTO": 3917.6307,
+    "CHUGOKU": 225.5448,
+    "SHIKOKU": 222.077,
+    "KYUSHU": 407.7694,
+    "HOKKAIDO": 301.3992,
+    "OKINAWA": 136.097
+   },
+   "PURPOSE OF TRIP | Corp. Meetings": {
+    "CHUBU": 101.7919,
+    "KINKI": 218.1076,
+    "TOHOKU": 48.0393,
+    "KANTO": 613.5809,
+    "CHUGOKU": 105.1186,
+    "SHIKOKU": 29.6691,
+    "KYUSHU": 51.5331,
+    "HOKKAIDO": 0,
+    "OKINAWA": 0
+   },
+   "PURPOSE OF TRIP | Incentive": {
+    "CHUBU": 8699.9779,
+    "KINKI": 10360.675,
+    "TOHOKU": 2525.9003,
+    "KANTO": 13367.8369,
+    "CHUGOKU": 1361.2837,
+    "SHIKOKU": 765.2489,
+    "KYUSHU": 2898.5757,
+    "HOKKAIDO": 1756.6701,
+    "OKINAWA": 234.5112
+   },
+   "PURPOSE OF TRIP | Other Business": {
+    "CHUBU": 292.4138,
+    "KINKI": 509.6724,
+    "TOHOKU": 79.8507,
+    "KANTO": 845.0788,
+    "CHUGOKU": 159.2537,
+    "SHIKOKU": 0,
+    "KYUSHU": 93.8952,
+    "HOKKAIDO": 0,
+    "OKINAWA": 83.5676
+   },
+   "PURPOSE OF TRIP | Visit Friends/Relatives": {
+    "CHUBU": 2651.4655,
+    "KINKI": 3897.9474,
+    "TOHOKU": 603.347,
+    "KANTO": 9158.3028,
+    "CHUGOKU": 423.7375,
+    "SHIKOKU": 338.0753,
+    "KYUSHU": 612.213,
+    "HOKKAIDO": 428.4874,
+    "OKINAWA": 523.4494
+   },
+   "PURPOSE OF TRIP | Government/Military": {
+    "CHUBU": 12.3527,
+    "KINKI": 36.1855,
+    "TOHOKU": 21.3138,
+    "KANTO": 141.1533,
+    "CHUGOKU": 0,
+    "SHIKOKU": 0,
+    "KYUSHU": 0,
+    "HOKKAIDO": 0,
+    "OKINAWA": 19.0579
+   },
+   "PURPOSE OF TRIP | Attend School": {
+    "CHUBU": 556.2972,
+    "KINKI": 725.9947,
+    "TOHOKU": 21.7126,
+    "KANTO": 1732.2992,
+    "CHUGOKU": 121.517,
+    "SHIKOKU": 9.4341,
+    "KYUSHU": 275.0521,
+    "HOKKAIDO": 21.8706,
+    "OKINAWA": 50.9053
+   },
+   "PURPOSE OF TRIP | Sport Events": {
+    "CHUBU": 1410.8983,
+    "KINKI": 1837.3711,
+    "TOHOKU": 479.6826,
+    "KANTO": 6282.6434,
+    "CHUGOKU": 293.2935,
+    "SHIKOKU": 119.1789,
+    "KYUSHU": 685.1193,
+    "HOKKAIDO": 139.4846,
+    "OKINAWA": 133.7988
+   },
+   "PURPOSE OF TRIP | Other purpose": {
+    "CHUBU": 7744.5584,
+    "KINKI": 8066.4454,
+    "TOHOKU": 1222.7659,
+    "KANTO": 18359.5496,
+    "CHUGOKU": 1461.1951,
+    "SHIKOKU": 481.0073,
+    "KYUSHU": 1467.3498,
+    "HOKKAIDO": 930.8579,
+    "OKINAWA": 57.0787
+   },
+   "PURPOSE OF TRIP | Average Age": {
+    "CHUBU": 52.3963,
+    "KINKI": 53.6923,
+    "TOHOKU": 51.7677,
+    "KANTO": 51.7327,
+    "CHUGOKU": 51.7314,
+    "SHIKOKU": 52.4479,
+    "KYUSHU": 54.2465,
+    "HOKKAIDO": 54.9273,
+    "OKINAWA": 50.3004
+   }
+  }
+ },
+ "canada": {
+  "table": "TABLE 25. 2025 Canada MMA Air Visitor Characteristics by Province",
+  "provinces": [
+   "Alberta",
+   "British Columbia",
+   "Manitoba",
+   "New Brunswick",
+   "Newfoundland and Labrador",
+   "Northwest Territories",
+   "Nova Scotia",
+   "Ontario",
+   "Prince Edward Island",
+   "Quebec",
+   "Saskatchewan",
+   "Yukon Territory"
+  ],
+  "visitor_counts": {
+   "Alberta": 61019,
+   "British Columbia": 173436,
+   "Manitoba": 11675,
+   "New Brunswick": 2259,
+   "Newfoundland and Labrador": 1303,
+   "Northwest Territories": 530,
+   "Nova Scotia": 3719,
+   "Ontario": 90863,
+   "Prince Edward Island": 476,
+   "Quebec": 29895,
+   "Saskatchewan": 11302,
+   "Yukon Territory": 2764
+  },
+  "visitors_column_total": 389241,
+  "visitor_counts_2024": {
+   "Alberta": 66937,
+   "British Columbia": 210557,
+   "Manitoba": 9986,
+   "New Brunswick": 2249,
+   "Newfoundland and Labrador": 1525,
+   "Northwest Territories": 993,
+   "Nova Scotia": 3929,
+   "Ontario": 106561,
+   "Prince Edward Island": 962,
+   "Quebec": 31158,
+   "Saskatchewan": 8554,
+   "Yukon Territory": 2574
+  },
+  "pct_change_vs_2024": {
+   "Alberta": -8.84,
+   "British Columbia": -17.63,
+   "Manitoba": 16.91,
+   "New Brunswick": 0.46,
+   "Newfoundland and Labrador": -14.54,
+   "Northwest Territories": -46.59,
+   "Nova Scotia": -5.34,
+   "Ontario": -14.73,
+   "Prince Edward Island": -50.52,
+   "Quebec": -4.05,
+   "Saskatchewan": 32.13,
+   "Yukon Territory": 7.38
+  },
+  "share_of_provinces": {
+   "Alberta": 0.1568,
+   "British Columbia": 0.4456,
+   "Manitoba": 0.03,
+   "New Brunswick": 0.0058,
+   "Newfoundland and Labrador": 0.0033,
+   "Northwest Territories": 0.0014,
+   "Nova Scotia": 0.0096,
+   "Ontario": 0.2334,
+   "Prince Edward Island": 0.0012,
+   "Quebec": 0.0768,
+   "Saskatchewan": 0.029,
+   "Yukon Territory": 0.0071
+  },
+  "sum_of_provinces": 389241,
+  "canada_total_air_visitors_table24": 389241,
+  "canada_on_domestic_flights_table24": 73912,
+  "canada_on_international_flights_table24": 315329,
+  "island_overindex": {
+   "Oahu": {
+    "base": 0.5645,
+    "by_group": {
+     "Alberta": {
+      "n": 29555,
+      "share": 0.4844,
+      "idx": 0.8581
+     },
+     "British Columbia": {
+      "n": 104846,
+      "share": 0.6045,
+      "idx": 1.071
+     },
+     "Manitoba": {
+      "n": 7182,
+      "share": 0.6152,
+      "idx": 1.0899
+     },
+     "New Brunswick": {
+      "n": 1483,
+      "share": 0.6563,
+      "idx": 1.1627
+     },
+     "Newfoundland and Labrador": {
+      "n": 909,
+      "share": 0.6972,
+      "idx": 1.2352
+     },
+     "Northwest Territories": {
+      "n": 429,
+      "share": 0.8084,
+      "idx": 1.4321
+     },
+     "Nova Scotia": {
+      "n": 2246,
+      "share": 0.6039,
+      "idx": 1.0698
+     },
+     "Ontario": {
+      "n": 45674,
+      "share": 0.5027,
+      "idx": 0.8905
+     },
+     "Prince Edward Island": {
+      "n": 309,
+      "share": 0.6493,
+      "idx": 1.1503
+     },
+     "Quebec": {
+      "n": 18175,
+      "share": 0.6079,
+      "idx": 1.0771
+     },
+     "Saskatchewan": {
+      "n": 6831,
+      "share": 0.6044,
+      "idx": 1.0708
+     },
+     "Yukon Territory": {
+      "n": 2070,
+      "share": 0.7492,
+      "idx": 1.3272
+     }
+    }
+   },
+   "Maui": {
+    "base": 0.4079,
+    "by_group": {
+     "Alberta": {
+      "n": 26634,
+      "share": 0.4365,
+      "idx": 1.07
+     },
+     "British Columbia": {
+      "n": 63021,
+      "share": 0.3634,
+      "idx": 0.8908
+     },
+     "Manitoba": {
+      "n": 4698,
+      "share": 0.4024,
+      "idx": 0.9864
+     },
+     "New Brunswick": {
+      "n": 803,
+      "share": 0.3553,
+      "idx": 0.8709
+     },
+     "Newfoundland and Labrador": {
+      "n": 492,
+      "share": 0.3778,
+      "idx": 0.9262
+     },
+     "Northwest Territories": {
+      "n": 144,
+      "share": 0.2714,
+      "idx": 0.6653
+     },
+     "Nova Scotia": {
+      "n": 1302,
+      "share": 0.3501,
+      "idx": 0.8582
+     },
+     "Ontario": {
+      "n": 42518,
+      "share": 0.4679,
+      "idx": 1.1471
+     },
+     "Prince Edward Island": {
+      "n": 154,
+      "share": 0.3232,
+      "idx": 0.7923
+     },
+     "Quebec": {
+      "n": 14526,
+      "share": 0.4859,
+      "idx": 1.1912
+     },
+     "Saskatchewan": {
+      "n": 3746,
+      "share": 0.3315,
+      "idx": 0.8126
+     },
+     "Yukon Territory": {
+      "n": 742,
+      "share": 0.2686,
+      "idx": 0.6585
+     }
+    }
+   },
+   "Kauai": {
+    "base": 0.1106,
+    "by_group": {
+     "Alberta": {
+      "n": 6341,
+      "share": 0.1039,
+      "idx": 0.9397
+     },
+     "British Columbia": {
+      "n": 13274,
+      "share": 0.0765,
+      "idx": 0.6922
+     },
+     "Manitoba": {
+      "n": 1352,
+      "share": 0.1158,
+      "idx": 1.0472
+     },
+     "New Brunswick": {
+      "n": 270,
+      "share": 0.1193,
+      "idx": 1.0788
+     },
+     "Newfoundland and Labrador": {
+      "n": 110,
+      "share": 0.0844,
+      "idx": 0.7632
+     },
+     "Northwest Territories": {
+      "n": 70,
+      "share": 0.1318,
+      "idx": 1.1918
+     },
+     "Nova Scotia": {
+      "n": 301,
+      "share": 0.081,
+      "idx": 0.7325
+     },
+     "Ontario": {
+      "n": 13667,
+      "share": 0.1504,
+      "idx": 1.3603
+     },
+     "Prince Edward Island": {
+      "n": 31,
+      "share": 0.0654,
+      "idx": 0.5917
+     },
+     "Quebec": {
+      "n": 6736,
+      "share": 0.2253,
+      "idx": 2.0377
+     },
+     "Saskatchewan": {
+      "n": 689,
+      "share": 0.061,
+      "idx": 0.5513
+     },
+     "Yukon Territory": {
+      "n": 200,
+      "share": 0.0724,
+      "idx": 0.6549
+     }
+    }
+   },
+   "Hawaii": {
+    "base": 0.1788,
+    "by_group": {
+     "Alberta": {
+      "n": 9212,
+      "share": 0.151,
+      "idx": 0.8444
+     },
+     "British Columbia": {
+      "n": 23261,
+      "share": 0.1341,
+      "idx": 0.7501
+     },
+     "Manitoba": {
+      "n": 1454,
+      "share": 0.1245,
+      "idx": 0.6964
+     },
+     "New Brunswick": {
+      "n": 597,
+      "share": 0.2643,
+      "idx": 1.4784
+     },
+     "Newfoundland and Labrador": {
+      "n": 209,
+      "share": 0.1604,
+      "idx": 0.8973
+     },
+     "Northwest Territories": {
+      "n": 110,
+      "share": 0.2076,
+      "idx": 1.1612
+     },
+     "Nova Scotia": {
+      "n": 756,
+      "share": 0.2034,
+      "idx": 1.1375
+     },
+     "Ontario": {
+      "n": 22408,
+      "share": 0.2466,
+      "idx": 1.3793
+     },
+     "Prince Edward Island": {
+      "n": 76,
+      "share": 0.1601,
+      "idx": 0.8955
+     },
+     "Quebec": {
+      "n": 9169,
+      "share": 0.3067,
+      "idx": 1.7152
+     },
+     "Saskatchewan": {
+      "n": 1753,
+      "share": 0.1551,
+      "idx": 0.8674
+     },
+     "Yukon Territory": {
+      "n": 591,
+      "share": 0.2139,
+      "idx": 1.1964
+     }
+    }
+   }
+  },
+  "rows": {
+   "Visitor Counts": {
+    "Visitors": 389241.1977,
+    "Alberta": 61018.8947,
+    "British Columbia": 173435.9458,
+    "Manitoba": 11675.2019,
+    "New Brunswick": 2259.3204,
+    "Newfoundland and Labrador": 1303.3609,
+    "Northwest Territories": 530.289,
+    "Nova Scotia": 3718.6999,
+    "Ontario": 90862.5413,
+    "Prince Edward Island": 476.2248,
+    "Quebec": 29895.4687,
+    "Saskatchewan": 11301.6201,
+    "Yukon Territory": 2763.6302
+   },
+   "PARTY SIZE | One": {
+    "Visitors": 35205.0468,
+    "Alberta": 4561.6703,
+    "British Columbia": 13972.9185,
+    "Manitoba": 825.5924,
+    "New Brunswick": 258.1152,
+    "Newfoundland and Labrador": 164.2476,
+    "Northwest Territories": 59.1978,
+    "Nova Scotia": 483.8324,
+    "Ontario": 10362.9694,
+    "Prince Edward Island": 48.8929,
+    "Quebec": 3616.3823,
+    "Saskatchewan": 627.921,
+    "Yukon Territory": 223.3071
+   },
+   "PARTY SIZE | Two": {
+    "Visitors": 155612.0274,
+    "Alberta": 22280.4858,
+    "British Columbia": 65223.5799,
+    "Manitoba": 5046.4523,
+    "New Brunswick": 1360.4039,
+    "Newfoundland and Labrador": 441.8923,
+    "Northwest Territories": 231.5191,
+    "Nova Scotia": 1888.0232,
+    "Ontario": 39922.4171,
+    "Prince Edward Island": 186.4994,
+    "Quebec": 12498.4777,
+    "Saskatchewan": 5195.5307,
+    "Yukon Territory": 1335.5458
+   },
+   "PARTY SIZE | Three or more": {
+    "Visitors": 198424.1235,
+    "Alberta": 34177.9508,
+    "British Columbia": 94241.6497,
+    "Manitoba": 5803.3616,
+    "New Brunswick": 640.6998,
+    "Newfoundland and Labrador": 697.1801,
+    "Northwest Territories": 239.5585,
+    "Nova Scotia": 1346.65,
+    "Ontario": 40574.5507,
+    "Prince Edward Island": 240.8267,
+    "Quebec": 13779.5976,
+    "Saskatchewan": 5478.5153,
+    "Yukon Territory": 1204.7826
+   },
+   "PARTY SIZE | Avg Party Size": {
+    "Visitors": 2.4196,
+    "Alberta": 2.5733,
+    "British Columbia": 2.4874,
+    "Manitoba": 2.4788,
+    "New Brunswick": 2.0343,
+    "Newfoundland and Labrador": 2.4137,
+    "Northwest Territories": 2.1692,
+    "Nova Scotia": 2.1282,
+    "Ontario": 2.2617,
+    "Prince Edward Island": 2.3292,
+    "Quebec": 2.2967,
+    "Saskatchewan": 2.5023,
+    "Yukon Territory": 2.357
+   },
+   "VISIT STATUS | First-Time": {
+    "Visitors": 133532.5706,
+    "Alberta": 18139.2689,
+    "British Columbia": 40113.0772,
+    "Manitoba": 4428.0695,
+    "New Brunswick": 1287.8436,
+    "Newfoundland and Labrador": 918.6975,
+    "Northwest Territories": 196.5456,
+    "Nova Scotia": 1771.346,
+    "Ontario": 44293.2272,
+    "Prince Edward Island": 288.0025,
+    "Quebec": 17631.9962,
+    "Saskatchewan": 3673.0112,
+    "Yukon Territory": 791.4852
+   },
+   "VISIT STATUS | Repeat": {
+    "Visitors": 255708.627,
+    "Alberta": 42879.4072,
+    "British Columbia": 133321.3519,
+    "Manitoba": 7247.1655,
+    "New Brunswick": 971.5169,
+    "Newfoundland and Labrador": 384.7003,
+    "Northwest Territories": 333.7446,
+    "Nova Scotia": 1947.3927,
+    "Ontario": 46570.3407,
+    "Prince Edward Island": 188.232,
+    "Quebec": 12264.0496,
+    "Saskatchewan": 7628.5929,
+    "Yukon Territory": 1972.1328
+   },
+   "VISIT STATUS | Average # of Trips": {
+    "Visitors": 3.8267,
+    "Alberta": 4.2173,
+    "British Columbia": 4.5395,
+    "Manitoba": 3.3758,
+    "New Brunswick": 2.3744,
+    "Newfoundland and Labrador": 1.9477,
+    "Northwest Territories": 4.4383,
+    "Nova Scotia": 3.0615,
+    "Ontario": 2.8025,
+    "Prince Edward Island": 3.2324,
+    "Quebec": 2.2544,
+    "Saskatchewan": 4.1548,
+    "Yukon Territory": 4.6812
+   },
+   "TRAVEL METHOD | Group Tour": {
+    "Visitors": 6639.2732,
+    "Alberta": 510.378,
+    "British Columbia": 2161.1709,
+    "Manitoba": 342.2132,
+    "New Brunswick": 203.6064,
+    "Newfoundland and Labrador": 17.4572,
+    "Northwest Territories": 0,
+    "Nova Scotia": 212.4572,
+    "Ontario": 2288.565,
+    "Prince Edward Island": 2.4496,
+    "Quebec": 699.8769,
+    "Saskatchewan": 95.7543,
+    "Yukon Territory": 105.3444
+   },
+   "TRAVEL METHOD | Package": {
+    "Visitors": 76911.684,
+    "Alberta": 11186.64,
+    "British Columbia": 36165.4112,
+    "Manitoba": 2540.0675,
+    "New Brunswick": 528.4675,
+    "Newfoundland and Labrador": 383.3676,
+    "Northwest Territories": 108.6513,
+    "Nova Scotia": 608.9204,
+    "Ontario": 16736.4386,
+    "Prince Edward Island": 46.3804,
+    "Quebec": 5071.7006,
+    "Saskatchewan": 3041.5685,
+    "Yukon Territory": 494.0702
+   },
+   "TRAVEL METHOD | Group Tour & Pkg": {
+    "Visitors": 4054.837,
+    "Alberta": 262.1026,
+    "British Columbia": 1130.5629,
+    "Manitoba": 262.1384,
+    "New Brunswick": 174.8412,
+    "Newfoundland and Labrador": 4.8647,
+    "Northwest Territories": 0,
+    "Nova Scotia": 170.9711,
+    "Ontario": 1460.0352,
+    "Prince Edward Island": 2.4501,
+    "Quebec": 541.2338,
+    "Saskatchewan": 45.6368,
+    "Yukon Territory": 0
+   },
+   "TRAVEL METHOD | True independent": {
+    "Visitors": 309745.0774,
+    "Alberta": 49582.8922,
+    "British Columbia": 136243.9676,
+    "Manitoba": 9055.4565,
+    "New Brunswick": 1702.1674,
+    "Newfoundland and Labrador": 907.6263,
+    "Northwest Territories": 421.6564,
+    "Nova Scotia": 3067.9803,
+    "Ontario": 73294.5312,
+    "Prince Edward Island": 429.7655,
+    "Quebec": 24663.6296,
+    "Saskatchewan": 8211.5323,
+    "Yukon Territory": 2163.8722
+   },
+   "ISLANDS VISITED | O'ahu": {
+    "Visitors": 219707.8533,
+    "Alberta": 29554.6588,
+    "British Columbia": 104846.1102,
+    "Manitoba": 7182.4156,
+    "New Brunswick": 1482.768,
+    "Newfoundland and Labrador": 908.6865,
+    "Northwest Territories": 428.6729,
+    "Nova Scotia": 2245.5429,
+    "Ontario": 45673.6471,
+    "Prince Edward Island": 309.2102,
+    "Quebec": 18174.8851,
+    "Saskatchewan": 6830.8446,
+    "Yukon Territory": 2070.4114
+   },
+   "ISLANDS VISITED | Maui County": {
+    "Visitors": 159939.5354,
+    "Alberta": 26980.3498,
+    "British Columbia": 63388.7866,
+    "Manitoba": 4726.9027,
+    "New Brunswick": 802.621,
+    "Newfoundland and Labrador": 492.4406,
+    "Northwest Territories": 143.9123,
+    "Nova Scotia": 1301.871,
+    "Ontario": 42776.5216,
+    "Prince Edward Island": 157.9775,
+    "Quebec": 14662.3731,
+    "Saskatchewan": 3746.2579,
+    "Yukon Territory": 759.5212
+   },
+   "ISLANDS VISITED | Maui": {
+    "Visitors": 158779.7465,
+    "Alberta": 26633.5047,
+    "British Columbia": 63020.7869,
+    "Manitoba": 4697.8132,
+    "New Brunswick": 802.633,
+    "Newfoundland and Labrador": 492.448,
+    "Northwest Territories": 143.9145,
+    "Nova Scotia": 1301.8904,
+    "Ontario": 42517.8977,
+    "Prince Edward Island": 153.9123,
+    "Quebec": 14526.3099,
+    "Saskatchewan": 3746.3137,
+    "Yukon Territory": 742.3222
+   },
+   "ISLANDS VISITED | Moloka'i *": {
+    "Visitors": 2127.6965,
+    "Alberta": 474.641,
+    "British Columbia": 964.0722,
+    "Manitoba": 65.0685,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 0,
+    "Ontario": 463.5788,
+    "Prince Edward Island": 4.0593,
+    "Quebec": 119.5415,
+    "Saskatchewan": 36.7353,
+    "Yukon Territory": 0
+   },
+   "ISLANDS VISITED | Lāna'i *": {
+    "Visitors": 2906.135,
+    "Alberta": 644.039,
+    "British Columbia": 786.0675,
+    "Manitoba": 123.0532,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 56.5389,
+    "Nova Scotia": 41.4531,
+    "Ontario": 960.4912,
+    "Prince Edward Island": 0,
+    "Quebec": 239.8809,
+    "Saskatchewan": 37.235,
+    "Yukon Territory": 17.3761
+   },
+   "ISLANDS VISITED | Kaua'i": {
+    "Visitors": 43041.0967,
+    "Alberta": 6340.6821,
+    "British Columbia": 13274.1999,
+    "Manitoba": 1351.9813,
+    "New Brunswick": 269.5046,
+    "Newfoundland and Labrador": 109.9992,
+    "Northwest Territories": 69.8862,
+    "Nova Scotia": 301.2022,
+    "Ontario": 13667.4475,
+    "Prince Edward Island": 31.1603,
+    "Quebec": 6735.9885,
+    "Saskatchewan": 688.9262,
+    "Yukon Territory": 200.1187
+   },
+   "ISLANDS VISITED | Hawai'i Island": {
+    "Visitors": 69596.8647,
+    "Alberta": 9212.4467,
+    "British Columbia": 23260.9182,
+    "Manitoba": 1453.7933,
+    "New Brunswick": 597.2258,
+    "Newfoundland and Labrador": 209.1152,
+    "Northwest Territories": 110.1036,
+    "Nova Scotia": 756.3239,
+    "Ontario": 22408.2745,
+    "Prince Edward Island": 76.2519,
+    "Quebec": 9168.5231,
+    "Saskatchewan": 1752.7086,
+    "Yukon Territory": 591.1798
+   },
+   "ISLANDS VISITED | Hilo": {
+    "Visitors": 22848.6487,
+    "Alberta": 2215.9293,
+    "British Columbia": 7016.1433,
+    "Manitoba": 575.8406,
+    "New Brunswick": 207.7803,
+    "Newfoundland and Labrador": 62.2211,
+    "Northwest Territories": 2.4577,
+    "Nova Scotia": 297.1115,
+    "Ontario": 6962.527,
+    "Prince Edward Island": 29.8839,
+    "Quebec": 5044.4446,
+    "Saskatchewan": 266.383,
+    "Yukon Territory": 167.9264
+   },
+   "ISLANDS VISITED | Kona": {
+    "Visitors": 64502.8333,
+    "Alberta": 8486.4003,
+    "British Columbia": 21773.1122,
+    "Manitoba": 1272.4006,
+    "New Brunswick": 556.6613,
+    "Newfoundland and Labrador": 203.3584,
+    "Northwest Territories": 110.1043,
+    "Nova Scotia": 654.4941,
+    "Ontario": 20927.28,
+    "Prince Edward Island": 65.7349,
+    "Quebec": 8211.4074,
+    "Saskatchewan": 1690.622,
+    "Yukon Territory": 551.2579
+   },
+   "LENGTH OF STAY | O'ahu (days)": {
+    "Visitors": 8.3063,
+    "Alberta": 8.7214,
+    "British Columbia": 8.451,
+    "Manitoba": 10.2832,
+    "New Brunswick": 7.3547,
+    "Newfoundland and Labrador": 7.9015,
+    "Northwest Territories": 6.4363,
+    "Nova Scotia": 8.7817,
+    "Ontario": 7.3315,
+    "Prince Edward Island": 7.196,
+    "Quebec": 7.417,
+    "Saskatchewan": 11.328,
+    "Yukon Territory": 7.4531
+   },
+   "LENGTH OF STAY | Maui (days)": {
+    "Visitors": 9.9289,
+    "Alberta": 10.5244,
+    "British Columbia": 10.2488,
+    "Manitoba": 9.6404,
+    "New Brunswick": 7.6905,
+    "Newfoundland and Labrador": 8.8121,
+    "Northwest Territories": 7.3779,
+    "Nova Scotia": 10.8594,
+    "Ontario": 9.1603,
+    "Prince Edward Island": 9.3732,
+    "Quebec": 8.9057,
+    "Saskatchewan": 13.6008,
+    "Yukon Territory": 9.8416
+   },
+   "LENGTH OF STAY | Moloka'i (days)": {
+    "Visitors": 3.7584,
+    "Alberta": 3.7222,
+    "British Columbia": 4.2045,
+    "Manitoba": 8.8158,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 0,
+    "Ontario": 2.0741,
+    "Prince Edward Island": 3.7013,
+    "Quebec": 4.9334,
+    "Saskatchewan": 1,
+    "Yukon Territory": 0
+   },
+   "LENGTH OF STAY | Lāna'i (days)": {
+    "Visitors": 2.6946,
+    "Alberta": 2.5182,
+    "British Columbia": 3.065,
+    "Manitoba": 1.7279,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 1,
+    "Nova Scotia": 1,
+    "Ontario": 3.2657,
+    "Prince Edward Island": 0,
+    "Quebec": 1.4823,
+    "Saskatchewan": 1,
+    "Yukon Territory": 1
+   },
+   "LENGTH OF STAY | Kaua'i (days)": {
+    "Visitors": 7.3252,
+    "Alberta": 9.1167,
+    "British Columbia": 7.4276,
+    "Manitoba": 8.0094,
+    "New Brunswick": 5.1494,
+    "Newfoundland and Labrador": 4.7868,
+    "Northwest Territories": 1.6644,
+    "Nova Scotia": 7.9923,
+    "Ontario": 6.9851,
+    "Prince Edward Island": 5.3351,
+    "Quebec": 6.012,
+    "Saskatchewan": 10.4287,
+    "Yukon Territory": 2.3004
+   },
+   "LENGTH OF STAY | Hawai'i Island (days)": {
+    "Visitors": 8.6723,
+    "Alberta": 9.1971,
+    "British Columbia": 8.853,
+    "Manitoba": 9.9735,
+    "New Brunswick": 7.7437,
+    "Newfoundland and Labrador": 7.944,
+    "Northwest Territories": 4.6306,
+    "Nova Scotia": 7.6837,
+    "Ontario": 8.0579,
+    "Prince Edward Island": 8.0345,
+    "Quebec": 7.936,
+    "Saskatchewan": 15.4092,
+    "Yukon Territory": 8.4152
+   },
+   "LENGTH OF STAY | Hilo (days)": {
+    "Visitors": 3.3058,
+    "Alberta": 3.6841,
+    "British Columbia": 3.2562,
+    "Manitoba": 4.0313,
+    "New Brunswick": 1.6368,
+    "Newfoundland and Labrador": 2.6222,
+    "Northwest Territories": 5,
+    "Nova Scotia": 5.1852,
+    "Ontario": 3.2119,
+    "Prince Edward Island": 7.0703,
+    "Quebec": 3.1647,
+    "Saskatchewan": 3.6724,
+    "Yukon Territory": 4.1259
+   },
+   "LENGTH OF STAY | Kona (days)": {
+    "Visitors": 8.1862,
+    "Alberta": 9.0227,
+    "British Columbia": 8.4094,
+    "Manitoba": 9.5722,
+    "New Brunswick": 7.6975,
+    "Newfoundland and Labrador": 7.3671,
+    "Northwest Territories": 4.519,
+    "Nova Scotia": 6.527,
+    "Ontario": 7.5603,
+    "Prince Edward Island": 6.1079,
+    "Quebec": 6.9183,
+    "Saskatchewan": 15.3969,
+    "Yukon Territory": 7.7687
+   },
+   "LENGTH OF STAY | Statewide (days)": {
+    "Visitors": 11.14,
+    "Alberta": 11.214,
+    "British Columbia": 10.6269,
+    "Manitoba": 12.4414,
+    "New Brunswick": 10.2226,
+    "Newfoundland and Labrador": 10.5165,
+    "Northwest Territories": 8.4889,
+    "Nova Scotia": 11.3277,
+    "Ontario": 11.0617,
+    "Prince Edward Island": 9.3696,
+    "Quebec": 12.664,
+    "Saskatchewan": 14.39,
+    "Yukon Territory": 10.1999
+   },
+   "ACCOMMODATIONS | Hotel": {
+    "Visitors": 216645.7831,
+    "Alberta": 29591.2193,
+    "British Columbia": 96031.5443,
+    "Manitoba": 6325.1024,
+    "New Brunswick": 1562.353,
+    "Newfoundland and Labrador": 779.8721,
+    "Northwest Territories": 348.0828,
+    "Nova Scotia": 2272.0271,
+    "Ontario": 55095.2688,
+    "Prince Edward Island": 225.2294,
+    "Quebec": 17284.3208,
+    "Saskatchewan": 5504.6706,
+    "Yukon Territory": 1626.0924
+   },
+   "ACCOMMODATIONS | Hotel Only": {
+    "Visitors": 178595.3695,
+    "Alberta": 24836.3761,
+    "British Columbia": 83894.5678,
+    "Manitoba": 5019.6681,
+    "New Brunswick": 1367.497,
+    "Newfoundland and Labrador": 589.253,
+    "Northwest Territories": 248.3647,
+    "Nova Scotia": 1908.4952,
+    "Ontario": 43344.7967,
+    "Prince Edward Island": 195.6883,
+    "Quebec": 11377.7731,
+    "Saskatchewan": 4571.2112,
+    "Yukon Territory": 1241.6783
+   },
+   "ACCOMMODATIONS | Condo": {
+    "Visitors": 87992.3686,
+    "Alberta": 16718.5734,
+    "British Columbia": 40274.2025,
+    "Manitoba": 3243.6716,
+    "New Brunswick": 272.3019,
+    "Newfoundland and Labrador": 306.451,
+    "Northwest Territories": 29.6987,
+    "Nova Scotia": 546.3137,
+    "Ontario": 15551.0884,
+    "Prince Edward Island": 78.2887,
+    "Quebec": 6911.7792,
+    "Saskatchewan": 3323.616,
+    "Yukon Territory": 736.3835
+   },
+   "ACCOMMODATIONS | Condo Only": {
+    "Visitors": 69671.9933,
+    "Alberta": 14177.4629,
+    "British Columbia": 34006.9558,
+    "Manitoba": 2636.2383,
+    "New Brunswick": 172.2134,
+    "Newfoundland and Labrador": 244.8227,
+    "Northwest Territories": 29.7236,
+    "Nova Scotia": 390.48,
+    "Ontario": 11322.6332,
+    "Prince Edward Island": 73.5407,
+    "Quebec": 3368.3068,
+    "Saskatchewan": 2908.5799,
+    "Yukon Territory": 341.0362
+   },
+   "ACCOMMODATIONS | Timeshare": {
+    "Visitors": 35278.7907,
+    "Alberta": 6985.096,
+    "British Columbia": 16332.6671,
+    "Manitoba": 533.6499,
+    "New Brunswick": 142.4707,
+    "Newfoundland and Labrador": 78.4193,
+    "Northwest Territories": 69.9766,
+    "Nova Scotia": 170.4162,
+    "Ontario": 8029.9333,
+    "Prince Edward Island": 18.6783,
+    "Quebec": 1287.3485,
+    "Saskatchewan": 1307.6669,
+    "Yukon Territory": 322.4679
+   },
+   "ACCOMMODATIONS | Timeshare Only": {
+    "Visitors": 28359.5035,
+    "Alberta": 5865.7736,
+    "British Columbia": 13209.3327,
+    "Manitoba": 467.3366,
+    "New Brunswick": 110.6384,
+    "Newfoundland and Labrador": 46.4622,
+    "Northwest Territories": 44.1099,
+    "Nova Scotia": 148.3055,
+    "Ontario": 6094.5064,
+    "Prince Edward Island": 17.1854,
+    "Quebec": 859.9262,
+    "Saskatchewan": 1173.2494,
+    "Yukon Territory": 322.6772
+   },
+   "ACCOMMODATIONS | Rental House": {
+    "Visitors": 42955.7958,
+    "Alberta": 6074.5605,
+    "British Columbia": 14990.7492,
+    "Manitoba": 1428.2334,
+    "New Brunswick": 121.5396,
+    "Newfoundland and Labrador": 163.5726,
+    "Northwest Territories": 50.2673,
+    "Nova Scotia": 510.9684,
+    "Ontario": 11455.7801,
+    "Prince Edward Island": 12.9716,
+    "Quebec": 6997.4617,
+    "Saskatchewan": 995.2653,
+    "Yukon Territory": 154.4261
+   },
+   "ACCOMMODATIONS | Hostel": {
+    "Visitors": 4654.3844,
+    "Alberta": 474.0036,
+    "British Columbia": 1463.3047,
+    "Manitoba": 93.305,
+    "New Brunswick": 47.2611,
+    "Newfoundland and Labrador": 1.1557,
+    "Northwest Territories": 14.9651,
+    "Nova Scotia": 100.085,
+    "Ontario": 1055.0806,
+    "Prince Edward Island": 11.3415,
+    "Quebec": 1307.431,
+    "Saskatchewan": 70.7573,
+    "Yukon Territory": 15.694
+   },
+   "ACCOMMODATIONS | Camp Site": {
+    "Visitors": 3238.4281,
+    "Alberta": 565.2378,
+    "British Columbia": 1099.4341,
+    "Manitoba": 46.277,
+    "New Brunswick": 2.4487,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 7.01,
+    "Ontario": 554.0866,
+    "Prince Edward Island": 0,
+    "Quebec": 879.0561,
+    "Saskatchewan": 20.203,
+    "Yukon Territory": 64.6746
+   },
+   "ACCOMMODATIONS | Private Room in Private Home**": {
+    "Visitors": 9264.979,
+    "Alberta": 1212.6155,
+    "British Columbia": 4127.8785,
+    "Manitoba": 558.3251,
+    "New Brunswick": 4.1078,
+    "Newfoundland and Labrador": 24.5489,
+    "Northwest Territories": 0,
+    "Nova Scotia": 69.0098,
+    "Ontario": 1754.7259,
+    "Prince Edward Island": 98.323,
+    "Quebec": 942.2999,
+    "Saskatchewan": 303.1462,
+    "Yukon Territory": 169.9983
+   },
+   "ACCOMMODATIONS | Shared Room Space in Private Home **": {
+    "Visitors": 1074.2929,
+    "Alberta": 142.953,
+    "British Columbia": 253.4202,
+    "Manitoba": 40.0043,
+    "New Brunswick": 3.3975,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 56.6466,
+    "Ontario": 285.7009,
+    "Prince Edward Island": 0,
+    "Quebec": 168.9594,
+    "Saskatchewan": 116.194,
+    "Yukon Territory": 7.0171
+   },
+   "ACCOMMODATIONS | Bed & Breakfast": {
+    "Visitors": 4429.6506,
+    "Alberta": 526.1459,
+    "British Columbia": 1627.7939,
+    "Manitoba": 95.7707,
+    "New Brunswick": 71.8509,
+    "Newfoundland and Labrador": 33.1479,
+    "Northwest Territories": 0,
+    "Nova Scotia": 24.1146,
+    "Ontario": 1568.6708,
+    "Prince Edward Island": 8.972,
+    "Quebec": 334.8349,
+    "Saskatchewan": 138.349,
+    "Yukon Territory": 0
+   },
+   "ACCOMMODATIONS | Cruise Ship": {
+    "Visitors": 5370.119,
+    "Alberta": 477.7172,
+    "British Columbia": 1327.4325,
+    "Manitoba": 241.6736,
+    "New Brunswick": 160.8585,
+    "Newfoundland and Labrador": 35.2196,
+    "Northwest Territories": 56.119,
+    "Nova Scotia": 54.1412,
+    "Ontario": 1914.6181,
+    "Prince Edward Island": 23.4103,
+    "Quebec": 1027.9405,
+    "Saskatchewan": 44.8988,
+    "Yukon Territory": 6.0897
+   },
+   "ACCOMMODATIONS | Friends or Relatives": {
+    "Visitors": 26189.9888,
+    "Alberta": 3953.5728,
+    "British Columbia": 11091.5252,
+    "Manitoba": 610.1844,
+    "New Brunswick": 115.7242,
+    "Newfoundland and Labrador": 108.0918,
+    "Northwest Territories": 44.7204,
+    "Nova Scotia": 306.5534,
+    "Ontario": 7063.5346,
+    "Prince Edward Island": 36.1404,
+    "Quebec": 1999.5582,
+    "Saskatchewan": 663.4156,
+    "Yukon Territory": 196.9677
+   },
+   "ACCOMMODATIONS | Other Accommodation": {
+    "Visitors": 5818.8868,
+    "Alberta": 1021.4735,
+    "British Columbia": 2243.1754,
+    "Manitoba": 173.9318,
+    "New Brunswick": 34.9884,
+    "Newfoundland and Labrador": 3.3975,
+    "Northwest Territories": 16.1781,
+    "Nova Scotia": 67.6714,
+    "Ontario": 1533.7128,
+    "Prince Edward Island": 0,
+    "Quebec": 568.659,
+    "Saskatchewan": 118.9764,
+    "Yukon Territory": 36.7225
+   },
+   "PURPOSE OF TRIP | Pleasure (Net)": {
+    "Visitors": 354460.1277,
+    "Alberta": 56419.9088,
+    "British Columbia": 159720.6039,
+    "Manitoba": 10541.1511,
+    "New Brunswick": 1909.8796,
+    "Newfoundland and Labrador": 1236.1672,
+    "Northwest Territories": 485.5262,
+    "Nova Scotia": 3261.5133,
+    "Ontario": 80643.6523,
+    "Prince Edward Island": 428.4828,
+    "Quebec": 26974.545,
+    "Saskatchewan": 10356.8181,
+    "Yukon Territory": 2481.8793
+   },
+   "PURPOSE OF TRIP | Vacation": {
+    "Visitors": 346038.0881,
+    "Alberta": 55211.8546,
+    "British Columbia": 157394.4689,
+    "Manitoba": 10300.7071,
+    "New Brunswick": 1837.7617,
+    "Newfoundland and Labrador": 1210.0067,
+    "Northwest Territories": 485.5675,
+    "Nova Scotia": 3124.713,
+    "Ontario": 77302.1738,
+    "Prince Edward Island": 404.8504,
+    "Quebec": 26200.9578,
+    "Saskatchewan": 10090.8661,
+    "Yukon Territory": 2474.1604
+   },
+   "PURPOSE OF TRIP | Honeymoon": {
+    "Visitors": 8384.3141,
+    "Alberta": 1238.5038,
+    "British Columbia": 2202.2389,
+    "Manitoba": 235.7485,
+    "New Brunswick": 72.0225,
+    "Newfoundland and Labrador": 83.7292,
+    "Northwest Territories": 0,
+    "Nova Scotia": 86.2298,
+    "Ontario": 3444.4472,
+    "Prince Edward Island": 23.2705,
+    "Quebec": 661.7377,
+    "Saskatchewan": 328.4842,
+    "Yukon Territory": 7.9018
+   },
+   "PURPOSE OF TRIP | Get Married": {
+    "Visitors": 1857.6869,
+    "Alberta": 220.8524,
+    "British Columbia": 733.0898,
+    "Manitoba": 40.3994,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 50.3588,
+    "Ontario": 606.1139,
+    "Prince Edward Island": 0.3139,
+    "Quebec": 204.1039,
+    "Saskatchewan": 2.4548,
+    "Yukon Territory": 0
+   },
+   "PURPOSE OF TRIP | MC&I (Net)": {
+    "Visitors": 14486.6059,
+    "Alberta": 1484.6581,
+    "British Columbia": 4243.1307,
+    "Manitoba": 600.7545,
+    "New Brunswick": 224.6301,
+    "Newfoundland and Labrador": 29.3093,
+    "Northwest Territories": 0,
+    "Nova Scotia": 204.1357,
+    "Ontario": 5524.0626,
+    "Prince Edward Island": 22.9905,
+    "Quebec": 1789.5512,
+    "Saskatchewan": 342.599,
+    "Yukon Territory": 20.784
+   },
+   "PURPOSE OF TRIP | Convention/Conf.": {
+    "Visitors": 10634.5243,
+    "Alberta": 1152.6342,
+    "British Columbia": 3248.801,
+    "Manitoba": 502.1268,
+    "New Brunswick": 179.8328,
+    "Newfoundland and Labrador": 25.6502,
+    "Northwest Territories": 0,
+    "Nova Scotia": 179.4662,
+    "Ontario": 3745.1041,
+    "Prince Edward Island": 19.0062,
+    "Quebec": 1277.9237,
+    "Saskatchewan": 303.9791,
+    "Yukon Territory": 0
+   },
+   "PURPOSE OF TRIP | Corp. Meetings": {
+    "Visitors": 1846.0526,
+    "Alberta": 98.6572,
+    "British Columbia": 525.4601,
+    "Manitoba": 55.6946,
+    "New Brunswick": 30.9408,
+    "Newfoundland and Labrador": 1.205,
+    "Northwest Territories": 0,
+    "Nova Scotia": 10.0037,
+    "Ontario": 823.3888,
+    "Prince Edward Island": 3.9944,
+    "Quebec": 295.0613,
+    "Saskatchewan": 1.6467,
+    "Yukon Territory": 0
+   },
+   "PURPOSE OF TRIP | Incentive": {
+    "Visitors": 2677.6222,
+    "Alberta": 274.6447,
+    "British Columbia": 807.7787,
+    "Manitoba": 47.6364,
+    "New Brunswick": 43.3083,
+    "Newfoundland and Labrador": 2.431,
+    "Northwest Territories": 0,
+    "Nova Scotia": 16.5078,
+    "Ontario": 1140.9778,
+    "Prince Edward Island": 0,
+    "Quebec": 286.9918,
+    "Saskatchewan": 36.5881,
+    "Yukon Territory": 20.7577
+   },
+   "PURPOSE OF TRIP | Other Business": {
+    "Visitors": 2447.331,
+    "Alberta": 329.5672,
+    "British Columbia": 883.353,
+    "Manitoba": 140.3778,
+    "New Brunswick": 22.6453,
+    "Newfoundland and Labrador": 7.903,
+    "Northwest Territories": 0,
+    "Nova Scotia": 34.8452,
+    "Ontario": 766.0176,
+    "Prince Edward Island": 0,
+    "Quebec": 239.3976,
+    "Saskatchewan": 23.2244,
+    "Yukon Territory": 0
+   },
+   "PURPOSE OF TRIP | Visit Friends/Relatives": {
+    "Visitors": 19762.9004,
+    "Alberta": 2990.0537,
+    "British Columbia": 8440.249,
+    "Manitoba": 613.9013,
+    "New Brunswick": 107.7269,
+    "Newfoundland and Labrador": 56.5933,
+    "Northwest Territories": 44.7784,
+    "Nova Scotia": 296.4508,
+    "Ontario": 5224.2853,
+    "Prince Edward Island": 22.9281,
+    "Quebec": 1387.8937,
+    "Saskatchewan": 478.9121,
+    "Yukon Territory": 99.1278
+   },
+   "PURPOSE OF TRIP | Government/Military": {
+    "Visitors": 371.7695,
+    "Alberta": 30.794,
+    "British Columbia": 101.3375,
+    "Manitoba": 14.8768,
+    "New Brunswick": 0,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 23.9406,
+    "Ontario": 155.946,
+    "Prince Edward Island": 0,
+    "Quebec": 42.4868,
+    "Saskatchewan": 0,
+    "Yukon Territory": 2.3877
+   },
+   "PURPOSE OF TRIP | Attend School": {
+    "Visitors": 762.9007,
+    "Alberta": 127.9711,
+    "British Columbia": 155.4575,
+    "Manitoba": 12.8124,
+    "New Brunswick": 47.0648,
+    "Newfoundland and Labrador": 0,
+    "Northwest Territories": 0,
+    "Nova Scotia": 0,
+    "Ontario": 281.9194,
+    "Prince Edward Island": 0,
+    "Quebec": 127.0946,
+    "Saskatchewan": 10.5808,
+    "Yukon Territory": 0
+   },
+   "PURPOSE OF TRIP | Sport Events": {
+    "Visitors": 3961.7047,
+    "Alberta": 432.0321,
+    "British Columbia": 2225.6949,
+    "Manitoba": 12.9444,
+    "New Brunswick": 71.1519,
+    "Newfoundland and Labrador": 33.3926,
+    "Northwest Territories": 0,
+    "Nova Scotia": 5.8615,
+    "Ontario": 712.5915,
+    "Prince Edward Island": 2.9307,
+    "Quebec": 254.7216,
+    "Saskatchewan": 64.0453,
+    "Yukon Territory": 146.3382
+   },
+   "PURPOSE OF TRIP | Other purpose": {
+    "Visitors": 10477.4361,
+    "Alberta": 1329.6336,
+    "British Columbia": 4783.5758,
+    "Manitoba": 432.3694,
+    "New Brunswick": 51.3083,
+    "Newfoundland and Labrador": 63.1864,
+    "Northwest Territories": 20.4507,
+    "Nova Scotia": 79.2538,
+    "Ontario": 2507.7073,
+    "Prince Edward Island": 7.3578,
+    "Quebec": 560.0477,
+    "Saskatchewan": 542.9996,
+    "Yukon Territory": 99.5459
+   },
+   "PURPOSE OF TRIP | Average Age": {
+    "Visitors": 47.3272,
+    "Alberta": 47.1633,
+    "British Columbia": 47.5984,
+    "Manitoba": 49.5556,
+    "New Brunswick": 49.8364,
+    "Newfoundland and Labrador": 50.2794,
+    "Northwest Territories": 42.8418,
+    "Nova Scotia": 53.242,
+    "Ontario": 46.9945,
+    "Prince Edward Island": 46.8777,
+    "Quebec": 44.1465,
+    "Saskatchewan": 48.3442,
+    "Yukon Territory": 51.0375
+   }
+  }
+ },
+ "notes": [
+  "TABLE NUMBERING CHANGED: in the 2025 workbook the CBSA-by-island table is TABLE 56 (TABLE 55 is now \"2025 Domestic U.S. Air Visitor Length of Stay (in Days) by Island and State\", a new table). an/vis_cbsa.py hard-codes sheet \"TABLE 55\"; run against the 2025 workbook it would hit the length-of-stay sheet and fail its Utah assert. Point it at \"TABLE 56\" for 2025. Tables 23 (Japan by region) and 25 (Canada by province) kept their numbers.",
+  "Arrivals in Table 56 are visitors on domestic (U.S. mainland-origin) transpacific flights, classified by residence ZIP to CBSA; island columns count visitors who visited each island, so they are not mutually exclusive (multi-island trips) and do not sum to TOTAL. Values are survey-weighted estimates (fractional in the workbook); rounded to whole visitors in the output.",
+  "Table 56 uses older OMB CBSA titles (e.g. \"Denver-Aurora-Lakewood CO\", \"San Francisco-Oakland-Hayward CA\", \"Ogden-Clearfield UT\", \"Provo-Orem UT\") while Table 21 uses 2023 titles (e.g. \"Denver-Aurora-Centennial CO\", \"Ogden UT\", \"Provo-Orem-Lehi UT\", \"Salt Lake City-Murray UT\"). Totals match between the tables to rounding.",
+  "The over-index base is the pooled island share across the 65 listed metros only, not all U.S. visitors; idx > 1 means a metro sends a larger share of its Hawaii visitors to that island than the listed-metro average.",
+  "Year-over-year swings at CBSA level are large in DBEDT's own figures (Table 57: Dallas-Fort Worth -38.5%, Phoenix -33.5%, Albuquerque -39.2%, Denver +36.1%, New York +30.2%); state-level Table 19 shows the same direction (Arizona -30.3%, Colorado +34.3%, Texas -17.3%). Treat single-year CBSA idx moves as noisy survey estimates.",
+  "Japan Table 23 covers Japan MMA visitors on INTERNATIONAL flights only; the nine regions sum to the Table 22 \"on international flights\" total (743,614), not the Japan total (749,596). Okinawa, Shikoku, Hokkaido, Chugoku, Tohoku counts are small; islands other than O‘ahu have very small Japanese counts, so neighbor-island idx for small regions is unstable. Moloka‘i/Lāna‘i flagged by DBEDT as small samples.",
+  "Canada Table 25 covers ALL Canada MMA air visitors (both flight types): the twelve provinces/territories sum to the Visitors column and the Table 24 total (389,241). Nunavut is not listed. Small-sample provinces/territories (NWT, PEI, Yukon, Newfoundland, New Brunswick) produce unstable ratios.",
+  "Market Penetration (Table 21) = arrivals per 1,000 metro population as published by DBEDT (population column in thousands).",
+  "No owner rolls or personal data are involved; all figures are published aggregates."
+ ]
+}

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hawaiʻi Broker Brief</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBFBFD; --bg2:#F5F5F7; --card:#FFFFFF; --ink:#1D1D1F; --ink2:#6E6E73; --ink3:#707075;
+  --line:rgba(0,0,0,.08); --line2:rgba(0,0,0,.14); --accent:#0071E3; --accent-ink:#0066CC;
+  --pos:#248A3D; --neg:#C93400; --amber:#B25000;
+  --shadow:0 2px 8px rgba(0,0,0,.04),0 12px 32px rgba(0,0,0,.06);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Inter",system-ui,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Inter",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#000000; --bg2:#0B0B0C; --card:#1C1C1E; --ink:#F5F5F7; --ink2:#A1A1A6; --ink3:#86868B;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18); --accent:#2997FF; --accent-ink:#2997FF;
+  --pos:#30B04F; --neg:#E07A20; --amber:#E0A040; --shadow:none; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#000000; --bg2:#0B0B0C; --card:#1C1C1E; --ink:#F5F5F7; --ink2:#A1A1A6; --ink3:#86868B;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18); --accent:#2997FF; --accent-ink:#2997FF;
+  --pos:#30B04F; --neg:#E07A20; --amber:#E0A040; --shadow:none; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;letter-spacing:-.01em;margin:0;-webkit-font-smoothing:antialiased;padding:0 0 72px}
+.wrap{max-width:1020px;margin:0 auto;padding-inline:16px}
+a{color:var(--accent-ink);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+p{margin:0 0 12px}
+
+header{padding-block:56px 8px}
+.eyebrow{font-size:15px;font-weight:600;color:var(--accent-ink)}
+h1{font-family:var(--display);font-size:clamp(36px,6vw,60px);line-height:1.04;font-weight:700;letter-spacing:-.035em;margin:8px 0 12px;text-wrap:balance}
+.sub{font-size:clamp(17px,2vw,20px);color:var(--ink2);max-width:46ch;margin:0;text-wrap:balance}
+
+section{padding-top:44px}
+.sn{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px;letter-spacing:.01em}
+h2{font-family:var(--display);font-size:clamp(24px,3vw,32px);font-weight:700;letter-spacing:-.025em;line-height:1.12;margin:0 0 14px;text-wrap:balance;max-width:30ch}
+.tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;padding:1px 7px;border-radius:980px;vertical-align:2px;white-space:nowrap;line-height:1.5}
+.tag.p{color:var(--pos);background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.tag.o{color:var(--accent-ink);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.tag.r{color:var(--ink2);background:var(--line)}
+.tag.f{color:var(--neg);background:color-mix(in srgb,var(--neg) 12%,transparent)}
+.src{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.5}
+
+/* market tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);min-width:0;display:flex;flex-direction:column}
+:root[data-theme="dark"] .tile,:root[data-theme="dark"] .card{border:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tile,:root:not([data-theme="light"]) .card{border:1px solid var(--line)}}
+.tn{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.02em}
+.pill{align-self:flex-start;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:980px;margin-top:6px}
+.pill.buy{color:var(--pos);background:color-mix(in srgb,var(--pos) 13%,transparent)}
+.pill.bal{color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+.big{font-family:var(--display);font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:14px;font-variant-numeric:tabular-nums}
+.big span{display:block;font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--ink2);letter-spacing:0;margin-top:6px}
+.tsub{font-size:13px;color:var(--ink2);margin:8px 0 10px}
+.tile dl{display:grid;grid-template-columns:1fr auto;gap:5px 8px;margin:0;font-size:12.5px;border-top:1px solid var(--line);padding-top:10px}
+.tile dt{color:var(--ink2)}
+.tile dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.play{font-size:13.5px;margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-weight:500}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tiles{grid-template-columns:1fr}}
+
+/* tables */
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow);overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td,tr:last-child th{border-bottom:0}
+tr.hl td{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+tr.hl td.rk{color:var(--accent-ink)}
+thead th{font-size:12px;font-weight:600;color:var(--ink3);white-space:nowrap}
+td.rk{color:var(--ink3);font-weight:600;width:28px;font-variant-numeric:tabular-nums}
+td b{font-weight:600;display:block}
+.mn{display:block;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums;margin-top:2px}
+.ot{min-width:640px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.two > div{background:var(--bg2);border-radius:16px;padding:14px 16px;font-size:14px;min-width:0}
+.two b{display:block;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:4px}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+
+/* calendar */
+table.cal{min-width:700px;font-size:12px}
+table.cal th,table.cal td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+table.cal th.rl{text-align:left;font-weight:500;color:var(--ink);white-space:nowrap;font-size:12.5px;padding-left:14px}
+table.cal td.hc{font-variant-numeric:tabular-nums;color:var(--ink);border-left:2px solid var(--card)}
+table.cal th.rl{position:sticky;left:0;background:var(--card);z-index:1}
+.swipe{display:none;font-size:12px;color:var(--ink2);margin:0 0 6px}
+@media (max-width:640px){.swipe{display:block}}
+table.cal td.hc.s{color:var(--ink);font-weight:700}
+table.cal td.hc.w{color:var(--ink2)}
+.do{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.do li{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-size:14px;min-width:0}
+.do li b{display:block;font-family:var(--display);font-size:16px;letter-spacing:-.01em;margin-bottom:2px}
+@media (max-width:900px){.do{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.do{grid-template-columns:1fr}}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.num{background:var(--card);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.num .n{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.num .l{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.4}
+@media (max-width:900px){.nums{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.nums{grid-template-columns:1fr}}
+.outlook{margin-top:12px;background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:18px;padding:16px 20px;font-size:15px}
+.outlook b{font-weight:600}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rules > div{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-size:13.5px;min-width:0}
+.rules .rk{font-weight:600;font-size:14px;margin-bottom:3px}
+@media (max-width:760px){.rules{grid-template-columns:1fr}}
+footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3)}
+footer p{margin:0 0 6px}
+
+@media print{
+  @page{size:letter;margin:.4in}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--bg2:#f5f5f7;--card:#fff;--ink:#1d1d1f;--ink2:#555;--ink3:#666;--line:rgba(0,0,0,.12);--line2:rgba(0,0,0,.2);--accent:#0071E3;--accent-ink:#0066CC;--pos:#248A3D;--neg:#C93400;--amber:#B25000;--shadow:none;color-scheme:light}
+  body{background:#fff;font-size:9.5px;line-height:1.35;padding:0}
+  .wrap{max-width:none;padding:0}
+  header{padding:0 0 2px}
+  .eyebrow{font-size:10px}
+  h1{font-size:24px;margin:2px 0 4px}
+  .sub{font-size:11px;max-width:none}
+  section{padding-top:10px;break-inside:auto}
+  .sn{font-size:9px;margin-bottom:2px}
+  h2{font-size:14px;margin-bottom:6px;max-width:none;break-after:avoid}
+  .tile,.two>div,.num,.do li,.rules>div,.outlook,tr{break-inside:avoid}
+  .card{break-inside:auto;overflow:visible}
+  .tiles,.do{grid-template-columns:repeat(4,1fr);gap:6px} .nums{grid-template-columns:repeat(5,1fr);gap:6px} .rules{grid-template-columns:repeat(3,1fr);gap:6px} .two{grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
+  .tile,.card,.num,.do li,.rules > div{border:1px solid #ddd;border-radius:8px}
+  .tile{padding:8px} .tn{font-size:13px} .pill{font-size:8.5px;margin-top:3px}
+  .big{font-size:20px;margin-top:5px} .big span{font-size:8.5px;margin-top:2px}
+  .tsub,.play{font-size:9px;margin:4px 0} .play{padding-top:5px}
+  .tile dl{font-size:8.5px;gap:2px 6px;padding-top:5px}
+  table{font-size:9px} th,td{padding:3px 5px} thead th{font-size:8.5px} .mn{font-size:8.5px}
+  .ot,table.cal{min-width:0} table.cal th,table.cal td{padding:3px 2px}
+  .two>div,.do li,.rules>div{padding:6px 8px;font-size:9px} .do li b{font-size:10px} .rules .rk{font-size:10px}
+  .num{padding:8px} .num .n{font-size:17px} .num .l{font-size:8.5px;margin-top:4px}
+  .outlook{padding:8px 10px;font-size:9.5px;margin-top:6px}
+  .src{font-size:8px;margin-top:4px;line-height:1.35}
+  .tag{font-size:7.5px;padding:0 5px}
+  footer{margin-top:10px;padding-top:6px;font-size:8px}
+  .swipe{display:none}
+  a{color:inherit}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Hawaiʻi Intelligence · Broker Brief · October 2026</div>
+  <h1>Who to reach, where, and when.</h1>
+  <p class="sub">The market on each island, where newcomers come from, where departing households go, and the months that matter.</p>
+</header>
+
+<section>
+  <span class="sn">1 · The market today</span>
+  <h2>Buyers have leverage on three islands. Oʻahu houses still favor sellers.</h2>
+  <div class="tiles"><div class="tile"><div class="tn">Oʻahu</div><div class="pill bal">Balanced</div>
+<div class="big">5.2<span> months of supply (Aug)</span></div><p class="tsub">Houses ~3 months: a seller's market. Condos favor buyers.</p>
+<dl><dt>Active listings, Sep</dt><dd>3,483</dd><dt>vs a year earlier</dt><dd>+6.4%</dd><dt>With a price cut</dt><dd>14.3%</dd><dt>Mainland share of 2025 purchase $</dt><dd>15%</dd></dl>
+<p class="play">Price houses to the market. Condos are where buyers can negotiate.</p></div><div class="tile"><div class="tn">Maui*</div><div class="pill buy">Buyer's market</div>
+<div class="big">9.6<span> months of supply (Aug)</span></div><p class="tsub">The deepest buyer's market, but tightening: 11.1 months a year earlier, and January–August recorded sales up 10% (DBEDT).</p>
+<dl><dt>Active listings, Sep</dt><dd>1,367</dd><dt>vs a year earlier</dt><dd>+5.2%</dd><dt>With a price cut</dt><dd>12.5%</dd><dt>Mainland share of 2025 purchase $</dt><dd>40%</dd></dl>
+<p class="play">The deepest buyer's market of the four. Condo prices are falling as the vacation-rental phase-out approaches.</p></div><div class="tile"><div class="tn">Kauaʻi</div><div class="pill buy">Buyer's market</div>
+<div class="big">8.4<span> months of supply (Aug)</span></div><p class="tsub">Sales down sharply, condos most.</p>
+<dl><dt>Active listings, Sep</dt><dd>385</dd><dt>vs a year earlier</dt><dd>+8.1%</dd><dt>With a price cut</dt><dd>15.2% (Aug)</dd><dt>Mainland share of 2025 purchase $</dt><dd>49%</dd></dl>
+<p class="play">Mainland buyers bring half the purchase dollars. Work Southern California.</p></div><div class="tile"><div class="tn">Hawaiʻi Island</div><div class="pill buy">Buyer's market</div>
+<div class="big">6.5<span> months of supply (Aug)</span></div><p class="tsub">Fastest-rising inventory, highest share of price cuts.</p>
+<dl><dt>Active listings, Sep</dt><dd>1,365</dd><dt>vs a year earlier</dt><dd>+24.9%</dd><dt>With a price cut</dt><dd>16.7%</dd><dt>Mainland share of 2025 purchase $</dt><dd>53%</dd></dl>
+<p class="play">Mainland buyers bring over half the purchase dollars. The highest-income newcomers come from the Bay Area.</p></div></div>
+  <div class="two"><div><b>Oʻahu, Jan–Aug 2026</b>House sales are up 6% and the median is up 4% to $1.19M. Condos are flat: sales −2%, median $512K.</div><div><b>Maui County, Jan–Sep 2026</b>Buyers are back for condos, but at lower prices: condo sales are up 21% while the median fell 7% to $655K. Resort condos fell most: Māʻalaea −18%, Wailea/Mākena −17%, Kapalua −16%, Kīhei −12%, Nāpili/Kahana −12%.</div><div><b>Kauaʻi, Jan–Aug 2026</b>Fewer sales (houses −8%, condos −21%), but the house median rose 11% to $1.30M, pulled up by Kōloa and Poʻipū (+47%). The mix shifted toward expensive homes.</div><div><b>Hawaiʻi Island, Jan–Aug 2026</b>Sales are flat island-wide (houses −1%, median $564K), but house dollar volume is up 18% because the top end grew: South Kohala +48% and North Kona +29%.</div></div>
+  <p class="src">Months of supply: active listings (Realtor.com) ÷ 3-month average of sales (DBEDT), August 2026. Under 4 favors sellers, 4–6 is balanced, over 6 favors buyers. Listings and price cuts: Realtor.com, September 2026 <span class="tag p">Primary</span>. *Realtor.com flags every Maui month since December 2025 for data quality, so treat Maui's listing figures as approximate. Kauaʻi's price-cut share is August's; September's 4.8% looks anomalous. Oʻahu houses: DBEDT single-family inventory ÷ sales, about 2.9 months. Kauaʻi and Maui sales: January–August 2026 vs 2025 (DBEDT). Purchase dollars: Title Guaranty buyer data, 2025 <span class="tag o">Official</span>. 2026 so far: MLS resales by district, January–August (Maui: January–September) vs the same months of 2025, from HiCentral MLS, Hawaii Information Service, the Kauai Board of REALTORS and the REALTORS Association of Maui <span class="tag o">Official</span>.</p>
+</section>
+
+<section>
+  <span class="sn">2 · Find buyers here</span>
+  <h2>Where each island's buyers come from</h2>
+  <p class="swipe">Swipe for Kauaʻi and Hawaiʻi Island →</p><div class="card"><table class="ot"><thead><tr><th></th><th>Oʻahu</th><th>Maui</th><th>Kauaʻi</th><th>Hawaiʻi Island</th></tr></thead><tbody><tr><td class="rk"></td><td><b>83% local · 14% mainland · 3% foreign</b><span class="mn">11,097 buyers in 2025</span></td><td><b>73% local · 25% mainland · 1% foreign</b><span class="mn">1,247 buyers in 2025</span></td><td><b>68% local · 32% mainland · <1% foreign</b><span class="mn">890 buyers in 2025</span></td><td><b>67% local · 32% mainland · 1% foreign</b><span class="mn">3,675 buyers in 2025</span></td></tr><tr><td class="rk"></td><td><b>California 656</b><span class="mn">#1 out-of-state buyer state, 2025</span></td><td><b>California 107</b><span class="mn">#1 out-of-state buyer state, 2025</span></td><td><b>California 102</b><span class="mn">#1 out-of-state buyer state, 2025</span></td><td><b>California 406</b><span class="mn">#1 out-of-state buyer state, 2025</span></td></tr><tr><td class="rk"></td><td><b>Next buyer states, 2025</b><span class="mn">Washington 112, Florida 111, Texas 83, Nevada 65</span></td><td><b>Next buyer states, 2025</b><span class="mn">Washington 34, Oregon 17, Colorado 17, Texas 15</span></td><td><b>Next buyer states, 2025</b><span class="mn">Colorado 24, Texas 19, Washington 18, Utah 16</span></td><td><b>Next buyer states, 2025</b><span class="mn">Washington 114, Oregon 77, Texas 58, Alaska 55</span></td></tr><tr><td class="rk"></td><td><b>2026 so far (Jan–Jun)</b><span class="mn">California 271, Washington 54, Texas 52</span></td><td><b>2026 so far (Jan–Jun)</b><span class="mn">California 55, Washington 38, Colorado 13</span></td><td><b>2026 so far (Jan–Jun)</b><span class="mn">California 50, Washington 13, Texas 7</span></td><td><b>2026 so far (Jan–Jun)</b><span class="mn">California 176, Washington 70, Oregon 30</span></td></tr><tr><td class="rk"></td><td><b>Biggest visitor metros</b><span class="mn">Los Angeles–OC 496K · SF–Oakland 296K · Seattle 209K · San Diego 156K</span></td><td><b>Biggest visitor metros</b><span class="mn">Los Angeles–OC 211K · SF–Oakland 159K · Seattle 127K · San Diego 70K</span></td><td><b>Biggest visitor metros</b><span class="mn">Los Angeles–OC 123K · SF–Oakland 86K · Seattle 61K · San Diego 49K</span></td><td><b>Biggest visitor metros</b><span class="mn">Los Angeles–OC 129K · SF–Oakland 101K · Seattle 87K · San Diego 48K</span></td></tr></tbody></table></div>
+  <div class="two">
+    <div><b>Local buyers come first</b>Hawaiʻi residents brought 70% of 2025 purchase dollars statewide and 81% on Oʻahu. On the neighbor islands many local buyers come from Oʻahu, which sends each of them about two to three times as many households as Los Angeles–Orange County (1.9× Maui, 2.3× Kauaʻi, 3.0× Big Island), so advertise neighbor-island listings on Oʻahu too.</div>
+    <div><b>California, then the West</b>California is the #1 out-of-state buyer state on every island. Washington is #2 on Oʻahu, Maui and the Big Island; Florida and Texas follow on Oʻahu, Oregon and Alaska on the Big Island, and Colorado and Utah on Kauaʻi.</div>
+  </div>
+  <p class="src">Buyers 2025: DBEDT buyer-origin series (Title Guaranty data) <span class="tag o">Official</span>. Buyer states: Title Guaranty buyer statistics, full year 2025 and January–June 2026 (the latest published), downloaded directly; Maui figures cover Maui County <span class="tag o">Official</span>. Visitor metros: DBEDT 2024 Annual Visitor Research, Table 55 <span class="tag p">Primary</span>. Oʻahu comparison: IRS county-to-county migration, 2019–23 <span class="tag p">Primary</span>.</p>
+</section>
+
+<section>
+  <span class="sn">2b · Second-home buyers</span>
+  <h2>Cities that send each island more than their share of visitors</h2>
+  <p class="swipe">Swipe for Kauaʻi and Hawaiʻi Island →</p><div class="card"><table class="ot"><thead><tr><th></th><th>Oʻahu</th><th>Maui</th><th>Kauaʻi</th><th>Hawaiʻi Island</th></tr></thead><tbody><tr><td class="rk">1</td><td><b>Washington DC</b><span class="mn">1.33× the average · 73K visitors</span></td><td><b>Minneapolis–St. Paul</b><span class="mn">1.31× the average · 26K visitors</span></td><td><b>Salt Lake City–Provo–Ogden</b><span class="mn">1.44× the average · 40K visitors</span></td><td><b>Anchorage</b><span class="mn">1.42× the average · 17K visitors</span></td></tr><tr><td class="rk">2</td><td><b>Baltimore</b><span class="mn">1.32× the average · 22K visitors</span></td><td><b>Chicago</b><span class="mn">1.25× the average · 45K visitors</span></td><td><b>Denver</b><span class="mn">1.32× the average · 28K visitors</span></td><td><b>Minneapolis–St. Paul</b><span class="mn">1.28× the average · 17K visitors</span></td></tr><tr><td class="rk">3</td><td><b>San Antonio</b><span class="mn">1.29× the average · 29K visitors</span></td><td><b>Dallas–Fort Worth</b><span class="mn">1.14× the average · 42K visitors</span></td><td><b>Minneapolis–St. Paul</b><span class="mn">1.29× the average · 15K visitors</span></td><td><b>Portland</b><span class="mn">1.22× the average · 47K visitors</span></td></tr></tbody></table></div>
+  <div class="two">
+    <div><b>Read Maui's buyer mix with care</b>Title Guaranty puts Maui's 2025 mainland share at 25%, counted by the buyer's address on the deed. By county tax records, 57% of Maui home buyers in FY2025–26 had no homeowner exemption, and UHERO counts 55–59% of Maui condo buyers as out-of-state. Outside demand has moved up-market and away from condos facing the vacation-rental phase-out; it has not dried up.</div>
+    <div><b>International</b>Buyers with foreign addresses made 415 purchases in 2025 (2.5%): 364 on Oʻahu, 33 on Hawaiʻi Island, 16 on Maui and 2 on Kauaʻi. Japan leads, with 85% of Japanese home-purchase value on Oʻahu in 2025; Japan's visitors come mostly from the Tokyo, Osaka and Nagoya regions. Canada led by number of purchases on Hawaiʻi Island (17) and Maui (11) in 2025; its visitors come mostly from British Columbia, Ontario and Alberta. Kauaʻi has no Canadian nonstop in winter 2026–27.</div>
+  </div>
+  <p class="src">Visitor index: each metro's share of its Hawaiʻi visitors who go to that island, divided by the same share for all visitors from the 67 metros DBEDT lists, taken together (Utah's three counted as one); 1.30 means 30% more than average. DBEDT 2024 Annual Visitor Research, Table 55 (domestic air arrivals by island and metro) <span class="tag p">Primary</span>; metros with at least 20,000 visitors to Oʻahu or Maui, 15,000 to Hawaiʻi Island, 10,000 to Kauaʻi. Visitors are a signal of where second-home buyers live, not a count of buyers. On Oʻahu the top three are military and federal centers, so their lead may reflect official travel more than second-home demand. Maui buyer mix: Title Guaranty 2025; County of Maui conveyance-tax schedule, FY2025–26; UHERO Hawaiʻi Housing Factbook 2026. Foreign regions: DBEDT 2024 Tables 23 and 25.</p>
+</section>
+
+<section>
+  <span class="sn">3 · Build referral partners here</span>
+  <h2>Where departing households from each island go</h2>
+  <p class="swipe">Swipe for Kauaʻi and Hawaiʻi Island →</p><div class="card"><table class="ot"><thead><tr><th></th><th>Oʻahu</th><th>Maui</th><th>Kauaʻi</th><th>Hawaiʻi Island</th></tr></thead><tbody><tr><td class="rk">1</td><td><b>Las Vegas</b><span class="mn">1,246 a year · $66K avg income</span></td><td><b>Las Vegas</b><span class="mn">196 a year · $57K avg income</span></td><td><b>Los Angeles–Orange County</b><span class="mn">61 a year · $111K avg income</span></td><td><b>Las Vegas</b><span class="mn">164 a year · $60K avg income</span></td></tr><tr><td class="rk">2</td><td><b>Seattle–Tacoma</b><span class="mn">1,057 a year · $68K avg income</span></td><td><b>Los Angeles–Orange County</b><span class="mn">140 a year · $86K avg income</span></td><td><b>Las Vegas</b><span class="mn">51 a year · $64K avg income</span></td><td><b>Seattle–Tacoma</b><span class="mn">155 a year · $57K avg income</span></td></tr><tr><td class="rk">3</td><td><b>Texas (4 metros combined)</b><span class="mn">935 a year · $71K avg income</span></td><td><b>Seattle–Tacoma</b><span class="mn">133 a year · $81K avg income</span></td><td><b>San Diego</b><span class="mn">36 a year · $65K avg income</span></td><td><b>Los Angeles–Orange County</b><span class="mn">118 a year · $58K avg income</span></td></tr><tr><td class="rk">4</td><td><b>Los Angeles–Orange County</b><span class="mn">928 a year · $75K avg income</span></td><td><b>Phoenix</b><span class="mn">90 a year · $86K avg income</span></td><td><b>Phoenix</b><span class="mn">32 a year · $78K avg income</span></td><td><b>Phoenix</b><span class="mn">100 a year · $64K avg income</span></td></tr></tbody></table></div>
+  <p class="src">Same IRS source and years; San Diego, a single metro, is #5 from Oʻahu at 889 a year. Las Vegas (Clark County) is the #1 destination county from every island; from Kauaʻi, the Los Angeles–Orange County metro edges it out. IRS counts households that move, not sellers, and no record links a seller to where they go. Departing owners who sell here may buy there, and Los Angeles–Orange County, Seattle–Tacoma, San Diego and Phoenix also send newcomers, so agents in these cities can refer both ways.</p>
+</section>
+
+<section>
+  <span class="sn">4 · The calendar</span>
+  <h2>When homes close, and when visitors arrive</h2>
+  <p class="swipe">Swipe for all twelve months →</p><div class="card"><table class="cal"><thead><tr><th></th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead><tbody><tr><th class="rl">Closings · Oʻahu</th><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.80</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.77</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 27%,transparent)">1.02</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 34%,transparent)">1.07</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 39%,transparent)">1.12</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 41%,transparent)">1.13</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 34%,transparent)">1.07</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 37%,transparent)">1.10</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 32%,transparent)">1.06</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 11%,transparent)">0.89</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 17%,transparent)">0.94</td></tr><tr><th class="rl">Closings · Maui</th><td class="hc w" style="background:color-mix(in srgb,var(--accent) 14%,transparent)">0.91</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 12%,transparent)">0.90</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 43%,transparent)">1.14</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 41%,transparent)">1.13</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 41%,transparent)">1.13</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 32%,transparent)">1.06</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 25%,transparent)">1.00</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 14%,transparent)">0.91</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 21%,transparent)">0.97</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.84</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 22%,transparent)">0.98</td></tr><tr><th class="rl">Closings · Kauaʻi</th><td class="hc w" style="background:color-mix(in srgb,var(--accent) 15%,transparent)">0.92</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 7%,transparent)">0.86</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 38%,transparent)">1.11</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 39%,transparent)">1.11</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 50%,transparent)">1.20</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 19%,transparent)">0.95</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 24%,transparent)">0.99</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">0.93</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 27%,transparent)">1.02</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 11%,transparent)">0.89</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 22%,transparent)">0.98</td></tr><tr><th class="rl">Closings · Hawaiʻi Island</th><td class="hc w" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">0.88</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 12%,transparent)">0.89</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 38%,transparent)">1.10</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 38%,transparent)">1.11</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 44%,transparent)">1.15</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 35%,transparent)">1.08</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 25%,transparent)">1.00</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">0.93</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 24%,transparent)">0.99</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.85</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 22%,transparent)">0.98</td></tr><tr><th class="rl">Arrivals · domestic flights</th><td class="hc w" style="background:color-mix(in srgb,var(--accent) 14%,transparent)">0.91</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 11%,transparent)">0.89</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 35%,transparent)">1.08</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 21%,transparent)">0.97</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 27%,transparent)">1.01</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 44%,transparent)">1.15</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 50%,transparent)">1.20</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.84</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 14%,transparent)">0.91</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 13%,transparent)">0.91</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 37%,transparent)">1.10</td></tr><tr><th class="rl">Arrivals · international flights</th><td class="hc s" style="background:color-mix(in srgb,var(--accent) 36%,transparent)">1.09</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 27%,transparent)">1.01</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 36%,transparent)">1.09</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">0.93</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 6%,transparent)">0.84</td><td class="hc w" style="background:color-mix(in srgb,var(--accent) 13%,transparent)">0.91</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 24%,transparent)">0.99</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 34%,transparent)">1.07</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 18%,transparent)">0.95</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 19%,transparent)">0.95</td><td class="hc" style="background:color-mix(in srgb,var(--accent) 29%,transparent)">1.03</td><td class="hc s" style="background:color-mix(in srgb,var(--accent) 43%,transparent)">1.15</td></tr></tbody></table></div>
+  <p class="src">Each month vs an average month (1.00); bold is 5% or more above average. Closings: DBEDT single-family plus condo, 2015–2025 excluding 2020–21. Arrivals: DBEDT statewide air arrivals (all islands), 2015–2019 and 2023–2025 <span class="tag o">Official</span>.</p>
+  <ul class="do">
+    <li><b>List</b>By February on the neighbor islands (closings peak March–June). By March on Oʻahu (April–September).</li>
+    <li><b>Mainland ads</b>June–July, December and March, when the most visitors arrive on domestic flights, a rough guide to buyer trips.</li>
+    <li><b>International</b>December, January, March and August, the peaks for international arrivals.</li>
+    <li><b>Slow months</b>January, February and November close 8–23% below an average month. Use them to build lists.</li>
+  </ul>
+</section>
+
+<section>
+  <span class="sn">5 · Numbers for client conversations</span>
+  <h2>Five facts that explain this market</h2>
+  <div class="nums">
+    <div class="num"><div class="n">7.28%</div><div class="l">30-year fixed rate, October 1, 2026 (Freddie Mac)</div></div>
+    <div class="num"><div class="n">66%</div><div class="l">of a median Oʻahu household income would go to principal and interest on a median-priced house in 2025 (30-year loan, 20% down; taxes, insurance and HOA extra). Maui 78%, Kauaʻi 76%. About 40% in 2019.</div></div>
+    <div class="num"><div class="n">70%</div><div class="l">of 2025 purchase dollars came from Hawaiʻi residents (81% on Oʻahu)</div></div>
+    <div class="num"><div class="n">1 in 6</div><div class="l">homes on Maui and Kauaʻi are held for seasonal or occasional use (Census, 2024)</div></div>
+    <div class="num"><div class="n">12,894</div><div class="l">more Hawaiʻi tax-filing households moved to Las Vegas than came from it, 2004–05 to 2022–23, the most of any metro</div></div>
+  </div>
+  <p class="src">Rate: Freddie Mac weekly survey. Payment share: DBEDT single-family median, Freddie Mac annual average rate and Census ACS median household income (2024 income for 2025), calculated here. Purchase dollars: Title Guaranty buyer data, 2025 <span class="tag o">Official</span>. Seasonal homes: ACS 2024 PUMS <span class="tag p">Primary</span>. Las Vegas: IRS county-to-county migration <span class="tag p">Primary</span>.</p>
+  <div class="outlook"><b>Outlook, 2027</b> <span class="tag f">Forecast</span> If rates stay between 6.5% and 7.5%, expect a slow buyer's market: about 16,300–17,400 recorded sales statewide (16,909 in 2025; MLS counts run about 12,000 a year) and flat prices, with Oʻahu houses holding. Below 6.5%, local buyers return first. Above 7.5%, price cuts spread, and some Maui condo owners facing Bill 9's phase-out of vacation rentals in apartment-zoned condos (West Maui Jan 1, 2029; the rest of Maui Jan 1, 2031) may sell, though Bill 88's hotel-zoning path may keep many renting.</div>
+</section>
+
+<section>
+  <span class="sn">6 · Rules of the road</span>
+  <h2>Target cities, not ZIP codes, and keep it fair</h2>
+  <div class="rules">
+    <div><div class="rk">Meta and Google</div>Housing ads cannot target ZIP codes, age or gender. Use a city or metro with a radius (Meta: at least 15 miles in the U.S. and Canada, 15 km elsewhere), or your own client list if the platform marks it eligible.</div>
+    <div><div class="rk">Fair housing</div>No ad may signal a preference by national origin, race or any protected class (42 USC 3604(c); HRS §515-3), and targeting by place can act as a proxy for these. Keep geographic targeting broad and based on documented demand, have country-level or language-specific campaigns reviewed, and keep ad copy about the property, never the buyer.</div>
+    <div><div class="rk">Direct mail</div>Can go to any ZIP except 96761, 96767 and 96790 (see Lahaina and Kula). Owner mailing addresses in county tax records are public (OIP Op. Ltr. 11-01). Fair-housing and brokerage-name rules still apply.</div>
+    <div><div class="rk">Every ad</div>Show the brokerage's legal or registered trade name and the licensee's status (HAR §16-99-11).</div>
+    <div><div class="rk">Referrals</div>Referral fees to out-of-state agents go through licensed brokerages, under each state's rules.</div>
+    <div><div class="rk">Lahaina and Kula</div>The governor's wildfire proclamations ban unsolicited offers to buy any real property in ZIP codes 96761 and 96767 (Lahaina–West Maui) and 96790 (Kula). A violation is a misdemeanor. The current proclamation (August 24, 2026) runs to about October 23, 2026; check for a renewal. Do not prospect there.</div>
+  </div>
+  <p class="src">A summary of rules, not legal advice. Confirm campaigns with your principal broker.</p>
+</section>
+
+<footer>
+  <p>From the full Hawaiʻi Intelligence report at <a href="https://hawaiiintelligence.com">hawaiiintelligence.com</a>: twenty years of IRS migration, DBEDT and Title Guaranty sales, Realtor.com listings, Census, HMDA and Freddie Mac data, with methods and checks. Title Guaranty of Hawaiʻi buyer statistics are used with permission. © 2026 Hawaiʻi Intelligence. Not legal, tax or investment advice.</p>
+  <p><span class="tag p">Primary</span> computed from the raw file · <span class="tag o">Official</span> official table, cross-checked · <span class="tag f">Forecast</span> judgment, not fact</p>
+</footer>
+</div>
+</body>
+</html>

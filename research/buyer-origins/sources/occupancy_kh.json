@@ -1,0 +1,5009 @@
+{
+ "key": "occupancy_kh",
+ "title": "Kauai and Hawaii County owner-occupancy proxy from 2026 county tax rolls (tax class / home-exemption based; not owner origin)",
+ "generated": "2026-10-09T01:59:15Z",
+ "source": {
+  "kauai_roll": {
+   "name": "County of Kauai GIS - TY26_PropertyTaxData (\"Tax Classes and Assessment data for 2026 tax year\")",
+   "url": "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/TY26_PropertyTaxData/FeatureServer/0",
+   "item": "https://www.arcgis.com/home/item.html?id=fe46d9ae37e6471e84bd14baf1df42e1",
+   "edition": "Tax year 2026 (TAXYR=2026); class counts match the official TY July 1 2026-June 30 2027 State summary (e.g. Owner-Occupied Mixed Use 2,073 = 2,073; gross value $2,204,808K = $2,204,808K)",
+   "data_last_edit_utc": "2026-02-11T23:49:22Z",
+   "records": 37653,
+   "pages": 19,
+   "sha256_concat_pages": "f727e7fee0f01ddc2781c103f408d9f7d075f36e4b0423e2de80d55d042cd9c7",
+   "fetched": "2026-10-08 (raw/owners_neighbor/MANIFEST.txt)",
+   "fields_used": "ZONE, SECTION, PLAT, PARCEL, CPR_UNIT, PARID (join only), TYPE, TAXCLASS, CLASS, OVRCLASS, MODTOT, ASSDTOT, TOTEXEMPT, TAXABLE, CDOMSTR; owner name field never pulled"
+  },
+  "hawaii_roll": {
+   "name": "County of Hawaii - cohRPT2026 (\"County of Hawaii Properties as of April 2026\": certified assessments)",
+   "url": "https://services1.arcgis.com/C2LPusZs5OXNGFDn/arcgis/rest/services/cohRPT/FeatureServer/0",
+   "item": "https://www.arcgis.com/home/item.html?id=77b943e9e75f44f891b52eddfeaa9cf6",
+   "edition": "Certified roll April 2026 (tax year July 1 2026-June 30 2027)",
+   "data_last_edit_utc": "2026-04-28T01:15:39Z",
+   "records": 135718,
+   "pages": 68,
+   "sha256_concat_pages": "c9ab366d11c41f0512dd5ba1cf553d3fe0347177d955f64182e17f6fe6759032",
+   "fetched": "2026-10-08 (raw/owners_neighbor/MANIFEST.txt)",
+   "fields_used": "TMK (zone digit, dedupe, join only), LandValue, BldgValue, LandExempt, BldgExempt, PittCode, Homeowner, NHoodCode, TaxAcres; owner fields never pulled"
+  },
+  "class_definitions": {
+   "hawaii_county": {
+    "url": "https://www.arcgis.com/home/item.html?id=77b943e9e75f44f891b52eddfeaa9cf6 (item description by County of Hawaii, raw/up_occupancy_kh/item_77b943e9e75f44f891b52eddfeaa9cf6.json)",
+    "text": "PittCode: Residential (100), Apartment (200), Commercial (300), Industrial (400), Agricultural or Native Forests (500), Conservation (600), Hotel and Resort (700), Homeowner (900), Multiple codes for a single TMK (999), Unknown (0); code 0 is used for Affordable Rental Housing for tax-rate purposes. Homeowner: homeowner exemption applied (Yes/No/Unknown).",
+    "observed": "PittCode values present: [(0, 1229), (100, 64341), (200, 646), (300, 1875), (400, 1113), (500, 64301), (600, 1644), (700, 110), (999, 383)] (no 900). Homeowner-exempt parcels keep code 100/500 etc. with Homeowner=Y. Code-0 TMKs: 1229, of which 1229 have zero land and building value and 1229 have a blank neighborhood code, so Affordable Rental and the new Long-Term Rental class are not identifiable in the layer."
+   },
+   "kauai": {
+    "url": "Class labels are embedded in the County layer (TAXCLASS e.g. \"8:OWNER-OCCUPIED\"); official class list and FY2026-27 counts: https://realproperty.honolulu.gov/media/3txnaost/state-report-fy27-final_kauai.pdf and https://realproperty.honolulu.gov/media/jvmlb03w/state-report-fy27-final_records.pdf; rates by class: https://files.hawaii.gov/dbedt/economic/databook/2024-individual/09/094924.pdf (State Data Book 2024 Table 9.49)",
+    "observed": "CLASS = base (use) class; OVRCLASS = owner-occupancy/affordable-rental override; TAXCLASS = final. Base classes under TAXCLASS 8: {'1:NON-OWNER-OCCUPIED RESIDENTIAL': 11691, '2:VACATION RENTAL': 7, '3:COMMERCIAL': 4}."
+   }
+  },
+  "official_totals": {
+   "name": "State of Hawaii real property tax valuation / records / exemption summaries, TY July 1 2026-June 30 2027 (Technical Branch, Real Property Assessment Division, City and County of Honolulu)",
+   "index": "https://realproperty.honolulu.gov/statewide-reports/2026-27/",
+   "date": "July 2026"
+  },
+  "district_names": {
+   "hawaii": "https://services1.arcgis.com/C2LPusZs5OXNGFDn/arcgis/rest/services/Hawaii_Co_Judicial_Districts/FeatureServer/0",
+   "kauai": "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/ZonesKauaiwm/FeatureServer/0"
+  },
+  "place_names": "US Census Bureau TIGERweb, Census 2020 Census Designated Places (layer 26) and County Subdivisions (layer 22): https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer",
+  "parcel_centroids": "returnCentroid queries on the same two county layers (OBJECTID join, TMK/PARID verified 100%)",
+  "kauai_buildings_2020": "County of Kauai KauaiHMP_gdb layer 16 AllBldg_RPA_pts (assessor building points, data 2020-09): https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/KauaiHMP_gdb/FeatureServer/16",
+  "comparison_inputs": [
+   "an/new/owners_neighbor.json (Maui)",
+   "an/new/owners_oahu.json (Oahu)"
+  ],
+  "manifest": "scratchpad/raw/up_occupancy_kh/MANIFEST.txt",
+  "build_script": "scratchpad/pull/up_occupancy_kh/build_v2.py"
+ },
+ "method": [
+  "Counts are tax-roll records (Kauai: parcels plus CPR/condo units; Hawaii County: 9-digit TMK parcels). No sampling; every record is classified.",
+  "Kauai: owner-occupied = TAXCLASS 8 Owner-Occupied or 10 Owner-Occupied Mixed-Use (these classes require the owner to live there and carry the home exemption); vacation rental = class 2; other non-owner-occupied = class 1 Non-Owner-Occupied Residential + class 11 Long-Term Affordable Rental with taxable value > 0. Condo master records whose units are listed separately (CDOMSTR=2) are dropped to avoid double counting.",
+  "Kauai unit types from the layer TYPE field: \"CPRX Multi-Unit Complex\" = condominium unit; \"CPR Unit\" = land CPR (house-lot) unit; \"TMK Parcel\" = whole lot.",
+  "Kauai value tiers use MODTOT (taken to be the county market value: it equals ASSDTOT except where an owner-occupied assessment limit or agricultural-use value appears to apply; 89% of class-8 records have MODTOT > ASSDTOT, median ratio 1.38, while 99% of class 1/2 records are equal; the field is not documented in the layer). An ASSDTOT-based tier table is also given.",
+  "Hawaii County: one record per distinct 9-digit TMK (76 repeated polygon records for 52 multipart TMKs dropped, all attribute-identical). Housing parcel = PittCode 100 or 500 with BldgValue > 0. Owner-occupied = Homeowner flag Y. Parcels with no home exemption and exemptions >= assessed value are shown separately (DHHL homestead leases, government, nonprofit). Probable multi-unit TMKs (PittCode 200 Apartment or 999 Multiple codes) are shown separately because their values and exemptions are summed across units.",
+  "Hawaii County value = LandValue + BldgValue (gross assessed value).",
+  "Tiers: entry < $750K; mid $750K to < $1.5M; upper $1.5M to < $3M; luxury $3M to < $10M; ultra >= $10M (assessed/market value, not sale price).",
+  "Neighborhoods: Kauai zone-section (TMK zone + section) and Hawaii County NHoodCode (County RPT neighborhood code), each limited to groups with >= 100 units in the main universe, ranked by non-owner-occupied share. Labels = the Census 2020 CDP containing at least half of the group's parcel centroids (point-in-polygon on TIGERweb polygons); otherwise \"<CDP> area\" if >= 25% fall in one CDP, else the Census County Subdivision.",
+  "District names verified two ways: the counties' own district layers map number to name, and parcel centroids were tested against the district polygons (agreement rates in results.district_verification).",
+  "Cells with fewer than 20 units carry flag_fewer_than_20_units."
+ ],
+ "notes": [
+  "This is an OCCUPANCY proxy, not an origin measure. Kauai and Hawaii County owner mailing addresses are not published, so nothing here says where owners live.",
+  "Non-owner-occupied means the parcel has no home exemption / owner-occupied class. That includes local landlords, long-term rentals, homes held by relatives or trusts, vacation rentals and second homes. It is NOT the same as off-island ownership: on Maui, where mailing addresses are public, 46% of non-owner-occupied residential parcels have a Hawaii mailing address; on Oahu 82% of residential parcels without any exemption do. Kauai and Hawaii County owner mailing addresses are not public, so their non-owner-occupied shares must not be read as out-of-state shares.",
+  "Hawaii County has no vacation-rental tax class (none in the County PITT list or the TY2026-27 State summary); vacation rentals are inside non-owner-occupied. On Kauai, condo units taxed as Hotel & Resort (3512) are outside the residential universe unless the sensitivity is used.",
+  "Hawaii County figures are per TMK parcel. Condominium units are not separate records in the public layer, so island figures describe houses and house-lots (incl. homes on agricultural land) and exclude 1029 probable multi-unit TMKs (Apartment or multiple-class codes), which include the condominium projects. On Kauai only 15% of condo units are owner-occupied versus 59% of lots, so leaving condos out likely overstates Hawaii County's unit-level owner-occupied share.",
+  "Kauai's class 1 includes vacant residential lots (no building field in the public layer), which inflates other non-owner-occupied; see sensitivity_possible_vacant_lots_in_class_1.",
+  "Hawaii County agricultural-class improved parcels include some farm buildings without a dwelling; the Residential-class-only figure is given for comparison.",
+  "Owner-occupied counts follow the counties' 2026 certification; homes sold or re-occupied since then may have changed status.",
+  "Kauai tax classes are defined in Kauai County Code 5A-9.1 (Bill 2944, kauai.gov, reachable 2026-10-09). The layer codes 10 and 11 correspond to the ordinance list items (9) and (10); the labels match. The ordinance caps assessment increases for owner-occupied homes at 3%, which supports reading MODTOT as market value and ASSDTOT as assessed value.",
+  "Kauai $3M+ figures use MODTOT (market value; inferred, the layer does not document it). On assessed value (ASSDTOT) the $3M+ non-owner-occupied share is 85.6% of 1,130 records. Public wording must say \"market value\".",
+  "Hawaii County tiers use whole-TMK summed assessed values. 343 owner-occupied TMKs carry exemptions above $300K (probably two or more homes on one lot), so some multi-home lots sit in higher tiers. The layer does not say whether Agricultural-class (PITT 500) land value is agricultural-use or market value.",
+  "The 3,822 fully exempt Hawaii County parcels without a home exemption: a County owner aggregate shows DHHL 1,908, other State 200, County 110, Federal 14 (about 58% government) and other 1,568 (41%); the nonprofit share of \"other\" cannot be checked.",
+  "\"Not owner-occupied\" includes local landlords, long-term rentals, family-held homes, second homes and vacation rentals. It is not a measure of off-island or out-of-state ownership; neither county publishes owner mailing addresses."
+ ],
+ "gaps": [
+  "kauai.gov (e.g. the Bill 2944 Long-Term Affordable Rental public-hearing PDF, https://kauai.gov/files/assets/public/v/1/county-council/documents/public-hearings/2025-03-25-ph-re-bn-2944.pdf) returned HTTP 403 on 2026-10-09; Kauai class definitions were taken from the County layer labels and the official State RPT summary instead.",
+  "Official neighborhood names for Hawaii County NHoodCode values and Kauai zone-sections are not published in the layers (the County RPT sites are blocked); labels are Census 2020 CDP / County Subdivision names assigned by parcel-centroid location.",
+  "hawaiicounty.gov and hawaiipropertytax.com were blocked earlier in this project (Akamai 403 / Cloudflare challenge; see owners_neighbor.json attempts); Hawaii County definitions come from the County's own ArcGIS item description.",
+  "Hawaii County condo/CPR unit records are not in any public County layer found; unit-level occupancy for condos cannot be computed. The County ArcGIS RPT folder requires a token (not attempted).",
+  "County of Kauai BUILDINGS_public layer (building cards) is marked \"internal and partner official use only\" and was not used.",
+  "Kauai and Hawaii County owner mailing addresses: not public (see owners_neighbor.json).",
+  "Hawaii County Affordable Rental Housing (2,048 records) and the new Long-Term Rental class (880 records) are not identifiable in the GIS layer; they sit inside non-owner-occupied or the multi-unit group."
+ ],
+ "key_figures": [
+  {
+   "id": "kauai_oo_share",
+   "label": "Kauai: residential units in an owner-occupied tax class (TY2026-27)",
+   "value": 0.5084,
+   "how_to_rederive": "TY26_PropertyTaxData: TAXCLASS 8 or 10 / TAXCLASS 1,2,8,10,11, dropping 97 condo master records and 1531 class-1 records with TAXABLE=0 (13775 / 27097). Official State summary gives 0.5036."
+  },
+  {
+   "id": "kauai_vr_share",
+   "label": "Kauai: residential units in the Vacation Rental class",
+   "value": 0.1465,
+   "how_to_rederive": "Same universe; TAXCLASS 2 (3971 / 27097)."
+  },
+  {
+   "id": "kauai_condo",
+   "label": "Kauai condo units (TYPE CPRX Multi-Unit Complex): owner-occupied / vacation-rental shares",
+   "value": {
+    "owner_occupied": 0.1549,
+    "vacation_rental": 0.5854,
+    "units": 5138
+   },
+   "how_to_rederive": "Universe records whose TYPE starts \"CPRX Multi-Unit Complex\"; class 8+10 and class 2 shares."
+  },
+  {
+   "id": "kauai_hanalei",
+   "label": "Kauai Hanalei district (zone 5): not owner-occupied (of which vacation-rental class)",
+   "value": {
+    "non_owner_occupied": 0.6318,
+    "vacation_rental": 0.2932,
+    "units": 4584
+   },
+   "how_to_rederive": "Zone 5 records in the Kauai universe: (class 2 + class 1/11) / all."
+  },
+  {
+   "id": "kauai_poipu",
+   "label": "Kauai zone-section 2-8 (Poipu CDP): not owner-occupied (of which vacation-rental class)",
+   "value": {
+    "non_owner_occupied": 0.8102,
+    "vacation_rental": 0.4699,
+    "units": 2992
+   },
+   "how_to_rederive": "Universe records with ZONE=2, SECTION=8; label from Census 2020 CDP containing 83% of record centroids."
+  },
+  {
+   "id": "kauai_3m",
+   "label": "Kauai residential units with county market value $3M+: not owner-occupied",
+   "value": {
+    "share": 0.7279,
+    "units": 1356
+   },
+   "how_to_rederive": "Universe records with MODTOT >= 3,000,000: (class 2 + class 1/11) / all = 987 / 1356."
+  },
+  {
+   "id": "hawaii_oo_share",
+   "label": "Hawaii County: improved house parcels (Residential + Agricultural class, condos excluded) with a home exemption",
+   "value": 0.6307,
+   "how_to_rederive": "cohRPT2026, one record per TMK, PittCode 100 or 500, BldgValue > 0, PittCode 200/999 excluded, parcels with no home exemption and exemptions >= value excluded: Homeowner=Y / all (42105 / 66761). Residential class only: 0.6147."
+  },
+  {
+   "id": "hawaii_lowest_districts",
+   "label": "Hawaii County: lowest owner-occupied districts (house parcels)",
+   "value": {
+    "Kaʻū": 0.4966,
+    "South Kona": 0.5589,
+    "Puna": 0.599,
+    "Puna_residential_class_only": 0.477
+   },
+   "how_to_rederive": "Universe split by TMK zone digit (9 Kaʻū, 8 South Kona, 1 Puna); Homeowner=Y / all."
+  },
+  {
+   "id": "hawaii_3m",
+   "label": "Hawaii County house parcels assessed $3M+ / $10M+ without a home exemption",
+   "value": {
+    "3M_plus": 0.8428,
+    "3M_plus_parcels": 1145,
+    "10M_plus": 0.9242,
+    "10M_plus_parcels": 343
+   },
+   "how_to_rederive": "Universe parcels with LandValue+BldgValue >= 3,000,000 (>= 10,000,000): Homeowner<>Y / all."
+  },
+  {
+   "id": "hawaii_multi_unit",
+   "label": "Hawaii County multi-unit TMKs (condo projects, apartments, multi-class) left out because units are not separate records",
+   "value": 1029,
+   "how_to_rederive": "cohRPT2026 distinct TMKs with PittCode 200 or 999; official State summary counts 8727 Apartment-class records."
+  },
+  {
+   "id": "official_oo_records",
+   "label": "Official TY2026-27 State summary: owner-occupied share of residential-type records",
+   "value": {
+    "Kauai": 0.5036,
+    "Maui": 0.4616,
+    "Hawaii_County_homeowner": 0.4809
+   },
+   "how_to_rederive": "state-report-fy27-final_records.pdf: Kauai (Owner-Occupied + OO Mixed Use)/(+Non Owner-Occupied, Vacation Rental, LT Affordable Rental); Maui Owner-Occupied/(+Non Owner-Occupied, STR/TVR, Long-Term Rental, Apartment, Commercialized Res); Hawaii Homeowner/(+Residential, Apartment, Long-Term Rental, Affordable Rental; includes vacant residential lots)."
+  },
+  {
+   "id": "maui_comparison",
+   "label": "Maui comparison: owner-occupied class share of residential parcels; share of non-owner-occupied parcels mailing to Hawaii",
+   "value": {
+    "maui_owner_occupied_class9": 0.4478,
+    "maui_owned_from_outside_hawaii": 0.3059,
+    "maui_non_owner_occupied_with_hawaii_mailing": 0.4621,
+    "oahu_hawaii_owned_with_exemption": 0.6206
+   },
+   "how_to_rederive": "owners_neighbor.json counties.maui.results: by_tax_class_code 9 / residential_classes_1_2_9_10_11_12; non_owner_occupied_residential_classes_1_2_11_12.share_of_classified.hawaii; owners_oahu.json residential_class1_any_exemption_by_owner_location.hawaii."
+  }
+ ],
+ "results": {
+  "kauai": {
+   "universe": {
+    "records_in_layer": 37655,
+    "exact_duplicate_records_dropped": 2,
+    "residential_class_records_considered": 28628,
+    "main_universe_units": 27097,
+    "fully_exempt_non_owner_occupied_class_records_shown_separately": 1531,
+    "excluded": {
+     "non_residential_class:7:HOTEL AND RESORT": 3597,
+     "non_residential_class:3:COMMERCIAL": 1235,
+     "non_residential_class:4:INDUSTRIAL": 782,
+     "non_residential_class:5:AGRICULTURAL": 2872,
+     "non_residential_class:6:CONSERVATION": 442,
+     "condo_master_record_(units_listed_separately)": 97
+    },
+    "definition": "Residential housing = tax classes 8 Owner-Occupied, 10 Owner-Occupied Mixed-Use, 2 Vacation Rental, 1 Non-Owner-Occupied Residential, 11 Long-Term Affordable Rental. Owner-occupied = classes 8+10; vacation-rental = class 2; other non-owner-occupied = classes 1+11 with taxable value > 0. Class-1 records with zero taxable value (mostly State-owned land incl. DHHL homestead leases, County-owned, nonprofit) are shown separately and excluded from shares. Condo master records whose units are listed separately are excluded. Hotel & Resort (class 7) and Agricultural (class 5) records are excluded (sensitivity below)."
+   },
+   "island": {
+    "units": 27097,
+    "owner_occupied": 13775,
+    "vacation_rental_class": 3971,
+    "other_non_owner_occupied": 9351,
+    "share_owner_occupied": 0.5084,
+    "share_vacation_rental_class": 0.1465,
+    "share_other_non_owner_occupied": 0.3451,
+    "share_non_owner_occupied_total": 0.4916,
+    "by_class_records": {
+     "8:OWNER-OCCUPIED": 11702,
+     "1:NON-OWNER-OCCUPIED RESIDENTIAL": 8232,
+     "2:VACATION RENTAL": 3971,
+     "10:OWNER-OCCUPIED MIXED-USE": 2073,
+     "11:LONG TERM AFFORDABLE RENTAL": 1119
+    }
+   },
+   "island_non_condo_(lots_and_land_CPRs;_closest_to_Hawaii_County_house-lot_basis)": {
+    "units": 21959,
+    "owner_occupied": 12979,
+    "vacation_rental_class": 963,
+    "other_non_owner_occupied": 8017,
+    "share_owner_occupied": 0.5911,
+    "share_vacation_rental_class": 0.0439,
+    "share_other_non_owner_occupied": 0.3651,
+    "share_non_owner_occupied_total": 0.4089
+   },
+   "island_condo_units_only": {
+    "units": 5138,
+    "owner_occupied": 796,
+    "vacation_rental_class": 3008,
+    "other_non_owner_occupied": 1334,
+    "share_owner_occupied": 0.1549,
+    "share_vacation_rental_class": 0.5854,
+    "share_other_non_owner_occupied": 0.2596,
+    "share_non_owner_occupied_total": 0.8451
+   },
+   "MODTOT_vs_ASSDTOT": {
+    "class8_share_MODTOT_gt_ASSDTOT": 0.8946,
+    "class8_median_ratio_when_greater": 1.38,
+    "class1_2_share_equal": 0.9916
+   },
+   "by_district": {
+    "zone_1_Waimea": {
+     "units": 2500,
+     "owner_occupied": 1456,
+     "vacation_rental_class": 40,
+     "other_non_owner_occupied": 1004,
+     "share_owner_occupied": 0.5824,
+     "share_vacation_rental_class": 0.016,
+     "share_other_non_owner_occupied": 0.4016,
+     "share_non_owner_occupied_total": 0.4176,
+     "district": "Waimea",
+     "fully_exempt_records_separate": 380,
+     "condo_units_(CPRX)": {
+      "units": 10,
+      "owner_occupied": 4,
+      "vacation_rental_class": 0,
+      "other_non_owner_occupied": 6,
+      "share_owner_occupied": 0.4,
+      "share_vacation_rental_class": 0.0,
+      "share_other_non_owner_occupied": 0.6,
+      "share_non_owner_occupied_total": 0.6,
+      "flag_fewer_than_20_units": true
+     },
+     "non_condo_(lots_and_land_CPRs)": {
+      "units": 2490,
+      "owner_occupied": 1452,
+      "vacation_rental_class": 40,
+      "other_non_owner_occupied": 998,
+      "share_owner_occupied": 0.5831,
+      "share_vacation_rental_class": 0.0161,
+      "share_other_non_owner_occupied": 0.4008,
+      "share_non_owner_occupied_total": 0.4169
+     }
+    },
+    "zone_2_Kōloa": {
+     "units": 7905,
+     "owner_occupied": 3431,
+     "vacation_rental_class": 1724,
+     "other_non_owner_occupied": 2750,
+     "share_owner_occupied": 0.434,
+     "share_vacation_rental_class": 0.2181,
+     "share_other_non_owner_occupied": 0.3479,
+     "share_non_owner_occupied_total": 0.566,
+     "district": "Kōloa",
+     "fully_exempt_records_separate": 265,
+     "condo_units_(CPRX)": {
+      "units": 2077,
+      "owner_occupied": 127,
+      "vacation_rental_class": 1363,
+      "other_non_owner_occupied": 587,
+      "share_owner_occupied": 0.0611,
+      "share_vacation_rental_class": 0.6562,
+      "share_other_non_owner_occupied": 0.2826,
+      "share_non_owner_occupied_total": 0.9389
+     },
+     "non_condo_(lots_and_land_CPRs)": {
+      "units": 5828,
+      "owner_occupied": 3304,
+      "vacation_rental_class": 361,
+      "other_non_owner_occupied": 2163,
+      "share_owner_occupied": 0.5669,
+      "share_vacation_rental_class": 0.0619,
+      "share_other_non_owner_occupied": 0.3711,
+      "share_non_owner_occupied_total": 0.4331
+     }
+    },
+    "zone_3_Līhuʻe": {
+     "units": 4977,
+     "owner_occupied": 3058,
+     "vacation_rental_class": 210,
+     "other_non_owner_occupied": 1709,
+     "share_owner_occupied": 0.6144,
+     "share_vacation_rental_class": 0.0422,
+     "share_other_non_owner_occupied": 0.3434,
+     "share_non_owner_occupied_total": 0.3856,
+     "district": "Līhuʻe",
+     "fully_exempt_records_separate": 107,
+     "condo_units_(CPRX)": {
+      "units": 1028,
+      "owner_occupied": 410,
+      "vacation_rental_class": 190,
+      "other_non_owner_occupied": 428,
+      "share_owner_occupied": 0.3988,
+      "share_vacation_rental_class": 0.1848,
+      "share_other_non_owner_occupied": 0.4163,
+      "share_non_owner_occupied_total": 0.6012
+     },
+     "non_condo_(lots_and_land_CPRs)": {
+      "units": 3949,
+      "owner_occupied": 2648,
+      "vacation_rental_class": 20,
+      "other_non_owner_occupied": 1281,
+      "share_owner_occupied": 0.6705,
+      "share_vacation_rental_class": 0.0051,
+      "share_other_non_owner_occupied": 0.3244,
+      "share_non_owner_occupied_total": 0.3295
+     }
+    },
+    "zone_4_Kawaihau": {
+     "units": 7131,
+     "owner_occupied": 4142,
+     "vacation_rental_class": 653,
+     "other_non_owner_occupied": 2336,
+     "share_owner_occupied": 0.5808,
+     "share_vacation_rental_class": 0.0916,
+     "share_other_non_owner_occupied": 0.3276,
+     "share_non_owner_occupied_total": 0.4192,
+     "district": "Kawaihau",
+     "fully_exempt_records_separate": 650,
+     "condo_units_(CPRX)": {
+      "units": 740,
+      "owner_occupied": 64,
+      "vacation_rental_class": 591,
+      "other_non_owner_occupied": 85,
+      "share_owner_occupied": 0.0865,
+      "share_vacation_rental_class": 0.7986,
+      "share_other_non_owner_occupied": 0.1149,
+      "share_non_owner_occupied_total": 0.9135
+     },
+     "non_condo_(lots_and_land_CPRs)": {
+      "units": 6391,
+      "owner_occupied": 4078,
+      "vacation_rental_class": 62,
+      "other_non_owner_occupied": 2251,
+      "share_owner_occupied": 0.6381,
+      "share_vacation_rental_class": 0.0097,
+      "share_other_non_owner_occupied": 0.3522,
+      "share_non_owner_occupied_total": 0.3619
+     }
+    },
+    "zone_5_Hanalei": {
+     "units": 4584,
+     "owner_occupied": 1688,
+     "vacation_rental_class": 1344,
+     "other_non_owner_occupied": 1552,
+     "share_owner_occupied": 0.3682,
+     "share_vacation_rental_class": 0.2932,
+     "share_other_non_owner_occupied": 0.3386,
+     "share_non_owner_occupied_total": 0.6318,
+     "district": "Hanalei",
+     "fully_exempt_records_separate": 129,
+     "condo_units_(CPRX)": {
+      "units": 1283,
+      "owner_occupied": 191,
+      "vacation_rental_class": 864,
+      "other_non_owner_occupied": 228,
+      "share_owner_occupied": 0.1489,
+      "share_vacation_rental_class": 0.6734,
+      "share_other_non_owner_occupied": 0.1777,
+      "share_non_owner_occupied_total": 0.8511
+     },
+     "non_condo_(lots_and_land_CPRs)": {
+      "units": 3301,
+      "owner_occupied": 1497,
+      "vacation_rental_class": 480,
+      "other_non_owner_occupied": 1324,
+      "share_owner_occupied": 0.4535,
+      "share_vacation_rental_class": 0.1454,
+      "share_other_non_owner_occupied": 0.4011,
+      "share_non_owner_occupied_total": 0.5465
+     }
+    }
+   },
+   "by_unit_type": {
+    "condo_unit (CPRX multi-unit complex)": {
+     "units": 5138,
+     "owner_occupied": 796,
+     "vacation_rental_class": 3008,
+     "other_non_owner_occupied": 1334,
+     "share_owner_occupied": 0.1549,
+     "share_vacation_rental_class": 0.5854,
+     "share_other_non_owner_occupied": 0.2596,
+     "share_non_owner_occupied_total": 0.8451
+    },
+    "land_cpr_unit (CPR unit)": {
+     "units": 4217,
+     "owner_occupied": 2395,
+     "vacation_rental_class": 177,
+     "other_non_owner_occupied": 1645,
+     "share_owner_occupied": 0.5679,
+     "share_vacation_rental_class": 0.042,
+     "share_other_non_owner_occupied": 0.3901,
+     "share_non_owner_occupied_total": 0.4321
+    },
+    "other_cpr (lease/commercial/utility/HHL)": {
+     "units": 4,
+     "owner_occupied": 1,
+     "vacation_rental_class": 0,
+     "other_non_owner_occupied": 3,
+     "share_owner_occupied": 0.25,
+     "share_vacation_rental_class": 0.0,
+     "share_other_non_owner_occupied": 0.75,
+     "share_non_owner_occupied_total": 0.75,
+     "flag_fewer_than_20_units": true
+    },
+    "whole_lot (TMK parcel)": {
+     "units": 17738,
+     "owner_occupied": 10583,
+     "vacation_rental_class": 786,
+     "other_non_owner_occupied": 6369,
+     "share_owner_occupied": 0.5966,
+     "share_vacation_rental_class": 0.0443,
+     "share_other_non_owner_occupied": 0.3591,
+     "share_non_owner_occupied_total": 0.4034
+    }
+   },
+   "by_tier_market_value_MODTOT": {
+    "entry_<750K": {
+     "units": 8041,
+     "owner_occupied": 3538,
+     "vacation_rental_class": 736,
+     "other_non_owner_occupied": 3767,
+     "share_owner_occupied": 0.44,
+     "share_vacation_rental_class": 0.0915,
+     "share_other_non_owner_occupied": 0.4685,
+     "share_non_owner_occupied_total": 0.56
+    },
+    "mid_750K-1.5M": {
+     "units": 13093,
+     "owner_occupied": 7672,
+     "vacation_rental_class": 1729,
+     "other_non_owner_occupied": 3692,
+     "share_owner_occupied": 0.586,
+     "share_vacation_rental_class": 0.1321,
+     "share_other_non_owner_occupied": 0.282,
+     "share_non_owner_occupied_total": 0.414
+    },
+    "upper_1.5M-3M": {
+     "units": 4607,
+     "owner_occupied": 2196,
+     "vacation_rental_class": 1120,
+     "other_non_owner_occupied": 1291,
+     "share_owner_occupied": 0.4767,
+     "share_vacation_rental_class": 0.2431,
+     "share_other_non_owner_occupied": 0.2802,
+     "share_non_owner_occupied_total": 0.5233
+    },
+    "luxury_3M-10M": {
+     "units": 1223,
+     "owner_occupied": 353,
+     "vacation_rental_class": 356,
+     "other_non_owner_occupied": 514,
+     "share_owner_occupied": 0.2886,
+     "share_vacation_rental_class": 0.2911,
+     "share_other_non_owner_occupied": 0.4203,
+     "share_non_owner_occupied_total": 0.7114
+    },
+    "ultra_10M+": {
+     "units": 133,
+     "owner_occupied": 16,
+     "vacation_rental_class": 30,
+     "other_non_owner_occupied": 87,
+     "share_owner_occupied": 0.1203,
+     "share_vacation_rental_class": 0.2256,
+     "share_other_non_owner_occupied": 0.6541,
+     "share_non_owner_occupied_total": 0.8797
+    },
+    "3M_plus_(luxury+ultra)": {
+     "units": 1356,
+     "owner_occupied": 369,
+     "vacation_rental_class": 386,
+     "other_non_owner_occupied": 601,
+     "share_owner_occupied": 0.2721,
+     "share_vacation_rental_class": 0.2847,
+     "share_other_non_owner_occupied": 0.4432,
+     "share_non_owner_occupied_total": 0.7279
+    }
+   },
+   "by_tier_assessed_value_ASSDTOT": {
+    "entry_<750K": {
+     "units": 12557,
+     "owner_occupied": 7857,
+     "vacation_rental_class": 736,
+     "other_non_owner_occupied": 3964,
+     "share_owner_occupied": 0.6257,
+     "share_vacation_rental_class": 0.0586,
+     "share_other_non_owner_occupied": 0.3157,
+     "share_non_owner_occupied_total": 0.3743
+    },
+    "mid_750K-1.5M": {
+     "units": 10015,
+     "owner_occupied": 4728,
+     "vacation_rental_class": 1729,
+     "other_non_owner_occupied": 3558,
+     "share_owner_occupied": 0.4721,
+     "share_vacation_rental_class": 0.1726,
+     "share_other_non_owner_occupied": 0.3553,
+     "share_non_owner_occupied_total": 0.5279
+    },
+    "upper_1.5M-3M": {
+     "units": 3395,
+     "owner_occupied": 1027,
+     "vacation_rental_class": 1120,
+     "other_non_owner_occupied": 1248,
+     "share_owner_occupied": 0.3025,
+     "share_vacation_rental_class": 0.3299,
+     "share_other_non_owner_occupied": 0.3676,
+     "share_non_owner_occupied_total": 0.6975
+    },
+    "luxury_3M-10M": {
+     "units": 1006,
+     "owner_occupied": 155,
+     "vacation_rental_class": 356,
+     "other_non_owner_occupied": 495,
+     "share_owner_occupied": 0.1541,
+     "share_vacation_rental_class": 0.3539,
+     "share_other_non_owner_occupied": 0.492,
+     "share_non_owner_occupied_total": 0.8459
+    },
+    "ultra_10M+": {
+     "units": 124,
+     "owner_occupied": 8,
+     "vacation_rental_class": 30,
+     "other_non_owner_occupied": 86,
+     "share_owner_occupied": 0.0645,
+     "share_vacation_rental_class": 0.2419,
+     "share_other_non_owner_occupied": 0.6935,
+     "share_non_owner_occupied_total": 0.9355
+    },
+    "3M_plus_(luxury+ultra)": {
+     "units": 1130,
+     "owner_occupied": 163,
+     "vacation_rental_class": 386,
+     "other_non_owner_occupied": 581,
+     "share_owner_occupied": 0.1442,
+     "share_vacation_rental_class": 0.3416,
+     "share_other_non_owner_occupied": 0.5142,
+     "share_non_owner_occupied_total": 0.8558
+    }
+   },
+   "by_district_by_tier_market_value_MODTOT": {
+    "zone_1_Waimea": {
+     "entry_<750K": {
+      "units": 1534,
+      "owner_occupied": 813,
+      "vacation_rental_class": 13,
+      "other_non_owner_occupied": 708,
+      "share_owner_occupied": 0.53,
+      "share_vacation_rental_class": 0.0085,
+      "share_other_non_owner_occupied": 0.4615,
+      "share_non_owner_occupied_total": 0.47
+     },
+     "mid_750K-1.5M": {
+      "units": 910,
+      "owner_occupied": 620,
+      "vacation_rental_class": 17,
+      "other_non_owner_occupied": 273,
+      "share_owner_occupied": 0.6813,
+      "share_vacation_rental_class": 0.0187,
+      "share_other_non_owner_occupied": 0.3,
+      "share_non_owner_occupied_total": 0.3187
+     },
+     "upper_1.5M-3M": {
+      "units": 48,
+      "owner_occupied": 23,
+      "vacation_rental_class": 9,
+      "other_non_owner_occupied": 16,
+      "share_owner_occupied": 0.4792,
+      "share_vacation_rental_class": 0.1875,
+      "share_other_non_owner_occupied": 0.3333,
+      "share_non_owner_occupied_total": 0.5208
+     },
+     "luxury_3M-10M": {
+      "units": 7,
+      "owner_occupied": 0,
+      "vacation_rental_class": 1,
+      "other_non_owner_occupied": 6,
+      "share_owner_occupied": 0.0,
+      "share_vacation_rental_class": 0.1429,
+      "share_other_non_owner_occupied": 0.8571,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 1,
+      "owner_occupied": 0,
+      "vacation_rental_class": 0,
+      "other_non_owner_occupied": 1,
+      "share_owner_occupied": 0.0,
+      "share_vacation_rental_class": 0.0,
+      "share_other_non_owner_occupied": 1.0,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 8,
+      "owner_occupied": 0,
+      "vacation_rental_class": 1,
+      "other_non_owner_occupied": 7,
+      "share_owner_occupied": 0.0,
+      "share_vacation_rental_class": 0.125,
+      "share_other_non_owner_occupied": 0.875,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     }
+    },
+    "zone_2_Kōloa": {
+     "entry_<750K": {
+      "units": 2230,
+      "owner_occupied": 736,
+      "vacation_rental_class": 331,
+      "other_non_owner_occupied": 1163,
+      "share_owner_occupied": 0.33,
+      "share_vacation_rental_class": 0.1484,
+      "share_other_non_owner_occupied": 0.5215,
+      "share_non_owner_occupied_total": 0.67
+     },
+     "mid_750K-1.5M": {
+      "units": 3818,
+      "owner_occupied": 2083,
+      "vacation_rental_class": 737,
+      "other_non_owner_occupied": 998,
+      "share_owner_occupied": 0.5456,
+      "share_vacation_rental_class": 0.193,
+      "share_other_non_owner_occupied": 0.2614,
+      "share_non_owner_occupied_total": 0.4544
+     },
+     "upper_1.5M-3M": {
+      "units": 1435,
+      "owner_occupied": 551,
+      "vacation_rental_class": 478,
+      "other_non_owner_occupied": 406,
+      "share_owner_occupied": 0.384,
+      "share_vacation_rental_class": 0.3331,
+      "share_other_non_owner_occupied": 0.2829,
+      "share_non_owner_occupied_total": 0.616
+     },
+     "luxury_3M-10M": {
+      "units": 406,
+      "owner_occupied": 58,
+      "vacation_rental_class": 178,
+      "other_non_owner_occupied": 170,
+      "share_owner_occupied": 0.1429,
+      "share_vacation_rental_class": 0.4384,
+      "share_other_non_owner_occupied": 0.4187,
+      "share_non_owner_occupied_total": 0.8571
+     },
+     "ultra_10M+": {
+      "units": 16,
+      "owner_occupied": 3,
+      "vacation_rental_class": 0,
+      "other_non_owner_occupied": 13,
+      "share_owner_occupied": 0.1875,
+      "share_vacation_rental_class": 0.0,
+      "share_other_non_owner_occupied": 0.8125,
+      "share_non_owner_occupied_total": 0.8125,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 422,
+      "owner_occupied": 61,
+      "vacation_rental_class": 178,
+      "other_non_owner_occupied": 183,
+      "share_owner_occupied": 0.1445,
+      "share_vacation_rental_class": 0.4218,
+      "share_other_non_owner_occupied": 0.4336,
+      "share_non_owner_occupied_total": 0.8555
+     }
+    },
+    "zone_3_Līhuʻe": {
+     "entry_<750K": {
+      "units": 2072,
+      "owner_occupied": 1011,
+      "vacation_rental_class": 120,
+      "other_non_owner_occupied": 941,
+      "share_owner_occupied": 0.4879,
+      "share_vacation_rental_class": 0.0579,
+      "share_other_non_owner_occupied": 0.4542,
+      "share_non_owner_occupied_total": 0.5121
+     },
+     "mid_750K-1.5M": {
+      "units": 2588,
+      "owner_occupied": 1834,
+      "vacation_rental_class": 52,
+      "other_non_owner_occupied": 702,
+      "share_owner_occupied": 0.7087,
+      "share_vacation_rental_class": 0.0201,
+      "share_other_non_owner_occupied": 0.2713,
+      "share_non_owner_occupied_total": 0.2913
+     },
+     "upper_1.5M-3M": {
+      "units": 278,
+      "owner_occupied": 210,
+      "vacation_rental_class": 20,
+      "other_non_owner_occupied": 48,
+      "share_owner_occupied": 0.7554,
+      "share_vacation_rental_class": 0.0719,
+      "share_other_non_owner_occupied": 0.1727,
+      "share_non_owner_occupied_total": 0.2446
+     },
+     "luxury_3M-10M": {
+      "units": 37,
+      "owner_occupied": 3,
+      "vacation_rental_class": 18,
+      "other_non_owner_occupied": 16,
+      "share_owner_occupied": 0.0811,
+      "share_vacation_rental_class": 0.4865,
+      "share_other_non_owner_occupied": 0.4324,
+      "share_non_owner_occupied_total": 0.9189
+     },
+     "ultra_10M+": {
+      "units": 2,
+      "owner_occupied": 0,
+      "vacation_rental_class": 0,
+      "other_non_owner_occupied": 2,
+      "share_owner_occupied": 0.0,
+      "share_vacation_rental_class": 0.0,
+      "share_other_non_owner_occupied": 1.0,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 39,
+      "owner_occupied": 3,
+      "vacation_rental_class": 18,
+      "other_non_owner_occupied": 18,
+      "share_owner_occupied": 0.0769,
+      "share_vacation_rental_class": 0.4615,
+      "share_other_non_owner_occupied": 0.4615,
+      "share_non_owner_occupied_total": 0.9231
+     }
+    },
+    "zone_4_Kawaihau": {
+     "entry_<750K": {
+      "units": 2014,
+      "owner_occupied": 956,
+      "vacation_rental_class": 238,
+      "other_non_owner_occupied": 820,
+      "share_owner_occupied": 0.4747,
+      "share_vacation_rental_class": 0.1182,
+      "share_other_non_owner_occupied": 0.4071,
+      "share_non_owner_occupied_total": 0.5253
+     },
+     "mid_750K-1.5M": {
+      "units": 3962,
+      "owner_occupied": 2499,
+      "vacation_rental_class": 291,
+      "other_non_owner_occupied": 1172,
+      "share_owner_occupied": 0.6307,
+      "share_vacation_rental_class": 0.0734,
+      "share_other_non_owner_occupied": 0.2958,
+      "share_non_owner_occupied_total": 0.3693
+     },
+     "upper_1.5M-3M": {
+      "units": 1047,
+      "owner_occupied": 641,
+      "vacation_rental_class": 111,
+      "other_non_owner_occupied": 295,
+      "share_owner_occupied": 0.6122,
+      "share_vacation_rental_class": 0.106,
+      "share_other_non_owner_occupied": 0.2818,
+      "share_non_owner_occupied_total": 0.3878
+     },
+     "luxury_3M-10M": {
+      "units": 102,
+      "owner_occupied": 45,
+      "vacation_rental_class": 13,
+      "other_non_owner_occupied": 44,
+      "share_owner_occupied": 0.4412,
+      "share_vacation_rental_class": 0.1275,
+      "share_other_non_owner_occupied": 0.4314,
+      "share_non_owner_occupied_total": 0.5588
+     },
+     "ultra_10M+": {
+      "units": 6,
+      "owner_occupied": 1,
+      "vacation_rental_class": 0,
+      "other_non_owner_occupied": 5,
+      "share_owner_occupied": 0.1667,
+      "share_vacation_rental_class": 0.0,
+      "share_other_non_owner_occupied": 0.8333,
+      "share_non_owner_occupied_total": 0.8333,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 108,
+      "owner_occupied": 46,
+      "vacation_rental_class": 13,
+      "other_non_owner_occupied": 49,
+      "share_owner_occupied": 0.4259,
+      "share_vacation_rental_class": 0.1204,
+      "share_other_non_owner_occupied": 0.4537,
+      "share_non_owner_occupied_total": 0.5741
+     }
+    },
+    "zone_5_Hanalei": {
+     "entry_<750K": {
+      "units": 191,
+      "owner_occupied": 22,
+      "vacation_rental_class": 34,
+      "other_non_owner_occupied": 135,
+      "share_owner_occupied": 0.1152,
+      "share_vacation_rental_class": 0.178,
+      "share_other_non_owner_occupied": 0.7068,
+      "share_non_owner_occupied_total": 0.8848
+     },
+     "mid_750K-1.5M": {
+      "units": 1815,
+      "owner_occupied": 636,
+      "vacation_rental_class": 632,
+      "other_non_owner_occupied": 547,
+      "share_owner_occupied": 0.3504,
+      "share_vacation_rental_class": 0.3482,
+      "share_other_non_owner_occupied": 0.3014,
+      "share_non_owner_occupied_total": 0.6496
+     },
+     "upper_1.5M-3M": {
+      "units": 1799,
+      "owner_occupied": 771,
+      "vacation_rental_class": 502,
+      "other_non_owner_occupied": 526,
+      "share_owner_occupied": 0.4286,
+      "share_vacation_rental_class": 0.279,
+      "share_other_non_owner_occupied": 0.2924,
+      "share_non_owner_occupied_total": 0.5714
+     },
+     "luxury_3M-10M": {
+      "units": 671,
+      "owner_occupied": 247,
+      "vacation_rental_class": 146,
+      "other_non_owner_occupied": 278,
+      "share_owner_occupied": 0.3681,
+      "share_vacation_rental_class": 0.2176,
+      "share_other_non_owner_occupied": 0.4143,
+      "share_non_owner_occupied_total": 0.6319
+     },
+     "ultra_10M+": {
+      "units": 108,
+      "owner_occupied": 12,
+      "vacation_rental_class": 30,
+      "other_non_owner_occupied": 66,
+      "share_owner_occupied": 0.1111,
+      "share_vacation_rental_class": 0.2778,
+      "share_other_non_owner_occupied": 0.6111,
+      "share_non_owner_occupied_total": 0.8889
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 779,
+      "owner_occupied": 259,
+      "vacation_rental_class": 176,
+      "other_non_owner_occupied": 344,
+      "share_owner_occupied": 0.3325,
+      "share_vacation_rental_class": 0.2259,
+      "share_other_non_owner_occupied": 0.4416,
+      "share_non_owner_occupied_total": 0.6675
+     }
+    }
+   },
+   "value_shares_market_value_MODTOT": {
+    "total_value_usd": 34976659500,
+    "share_owner_occupied": 0.4582,
+    "share_vacation_rental_class": 0.1959,
+    "share_other_non_owner_occupied": 0.3459
+   },
+   "neighborhoods_eligible_(zone-sections_with_100plus_units)": 34,
+   "top15_zone_sections_by_non_owner_occupied_share": [
+    {
+     "units": 104,
+     "owner_occupied": 0,
+     "vacation_rental_class": 1,
+     "other_non_owner_occupied": 103,
+     "share_owner_occupied": 0.0,
+     "share_vacation_rental_class": 0.0096,
+     "share_other_non_owner_occupied": 0.9904,
+     "share_non_owner_occupied_total": 1.0,
+     "zone_section": "1-4",
+     "district": "Waimea",
+     "place": {
+      "label": "Kekaha-Waimea CCD (mostly outside Census-designated places)",
+      "census2020_cdp_top": [],
+      "share_outside_any_cdp": 1.0,
+      "census2020_ccd_top": "Kekaha-Waimea CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "state": 104
+     },
+     "note": "Mostly State-owned land held under lease (TYPE \"- STATE\"); leasehold, not a fee-simple market.",
+     "median_market_value_usd": 136450
+    },
+    {
+     "units": 660,
+     "owner_occupied": 82,
+     "vacation_rental_class": 497,
+     "other_non_owner_occupied": 81,
+     "share_owner_occupied": 0.1242,
+     "share_vacation_rental_class": 0.753,
+     "share_other_non_owner_occupied": 0.1227,
+     "share_non_owner_occupied_total": 0.8758,
+     "zone_section": "4-3",
+     "district": "Kawaihau",
+     "place": {
+      "label": "Wailua / Kapaa",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Wailua",
+        "share_of_units": 0.53
+       },
+       {
+        "cdp": "Kapaa",
+        "share_of_units": 0.465
+       }
+      ],
+      "share_outside_any_cdp": 0.005,
+      "census2020_ccd_top": "Wailua-Anahola CCD"
+     },
+     "condo_unit_share": 0.8803,
+     "owner_type_mix": {
+      "private": 660
+     },
+     "median_market_value_usd": 971200
+    },
+    {
+     "units": 2992,
+     "owner_occupied": 568,
+     "vacation_rental_class": 1406,
+     "other_non_owner_occupied": 1018,
+     "share_owner_occupied": 0.1898,
+     "share_vacation_rental_class": 0.4699,
+     "share_other_non_owner_occupied": 0.3402,
+     "share_non_owner_occupied_total": 0.8102,
+     "zone_section": "2-8",
+     "district": "Kōloa",
+     "place": {
+      "label": "Poipu",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Poipu",
+        "share_of_units": 0.827
+       },
+       {
+        "cdp": "Koloa",
+        "share_of_units": 0.164
+       },
+       {
+        "cdp": "Omao",
+        "share_of_units": 0.006
+       }
+      ],
+      "share_outside_any_cdp": 0.003,
+      "census2020_ccd_top": "Koloa-Poipu CCD"
+     },
+     "condo_unit_share": 0.6033,
+     "owner_type_mix": {
+      "private": 2990,
+      "county": 1,
+      "state": 1
+     },
+     "median_market_value_usd": 1057950
+    },
+    {
+     "units": 118,
+     "owner_occupied": 24,
+     "vacation_rental_class": 36,
+     "other_non_owner_occupied": 58,
+     "share_owner_occupied": 0.2034,
+     "share_vacation_rental_class": 0.3051,
+     "share_other_non_owner_occupied": 0.4915,
+     "share_non_owner_occupied_total": 0.7966,
+     "zone_section": "3-5",
+     "district": "Līhuʻe",
+     "place": {
+      "label": "Lihue",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Lihue",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Lihue CCD"
+     },
+     "condo_unit_share": 0.5169,
+     "owner_type_mix": {
+      "private": 118
+     },
+     "median_market_value_usd": 1037700
+    },
+    {
+     "units": 309,
+     "owner_occupied": 68,
+     "vacation_rental_class": 94,
+     "other_non_owner_occupied": 147,
+     "share_owner_occupied": 0.2201,
+     "share_vacation_rental_class": 0.3042,
+     "share_other_non_owner_occupied": 0.4757,
+     "share_non_owner_occupied_total": 0.7799,
+     "zone_section": "5-5",
+     "district": "Hanalei",
+     "place": {
+      "label": "Hanalei",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hanalei",
+        "share_of_units": 0.99
+       }
+      ],
+      "share_outside_any_cdp": 0.01,
+      "census2020_ccd_top": "Hanalei CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "private": 309
+     },
+     "median_market_value_usd": 3555100
+    },
+    {
+     "units": 1040,
+     "owner_occupied": 232,
+     "vacation_rental_class": 314,
+     "other_non_owner_occupied": 494,
+     "share_owner_occupied": 0.2231,
+     "share_vacation_rental_class": 0.3019,
+     "share_other_non_owner_occupied": 0.475,
+     "share_non_owner_occupied_total": 0.7769,
+     "zone_section": "2-6",
+     "district": "Kōloa",
+     "place": {
+      "label": "Poipu area (partly outside the CDP)",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Poipu",
+        "share_of_units": 0.457
+       },
+       {
+        "cdp": "Lawai",
+        "share_of_units": 0.213
+       },
+       {
+        "cdp": "Koloa",
+        "share_of_units": 0.096
+       }
+      ],
+      "share_outside_any_cdp": 0.234,
+      "census2020_ccd_top": "Koloa-Poipu CCD"
+     },
+     "condo_unit_share": 0.2096,
+     "owner_type_mix": {
+      "private": 1040
+     },
+     "median_market_value_usd": 1519600
+    },
+    {
+     "units": 1956,
+     "owner_occupied": 478,
+     "vacation_rental_class": 1048,
+     "other_non_owner_occupied": 430,
+     "share_owner_occupied": 0.2444,
+     "share_vacation_rental_class": 0.5358,
+     "share_other_non_owner_occupied": 0.2198,
+     "share_non_owner_occupied_total": 0.7556,
+     "zone_section": "5-4",
+     "district": "Hanalei",
+     "place": {
+      "label": "Princeville",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Princeville",
+        "share_of_units": 0.998
+       }
+      ],
+      "share_outside_any_cdp": 0.002,
+      "census2020_ccd_top": "Hanalei CCD"
+     },
+     "condo_unit_share": 0.5685,
+     "owner_type_mix": {
+      "private": 1956
+     },
+     "median_market_value_usd": 1536600
+    },
+    {
+     "units": 487,
+     "owner_occupied": 120,
+     "vacation_rental_class": 127,
+     "other_non_owner_occupied": 240,
+     "share_owner_occupied": 0.2464,
+     "share_vacation_rental_class": 0.2608,
+     "share_other_non_owner_occupied": 0.4928,
+     "share_non_owner_occupied_total": 0.7536,
+     "zone_section": "5-8",
+     "district": "Hanalei",
+     "place": {
+      "label": "Haena / Wainiha",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Haena",
+        "share_of_units": 0.639
+       },
+       {
+        "cdp": "Wainiha",
+        "share_of_units": 0.351
+       }
+      ],
+      "share_outside_any_cdp": 0.01,
+      "census2020_ccd_top": "Hanalei CCD"
+     },
+     "condo_unit_share": 0.1088,
+     "owner_type_mix": {
+      "private": 487
+     },
+     "median_market_value_usd": 1199800
+    },
+    {
+     "units": 402,
+     "owner_occupied": 130,
+     "vacation_rental_class": 87,
+     "other_non_owner_occupied": 185,
+     "share_owner_occupied": 0.3234,
+     "share_vacation_rental_class": 0.2164,
+     "share_other_non_owner_occupied": 0.4602,
+     "share_non_owner_occupied_total": 0.6766,
+     "zone_section": "3-2",
+     "district": "Līhuʻe",
+     "place": {
+      "label": "Lihue",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Lihue",
+        "share_of_units": 0.823
+       }
+      ],
+      "share_outside_any_cdp": 0.177,
+      "census2020_ccd_top": "Lihue CCD"
+     },
+     "condo_unit_share": 0.301,
+     "owner_type_mix": {
+      "private": 402
+     },
+     "median_market_value_usd": 673850
+    },
+    {
+     "units": 441,
+     "owner_occupied": 163,
+     "vacation_rental_class": 44,
+     "other_non_owner_occupied": 234,
+     "share_owner_occupied": 0.3696,
+     "share_vacation_rental_class": 0.0998,
+     "share_other_non_owner_occupied": 0.5306,
+     "share_non_owner_occupied_total": 0.6304,
+     "zone_section": "5-3",
+     "district": "Hanalei",
+     "place": {
+      "label": "Princeville / Kalihiwai",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Princeville",
+        "share_of_units": 0.512
+       },
+       {
+        "cdp": "Kalihiwai",
+        "share_of_units": 0.317
+       }
+      ],
+      "share_outside_any_cdp": 0.17,
+      "census2020_ccd_top": "Hanalei CCD"
+     },
+     "condo_unit_share": 0.2676,
+     "owner_type_mix": {
+      "private": 440,
+      "state": 1
+     },
+     "median_market_value_usd": 2294000
+    },
+    {
+     "units": 353,
+     "owner_occupied": 132,
+     "vacation_rental_class": 64,
+     "other_non_owner_occupied": 157,
+     "share_owner_occupied": 0.3739,
+     "share_vacation_rental_class": 0.1813,
+     "share_other_non_owner_occupied": 0.4448,
+     "share_non_owner_occupied_total": 0.6261,
+     "zone_section": "4-5",
+     "district": "Kawaihau",
+     "place": {
+      "label": "Kapaa",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kapaa",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kapaa CCD"
+     },
+     "condo_unit_share": 0.1615,
+     "owner_type_mix": {
+      "private": 345,
+      "state": 8
+     },
+     "median_market_value_usd": 844100
+    },
+    {
+     "units": 186,
+     "owner_occupied": 82,
+     "vacation_rental_class": 0,
+     "other_non_owner_occupied": 104,
+     "share_owner_occupied": 0.4409,
+     "share_vacation_rental_class": 0.0,
+     "share_other_non_owner_occupied": 0.5591,
+     "share_non_owner_occupied_total": 0.5591,
+     "zone_section": "1-9",
+     "district": "Waimea",
+     "place": {
+      "label": "Hanapepe",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hanapepe",
+        "share_of_units": 0.995
+       }
+      ],
+      "share_outside_any_cdp": 0.005,
+      "census2020_ccd_top": "Kaumakani-Hanapepe CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "state": 6,
+      "private": 180
+     },
+     "median_market_value_usd": 676050
+    },
+    {
+     "units": 425,
+     "owner_occupied": 195,
+     "vacation_rental_class": 5,
+     "other_non_owner_occupied": 225,
+     "share_owner_occupied": 0.4588,
+     "share_vacation_rental_class": 0.0118,
+     "share_other_non_owner_occupied": 0.5294,
+     "share_non_owner_occupied_total": 0.5412,
+     "zone_section": "1-6",
+     "district": "Waimea",
+     "place": {
+      "label": "Waimea",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Waimea",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kekaha-Waimea CCD"
+     },
+     "condo_unit_share": 0.0235,
+     "owner_type_mix": {
+      "private": 424,
+      "state": 1
+     },
+     "median_market_value_usd": 639400
+    },
+    {
+     "units": 283,
+     "owner_occupied": 144,
+     "vacation_rental_class": 25,
+     "other_non_owner_occupied": 114,
+     "share_owner_occupied": 0.5088,
+     "share_vacation_rental_class": 0.0883,
+     "share_other_non_owner_occupied": 0.4028,
+     "share_non_owner_occupied_total": 0.4912,
+     "zone_section": "4-9",
+     "district": "Kawaihau",
+     "place": {
+      "label": "Anahola area (partly outside the CDP)",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Anahola",
+        "share_of_units": 0.261
+       }
+      ],
+      "share_outside_any_cdp": 0.739,
+      "census2020_ccd_top": "Wailua-Anahola CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "private": 283
+     },
+     "median_market_value_usd": 1893200
+    },
+    {
+     "units": 783,
+     "owner_occupied": 422,
+     "vacation_rental_class": 50,
+     "other_non_owner_occupied": 311,
+     "share_owner_occupied": 0.539,
+     "share_vacation_rental_class": 0.0639,
+     "share_other_non_owner_occupied": 0.3972,
+     "share_non_owner_occupied_total": 0.461,
+     "zone_section": "4-1",
+     "district": "Kawaihau",
+     "place": {
+      "label": "Wailua",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Wailua",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Wailua-Anahola CCD"
+     },
+     "condo_unit_share": 0.0766,
+     "owner_type_mix": {
+      "private": 780,
+      "state": 2,
+      "county": 1
+     },
+     "median_market_value_usd": 748200
+    }
+   ],
+   "bottom5_zone_sections_by_non_owner_occupied_share": [
+    {
+     "units": 1181,
+     "owner_occupied": 811,
+     "vacation_rental_class": 0,
+     "other_non_owner_occupied": 370,
+     "share_owner_occupied": 0.6867,
+     "share_vacation_rental_class": 0.0,
+     "share_other_non_owner_occupied": 0.3133,
+     "share_non_owner_occupied_total": 0.3133,
+     "zone_section": "3-6",
+     "district": "Līhuʻe",
+     "place": {
+      "label": "Lihue",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Lihue",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Lihue CCD"
+     },
+     "condo_unit_share": 0.1287,
+     "owner_type_mix": {
+      "private": 1175,
+      "county": 4,
+      "state": 2
+     },
+     "median_market_value_usd": 838300
+    },
+    {
+     "units": 462,
+     "owner_occupied": 325,
+     "vacation_rental_class": 4,
+     "other_non_owner_occupied": 133,
+     "share_owner_occupied": 0.7035,
+     "share_vacation_rental_class": 0.0087,
+     "share_other_non_owner_occupied": 0.2879,
+     "share_non_owner_occupied_total": 0.2965,
+     "zone_section": "1-2",
+     "district": "Waimea",
+     "place": {
+      "label": "Kekaha / Waimea",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kekaha",
+        "share_of_units": 0.515
+       },
+       {
+        "cdp": "Waimea",
+        "share_of_units": 0.485
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kekaha-Waimea CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "state": 2,
+      "private": 457,
+      "county": 3
+     },
+     "median_market_value_usd": 724450
+    },
+    {
+     "units": 558,
+     "owner_occupied": 399,
+     "vacation_rental_class": 0,
+     "other_non_owner_occupied": 159,
+     "share_owner_occupied": 0.7151,
+     "share_vacation_rental_class": 0.0,
+     "share_other_non_owner_occupied": 0.2849,
+     "share_non_owner_occupied_total": 0.2849,
+     "zone_section": "1-8",
+     "district": "Waimea",
+     "place": {
+      "label": "Hanapepe",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hanapepe",
+        "share_of_units": 0.995
+       }
+      ],
+      "share_outside_any_cdp": 0.005,
+      "census2020_ccd_top": "Kaumakani-Hanapepe CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "private": 551,
+      "county": 5,
+      "state": 2
+     },
+     "median_market_value_usd": 748050
+    },
+    {
+     "units": 818,
+     "owner_occupied": 618,
+     "vacation_rental_class": 1,
+     "other_non_owner_occupied": 199,
+     "share_owner_occupied": 0.7555,
+     "share_vacation_rental_class": 0.0012,
+     "share_other_non_owner_occupied": 0.2433,
+     "share_non_owner_occupied_total": 0.2445,
+     "zone_section": "2-1",
+     "district": "Kōloa",
+     "place": {
+      "label": "Eleele",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Eleele",
+        "share_of_units": 0.967
+       },
+       {
+        "cdp": "Hanapepe",
+        "share_of_units": 0.005
+       }
+      ],
+      "share_outside_any_cdp": 0.028,
+      "census2020_ccd_top": "Eleele-Kalaheo CCD"
+     },
+     "condo_unit_share": 0.0012,
+     "owner_type_mix": {
+      "private": 776,
+      "county": 42
+     },
+     "median_market_value_usd": 687350
+    },
+    {
+     "units": 112,
+     "owner_occupied": 96,
+     "vacation_rental_class": 0,
+     "other_non_owner_occupied": 16,
+     "share_owner_occupied": 0.8571,
+     "share_vacation_rental_class": 0.0,
+     "share_other_non_owner_occupied": 0.1429,
+     "share_non_owner_occupied_total": 0.1429,
+     "zone_section": "2-2",
+     "district": "Kōloa",
+     "place": {
+      "label": "Kalaheo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kalaheo",
+        "share_of_units": 0.991
+       }
+      ],
+      "share_outside_any_cdp": 0.009,
+      "census2020_ccd_top": "Eleele-Kalaheo CCD"
+     },
+     "condo_unit_share": 0.0,
+     "owner_type_mix": {
+      "private": 112
+     },
+     "median_market_value_usd": 678150
+    }
+   ],
+   "all_eligible_zone_sections_sorted": [
+    {
+     "zone_section": "1-4",
+     "label": "Kekaha-Waimea CCD (mostly outside Census-designated places)",
+     "units": 104,
+     "share_owner_occupied": 0.0,
+     "share_vacation_rental_class": 0.0096,
+     "share_non_owner_occupied_total": 1.0
+    },
+    {
+     "zone_section": "4-3",
+     "label": "Wailua / Kapaa",
+     "units": 660,
+     "share_owner_occupied": 0.1242,
+     "share_vacation_rental_class": 0.753,
+     "share_non_owner_occupied_total": 0.8758
+    },
+    {
+     "zone_section": "2-8",
+     "label": "Poipu",
+     "units": 2992,
+     "share_owner_occupied": 0.1898,
+     "share_vacation_rental_class": 0.4699,
+     "share_non_owner_occupied_total": 0.8102
+    },
+    {
+     "zone_section": "3-5",
+     "label": "Lihue",
+     "units": 118,
+     "share_owner_occupied": 0.2034,
+     "share_vacation_rental_class": 0.3051,
+     "share_non_owner_occupied_total": 0.7966
+    },
+    {
+     "zone_section": "5-5",
+     "label": "Hanalei",
+     "units": 309,
+     "share_owner_occupied": 0.2201,
+     "share_vacation_rental_class": 0.3042,
+     "share_non_owner_occupied_total": 0.7799
+    },
+    {
+     "zone_section": "2-6",
+     "label": "Poipu area (partly outside the CDP)",
+     "units": 1040,
+     "share_owner_occupied": 0.2231,
+     "share_vacation_rental_class": 0.3019,
+     "share_non_owner_occupied_total": 0.7769
+    },
+    {
+     "zone_section": "5-4",
+     "label": "Princeville",
+     "units": 1956,
+     "share_owner_occupied": 0.2444,
+     "share_vacation_rental_class": 0.5358,
+     "share_non_owner_occupied_total": 0.7556
+    },
+    {
+     "zone_section": "5-8",
+     "label": "Haena / Wainiha",
+     "units": 487,
+     "share_owner_occupied": 0.2464,
+     "share_vacation_rental_class": 0.2608,
+     "share_non_owner_occupied_total": 0.7536
+    },
+    {
+     "zone_section": "3-2",
+     "label": "Lihue",
+     "units": 402,
+     "share_owner_occupied": 0.3234,
+     "share_vacation_rental_class": 0.2164,
+     "share_non_owner_occupied_total": 0.6766
+    },
+    {
+     "zone_section": "5-3",
+     "label": "Princeville / Kalihiwai",
+     "units": 441,
+     "share_owner_occupied": 0.3696,
+     "share_vacation_rental_class": 0.0998,
+     "share_non_owner_occupied_total": 0.6304
+    },
+    {
+     "zone_section": "4-5",
+     "label": "Kapaa",
+     "units": 353,
+     "share_owner_occupied": 0.3739,
+     "share_vacation_rental_class": 0.1813,
+     "share_non_owner_occupied_total": 0.6261
+    },
+    {
+     "zone_section": "1-9",
+     "label": "Hanapepe",
+     "units": 186,
+     "share_owner_occupied": 0.4409,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.5591
+    },
+    {
+     "zone_section": "1-6",
+     "label": "Waimea",
+     "units": 425,
+     "share_owner_occupied": 0.4588,
+     "share_vacation_rental_class": 0.0118,
+     "share_non_owner_occupied_total": 0.5412
+    },
+    {
+     "zone_section": "4-9",
+     "label": "Anahola area (partly outside the CDP)",
+     "units": 283,
+     "share_owner_occupied": 0.5088,
+     "share_vacation_rental_class": 0.0883,
+     "share_non_owner_occupied_total": 0.4912
+    },
+    {
+     "zone_section": "4-1",
+     "label": "Wailua",
+     "units": 783,
+     "share_owner_occupied": 0.539,
+     "share_vacation_rental_class": 0.0639,
+     "share_non_owner_occupied_total": 0.461
+    },
+    {
+     "zone_section": "1-3",
+     "label": "Kekaha",
+     "units": 728,
+     "share_owner_occupied": 0.5989,
+     "share_vacation_rental_class": 0.0385,
+     "share_non_owner_occupied_total": 0.4011
+    },
+    {
+     "zone_section": "2-7",
+     "label": "Omao",
+     "units": 427,
+     "share_owner_occupied": 0.6159,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3841
+    },
+    {
+     "zone_section": "4-8",
+     "label": "Anahola",
+     "units": 264,
+     "share_owner_occupied": 0.6174,
+     "share_vacation_rental_class": 0.0341,
+     "share_non_owner_occupied_total": 0.3826
+    },
+    {
+     "zone_section": "5-1",
+     "label": "Kilauea area (partly outside the CDP)",
+     "units": 272,
+     "share_owner_occupied": 0.6287,
+     "share_vacation_rental_class": 0.0441,
+     "share_non_owner_occupied_total": 0.3713
+    },
+    {
+     "zone_section": "5-2",
+     "label": "Kilauea",
+     "units": 1037,
+     "share_owner_occupied": 0.6316,
+     "share_vacation_rental_class": 0.0154,
+     "share_non_owner_occupied_total": 0.3684
+    },
+    {
+     "zone_section": "2-4",
+     "label": "Kalaheo",
+     "units": 647,
+     "share_owner_occupied": 0.6476,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3524
+    },
+    {
+     "zone_section": "3-7",
+     "label": "Hanamaulu",
+     "units": 877,
+     "share_owner_occupied": 0.6522,
+     "share_vacation_rental_class": 0.0217,
+     "share_non_owner_occupied_total": 0.3478
+    },
+    {
+     "zone_section": "2-3",
+     "label": "Kalaheo",
+     "units": 1344,
+     "share_owner_occupied": 0.6525,
+     "share_vacation_rental_class": 0.0015,
+     "share_non_owner_occupied_total": 0.3475
+    },
+    {
+     "zone_section": "3-3",
+     "label": "Puhi / Lihue",
+     "units": 1734,
+     "share_owner_occupied": 0.6534,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3466
+    },
+    {
+     "zone_section": "3-8",
+     "label": "Lihue / Hanamaulu",
+     "units": 590,
+     "share_owner_occupied": 0.6542,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3458
+    },
+    {
+     "zone_section": "4-6",
+     "label": "Kapaa",
+     "units": 2540,
+     "share_owner_occupied": 0.6657,
+     "share_vacation_rental_class": 0.0004,
+     "share_non_owner_occupied_total": 0.3343
+    },
+    {
+     "zone_section": "4-2",
+     "label": "Wailua Homesteads",
+     "units": 1424,
+     "share_owner_occupied": 0.6706,
+     "share_vacation_rental_class": 0.0028,
+     "share_non_owner_occupied_total": 0.3294
+    },
+    {
+     "zone_section": "4-4",
+     "label": "Wailua Homesteads / Kapaa",
+     "units": 734,
+     "share_owner_occupied": 0.6798,
+     "share_vacation_rental_class": 0.0014,
+     "share_non_owner_occupied_total": 0.3202
+    },
+    {
+     "zone_section": "2-5",
+     "label": "Lawai",
+     "units": 523,
+     "share_owner_occupied": 0.6845,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3155
+    },
+    {
+     "zone_section": "3-6",
+     "label": "Lihue",
+     "units": 1181,
+     "share_owner_occupied": 0.6867,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.3133
+    },
+    {
+     "zone_section": "1-2",
+     "label": "Kekaha / Waimea",
+     "units": 462,
+     "share_owner_occupied": 0.7035,
+     "share_vacation_rental_class": 0.0087,
+     "share_non_owner_occupied_total": 0.2965
+    },
+    {
+     "zone_section": "1-8",
+     "label": "Hanapepe",
+     "units": 558,
+     "share_owner_occupied": 0.7151,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.2849
+    },
+    {
+     "zone_section": "2-1",
+     "label": "Eleele",
+     "units": 818,
+     "share_owner_occupied": 0.7555,
+     "share_vacation_rental_class": 0.0012,
+     "share_non_owner_occupied_total": 0.2445
+    },
+    {
+     "zone_section": "2-2",
+     "label": "Kalaheo",
+     "units": 112,
+     "share_owner_occupied": 0.8571,
+     "share_vacation_rental_class": 0.0,
+     "share_non_owner_occupied_total": 0.1429
+    }
+   ],
+   "sensitivity_include_hotel_resort_condo_units_as_non_owner_occupied": {
+    "hotel_resort_class_condo_units": 3512,
+    "by_district": {
+     "Līhuʻe": 1269,
+     "Kōloa": 1021,
+     "Hanalei": 664,
+     "Kawaihau": 558
+    },
+    "share_owner_occupied_if_included": 0.45,
+    "note": "Class 7 Hotel & Resort condo units (resort condos, condo-hotels, timeshare) are housing-like but taxed as hotel; including them lowers the owner-occupied share."
+   },
+   "sensitivity_fully_exempt_counted_as_non_owner_occupied": {
+    "fully_exempt_records": 1531,
+    "by_owner_type": {
+     "private": 490,
+     "state": 861,
+     "county": 171,
+     "federal": 9
+    },
+    "by_district": {
+     "Kōloa": 265,
+     "Waimea": 380,
+     "Kawaihau": 650,
+     "Hanalei": 129,
+     "Līhuʻe": 107
+    },
+    "top_zone_sections": {
+     "4-8": 419,
+     "4-6": 92,
+     "1-8": 84,
+     "1-3": 83,
+     "2-8": 72
+    },
+    "share_owner_occupied_if_included": 0.4812
+   },
+   "sensitivity_possible_vacant_lots_in_class_1": {
+    "note": "Kauai's public layer has no building value, so vacant residential lots (taxed in class 1) cannot be removed directly. As a check, PARIDs were matched to the County of Kauai 2020 Hazard Mitigation Plan building points (assessor building records). Unmatched class-1 lots are an upper bound on vacant lots (they also include homes built after 2020 and match failures; owner-occupied lots, which must have a home, match at the rate shown).",
+    "owner_occupied_lots_match_rate": {
+     "records": 12979,
+     "with_2020_assessor_building_record": 12694,
+     "share_matched": 0.978
+    },
+    "vacation_rental_lots_match_rate": {
+     "records": 963,
+     "with_2020_assessor_building_record": 920,
+     "share_matched": 0.9553
+    },
+    "class_1_and_11_lots_match_rate": {
+     "records": 8017,
+     "with_2020_assessor_building_record": 5960,
+     "share_matched": 0.7434
+    },
+    "class_1_and_11_lots_without_2020_building_record": 2057,
+    "share_owner_occupied_if_all_unmatched_class1_lots_are_vacant": 0.5501,
+    "share_vacation_rental_if_all_unmatched_class1_lots_are_vacant": 0.1586
+   },
+   "note_agricultural_class": {
+    "agricultural_class_records": 2872,
+    "of_which_land_cpr_units": 1099,
+    "with_2020_assessor_residential_building_record": 40,
+    "note": "Agricultural-class records are excluded from residential housing. Few carry a 2020 assessor residential building record, and every owner-occupied (class 8) record sits on a residential, vacation-rental or commercial base class (CLASS field), so the exclusion drops few homes."
+   },
+   "owner_type_of_main_universe": {
+    "private": 26727,
+    "state": 299,
+    "county": 71
+   },
+   "reconciliation_with_official_TY2026_27_records": {
+    "layer_main_universe": {
+     "owner_occupied_8_10": 13775,
+     "vacation_rental_2": 3971,
+     "non_owner_occupied_1_taxable": 8232,
+     "long_term_affordable_rental_11": 1119
+    },
+    "official_records": {
+     "owner_occupied_records_(OO+OO_mixed_use)": 13623,
+     "vacation_rental": 3969,
+     "non_owner_occupied": 8340,
+     "long_term_affordable_rental": 1119
+    },
+    "official_home_exemptions": 13806,
+    "note": "Class counts in the layer differ slightly from the State summary; the cause of the small differences is unknown. Shares agree within half a point."
+   }
+  },
+  "hawaii_county": {
+   "universe": {
+    "records_in_layer": 135718,
+    "distinct_9digit_tmks": 135642,
+    "repeated_tmk_records_dropped": 76,
+    "improved_single_tmk_housing_parcels_considered": 70583,
+    "main_universe_parcels": 66761,
+    "fully_exempt_without_home_exemption_shown_separately": 3822,
+    "probable_multi_unit_tmks_shown_separately": 1029,
+    "excluded": {
+     "class:Conservation (600)": 1594,
+     "unimproved (building value 0):Residential (100)": 24617,
+     "unimproved (building value 0):Agricultural or Native Forests (500)": 33442,
+     "class:Conservation (600) (homeowner flag Y)": 50,
+     "class:Commercial (300)": 1815,
+     "class:Industrial (400)": 1113,
+     "class:Hotel and Resort (700)": 110,
+     "class:Unknown / Affordable Rental Housing (0)": 1229,
+     "class:Commercial (300) (homeowner flag Y)": 60
+    },
+    "definition": "Unit = 9-digit TMK parcel (the public layer has no CPR/condo-unit records). Housing parcel = PITT code 100 Residential or 500 Agricultural/Native Forests with building value > 0, excluding probable multi-unit TMKs (PITT 200 Apartment or PITT 999 multiple codes for one TMK). Owner-occupied = Homeowner exemption flag Y. Other non-owner-occupied = flag N/U with taxable value > 0. Parcels with no home exemption whose exemptions equal or exceed their value (mainly DHHL homestead leases, government and nonprofit property) are shown separately. Hawaii County has no vacation-rental tax class, so vacation rentals sit inside non-owner-occupied."
+   },
+   "island_residential_plus_agricultural_class": {
+    "units": 66761,
+    "owner_occupied": 42105,
+    "other_non_owner_occupied": 24656,
+    "share_owner_occupied": 0.6307,
+    "share_other_non_owner_occupied": 0.3693,
+    "share_non_owner_occupied_total": 0.3693
+   },
+   "island_residential_class_only_PITT100": {
+    "units": 37035,
+    "owner_occupied": 22766,
+    "other_non_owner_occupied": 14269,
+    "share_owner_occupied": 0.6147,
+    "share_other_non_owner_occupied": 0.3853,
+    "share_non_owner_occupied_total": 0.3853
+   },
+   "island_agricultural_class_only_PITT500": {
+    "units": 29726,
+    "owner_occupied": 19339,
+    "other_non_owner_occupied": 10387,
+    "share_owner_occupied": 0.6506,
+    "share_other_non_owner_occupied": 0.3494,
+    "share_non_owner_occupied_total": 0.3494
+   },
+   "by_district": {
+    "zone_1_Puna": {
+     "units": 22218,
+     "owner_occupied": 13308,
+     "other_non_owner_occupied": 8910,
+     "share_owner_occupied": 0.599,
+     "share_other_non_owner_occupied": 0.401,
+     "share_non_owner_occupied_total": 0.401,
+     "district": "Puna",
+     "residential_class_only_PITT100": {
+      "units": 7838,
+      "owner_occupied": 3739,
+      "other_non_owner_occupied": 4099,
+      "share_owner_occupied": 0.477,
+      "share_other_non_owner_occupied": 0.523,
+      "share_non_owner_occupied_total": 0.523
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.6472,
+     "fully_exempt_without_home_exemption_separate": 696,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 55,
+      "improved": 19,
+      "with_at_least_one_home_exemption": 2
+     }
+    },
+    "zone_2_South Hilo": {
+     "units": 14489,
+     "owner_occupied": 10248,
+     "other_non_owner_occupied": 4241,
+     "share_owner_occupied": 0.7073,
+     "share_other_non_owner_occupied": 0.2927,
+     "share_non_owner_occupied_total": 0.2927,
+     "district": "South Hilo",
+     "residential_class_only_PITT100": {
+      "units": 11616,
+      "owner_occupied": 7981,
+      "other_non_owner_occupied": 3635,
+      "share_owner_occupied": 0.6871,
+      "share_other_non_owner_occupied": 0.3129,
+      "share_non_owner_occupied_total": 0.3129
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.1983,
+     "fully_exempt_without_home_exemption_separate": 1446,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 331,
+      "improved": 231,
+      "with_at_least_one_home_exemption": 63
+     }
+    },
+    "zone_3_North Hilo": {
+     "units": 880,
+     "owner_occupied": 563,
+     "other_non_owner_occupied": 317,
+     "share_owner_occupied": 0.6398,
+     "share_other_non_owner_occupied": 0.3602,
+     "share_non_owner_occupied_total": 0.3602,
+     "district": "North Hilo",
+     "residential_class_only_PITT100": {
+      "units": 412,
+      "owner_occupied": 274,
+      "other_non_owner_occupied": 138,
+      "share_owner_occupied": 0.665,
+      "share_other_non_owner_occupied": 0.335,
+      "share_non_owner_occupied_total": 0.335
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.5318,
+     "fully_exempt_without_home_exemption_separate": 42,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 6,
+      "improved": 5,
+      "with_at_least_one_home_exemption": 2
+     }
+    },
+    "zone_4_Hāmākua": {
+     "units": 2315,
+     "owner_occupied": 1497,
+     "other_non_owner_occupied": 818,
+     "share_owner_occupied": 0.6467,
+     "share_other_non_owner_occupied": 0.3533,
+     "share_non_owner_occupied_total": 0.3533,
+     "district": "Hāmākua",
+     "residential_class_only_PITT100": {
+      "units": 1146,
+      "owner_occupied": 746,
+      "other_non_owner_occupied": 400,
+      "share_owner_occupied": 0.651,
+      "share_other_non_owner_occupied": 0.349,
+      "share_non_owner_occupied_total": 0.349
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.505,
+     "fully_exempt_without_home_exemption_separate": 108,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 23,
+      "improved": 18,
+      "with_at_least_one_home_exemption": 5
+     }
+    },
+    "zone_5_North Kohala": {
+     "units": 2168,
+     "owner_occupied": 1411,
+     "other_non_owner_occupied": 757,
+     "share_owner_occupied": 0.6508,
+     "share_other_non_owner_occupied": 0.3492,
+     "share_non_owner_occupied_total": 0.3492,
+     "district": "North Kohala",
+     "residential_class_only_PITT100": {
+      "units": 1113,
+      "owner_occupied": 768,
+      "other_non_owner_occupied": 345,
+      "share_owner_occupied": 0.69,
+      "share_other_non_owner_occupied": 0.31,
+      "share_non_owner_occupied_total": 0.31
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.4866,
+     "fully_exempt_without_home_exemption_separate": 76,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 27,
+      "improved": 21,
+      "with_at_least_one_home_exemption": 9
+     }
+    },
+    "zone_6_South Kohala": {
+     "units": 5626,
+     "owner_occupied": 3824,
+     "other_non_owner_occupied": 1802,
+     "share_owner_occupied": 0.6797,
+     "share_other_non_owner_occupied": 0.3203,
+     "share_non_owner_occupied_total": 0.3203,
+     "district": "South Kohala",
+     "residential_class_only_PITT100": {
+      "units": 4286,
+      "owner_occupied": 2758,
+      "other_non_owner_occupied": 1528,
+      "share_owner_occupied": 0.6435,
+      "share_other_non_owner_occupied": 0.3565,
+      "share_non_owner_occupied_total": 0.3565
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.2382,
+     "fully_exempt_without_home_exemption_separate": 565,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 145,
+      "improved": 89,
+      "with_at_least_one_home_exemption": 54
+     }
+    },
+    "zone_7_North Kona": {
+     "units": 10930,
+     "owner_occupied": 7009,
+     "other_non_owner_occupied": 3921,
+     "share_owner_occupied": 0.6413,
+     "share_other_non_owner_occupied": 0.3587,
+     "share_non_owner_occupied_total": 0.3587,
+     "district": "North Kona",
+     "residential_class_only_PITT100": {
+      "units": 7916,
+      "owner_occupied": 5002,
+      "other_non_owner_occupied": 2914,
+      "share_owner_occupied": 0.6319,
+      "share_other_non_owner_occupied": 0.3681,
+      "share_non_owner_occupied_total": 0.3681
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.2758,
+     "fully_exempt_without_home_exemption_separate": 675,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 341,
+      "improved": 260,
+      "with_at_least_one_home_exemption": 126
+     }
+    },
+    "zone_8_South Kona": {
+     "units": 3292,
+     "owner_occupied": 1840,
+     "other_non_owner_occupied": 1452,
+     "share_owner_occupied": 0.5589,
+     "share_other_non_owner_occupied": 0.4411,
+     "share_non_owner_occupied_total": 0.4411,
+     "district": "South Kona",
+     "residential_class_only_PITT100": {
+      "units": 1162,
+      "owner_occupied": 665,
+      "other_non_owner_occupied": 497,
+      "share_owner_occupied": 0.5723,
+      "share_other_non_owner_occupied": 0.4277,
+      "share_non_owner_occupied_total": 0.4277
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.647,
+     "fully_exempt_without_home_exemption_separate": 87,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 66,
+      "improved": 36,
+      "with_at_least_one_home_exemption": 8
+     }
+    },
+    "zone_9_Kaʻū": {
+     "units": 4843,
+     "owner_occupied": 2405,
+     "other_non_owner_occupied": 2438,
+     "share_owner_occupied": 0.4966,
+     "share_other_non_owner_occupied": 0.5034,
+     "share_non_owner_occupied_total": 0.5034,
+     "district": "Kaʻū",
+     "residential_class_only_PITT100": {
+      "units": 1546,
+      "owner_occupied": 833,
+      "other_non_owner_occupied": 713,
+      "share_owner_occupied": 0.5388,
+      "share_other_non_owner_occupied": 0.4612,
+      "share_non_owner_occupied_total": 0.4612
+     },
+     "share_of_housing_parcels_in_agricultural_class": 0.6808,
+     "fully_exempt_without_home_exemption_separate": 127,
+     "probable_multi_unit_tmks_separate": {
+      "tmks": 35,
+      "improved": 23,
+      "with_at_least_one_home_exemption": 1
+     }
+    }
+   },
+   "by_tier_assessed_land_plus_building": {
+    "entry_<750K": {
+     "units": 54488,
+     "owner_occupied": 35369,
+     "other_non_owner_occupied": 19119,
+     "share_owner_occupied": 0.6491,
+     "share_other_non_owner_occupied": 0.3509,
+     "share_non_owner_occupied_total": 0.3509
+    },
+    "mid_750K-1.5M": {
+     "units": 9152,
+     "owner_occupied": 5591,
+     "other_non_owner_occupied": 3561,
+     "share_owner_occupied": 0.6109,
+     "share_other_non_owner_occupied": 0.3891,
+     "share_non_owner_occupied_total": 0.3891
+    },
+    "upper_1.5M-3M": {
+     "units": 1976,
+     "owner_occupied": 965,
+     "other_non_owner_occupied": 1011,
+     "share_owner_occupied": 0.4884,
+     "share_other_non_owner_occupied": 0.5116,
+     "share_non_owner_occupied_total": 0.5116
+    },
+    "luxury_3M-10M": {
+     "units": 802,
+     "owner_occupied": 154,
+     "other_non_owner_occupied": 648,
+     "share_owner_occupied": 0.192,
+     "share_other_non_owner_occupied": 0.808,
+     "share_non_owner_occupied_total": 0.808
+    },
+    "ultra_10M+": {
+     "units": 343,
+     "owner_occupied": 26,
+     "other_non_owner_occupied": 317,
+     "share_owner_occupied": 0.0758,
+     "share_other_non_owner_occupied": 0.9242,
+     "share_non_owner_occupied_total": 0.9242
+    },
+    "3M_plus_(luxury+ultra)": {
+     "units": 1145,
+     "owner_occupied": 180,
+     "other_non_owner_occupied": 965,
+     "share_owner_occupied": 0.1572,
+     "share_other_non_owner_occupied": 0.8428,
+     "share_non_owner_occupied_total": 0.8428
+    }
+   },
+   "by_district_by_tier": {
+    "zone_1_Puna": {
+     "entry_<750K": {
+      "units": 21687,
+      "owner_occupied": 13053,
+      "other_non_owner_occupied": 8634,
+      "share_owner_occupied": 0.6019,
+      "share_other_non_owner_occupied": 0.3981,
+      "share_non_owner_occupied_total": 0.3981
+     },
+     "mid_750K-1.5M": {
+      "units": 516,
+      "owner_occupied": 248,
+      "other_non_owner_occupied": 268,
+      "share_owner_occupied": 0.4806,
+      "share_other_non_owner_occupied": 0.5194,
+      "share_non_owner_occupied_total": 0.5194
+     },
+     "upper_1.5M-3M": {
+      "units": 10,
+      "owner_occupied": 6,
+      "other_non_owner_occupied": 4,
+      "share_owner_occupied": 0.6,
+      "share_other_non_owner_occupied": 0.4,
+      "share_non_owner_occupied_total": 0.4,
+      "flag_fewer_than_20_units": true
+     },
+     "luxury_3M-10M": {
+      "units": 5,
+      "owner_occupied": 1,
+      "other_non_owner_occupied": 4,
+      "share_owner_occupied": 0.2,
+      "share_other_non_owner_occupied": 0.8,
+      "share_non_owner_occupied_total": 0.8,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 5,
+      "owner_occupied": 1,
+      "other_non_owner_occupied": 4,
+      "share_owner_occupied": 0.2,
+      "share_other_non_owner_occupied": 0.8,
+      "share_non_owner_occupied_total": 0.8,
+      "flag_fewer_than_20_units": true
+     }
+    },
+    "zone_2_South Hilo": {
+     "entry_<750K": {
+      "units": 12929,
+      "owner_occupied": 9168,
+      "other_non_owner_occupied": 3761,
+      "share_owner_occupied": 0.7091,
+      "share_other_non_owner_occupied": 0.2909,
+      "share_non_owner_occupied_total": 0.2909
+     },
+     "mid_750K-1.5M": {
+      "units": 1461,
+      "owner_occupied": 1031,
+      "other_non_owner_occupied": 430,
+      "share_owner_occupied": 0.7057,
+      "share_other_non_owner_occupied": 0.2943,
+      "share_non_owner_occupied_total": 0.2943
+     },
+     "upper_1.5M-3M": {
+      "units": 89,
+      "owner_occupied": 46,
+      "other_non_owner_occupied": 43,
+      "share_owner_occupied": 0.5169,
+      "share_other_non_owner_occupied": 0.4831,
+      "share_non_owner_occupied_total": 0.4831
+     },
+     "luxury_3M-10M": {
+      "units": 10,
+      "owner_occupied": 3,
+      "other_non_owner_occupied": 7,
+      "share_owner_occupied": 0.3,
+      "share_other_non_owner_occupied": 0.7,
+      "share_non_owner_occupied_total": 0.7,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 10,
+      "owner_occupied": 3,
+      "other_non_owner_occupied": 7,
+      "share_owner_occupied": 0.3,
+      "share_other_non_owner_occupied": 0.7,
+      "share_non_owner_occupied_total": 0.7,
+      "flag_fewer_than_20_units": true
+     }
+    },
+    "zone_3_North Hilo": {
+     "entry_<750K": {
+      "units": 725,
+      "owner_occupied": 468,
+      "other_non_owner_occupied": 257,
+      "share_owner_occupied": 0.6455,
+      "share_other_non_owner_occupied": 0.3545,
+      "share_non_owner_occupied_total": 0.3545
+     },
+     "mid_750K-1.5M": {
+      "units": 129,
+      "owner_occupied": 82,
+      "other_non_owner_occupied": 47,
+      "share_owner_occupied": 0.6357,
+      "share_other_non_owner_occupied": 0.3643,
+      "share_non_owner_occupied_total": 0.3643
+     },
+     "upper_1.5M-3M": {
+      "units": 24,
+      "owner_occupied": 13,
+      "other_non_owner_occupied": 11,
+      "share_owner_occupied": 0.5417,
+      "share_other_non_owner_occupied": 0.4583,
+      "share_non_owner_occupied_total": 0.4583
+     },
+     "luxury_3M-10M": {
+      "units": 1,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 1,
+      "share_owner_occupied": 0.0,
+      "share_other_non_owner_occupied": 1.0,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 1,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 1,
+      "share_owner_occupied": 0.0,
+      "share_other_non_owner_occupied": 1.0,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 2,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 2,
+      "share_owner_occupied": 0.0,
+      "share_other_non_owner_occupied": 1.0,
+      "share_non_owner_occupied_total": 1.0,
+      "flag_fewer_than_20_units": true
+     }
+    },
+    "zone_4_Hāmākua": {
+     "entry_<750K": {
+      "units": 1965,
+      "owner_occupied": 1270,
+      "other_non_owner_occupied": 695,
+      "share_owner_occupied": 0.6463,
+      "share_other_non_owner_occupied": 0.3537,
+      "share_non_owner_occupied_total": 0.3537
+     },
+     "mid_750K-1.5M": {
+      "units": 303,
+      "owner_occupied": 202,
+      "other_non_owner_occupied": 101,
+      "share_owner_occupied": 0.6667,
+      "share_other_non_owner_occupied": 0.3333,
+      "share_non_owner_occupied_total": 0.3333
+     },
+     "upper_1.5M-3M": {
+      "units": 42,
+      "owner_occupied": 23,
+      "other_non_owner_occupied": 19,
+      "share_owner_occupied": 0.5476,
+      "share_other_non_owner_occupied": 0.4524,
+      "share_non_owner_occupied_total": 0.4524
+     },
+     "luxury_3M-10M": {
+      "units": 5,
+      "owner_occupied": 2,
+      "other_non_owner_occupied": 3,
+      "share_owner_occupied": 0.4,
+      "share_other_non_owner_occupied": 0.6,
+      "share_non_owner_occupied_total": 0.6,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 5,
+      "owner_occupied": 2,
+      "other_non_owner_occupied": 3,
+      "share_owner_occupied": 0.4,
+      "share_other_non_owner_occupied": 0.6,
+      "share_non_owner_occupied_total": 0.6,
+      "flag_fewer_than_20_units": true
+     }
+    },
+    "zone_5_North Kohala": {
+     "entry_<750K": {
+      "units": 1434,
+      "owner_occupied": 965,
+      "other_non_owner_occupied": 469,
+      "share_owner_occupied": 0.6729,
+      "share_other_non_owner_occupied": 0.3271,
+      "share_non_owner_occupied_total": 0.3271
+     },
+     "mid_750K-1.5M": {
+      "units": 473,
+      "owner_occupied": 320,
+      "other_non_owner_occupied": 153,
+      "share_owner_occupied": 0.6765,
+      "share_other_non_owner_occupied": 0.3235,
+      "share_non_owner_occupied_total": 0.3235
+     },
+     "upper_1.5M-3M": {
+      "units": 222,
+      "owner_occupied": 112,
+      "other_non_owner_occupied": 110,
+      "share_owner_occupied": 0.5045,
+      "share_other_non_owner_occupied": 0.4955,
+      "share_non_owner_occupied_total": 0.4955
+     },
+     "luxury_3M-10M": {
+      "units": 39,
+      "owner_occupied": 14,
+      "other_non_owner_occupied": 25,
+      "share_owner_occupied": 0.359,
+      "share_other_non_owner_occupied": 0.641,
+      "share_non_owner_occupied_total": 0.641
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 39,
+      "owner_occupied": 14,
+      "other_non_owner_occupied": 25,
+      "share_owner_occupied": 0.359,
+      "share_other_non_owner_occupied": 0.641,
+      "share_non_owner_occupied_total": 0.641
+     }
+    },
+    "zone_6_South Kohala": {
+     "entry_<750K": {
+      "units": 3331,
+      "owner_occupied": 2706,
+      "other_non_owner_occupied": 625,
+      "share_owner_occupied": 0.8124,
+      "share_other_non_owner_occupied": 0.1876,
+      "share_non_owner_occupied_total": 0.1876
+     },
+     "mid_750K-1.5M": {
+      "units": 1551,
+      "owner_occupied": 905,
+      "other_non_owner_occupied": 646,
+      "share_owner_occupied": 0.5835,
+      "share_other_non_owner_occupied": 0.4165,
+      "share_non_owner_occupied_total": 0.4165
+     },
+     "upper_1.5M-3M": {
+      "units": 343,
+      "owner_occupied": 163,
+      "other_non_owner_occupied": 180,
+      "share_owner_occupied": 0.4752,
+      "share_other_non_owner_occupied": 0.5248,
+      "share_non_owner_occupied_total": 0.5248
+     },
+     "luxury_3M-10M": {
+      "units": 328,
+      "owner_occupied": 45,
+      "other_non_owner_occupied": 283,
+      "share_owner_occupied": 0.1372,
+      "share_other_non_owner_occupied": 0.8628,
+      "share_non_owner_occupied_total": 0.8628
+     },
+     "ultra_10M+": {
+      "units": 73,
+      "owner_occupied": 5,
+      "other_non_owner_occupied": 68,
+      "share_owner_occupied": 0.0685,
+      "share_other_non_owner_occupied": 0.9315,
+      "share_non_owner_occupied_total": 0.9315
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 401,
+      "owner_occupied": 50,
+      "other_non_owner_occupied": 351,
+      "share_owner_occupied": 0.1247,
+      "share_other_non_owner_occupied": 0.8753,
+      "share_non_owner_occupied_total": 0.8753
+     }
+    },
+    "zone_7_North Kona": {
+     "entry_<750K": {
+      "units": 5092,
+      "owner_occupied": 3941,
+      "other_non_owner_occupied": 1151,
+      "share_owner_occupied": 0.774,
+      "share_other_non_owner_occupied": 0.226,
+      "share_non_owner_occupied_total": 0.226
+     },
+     "mid_750K-1.5M": {
+      "units": 4049,
+      "owner_occupied": 2417,
+      "other_non_owner_occupied": 1632,
+      "share_owner_occupied": 0.5969,
+      "share_other_non_owner_occupied": 0.4031,
+      "share_non_owner_occupied_total": 0.4031
+     },
+     "upper_1.5M-3M": {
+      "units": 1145,
+      "owner_occupied": 551,
+      "other_non_owner_occupied": 594,
+      "share_owner_occupied": 0.4812,
+      "share_other_non_owner_occupied": 0.5188,
+      "share_non_owner_occupied_total": 0.5188
+     },
+     "luxury_3M-10M": {
+      "units": 375,
+      "owner_occupied": 79,
+      "other_non_owner_occupied": 296,
+      "share_owner_occupied": 0.2107,
+      "share_other_non_owner_occupied": 0.7893,
+      "share_non_owner_occupied_total": 0.7893
+     },
+     "ultra_10M+": {
+      "units": 269,
+      "owner_occupied": 21,
+      "other_non_owner_occupied": 248,
+      "share_owner_occupied": 0.0781,
+      "share_other_non_owner_occupied": 0.9219,
+      "share_non_owner_occupied_total": 0.9219
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 644,
+      "owner_occupied": 100,
+      "other_non_owner_occupied": 544,
+      "share_owner_occupied": 0.1553,
+      "share_other_non_owner_occupied": 0.8447,
+      "share_non_owner_occupied_total": 0.8447
+     }
+    },
+    "zone_8_South Kona": {
+     "entry_<750K": {
+      "units": 2524,
+      "owner_occupied": 1410,
+      "other_non_owner_occupied": 1114,
+      "share_owner_occupied": 0.5586,
+      "share_other_non_owner_occupied": 0.4414,
+      "share_non_owner_occupied_total": 0.4414
+     },
+     "mid_750K-1.5M": {
+      "units": 632,
+      "owner_occupied": 371,
+      "other_non_owner_occupied": 261,
+      "share_owner_occupied": 0.587,
+      "share_other_non_owner_occupied": 0.413,
+      "share_non_owner_occupied_total": 0.413
+     },
+     "upper_1.5M-3M": {
+      "units": 97,
+      "owner_occupied": 49,
+      "other_non_owner_occupied": 48,
+      "share_owner_occupied": 0.5052,
+      "share_other_non_owner_occupied": 0.4948,
+      "share_non_owner_occupied_total": 0.4948
+     },
+     "luxury_3M-10M": {
+      "units": 39,
+      "owner_occupied": 10,
+      "other_non_owner_occupied": 29,
+      "share_owner_occupied": 0.2564,
+      "share_other_non_owner_occupied": 0.7436,
+      "share_non_owner_occupied_total": 0.7436
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 39,
+      "owner_occupied": 10,
+      "other_non_owner_occupied": 29,
+      "share_owner_occupied": 0.2564,
+      "share_other_non_owner_occupied": 0.7436,
+      "share_non_owner_occupied_total": 0.7436
+     }
+    },
+    "zone_9_Kaʻū": {
+     "entry_<750K": {
+      "units": 4801,
+      "owner_occupied": 2388,
+      "other_non_owner_occupied": 2413,
+      "share_owner_occupied": 0.4974,
+      "share_other_non_owner_occupied": 0.5026,
+      "share_non_owner_occupied_total": 0.5026
+     },
+     "mid_750K-1.5M": {
+      "units": 38,
+      "owner_occupied": 15,
+      "other_non_owner_occupied": 23,
+      "share_owner_occupied": 0.3947,
+      "share_other_non_owner_occupied": 0.6053,
+      "share_non_owner_occupied_total": 0.6053
+     },
+     "upper_1.5M-3M": {
+      "units": 4,
+      "owner_occupied": 2,
+      "other_non_owner_occupied": 2,
+      "share_owner_occupied": 0.5,
+      "share_other_non_owner_occupied": 0.5,
+      "share_non_owner_occupied_total": 0.5,
+      "flag_fewer_than_20_units": true
+     },
+     "luxury_3M-10M": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "ultra_10M+": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     },
+     "3M_plus_(luxury+ultra)": {
+      "units": 0,
+      "owner_occupied": 0,
+      "other_non_owner_occupied": 0,
+      "share_owner_occupied": null,
+      "share_other_non_owner_occupied": null,
+      "share_non_owner_occupied_total": null,
+      "flag_fewer_than_20_units": true
+     }
+    }
+   },
+   "value_shares": {
+    "total_value_usd": 42441082400,
+    "share_owner_occupied": 0.5035,
+    "share_other_non_owner_occupied": 0.4965
+   },
+   "neighborhoods_eligible_(nhood_codes_with_100plus_parcels)": 166,
+   "top15_nhood_codes_by_non_owner_occupied_share": [
+    {
+     "units": 105,
+     "owner_occupied": 14,
+     "other_non_owner_occupied": 91,
+     "share_owner_occupied": 0.1333,
+     "share_other_non_owner_occupied": 0.8667,
+     "share_non_owner_occupied_total": 0.8667,
+     "nhood_code": "7531-1",
+     "district": "North Kona",
+     "district_share": 1.0,
+     "place": {
+      "label": "Kailua (Kona) / Kahaluu-Keauhou",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kailua (Kona)",
+        "share_of_units": 0.524
+       },
+       {
+        "cdp": "Kahaluu-Keauhou",
+        "share_of_units": 0.476
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "North Kona CCD"
+     },
+     "share_agricultural_class": 0.0,
+     "median_assessed_value_usd": 2530200
+    },
+    {
+     "units": 328,
+     "owner_occupied": 102,
+     "other_non_owner_occupied": 226,
+     "share_owner_occupied": 0.311,
+     "share_other_non_owner_occupied": 0.689,
+     "share_non_owner_occupied_total": 0.689,
+     "nhood_code": "9227-5",
+     "district": "Kaʻū",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hawaiian Ocean View",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hawaiian Ocean View",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kau CCD"
+     },
+     "share_agricultural_class": 0.997,
+     "median_assessed_value_usd": 91450
+    },
+    {
+     "units": 156,
+     "owner_occupied": 61,
+     "other_non_owner_occupied": 95,
+     "share_owner_occupied": 0.391,
+     "share_other_non_owner_occupied": 0.609,
+     "share_non_owner_occupied_total": 0.609,
+     "nhood_code": "8883-5",
+     "district": "South Kona",
+     "district_share": 1.0,
+     "place": {
+      "label": "South Kona CCD (mostly outside Census-designated places)",
+      "census2020_cdp_top": [],
+      "share_outside_any_cdp": 1.0,
+      "census2020_ccd_top": "South Kona CCD"
+     },
+     "share_agricultural_class": 0.1282,
+     "median_assessed_value_usd": 230350
+    },
+    {
+     "units": 210,
+     "owner_occupied": 84,
+     "other_non_owner_occupied": 126,
+     "share_owner_occupied": 0.4,
+     "share_other_non_owner_occupied": 0.6,
+     "share_non_owner_occupied_total": 0.6,
+     "nhood_code": "8445A-5",
+     "district": "South Kona",
+     "district_share": 1.0,
+     "place": {
+      "label": "Honaunau-Napoopoo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Honaunau-Napoopoo",
+        "share_of_units": 0.976
+       }
+      ],
+      "share_outside_any_cdp": 0.024,
+      "census2020_ccd_top": "South Kona CCD"
+     },
+     "share_agricultural_class": 1.0,
+     "median_assessed_value_usd": 348700
+    },
+    {
+     "units": 249,
+     "owner_occupied": 107,
+     "other_non_owner_occupied": 142,
+     "share_owner_occupied": 0.4297,
+     "share_other_non_owner_occupied": 0.5703,
+     "share_non_owner_occupied_total": 0.5703,
+     "nhood_code": "7005-5",
+     "district": "North Kona",
+     "district_share": 1.0,
+     "place": {
+      "label": "Honalo / Kahaluu-Keauhou",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Honalo",
+        "share_of_units": 0.651
+       },
+       {
+        "cdp": "Kahaluu-Keauhou",
+        "share_of_units": 0.349
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "North Kona CCD"
+     },
+     "share_agricultural_class": 0.9357,
+     "median_assessed_value_usd": 499200
+    },
+    {
+     "units": 104,
+     "owner_occupied": 45,
+     "other_non_owner_occupied": 59,
+     "share_owner_occupied": 0.4327,
+     "share_other_non_owner_occupied": 0.5673,
+     "share_non_owner_occupied_total": 0.5673,
+     "nhood_code": "5563-5",
+     "district": "North Kohala",
+     "district_share": 1.0,
+     "place": {
+      "label": "Kapaau area (partly outside the CDP)",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kapaau",
+        "share_of_units": 0.375
+       },
+       {
+        "cdp": "Hawi",
+        "share_of_units": 0.25
+       },
+       {
+        "cdp": "Halaula",
+        "share_of_units": 0.029
+       }
+      ],
+      "share_outside_any_cdp": 0.346,
+      "census2020_ccd_top": "North Kohala CCD"
+     },
+     "share_agricultural_class": 1.0,
+     "median_assessed_value_usd": 664050
+    },
+    {
+     "units": 212,
+     "owner_occupied": 92,
+     "other_non_owner_occupied": 120,
+     "share_owner_occupied": 0.434,
+     "share_other_non_owner_occupied": 0.566,
+     "share_non_owner_occupied_total": 0.566,
+     "nhood_code": "2251-1",
+     "district": "South Hilo",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hilo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hilo",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Hilo CCD"
+     },
+     "share_agricultural_class": 0.0,
+     "median_assessed_value_usd": 265350
+    },
+    {
+     "units": 128,
+     "owner_occupied": 56,
+     "other_non_owner_occupied": 72,
+     "share_owner_occupied": 0.4375,
+     "share_other_non_owner_occupied": 0.5625,
+     "share_non_owner_occupied_total": 0.5625,
+     "nhood_code": "1524A-1",
+     "district": "Puna",
+     "district_share": 1.0,
+     "place": {
+      "label": "Pahoa",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Pahoa",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Pahoa-Kalapana CCD"
+     },
+     "share_agricultural_class": 0.0078,
+     "median_assessed_value_usd": 166200
+    },
+    {
+     "units": 115,
+     "owner_occupied": 51,
+     "other_non_owner_occupied": 64,
+     "share_owner_occupied": 0.4435,
+     "share_other_non_owner_occupied": 0.5565,
+     "share_non_owner_occupied_total": 0.5565,
+     "nhood_code": "1121-1",
+     "district": "Puna",
+     "district_share": 1.0,
+     "place": {
+      "label": "Mauna Loa Estates",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Mauna Loa Estates",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Keaau-Mountain View CCD"
+     },
+     "share_agricultural_class": 0.0,
+     "median_assessed_value_usd": 209500
+    },
+    {
+     "units": 1111,
+     "owner_occupied": 499,
+     "other_non_owner_occupied": 612,
+     "share_owner_occupied": 0.4491,
+     "share_other_non_owner_occupied": 0.5509,
+     "share_non_owner_occupied_total": 0.5509,
+     "nhood_code": "9223-5",
+     "district": "Kaʻū",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hawaiian Ocean View",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hawaiian Ocean View",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kau CCD"
+     },
+     "share_agricultural_class": 0.9991,
+     "median_assessed_value_usd": 168200
+    },
+    {
+     "units": 357,
+     "owner_occupied": 162,
+     "other_non_owner_occupied": 195,
+     "share_owner_occupied": 0.4538,
+     "share_other_non_owner_occupied": 0.5462,
+     "share_non_owner_occupied_total": 0.5462,
+     "nhood_code": "1123-5",
+     "district": "Puna",
+     "district_share": 1.0,
+     "place": {
+      "label": "Eden Roc",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Eden Roc",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Keaau-Mountain View CCD"
+     },
+     "share_agricultural_class": 0.9916,
+     "median_assessed_value_usd": 117500
+    },
+    {
+     "units": 258,
+     "owner_occupied": 118,
+     "other_non_owner_occupied": 140,
+     "share_owner_occupied": 0.4574,
+     "share_other_non_owner_occupied": 0.5426,
+     "share_non_owner_occupied_total": 0.5426,
+     "nhood_code": "1624-5",
+     "district": "Puna",
+     "district_share": 1.0,
+     "place": {
+      "label": "Tiki Gardens",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Tiki Gardens",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Keaau-Mountain View CCD"
+     },
+     "share_agricultural_class": 0.2248,
+     "median_assessed_value_usd": 194800
+    },
+    {
+     "units": 426,
+     "owner_occupied": 196,
+     "other_non_owner_occupied": 230,
+     "share_owner_occupied": 0.4601,
+     "share_other_non_owner_occupied": 0.5399,
+     "share_non_owner_occupied_total": 0.5399,
+     "nhood_code": "1131-5",
+     "district": "Puna",
+     "district_share": 1.0,
+     "place": {
+      "label": "Fern Forest",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Fern Forest",
+        "share_of_units": 0.944
+       },
+       {
+        "cdp": "Royal Hawaiian Estates",
+        "share_of_units": 0.054
+       },
+       {
+        "cdp": "Mountain View",
+        "share_of_units": 0.002
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Keaau-Mountain View CCD"
+     },
+     "share_agricultural_class": 1.0,
+     "median_assessed_value_usd": 149700
+    },
+    {
+     "units": 756,
+     "owner_occupied": 350,
+     "other_non_owner_occupied": 406,
+     "share_owner_occupied": 0.463,
+     "share_other_non_owner_occupied": 0.537,
+     "share_non_owner_occupied_total": 0.537,
+     "nhood_code": "9225-5",
+     "district": "Kaʻū",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hawaiian Ocean View",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hawaiian Ocean View",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kau CCD"
+     },
+     "share_agricultural_class": 1.0,
+     "median_assessed_value_usd": 160500
+    },
+    {
+     "units": 245,
+     "owner_occupied": 114,
+     "other_non_owner_occupied": 131,
+     "share_owner_occupied": 0.4653,
+     "share_other_non_owner_occupied": 0.5347,
+     "share_non_owner_occupied_total": 0.5347,
+     "nhood_code": "9235B-5",
+     "district": "Kaʻū",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hawaiian Ocean View",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hawaiian Ocean View",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Kau CCD"
+     },
+     "share_agricultural_class": 1.0,
+     "median_assessed_value_usd": 249400
+    }
+   ],
+   "bottom5_nhood_codes_by_non_owner_occupied_share": [
+    {
+     "units": 689,
+     "owner_occupied": 591,
+     "other_non_owner_occupied": 98,
+     "share_owner_occupied": 0.8578,
+     "share_other_non_owner_occupied": 0.1422,
+     "share_non_owner_occupied_total": 0.1422,
+     "nhood_code": "X999",
+     "district": "North Kona",
+     "district_share": 0.409,
+     "place": {
+      "label": "North Kona CCD (spread across several places)",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kailua (Kona)",
+        "share_of_units": 0.167
+       },
+       {
+        "cdp": "Waimea",
+        "share_of_units": 0.083
+       },
+       {
+        "cdp": "Holualoa",
+        "share_of_units": 0.077
+       }
+      ],
+      "share_outside_any_cdp": 0.237,
+      "census2020_ccd_top": "North Kona CCD"
+     },
+     "share_agricultural_class": 0.5573,
+     "median_assessed_value_usd": 1215900
+    },
+    {
+     "units": 162,
+     "owner_occupied": 142,
+     "other_non_owner_occupied": 20,
+     "share_owner_occupied": 0.8765,
+     "share_other_non_owner_occupied": 0.1235,
+     "share_non_owner_occupied_total": 0.1235,
+     "nhood_code": "5321-1",
+     "district": "North Kohala",
+     "district_share": 1.0,
+     "place": {
+      "label": "Kapaau",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Kapaau",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "North Kohala CCD"
+     },
+     "share_agricultural_class": 0.0,
+     "median_assessed_value_usd": 390150
+    },
+    {
+     "units": 162,
+     "owner_occupied": 144,
+     "other_non_owner_occupied": 18,
+     "share_owner_occupied": 0.8889,
+     "share_other_non_owner_occupied": 0.1111,
+     "share_non_owner_occupied_total": 0.1111,
+     "nhood_code": "2422-5",
+     "district": "South Hilo",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hilo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hilo",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Hilo CCD"
+     },
+     "share_agricultural_class": 0.9938,
+     "median_assessed_value_usd": 853350
+    },
+    {
+     "units": 152,
+     "owner_occupied": 136,
+     "other_non_owner_occupied": 16,
+     "share_owner_occupied": 0.8947,
+     "share_other_non_owner_occupied": 0.1053,
+     "share_non_owner_occupied_total": 0.1053,
+     "nhood_code": "2431-1",
+     "district": "South Hilo",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hilo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hilo",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Hilo CCD"
+     },
+     "share_agricultural_class": 0.0,
+     "median_assessed_value_usd": 476350
+    },
+    {
+     "units": 169,
+     "owner_occupied": 163,
+     "other_non_owner_occupied": 6,
+     "share_owner_occupied": 0.9645,
+     "share_other_non_owner_occupied": 0.0355,
+     "share_non_owner_occupied_total": 0.0355,
+     "nhood_code": "2426-5",
+     "district": "South Hilo",
+     "district_share": 1.0,
+     "place": {
+      "label": "Hilo",
+      "census2020_cdp_top": [
+       {
+        "cdp": "Hilo",
+        "share_of_units": 1.0
+       }
+      ],
+      "share_outside_any_cdp": 0.0,
+      "census2020_ccd_top": "Hilo CCD"
+     },
+     "share_agricultural_class": 0.9882,
+     "median_assessed_value_usd": 877300
+    }
+   ],
+   "all_eligible_nhood_codes_sorted": [
+    {
+     "nhood_code": "7531-1",
+     "label": "Kailua (Kona) / Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 105,
+     "share_owner_occupied": 0.1333,
+     "share_non_owner_occupied_total": 0.8667
+    },
+    {
+     "nhood_code": "9227-5",
+     "label": "Hawaiian Ocean View",
+     "district": "Kaʻū",
+     "units": 328,
+     "share_owner_occupied": 0.311,
+     "share_non_owner_occupied_total": 0.689
+    },
+    {
+     "nhood_code": "8883-5",
+     "label": "South Kona CCD (mostly outside Census-designated places)",
+     "district": "South Kona",
+     "units": 156,
+     "share_owner_occupied": 0.391,
+     "share_non_owner_occupied_total": 0.609
+    },
+    {
+     "nhood_code": "8445A-5",
+     "label": "Honaunau-Napoopoo",
+     "district": "South Kona",
+     "units": 210,
+     "share_owner_occupied": 0.4,
+     "share_non_owner_occupied_total": 0.6
+    },
+    {
+     "nhood_code": "7005-5",
+     "label": "Honalo / Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 249,
+     "share_owner_occupied": 0.4297,
+     "share_non_owner_occupied_total": 0.5703
+    },
+    {
+     "nhood_code": "5563-5",
+     "label": "Kapaau area (partly outside the CDP)",
+     "district": "North Kohala",
+     "units": 104,
+     "share_owner_occupied": 0.4327,
+     "share_non_owner_occupied_total": 0.5673
+    },
+    {
+     "nhood_code": "2251-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 212,
+     "share_owner_occupied": 0.434,
+     "share_non_owner_occupied_total": 0.566
+    },
+    {
+     "nhood_code": "1524A-1",
+     "label": "Pahoa",
+     "district": "Puna",
+     "units": 128,
+     "share_owner_occupied": 0.4375,
+     "share_non_owner_occupied_total": 0.5625
+    },
+    {
+     "nhood_code": "1121-1",
+     "label": "Mauna Loa Estates",
+     "district": "Puna",
+     "units": 115,
+     "share_owner_occupied": 0.4435,
+     "share_non_owner_occupied_total": 0.5565
+    },
+    {
+     "nhood_code": "9223-5",
+     "label": "Hawaiian Ocean View",
+     "district": "Kaʻū",
+     "units": 1111,
+     "share_owner_occupied": 0.4491,
+     "share_non_owner_occupied_total": 0.5509
+    },
+    {
+     "nhood_code": "1123-5",
+     "label": "Eden Roc",
+     "district": "Puna",
+     "units": 357,
+     "share_owner_occupied": 0.4538,
+     "share_non_owner_occupied_total": 0.5462
+    },
+    {
+     "nhood_code": "1624-5",
+     "label": "Tiki Gardens",
+     "district": "Puna",
+     "units": 258,
+     "share_owner_occupied": 0.4574,
+     "share_non_owner_occupied_total": 0.5426
+    },
+    {
+     "nhood_code": "1131-5",
+     "label": "Fern Forest",
+     "district": "Puna",
+     "units": 426,
+     "share_owner_occupied": 0.4601,
+     "share_non_owner_occupied_total": 0.5399
+    },
+    {
+     "nhood_code": "9225-5",
+     "label": "Hawaiian Ocean View",
+     "district": "Kaʻū",
+     "units": 756,
+     "share_owner_occupied": 0.463,
+     "share_non_owner_occupied_total": 0.537
+    },
+    {
+     "nhood_code": "9235B-5",
+     "label": "Hawaiian Ocean View",
+     "district": "Kaʻū",
+     "units": 245,
+     "share_owner_occupied": 0.4653,
+     "share_non_owner_occupied_total": 0.5347
+    },
+    {
+     "nhood_code": "1924-1",
+     "label": "Volcano",
+     "district": "Puna",
+     "units": 178,
+     "share_owner_occupied": 0.4663,
+     "share_non_owner_occupied_total": 0.5337
+    },
+    {
+     "nhood_code": "1234-5",
+     "label": "Seaview",
+     "district": "Puna",
+     "units": 277,
+     "share_owner_occupied": 0.4693,
+     "share_non_owner_occupied_total": 0.5307
+    },
+    {
+     "nhood_code": "1222-5",
+     "label": "Black Sands",
+     "district": "Puna",
+     "units": 176,
+     "share_owner_occupied": 0.4773,
+     "share_non_owner_occupied_total": 0.5227
+    },
+    {
+     "nhood_code": "8322A-5",
+     "label": "Honaunau-Napoopoo",
+     "district": "South Kona",
+     "units": 376,
+     "share_owner_occupied": 0.484,
+     "share_non_owner_occupied_total": 0.516
+    },
+    {
+     "nhood_code": "1121-5",
+     "label": "Royal Hawaiian Estates",
+     "district": "Puna",
+     "units": 180,
+     "share_owner_occupied": 0.4889,
+     "share_non_owner_occupied_total": 0.5111
+    },
+    {
+     "nhood_code": "7834A-1",
+     "label": "Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 211,
+     "share_owner_occupied": 0.4929,
+     "share_non_owner_occupied_total": 0.5071
+    },
+    {
+     "nhood_code": "1121A-1",
+     "label": "Mauna Loa Estates",
+     "district": "Puna",
+     "units": 100,
+     "share_owner_occupied": 0.5,
+     "share_non_owner_occupied_total": 0.5
+    },
+    {
+     "nhood_code": "1123A-5",
+     "label": "Eden Roc",
+     "district": "Puna",
+     "units": 169,
+     "share_owner_occupied": 0.503,
+     "share_non_owner_occupied_total": 0.497
+    },
+    {
+     "nhood_code": "1425-1",
+     "label": "Nanawale Estates",
+     "district": "Puna",
+     "units": 663,
+     "share_owner_occupied": 0.5038,
+     "share_non_owner_occupied_total": 0.4962
+    },
+    {
+     "nhood_code": "1125-5",
+     "label": "Royal Hawaiian Estates",
+     "district": "Puna",
+     "units": 170,
+     "share_owner_occupied": 0.5059,
+     "share_non_owner_occupied_total": 0.4941
+    },
+    {
+     "nhood_code": "2221B-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 613,
+     "share_owner_occupied": 0.522,
+     "share_non_owner_occupied_total": 0.478
+    },
+    {
+     "nhood_code": "1633-5",
+     "label": "Hawaiian Acres",
+     "district": "Puna",
+     "units": 282,
+     "share_owner_occupied": 0.5284,
+     "share_non_owner_occupied_total": 0.4716
+    },
+    {
+     "nhood_code": "9423-5",
+     "label": "Discovery Harbour",
+     "district": "Kaʻū",
+     "units": 117,
+     "share_owner_occupied": 0.5299,
+     "share_non_owner_occupied_total": 0.4701
+    },
+    {
+     "nhood_code": "1826-5",
+     "label": "Mountain View",
+     "district": "Puna",
+     "units": 122,
+     "share_owner_occupied": 0.5328,
+     "share_non_owner_occupied_total": 0.4672
+    },
+    {
+     "nhood_code": "9422-5",
+     "label": "Discovery Harbour",
+     "district": "Kaʻū",
+     "units": 283,
+     "share_owner_occupied": 0.5336,
+     "share_non_owner_occupied_total": 0.4664
+    },
+    {
+     "nhood_code": "8242A-5",
+     "label": "Captain Cook / Honaunau-Napoopoo",
+     "district": "South Kona",
+     "units": 190,
+     "share_owner_occupied": 0.5368,
+     "share_non_owner_occupied_total": 0.4632
+    },
+    {
+     "nhood_code": "7975-5",
+     "label": "Kealakekua",
+     "district": "North Kona",
+     "units": 167,
+     "share_owner_occupied": 0.5389,
+     "share_non_owner_occupied_total": 0.4611
+    },
+    {
+     "nhood_code": "7534-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 103,
+     "share_owner_occupied": 0.5437,
+     "share_non_owner_occupied_total": 0.4563
+    },
+    {
+     "nhood_code": "1564-1",
+     "label": "Hawaiian Beaches",
+     "district": "Puna",
+     "units": 147,
+     "share_owner_occupied": 0.551,
+     "share_non_owner_occupied_total": 0.449
+    },
+    {
+     "nhood_code": "5938-5",
+     "label": "North Kohala CCD (mostly outside Census-designated places)",
+     "district": "North Kohala",
+     "units": 138,
+     "share_owner_occupied": 0.558,
+     "share_non_owner_occupied_total": 0.442
+    },
+    {
+     "nhood_code": "7004-5",
+     "label": "Holualoa area (partly outside the CDP)",
+     "district": "North Kona",
+     "units": 170,
+     "share_owner_occupied": 0.5647,
+     "share_non_owner_occupied_total": 0.4353
+    },
+    {
+     "nhood_code": "1321B-5",
+     "label": "Leilani Estates",
+     "district": "Puna",
+     "units": 241,
+     "share_owner_occupied": 0.5685,
+     "share_non_owner_occupied_total": 0.4315
+    },
+    {
+     "nhood_code": "8792-5",
+     "label": "South Kona CCD (mostly outside Census-designated places)",
+     "district": "South Kona",
+     "units": 130,
+     "share_owner_occupied": 0.5692,
+     "share_non_owner_occupied_total": 0.4308
+    },
+    {
+     "nhood_code": "7711-1",
+     "label": "Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 282,
+     "share_owner_occupied": 0.5709,
+     "share_non_owner_occupied_total": 0.4291
+    },
+    {
+     "nhood_code": "5531-1",
+     "label": "Hawi",
+     "district": "North Kohala",
+     "units": 164,
+     "share_owner_occupied": 0.5732,
+     "share_non_owner_occupied_total": 0.4268
+    },
+    {
+     "nhood_code": "1622C-5",
+     "label": "Ainaloa",
+     "district": "Puna",
+     "units": 533,
+     "share_owner_occupied": 0.5741,
+     "share_non_owner_occupied_total": 0.4259
+    },
+    {
+     "nhood_code": "1141-1",
+     "label": "Mauna Loa Estates",
+     "district": "Puna",
+     "units": 436,
+     "share_owner_occupied": 0.5757,
+     "share_non_owner_occupied_total": 0.4243
+    },
+    {
+     "nhood_code": "7002-5",
+     "label": "Holualoa",
+     "district": "North Kona",
+     "units": 316,
+     "share_owner_occupied": 0.5759,
+     "share_non_owner_occupied_total": 0.4241
+    },
+    {
+     "nhood_code": "8145A-5",
+     "label": "Captain Cook",
+     "district": "South Kona",
+     "units": 191,
+     "share_owner_occupied": 0.5759,
+     "share_non_owner_occupied_total": 0.4241
+    },
+    {
+     "nhood_code": "1321C-5",
+     "label": "Leilani Estates",
+     "district": "Puna",
+     "units": 173,
+     "share_owner_occupied": 0.578,
+     "share_non_owner_occupied_total": 0.422
+    },
+    {
+     "nhood_code": "2611-1",
+     "label": "Wainaku",
+     "district": "South Hilo",
+     "units": 112,
+     "share_owner_occupied": 0.5804,
+     "share_non_owner_occupied_total": 0.4196
+    },
+    {
+     "nhood_code": "4571-5",
+     "label": "Honokaa-Kukuihaele CCD (mostly outside Census-designated places)",
+     "district": "Hāmākua",
+     "units": 138,
+     "share_owner_occupied": 0.587,
+     "share_non_owner_occupied_total": 0.413
+    },
+    {
+     "nhood_code": "1132-5",
+     "label": "Fern Acres",
+     "district": "Puna",
+     "units": 850,
+     "share_owner_occupied": 0.5871,
+     "share_non_owner_occupied_total": 0.4129
+    },
+    {
+     "nhood_code": "1562-1",
+     "label": "Hawaiian Beaches",
+     "district": "Puna",
+     "units": 797,
+     "share_owner_occupied": 0.5872,
+     "share_non_owner_occupied_total": 0.4128
+    },
+    {
+     "nhood_code": "2423-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 100,
+     "share_owner_occupied": 0.59,
+     "share_non_owner_occupied_total": 0.41
+    },
+    {
+     "nhood_code": "1634A-5",
+     "label": "Hawaiian Acres",
+     "district": "Puna",
+     "units": 568,
+     "share_owner_occupied": 0.5915,
+     "share_non_owner_occupied_total": 0.4085
+    },
+    {
+     "nhood_code": "9931-1",
+     "label": "Volcano Golf Course",
+     "district": "Kaʻū",
+     "units": 235,
+     "share_owner_occupied": 0.5915,
+     "share_non_owner_occupied_total": 0.4085
+    },
+    {
+     "nhood_code": "16723-5",
+     "label": "Orchidlands Estates",
+     "district": "Puna",
+     "units": 212,
+     "share_owner_occupied": 0.5943,
+     "share_non_owner_occupied_total": 0.4057
+    },
+    {
+     "nhood_code": "1567-1",
+     "label": "Hawaiian Beaches",
+     "district": "Puna",
+     "units": 203,
+     "share_owner_occupied": 0.5961,
+     "share_non_owner_occupied_total": 0.4039
+    },
+    {
+     "nhood_code": "5561-5",
+     "label": "Hawi area (partly outside the CDP)",
+     "district": "North Kohala",
+     "units": 129,
+     "share_owner_occupied": 0.5969,
+     "share_non_owner_occupied_total": 0.4031
+    },
+    {
+     "nhood_code": "1528A-5",
+     "label": "Hawaiian Paradise Park",
+     "district": "Puna",
+     "units": 167,
+     "share_owner_occupied": 0.5988,
+     "share_non_owner_occupied_total": 0.4012
+    },
+    {
+     "nhood_code": "7001-5",
+     "label": "Holualoa",
+     "district": "North Kona",
+     "units": 217,
+     "share_owner_occupied": 0.5991,
+     "share_non_owner_occupied_total": 0.4009
+    },
+    {
+     "nhood_code": "2221-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 674,
+     "share_owner_occupied": 0.5994,
+     "share_non_owner_occupied_total": 0.4006
+    },
+    {
+     "nhood_code": "7003-5",
+     "label": "Holualoa",
+     "district": "North Kona",
+     "units": 206,
+     "share_owner_occupied": 0.6019,
+     "share_non_owner_occupied_total": 0.3981
+    },
+    {
+     "nhood_code": "4541A-5",
+     "label": "Honokaa-Kukuihaele CCD (mostly outside Census-designated places)",
+     "district": "Hāmākua",
+     "units": 269,
+     "share_owner_occupied": 0.6022,
+     "share_non_owner_occupied_total": 0.3978
+    },
+    {
+     "nhood_code": "2711-1",
+     "label": "Papaikou",
+     "district": "South Hilo",
+     "units": 326,
+     "share_owner_occupied": 0.6074,
+     "share_non_owner_occupied_total": 0.3926
+    },
+    {
+     "nhood_code": "1671-5",
+     "label": "Orchidlands Estates",
+     "district": "Puna",
+     "units": 133,
+     "share_owner_occupied": 0.609,
+     "share_non_owner_occupied_total": 0.391
+    },
+    {
+     "nhood_code": "2535-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 128,
+     "share_owner_occupied": 0.6094,
+     "share_non_owner_occupied_total": 0.3906
+    },
+    {
+     "nhood_code": "1673-5",
+     "label": "Orchidlands Estates",
+     "district": "Puna",
+     "units": 378,
+     "share_owner_occupied": 0.6111,
+     "share_non_owner_occupied_total": 0.3889
+    },
+    {
+     "nhood_code": "1744-1",
+     "label": "Kurtistown",
+     "district": "Puna",
+     "units": 176,
+     "share_owner_occupied": 0.6136,
+     "share_non_owner_occupied_total": 0.3864
+    },
+    {
+     "nhood_code": "2534-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 120,
+     "share_owner_occupied": 0.6167,
+     "share_non_owner_occupied_total": 0.3833
+    },
+    {
+     "nhood_code": "7611-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 220,
+     "share_owner_occupied": 0.6182,
+     "share_non_owner_occupied_total": 0.3818
+    },
+    {
+     "nhood_code": "3465-5",
+     "label": "Laupahoehoe area (partly outside the CDP)",
+     "district": "North Hilo",
+     "units": 103,
+     "share_owner_occupied": 0.6214,
+     "share_non_owner_occupied_total": 0.3786
+    },
+    {
+     "nhood_code": "7722-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 288,
+     "share_owner_occupied": 0.6215,
+     "share_non_owner_occupied_total": 0.3785
+    },
+    {
+     "nhood_code": "2311-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 135,
+     "share_owner_occupied": 0.6222,
+     "share_non_owner_occupied_total": 0.3778
+    },
+    {
+     "nhood_code": "2416-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 191,
+     "share_owner_occupied": 0.6283,
+     "share_non_owner_occupied_total": 0.3717
+    },
+    {
+     "nhood_code": "5569-5",
+     "label": "Hawi",
+     "district": "North Kohala",
+     "units": 148,
+     "share_owner_occupied": 0.6284,
+     "share_non_owner_occupied_total": 0.3716
+    },
+    {
+     "nhood_code": "7833-1",
+     "label": "Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 130,
+     "share_owner_occupied": 0.6308,
+     "share_non_owner_occupied_total": 0.3692
+    },
+    {
+     "nhood_code": "2621A-1",
+     "label": "Wainaku",
+     "district": "South Hilo",
+     "units": 101,
+     "share_owner_occupied": 0.6337,
+     "share_non_owner_occupied_total": 0.3663
+    },
+    {
+     "nhood_code": "1622D-5",
+     "label": "Ainaloa",
+     "district": "Puna",
+     "units": 763,
+     "share_owner_occupied": 0.6343,
+     "share_non_owner_occupied_total": 0.3657
+    },
+    {
+     "nhood_code": "9611-1",
+     "label": "Pahala",
+     "district": "Kaʻū",
+     "units": 426,
+     "share_owner_occupied": 0.6362,
+     "share_non_owner_occupied_total": 0.3638
+    },
+    {
+     "nhood_code": "3631-1",
+     "label": "Laupahoehoe",
+     "district": "North Hilo",
+     "units": 110,
+     "share_owner_occupied": 0.6364,
+     "share_non_owner_occupied_total": 0.3636
+    },
+    {
+     "nhood_code": "2314-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 481,
+     "share_owner_occupied": 0.6383,
+     "share_non_owner_occupied_total": 0.3617
+    },
+    {
+     "nhood_code": "4171-5",
+     "label": "Paauhau-Paauilo CCD (mostly outside Census-designated places)",
+     "district": "Hāmākua",
+     "units": 476,
+     "share_owner_occupied": 0.6408,
+     "share_non_owner_occupied_total": 0.3592
+    },
+    {
+     "nhood_code": "9426-5",
+     "label": "Discovery Harbour",
+     "district": "Kaʻū",
+     "units": 171,
+     "share_owner_occupied": 0.6433,
+     "share_non_owner_occupied_total": 0.3567
+    },
+    {
+     "nhood_code": "6565-1",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 284,
+     "share_owner_occupied": 0.6479,
+     "share_non_owner_occupied_total": 0.3521
+    },
+    {
+     "nhood_code": "1627B-5",
+     "label": "Ainaloa",
+     "district": "Puna",
+     "units": 662,
+     "share_owner_occupied": 0.6495,
+     "share_non_owner_occupied_total": 0.3505
+    },
+    {
+     "nhood_code": "7393-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 129,
+     "share_owner_occupied": 0.6512,
+     "share_non_owner_occupied_total": 0.3488
+    },
+    {
+     "nhood_code": "2812-1",
+     "label": "Honomu",
+     "district": "South Hilo",
+     "units": 155,
+     "share_owner_occupied": 0.6516,
+     "share_non_owner_occupied_total": 0.3484
+    },
+    {
+     "nhood_code": "9513-1",
+     "label": "Naalehu",
+     "district": "Kaʻū",
+     "units": 253,
+     "share_owner_occupied": 0.6522,
+     "share_non_owner_occupied_total": 0.3478
+    },
+    {
+     "nhood_code": "1553",
+     "label": "Hawaiian Paradise Park",
+     "district": "Puna",
+     "units": 610,
+     "share_owner_occupied": 0.6525,
+     "share_non_owner_occupied_total": 0.3475
+    },
+    {
+     "nhood_code": "2612-1",
+     "label": "Wainaku",
+     "district": "South Hilo",
+     "units": 169,
+     "share_owner_occupied": 0.6568,
+     "share_non_owner_occupied_total": 0.3432
+    },
+    {
+     "nhood_code": "2722A-1",
+     "label": "Papaikou",
+     "district": "South Hilo",
+     "units": 137,
+     "share_owner_occupied": 0.6569,
+     "share_non_owner_occupied_total": 0.3431
+    },
+    {
+     "nhood_code": "2259-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 117,
+     "share_owner_occupied": 0.6581,
+     "share_non_owner_occupied_total": 0.3419
+    },
+    {
+     "nhood_code": "1566-1",
+     "label": "Hawaiian Beaches",
+     "district": "Puna",
+     "units": 480,
+     "share_owner_occupied": 0.6583,
+     "share_non_owner_occupied_total": 0.3417
+    },
+    {
+     "nhood_code": "1847-5",
+     "label": "Mountain View",
+     "district": "Puna",
+     "units": 165,
+     "share_owner_occupied": 0.6606,
+     "share_non_owner_occupied_total": 0.3394
+    },
+    {
+     "nhood_code": "2634-1",
+     "label": "Paukaa / Wainaku",
+     "district": "South Hilo",
+     "units": 128,
+     "share_owner_occupied": 0.6641,
+     "share_non_owner_occupied_total": 0.3359
+    },
+    {
+     "nhood_code": "1634-5",
+     "label": "Hawaiian Acres",
+     "district": "Puna",
+     "units": 254,
+     "share_owner_occupied": 0.6654,
+     "share_non_owner_occupied_total": 0.3346
+    },
+    {
+     "nhood_code": "5431-1",
+     "label": "Kapaau",
+     "district": "North Kohala",
+     "units": 259,
+     "share_owner_occupied": 0.668,
+     "share_non_owner_occupied_total": 0.332
+    },
+    {
+     "nhood_code": "9425-5",
+     "label": "Discovery Harbour",
+     "district": "Kaʻū",
+     "units": 160,
+     "share_owner_occupied": 0.6687,
+     "share_non_owner_occupied_total": 0.3312
+    },
+    {
+     "nhood_code": "1555",
+     "label": "Hawaiian Paradise Park",
+     "district": "Puna",
+     "units": 2215,
+     "share_owner_occupied": 0.67,
+     "share_non_owner_occupied_total": 0.33
+    },
+    {
+     "nhood_code": "6426-5",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 390,
+     "share_owner_occupied": 0.6718,
+     "share_non_owner_occupied_total": 0.3282
+    },
+    {
+     "nhood_code": "8242-5",
+     "label": "Captain Cook",
+     "district": "South Kona",
+     "units": 110,
+     "share_owner_occupied": 0.6727,
+     "share_non_owner_occupied_total": 0.3273
+    },
+    {
+     "nhood_code": "7623-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 336,
+     "share_owner_occupied": 0.6756,
+     "share_non_owner_occupied_total": 0.3244
+    },
+    {
+     "nhood_code": "2769D-5",
+     "label": "Papaikou-Wailea CCD (mostly outside Census-designated places)",
+     "district": "South Hilo",
+     "units": 130,
+     "share_owner_occupied": 0.6769,
+     "share_non_owner_occupied_total": 0.3231
+    },
+    {
+     "nhood_code": "3599-1",
+     "label": "Laupahoehoe",
+     "district": "North Hilo",
+     "units": 118,
+     "share_owner_occupied": 0.678,
+     "share_non_owner_occupied_total": 0.322
+    },
+    {
+     "nhood_code": "1122-5",
+     "label": "Royal Hawaiian Estates",
+     "district": "Puna",
+     "units": 100,
+     "share_owner_occupied": 0.68,
+     "share_non_owner_occupied_total": 0.32
+    },
+    {
+     "nhood_code": "6610-5",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 372,
+     "share_owner_occupied": 0.6801,
+     "share_non_owner_occupied_total": 0.3199
+    },
+    {
+     "nhood_code": "1558",
+     "label": "Hawaiian Paradise Park",
+     "district": "Puna",
+     "units": 2507,
+     "share_owner_occupied": 0.6833,
+     "share_non_owner_occupied_total": 0.3167
+    },
+    {
+     "nhood_code": "5331-1",
+     "label": "Halaula",
+     "district": "North Kohala",
+     "units": 169,
+     "share_owner_occupied": 0.6864,
+     "share_non_owner_occupied_total": 0.3136
+    },
+    {
+     "nhood_code": "7724-1",
+     "label": "Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 136,
+     "share_owner_occupied": 0.6912,
+     "share_non_owner_occupied_total": 0.3088
+    },
+    {
+     "nhood_code": "6839-2",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 315,
+     "share_owner_occupied": 0.6921,
+     "share_non_owner_occupied_total": 0.3079
+    },
+    {
+     "nhood_code": "7641B-1",
+     "label": "Holualoa",
+     "district": "North Kona",
+     "units": 151,
+     "share_owner_occupied": 0.6954,
+     "share_non_owner_occupied_total": 0.3046
+    },
+    {
+     "nhood_code": "2521-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 533,
+     "share_owner_occupied": 0.6961,
+     "share_non_owner_occupied_total": 0.3039
+    },
+    {
+     "nhood_code": "7395-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 249,
+     "share_owner_occupied": 0.7028,
+     "share_non_owner_occupied_total": 0.2972
+    },
+    {
+     "nhood_code": "2434-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 1885,
+     "share_owner_occupied": 0.7029,
+     "share_non_owner_occupied_total": 0.2971
+    },
+    {
+     "nhood_code": "16721-5",
+     "label": "Orchidlands Estates",
+     "district": "Puna",
+     "units": 132,
+     "share_owner_occupied": 0.7045,
+     "share_non_owner_occupied_total": 0.2955
+    },
+    {
+     "nhood_code": "4199-5",
+     "label": "Paauilo area (partly outside the CDP)",
+     "district": "Hāmākua",
+     "units": 250,
+     "share_owner_occupied": 0.712,
+     "share_non_owner_occupied_total": 0.288
+    },
+    {
+     "nhood_code": "2522-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 166,
+     "share_owner_occupied": 0.7169,
+     "share_non_owner_occupied_total": 0.2831
+    },
+    {
+     "nhood_code": "7712-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 145,
+     "share_owner_occupied": 0.7172,
+     "share_non_owner_occupied_total": 0.2828
+    },
+    {
+     "nhood_code": "7641-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 170,
+     "share_owner_occupied": 0.7176,
+     "share_non_owner_occupied_total": 0.2824
+    },
+    {
+     "nhood_code": "7391B-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 285,
+     "share_owner_occupied": 0.7193,
+     "share_non_owner_occupied_total": 0.2807
+    },
+    {
+     "nhood_code": "7392-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 354,
+     "share_owner_occupied": 0.7203,
+     "share_non_owner_occupied_total": 0.2797
+    },
+    {
+     "nhood_code": "7522A-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 403,
+     "share_owner_occupied": 0.7221,
+     "share_non_owner_occupied_total": 0.2779
+    },
+    {
+     "nhood_code": "1721-5",
+     "label": "Kurtistown",
+     "district": "Puna",
+     "units": 191,
+     "share_owner_occupied": 0.7225,
+     "share_non_owner_occupied_total": 0.2775
+    },
+    {
+     "nhood_code": "2528-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 152,
+     "share_owner_occupied": 0.7368,
+     "share_non_owner_occupied_total": 0.2632
+    },
+    {
+     "nhood_code": "1848-5",
+     "label": "Mountain View",
+     "district": "Puna",
+     "units": 343,
+     "share_owner_occupied": 0.7376,
+     "share_non_owner_occupied_total": 0.2624
+    },
+    {
+     "nhood_code": "7511-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 100,
+     "share_owner_occupied": 0.74,
+     "share_non_owner_occupied_total": 0.26
+    },
+    {
+     "nhood_code": "7324-5",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 224,
+     "share_owner_occupied": 0.7411,
+     "share_non_owner_occupied_total": 0.2589
+    },
+    {
+     "nhood_code": "7591A-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 116,
+     "share_owner_occupied": 0.7414,
+     "share_non_owner_occupied_total": 0.2586
+    },
+    {
+     "nhood_code": "2536-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 129,
+     "share_owner_occupied": 0.7442,
+     "share_non_owner_occupied_total": 0.2558
+    },
+    {
+     "nhood_code": "1672A-5",
+     "label": "Orchidlands Estates",
+     "district": "Puna",
+     "units": 102,
+     "share_owner_occupied": 0.7451,
+     "share_non_owner_occupied_total": 0.2549
+    },
+    {
+     "nhood_code": "7533-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 477,
+     "share_owner_occupied": 0.7463,
+     "share_non_owner_occupied_total": 0.2537
+    },
+    {
+     "nhood_code": "8122-1",
+     "label": "Captain Cook",
+     "district": "South Kona",
+     "units": 178,
+     "share_owner_occupied": 0.7472,
+     "share_non_owner_occupied_total": 0.2528
+    },
+    {
+     "nhood_code": "2532-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 186,
+     "share_owner_occupied": 0.7473,
+     "share_non_owner_occupied_total": 0.2527
+    },
+    {
+     "nhood_code": "7391A-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 179,
+     "share_owner_occupied": 0.7486,
+     "share_non_owner_occupied_total": 0.2514
+    },
+    {
+     "nhood_code": "4521-1",
+     "label": "Honokaa",
+     "district": "Hāmākua",
+     "units": 605,
+     "share_owner_occupied": 0.7488,
+     "share_non_owner_occupied_total": 0.2512
+    },
+    {
+     "nhood_code": "2419-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 181,
+     "share_owner_occupied": 0.7514,
+     "share_non_owner_occupied_total": 0.2486
+    },
+    {
+     "nhood_code": "2331-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 133,
+     "share_owner_occupied": 0.7519,
+     "share_non_owner_occupied_total": 0.2481
+    },
+    {
+     "nhood_code": "6821-1",
+     "label": "Waikoloa Village",
+     "district": "South Kohala",
+     "units": 1829,
+     "share_owner_occupied": 0.7545,
+     "share_non_owner_occupied_total": 0.2455
+    },
+    {
+     "nhood_code": "6423-5",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 528,
+     "share_owner_occupied": 0.7595,
+     "share_non_owner_occupied_total": 0.2405
+    },
+    {
+     "nhood_code": "6422-5",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 569,
+     "share_owner_occupied": 0.7627,
+     "share_non_owner_occupied_total": 0.2373
+    },
+    {
+     "nhood_code": "7432-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 118,
+     "share_owner_occupied": 0.7627,
+     "share_non_owner_occupied_total": 0.2373
+    },
+    {
+     "nhood_code": "2429-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 399,
+     "share_owner_occupied": 0.7644,
+     "share_non_owner_occupied_total": 0.2356
+    },
+    {
+     "nhood_code": "2731-1",
+     "label": "Paukaa",
+     "district": "South Hilo",
+     "units": 115,
+     "share_owner_occupied": 0.7652,
+     "share_non_owner_occupied_total": 0.2348
+    },
+    {
+     "nhood_code": "4331-1",
+     "label": "Honokaa area (partly outside the CDP)",
+     "district": "Hāmākua",
+     "units": 158,
+     "share_owner_occupied": 0.7658,
+     "share_non_owner_occupied_total": 0.2342
+    },
+    {
+     "nhood_code": "8121-1",
+     "label": "Kealakekua",
+     "district": "South Kona",
+     "units": 118,
+     "share_owner_occupied": 0.7712,
+     "share_non_owner_occupied_total": 0.2288
+    },
+    {
+     "nhood_code": "7391-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 473,
+     "share_owner_occupied": 0.7759,
+     "share_non_owner_occupied_total": 0.2241
+    },
+    {
+     "nhood_code": "7411-1",
+     "label": "Kailua (Kona)",
+     "district": "North Kona",
+     "units": 278,
+     "share_owner_occupied": 0.777,
+     "share_non_owner_occupied_total": 0.223
+    },
+    {
+     "nhood_code": "2423-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 286,
+     "share_owner_occupied": 0.7797,
+     "share_non_owner_occupied_total": 0.2203
+    },
+    {
+     "nhood_code": "7711B-1",
+     "label": "Kahaluu-Keauhou",
+     "district": "North Kona",
+     "units": 213,
+     "share_owner_occupied": 0.784,
+     "share_non_owner_occupied_total": 0.216
+    },
+    {
+     "nhood_code": "2523-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 112,
+     "share_owner_occupied": 0.7946,
+     "share_non_owner_occupied_total": 0.2054
+    },
+    {
+     "nhood_code": "7391D-1",
+     "label": "Kaiminani",
+     "district": "North Kona",
+     "units": 186,
+     "share_owner_occupied": 0.7957,
+     "share_non_owner_occupied_total": 0.2043
+    },
+    {
+     "nhood_code": "2821-1",
+     "label": "Pepeekeo",
+     "district": "South Hilo",
+     "units": 477,
+     "share_owner_occupied": 0.8071,
+     "share_non_owner_occupied_total": 0.1929
+    },
+    {
+     "nhood_code": "8220-1",
+     "label": "Captain Cook",
+     "district": "South Kona",
+     "units": 120,
+     "share_owner_occupied": 0.8083,
+     "share_non_owner_occupied_total": 0.1917
+    },
+    {
+     "nhood_code": "6824-1",
+     "label": "Waikoloa Village",
+     "district": "South Kohala",
+     "units": 174,
+     "share_owner_occupied": 0.8103,
+     "share_non_owner_occupied_total": 0.1897
+    },
+    {
+     "nhood_code": "6231-1",
+     "label": "Waimea",
+     "district": "South Kohala",
+     "units": 122,
+     "share_owner_occupied": 0.8115,
+     "share_non_owner_occupied_total": 0.1885
+    },
+    {
+     "nhood_code": "1725-5",
+     "label": "Kurtistown",
+     "district": "Puna",
+     "units": 270,
+     "share_owner_occupied": 0.8148,
+     "share_non_owner_occupied_total": 0.1852
+    },
+    {
+     "nhood_code": "2511-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 104,
+     "share_owner_occupied": 0.8173,
+     "share_non_owner_occupied_total": 0.1827
+    },
+    {
+     "nhood_code": "2425-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 121,
+     "share_owner_occupied": 0.8182,
+     "share_non_owner_occupied_total": 0.1818
+    },
+    {
+     "nhood_code": "2428-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 107,
+     "share_owner_occupied": 0.8224,
+     "share_non_owner_occupied_total": 0.1776
+    },
+    {
+     "nhood_code": "2422-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 1130,
+     "share_owner_occupied": 0.8239,
+     "share_non_owner_occupied_total": 0.1761
+    },
+    {
+     "nhood_code": "2421-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 111,
+     "share_owner_occupied": 0.8288,
+     "share_non_owner_occupied_total": 0.1712
+    },
+    {
+     "nhood_code": "2561-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 216,
+     "share_owner_occupied": 0.838,
+     "share_non_owner_occupied_total": 0.162
+    },
+    {
+     "nhood_code": "2526",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 168,
+     "share_owner_occupied": 0.8452,
+     "share_non_owner_occupied_total": 0.1548
+    },
+    {
+     "nhood_code": "2433-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 521,
+     "share_owner_occupied": 0.8522,
+     "share_non_owner_occupied_total": 0.1478
+    },
+    {
+     "nhood_code": "X999",
+     "label": "North Kona CCD (spread across several places)",
+     "district": "North Kona",
+     "units": 689,
+     "share_owner_occupied": 0.8578,
+     "share_non_owner_occupied_total": 0.1422
+    },
+    {
+     "nhood_code": "5321-1",
+     "label": "Kapaau",
+     "district": "North Kohala",
+     "units": 162,
+     "share_owner_occupied": 0.8765,
+     "share_non_owner_occupied_total": 0.1235
+    },
+    {
+     "nhood_code": "2422-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 162,
+     "share_owner_occupied": 0.8889,
+     "share_non_owner_occupied_total": 0.1111
+    },
+    {
+     "nhood_code": "2431-1",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 152,
+     "share_owner_occupied": 0.8947,
+     "share_non_owner_occupied_total": 0.1053
+    },
+    {
+     "nhood_code": "2426-5",
+     "label": "Hilo",
+     "district": "South Hilo",
+     "units": 169,
+     "share_owner_occupied": 0.9645,
+     "share_non_owner_occupied_total": 0.0355
+    }
+   ],
+   "probable_multi_unit_tmks": {
+    "tmks": 1029,
+    "improved": 702,
+    "by_pitt": {
+     "Multiple codes for a single TMK (999)": 383,
+     "Apartment (200)": 646
+    },
+    "with_at_least_one_home_exemption": 270,
+    "total_assessed_value_usd": 12417628100,
+    "by_district_tmks": {
+     "Puna": 55,
+     "South Hilo": 331,
+     "North Hilo": 6,
+     "Hāmākua": 23,
+     "North Kohala": 27,
+     "South Kohala": 145,
+     "North Kona": 341,
+     "South Kona": 66,
+     "Kaʻū": 35
+    },
+    "note": "Condominium and other multi-unit TMKs carry the summed values and exemptions of all their units, and the Homeowner flag is Y when any unit has a home exemption, so unit-level occupancy cannot be measured from this layer. The official State summary counts 8,727 Apartment-class records in Hawaii County for TY2026-27 against the layer's 646 Apartment-coded TMKs."
+   },
+   "note_tmks_with_exemptions_above_300K": {
+    "owner_occupied_parcels_with_partial_exemptions_above_300K": 343,
+    "note": "Above the largest single home-exemption amounts seen (about $275K); likely two or more home exemptions on one TMK (e.g. CPR'd lots). Counted once."
+   },
+   "note_flag_N_with_home_exemption_like_amounts": {
+    "parcels": 606,
+    "share_of_universe": 0.0091,
+    "max_district_shift_points_if_reclassified": 2.22,
+    "note": "Homeowner flag N but the exemption equals a common home-exemption amount ($150K, $185K, $190K, $205K, $210K, $225K or $275K); possibly a flag/exemption timing difference. Left as non-owner-occupied; reclassifying them would raise owner-occupied shares by the points shown at most."
+   },
+   "sensitivity_fully_exempt_counted_as_non_owner_occupied": {
+    "fully_exempt_parcels": 3822,
+    "by_district": {
+     "Puna": 696,
+     "South Hilo": 1446,
+     "North Hilo": 42,
+     "Hāmākua": 108,
+     "North Kohala": 76,
+     "South Kohala": 565,
+     "North Kona": 675,
+     "South Kona": 87,
+     "Kaʻū": 127
+    },
+    "top_nhood_codes": {
+     "2125-1": 427,
+     "7413-1": 402,
+     "2264-1": 292,
+     "6183-1": 161,
+     "2159-5": 124,
+     "6426-5": 116
+    },
+    "share_owner_occupied_if_included": 0.5965
+   },
+   "homeowner_flag_in_excluded_classes": {
+    "class:Conservation (600) (homeowner flag Y)": 50,
+    "class:Commercial (300) (homeowner flag Y)": 60
+   },
+   "reconciliation_with_official_TY2026_27": {
+    "layer_tmks_with_homeowner_flag_Y_all_classes": 42485,
+    "official_homeowner_class_records": 45162,
+    "official_home_exemptions": 46232,
+    "note": "The official counts are per tax record (condo units counted individually); the layer is per 9-digit TMK, so the layer has fewer homeowner TMKs than official homeowner records."
+   }
+  },
+  "district_verification": {
+   "hawaii_county": {
+    "official_layer": "County of Hawaii Hawaii_Co_Judicial_Districts (NAME, NUMBER)",
+    "number_to_name": [
+     {
+      "number": "1",
+      "name": "Puna"
+     },
+     {
+      "number": "2",
+      "name": "South Hilo"
+     },
+     {
+      "number": "3",
+      "name": "North Hilo"
+     },
+     {
+      "number": "4",
+      "name": "Hāmākua"
+     },
+     {
+      "number": "5",
+      "name": "North Kohala"
+     },
+     {
+      "number": "6",
+      "name": "South Kohala"
+     },
+     {
+      "number": "7",
+      "name": "North Kona"
+     },
+     {
+      "number": "8",
+      "name": "South Kona"
+     },
+     {
+      "number": "9",
+      "name": "Kaʻū"
+     }
+    ],
+    "parcels_whose_centroid_falls_in_district_of_same_number_as_TMK_zone": 135454,
+    "parcels_with_centroid_outside_all_district_polygons": 38,
+    "parcels": 135642,
+    "agreement_share_of_located": 0.9989
+   },
+   "kauai": {
+    "official_layer": "County of Kauai ZonesKauaiwm (ZONEPIT, Name, ZONETEXT)",
+    "zone_to_name": [
+     {
+      "zone": 1,
+      "name": "WAIMEA",
+      "text": "Zone 1: West"
+     },
+     {
+      "zone": 2,
+      "name": "KOLOA",
+      "text": "Zone 2: South"
+     },
+     {
+      "zone": 3,
+      "name": "LIHUE",
+      "text": "Zone 3: Southeast"
+     },
+     {
+      "zone": 4,
+      "name": "KAWAIHAU",
+      "text": "Zone 4: East"
+     },
+     {
+      "zone": 5,
+      "name": "HANALEI",
+      "text": "Zone 5: North"
+     }
+    ],
+    "records_whose_centroid_falls_in_zone_polygon_matching_ZONE": 37461,
+    "records_with_centroid_outside_all_zone_polygons": 40,
+    "records": 37653,
+    "agreement_share_of_located": 0.996
+   }
+  },
+  "official_state_rpt_summary_TY2026_27": {
+   "kauai": {
+    "owner_occupied_records_(OO+OO_mixed_use)": 13623,
+    "non_owner_occupied": 8340,
+    "vacation_rental": 3969,
+    "long_term_affordable_rental": 1119,
+    "hotel_resort": 3563,
+    "residential_records_denominator": 27051,
+    "share_owner_occupied": 0.5036,
+    "share_vacation_rental": 0.1467
+   },
+   "hawaii": {
+    "homeowner": 45162,
+    "residential": 37093,
+    "apartment": 8727,
+    "long_term_rental": 880,
+    "affordable_rental": 2048,
+    "agricultural": 42759,
+    "hotel_resort": 115,
+    "residential_records_denominator_(homeowner+residential+apartment+LTR+affordable)": 93910,
+    "share_homeowner": 0.4809,
+    "caveat": "Residential-class records include vacant residential lots; agricultural-class records (42,759, incl. many homes without a home exemption and vacant ag lots) are not in the denominator. Not directly comparable with the parcel-layer figures."
+   },
+   "maui": {
+    "owner_occupied": 28387,
+    "non_owner_occupied": 14638,
+    "short_term_rental_tvr": 13234,
+    "long_term_rental": 4350,
+    "apartment": 740,
+    "commercialized_res": 145,
+    "time_share_excluded": 2447,
+    "residential_records_denominator": 61494,
+    "share_owner_occupied": 0.4616,
+    "share_short_term_rental": 0.2152
+   },
+   "raw_rows_parsed": {
+    "Residential": {
+     "honolulu": 253233,
+     "maui": 0,
+     "hawaii": 37093,
+     "kauai": 0,
+     "statewide": 290326
+    },
+    "Residential A": {
+     "honolulu": 30603,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 30603
+    },
+    "Non Owner-Occupied": {
+     "honolulu": 0,
+     "maui": 14638,
+     "hawaii": 0,
+     "kauai": 8340,
+     "statewide": 22978
+    },
+    "Commercialized Res": {
+     "honolulu": 0,
+     "maui": 145,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 145
+    },
+    "Apartment": {
+     "honolulu": 0,
+     "maui": 740,
+     "hawaii": 8727,
+     "kauai": 0,
+     "statewide": 9467
+    },
+    "Commercial": {
+     "honolulu": 7025,
+     "maui": 2032,
+     "hawaii": 2134,
+     "kauai": 1068,
+     "statewide": 12259
+    },
+    "Industrial": {
+     "honolulu": 4483,
+     "maui": 874,
+     "hawaii": 1451,
+     "kauai": 492,
+     "statewide": 7300
+    },
+    "Agricultural": {
+     "honolulu": 3366,
+     "maui": 5558,
+     "hawaii": 42759,
+     "kauai": 2248,
+     "statewide": 53931
+    },
+    "Vacant Agricultural": {
+     "honolulu": 82,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 82
+    },
+    "Conservation/Preservation": {
+     "honolulu": 986,
+     "maui": 1087,
+     "hawaii": 939,
+     "kauai": 207,
+     "statewide": 3219
+    },
+    "Hotel/Resort": {
+     "honolulu": 8494,
+     "maui": 496,
+     "hawaii": 115,
+     "kauai": 3563,
+     "statewide": 12668
+    },
+    "Bed/Breakfast Home": {
+     "honolulu": 27,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 27
+    },
+    "Homeowner": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 45162,
+     "kauai": 0,
+     "statewide": 45162
+    },
+    "Owner-Occupied": {
+     "honolulu": 0,
+     "maui": 28387,
+     "hawaii": 0,
+     "kauai": 11550,
+     "statewide": 39937
+    },
+    "Homestead": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 0
+    },
+    "Public Service": {
+     "honolulu": 456,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 456
+    },
+    "Time Share": {
+     "honolulu": 0,
+     "maui": 2447,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 2447
+    },
+    "Affordable Rental": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 2048,
+     "kauai": 0,
+     "statewide": 2048
+    },
+    "Vacation Rental": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 3969,
+     "statewide": 3969
+    },
+    "Short-Term Rental/TVR": {
+     "honolulu": 0,
+     "maui": 13234,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 13234
+    },
+    "Long-Term Rental": {
+     "honolulu": 0,
+     "maui": 4350,
+     "hawaii": 880,
+     "kauai": 0,
+     "statewide": 5230
+    },
+    "Transient Vacation": {
+     "honolulu": 2048,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 0,
+     "statewide": 2048
+    },
+    "Owner-Occupied Mixed Use": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 2073,
+     "statewide": 2073
+    },
+    "Long-Term Affordable Rental": {
+     "honolulu": 0,
+     "maui": 0,
+     "hawaii": 0,
+     "kauai": 1119,
+     "statewide": 1119
+    },
+    "TOTAL": {
+     "honolulu": 310803,
+     "maui": 73988,
+     "hawaii": 141308,
+     "kauai": 34629,
+     "statewide": 560728
+    }
+   },
+   "home_exemptions_by_type": {
+    "Homes - Fee - Basic": {
+     "honolulu": {
+      "number": 142144,
+      "amount_thousands": 20059991
+     },
+     "maui": {
+      "number": 25029,
+      "amount_thousands": 7292194
+     },
+     "hawaii": {
+      "number": 16087,
+      "amount_thousands": 2012122
+     },
+     "kauai": {
+      "number": 13509,
+      "amount_thousands": 3188961
+     },
+     "statewide": {
+      "number": 196769,
+      "amount_thousands": 32553267
+     }
+    },
+    "Homes - Fee - Multiple": {
+     "honolulu": {
+      "number": 1,
+      "amount_thousands": 160
+     },
+     "maui": {
+      "number": 2174,
+      "amount_thousands": 626961
+     },
+     "hawaii": {
+      "number": 30097,
+      "amount_thousands": 5170303
+     },
+     "kauai": {
+      "number": 0,
+      "amount_thousands": 0
+     },
+     "statewide": {
+      "number": 32272,
+      "amount_thousands": 5797425
+     }
+    },
+    "Homes - Leasehold - Basic": {
+     "honolulu": {
+      "number": 10590,
+      "amount_thousands": 1663343
+     },
+     "maui": {
+      "number": 311,
+      "amount_thousands": 87923
+     },
+     "hawaii": {
+      "number": 48,
+      "amount_thousands": 7492
+     },
+     "kauai": {
+      "number": 297,
+      "amount_thousands": 71881
+     },
+     "statewide": {
+      "number": 11246,
+      "amount_thousands": 1830638
+     }
+    },
+    "Homes - Leasehold - Multiple": {
+     "honolulu": {
+      "number": 0,
+      "amount_thousands": 0
+     },
+     "maui": {
+      "number": 78,
+      "amount_thousands": 21848
+     },
+     "hawaii": {
+      "number": 0,
+      "amount_thousands": 0
+     },
+     "kauai": {
+      "number": 0,
+      "amount_thousands": 0
+     },
+     "statewide": {
+      "number": 78,
+      "amount_thousands": 21848
+     }
+    }
+   },
+   "home_exemptions_total_number": {
+    "honolulu": 152735,
+    "maui": 27592,
+    "hawaii": 46232,
+    "kauai": 13806,
+    "statewide": 240365
+   }
+  },
+  "comparison_with_report_figures": {
+   "maui_county_from_owners_neighbor_json": {
+    "residential_parcels_classes_1_2_9_10_11_12": 64795,
+    "owned_from_outside_hawaii_share_(report_30.6%)": 0.3059,
+    "owner_occupied_class_9_share": 0.4478,
+    "owner_occupied_class_9_plus_10_share": 0.4502,
+    "short_term_rental_class_11_share": 0.2113,
+    "other_non_owner_occupied_classes_1_2_12_share": 0.3385,
+    "non_owner_occupied_residential_parcels_classes_1_2_11_12": 35626,
+    "of_which_mailing_outside_hawaii_share": 0.5379,
+    "of_which_mailing_in_hawaii_share": 0.4621,
+    "homeowner_flag_Y_parcels_certified_roll": 29003,
+    "homeowner_flag_Y_mailing_outside_hawaii_share": 0.0272
+   },
+   "oahu_from_owners_oahu_json": {
+    "hawaii_addressed_residential_parcels_with_any_exemption_share_(report_62%)": 0.6206,
+    "all_addressed_residential_class1_parcels": 280994,
+    "all_addressed_residential_class1_with_any_exemption_share": 0.574,
+    "residential_parcels_without_any_exemption": 119715,
+    "of_which_hawaii_addressed_share": 0.8167,
+    "caveat": "Oahu measure is any land/building exemption on residential tax-class parcels (home exemptions dominate but are not separated); not the same as an owner-occupied tax class."
+   },
+   "plain_english": "Non-owner-occupied means the parcel has no home exemption / owner-occupied class. That includes local landlords, long-term rentals, homes held by relatives or trusts, vacation rentals and second homes. It is NOT the same as off-island ownership: on Maui, where mailing addresses are public, 46% of non-owner-occupied residential parcels have a Hawaii mailing address; on Oahu 82% of residential parcels without any exemption do. Kauai and Hawaii County owner mailing addresses are not public, so their non-owner-occupied shares must not be read as out-of-state shares."
+  }
+ },
+ "verification": {
+  "verified": "2026-10-09",
+  "by": "independent re-derivation (pull/up_occupancy_kh/verify.py) plus a second skeptic pass",
+  "result": "All headline figures reproduced. Corrections applied in this file: one Kauai class-11 record that appears twice in the county layer is dropped (universe 27,097; shares move by less than 0.01 point); the catch-all Hawaii County neighborhood code X999 is no longer labelled as mostly outside Census places; the State-summary reconciliation note no longer asserts a cause.",
+  "open_items": [
+   "Some sub-counts of 1-19 inside the district and zone-section detail (for example North Hilo multi-unit lots, the Kauai federal fully exempt count, owner-type mixes) are not flagged individually. Do not quote any count under 20 as a rate."
+  ]
+ }
+}

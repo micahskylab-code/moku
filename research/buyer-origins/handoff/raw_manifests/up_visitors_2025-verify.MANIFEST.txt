@@ -1,0 +1,7 @@
+# MANIFEST raw/up_visitors_2025-verify (verifier re-pull for KEY visitors_2025)
+# file | url | downloaded_utc | http | bytes | sha256
+tourism_annual-reports_2025-annual-visitor.xlsx | https://files.hawaii.gov/dbedt/economic/tourism/annual-reports/2025-annual-visitor.xlsx | 2026-10-09T01:37:19Z | 200 | 1171485 | 08b54f4bd135e94b2df5f96fd02e9d928cb21958c0a7dafd22c031311726175c
+archive_tourism_annual-reports_2024-annual-visitor.xlsx | https://files.hawaii.gov/dbedt/economic/archive/tourism/annual-reports/2024-annual-visitor.xlsx | 2026-10-09T01:37:19Z | 200 | 1223704 | 86bf9ca5711671f3a4333bba15a0da06d70df361269c68d8951cf94acad0a35c
+tourism_annual-reports_2024-annual-visitor.xlsx (404 body) | https://files.hawaii.gov/dbedt/economic/tourism/annual-reports/2024-annual-visitor.xlsx | 2026-10-09T01:37:20Z | 404 | 196 | 80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880
+archive_2023-annual-visitor.xlsx | https://files.hawaii.gov/dbedt/economic/archive/tourism/annual-reports/2023-annual-visitor.xlsx | 2026-10-09T01:41:50Z | 200 | 1238032 | 0b7eb98efd50bbf95e585a30040f1549ea4858e89e87b6eec276220e26530d76
+archive_2022-annual-visitor.xlsx | https://files.hawaii.gov/dbedt/economic/archive/tourism/annual-reports/2022-annual-visitor.xlsx | 2026-10-09T01:41:50Z | 200 | 1194549 | 594f45b75a77ba02191b774a8f4353fd5a57261d1e357c454ccb73f9a0782a65

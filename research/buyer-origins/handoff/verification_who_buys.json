@@ -1,0 +1,671 @@
+[
+ {
+  "key": "oahu_join",
+  "summary": "The join finished, but two things limit it. The sales file has no 2026 sales (the last one is 2025-09-26), so 2026 YTD cannot be measured; 2025 is thin after April. And the file holds only about half of Title Guaranty's Oahu sales (53% in 2023, 48% in 2024, 17% in 2025).\n\n**Output:** `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/who/oahu_join.json` (has `source`, `method`, `notes`, `results.headline`; no names, street addresses or parcel ids)\n**Script:** `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/who_oahu_join/join.py` (run with `python3 -I`)\n\n**How it was built:**\n- **Sales:** sales dated 2023-01-01 or later at $50K or more. The file's keys are 13 digits (county digit '1' plus the 12-digit TMK), so the leading '1' was dropped to match the owner roll.\n- **Deals:** sales were grouped by price, date and the first 8 TMK digits (16 multi-parcel groups). I also merged deals in different plats that share price, date and the current owner's mailing address (25 portfolio deals, 17 of them $3M+).\n- **Current owner:** a deal is kept only if it is still the parcel's most recent sale (154 later resales dropped).\n- **Owner address:** the structured state/country/ZIP fields were used for 96.6% of deals, otherwise the free-text address. Where both exist they agree 100% on category.\n- **Exclusions:** 161 deals at mailing addresses shared by 10+ parcels are reported separately as institutional. All breakdowns use housing only (residential class plus resort condo units). 259 commercial, industrial and farm deals were left out of the breakdowns because they distorted the $10M+ tier; one example is a $499M resort sale. Tax-class labels are inferred, because the county layer has no code lookup.\n\n**Key figures** (2023\u20132025 housing deals, institutional addresses excluded; shares are Hawaii / mainland / foreign):\n1. **Overall**, 11,851 deals: Hawaii 83.9% (82.9% Oahu ZIPs, 1.0% neighbor-island), mainland 13.8%, foreign 2.1%, territory/military 0.2%. Weighted by price it is 81.8 / 15.2 / 2.9.\n2. **Houses vs condos** (condo = CPR unit suffix other than 0000): houses (3,808 deals) are 92.2 / 7.5 / 0.2; condos (8,043 deals) are 80.0 / 16.8 / 2.9.\n3. **Price tiers** (by deal price):\n\n| Tier | Deals | Hawaii | Mainland | Foreign |\n|---|---|---|---|---|\n| Under $750K | 5,888 | 82.9% | 14.9% | 1.9% |\n| $750K\u20131.5M | 4,511 | 86.8% | 11.2% | 1.8% |\n| $1.5M\u20133M | 1,183 | 81.7% | 15.2% | 3.0% |\n| $3M\u201310M | 255 | 68.6% | 26.3% | 5.1% |\n| $10M+ | 14 (fewer than 20, indicative only) | 35.7% | 42.9% | 21.4% |\n\n4. **Tier by type:** condos at $1.5\u20133M (324 deals) are 67.3 / 22.8 / 9.6. Condos at $3\u201310M (66 deals) are 53.0 / 30.3 / 16.7. Houses at $3\u201310M (189 deals) are 74.1 / 24.9 / 1.1.\n5. **Areas:**\n   - Waikiki (TMK zone 2, section 6), 1,666 deals: 52.8 / 39.8 / 6.9.\n   - Koolauloa (zone 5), 178 deals: 70.2% Hawaii, 29.2% mainland.\n   - Ewa side (zone 9), 3,830 deals: 94.1 / 5.5 / 0.2.\n   - The file also has 23 ZIPs with at least 40 deals, each with place labels.\n6. **$3M+**, 269 deals: 66.9 / 27.1 / 6.0. The 73 mainland buyers come mostly from the San Francisco Bay Area (16), Los Angeles (12) and Seattle (8). Japan is 14 of the 16 foreign buyers. Twelve $3M+ deals at institutional addresses, all Oahu addresses, are excluded.\n7. **Where buyers come from:**\n   - California is 53.3% of mainland buyers (872 of 1,636). By metro, using an approximate ZIP3 map: Bay Area 26.2%, Los Angeles 16.9%, Seattle 6.6%.\n   - Japan is 67.8% of foreign buyers (166 of 245), Canada 13.5%, Korea 11.0%.\n   - Neighbor-island buyers: 120 (Hawaii Island 52, Maui County 49, Kauai 19).\n8. **Calibration against Title Guaranty Oahu:**\n   - **2025:** our mix is 83.9 / 14.0 / 2.1 (1,796 deals) vs TG's 82.9 / 13.9 / 3.2. TG's own counts give 3.2% foreign, not the 3.3% in the brief. The gap is +1.0 / +0.2 / \u22121.1 points.\n   - **2024**, the most complete year: +3.7 / \u22122.1 / \u22121.6.\n   - **January\u2013June 2025**, a like-for-like window: +2.1 / \u22121.3 / \u22120.8. So the close 2025 full-year match is partly coincidence.\n9. **Likely causes of the gap:**\n   - **Missing developer sales:** 9,557 new condo units created since late 2023 are on the roll, but only 515 appear in the sales file. Their owners are 4.3% foreign, against 2.1% in the joined sales. Adding them would move the overall foreign share only about +0.3 points, so this explains part of the foreign gap, not the Hawaii one.\n   - **Mainland movers (inferred, not measured):** TG records the buyer's address at closing; the roll shows today's tax-bill address. Households that move to Oahu after buying show up as Hawaii here. The mainland shortfall is concentrated in the suburbs: \u22123.0 points in Leeward/Central and \u22123.1 in Windward/North Shore in 2024.\n   - **Trusts, LLCs and local agents:** 41% of Hawaii-address condo buyers claim no exemption of any kind. Owner names were not pulled, so trusts and LLCs can't be identified directly.\n   - **Not the cause:** counting parcels instead of deals changes shares by 0.1 points or less. Including or excluding institutional addresses changes them by 0.3 points or less.\n   - **Recommendation:** use Title Guaranty for island-wide levels and this join for comparing micro-markets.\n10. **Owner-occupancy:** among 2023\u201324 buyers on residential land, 62% of Hawaii-address buyers have a tax exemption on the parcel. For mainland buyers it is 5.3%; for foreign buyers, 1.7%.\n\nAll cells with fewer than 20 deals are flagged in the file (26 cells).",
+  "verify": {
+   "key": "oahu_join",
+   "checked": [
+    {
+     "claim": "Funnel: 12,513 sale records from 2023 on at $50K or more (4 under $50K dropped); 13-digit keys with the leading '1' stripped; 12,495 deals; 16 multi-parcel groups; latest sale 2025-09-26",
+     "ok": true,
+     "recomputed": "12,513 / 4 / 12,495 / 16; every key is 13 digits starting with '1'; 99.95% of the 12-digit ids are on the roll; max date 2025-09-26; the sales sha256 matches",
+     "note": "The puller grouped on the first 8 digits of the 12-digit TMK (zone, section, plat, parcel), which is right. Using the first 8 digits of the 13-digit key instead would give 28 multi-parcel groups."
+    },
+    {
+     "claim": "Most-recent-sale rule: 154 deals resold later were dropped (124 from 2023, 28 from 2024, 2 from 2025); 6 deals are not on the roll and 6 are condo-master records",
+     "ok": true,
+     "recomputed": "154 (124/28/2), 6, 6. No 2023+ parcel has two sales on the same latest date, and no 2023+ sale is superseded only by a later sale under $50K.",
+     "note": "The rule can only see resales that are in the file. See problems."
+    },
+    {
+     "claim": "Portfolio merge: 25 deals merged (6 upper, 2 mid, 9 luxury, 8 ultra; 17 at $3M+)",
+     "ok": true,
+     "recomputed": "25 (6/2/9/8). Only 2 of them are in the housing sample with institutional addresses excluded, and the $3M\u201310M and $10M+ mixes are the same with or without the merge.",
+     "note": "One merged group mixes class 6 and class 7 parcels. Both are institutional and outside housing, so it has no effect."
+    },
+    {
+     "claim": "Institutional exclusion: 161 housing deals at 57 addresses shared by 10+ parcels; 91% Hawaii-addressed; 12 $3M+ deals, all at Oahu addresses",
+     "ok": true,
+     "recomputed": "161 deals / 57 addresses; 147 Hawaii and 14 mainland (91.3%); 12 at $3M+, all Oahu ZIPs",
+     "note": "By address shape (deal-weighted): 77 have a C/O line plus a unit, 39 a unit only, 41 a plain street, 4 a PO box. Only 6 deals sit at an address whose parcels are mostly in one building. 0.6% carry an exemption. This looks like property managers or trustees, as described."
+    },
+    {
+     "claim": "Housing filter: 259 commercial, industrial, farm, preservation and whole-hotel deals left out; tax class 7 = Hotel & Resort (inferred)",
+     "ok": true,
+     "recomputed": "260 in my run (one extra deal from a parser difference); every deal matched an ASMTPITT record. Class 7 condo-unit deals are in situs ZIPs 96815 (443) and 96814 (208), which fits resort condos.",
+     "note": "Leaving out 28 houses in class 5 or 6 (ag or preservation land), 5 of them at $3M+, moves the $3M+ mix by 0.3 points or less."
+    },
+    {
+     "claim": "Tier boundaries: under $750K, $750K\u20131.5M, $1.5M\u20133M, $3M\u201310M, $10M+",
+     "ok": true,
+     "recomputed": "Deals exactly at the boundaries fall in the upper tier: $750K (75 deals) to mid, $1.5M (59) to upper, $3M (11) to luxury, $10M (1) to ultra"
+    },
+    {
+     "claim": "KEY 1: overall 11,851 deals; Hawaii 83.9% (82.9% Oahu, 1.0% neighbor islands), mainland 13.8%, foreign 2.1%, territory/military 0.2%; by dollars 81.8 / 15.2 / 2.9",
+     "ok": true,
+     "recomputed": "11,852 deals: 83.9 (82.9 + 1.0) / 13.8 / 2.1 / 0.2; by dollars 81.8 / 15.2 / 2.8 (the file stores 0.0285)",
+     "note": "The 1-deal difference comes from my independent address parser. Across all deals the two classifiers differ on only 4, each by one deal."
+    },
+    {
+     "claim": "KEY 2: houses (3,808) 92.2 / 7.5 / 0.2; condos (8,043) 80.0 / 16.8 / 2.9",
+     "ok": true,
+     "recomputed": "Houses 3,809: 92.2 / 7.5 / 0.3 (one 'AS' country code my parser wrongly counted as foreign; the puller correctly counts it as a US territory). Condos 8,043: 80.0 / 16.8 / 2.9."
+    },
+    {
+     "claim": "KEY 3: tier table: entry 5,888 82.9/14.9/1.9; mid 4,511 86.8/11.2/1.8; upper 1,183 81.7/15.2/3.0; luxury 255 68.6/26.3/5.1; ultra 14 35.7/42.9/21.4 (flagged)",
+     "ok": true,
+     "recomputed": "5,889 82.9/14.9/1.9; 4,512 86.8/11.2/1.8; 1,182 81.8/15.2/2.9; 255 68.6/26.3/5.1; 14 35.7/42.9/21.4",
+     "note": "The \u00b11 differences are the parser edge cases (Panama, a Canadian postcode, one fallback address)."
+    },
+    {
+     "claim": "KEY 4: condos at $1.5\u20133M (324) 67.3/22.8/9.6; condos at $3\u201310M (66) 53.0/30.3/16.7; houses at $3\u201310M (189) 74.1/24.9/1.1",
+     "ok": true,
+     "recomputed": "323 at 67.5/22.9/9.3 (my parser missed a Panama address the puller caught, so the puller is right); 66 at 53.0/30.3/16.7; 189 at 74.1/24.9/1.1"
+    },
+    {
+     "claim": "KEY 5: Waikiki (TMK 2-6) 1,666: 52.8/39.8/6.9; Koolauloa (zone 5) 178: 70.2/29.2; Ewa (zone 9) 3,830: 94.1/5.5/0.2; 23 ZIPs with at least 40 deals",
+     "ok": true,
+     "recomputed": "1,667: 52.8/39.8/7.0; 178: 70.2/29.2/0.6; 3,830: 94.1/5.5/0.2; 23 ZIPs. Spot checks of ZIPs 96815, 96813, 96814, 96825, 96706 and 96734 match within one deal."
+    },
+    {
+     "claim": "KEY 6: $3M+ 269 deals: 66.9/27.1/6.0; mainland 73 (Bay Area 16, Los Angeles 12, Seattle 8); Japan 14 of 16 foreign",
+     "ok": true,
+     "recomputed": "269: 66.9/27.1/5.9; 73 mainland: Bay Area 16, LA 12, Seattle 8; Japan 14 of 16 foreign",
+     "note": "The exact foreign share is 16/269 = 5.95%. The summary's 6.0 comes from rounding twice."
+    },
+    {
+     "claim": "KEY 7: California 53.3% of mainland (872/1,636); Bay Area 26.2%, LA 16.9%, Seattle 6.6%; Japan 67.8% (166/245), Canada 13.5%, Korea 11.0%; neighbor-island buyers 52 Hawaii Island / 49 Maui County / 19 Kauai",
+     "ok": true,
+     "recomputed": "872/1,636 = 53.3%; 429 / 276 / 108 = 26.2 / 16.9 / 6.6 (same ZIP3 ranges); Japan 166 of 246 (67.5%), Canada 34 (one extra Canadian-postcode deal in my run), Korea 27 (11.0%); 52 / 49 / 19"
+    },
+    {
+     "claim": "KEY 8: Title Guaranty calibration gaps: 2025 +1.0/+0.2/\u22121.1 (n=1,796; TG 82.9/13.9/3.2); 2024 +3.7/\u22122.1/\u22121.6; January\u2013June 2025 +2.1/\u22121.3/\u22120.8",
+     "ok": true,
+     "recomputed": "2025 +1.0/+0.2/\u22121.1 with TG 9,202/1,539/356 of 11,097; 2024 +3.7/\u22122.1/\u22121.6 (n=4,974); January\u2013June 2025 +2.1/\u22121.2/\u22120.8 (n=1,644; the exact \u22121.25 rounds either way)"
+    },
+    {
+     "claim": "KEY 10: share with any exemption, 2023\u201324 class-1 buyers: Hawaii 62%, mainland 5.3%, foreign 1.7%",
+     "ok": true,
+     "recomputed": "62.1% (n=8,198), 5.3% (n=1,137), 1.7% (n=121)"
+    },
+    {
+     "claim": "Coverage vs Title Guaranty: 53% (2023), 48% (2024), 17% (2025)",
+     "ok": true,
+     "recomputed": "All-property deals including institutional, over TG sales: 53.5% / 48.2% / 17.1%. The housing sample gives 52.3 / 47.5 / 16.5.",
+     "note": "The calibration block's housing coverage field is 2023 0.5228. The 53/48/17 in the notes is on the all-property basis."
+    },
+    {
+     "claim": "District gaps (other-US, 2024): Leeward+Central \u22123.0; Windward+North Shore \u22123.1; urban Honolulu (zones 1\u20133) foreign 3.2% vs TG 6.1%",
+     "ok": true,
+     "recomputed": "Zones 7\u20139 2024 +3.2/\u22123.0/\u22120.1; zones 4\u20136 2024 +3.0/\u22123.1/+0.1 and 2025 +6.5/\u22127.2/+0.6; zones 1\u20133 2024 +3.9/\u22121.1/\u22122.9"
+    },
+    {
+     "claim": "Notes: 41% of Hawaii-address class-1 condo buyers have no exemption; 77% of Oahu-address condo buyers have a mailing ZIP equal to the unit's ZIP; 209 of 8,043 condo deals are on TMKs with 2\u20134 units; California is 53% of 2024\u201325 mainland buyers vs 44% at TG; Japan is 63% of foreign vs 64% at TG",
+     "ok": true,
+     "recomputed": "41.3%; 77.3%; 209/8,043; 53.0% vs 43.9%; 63.5% vs 64.4%"
+    },
+    {
+     "claim": "By year: 5,082 / 4,973 / 1,796 deals; 2026 YTD n=0 and reported as not measurable",
+     "ok": true,
+     "recomputed": "5,082 / 4,974 / 1,796; the sales file has no 2026 sales"
+    },
+    {
+     "claim": "Structured tax-bill fields and free-text addresses agree 100% on category",
+     "ok": true,
+     "recomputed": "My parser agrees with the structured fields on 11,690 of 11,691 analyzed deals that have both"
+    },
+    {
+     "claim": "Structured fields used for 96.6% of analyzed deals (method item 4)",
+     "ok": false,
+     "recomputed": "11,696 of 12,271 = 95.3% (95.2% in the housing sample)",
+     "note": "96.6% is typed into the method text as a fixed number; it is not computed from the data."
+    },
+    {
+     "claim": "KEY 9 / note CAUSE 1: 9,557 new condo units created since late 2023; only 515 in the sales file; their owners are 4.3% foreign (13.4% in zone 2); adding them raises foreign 2.1% to 2.4% (about +0.3 points)",
+     "ok": false,
+     "recomputed": "The puller's numbers reproduce under its own code (9,557; 515; 4.3%; 2.42%). But the set is 'condo units without a ZIP in the 2024 LEGDAT address layer', not 'created since late 2023'. Units truly missing from LEGDAT: 6,302, with 105 in the sales file. Their non-institutional owners (n=1,370) are 95.4% Hawaii / 4.6% mainland / 0.0% foreign. On that set the what-if lowers foreign to 1.87%.",
+     "note": "The other 3,255 units are in LEGDAT with a blank ZIP, and 272 of them have pre-2023 sales. All of the 4.3% foreign comes from this blank-ZIP group (7.9% foreign; 13.1% in 73 TMK8s with no sale before 2022)."
+    },
+    {
+     "claim": "Small cells: 26 cells under 20 flagged",
+     "ok": true,
+     "recomputed": "26 mix cells flagged; none under 20 left unflagged; none at 20 or more flagged by mistake"
+    },
+    {
+     "claim": "Privacy: no owner names, street addresses or parcel ids in the output",
+     "ok": true,
+     "recomputed": "No 8\u201313 digit run in the output is a roll parcel id or a TMK8. The long numbers are all dollar volumes. No owner address line from the roll appears verbatim. The only name/street-pattern hit is the methods word 'trustee'. No deal-level lists or dates.",
+     "note": "Medians over cells of 1\u20133 deals expose exact sale prices (see problems)."
+    },
+    {
+     "claim": "The $10M+ tier excludes a $499M resort sale",
+     "ok": true,
+     "recomputed": "The largest excluded deal is $499.3M, but its tax class is 6 (the puller's own label: inferred Preservation) and it is at an institutional address",
+     "note": "Calling it a 'resort' sale is not supported by the data used."
+    }
+   ],
+   "problems": [
+    "MATERIAL (summary item 9, note CAUSE 1). The new-construction test is labelled wrongly, and its foreign result depends on that label. The code counts condo units with no ZIP in the 2024 LEGDAT address layer, then calls them 'created since late 2023'. 3,255 of the 9,557 are in that layer with a blank ZIP, and 272 of them have sales before 2023. Units truly missing from LEGDAT number 6,302, with 105 sales in the file, not 515. Their non-institutional owners (n=1,370) are 0.0% foreign. On that set, the what-if lowers foreign to 1.87% instead of raising it to 2.42%. All of the 4.3% foreign share (13.4% in zone 2) comes from the blank-ZIP units, mostly 73 TMK8s with no sale before 2022, likely towers created about 2022\u201323. The note also calls n=2,963 'missing from the sales file', but 502 of them are in it (2,461 are missing). The 'explains about 0.3 pt of the foreign gap' claim needs restating as a test of towers created about 2022\u201323, not since late 2023.",
+    "PRIVACY (quasi-identifying). Median prices are printed for cells with 1\u20133 deals, 17 times. Examples: ZIP 96821, foreign, n=1, median $13,000,000; the $10M+ tier, foreign, n=3, median $13.0M; zone 1, foreign, n=1, $330,000; ZIP 96744, foreign, n=1, $1.57M. These sub-cells are not flagged as small. A median of one deal is that deal's exact price, which links a findable public sale to its buyer's origin. No names, addresses or parcel ids are output, so the stated rule is technically met, but medians should be suppressed (or at least flagged) for n<5, ideally n<20.",
+    "UNDISCLOSED CAVEAT (most-recent-sale rule). The rule only catches resales that are in the file. The file holds about 50% of TG's sales in 2023\u201324 and 17% in 2025, and has nothing after 2025-09-26, but the roll is dated 2026-10-05. So some 'current owners' are later buyers who were never seen. 2.3% of 2023 deals already show a resale inside the file, so the true share is likely a few percent. The notes discuss only deed-processing lag ('unprocessed deeds should not matter') and the 154 resales they did detect, not undetected resales.",
+    "MINOR (documentation). Method item 4 says the structured tax-bill fields were used for '96.6% of analyzed deals'. The number is typed in, not computed. The file's own counts give 11,696 of 12,271 = 95.3% (95.2% in the housing sample).",
+    "MINOR (dedupe the brief requires). 11 of the 16 multi-parcel groups (8 in the housing sample) are two condo units in the same building whose current owners have different mailing addresses. They are probably separate buyers who happened to close on the same date at the same price, so most '16 multi-parcel deals' are not real multi-parcel deals. The effect is under 0.1 point, and the rule follows the brief.",
+    "MINOR (wording). The '$499M resort sale' given as the reason for the housing filter has tax class 6, which the puller itself labels as inferred Preservation. It is also at an institutional address, so it only affects the all-property block that includes institutional deals.",
+    "TRIVIAL (rounding). The summary reports $3M+ foreign as 6.0%, but 16/269 = 5.95%, i.e. 5.9% when rounded once; 6.0 comes from rounding the stored 0.0595 again. The overall dollar-weighted foreign '2.9' likewise comes from the stored 0.0285. Also note: $10M+ dollar shares depend on one $65.75M zone-3 house, about 26% of that tier's volume, priced at 2.75 times its assessed value. The cell is already flagged as small."
+   ]
+  }
+ },
+ {
+  "key": "maui_join",
+  "summary": "About 57% of Maui County home sales go to buyers who don't qualify for the homeowner exemption. That share climbs with price: around half at $800K\u20131.5M, about 81% at $3\u201310M and about 89% above $10M (FY2024\u201326).\n\nPart (b) could not be done as asked. None of the Maui parcel files has a last-sale date or price, and the county's sales file exists here only in aggregated form, so recent sales can't be joined to owner mailing addresses. Instead I report two things:\n- **Who owns now:** the mailing-address origin of all 64,795 residential parcels. This is ownership, not buying, and is labelled that way.\n- **Who bought recently (a stand-in):** parcels whose owner name changed between the April 2026 tax roll and the live 2026-10-04 parcel map. This is my own inference, not a recorded-sales measure.\n\n**Output:** /tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/who/maui_join.json (with source, method and notes; aggregates only; cells under 20 are flagged n<20). Scripts are in /tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/who_maui_join/ (part_a.py, part_b.py, hmda_xcheck.py, assemble.py).\n\n**Key figures**\n\n1. **All residential sales, FY2026 (Jul 2025\u2013Jun 2026):** 56.7% of 2,068 sales and 61.2% of dollars went to non-homeowner buyers. \"Non-homeowner\" means the conveyance tax paid fits the higher schedule for buyers not eligible for the exemption; the share is those sales over all residential sales. Sales of whole 5+ unit buildings, vacant land and commercial property are left out.\n\n2. **By price tier, FY2024\u201326 combined:**\n\n   | Tier | Non-homeowner share | Sales | Dollar share |\n   |---|---|---|---|\n   | Entry, under $800K | 58.5% | 2,995 | 61.5% |\n   | Mid, $800K\u20131.5M | 49.6% | 2,052 | 48.9% |\n   | Upper, $1.5\u20133M | 62.8% | 1,017 | 63.1% |\n   | Luxury, $3\u201310M | 81.4% | 392 | 81.0% |\n   | Ultra, $10M+ | 88.6% | 44 | 90.1% |\n\n   The source's price bins jump from $600K to $800K, so the entry tier is cut at $800K rather than $750K.\n\n3. **Mid-tier trend ($800K\u20131.5M):** the non-homeowner share fell from 60.2% (FY2019) to 58.2% (FY2022), 53.6% (FY2024) and 45.0% (FY2026). Owner-occupants have been taking a bigger share of this tier.\n\n4. **Condo vs house, FY2024\u201326:** 71.6% of condo sales (2,866) went to non-homeowner buyers, against 38.7% of house sales (2,144). Condos at $3\u201310M were 88.8%; houses at $800K\u20131.5M were 29.6%. This uses the source's subset of arm's-length sales of improved property. \"Condo\" means every parcel in the sale is a condo/CPR unit, which also catches some CPR'd house lots.\n\n5. **Off-island ownership today:** 34.9% of residential parcels send their tax bill outside Maui County. That breaks down as 27.8% mainland, 2.8% foreign and 4.3% other Hawaii islands, so 30.6% are outside Hawaii. This is based on the 63,835 parcels with a usable mailing address on the live parcel map.\n\n6. **Ownership by type and district (share mailed outside Hawaii):**\n   - Condos 59.8%; houses 10.7%.\n   - Kaanapali\u2013Kahana\u2013Napili\u2013Kapalua 68.2%; Wailea\u2013Makena 53.6%; Kihei 45.9%.\n   - Lahaina town, Launiupoko and Olowalu 28.1%; Molokai 24.8%; Hana 21.4%; Lanai 15.2%.\n   - Haiku\u2013Paia 13.1%; Upcountry 8.0%; Kahului\u2013Wailuku 7.6%.\n\n   Districts come from the property's postal city plus the tax-map zone and section.\n\n7. **Ownership by assessed-value tier (share mailed outside Hawaii):** entry 33.1%, mid 23.8%, upper 33.8%, $3\u201310M 62.9%, $10M+ 63.1%. Tiers use the 2026 assessed land plus building value. Recent arm's-length sales went for 0.97\u20131.10 times assessed value, so these tiers roughly match price tiers.\n\n8. **Where the owners are:**\n   - California owns 8,478 parcels (47.8% of mainland-mailed parcels); Washington 2,371.\n   - Top metros: SF Bay Area 3,430, Los Angeles 2,791, Seattle 1,896, San Diego 677.\n   - Canada owns 1,583 of the 1,789 foreign-mailed parcels; Japan 95.\n   - 3,147 parcels (4.9%) share 166 mailing addresses that each receive 10+ tax bills (funds, managers, developers). The JSON gives origins separately for these and for individual-scale owners.\n\n9. **Recent buyers (owner-change stand-in):** of 952 recent acquisitions with a usable address, 64.8% mail within Hawaii (59.2% Maui County), 29.4% mainland and 5.8% foreign. Condo buyers are 53.3% non-Hawaii, house buyers 13.6%, and buyers at $3\u201310M assessed 68.1% (n=47).\n   - **How:** a parcel counts as acquired when the new owner's name shares no surname or entity word with any owner on the April 2026 roll. Leasehold, government and apparent renamings are dropped.\n   - **Check against published data:** Title Guaranty's Maui County figures for Jan\u2013Jun 2026 are 71% Hawaii, 28% other US and 1% foreign. The mainland share matches closely; my foreign share looks too high and is best read as an upper bound.\n   - **Time window:** the April roll doesn't say what date its owners are as of. The count suggests changes from roughly early 2026 to October 2026.\n\n10. **Mortgaged purchases (HMDA 2025):** only 18.9% of 694 Maui home-purchase loans were for second homes or investment, and 53.8% at $3\u201310M (n=26). Since about 57% of all sales go to non-homeowner buyers, most of them are likely paying cash.\n\n**Caveats**\n- \"Non-homeowner buyer\" does not mean \"from out of state.\" It also covers Hawaii residents who already claim an exemption elsewhere, such as local landlords or move-up buyers who haven't sold yet. About 7.8% of these purchases from FY2023\u201325 now carry a homeowner exemption, against 69.7% of homeowner purchases.\n- A mailing address is where the tax bill goes, not where the owner lives. Off-island shares are therefore a floor.\n- The tax-class labels for Maui codes are inferred, not published by the county.",
+  "verify": {
+   "key": "maui_join",
+   "checked": [
+    {
+     "claim": "Input files: SHA-256 of maui_sales_history, maui_sales_value_price, maui_sales_by_value and maui_sales_totals match the 'source' block",
+     "ok": true,
+     "recomputed": "All 4 hashes identical"
+    },
+    {
+     "claim": "FY2026 all residential: 56.7% of 2,068 sales and 61.2% of dollars went to non-homeowner (schedule 2) buyers",
+     "ok": true,
+     "recomputed": "0.5667 of 2,068; dollars 0.612 (nonowner/(owner+nonowner); 'mf' rows dropped, 'top' rows go to ultra)"
+    },
+    {
+     "claim": "FY2024-26 pooled by tier: entry 58.5% (2,995, $61.5%), mid 49.6% (2,052, $48.9%), upper 62.8% (1,017, $63.1%), $3-10M 81.4% (392, $81.0%), $10M+ 88.6% (44, $90.1%)",
+     "ok": true,
+     "recomputed": "Identical to 3 decimals",
+     "note": "The $750K cut falls inside the $600-800K bin, so entry is <$800K. The puller says so."
+    },
+    {
+     "claim": "Mid tier ($800K-1.5M) trend: FY2019 60.2%, FY2022 58.2%, FY2024 53.6%, FY2025 49.0%, FY2026 45.0%",
+     "ok": true,
+     "recomputed": "0.6023, 0.5823, 0.5364, 0.4900, 0.4500",
+     "note": "Numbers are right, but the 'how' text calls FY2022 a peak, which it isn't for this tier (see problems)."
+    },
+    {
+     "claim": "Condo vs house FY2024-26 (arm's-length improved subset): condo 71.6% (n=2,866), house 38.7% (n=2,144); condo $3-10M 88.8%; house $800K-1.5M 29.6%",
+     "ok": true,
+     "recomputed": "0.716/2,866; 0.3871/2,144; 0.8877 (n=187); 0.2958 (n=1,146)"
+    },
+    {
+     "claim": "FY2023-25 schedule-2 purchases now carrying a homeowner exemption: 7.8% (houses 18.7%, condos 3.8%); schedule-1 purchases: 69.7%",
+     "ok": true,
+     "recomputed": "0.0778 of 3,213; 0.1865; 0.0382; 0.6974 of 2,237"
+    },
+    {
+     "claim": "Multi-parcel dedupe in (a): one count per recorded document",
+     "ok": true,
+     "recomputed": "The extractor groups rows by instrument or Land Court number, so a multi-parcel deed counts once. History owner/nonowner counts match the totals file exactly in every year FY2016-26, and history nonres equals totals nonres + unmatched. 5+ unit ('mf') sales are not also in the bins, so nothing is counted twice."
+    },
+    {
+     "claim": "Tier assignment: (a) price-bin edges and (b) assessed-value cuts at $750K / 1.5M / 3M / 10M",
+     "ok": true,
+     "recomputed": "Bin edges include 1.5M, 3M and 10M; 'top' rows are all >= $10M and go to ultra. My separate (b) tiers reproduce every count to within 1 parcel."
+    },
+    {
+     "claim": "No last-sale date or price in the Maui fabric, PARCELINFO or certified-roll tables",
+     "ok": true,
+     "recomputed": "No price or date fields. Fabric LGLSTARTDT has 200-426 dates a year (90 in 2026) and 38,303 nulls, so it is not a sale date.",
+     "note": "A parcel-level Sales layer does exist on disk; see problems."
+    },
+    {
+     "claim": "Universe: 64,795 residential parcels (classes 1,2,9,10,11,12; condo masters excluded); 63,835 have a usable address",
+     "ok": true,
+     "recomputed": "64,795 residential and 80,457 parcels after removing masters; I classify 63,832 (3 fewer because I don't parse free-text addresses)"
+    },
+    {
+     "claim": "Ownership: 34.9% mail outside Maui County; 30.6% outside Hawaii (mainland 27.8%, foreign 2.8%, other islands 4.3%)",
+     "ok": true,
+     "recomputed": "0.3494 / 0.3059 / 0.2777 / 0.0280 / 0.0436. The other-island count (2,780) is genuine: Oahu 2,514, Hawaii Island 193, Kauai 71, 2 unknown."
+    },
+    {
+     "claim": "Ownership by type: condo/CPR 59.8% outside Hawaii, house 10.7%",
+     "ok": true,
+     "recomputed": "0.5983 (n=25,192); 0.1073 (n=34,725)"
+    },
+    {
+     "claim": "Ownership by district (share outside Hawaii): WM-N 68.2, Wailea-Makena 53.6, Kihei 45.9, WM-S 28.1, Molokai 24.8, Hana 21.4, Lanai 15.2, Haiku-Paia 13.1, Upcountry 8.0, Central 7.6",
+     "ok": true,
+     "recomputed": "68.2, 53.7, 45.9, 28.1, 24.8, 21.4, 15.2, 13.1, 8.0, 7.6. Every district is within 0.1pp; the puller assigns 28 no-city parcels by TMK, which I leave out."
+    },
+    {
+     "claim": "Ownership by assessed tier (share outside Hawaii): 33.1 / 23.8 / 33.8 / 62.9 / 63.1",
+     "ok": true,
+     "recomputed": "0.3314 (22,631), 0.2385 (28,978), 0.3381 (8,852), 0.6290 (3,057), 0.6306 (314)"
+    },
+    {
+     "claim": "CA 8,478 (47.8% of mainland), WA 2,371; Canada 1,583 of 1,789 foreign; Japan 95",
+     "ok": true,
+     "recomputed": "CA 8,478/17,729 = 47.8%; WA 2,371; Canada 1,583 of 1,787; Japan 95"
+    },
+    {
+     "claim": "Metros: SF Bay 3,430, LA 2,791, Seattle 1,896, San Diego 677",
+     "ok": true,
+     "recomputed": "Using rough ZIP3 ranges: Seattle 1,896 and San Diego 677 match exactly. Bay Area (3,285) and LA (2,932) are within about 5%; the gap comes from the hand-built ZIP3 map."
+    },
+    {
+     "claim": "Institutional concentration: 3,147 residential parcels (4.9%) at 166 addresses that each get 10+ tax bills",
+     "ok": true,
+     "recomputed": "3,237 at 178 with my looser address normalization; the rule counts parcels of all tax classes at an address. Leaving these parcels out moves the headline only from 34.9/30.6 to 34.1/30.5."
+    },
+    {
+     "claim": "Owner-change proxy counts: 1,365 changed private residential; 1,028 kept; 952 with a usable address",
+     "ok": true,
+     "recomputed": "1,367 / 1,029 / 953 with my own stop-word list"
+    },
+    {
+     "claim": "Proxy origin: Hawaii 64.8% (Maui 59.2%), mainland 29.4%, foreign 5.8%; condo 53.3% outside Hawaii, house 13.6%, $3-10M 68.1% (n=47)",
+     "ok": true,
+     "recomputed": "64.7 / 59.2 / 29.5 / 5.8; condo 53.4% (476), house 13.6% (413), $3-10M 68.1% (47)",
+     "note": "These depend on the address filter; see problems."
+    },
+    {
+     "claim": "Title Guaranty, Maui County Jan-Jun 2026: 71% Hawaii, 28% other US, 1% foreign by count",
+     "ok": true,
+     "recomputed": "tg.json 2026H1: 71/28/1 by count (642 sales)"
+    },
+    {
+     "claim": "HMDA 2025: 18.9% of 694 Maui purchase loans were second-home or investment; 53.8% at $3-10M (n=26)",
+     "ok": true,
+     "recomputed": "0.1888 of 694; 0.5385 of 26",
+     "note": "The arithmetic is right, but the sample leaves out business-purpose loans; see problems."
+    },
+    {
+     "claim": "Price/assessed ratio for arm's-length improved sales: 0.97-1.10",
+     "ok": true,
+     "recomputed": "0.970 (FY23 house) to 1.097 (FY24 condo)"
+    },
+    {
+     "claim": "Privacy: no owner names, street addresses or parcel ids in the output",
+     "ok": true,
+     "recomputed": "12,243 strings scanned. No 12- or 13-digit TMK and no 8-digit TMK prefix; no exact match to any fabric or roll owner name, mailing name, or mailing/situs street. Only 2 substring hits, both ordinary prose ('County of Maui' in a source note; 'mainland trustees'). No street-address patterns. ZIP lists give a ZIP and a count only."
+    },
+    {
+     "claim": "Small cells: every result with n<20 carries 'n<20'",
+     "ok": true,
+     "recomputed": "44 flagged cells; no unflagged cell with n<20; no flag on n>=20; no key-figure n under 20"
+    },
+    {
+     "claim": "Most-recent-sale rule",
+     "ok": true,
+     "note": "Doesn't apply to the puller's method, which has no parcel-level sale join. In my own join of the Sales layer, 57 earlier sales were replaced by later sales of the same parcel."
+    },
+    {
+     "claim": "Output has source, method and notes",
+     "ok": true,
+     "recomputed": "Present: 8 method entries, 12 notes, 10 key figures"
+    }
+   ],
+   "problems": [
+    "MATERIAL: The claim that part (b) 'could not be done as asked' is only partly true. The public Maui County GIS 'Sales' FeatureServer/0 is on disk at raw/mm_neighbor_sales/maui/sales_p0.json. It sits in the same ArcGIS org as the parcel fabric and holds 1,500 qualified sales (complete against its own count) with 12-digit parcel id, price and sale date, Mar 2023-Jun 2025, for non-CPR parcels only. Another pull fetched it at 06:13Z, about 90 s before part_b ran, and it is not in the task's input list. I joined it to the live-fabric mailing address: 3 sales under $50K dropped, 0 multi-parcel groups on price+date+TMK8, 57 earlier sales replaced by later ones (most-recent-sale rule). That leaves 1,170 improved house sales (FY2023-25). Their current owners mail outside Hawaii 16.7% of the time: $750K-1.5M 11.5% (n=681), $1.5-3M 16.6% (n=289), $3-10M 45.7% (n=92), $10M+ 62.5% (n=8, n<20), entry 22.0% (n=100). 1,117 of the 1,170 still show the April-roll owner, so the current owner is very likely the buyer. Condos can't be joined this way. The report should either use this house-level buyer measure or say it exists.",
+    "MATERIAL: HMDA key figure 10 leaves out 171 Maui first-lien business-purpose home-purchase loans, and 169 of them are investment occupancy. With them included there are 879 loans and 34.7% are second-home or investment, not 18.9% of 694 (19.2% of 708 counting the loans with no property value). The summary's 'only 18.9%' and its inference that most non-homeowner buyers pay cash overstate the cash share. Only the JSON 'how' text says 'non-business'.",
+    "MODERATE: The owner-change proxy's origin mix depends on an asymmetric address filter. The 195 kept cases where the address is unchanged and is the property's own address are 100% Maui County by construction, because the rule requires a Maui ZIP. Dropping all unchanged-address cases instead gives 834 kept and 758 classified: Hawaii 55.7%, mainland 37.1%, foreign 7.3%, outside Hawaii 44.3%. Applying no filter gives 61.5 / 34.2 / 4.3. The stated close match to Title Guaranty's 28% mainland share rests on this rule. Only the no-filter variant is in the JSON, and the summary doesn't mention the sensitivity.",
+    "MINOR: Key figure 3's 'how' says owner-occupants gained 'since the FY2022 peak'. For the mid tier FY2022 (58.2%) was not a peak: FY2016 was 63.4%, FY2018 63.9% and FY2019 60.2%. Only the all-residential share (64.5%) and the entry tier (65.0%) peaked in FY2022.",
+    "MINOR: The summary says the share 'climbs with price: around half at $800K-1.5M...' without mentioning that entry (<$800K) is 58.5%, higher than mid at 49.6%. The pattern dips at mid and only then rises; it is not monotonic.",
+    "MINOR, not disclosed: the entry tier includes non-arm's-length and nominal documents, and the binned data (lowest bin starts at $0) can't separate them. For FY2024-26, owner-schedule documents under $600K average $229K (911 documents) against $450K in the arm's-length subset (384). The non-homeowner share under $600K is 57.5% in the history file against 61.2% in the arm's-length subset. The task's <$50K floor can't be applied to this data.",
+    "MINOR: The ownership headline (34.9% / 30.6%) includes government-owned residential parcels (2,250 parcels; 1,750 with an address, 98% of them mailed in Hawaii) and the 10+ institutional addresses. Private owners only gives 35.6% / 31.4%; leaving out the 10+ addresses gives 34.1% / 30.5%. Both variants are in the JSON, but the summary doesn't say which one is the headline.",
+    "MINOR: The summary says the 63,835 classified parcels use addresses 'on the live parcel map', but about 870 of them fall back to the April 2026 certified roll. The JSON key figure does say so.",
+    "MINOR, disclosed: 'condo' means a CPR unit in both (a) and (b), so CPR'd house lots count as condos. About 2,007 residential CPR units sit in Upcountry, Haiku-Paia, Hana and Molokai, and 31% of those mail outside Hawaii. The condo-versus-house contrast still holds."
+   ]
+  }
+ },
+ {
+  "key": "hmda_tiers",
+  "summary": "I built the HMDA buyer profile by county and price tier for 2025, the latest year available, and for 2019. It covers 9,707 mortgages in 2025 and 13,312 in 2019. The universe is originated home-purchase loans that are first lien, on 1\u20134 unit site-built homes, in Hawaii, Honolulu, Kauai and Maui counties.\n\nEach county \u00d7 tier cell has the count, occupancy mix, loan-type mix, median income, age mix and jumbo share. Separate VA tables give county counts and median property value. Race, ethnicity and sex fields were not used. Cells with n<20 are flagged.\n\n**Things to keep in mind:**\n- **Price tiers:** HMDA reports `property_value` as the midpoint of its $10K bin. All tier cut-offs are multiples of $10K, so every loan falls cleanly into one tier. Loans with the value missing or exempt are in an \"unknown\" tier (133 in 2025, 202 in 2019).\n- **Cash buyers are missing:** HMDA only covers mortgages. The upper, luxury and ultra tiers describe the financed minority of buyers, not all buyers.\n- **No house vs condo split:** HMDA puts both under the same dwelling category.\n- **Second home vs investment:** lenders coded these very differently in 2019 and 2025. For trends, use the combined non-owner-occupied share.\n- **Jumbo trends:** the conforming loan limit rose a lot between the two years, so jumbo shares can't be compared year to year.\n\nOutput: `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/who/hmda_tiers.json`\nScripts: `.../scratchpad/pull/who_hmda_tiers/analyze.py` and `finalize.py`\n\n**Key figures** (2025 vs 2019; \"statewide\" means the four counties):\n\n1. **Financed purchases moved up the price tiers.** In 2025, 50.5% of loans were entry (<$750K), 38.8% mid, 9.0% upper and 1.6% luxury (150 loans). In 2019 it was 72.5%, 23.7%, 3.2% and 0.6% (73 loans). Shares use loans with a known property value.\n\n2. **The luxury tier ($3M\u2013<$10M) is half second homes and investors.** In 2025, 48.0% were principal residences, 29.3% second homes and 22.7% investment. In 2019 it was 28.8%, 45.2% and 26.0%. These shares come from `occupancy_type`.\n\n3. **Luxury borrowers are rich and older.** Their median household income was $1.024M in 2025, up from $869K. 49.6% of primary applicants were 55 or older, and 89.1% of conventional luxury loans were jumbo. Income is the HMDA `income` field (applicant plus co-applicant, NA excluded). Age is the primary applicant, people only. Jumbo means the `conforming_loan_limit` flag is \"NC\".\n\n4. **The upper tier ($1.5M\u2013<$3M) has become more of a local buyer's market.** Principal residences rose from 57.3% to 67.7%, and second homes fell from 26.4% to 10.1%. The tier roughly doubled, from 417 to 864 loans. Median income was $343K.\n\n5. **Entry tier (<$750K):** 4,836 loans in 2025, about half of the 9,510 in 2019. Median income rose from $102K to $123K. 38.9% of primary applicants were under 35 (32.8% in 2019), and 23.1% of loans were VA. Investment loans rose from 11.6% to 15.7%.\n\n6. **Mid tier ($750K\u2013<$1.5M):** the VA share rose from 14.9% to 21.7%, and median income from $172K to $202K. Principal residences were 80.2% of loans.\n\n7. **Military (VA) buyers by county, 2025.** Median property value has risen since 2019 (e.g. Honolulu $585K, statewide $575K).\n\n| County | VA loans | Median property value | Share of county loans |\n|---|---|---|---|\n| Statewide | 2,088 | $705K | 21.5% |\n| Honolulu | 1,830 | $715K | 27.6% |\n| Hawaii County | 191 | $525K | 10.9% |\n| Maui | 42 | $875K | 4.8% |\n| Kauai | 25 | $895K | 5.4% |\n\n8. **Neighbor-island luxury buyers are mostly not owner-occupants (2025).** Principal residences were 26% of luxury loans in Hawaii County (n=23), 23% in Kauai (n=22) and 41% in Maui (n=32), against 66% in Honolulu (n=73). These cells are above 20 but only just, so each loan moves the percentages by 4\u20135 points.\n\n9. **Ultra (\u2265$10M) is too small to read as rates.** There were 6 loans statewide in 2025 (3 in Hawaii County, 3 in Honolulu) and 4 in 2019. All of these cells are flagged small.",
+  "verify": {
+   "key": "hmda_tiers",
+   "checked": [
+    {
+     "claim": "Universe funnel: 2025 9,908 rows -> 9,876 (1-4 units) -> 9,875 (site-built) -> 9,707 first lien; 2019 13,859 -> 13,798 -> 13,797 -> 13,312. By county 2025: HI 1,746, Hon 6,623, Kauai 461, Maui 877",
+     "ok": true,
+     "recomputed": "Same counts with an independent filter on derived_dwelling_category=='Single Family (1-4 Units):Site-Built' & lien_status==1; also equal to the puller's total_units/construction_method filter. Exactly 1 manufactured-home loan is dropped each year (32 and 61 multifamily rows dropped)",
+     "note": "CSV contains only action_taken=1, loan_purpose=1, state HI, four counties, so those filters are no-ops"
+    },
+    {
+     "claim": "Input provenance: sha256 of both CSVs and the aggregation-API cross-check (county sums 9,908 and 13,859)",
+     "ok": true,
+     "recomputed": "sha256sum matches output input_sha256; agg_*.json counts sum to 9,908 (2025) and 13,859 (2019)"
+    },
+    {
+     "claim": "Tier assignment is exact because every numeric property_value ends in 5000 ($10K bin midpoint) and every cut-off is a multiple of $10K; unknown tier 133 (2025) / 202 (2019)",
+     "ok": true,
+     "recomputed": "All 9,773 (2025) and 13,639 (2019) numeric property_value values in the whole files are 5000 mod 10000. Tiers recomputed with bisect on cuts [750K, 1.5M, 3M, 10M]. Unknown: 2025 = 90 NA + 43 Exempt = 133; 2019 = 51 NA + 151 Exempt = 202"
+    },
+    {
+     "claim": "Key fig 1: 2025 tiers 4,836/3,718/864/150/6 = 50.5/38.8/9.0/1.6/0.1%; 2019 9,510/3,106/417/73/4 = 72.5/23.7/3.2/0.6/0.0% (known property value denominators)",
+     "ok": true,
+     "recomputed": "2025: 50.512/38.834/9.024/1.567/0.063%; 2019: 72.540/23.692/3.181/0.557/0.031%"
+    },
+    {
+     "claim": "Key fig 2: luxury occupancy 2025 48.0% principal / 29.3% second / 22.7% investment; 2019 28.8/45.2/26.0",
+     "ok": true,
+     "recomputed": "2025 72/44/34 of 150 = 48.0/29.33/22.67%; 2019 21/33/19 of 73 = 28.77/45.21/26.03%",
+     "note": "The numbers are right, but the trend leans on the second-home vs investment split, which the output's own note N3 says can't be compared across years (see problems)"
+    },
+    {
+     "claim": "Key fig 3: luxury median income $1,024K (2025) vs $869K (2019); 49.6% of applicants 55+ (natural persons); 89.1% of conventional luxury loans jumbo (NC)",
+     "ok": true,
+     "recomputed": "Median income 1024.0 (n=131 reported, 19 NA) vs 869.0 (n=57); 55+ = 49.645% of 141 natural persons (2019 45.763% of 59); jumbo 89.116% of 147 conventional loans",
+     "note": "Median includes 2 non-positive incomes; excluding them gives 1,044K. 2019 luxury has 14/73 (19.2%) entity borrowers vs 9/150 (6.0%) in 2025"
+    },
+    {
+     "claim": "Key fig 4: upper tier n 864 vs 417; principal 67.7% vs 57.3%; second home 10.1% vs 26.4%; median income $343K",
+     "ok": true,
+     "recomputed": "Principal 67.708/57.314%, second home 10.069/26.379%, investment 22.222/16.307%, combined non-owner 32.29/42.69%; median income 343.0 (2019: 370.0)",
+     "note": "The numbers check out. The 'local buyer's market' framing does not (see problems)"
+    },
+    {
+     "claim": "Key fig 5: entry 4,836 vs 9,510 loans; median income $123K vs $102K; 38.9% under 35 (32.8% in 2019); VA 23.1%; investment 15.7% vs 11.6%",
+     "ok": false,
+     "recomputed": "All match except the 2019 investment share: 1,098/9,510 = 11.546%, which rounds to 11.5%, not 11.6%. The output stored 0.1155 and rounded it again. 2025 investment = 757/4,836 = 15.653%"
+    },
+    {
+     "claim": "Key fig 6: mid-tier VA 21.7% vs 14.9%; median income $202K vs $172K; principal residence 80.2%",
+     "ok": true,
+     "recomputed": "VA 21.732/14.874%; income 202.0/172.0; principal 80.151% (2019 76.272%)"
+    },
+    {
+     "claim": "Key fig 7: 2025 VA loans: statewide 2,088, median $705K, 21.5%; Honolulu 1,830, $715K, 27.6%; Hawaii County 191, $525K, 10.9%; Maui 42, $875K, 4.8%; Kauai 25, $895K, 5.4%. 2019 medians: Honolulu $585K, statewide $575K",
+     "ok": true,
+     "recomputed": "Identical counts and medians (statistics.median over known property value); shares 21.51/27.63/10.94/4.79/5.42%. 2019: statewide 2,587, $575K; Honolulu 2,205, $585K",
+     "note": "The summary's wording 'has risen since 2019 (e.g. Honolulu $585K, statewide $575K)' gives the 2019 values but reads as if they were current levels"
+    },
+    {
+     "claim": "Key fig 8: 2025 luxury principal-residence share by county: Hawaii County 26% (n=23), Kauai 23% (n=22), Maui 41% (n=32), Honolulu 66% (n=73)",
+     "ok": true,
+     "recomputed": "6/23 = 26.1%, 5/22 = 22.7%, 13/32 = 40.6%, 48/73 = 65.8%",
+     "note": "'4-5 points per loan' is right only for Hawaii County and Kauai (see problems)"
+    },
+    {
+     "claim": "Key fig 9: ultra 6 loans in 2025 (Hawaii County 3, Honolulu 3) and 4 in 2019 (Hawaii County 2, Maui 2), all flagged small",
+     "ok": true,
+     "recomputed": "Same; every ultra cell has small_cell_flag = true"
+    },
+    {
+     "claim": "Full-table re-derivation: every county x tier x year cell (70 cells including the all-tiers and unknown rows), every VA table (10) and every tier distribution",
+     "ok": true,
+     "recomputed": "0 mismatches on n, occupancy, loan-type and non-owner shares, under-35/55+ shares, conventional jumbo share, median income, n income reported, n conventional, median property value and VA count, share and median property value. Shares were compared to 0.005 percentage points"
+    },
+    {
+     "claim": "Small-cell flags (n<20) and the list of small cells in note N5",
+     "ok": true,
+     "recomputed": "16 cells have n<20 (all ultra cells; 2019 luxury Hawaii County n=10 and Kauai n=14; unknown-tier cells in Kauai and Maui) and all are flagged true. No cell with n>=20 is flagged. VA tier-share small flags are also correct"
+    },
+    {
+     "claim": "Note N4: mid-tier conventional jumbo share fell from 28% to under 1%",
+     "ok": true,
+     "recomputed": "28.126% (2019) vs 0.431% (2025)"
+    },
+    {
+     "claim": "Note N7: income NA is more common for investor loans",
+     "ok": true,
+     "recomputed": "2025 entry tier: 265/757 investment loans are income NA (35%) vs 298/4,836 for the whole tier (6.2%)"
+    },
+    {
+     "claim": "Join logic (most-recent-sale rule, multi-parcel dedupe, parcel join, institutional exclusion)",
+     "ok": true,
+     "note": "Does not apply: HMDA is loan-level and this output makes no parcel or sales join, so there is no most-recent-sale or multi-parcel logic to check. Entity (non-natural-person, age 8888) borrowers are kept in counts and mixes and left out of age shares only, and this is documented"
+    },
+    {
+     "claim": "No names, addresses, parcel ids or loan-level records in the output; race, ethnicity and sex not used",
+     "ok": true,
+     "recomputed": "Regex scan finds no numbers of 10+ digits, no LEI-like strings and no census-tract ids. There are no owner, address, parcel, TMK, LEI or tract keys, and no list longer than 20 items. 'race/ethnicity/sex' appears only in the disclaimer note. analyze.py reads only the 14 listed fields into its statistics"
+    },
+    {
+     "claim": "Output has source/method/notes, and the finalize step did not alter the numbers",
+     "ok": true,
+     "recomputed": "source, method and notes are present. by_year, va_military_buyers and funnel in hmda_tiers.json are identical to pull/who_hmda_tiers/core.json"
+    }
+   ],
+   "problems": [
+    "Rounding error: the 2019 entry-tier investment share is given as 11.6% in key_figures and in the puller's summary (key fig 5). The exact value is 1,098/9,510 = 11.546%, so it should read 11.5%. finalize.py rounded the stored 0.1155 a second time. This is the only double-rounding case among the key_figures percentages.",
+    "Framing inconsistency: summary figs 2 and 4 present the second-home vs investment trend (upper tier second homes 26.4%->10.1%; luxury 45.2%->29.3%). The output's own note N3 says this split is coded differently in the two years and that trends should use the combined non-owner-occupied share. Those combined shares are upper 42.7%->32.3% and luxury 71.2%->52.0%; they still fall, but by much less than the second-home figures suggest.",
+    "Overreach in fig 4 ('upper tier has become more of a local buyer's market'): occupancy_type=1 means the buyer will live there as a principal residence, not that the buyer is local. Mainland movers count as principal residences too. The tiers are also in nominal dollars, so after 2019-2025 price growth the $1.5M-3M tier holds more ordinary homes. Part of the owner-occupancy rise (and the fall in median income from $370K to $343K) is a change in what the tier contains, not in who buys.",
+    "Small-cell wording: summary fig 8 and note N5 say each loan moves the 2025 county luxury percentages by 4-5 points. That holds for Hawaii County (n=23, 4.3 points) and Kauai (n=22, 4.5 points) but not for Maui (n=32, 3.1 points) or Honolulu (n=73, 1.4 points).",
+    "Method text is incomplete: M4 says median income excludes only NA values, but zero and negative incomes are included (160 loans in the 2025 universe, 20 in 2019). The effect is small: luxury 2025 is $1,024K vs $1,044K without them, upper $343K vs $347.5K, entry $123K vs $125K. A median_excluding_le_zero field is in the output but the method does not mention it.",
+    "Context missing from the luxury comparison: in 2019, 14 of 73 luxury loans (19.2%) went to non-natural-person (entity) borrowers, against 9 of 150 (6.0%) in 2025. The 55+ comparison (49.6% vs 45.8%) therefore rests on only 59 natural persons in 2019, and the occupancy and income mixes include entity loans. The per-cell non_natural_person_share field exists, but the summary does not mention it.",
+    "Ambiguous wording in summary fig 7: 'Median property value has risen since 2019 (e.g. Honolulu $585K, statewide $575K)'. These are the 2019 values (2025: Honolulu $715K, statewide $705K). The numbers are correct, but the sentence reads as if they were current.",
+    "Housekeeping, not a problem with the output: pull/who_hmda_tiers-verify/ already held files from an earlier verifier pass (cll.py, explore.py, leak.py, mine.json, verify2.py, verify3.py, dated 06:37-06:40). This run wrote verify.py, extra.py and result.json there, which would have replaced any same-named files from that pass. The output JSON was not modified."
+   ]
+  }
+ },
+ {
+  "key": "tg_prices",
+  "summary": "I computed the average price by buyer origin for 2025 and 2026 H1 from Title Guaranty's buyer statistics in tg.json. Each average is dollars \u00f7 count. Buyers from other states paid more than Hawaii residents on every island. The gap is smallest on Oahu (about 1.1\u20131.3x) and widest on Hawaii Island, Kauai and Maui (about 2\u20133.5x).\n\nThe output covers Statewide, Oahu, Maui County, Kauai and Hawaii Island for both periods. For each state and country it gives the count and average, flags n<10 and n<20, ranks states by average (n\u226510) and by total dollars, and compares each to the Hawaii-resident average. Jan\u2013Jun 2025 is included as the like-for-like base for 2026 H1. The file also has Hawaii-resident averages by district.\n\nLimits on what the source supports:\n- **Rounding:** TG publishes dollars rounded (e.g. \"$273.3M\", \"$1.9B\"), so every average carries a low/high band. Where a \"$X.XB\" figure was too coarse, I used the published island or district cells instead, which add up exactly in count. That changed five cells:\n\n  | Cell | Published total \u00f7 count | Using the finer cells |\n  |---|---|---|\n  | Statewide CA 2025 | $1.495M | $1.492M |\n  | Hawaii Island HI 2025 | $486K | $497K |\n  | Maui HI 2025 | $1.093M | $1.103M |\n  | Oahu HI 2026 H1 | $940K | $936K |\n  | Statewide HI 2025 | $819K | $820K |\n\n  The file keeps the plain published-total figure next to each one. No source figures contradicted each other.\n- **Coverage:** TG lists only the top 10 states and up to 5 countries per panel, so rankings are among listed states only. The listed states cover about 74\u201382% of out-of-state buyers.\n- **Meaning:** These are means of whatever sales TG counts, not medians, and a single large sale can move a small cell. A few foreign cells average under $50K (e.g. Hawaii Island 2025 New Zealand: 2 sales, $37.0K), so they are not whole-home purchases.\n- **Groups:** The \"all out-of-state\" and \"all foreign\" averages are ranges I derived from TG's whole-number dollar-share percentages, not published figures.\n\nKey figures:\n1. **Statewide 2025:** Hawaii residents averaged $820K (n=13,188). All non-Hawaii buyers averaged $1.236M\u2013$1.275M (n=3,721), or 1.50\u20131.56x. The resident figure is $10.8B \u00f7 13,188, checked against the island sums. The non-Hawaii range is (total \u2212 Hawaii dollars), cross-checked with the published 70% resident share, \u00f7 (3,314 + 407).\n2. **Statewide 2025 rankings:** by average (n\u226510), Arizona leads at $1.706M (n=85), then California $1.492M (n=1,271, 1.82x residents) and Utah $1.436M (n=105). By total dollars: California $1.9B, Washington $328.7M, Texas $221.1M.\n3. **Statewide 2026 H1:** residents averaged $883K (n=6,015). The 9 listed mainland states together averaged $1.607M (n=1,096, 1.82x), which is the sum of their dollars \u00f7 their count. New York had the top average at $2.55M (n=40, $102.0M). California had the most out-of-state dollars at $888.1M (n=552, $1.609M average).\n4. **Oahu 2025 (smallest premium):** residents averaged $869K (n=9,202, \u00b1$5K). The listed mainland states averaged $986K (1.13x). Florida was highest at $1.236M (n=111), and Oregon ($610K) and Texas ($781K) were below residents. Japan averaged $1.154M (n=202, $233.1M, 1.33x) and Korea $1.071M (n=87).\n5. **Oahu 2026 H1:** residents averaged $936K (n=4,150). Japan averaged $1.295M (n=133, $172.2M, 1.38x) and Korea $1.316M (n=37, 1.41x). Utah had the top state average at $1.630M (n=23).\n6. **Maui County 2025:** residents averaged $1.103M (n=915), from the district sum of $1,009.1M. California averaged $2.206M (n=107, 2.00x). The luxury cells are small (n<20): Arizona $5.58M (n=10, $55.8M), Canada $4.345M (n=11, $47.8M), Utah $3.782M (n=11, $41.6M).\n7. **Kauai:** California buyers paid about 2.8\u20132.9x residents. In 2025 that was $2.750M (n=102, $280.5M) against $986K (n=604, $595.4M). In 2026 H1 it was $2.794M (n=50) against $965K (n=213). All non-Hawaii buyers in 2026 H1 averaged $2.632M (n=112, 2.73x).\n8. **Hawaii Island (widest gap):** in 2025 residents averaged $497K (n=2,467, from the district sum of $1,226.6M) and California buyers $1.737M (n=406, 3.49x). In 2026 H1 residents averaged $611K (n=1,197). New York averaged $5.308M (n=13, $69.0M, 8.7x, flagged n<20) and Japan $5.6M (n=4, flagged n<10).\n9. **Resident average, Jan\u2013Jun 2026 vs Jan\u2013Jun 2025:** Statewide +6.5%, Oahu +3.0%, Maui County \u22125.2%, Kauai +17.5%, Hawaii Island +24.6%. These are means, so they also move with the mix of sales; for example, Kauai's Lihue district fell from 170 to 66 sales.\n10. **Small cells:** in 2026 H1, 7 of Kauai's 10 state cells and 6 of Maui County's are under 10 sales. Every listed country cell on Kauai, Maui and Hawaii Island in 2026 H1 is under 10 sales.\n\nFiles are in /tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad:\n- an/who/tg_prices.json\n- pull/who_tg_prices/build.py",
+  "verify": {
+   "key": "tg_prices",
+   "checked": [
+    {
+     "claim": "All per-cell averages in the output (205 state/country cells over 2025FY, 2026H1, 2025H1 x 5 panels): count, avg_price, avg_price_low/high, n<10/n<20 flags, ratio to HI avg; plus the all-buyers avg per panel",
+     "ok": true,
+     "recomputed": "0 mismatches. Independent parse of every '$X.XK/M/B' string to a +/- half-last-digit band, avg = band midpoint / count",
+     "note": "Script: pull/who_tg_prices-verify/verify.py (run with python3 -I <tg.json> <tg_prices.json>). State and country lists are identical to tg.json, so nothing is dropped or added."
+    },
+    {
+     "claim": "Band refinement (island HI intersected with district HI sum; Statewide intersected with island sums when counts add exactly) changes 10 cells, with no band conflicts",
+     "ok": true,
+     "recomputed": "Same 10 refined cells, band_inconsistencies=[] confirmed: Statewide HI 2025 $818,926->$820,075; Statewide CA 2025 $1,494,886->$1,492,054; Hawaii Island HI 2025 $486,421->$497,203; Maui HI 2025 $1,092,896->$1,102,842; Oahu HI 2026H1 $939,759->$935,584 (band $927.7K-$943.5K); Statewide HI 2026H1 $881,131->$883,121; Statewide total 2026H1; Oahu HI 2025H1 $905,218->$908,280; Statewide HI 2025H1 $829,732->$828,920; Statewide total 2025H1",
+     "note": "The puller summary's table lists only 5 of these (see problems)."
+    },
+    {
+     "claim": "KF1 Statewide 2025: HI $820K (n=13,188); non-HI $1.236M-$1.275M (n=3,721); 1.50-1.56x",
+     "ok": true,
+     "recomputed": "HI $820,075 (band $817,433-$822,718). Non-HI = (total band - HI band) intersected with (100-70+/-0.5)% x total band, / (3,314+407) = $1,236,227-$1,274,590; ratio bounds 1.503-1.559"
+    },
+    {
+     "claim": "KF2 Statewide 2025 ranking by avg (n>=10): AZ $1.706M (n=85), CA $1.492M (n=1,271, 1.82x), UT $1.436M (n=105); by dollars CA $1.9B, WA $328.7M, TX $221.1M",
+     "ok": true,
+     "recomputed": "AZ $1,705,882; CA $1,492,054 (island sum $1,896.4M), 1.819x; UT $1,436,190. Dollar order HI, CA, WA, TX. Source PDF text shows CA 1271 $1.9B and HI 13188 $10.8B"
+    },
+    {
+     "claim": "KF3 Statewide 2026H1: HI $883K (n=6,015); 9 listed mainland states $1.607M (n=1,096, 1.82x); NY top avg $2.55M (n=40, $102.0M); CA $888.1M (n=552, $1.609M)",
+     "ok": true,
+     "recomputed": "HI $883,121; mainland $1,607,026, n=1,096, 1.820x; NY $2,550,000; CA $1,608,877. Avg ranking NY, NV, CO, WA. PDF text shows NY 40 $102.0M and CA 552 $888.1M"
+    },
+    {
+     "claim": "KF4 Oahu 2025: HI $869K (+/-$5K); mainland $986K (1.13x); FL $1.236M (n=111); Japan $1.154M (n=202, 1.33x); Korea $1.071M (n=87); OR $610K and TX $781K below HI",
+     "ok": true,
+     "recomputed": "HI $869,376 (band $863,943-$874,810, cannot be tightened because the district sum band $7,730.85M-$8,230.95M contains the headline band); mainland $985,631, 1.134x; FL $1,236,036; Japan $1,153,960, 1.327x; Korea $1,071,264; OR $609,677; TX $780,723",
+     "note": "Correct but incomplete: NY $847,273 (0.975x) and UT $860,417 (0.990x) are also below residents. The JSON summary lists all four."
+    },
+    {
+     "claim": "KF5 Oahu 2026H1: HI $936K (n=4,150); Japan $1.295M (n=133, 1.38x); Korea $1.316M (n=37, 1.41x); UT top state $1.630M (n=23)",
+     "ok": true,
+     "recomputed": "HI $935,584 = midpoint of [$3,850M, $3,915.35M] / 4,150; Japan $1,294,737 (1.384x); Korea $1,316,216 (1.407x); UT $1,630,435"
+    },
+    {
+     "claim": "KF6 Maui County 2025: HI $1.103M (n=915, district sum $1,009.1M); CA $2.206M (n=107, 2.00x); AZ $5.58M (n=10); Canada $4.345M (n=11); UT $3.782M (n=11)",
+     "ok": true,
+     "recomputed": "HI $1,102,842; CA $2,205,607 (2.000x); AZ $5,580,000; Canada $4,345,455; UT $3,781,818; all three flagged n<20. PDF text shows AZ 10 $55.8M and Canada 11 $47.8M"
+    },
+    {
+     "claim": "KF7 Kauai: CA 2025 $2.750M (n=102) vs HI $986K (n=604) = 2.79x; 2026H1 CA $2.794M (n=50) vs HI $965K (n=213) = 2.90x; non-HI 2026H1 $2.632M (n=112, 2.73x)",
+     "ok": true,
+     "recomputed": "2.790x and 2.895x; non-HI 2026H1 $2,631,250-$2,633,036, 2.725-2.728x. PDF text shows HI 213 $205.6M and CA 50 $139.7M"
+    },
+    {
+     "claim": "KF8 Hawaii Island: 2025 HI $497K (n=2,467) vs CA $1.737M (3.49x); 2026H1 HI $611K (n=1,197); NY $5.308M (n=13, 8.7x); Japan $5.6M (n=4)",
+     "ok": true,
+     "recomputed": "HI $497,203 (district sum $1,226.6M); CA $1,737,438 (3.494x); 2026H1 HI $611,111; NY $5,307,692 (8.685x, n<20); Japan $5,600,000 (n<10). PDF text shows NY 13 $69.0M"
+    },
+    {
+     "claim": "KF9 HI-resident avg, 2026H1 vs 2025H1: Statewide +6.5%, Oahu +3.0%, Maui -5.2%, Kauai +17.5%, Hawaii Island +24.6%",
+     "ok": true,
+     "recomputed": "+6.5%, +3.0%, -5.2%, +17.5%, +24.6%. Every origin row in the yoy block matched, including the pct bounds (e.g. Oahu HI +2.1 to +3.9%, Statewide HI +5.9 to +7.2%)",
+     "note": "With raw headline figures only, Oahu would be +3.8% and Statewide +6.2%. These two point values depend on the refinement step."
+    },
+    {
+     "claim": "KF10 small cells 2026H1: 7/10 Kauai and 6/10 Maui state cells n<10; every country cell on Kauai, Maui and Hawaii Island n<10",
+     "ok": true,
+     "recomputed": "Kauai 7/10 state cells, Maui 6/10, country cells 2/2, 2/2 and 3/3 under 10. The notes' n<10 counts for all 10 panels also match"
+    },
+    {
+     "claim": "Group averages: listed_mainland_states_combined, all_other_us_buyers_implied, all_foreign_buyers_implied and all_non_hawaii_buyers_implied, for all 15 panels",
+     "ok": true,
+     "recomputed": "All match within $2. Bounds reproduced as the intersection of published integer dollar share +/-0.5pt x total band, total minus HI minus the other group, and listed-cell sums"
+    },
+    {
+     "claim": "statewide_residuals (statewide count and dollars minus listed island cells) and district_hawaii_resident_avg (78 district rows)",
+     "ok": true,
+     "recomputed": "0 mismatches on residual counts and dollar bounds or on the 78 district HI avg/low/high/flags"
+    },
+    {
+     "claim": "Coverage: listed mainland states cover about 74-82% of other-US buyers",
+     "ok": false,
+     "recomputed": "73.4% (Maui 2025FY) to 81.7% (Kauai 2026H1); Statewide 2026H1 73.5%. Per-panel coverage fields in the JSON are correct",
+     "note": "Wording only: the range is about 73-82%."
+    },
+    {
+     "claim": "No owner names, street addresses or parcel ids in the output",
+     "ok": true,
+     "recomputed": "No digit runs of 8 or more in any string value, no TMK patterns, no emails. The only street/owner keyword hit is the publisher 'Title Guaranty of Hawaii, LLC'. No name/owner/address/parcel keys (only state_name = US state names)"
+    },
+    {
+     "claim": "Join logic (most-recent-sale rule, multi-parcel dedupe, institutional exclusion) and price-tier assignment",
+     "ok": true,
+     "note": "Not applicable to this key. build.py opens only tg.json (one open/load call), and TG publishes only aggregates, so there is no parcel join, dedupe or tier assignment to check. The output does not place origins into the entry/mid/upper/luxury/ultra tiers. 'Luxury' in KF6 describes cell averages of $3M or more, not tier-classified sales."
+    },
+    {
+     "claim": "Input fidelity of tg.json for load-bearing cells",
+     "ok": true,
+     "recomputed": "Matched against pdftotext output: Statewide 2025 HI 13188 $10.8B and CA 1271 $1.9B; Hawaii Island 2025 HI 2467 $1.2B and NZ 2 $37.0K; Maui 2025 AZ 10 $55.8M and Canada 11 $47.8M; Hawaii Island 2026H1 NY 13 $69.0M; Statewide 2026H1 CA 552 $888.1M and NY 40 $102.0M; Kauai 2026H1 HI 213 $205.6M and CA 50 $139.7M; Oahu 2026H1 HI 4150 $3.9B and Japan 133 $172.2M"
+    }
+   ],
+   "problems": [
+    "No numeric errors found: all 205 cells, the 10 refinements, group bounds, rankings, YoY, residuals and 78 district rows reproduce. The problems below are about wording and completeness in the puller summary and key-figure prose. The output JSON itself is internally correct.",
+    "Puller summary says the rounding refinement 'changed five cells'. The output actually refines 10 cells (its method text lists them correctly). The summary table leaves out Statewide HI 2026H1 ($881K headline -> $883K, the figure used in KF3), Statewide all-buyers 2026H1, Oahu HI 2025H1 ($905K -> $908K), Statewide HI 2025H1 ($830K -> $829K) and Statewide all-buyers 2025H1. KF9 depends on these: on headline figures alone Oahu would be +3.8% instead of +3.0%, and Statewide +6.2% instead of +6.5%. The JSON yoy block carries bounds (Oahu HI +2.1 to +3.9%, Statewide HI +5.9 to +7.2%), but KF9 gives point values only.",
+    "KF4 and the summary name only OR ($610K) and TX ($781K) as below Oahu residents in 2025. NY ($847K, 0.975x) and UT ($860K, 0.990x, below even the HI band low of $864K) are also below, which the JSON summary block lists correctly. So the summary's 'Buyers from other states paid more than Hawaii residents on every island' holds only for the combined group: on Oahu 2025, 4 of 9 listed states averaged less than residents, and on Hawaii Island 2026H1 AK did too ($587K vs $611K).",
+    "The summary's 'widest on Hawaii Island, Kauai and Maui (about 2-3.5x)' and KF8's heading 'Hawaii Island (widest gap)' hold for 2025 only. In 2026H1, Maui County's premium is 1.71x (listed mainland) or 1.74x (all non-HI), below 'about 2'. Kauai's gap equals or exceeds Hawaii Island's: listed mainland 2.82x vs 2.79x, all non-HI 2.73x vs 2.58-2.80x.",
+    "KF1 and KF3 use different metrics for the statewide premium. 2025 uses all non-HI implied (1.50-1.56x); 2026H1 uses the 9 listed mainland states (1.82x). Like-for-like, listed mainland went from 1.64x to 1.82x and all non-HI from 1.50-1.56x to 1.65-1.72x. Read side by side, KF1 and KF3 overstate the change.",
+    "Coverage is stated as 'about 74-82%' of other-US buyers. The recomputed range for the primary periods is 73.4% (Maui 2025) to 81.7% (Kauai 2026H1), and Statewide 2026H1 is 73.5%, so ~73-82%.",
+    "The notes give 'Kauai 2025 and 2025H1 Canada 1/$51.1K' as an example of cells averaging under $50K, but $51.1K is above $50K. Separately, the summary's 'Hawaii Island 2025 New Zealand: 2 sales, $37.0K' cites the cell total, not the average ($18.5K), which could be misread."
+   ]
+  }
+ },
+ {
+  "key": "luxury_buyers",
+  "summary": "I re-ran the luxury buyers analysis and the results file is updated. The counts from `luxury_report_counts.csv` match the earlier run exactly (0 mismatches). A web refresh today found no new buyer-origin data: Q3 2026 editions from List Sotheby's, Caron B and Title Guaranty are not out yet. List Sotheby's has usually posted its Q3 report in late October.\n\nChanges in this run:\n- **Notes added:** the file was missing the required `notes` section, so I added it. It covers the small-cell flags, a mismatch between the Hawaii Life chart and report text, quarters missing from the List Sotheby's data, and the limits of the Maui and cash-share estimates.\n- **Web refresh logged:** two new items are recorded, but neither could be checked on the source page, so both are marked unverified. They are a Redfin list of top 2025 Honolulu sales and a headline saying Hawaii's top 10 home sales in 2025 totalled $273.8M. I left out a $27.5M Park Lane penthouse sale because it closed in October 2023, outside the 2025\u20132026 window.\n\nGaps that remain:\n- **Buyer origin by island:** no 2025\u20132026 source gives the share of $3M+ or $10M+ buyers who are out-of-state or foreign by island. Hawaii Life gives only qualitative statements. Title Guaranty and the state data book (DBEDT) report buyer origin for all sales, with no price split.\n- **Cash share:** no Hawaii cash share for $3M+ sales is published.\n- **Record sales:** buyer origin was not publicly reported for any of the record 2025\u20132026 sales found.\n\nOutput: `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/who/luxury_buyers.json`\n\nKey figures:\n1. **$10M+ sales statewide:** 28 house and condo sales in 2026H1 (22 houses, 6 condos), against 29 in 2025H1 and 13 in 2022H2. These are Hawaii Life 2026 Midyear chart rows added across the four counties. Every island/half-year cell is under 20 sales.\n2. **$3M+ sales statewide:** 519 in 2025 (338 houses, 139 condos, 42 land), down from 652 in 2022. In 2026H1 there were 264, split Oahu 34.8%, Hawaii Island 29.9%, Maui County 18.2%, Kauai 17.0%. Source is the Hawaii Life report text; type totals equal band totals in every island/period.\n3. **Share of $3M+ sales at $10M+:** Hawaii Island is the most top-heavy, at 21.5% in 2026H1 (17 of 79), against 8.7% on Oahu, 4.2% in Maui County and 4.4% on Kauai. Computed as Hawaii Life text counts of $10M+ divided by $3M+.\n4. **Oahu condos at $2.5M+:** 36 in 2025H1, 47 in 2025H2 and 36 in 2026H1, up from 20\u201328 per half in 2023\u201324. List Sotheby's quarterly counts were summed into half-years.\n5. **Maui $3M\u201310M non-owner share:** 81.2% in FY2026 (91 of 112) and 80.0% pooled FY2023\u201326 (n=514). For $10M+ it is 91.4% pooled (n=58), but single years are under 20 sales. Source is the Maui County sales file. A \"non-owner\" buyer did not qualify for the homeowner exemption on that purchase. That group includes Hawaii residents buying second homes, so it is an upper bound on the out-of-state share.\n6. **Implied cash share, 2025:** about 67% of $3M+ home purchases statewide had no HMDA-reported purchase mortgage (156 loans against 477 sales). By island: Oahu 60%, Maui County 71%, Hawaii Island 74%, Kauai 70%. Computed as one minus HMDA 2025 first-lien purchase loans with property value of $3M+, divided by Hawaii Life 2025 house-plus-condo sales. This is a proxy that overstates cash buying, not a measured cash share.\n7. **Oahu luxury buyers by mailing address:** at $3M\u201310M, 68.6% of buyers have a Hawaii mailing address (n=255); 25.9% of house buyers and 47.0% of condo buyers are non-Hawaii. At $10M+, 64.3% are non-Hawaii (n=14, small). Quoted from the earlier Oahu owner-roll analysis; this uses the current mailing address of 2023\u201325 buyers who still own.\n8. **Caron B Oahu buyer mix (company-reported, Caron B's own \"luxury\" segment):** local buyers made up 61% of single-family luxury purchases in Q1 2026 and 59% in Q4 2025. For luxury condos in Q1 2026, Hawaii residents were 39.1% and Japanese corporations 21.7% (n=23).\n   - Q1 2026: https://caronbrealty.com/oahu-luxury-real-estate-report-quarter-1-2026/ (published 2026-04-23)\n   - Q4 2025: https://caronbrealty.com/oahu-luxury-real-estate-report-quarter-4-2025/ (published 2026-01-12)\n9. **Average price by buyer origin, Title Guaranty statewide 2026H1:** California buyers about $1.61M (552 sales, $888.1M); Japanese buyers about $1.45M (138 sales); Hawaii buyers about $881K. Computed as published dollars divided by sales count; the dollar figures are published rounded, so the averages are approximate.\n10. **Record sales, all with buyer origin undisclosed:**\n    - $65.75M, Kahala, March 2025 \u2014 the Hawaii record (Coldwell Banker and KHON2)\n    - $38.25M, Kukio, January 2026 \u2014 Hawaii Life\n    - $36M, Hualalai, July 2026 \u2014 Aloha State Daily, 2026-09-18\n    - more than $40M for a single Ward Village presale residence, September 2025 \u2014 seen only in a search snippet",
+  "verify": {
+   "key": "luxury_buyers",
+   "checked": [
+    {
+     "claim": "KF1 arithmetic: $10M+ house+condo statewide 2026H1 = 28 (22 houses, 6 condos), 2025H1 = 29, 2022H2 = 13 (Hawaii Life chart rows summed over 4 counties)",
+     "ok": true,
+     "recomputed": "28 (22/6); 29 (24/5); 13 (10/3). All 64 chart cells and statewide sums match the file (0 mismatches).",
+     "note": "v1_tables.py section A. The arithmetic is right, but see the next check: the 2025H1 value conflicts with the report's own text."
+    },
+    {
+     "claim": "KF1 comparison: 2026H1 (28) vs 2025H1 (29) agrees with the Hawaii Life report text",
+     "ok": false,
+     "recomputed": "The 2026 Midyear text says 'The statewide ultra tier grew, from 19 sales to 22, with all of that growth coming from Hawai'i Island.' The 2025 Midyear text gives Hawaii Island '10 Sales Above $10M'. That makes the text-consistent 2025H1 count 19 houses + 5 condos = 24, so 2026H1 is up 4, not down 1.",
+     "note": "The chart read has Hawaii Island houses at 15 for 2025H1 and 8 for 2025H2, a sum of 23 against the 2025 year-end text's 17. The file's notes and its 'text_consistent_alternative' block flag this, but the statewide series and key figure 1 still use 29."
+    },
+    {
+     "claim": "KF1: every island/half-year $10M+ cell is n<20; statewide halves range 13-30",
+     "ok": true,
+     "recomputed": "max island-half house+condo = 16; statewide 13..30"
+    },
+    {
+     "claim": "KF2: $3M+ statewide 519 in 2025 (338 house / 139 condo / 42 land), 652 in 2022, 264 in 2026H1 split Oahu 34.8 / Hawaii Island 29.9 / Maui County 18.2 / Kauai 17.0%; type totals equal band totals in every island-period",
+     "ok": true,
+     "recomputed": "519 (338/139/42); 652; 264 = 92/79/48/45 -> 34.8/29.9/18.2/17.0%. Type totals equal band totals in all 12 island-periods. The 169 single-family count matches the 2026 Midyear text.",
+     "note": "v1_tables.py section B"
+    },
+    {
+     "claim": "KF3: share of $3M+ at $10M+ in 2026H1: Hawaii Island 21.5% (17/79), Oahu 8.7%, Maui County 4.2%, Kauai 4.4%",
+     "ok": true,
+     "recomputed": "17/79=21.5%, 8/92=8.7%, 2/48=4.2%, 2/45=4.4% (land included in both numerator and denominator)",
+     "note": "The Maui and Kauai shares each rest on 2 sales and carry no small-cell flag in the JSON."
+    },
+    {
+     "claim": "KF4: List Sotheby's Oahu condos at $2.5M+: 36 (2025H1), 47 (2025H2), 36 (2026H1), against 20-28 per half in 2023-24",
+     "ok": true,
+     "recomputed": "2023H1 20, 2023H2 28, 2024H1 25, 2024H2 24, 2025H1 36 (16+20), 2025H2 47 (23+24), 2026H1 36 (13+23). The complete/missing-quarter flags match for all 7 series x 8 halves.",
+     "note": "v1_tables.py section C"
+    },
+    {
+     "claim": "KF5: Maui non-owner (HRS 247-2 schedule 2) share, $3M-10M: 81.2% FY2026 (91/112) and 80.0% pooled FY2023-26 (n=514); $10M+ 91.4% pooled (n=58)",
+     "ok": true,
+     "recomputed": "91/112=81.2%; 411/514=80.0%; 53/58=91.4%. All 56 tier x FY/pooled cells match: owner, non-owner, sales share, dollar share, excluded count and small-cell flag. Bin and top rows reconcile exactly to maui_sales_totals (non-residential = nonres + unmatched).",
+     "note": "Bins under $10M plus the individual $10M+ rows; 5+ unit ('mf') sales are excluded. The summary says '$10M+ single years are under 20 sales', but FY2024 has 23 (and FY2022 has 28). The JSON flags themselves are correct."
+    },
+    {
+     "claim": "KF6: implied share of $3M+ purchases with no HMDA purchase mortgage, 2025: 67% statewide (156 loans / 477 sales); Oahu 60, Maui County 71, Hawaii Island 74, Kauai 70%",
+     "ok": true,
+     "recomputed": "Rebuilt from the raw HMDA 2025 CSV (originated, purchase, first lien, 1-4 units, site-built; universe 9,707): loans with property value of $3M+ are Oahu 76, Maui 32, Hawaii Island 26, Kauai 22 = 156. Against 192/112/100/73 = 477 sales this gives 0.604/0.714/0.740/0.699, and 0.673 statewide. The occupancy splits and the 6 loans at $10M+ also match.",
+     "note": "v2_hmda_tg.py. The figures match, but the claimed direction of bias is questionable (see problems)."
+    },
+    {
+     "claim": "KF7 (join): Oahu 2023-25 buyers still holding, $3M-10M: 68.6% Hawaii-mailing (n=255); non-Hawaii 25.9% of houses (n=189) and 47.0% of condos (n=66); $10M+ 64.3% non-Hawaii (n=14)",
+     "ok": true,
+     "recomputed": "An independent re-join from oahu-sales.json plus the raw OWNDAT/OWNINFO/ASMTPITT pages gives n=255 at 68.63% Hawaii (175 Hawaii / 67 mainland / 13 foreign); houses 25.93% non-Hawaii (n=189); condos 46.97% (n=66); $10M+ 64.29% (n=14: 5 Hawaii / 6 mainland / 3 foreign); $3M+ Hawaii dollar share 62.9%; medians $3.9125M / $4.798M / $4.75M.",
+     "note": "v3_oahu_join.py. To reproduce exactly, the join needs the OWNMLT fee-owner fallback where the ownseq-0 address is blank."
+    },
+    {
+     "claim": "Join logic: most-recent-sale rule, multi-parcel dedupe, institutional exclusion",
+     "ok": true,
+     "recomputed": "12,513 parcel-sales from 2023 on at >=$50K (4 under $50K dropped) form 12,495 deals after grouping on (price, date, first 8 TMK digits), 16 of them multi-parcel. 154 deals were superseded by a later sale (6 of them in the $3M-10M tier). No parcel has a later sub-$50K transfer, and no multi-parcel deal is only partly superseded. No multi-parcel deal falls in the $3M+ housing cells. The second-pass merge on same price, date and address touches 25 deals (17 at $3M+), all non-housing, so the quoted cells are unchanged with or without it. Institutional addresses (shared by 10+ parcels) cover 12 $3M+ housing deals, all Hawaii-addressed. Including them gives 70.0% Hawaii at $3M-10M (n=267). Thresholds of 5/20/50 parcels give 67.9/68.9/69.6%."
+    },
+    {
+     "claim": "Tier assignment",
+     "ok": true,
+     "recomputed": "Lower bounds are inclusive throughout. In the join, 11 deals at exactly $3M fall in luxury and 1 at exactly $10M in ultra. The Maui bin edges align with $1.5M/$3M/$10M. HMDA property values are $10K-interval midpoints, so the $3M and $10M cuts are exact."
+    },
+    {
+     "claim": "KF8: Caron B Oahu: local 61% of single-family luxury in Q1 2026 and 59% in Q4 2025; condos Q1 2026 Hawaii residents 39.1%, Japanese corporations 21.7% (n=23); publication dates 2026-04-23 and 2026-01-12",
+     "ok": true,
+     "recomputed": "All strings appear verbatim in the downloaded pages. Condo sales 'down from 40 in quarter 4 2025 to 23 in quarter 1 2026' confirms n=23. The pages' datePublished values are 2026-04-23 and 2026-01-12. The Q1-Q3 2025 and Q2 2026 quotes were also found verbatim.",
+     "note": "v4_web.py"
+    },
+    {
+     "claim": "KF9: Title Guaranty statewide 2026H1 average price: California about $1.61M (552 sales, $888.1M), Japan about $1.45M (138), Hawaii about $881K",
+     "ok": true,
+     "recomputed": "CA $1,608,877; JP $1,447,826; HI $881,131 ($5.3B / 6,015). The top-5 states, top-3 countries, Hawaii averages and origin shares match tg.json for 2025FY and 2026H1 across all 5 geographies.",
+     "note": "Hawaii dollars are published to two significant figures, so the Hawaii average could be anywhere from about $873K to $889K."
+    },
+    {
+     "claim": "KF10: record sales with undisclosed buyer origin ($65.75M Kahala, Mar 2025; $38.25M Kukio, Jan 2026; $36M Hualalai, Jul 2026; >$40M Ward Village presale, snippet only)",
+     "ok": true,
+     "recomputed": "$65.75M appears on both the Coldwell Banker and KHON pages; the KHON page says 'The buyer of the estate was not revealed'. $38.25M Kukio sold in January per the Hawaii Life 2026 Midyear text. The Hualalai page reads 'sold in late July for $36 million' with a September 18, 2026 byline (metadata 2026-09-17 HST). The Howard Hughes fetch is 9 bytes, which confirms the >$40M figure is snippet-only."
+    },
+    {
+     "claim": "DBEDT county and statewide averages by buyer origin, 2024-2025 (sales, averages, ratios, small-cell flags)",
+     "ok": true,
+     "recomputed": "0 mismatches against databook.json"
+    },
+    {
+     "claim": "UHERO 2025 out-of-state shares for 11 resort/high-price ZIPs",
+     "ok": true,
+     "recomputed": "0 mismatches against uhero.json zip_rows; small-cell flags correct (Kilauea SF n=17, Aina Haina condo n=16)"
+    },
+    {
+     "claim": "Maui County owner-stock cross-reference ($3M-10M non-Hawaii 62.9% of 3,104 parcels; $10M+ 63.1% of 336)",
+     "ok": true,
+     "recomputed": "Values match maui_join.json stock_by_tier exactly",
+     "note": "Checked as quoted only; not rebuilt from the raw Maui parcel data. This is assessed-value stock, not buyers, as the file states."
+    },
+    {
+     "claim": "Consistency-check block (chart vs text) reproduces",
+     "ok": true,
+     "recomputed": "Oahu chart 10 vs text 9 (fails); Hawaii Island houses 23 vs 17 and house+condo 24 vs 22 (fail); all other checks pass. This matches the file."
+    },
+    {
+     "claim": "No owner names, street addresses or parcel ids in output; required source/method/notes present",
+     "ok": true,
+     "recomputed": "Scanned every key and value: no runs of 9+ digits, no TMK-format strings, no street-number or unit-number patterns, no owner names. source, method and notes are all present.",
+     "note": "v5_pii.py. The only person names are two real-estate agents inside one URL slug (results.published_findings_web.refresh_2026_10_08_pm.excluded[0])."
+    }
+   ],
+   "problems": [
+    "Key figure 1 and results.hawaii_life_10m_plus_by_half_year_chart.statewide use 29 sales at $10M+ (24 houses + 5 condos) for 2025H1. That comes from a chart read that conflicts with Hawaii Life's own text. The 2026 Midyear text says 'The statewide ultra tier grew, from 19 sales to 22', and the 2025 Midyear text gives Hawaii Island 10. The text-consistent 2025H1 figure is 24 (19 + 5), so 2026H1 (28) is up 4 (+17%), not down 1. The 2025H2 statewide figure would be 20, not 21. The notes flag the Hawaii Island cell, but the statewide series and the headline comparison are not adjusted or caveated, and the direction of change is reversed.",
+    "Key figure 6 and the notes call the HMDA-loans / MLS-sales ratio 'a proxy that overstates cash buying'. That direction is not established. The HMDA numerator counts loans on all recorded purchases, including off-MLS sales such as new-tower developer closings and off-market deals like the $36M Hualalai sale, and 2-4 unit properties. The denominator is Hawaii Life's MLS house+condo counts. Those mismatches push the implied cash share down. The 'binned' reason is also wrong: HMDA $10K bins align exactly with the $3M cut. It should be described as a rough proxy with offsetting biases.",
+    "The Oahu owner-roll cross-reference (key figure 7) reproduces exactly, but luxury_buyers.json leaves out three conditions behind it. It excludes 12 institutional-address $3M+ deals, all Hawaii-addressed; including them gives 70.0% Hawaii, n=267. It drops 6 resold $3M-10M deals under the most-recent-sale rule. And the sales file covers only part of the market: 56 $3M+ housing deals in 2025 against Hawaii Life's 192 Oahu house+condo $3M+ sales.",
+    "The puller's summary says Maui $10M+ 'single years are under 20 sales'. FY2024 has 23 (and FY2022 has 28). The per-cell flags in the JSON are correct.",
+    "Hawaii Life text-table cells (results.hawaii_life_3m_plus_by_island_type_band) carry no small-cell flags. Key figure 3 quotes Maui County 4.2% and Kauai 4.4% shares that each rest on 2 sales.",
+    "Key figure 9's Hawaii-buyer average of 'about $881K' implies more precision than the source allows. Title Guaranty publishes Hawaii dollars as $5.3B, so the average could be anywhere from about $873K to $889K. The file does label the averages approximate.",
+    "Minor: results.published_findings_web.refresh_2026_10_08_pm.excluded[0] contains a URL whose slug names two real-estate agents. They are not owners, so the aggregates-only rule is technically met, but the slug could be trimmed. No owner names, street addresses or parcel ids were found anywhere in the output."
+   ]
+  }
+ }
+]

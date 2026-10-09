@@ -1,0 +1,512 @@
+{
+ "candidate_file": "staged/2026-08_175114d893df.json",
+ "checks": [
+  {
+   "detail": "https://dbedt.hawaii.gov/economic/mei/ -> 200",
+   "id": "fetch.publisher_page",
+   "status": "pass"
+  },
+  {
+   "detail": "latest period with all four county workbooks: 2026-08; listed: ['2026-08']",
+   "id": "discovery.county_workbooks",
+   "status": "pass"
+  },
+  {
+   "detail": "newest listed period 2026-08; newest complete period 2026-08",
+   "id": "discovery.latest_listed_is_complete",
+   "status": "pass"
+  },
+  {
+   "detail": "link text 'Honolulu County'",
+   "id": "discovery.link_text.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "link text 'Maui County'",
+   "id": "discovery.link_text.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "link text 'Kauai County'",
+   "id": "discovery.link_text.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "link text 'Hawaii County'",
+   "id": "discovery.link_text.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-honolulu.xlsx -> 200",
+   "id": "fetch.county.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "columns {'sf_sales': 40, 'sf_median': 41, 'condo_sales': 43, 'condo_median': 44}; months 1990-01 to 2026-08",
+   "id": "parse.county.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-maui.xlsx -> 200",
+   "id": "fetch.county.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "columns {'sf_sales': 40, 'sf_median': 41, 'condo_sales': 43, 'condo_median': 44}; months 2001-01 to 2026-08",
+   "id": "parse.county.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-kauai.xlsx -> 200",
+   "id": "fetch.county.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "columns {'sf_sales': 40, 'sf_median': 41, 'condo_sales': 43, 'condo_median': 44}; months 2005-01 to 2026-08",
+   "id": "parse.county.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/2026-08-hawaii.xlsx -> 200",
+   "id": "fetch.county.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "columns {'sf_sales': 40, 'sf_median': 41, 'condo_sales': 43, 'condo_median': 44}; months 2005-02 to 2026-08",
+   "id": "parse.county.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "summary workbook for 2026-08: https://files.hawaii.gov/dbedt/economic/data_reports/mei/mei-08p-2026.xlsx",
+   "id": "discovery.summary_workbook",
+   "status": "pass"
+  },
+  {
+   "detail": "https://files.hawaii.gov/dbedt/economic/data_reports/mei/mei-08p-2026.xlsx -> 200",
+   "id": "fetch.summary",
+   "status": "pass"
+  },
+  {
+   "detail": "sheets: ['HAWAII', 'HONOLULU', 'KAUAI', 'MAUI', 'STATE']",
+   "id": "parse.summary",
+   "status": "pass"
+  },
+  {
+   "detail": "workbook title says through 2026-08; file name says 2026-08",
+   "id": "release.title_period.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "last month with housing data 2026-08; release period 2026-08",
+   "id": "release.last_month.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "missing for 2026-08: none",
+   "id": "complete.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "workbook title says through 2026-08; file name says 2026-08",
+   "id": "release.title_period.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "last month with housing data 2026-08; release period 2026-08",
+   "id": "release.last_month.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "missing for 2026-08: none",
+   "id": "complete.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "workbook title says through 2026-08; file name says 2026-08",
+   "id": "release.title_period.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "last month with housing data 2026-08; release period 2026-08",
+   "id": "release.last_month.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "missing for 2026-08: none",
+   "id": "complete.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "workbook title says through 2026-08; file name says 2026-08",
+   "id": "release.title_period.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "last month with housing data 2026-08; release period 2026-08",
+   "id": "release.last_month.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "missing for 2026-08: none",
+   "id": "complete.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "county workbook titles ['2026-10-01']; summary sheet titles ['2026-10-01']",
+   "id": "release.publication_date_established",
+   "status": "pass"
+  },
+  {
+   "detail": "summary sheet for HONOLULU",
+   "id": "summary.sheet.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "summary month 2026-08, YTD through 2026-08; release 2026-08",
+   "id": "summary.period.honolulu",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 264 vs county workbook 264 (2026-08)",
+   "id": "summary.month.honolulu.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 259 vs county workbook 259 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.honolulu.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1240000 vs county workbook 1240000 (2026-08)",
+   "id": "summary.month.honolulu.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1105500 vs county workbook 1105500 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.honolulu.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 365 vs county workbook 365 (2026-08)",
+   "id": "summary.month.honolulu.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 391 vs county workbook 391 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.honolulu.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 510000 vs county workbook 510000 (2026-08)",
+   "id": "summary.month.honolulu.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 515000 vs county workbook 515000 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.honolulu.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 1950; sum of monthly rows 1950 (through 2026-08)",
+   "id": "summary.ytd.honolulu.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 1842; sum of monthly rows 1842 (through 2025-08)",
+   "id": "summary.ytd_year_ago.honolulu.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 2834; sum of monthly rows 2834 (through 2026-08)",
+   "id": "summary.ytd.honolulu.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 2881; sum of monthly rows 2881 (through 2025-08)",
+   "id": "summary.ytd_year_ago.honolulu.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary sheet for MAUI",
+   "id": "summary.sheet.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "summary month 2026-08, YTD through 2026-08; release 2026-08",
+   "id": "summary.period.maui",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 64 vs county workbook 64 (2026-08)",
+   "id": "summary.month.maui.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 62 vs county workbook 62 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.maui.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1200000 vs county workbook 1200000 (2026-08)",
+   "id": "summary.month.maui.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1302500 vs county workbook 1302500 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.maui.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 68 vs county workbook 68 (2026-08)",
+   "id": "summary.month.maui.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 57 vs county workbook 57 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.maui.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 564950 vs county workbook 564950 (2026-08)",
+   "id": "summary.month.maui.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 650000 vs county workbook 650000 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.maui.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 485; sum of monthly rows 483 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.maui.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 471; sum of monthly rows 471 (through 2025-08)",
+   "id": "summary.ytd_year_ago.maui.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 546; sum of monthly rows 545 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.maui.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 466; sum of monthly rows 466 (through 2025-08)",
+   "id": "summary.ytd_year_ago.maui.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary sheet for KAUAI",
+   "id": "summary.sheet.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "summary month 2026-08, YTD through 2026-08; release 2026-08",
+   "id": "summary.period.kauai",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 28 vs county workbook 28 (2026-08)",
+   "id": "summary.month.kauai.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 28 vs county workbook 28 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.kauai.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1088000 vs county workbook 1088000 (2026-08)",
+   "id": "summary.month.kauai.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 1185000 vs county workbook 1185000 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.kauai.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 15 vs county workbook 15 (2026-08)",
+   "id": "summary.month.kauai.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 26 vs county workbook 26 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.kauai.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 999999 vs county workbook 999999 (2026-08)",
+   "id": "summary.month.kauai.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 680000 vs county workbook 680000 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.kauai.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 239; sum of monthly rows 236 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.kauai.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 261; sum of monthly rows 261 (through 2025-08)",
+   "id": "summary.ytd_year_ago.kauai.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 153; sum of monthly rows 149 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.kauai.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 203; sum of monthly rows 203 (through 2025-08)",
+   "id": "summary.ytd_year_ago.kauai.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary sheet for HAWAII",
+   "id": "summary.sheet.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "summary month 2026-08, YTD through 2026-08; release 2026-08",
+   "id": "summary.period.hawaii",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 153 vs county workbook 153 (2026-08)",
+   "id": "summary.month.hawaii.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 166 vs county workbook 166 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.hawaii.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 580000 vs county workbook 580000 (2026-08)",
+   "id": "summary.month.hawaii.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 523500 vs county workbook 523500 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.hawaii.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 31 vs county workbook 31 (2026-08)",
+   "id": "summary.month.hawaii.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 37 vs county workbook 37 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.hawaii.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 493000 vs county workbook 493000 (2026-08)",
+   "id": "summary.month.hawaii.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "summary 572500 vs county workbook 572500 (2025-08); the county workbook value is kept",
+   "id": "summary.year_ago.hawaii.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 1335; sum of monthly rows 1317 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.hawaii.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 1355; sum of monthly rows 1355 (through 2025-08)",
+   "id": "summary.ytd_year_ago.hawaii.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 346; sum of monthly rows 343 (through 2026-08); published YTD includes sales reported after the monthly rows were compiled",
+   "id": "summary.ytd.hawaii.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "published YTD 357; sum of monthly rows 357 (through 2025-08)",
+   "id": "summary.ytd_year_ago.hawaii.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "summary sheet for STATE",
+   "id": "summary.sheet.state",
+   "status": "pass"
+  },
+  {
+   "detail": "summary month 2026-08, YTD through 2026-08; release 2026-08",
+   "id": "summary.period.state",
+   "status": "pass"
+  },
+  {
+   "detail": "sum of counties 509; DBEDT state 509",
+   "id": "summary.state_month_sum.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "sum of county published YTD 4009; DBEDT state YTD 4009",
+   "id": "summary.state_ytd_sum.sf_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "sum of counties 479; DBEDT state 479",
+   "id": "summary.state_month_sum.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "sum of county published YTD 3879; DBEDT state YTD 3879",
+   "id": "summary.state_ytd_sum.condo_sales",
+   "status": "pass"
+  },
+  {
+   "detail": "DBEDT state sf_median: None (recorded as published; never derived)",
+   "id": "summary.state_median_not_published.sf_median",
+   "status": "pass"
+  },
+  {
+   "detail": "DBEDT state condo_median: None (recorded as published; never derived)",
+   "id": "summary.state_median_not_published.condo_median",
+   "status": "pass"
+  },
+  {
+   "detail": "0 of 3552 verified baseline values differ (through 2026-08)",
+   "id": "baseline.no_mass_difference",
+   "status": "pass"
+  }
+ ],
+ "dataset": "dbedt_mei_county_housing",
+ "decision": "promoted",
+ "differences_vs_baseline": 0,
+ "discovery": {
+  "latest_complete_period": "2026-08",
+  "latest_listed_period": "2026-08",
+  "page_statements": [
+   "Monthly Economic Indicators (MEI) through August 2026 was released on October 1st including the BLS/DBEDT-LRB seasonally-adjusted Honolulu and Maui LAUS data.",
+   "Monthly Economic Indicators (MEI) through September 2026 will be released on/about October 29th and will include the BLS/DBEDT-LRB seasonally-adjusted Honolulu and Maui LAUS data."
+  ],
+  "problems": []
+ },
+ "exit_code": 0,
+ "first_release": true,
+ "kept_previous_last_good": false,
+ "last_good_after": {
+  "observation_month": "2026-08",
+  "release_id": "2026-08_175114d893df"
+ },
+ "last_good_before": null,
+ "new_months": [],
+ "observation_month": "2026-08",
+ "release_id": "2026-08_175114d893df",
+ "revisions_vs_last_good": 0,
+ "run_utc": "2026-10-09T02:48:49Z",
+ "schema_version": 1,
+ "status": "pass"
+}

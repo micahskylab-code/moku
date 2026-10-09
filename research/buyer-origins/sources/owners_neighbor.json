@@ -1,0 +1,4780 @@
+{
+ "key": "owners_neighbor",
+ "title": "Neighbor-island real property owner mailing-address geography (Maui County obtained; Hawaii County and Kauai County mailing data not publicly obtainable - proxies included)",
+ "generated_utc": "2026-10-08T06:05:42Z",
+ "source": {
+  "maui": {
+   "primary_mailing": {
+    "name": "Maui County GIS - Parcel Fabric Layers / Tax Parcel (production parcel fabric with OWNERNME1 + PSTL* postal mailing fields)",
+    "url": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Parcel_Fabric_Layers/FeatureServer/1",
+    "item_id": "3bdd938706dd4a0b9e9c4285c1ff732e",
+    "data_last_edit_utc": "2026-10-04T14:19:08Z",
+    "records": 81645,
+    "pages": 41,
+    "sha256_concat_pages": "f6e9e57c080bcd25fd138ef6bbee1a3b225b99948ed9f058b20da8cbf7416cb1",
+    "fields_pulled": "OBJECTID,LOWPARCELID,PARCELID,TMK,FULLTMK,STATEDAREA,LGLSTARTDT,OWNERNME1,PSTLADDRESS,PSTLCITY,PSTLSTATE,PSTLZIP5,PSTLCOUNTRY"
+   },
+   "condo_units": {
+    "name": "Parcel Fabric Layers / Tax Parcel - Condos",
+    "url": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Parcel_Fabric_Layers/FeatureServer/4",
+    "data_last_edit_utc": "2026-10-04T14:17:42Z",
+    "records": 30370,
+    "sha256_concat_pages": "48641033b316fcd968357625d5f4d490b07f72762827d9e61069862a3bac293b"
+   },
+   "situs_and_class_live": {
+    "name": "PARCELINFO - 'Parcel Data from CAMA Database Joined to Production Parcels (Updated Weekly)'",
+    "url": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/PARCELINFO/FeatureServer/0",
+    "item_id": "0fc4073a53c14f66bf02556a8f9f11b0",
+    "records": 81586,
+    "sha256_concat_pages": "6b54076bf60c82e3477393a12e73433c61c57cb1f6dc30f9eeb3ecd0a6681d19",
+    "fields_pulled": "OBJECTID,GIS_PARCELINFO_COL_A,GIS_PARCELINFO_PARID,GIS_PARCELINFO_CITYNAME,GIS_PARCELINFO_CPR,GIS_PARCELINFO_PITTCODE,GIS_PARCELINFO_PITTCODES,GIS_PARCELINFO_EXEMPTIONS,GIS_PARCELINFO_RES_COUNT,GIS_PARCELINFO_TOTAL_ASSESSED"
+   },
+   "certified_roll_2026": {
+    "name": "Maui County Certified Parcels 2026 (Real Property Tax certified parcels; related tables RPFMAIL/RPFOWNER/RPFVALUE/RPFADDR/RPFLEASE/TMKINFO)",
+    "url": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/Maui_County_Certified_Parcels_2026/FeatureServer",
+    "item_id": "15179781b53c460aba32ba92f4fd4d39",
+    "access_information": "Maui County Real Property Tax Division of the Department of Finance, 2026.",
+    "data_last_edit_utc": "2026-04-10T16:40:35Z",
+    "tax_year_field": 2026,
+    "rpfmail_records": 141149,
+    "rpfmail_sha256_concat_pages": "27e290b0a10b33b51b4a72aa10a2f0997680d9671df65771e0eeb606e5482b3d",
+    "rpfowner_records": 81786,
+    "rpfowner_sha256_concat_pages": "7f0bd4cb5bc93a376bb64c816050cde07e2cf577568fc3a6b91846104d557d1f",
+    "rpfvalue_records": 81716,
+    "rpfvalue_sha256_concat_pages": "c9949c1af566153000501b719f893a9016dc9a902dbad98ef641983e027816f4"
+   },
+   "official_aggregates": {
+    "2022": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/OwnerbyMail_2022/FeatureServer",
+    "2023": "https://services3.arcgis.com/fsrDo0QMPlK9CkZD/arcgis/rest/services/OwnerbyMail_2023/FeatureServer"
+   },
+   "mauicounty_gov_download_page": "https://www.mauicounty.gov/1032/Download-Public-Information - HTTP 403 (Cloudflare 'Attention Required' block page) on 2026-10-08 with a desktop Chrome User-Agent and Accept headers; www.mauicounty.gov/, /DocumentCenter and mauicounty.gov/... also 403. The same RPT owner/mailing data was obtained from the County's own ArcGIS Online org instead."
+  },
+  "kauai": {
+   "name": "County of Kauai GIS - TY26_PropertyTaxData ('Tax Classes and Assessment data for 2026 tax year')",
+   "url": "https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/TY26_PropertyTaxData/FeatureServer/0",
+   "data_last_edit_utc": "2026-02-11T23:49:22Z",
+   "records": 37655,
+   "sha256_concat_pages": "f727e7fee0f01ddc2781c103f408d9f7d075f36e4b0423e2de80d55d042cd9c7",
+   "fields_pulled": "OBJECTID,ZONE,SECTION,PLAT,PARCEL,CPR_UNIT,TMK,COTMK,PARID,TAXACRES,CDOMSTR,TYPE,TAXYR,CLASS,OVRCLASS,TAXCLASS,MODTOT,ASSDTOT,TOTEXEMPT,TAXABLE (OWN1 owner name deliberately not pulled)"
+  },
+  "hawaii": {
+   "name": "County of Hawaii GIS - cohRPT / cohRPT2026 (parcel polygons with RPT attributes)",
+   "url": "https://services1.arcgis.com/C2LPusZs5OXNGFDn/arcgis/rest/services/cohRPT/FeatureServer/0",
+   "data_last_edit_utc": "2026-04-28T01:15:39Z",
+   "records": 135718,
+   "sha256_concat_pages": "c9ab366d11c41f0512dd5ba1cf553d3fe0347177d955f64182e17f6fe6759032",
+   "fields_pulled": "OBJECTID,TMK,TaxAcres,LandValue,LandExempt,BldgValue,BldgExempt,PittCode,Homeowner,NHoodCode (MajorOwner/BigstOwner names deliberately not pulled)"
+  },
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/owners_neighbor",
+  "manifest": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/owners_neighbor/MANIFEST.txt",
+  "sha256_concat_pages_definition": "sha256 of the page files' bytes concatenated in filename order (prefix_0000.json, prefix_0001.json, ...); per-page URL, time, size and sha256 are in MANIFEST.txt",
+  "build_script": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/owners_neighbor/build.py"
+ },
+ "notes": [
+  "COVERAGE: Maui County (islands of Maui, Molokai, Lanai; Kalawao parcels in TMK zone 6 included) is complete. Hawaii County and Kauai County owner MAILING addresses could not be obtained from any free public source reachable from this environment (see counties.*.attempts). For those two counties only an owner-occupancy/tax-class PROXY is given; it is NOT a mailing-address measure and must not be presented as an out-of-state share.",
+  "MAUI DATA DATE: mailing addresses from the live production parcel fabric (Parcel_Fabric_Layers/1, dataLastEditDate 2026-10-04); tax class, situs city and CPR flag from PARCELINFO (CAMA join 'updated weekly', item modified 2026-10-07); owner type and homeowner flag from the 2026 certified roll (Maui_County_Certified_Parcels_2026 tables, data edited 2026-04-10, TAXYR 2026). The mauicounty.gov 'Property Owners & Mailing Addresses' download page itself was blocked (Cloudflare 403).",
+  "MAUI UNIT OF COUNT: one record per 13-digit TMK (county digit 2 + zone + section + plat(3) + parcel(3) + CPR(4)), so each condominium/CPR unit counts as one parcel. 1,187 records whose OWNERNME1 contains 'CONDO MASTER' (common-element/master records) are excluded, mirroring the Oahu treatment of condo masters.",
+  "MAUI MAILING ADDRESS: the fabric carries ONE postal address per parcel (PSTLADDRESS/PSTLCITY/PSTLSTATE/PSTLZIP5/PSTLCOUNTRY), i.e. the tax-bill mailing address. PSTLCOUNTRY 'US' + PSTLSTATE gives the US state; non-US countries are normalized with the same alias list as the Oahu file plus overrides (NORTHERN IRELAND/UK -> United Kingdom; BRITISH COLUMBIA -> Canada; AUSTRAILIA -> Australia; CHANNEL ISLANDS kept separate; one 'VICTORIA' left unresolved). 'Other US state' = 49 states + DC; US territories (PR, GU, MP, AS, VI) and APO/FPO (AA/AE/AP) are separate buckets counted in non_hawaii_total.",
+  "MAUI FALLBACK: 4,595 fabric records have a blank postal address. For those, the first owner mailing record with a classifiable address in the certified 2026 roll (RPFMAIL, OBJECTID order) is used ('fallback_certified_rpfmail'). 'all_parcels_strict_fabric_only' gives the no-fallback result. RPFMAIL has one row per owner name (141,149 rows); only some rows carry an address and 265 carry only a '00000' ZIP placeholder (treated as no address).",
+  "MAUI CROSS-CHECK: live fabric category vs certified-roll category agree on the share reported in crosscheck_live_fabric_vs_certified_rpfmail (differences are mostly ownership/mailing changes between April and October 2026 and multi-owner parcels whose first addressed owner differs from the tax-bill address). 'sensitivity_any_owner_record_non_hawaii_certified_roll' counts a parcel as non-Hawaii if ANY owner mailing record in the certified roll is outside Hawaii (upper-bound style measure).",
+  "MAUI TAX CLASS LABELS ARE INFERRED (no code-to-label lookup is published in the layers): code 9 = Owner-Occupied (all 28,974 certified-roll 900-coded parcels carry Homeowner='Y' and live exemptions are home exemptions); 12 = Long-Term Rental (2,807 of 3,141 carry 'LONG TERM RENTAL EXEMPTION'); 11 = Short-Term Rental (6,108 of 7,060 CPR units in the County's 101 'Minatoya list' complexes are code 11); 1 = Non-Owner-Occupied residential; 5 Agricultural; 6 Conservation; 3 Commercial; 4 Industrial; 2 Apartment; 7 Hotel & Resort; 10 Commercialized Residential; code 0 is 1,938 timeshare-plan-manager parcels + others (probably Time Share); 999 unlabeled. Verify against Maui RPT before publishing. Live PARCELINFO codes (1-12) equal certified RPFVALUE codes/100.",
+  "MAUI CONDO: 'by_condo_unit' uses membership in the County's 'Tax Parcel - Condos' fabric layer (30,370 units; identical to CPR suffix != 0000 in practice). PARCELINFO's CPR flag (YES/NO) is TMK-level and also flags CPR'd house/ag lots.",
+  "MAUI GEOGRAPHY: situs region uses PARCELINFO CITYNAME (postal city of the property; 'KIHEI' includes Wailea/Makena and 'LAHAINA' includes Kaanapali/Napili/Kapalua). TMK zone labels are the traditional Maui County tax-map districts (approximate); each zone lists its top situs cities so the label can be checked. Hawaii mailing ZIPs are split into Maui County / Oahu / Hawaii Island / Kauai by USPS ZIP lists.",
+  "MAUI METROS: same hand-built approximate ZIP3 -> metro mapping as the Oahu file (not an official ZIP-to-CBSA crosswalk), plus one addition: ZIP3 338 -> 'Lakeland-Winter Haven FL' (ZIP 33801 is a single institutional mailing address for hundreds of Maui parcels).",
+  "MAUI INSTITUTIONAL OWNERS: timeshare plan managers, developers, trusts and agents receive many tax bills at one address (see mailing_address_concentration and parcels_at_addresses_with_10plus_parcels by ZIP). '..._excluding_addresses_with_10plus_parcels' removes parcels at any identical normalized mailing address shared by >= 10 parcels.",
+  "INTERPRETATION: a mailing address is where the tax bill goes, not proof of residence. Out-of-state addresses can be trustees or agents for local owners; absentee owners using a Hawaii property manager or attorney appear as Hawaii. Treat non-Hawaii shares as a floor on non-resident ownership.",
+  "OFFICIAL MAUI AGGREGATES: Maui County GIS published 'Ownership by Mailing Address' layers for 2022 and 2023 (counts by HI ZIP, US state, country). They count ~87k mailing records (not parcels) with an undocumented method; included only as context.",
+  "KAUAI PROXY: TY26_PropertyTaxData (tax year 2026; layer data edited 2026-02-11; 37,655 mapped parcel/CPR records - some CPR units are unmapped per the County's layer description). Kauai's tax classes are labeled in the data (e.g. '8:OWNER-OCCUPIED', '1:NON-OWNER-OCCUPIED RESIDENTIAL', '2:VACATION RENTAL'). The owner-occupied share of residential records is a residency PROXY (home-exemption based), not a mailing-address result.",
+  "HAWAII COUNTY PROXY: cohRPT2026 (135,718 parcel polygons incl. 76 repeated TMKs from multipart parcels; 9-digit TMK without CPR suffix, so condo units are not separately represented; data edited 2026-04-28). Homeowner='Y' marks parcels with a home exemption (owner-occupancy proxy). Because Puna and Kau contain tens of thousands of vacant subdivision lots, 'homeowner_Y_share_of_improved' (parcels with BldgValue > 0) is the more meaningful figure; all Y parcels are improved. PittCode values (0,100,...,700,999) have no published labels in the layer and are reported as codes only.",
+  "PRIVACY: owner names and street addresses are not included in this file; raw pages containing them are kept only in the raw folder. Kauai and Hawaii County pulls deliberately excluded owner-name fields."
+ ],
+ "counties": {
+  "maui": {
+   "status": "obtained",
+   "data_date": "mailing 2026-10-04 (live parcel fabric); class/situs 2026-10-07 (PARCELINFO); certified roll 2026-04-10 (TAXYR 2026)",
+   "results": {
+    "universe": {
+     "fabric_tax_parcel_records": 81645,
+     "records_without_valid_13digit_tmk_skipped": 1,
+     "parcels_incl_cpr_units": 81644,
+     "condo_master_records_excluded": 1187,
+     "parcels_analyzed_excluding_masters": 80457,
+     "mailing_address_source": {
+      "none": 3109,
+      "fabric": 75954,
+      "fallback_certified_rpfmail": 1394
+     },
+     "joined_to_certified_2026_roll_rpfvalue": 80317,
+     "joined_to_live_parcelinfo": 80392
+    },
+    "all_parcels": {
+     "parcels": 80457,
+     "with_classified_mailing_address": 77348,
+     "counts": {
+      "hawaii": 53301,
+      "other_us_state": 22202,
+      "foreign": 1835,
+      "us_territory": 5,
+      "us_military_apo_fpo": 5,
+      "no_address": 3106,
+      "placeholder_nonaddress": 0,
+      "unparsed": 3,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.6891,
+      "other_us_state": 0.287,
+      "foreign": 0.0237,
+      "us_territory": 0.0001,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.3109
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.2759,
+      "foreign": 0.0228,
+      "non_hawaii_total": 0.2989
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 48160,
+      "oahu": 4735,
+      "hawaii_island": 295,
+      "kauai": 108,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.0964
+     }
+    },
+    "all_parcels_strict_fabric_only": {
+     "parcels": 80457,
+     "with_classified_mailing_address": 75954,
+     "counts": {
+      "hawaii": 52073,
+      "other_us_state": 22047,
+      "foreign": 1824,
+      "us_territory": 5,
+      "us_military_apo_fpo": 5,
+      "no_address": 4493,
+      "placeholder_nonaddress": 0,
+      "unparsed": 10,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.6856,
+      "other_us_state": 0.2903,
+      "foreign": 0.024,
+      "us_territory": 0.0001,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.3144
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.274,
+      "foreign": 0.0227,
+      "non_hawaii_total": 0.2968
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 47243,
+      "oahu": 4432,
+      "hawaii_island": 290,
+      "kauai": 108,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.0928
+     }
+    },
+    "sensitivity_any_owner_record_non_hawaii_certified_roll": {
+     "no_certified_mailing": 3411,
+     "any_owner_non_hawaii": 25018,
+     "all_owner_records_hawaii": 52028,
+     "share_any_owner_non_hawaii_of_parcels_with_certified_mailing": 0.3247
+    },
+    "top25_states_incl_hawaii": [
+     {
+      "state": "HI",
+      "name": "Hawaii",
+      "parcels": 53301
+     },
+     {
+      "state": "CA",
+      "name": "California",
+      "parcels": 9421
+     },
+     {
+      "state": "WA",
+      "name": "Washington",
+      "parcels": 2600
+     },
+     {
+      "state": "FL",
+      "name": "Florida",
+      "parcels": 1513
+     },
+     {
+      "state": "NV",
+      "name": "Nevada",
+      "parcels": 1465
+     },
+     {
+      "state": "CO",
+      "name": "Colorado",
+      "parcels": 905
+     },
+     {
+      "state": "OR",
+      "name": "Oregon",
+      "parcels": 800
+     },
+     {
+      "state": "TX",
+      "name": "Texas",
+      "parcels": 708
+     },
+     {
+      "state": "UT",
+      "name": "Utah",
+      "parcels": 507
+     },
+     {
+      "state": "AZ",
+      "name": "Arizona",
+      "parcels": 489
+     },
+     {
+      "state": "IL",
+      "name": "Illinois",
+      "parcels": 456
+     },
+     {
+      "state": "AK",
+      "name": "Alaska",
+      "parcels": 401
+     },
+     {
+      "state": "MA",
+      "name": "Massachusetts",
+      "parcels": 285
+     },
+     {
+      "state": "NY",
+      "name": "New York",
+      "parcels": 276
+     },
+     {
+      "state": "MN",
+      "name": "Minnesota",
+      "parcels": 175
+     },
+     {
+      "state": "ID",
+      "name": "Idaho",
+      "parcels": 175
+     },
+     {
+      "state": "MI",
+      "name": "Michigan",
+      "parcels": 158
+     },
+     {
+      "state": "MD",
+      "name": "Maryland",
+      "parcels": 135
+     },
+     {
+      "state": "VA",
+      "name": "Virginia",
+      "parcels": 134
+     },
+     {
+      "state": "NJ",
+      "name": "New Jersey",
+      "parcels": 124
+     },
+     {
+      "state": "MT",
+      "name": "Montana",
+      "parcels": 117
+     },
+     {
+      "state": "MO",
+      "name": "Missouri",
+      "parcels": 116
+     },
+     {
+      "state": "OH",
+      "name": "Ohio",
+      "parcels": 98
+     },
+     {
+      "state": "GA",
+      "name": "Georgia",
+      "parcels": 96
+     },
+     {
+      "state": "WI",
+      "name": "Wisconsin",
+      "parcels": 92
+     }
+    ],
+    "top25_out_of_state": [
+     {
+      "state": "CA",
+      "name": "California",
+      "parcels": 9421,
+      "share_of_out_of_state": 0.4243
+     },
+     {
+      "state": "WA",
+      "name": "Washington",
+      "parcels": 2600,
+      "share_of_out_of_state": 0.1171
+     },
+     {
+      "state": "FL",
+      "name": "Florida",
+      "parcels": 1513,
+      "share_of_out_of_state": 0.0681
+     },
+     {
+      "state": "NV",
+      "name": "Nevada",
+      "parcels": 1465,
+      "share_of_out_of_state": 0.066
+     },
+     {
+      "state": "CO",
+      "name": "Colorado",
+      "parcels": 905,
+      "share_of_out_of_state": 0.0408
+     },
+     {
+      "state": "OR",
+      "name": "Oregon",
+      "parcels": 800,
+      "share_of_out_of_state": 0.036
+     },
+     {
+      "state": "TX",
+      "name": "Texas",
+      "parcels": 708,
+      "share_of_out_of_state": 0.0319
+     },
+     {
+      "state": "UT",
+      "name": "Utah",
+      "parcels": 507,
+      "share_of_out_of_state": 0.0228
+     },
+     {
+      "state": "AZ",
+      "name": "Arizona",
+      "parcels": 489,
+      "share_of_out_of_state": 0.022
+     },
+     {
+      "state": "IL",
+      "name": "Illinois",
+      "parcels": 456,
+      "share_of_out_of_state": 0.0205
+     },
+     {
+      "state": "AK",
+      "name": "Alaska",
+      "parcels": 401,
+      "share_of_out_of_state": 0.0181
+     },
+     {
+      "state": "MA",
+      "name": "Massachusetts",
+      "parcels": 285,
+      "share_of_out_of_state": 0.0128
+     },
+     {
+      "state": "NY",
+      "name": "New York",
+      "parcels": 276,
+      "share_of_out_of_state": 0.0124
+     },
+     {
+      "state": "MN",
+      "name": "Minnesota",
+      "parcels": 175,
+      "share_of_out_of_state": 0.0079
+     },
+     {
+      "state": "ID",
+      "name": "Idaho",
+      "parcels": 175,
+      "share_of_out_of_state": 0.0079
+     },
+     {
+      "state": "MI",
+      "name": "Michigan",
+      "parcels": 158,
+      "share_of_out_of_state": 0.0071
+     },
+     {
+      "state": "MD",
+      "name": "Maryland",
+      "parcels": 135,
+      "share_of_out_of_state": 0.0061
+     },
+     {
+      "state": "VA",
+      "name": "Virginia",
+      "parcels": 134,
+      "share_of_out_of_state": 0.006
+     },
+     {
+      "state": "NJ",
+      "name": "New Jersey",
+      "parcels": 124,
+      "share_of_out_of_state": 0.0056
+     },
+     {
+      "state": "MT",
+      "name": "Montana",
+      "parcels": 117,
+      "share_of_out_of_state": 0.0053
+     },
+     {
+      "state": "MO",
+      "name": "Missouri",
+      "parcels": 116,
+      "share_of_out_of_state": 0.0052
+     },
+     {
+      "state": "OH",
+      "name": "Ohio",
+      "parcels": 98,
+      "share_of_out_of_state": 0.0044
+     },
+     {
+      "state": "GA",
+      "name": "Georgia",
+      "parcels": 96,
+      "share_of_out_of_state": 0.0043
+     },
+     {
+      "state": "WI",
+      "name": "Wisconsin",
+      "parcels": 92,
+      "share_of_out_of_state": 0.0041
+     },
+     {
+      "state": "PA",
+      "name": "Pennsylvania",
+      "parcels": 90,
+      "share_of_out_of_state": 0.0041
+     }
+    ],
+    "out_of_state_state_count": 50,
+    "territories_and_military": {
+     "us_territory_by_code": {
+      "GU": 4,
+      "PR": 1
+     },
+     "military_by_code": {
+      "AP": 3,
+      "AE": 2
+     }
+    },
+    "top50_out_of_state_zips": [
+     {
+      "zip5": "32819",
+      "state": "FL",
+      "parcels": 685,
+      "zip3": "328",
+      "metro_approx": "Orlando FL",
+      "parcels_at_addresses_with_10plus_parcels": 684,
+      "distinct_mailing_addresses": 3
+     },
+     {
+      "zip5": "33801",
+      "state": "FL",
+      "parcels": 480,
+      "zip3": "338",
+      "metro_approx": "Lakeland-Winter Haven FL",
+      "parcels_at_addresses_with_10plus_parcels": 480,
+      "distinct_mailing_addresses": 1
+     },
+     {
+      "zip5": "89135",
+      "state": "NV",
+      "parcels": 461,
+      "zip3": "891",
+      "metro_approx": "Las Vegas NV",
+      "parcels_at_addresses_with_10plus_parcels": 435,
+      "distinct_mailing_addresses": 23
+     },
+     {
+      "zip5": "89119",
+      "state": "NV",
+      "parcels": 404,
+      "zip3": "891",
+      "metro_approx": "Las Vegas NV",
+      "parcels_at_addresses_with_10plus_parcels": 397,
+      "distinct_mailing_addresses": 8
+     },
+     {
+      "zip5": "90067",
+      "state": "CA",
+      "parcels": 317,
+      "zip3": "900",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 289,
+      "distinct_mailing_addresses": 16
+     },
+     {
+      "zip5": "98004",
+      "state": "WA",
+      "parcels": 171,
+      "zip3": "980",
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels_at_addresses_with_10plus_parcels": 109,
+      "distinct_mailing_addresses": 56
+     },
+     {
+      "zip5": "01923",
+      "state": "MA",
+      "parcels": 168,
+      "zip3": "019",
+      "metro_approx": "Boston MA",
+      "parcels_at_addresses_with_10plus_parcels": 167,
+      "distinct_mailing_addresses": 2
+     },
+     {
+      "zip5": "84020",
+      "state": "UT",
+      "parcels": 165,
+      "zip3": "840",
+      "metro_approx": "Salt Lake City UT",
+      "parcels_at_addresses_with_10plus_parcels": 158,
+      "distinct_mailing_addresses": 7
+     },
+     {
+      "zip5": "92630",
+      "state": "CA",
+      "parcels": 157,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 132,
+      "distinct_mailing_addresses": 16
+     },
+     {
+      "zip5": "92614",
+      "state": "CA",
+      "parcels": 112,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 101,
+      "distinct_mailing_addresses": 9
+     },
+     {
+      "zip5": "90046",
+      "state": "CA",
+      "parcels": 104,
+      "zip3": "900",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 95,
+      "distinct_mailing_addresses": 9
+     },
+     {
+      "zip5": "94118",
+      "state": "CA",
+      "parcels": 98,
+      "zip3": "941",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 83,
+      "distinct_mailing_addresses": 15
+     },
+     {
+      "zip5": "60690",
+      "state": "IL",
+      "parcels": 98,
+      "zip3": "606",
+      "metro_approx": "Chicago IL",
+      "parcels_at_addresses_with_10plus_parcels": 97,
+      "distinct_mailing_addresses": 2
+     },
+     {
+      "zip5": "95070",
+      "state": "CA",
+      "parcels": 92,
+      "zip3": "950",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 55
+     },
+     {
+      "zip5": "90069",
+      "state": "CA",
+      "parcels": 89,
+      "zip3": "900",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 74,
+      "distinct_mailing_addresses": 15
+     },
+     {
+      "zip5": "85261",
+      "state": "AZ",
+      "parcels": 74,
+      "zip3": "852",
+      "metro_approx": "Phoenix AZ",
+      "parcels_at_addresses_with_10plus_parcels": 65,
+      "distinct_mailing_addresses": 5
+     },
+     {
+      "zip5": "98040",
+      "state": "WA",
+      "parcels": 72,
+      "zip3": "980",
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 59
+     },
+     {
+      "zip5": "80502",
+      "state": "CO",
+      "parcels": 68,
+      "zip3": "805",
+      "metro_approx": "Denver-Boulder CO",
+      "parcels_at_addresses_with_10plus_parcels": 68,
+      "distinct_mailing_addresses": 1
+     },
+     {
+      "zip5": "92660",
+      "state": "CA",
+      "parcels": 65,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 51
+     },
+     {
+      "zip5": "91364",
+      "state": "CA",
+      "parcels": 63,
+      "zip3": "913",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 48,
+      "distinct_mailing_addresses": 14
+     },
+     {
+      "zip5": "80202",
+      "state": "CO",
+      "parcels": 63,
+      "zip3": "802",
+      "metro_approx": "Denver-Boulder CO",
+      "parcels_at_addresses_with_10plus_parcels": 53,
+      "distinct_mailing_addresses": 9
+     },
+     {
+      "zip5": "94566",
+      "state": "CA",
+      "parcels": 61,
+      "zip3": "945",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 50
+     },
+     {
+      "zip5": "92037",
+      "state": "CA",
+      "parcels": 60,
+      "zip3": "920",
+      "metro_approx": "San Diego CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 45
+     },
+     {
+      "zip5": "94010",
+      "state": "CA",
+      "parcels": 59,
+      "zip3": "940",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 43
+     },
+     {
+      "zip5": "21108",
+      "state": "MD",
+      "parcels": 58,
+      "zip3": "211",
+      "metro_approx": "Baltimore MD",
+      "parcels_at_addresses_with_10plus_parcels": 49,
+      "distinct_mailing_addresses": 8
+     },
+     {
+      "zip5": "75201",
+      "state": "TX",
+      "parcels": 57,
+      "zip3": "752",
+      "metro_approx": "Dallas-Fort Worth TX",
+      "parcels_at_addresses_with_10plus_parcels": 46,
+      "distinct_mailing_addresses": 10
+     },
+     {
+      "zip5": "98033",
+      "state": "WA",
+      "parcels": 55,
+      "zip3": "980",
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 50
+     },
+     {
+      "zip5": "92705",
+      "state": "CA",
+      "parcels": 51,
+      "zip3": "927",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 17,
+      "distinct_mailing_addresses": 25
+     },
+     {
+      "zip5": "94022",
+      "state": "CA",
+      "parcels": 51,
+      "zip3": "940",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 47
+     },
+     {
+      "zip5": "95762",
+      "state": "CA",
+      "parcels": 48,
+      "zip3": "957",
+      "metro_approx": "Sacramento CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 35
+     },
+     {
+      "zip5": "99515",
+      "state": "AK",
+      "parcels": 48,
+      "zip3": "995",
+      "metro_approx": "Anchorage AK",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 39
+     },
+     {
+      "zip5": "95120",
+      "state": "CA",
+      "parcels": 46,
+      "zip3": "951",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 40
+     },
+     {
+      "zip5": "94526",
+      "state": "CA",
+      "parcels": 45,
+      "zip3": "945",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 38
+     },
+     {
+      "zip5": "94596",
+      "state": "CA",
+      "parcels": 45,
+      "zip3": "945",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 28,
+      "distinct_mailing_addresses": 16
+     },
+     {
+      "zip5": "94549",
+      "state": "CA",
+      "parcels": 45,
+      "zip3": "945",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 41
+     },
+     {
+      "zip5": "94901",
+      "state": "CA",
+      "parcels": 44,
+      "zip3": "949",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 35
+     },
+     {
+      "zip5": "92651",
+      "state": "CA",
+      "parcels": 44,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 30
+     },
+     {
+      "zip5": "92648",
+      "state": "CA",
+      "parcels": 42,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 28
+     },
+     {
+      "zip5": "90275",
+      "state": "CA",
+      "parcels": 42,
+      "zip3": "902",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 34
+     },
+     {
+      "zip5": "92024",
+      "state": "CA",
+      "parcels": 41,
+      "zip3": "920",
+      "metro_approx": "San Diego CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 37
+     },
+     {
+      "zip5": "90266",
+      "state": "CA",
+      "parcels": 41,
+      "zip3": "902",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 32
+     },
+     {
+      "zip5": "89511",
+      "state": "NV",
+      "parcels": 41,
+      "zip3": "895",
+      "metro_approx": "Reno-Tahoe NV/CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 38
+     },
+     {
+      "zip5": "89052",
+      "state": "NV",
+      "parcels": 40,
+      "zip3": "890",
+      "metro_approx": "Las Vegas NV",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 31
+     },
+     {
+      "zip5": "94027",
+      "state": "CA",
+      "parcels": 38,
+      "zip3": "940",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 29
+     },
+     {
+      "zip5": "94062",
+      "state": "CA",
+      "parcels": 38,
+      "zip3": "940",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 32
+     },
+     {
+      "zip5": "94024",
+      "state": "CA",
+      "parcels": 38,
+      "zip3": "940",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 34
+     },
+     {
+      "zip5": "98006",
+      "state": "WA",
+      "parcels": 38,
+      "zip3": "980",
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 32
+     },
+     {
+      "zip5": "90274",
+      "state": "CA",
+      "parcels": 37,
+      "zip3": "902",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 34
+     },
+     {
+      "zip5": "92663",
+      "state": "CA",
+      "parcels": 37,
+      "zip3": "926",
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 26
+     },
+     {
+      "zip5": "94941",
+      "state": "CA",
+      "parcels": 37,
+      "zip3": "949",
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels_at_addresses_with_10plus_parcels": 0,
+      "distinct_mailing_addresses": 34
+     }
+    ],
+    "out_of_state_by_metro_approx": [
+     {
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels": 3610,
+      "share_of_out_of_state": 0.1626
+     },
+     {
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels": 3413,
+      "share_of_out_of_state": 0.1537
+     },
+     {
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels": 2094,
+      "share_of_out_of_state": 0.0943
+     },
+     {
+      "metro_approx": "Las Vegas NV",
+      "parcels": 1199,
+      "share_of_out_of_state": 0.054
+     },
+     {
+      "metro_approx": "Orlando FL",
+      "parcels": 737,
+      "share_of_out_of_state": 0.0332
+     },
+     {
+      "metro_approx": "Denver-Boulder CO",
+      "parcels": 720,
+      "share_of_out_of_state": 0.0324
+     },
+     {
+      "metro_approx": "San Diego CA",
+      "parcels": 714,
+      "share_of_out_of_state": 0.0322
+     },
+     {
+      "metro_approx": "Portland OR-WA",
+      "parcels": 630,
+      "share_of_out_of_state": 0.0284
+     },
+     {
+      "metro_approx": "Sacramento CA",
+      "parcels": 548,
+      "share_of_out_of_state": 0.0247
+     },
+     {
+      "metro_approx": "Lakeland-Winter Haven FL",
+      "parcels": 482,
+      "share_of_out_of_state": 0.0217
+     },
+     {
+      "metro_approx": "Salt Lake City UT",
+      "parcels": 430,
+      "share_of_out_of_state": 0.0194
+     },
+     {
+      "metro_approx": "Chicago IL",
+      "parcels": 419,
+      "share_of_out_of_state": 0.0189
+     },
+     {
+      "metro_approx": "Phoenix AZ",
+      "parcels": 391,
+      "share_of_out_of_state": 0.0176
+     },
+     {
+      "metro_approx": "Reno-Tahoe NV/CA",
+      "parcels": 335,
+      "share_of_out_of_state": 0.0151
+     },
+     {
+      "metro_approx": "Anchorage AK",
+      "parcels": 331,
+      "share_of_out_of_state": 0.0149
+     },
+     {
+      "metro_approx": "Dallas-Fort Worth TX",
+      "parcels": 330,
+      "share_of_out_of_state": 0.0149
+     },
+     {
+      "metro_approx": "New York City NY-NJ",
+      "parcels": 297,
+      "share_of_out_of_state": 0.0134
+     },
+     {
+      "metro_approx": "Boston MA",
+      "parcels": 233,
+      "share_of_out_of_state": 0.0105
+     },
+     {
+      "metro_approx": "Riverside-San Bernardino CA (Inland Empire)",
+      "parcels": 217,
+      "share_of_out_of_state": 0.0098
+     },
+     {
+      "metro_approx": "Houston TX",
+      "parcels": 172,
+      "share_of_out_of_state": 0.0077
+     },
+     {
+      "metro_approx": "Stockton-Modesto CA",
+      "parcels": 151,
+      "share_of_out_of_state": 0.0068
+     },
+     {
+      "metro_approx": "Minneapolis-St. Paul MN",
+      "parcels": 141,
+      "share_of_out_of_state": 0.0064
+     },
+     {
+      "metro_approx": "Spokane WA",
+      "parcels": 132,
+      "share_of_out_of_state": 0.0059
+     },
+     {
+      "metro_approx": "Other CO (not mapped)",
+      "parcels": 129,
+      "share_of_out_of_state": 0.0058
+     },
+     {
+      "metro_approx": "Washington DC-MD-VA",
+      "parcels": 125,
+      "share_of_out_of_state": 0.0056
+     },
+     {
+      "metro_approx": "Santa Barbara CA",
+      "parcels": 118,
+      "share_of_out_of_state": 0.0053
+     },
+     {
+      "metro_approx": "Other MT (not mapped)",
+      "parcels": 117,
+      "share_of_out_of_state": 0.0053
+     },
+     {
+      "metro_approx": "Oxnard-Ventura CA",
+      "parcels": 116,
+      "share_of_out_of_state": 0.0052
+     },
+     {
+      "metro_approx": "Austin TX",
+      "parcels": 113,
+      "share_of_out_of_state": 0.0051
+     },
+     {
+      "metro_approx": "Santa Barbara/San Luis Obispo CA",
+      "parcels": 109,
+      "share_of_out_of_state": 0.0049
+     },
+     {
+      "metro_approx": "Miami-Fort Lauderdale-West Palm Beach FL",
+      "parcels": 101,
+      "share_of_out_of_state": 0.0045
+     },
+     {
+      "metro_approx": "Bend OR",
+      "parcels": 99,
+      "share_of_out_of_state": 0.0045
+     },
+     {
+      "metro_approx": "Other ID (not mapped)",
+      "parcels": 98,
+      "share_of_out_of_state": 0.0044
+     },
+     {
+      "metro_approx": "Salinas-Monterey CA",
+      "parcels": 92,
+      "share_of_out_of_state": 0.0041
+     },
+     {
+      "metro_approx": "Olympia WA",
+      "parcels": 92,
+      "share_of_out_of_state": 0.0041
+     },
+     {
+      "metro_approx": "Salem OR",
+      "parcels": 90,
+      "share_of_out_of_state": 0.0041
+     },
+     {
+      "metro_approx": "Other MI (not mapped)",
+      "parcels": 86,
+      "share_of_out_of_state": 0.0039
+     },
+     {
+      "metro_approx": "Baltimore MD",
+      "parcels": 84,
+      "share_of_out_of_state": 0.0038
+     },
+     {
+      "metro_approx": "Philadelphia PA-NJ",
+      "parcels": 80,
+      "share_of_out_of_state": 0.0036
+     },
+     {
+      "metro_approx": "Eugene OR",
+      "parcels": 78,
+      "share_of_out_of_state": 0.0035
+     }
+    ],
+    "top50_zips_rolled_up_by_metro": [
+     {
+      "metro_approx": "Los Angeles-Long Beach-Anaheim CA",
+      "parcels": 1201
+     },
+     {
+      "metro_approx": "Las Vegas NV",
+      "parcels": 905
+     },
+     {
+      "metro_approx": "San Francisco Bay Area CA",
+      "parcels": 737
+     },
+     {
+      "metro_approx": "Orlando FL",
+      "parcels": 685
+     },
+     {
+      "metro_approx": "Lakeland-Winter Haven FL",
+      "parcels": 480
+     },
+     {
+      "metro_approx": "Seattle-Tacoma WA",
+      "parcels": 336
+     },
+     {
+      "metro_approx": "Boston MA",
+      "parcels": 168
+     },
+     {
+      "metro_approx": "Salt Lake City UT",
+      "parcels": 165
+     },
+     {
+      "metro_approx": "Denver-Boulder CO",
+      "parcels": 131
+     },
+     {
+      "metro_approx": "San Diego CA",
+      "parcels": 101
+     },
+     {
+      "metro_approx": "Chicago IL",
+      "parcels": 98
+     },
+     {
+      "metro_approx": "Phoenix AZ",
+      "parcels": 74
+     },
+     {
+      "metro_approx": "Baltimore MD",
+      "parcels": 58
+     },
+     {
+      "metro_approx": "Dallas-Fort Worth TX",
+      "parcels": 57
+     },
+     {
+      "metro_approx": "Sacramento CA",
+      "parcels": 48
+     },
+     {
+      "metro_approx": "Anchorage AK",
+      "parcels": 48
+     },
+     {
+      "metro_approx": "Reno-Tahoe NV/CA",
+      "parcels": 41
+     }
+    ],
+    "top20_foreign_countries": [
+     {
+      "country": "Canada",
+      "parcels": 1602,
+      "share_of_foreign": 0.873
+     },
+     {
+      "country": "Japan",
+      "parcels": 96,
+      "share_of_foreign": 0.0523
+     },
+     {
+      "country": "Germany",
+      "parcels": 29,
+      "share_of_foreign": 0.0158
+     },
+     {
+      "country": "Australia",
+      "parcels": 19,
+      "share_of_foreign": 0.0104
+     },
+     {
+      "country": "United Kingdom",
+      "parcels": 16,
+      "share_of_foreign": 0.0087
+     },
+     {
+      "country": "New Zealand",
+      "parcels": 13,
+      "share_of_foreign": 0.0071
+     },
+     {
+      "country": "Switzerland",
+      "parcels": 9,
+      "share_of_foreign": 0.0049
+     },
+     {
+      "country": "France",
+      "parcels": 7,
+      "share_of_foreign": 0.0038
+     },
+     {
+      "country": "Hong Kong",
+      "parcels": 7,
+      "share_of_foreign": 0.0038
+     },
+     {
+      "country": "South Korea",
+      "parcels": 5,
+      "share_of_foreign": 0.0027
+     },
+     {
+      "country": "Channel Islands (UK Crown Dependencies)",
+      "parcels": 4,
+      "share_of_foreign": 0.0022
+     },
+     {
+      "country": "China",
+      "parcels": 4,
+      "share_of_foreign": 0.0022
+     },
+     {
+      "country": "Singapore",
+      "parcels": 4,
+      "share_of_foreign": 0.0022
+     },
+     {
+      "country": "Philippines",
+      "parcels": 3,
+      "share_of_foreign": 0.0016
+     },
+     {
+      "country": "Netherlands",
+      "parcels": 2,
+      "share_of_foreign": 0.0011
+     },
+     {
+      "country": "Israel",
+      "parcels": 2,
+      "share_of_foreign": 0.0011
+     },
+     {
+      "country": "Spain",
+      "parcels": 2,
+      "share_of_foreign": 0.0011
+     },
+     {
+      "country": "Taiwan",
+      "parcels": 2,
+      "share_of_foreign": 0.0011
+     },
+     {
+      "country": "United Arab Emirates",
+      "parcels": 1,
+      "share_of_foreign": 0.0005
+     },
+     {
+      "country": "Thailand",
+      "parcels": 1,
+      "share_of_foreign": 0.0005
+     }
+    ],
+    "foreign_country_count": 26,
+    "mailing_address_concentration": {
+     "hawaii": {
+      "parcels": 53301,
+      "at_addresses_with_2plus_parcels": 20257,
+      "at_addresses_with_10plus_parcels": 5323,
+      "at_addresses_with_50plus_parcels": 2740,
+      "distinct_mailing_addresses": 38863
+     },
+     "other_us_state": {
+      "parcels": 22202,
+      "at_addresses_with_2plus_parcels": 8798,
+      "at_addresses_with_10plus_parcels": 3911,
+      "at_addresses_with_50plus_parcels": 3314,
+      "distinct_mailing_addresses": 15367
+     },
+     "foreign": {
+      "parcels": 1835,
+      "at_addresses_with_2plus_parcels": 236,
+      "at_addresses_with_10plus_parcels": 22,
+      "at_addresses_with_50plus_parcels": 0,
+      "distinct_mailing_addresses": 1700
+     }
+    },
+    "all_parcels_excluding_addresses_with_10plus_parcels": {
+     "parcels": 71201,
+     "with_classified_mailing_address": 68092,
+     "counts": {
+      "hawaii": 47978,
+      "other_us_state": 18291,
+      "foreign": 1813,
+      "us_territory": 5,
+      "us_military_apo_fpo": 5,
+      "no_address": 3106,
+      "placeholder_nonaddress": 0,
+      "unparsed": 3,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.7046,
+      "other_us_state": 0.2686,
+      "foreign": 0.0266,
+      "us_territory": 0.0001,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.2954
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.2569,
+      "foreign": 0.0255,
+      "non_hawaii_total": 0.2825
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 44250,
+      "oahu": 3322,
+      "hawaii_island": 295,
+      "kauai": 108,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.0776
+     }
+    },
+    "by_tax_class_code": {
+     "9 (inferred Owner-Occupied)": {
+      "parcels": 29013,
+      "with_classified_mailing_address": 29013,
+      "counts": {
+       "hawaii": 28138,
+       "other_us_state": 827,
+       "foreign": 46,
+       "us_territory": 0,
+       "us_military_apo_fpo": 2,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9698,
+       "other_us_state": 0.0285,
+       "foreign": 0.0016,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.0302
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0285,
+       "foreign": 0.0016,
+       "non_hawaii_total": 0.0302
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 27899,
+       "oahu": 195,
+       "hawaii_island": 35,
+       "kauai": 8,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0085
+      }
+     },
+     "1 (inferred Non-Owner-Occupied residential)": {
+      "parcels": 17953,
+      "with_classified_mailing_address": 17024,
+      "counts": {
+       "hawaii": 11201,
+       "other_us_state": 5307,
+       "foreign": 511,
+       "us_territory": 3,
+       "us_military_apo_fpo": 2,
+       "no_address": 929,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.658,
+       "other_us_state": 0.3117,
+       "foreign": 0.03,
+       "us_territory": 0.0002,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.342
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2956,
+       "foreign": 0.0285,
+       "non_hawaii_total": 0.3243
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 9173,
+       "oahu": 1869,
+       "hawaii_island": 107,
+       "kauai": 51,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.181
+      }
+     },
+     "11 (inferred Short-Term Rental)": {
+      "parcels": 13693,
+      "with_classified_mailing_address": 13690,
+      "counts": {
+       "hawaii": 2155,
+       "other_us_state": 10338,
+       "foreign": 1197,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 1,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.1574,
+       "other_us_state": 0.7551,
+       "foreign": 0.0874,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.8426
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.755,
+       "foreign": 0.0874,
+       "non_hawaii_total": 0.8424
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1891,
+       "oahu": 228,
+       "hawaii_island": 29,
+       "kauai": 7,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1225
+      }
+     },
+     "5 (inferred Agricultural)": {
+      "parcels": 7294,
+      "with_classified_mailing_address": 6083,
+      "counts": {
+       "hawaii": 4839,
+       "other_us_state": 1212,
+       "foreign": 30,
+       "us_territory": 2,
+       "us_military_apo_fpo": 0,
+       "no_address": 1210,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7955,
+       "other_us_state": 0.1992,
+       "foreign": 0.0049,
+       "us_territory": 0.0003,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2045
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1662,
+       "foreign": 0.0041,
+       "non_hawaii_total": 0.1706
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 3834,
+       "oahu": 919,
+       "hawaii_island": 65,
+       "kauai": 20,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2075
+      }
+     },
+     "12 (inferred Long-Term Rental)": {
+      "parcels": 3136,
+      "with_classified_mailing_address": 3136,
+      "counts": {
+       "hawaii": 2322,
+       "other_us_state": 778,
+       "foreign": 35,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7404,
+       "other_us_state": 0.2481,
+       "foreign": 0.0112,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0003,
+       "non_hawaii_total": 0.2596
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2481,
+       "foreign": 0.0112,
+       "non_hawaii_total": 0.2596
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 2115,
+       "oahu": 181,
+       "hawaii_island": 21,
+       "kauai": 5,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0891
+      }
+     },
+     "3 (inferred Commercial)": {
+      "parcels": 2465,
+      "with_classified_mailing_address": 2236,
+      "counts": {
+       "hawaii": 1814,
+       "other_us_state": 416,
+       "foreign": 6,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 229,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8113,
+       "other_us_state": 0.186,
+       "foreign": 0.0027,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1887
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1688,
+       "foreign": 0.0024,
+       "non_hawaii_total": 0.1712
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1367,
+       "oahu": 437,
+       "hawaii_island": 5,
+       "kauai": 5,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2464
+      }
+     },
+     "0 (unlabeled; mostly timeshare-plan-manager parcels)": {
+      "parcels": 2449,
+      "with_classified_mailing_address": 2449,
+      "counts": {
+       "hawaii": 220,
+       "other_us_state": 2227,
+       "foreign": 2,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.0898,
+       "other_us_state": 0.9094,
+       "foreign": 0.0008,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.9102
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.9094,
+       "foreign": 0.0008,
+       "non_hawaii_total": 0.9102
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 136,
+       "oahu": 84,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.3818
+      }
+     },
+     "6 (inferred Conservation)": {
+      "parcels": 1302,
+      "with_classified_mailing_address": 875,
+      "counts": {
+       "hawaii": 710,
+       "other_us_state": 160,
+       "foreign": 5,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 427,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8114,
+       "other_us_state": 0.1829,
+       "foreign": 0.0057,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1886
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1229,
+       "foreign": 0.0038,
+       "non_hawaii_total": 0.1267
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 474,
+       "oahu": 209,
+       "hawaii_island": 21,
+       "kauai": 6,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.3324
+      }
+     },
+     "4 (inferred Industrial)": {
+      "parcels": 1011,
+      "with_classified_mailing_address": 937,
+      "counts": {
+       "hawaii": 814,
+       "other_us_state": 123,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 74,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8687,
+       "other_us_state": 0.1313,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1313
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1217,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.1217
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 537,
+       "oahu": 265,
+       "hawaii_island": 9,
+       "kauai": 3,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.3403
+      }
+     },
+     "2 (inferred Apartment)": {
+      "parcels": 844,
+      "with_classified_mailing_address": 816,
+      "counts": {
+       "hawaii": 340,
+       "other_us_state": 476,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 28,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4167,
+       "other_us_state": 0.5833,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5833
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.564,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.564
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 300,
+       "oahu": 40,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1176
+      }
+     },
+     "7 (inferred Hotel & Resort)": {
+      "parcels": 558,
+      "with_classified_mailing_address": 523,
+      "counts": {
+       "hawaii": 275,
+       "other_us_state": 247,
+       "foreign": 1,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 35,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5258,
+       "other_us_state": 0.4723,
+       "foreign": 0.0019,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.4742
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.4427,
+       "foreign": 0.0018,
+       "non_hawaii_total": 0.4444
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 43,
+       "oahu": 232,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.8436
+      }
+     },
+     "999 (unlabeled)": {
+      "parcels": 460,
+      "with_classified_mailing_address": 410,
+      "counts": {
+       "hawaii": 321,
+       "other_us_state": 87,
+       "foreign": 2,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 50,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7829,
+       "other_us_state": 0.2122,
+       "foreign": 0.0049,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2171
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1891,
+       "foreign": 0.0043,
+       "non_hawaii_total": 0.1935
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 241,
+       "oahu": 75,
+       "hawaii_island": 2,
+       "kauai": 3,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2492
+      }
+     },
+     "10 (inferred Commercialized Residential)": {
+      "parcels": 156,
+      "with_classified_mailing_address": 156,
+      "counts": {
+       "hawaii": 152,
+       "other_us_state": 4,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9744,
+       "other_us_state": 0.0256,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0256
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0256,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0256
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 150,
+       "oahu": 1,
+       "hawaii_island": 1,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0132
+      }
+     },
+     "no_class_match": {
+      "parcels": 123,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 123,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      }
+     }
+    },
+    "residential_classes_1_2_9_10_11_12": {
+     "parcels": 64795,
+     "with_classified_mailing_address": 63835,
+     "counts": {
+      "hawaii": 44308,
+      "other_us_state": 17730,
+      "foreign": 1789,
+      "us_territory": 3,
+      "us_military_apo_fpo": 5,
+      "no_address": 958,
+      "placeholder_nonaddress": 0,
+      "unparsed": 2,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.6941,
+      "other_us_state": 0.2777,
+      "foreign": 0.028,
+      "us_territory": 0.0,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.3059
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.2736,
+      "foreign": 0.0276,
+      "non_hawaii_total": 0.3014
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 41528,
+      "oahu": 2514,
+      "hawaii_island": 193,
+      "kauai": 71,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.0627
+     }
+    },
+    "non_owner_occupied_residential_classes_1_2_11_12": {
+     "parcels": 35626,
+     "with_classified_mailing_address": 34666,
+     "counts": {
+      "hawaii": 16018,
+      "other_us_state": 16899,
+      "foreign": 1743,
+      "us_territory": 3,
+      "us_military_apo_fpo": 3,
+      "no_address": 958,
+      "placeholder_nonaddress": 0,
+      "unparsed": 2,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.4621,
+      "other_us_state": 0.4875,
+      "foreign": 0.0503,
+      "us_territory": 0.0001,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.5379
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.4743,
+      "foreign": 0.0489,
+      "non_hawaii_total": 0.5234
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 13479,
+      "oahu": 2318,
+      "hawaii_island": 157,
+      "kauai": 63,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.1585
+     }
+    },
+    "non_owner_occupied_residential_classes_1_2_11_12_excluding_addresses_with_10plus_parcels": {
+     "parcels": 32689,
+     "with_classified_mailing_address": 31729,
+     "counts": {
+      "hawaii": 14116,
+      "other_us_state": 15880,
+      "foreign": 1727,
+      "us_territory": 3,
+      "us_military_apo_fpo": 3,
+      "no_address": 958,
+      "placeholder_nonaddress": 0,
+      "unparsed": 2,
+      "condo_master_placeholder": 0
+     },
+     "share_of_classified": {
+      "hawaii": 0.4449,
+      "other_us_state": 0.5005,
+      "foreign": 0.0544,
+      "us_territory": 0.0001,
+      "us_military_apo_fpo": 0.0001,
+      "non_hawaii_total": 0.5551
+     },
+     "share_of_all_parcels_lower_bound": {
+      "other_us_state": 0.4858,
+      "foreign": 0.0528,
+      "non_hawaii_total": 0.5388
+     },
+     "hawaii_mailing_split_by_island_zip": {
+      "maui_county": 12159,
+      "oahu": 1736,
+      "hawaii_island": 157,
+      "kauai": 63,
+      "other_or_unknown_hi_zip": 0,
+      "off_island_share_of_hawaii": 0.1386
+     }
+    },
+    "homeowner_flag_certified_roll": {
+     "": {
+      "parcels": 16,
+      "with_classified_mailing_address": 16,
+      "counts": {
+       "hawaii": 16,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 1.0,
+       "other_us_state": 0.0,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 16,
+       "oahu": 0,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0
+      }
+     },
+     "N": {
+      "parcels": 51298,
+      "with_classified_mailing_address": 48329,
+      "counts": {
+       "hawaii": 25072,
+       "other_us_state": 21455,
+       "foreign": 1794,
+       "us_territory": 5,
+       "us_military_apo_fpo": 3,
+       "no_address": 2966,
+       "placeholder_nonaddress": 0,
+       "unparsed": 3,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5188,
+       "other_us_state": 0.4439,
+       "foreign": 0.0371,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.4812
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.4182,
+       "foreign": 0.035,
+       "non_hawaii_total": 0.4534
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 20150,
+       "oahu": 4557,
+       "hawaii_island": 264,
+       "kauai": 99,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1963
+      }
+     },
+     "Y": {
+      "parcels": 29003,
+      "with_classified_mailing_address": 29003,
+      "counts": {
+       "hawaii": 28213,
+       "other_us_state": 747,
+       "foreign": 41,
+       "us_territory": 0,
+       "us_military_apo_fpo": 2,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9728,
+       "other_us_state": 0.0258,
+       "foreign": 0.0014,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.0272
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0258,
+       "foreign": 0.0014,
+       "non_hawaii_total": 0.0272
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 27994,
+       "oahu": 178,
+       "hawaii_island": 31,
+       "kauai": 9,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0077
+      }
+     },
+     "no_match": {
+      "parcels": 140,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 140,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      }
+     }
+    },
+    "by_condo_unit": {
+     "non_condo_parcel": {
+      "parcels": 50089,
+      "with_classified_mailing_address": 47170,
+      "counts": {
+       "hawaii": 41128,
+       "other_us_state": 5722,
+       "foreign": 310,
+       "us_territory": 5,
+       "us_military_apo_fpo": 5,
+       "no_address": 2918,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8719,
+       "other_us_state": 0.1213,
+       "foreign": 0.0066,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.1281
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1142,
+       "foreign": 0.0062,
+       "non_hawaii_total": 0.1206
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 37328,
+       "oahu": 3481,
+       "hawaii_island": 228,
+       "kauai": 88,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0923
+      }
+     },
+     "condo_cpr_unit": {
+      "parcels": 30368,
+      "with_classified_mailing_address": 30178,
+      "counts": {
+       "hawaii": 12173,
+       "other_us_state": 16480,
+       "foreign": 1525,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 188,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4034,
+       "other_us_state": 0.5461,
+       "foreign": 0.0505,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5966
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5427,
+       "foreign": 0.0502,
+       "non_hawaii_total": 0.5929
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 10832,
+       "oahu": 1254,
+       "hawaii_island": 67,
+       "kauai": 20,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1102
+      }
+     }
+    },
+    "by_cpr_suffix": {
+     "suffix_0000": {
+      "parcels": 50089,
+      "with_classified_mailing_address": 47170,
+      "counts": {
+       "hawaii": 41128,
+       "other_us_state": 5722,
+       "foreign": 310,
+       "us_territory": 5,
+       "us_military_apo_fpo": 5,
+       "no_address": 2918,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8719,
+       "other_us_state": 0.1213,
+       "foreign": 0.0066,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.1281
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1142,
+       "foreign": 0.0062,
+       "non_hawaii_total": 0.1206
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 37328,
+       "oahu": 3481,
+       "hawaii_island": 228,
+       "kauai": 88,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0923
+      }
+     },
+     "cpr_unit_suffix_ne_0000": {
+      "parcels": 30368,
+      "with_classified_mailing_address": 30178,
+      "counts": {
+       "hawaii": 12173,
+       "other_us_state": 16480,
+       "foreign": 1525,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 188,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4034,
+       "other_us_state": 0.5461,
+       "foreign": 0.0505,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5966
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5427,
+       "foreign": 0.0502,
+       "non_hawaii_total": 0.5929
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 10832,
+       "oahu": 1254,
+       "hawaii_island": 67,
+       "kauai": 20,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1102
+      }
+     }
+    },
+    "by_cpr_flag_parcelinfo": {
+     "NO": {
+      "parcels": 49691,
+      "with_classified_mailing_address": 47018,
+      "counts": {
+       "hawaii": 41002,
+       "other_us_state": 5698,
+       "foreign": 308,
+       "us_territory": 5,
+       "us_military_apo_fpo": 5,
+       "no_address": 2672,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.872,
+       "other_us_state": 0.1212,
+       "foreign": 0.0066,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.128
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1147,
+       "foreign": 0.0062,
+       "non_hawaii_total": 0.1211
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 37218,
+       "oahu": 3466,
+       "hawaii_island": 227,
+       "kauai": 88,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0922
+      }
+     },
+     "YES": {
+      "parcels": 30643,
+      "with_classified_mailing_address": 30330,
+      "counts": {
+       "hawaii": 12299,
+       "other_us_state": 16504,
+       "foreign": 1527,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 311,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4055,
+       "other_us_state": 0.5441,
+       "foreign": 0.0503,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5945
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5386,
+       "foreign": 0.0498,
+       "non_hawaii_total": 0.5884
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 10942,
+       "oahu": 1269,
+       "hawaii_island": 68,
+       "kauai": 20,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1103
+      }
+     },
+     "no_match_or_blank": {
+      "parcels": 123,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 123,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      }
+     }
+    },
+    "residential_classes_by_condo_unit": {
+     "non_condo_parcel": {
+      "parcels": 39580,
+      "with_classified_mailing_address": 38641,
+      "counts": {
+       "hawaii": 34189,
+       "other_us_state": 4170,
+       "foreign": 274,
+       "us_territory": 3,
+       "us_military_apo_fpo": 5,
+       "no_address": 939,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8848,
+       "other_us_state": 0.1079,
+       "foreign": 0.0071,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.1152
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1054,
+       "foreign": 0.0069,
+       "non_hawaii_total": 0.1125
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 32102,
+       "oahu": 1892,
+       "hawaii_island": 138,
+       "kauai": 55,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.061
+      }
+     },
+     "condo_cpr_unit": {
+      "parcels": 25215,
+      "with_classified_mailing_address": 25194,
+      "counts": {
+       "hawaii": 10119,
+       "other_us_state": 13560,
+       "foreign": 1515,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 19,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4016,
+       "other_us_state": 0.5382,
+       "foreign": 0.0601,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5984
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5378,
+       "foreign": 0.0601,
+       "non_hawaii_total": 0.5979
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 9426,
+       "oahu": 622,
+       "hawaii_island": 55,
+       "kauai": 16,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0685
+      }
+     }
+    },
+    "short_term_rental_11_by_condo_unit": {
+     "non_condo_parcel": {
+      "parcels": 424,
+      "with_classified_mailing_address": 423,
+      "counts": {
+       "hawaii": 171,
+       "other_us_state": 228,
+       "foreign": 24,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 1,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4043,
+       "other_us_state": 0.539,
+       "foreign": 0.0567,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5957
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5377,
+       "foreign": 0.0566,
+       "non_hawaii_total": 0.5943
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 160,
+       "oahu": 9,
+       "hawaii_island": 1,
+       "kauai": 1,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0643
+      }
+     },
+     "condo_cpr_unit": {
+      "parcels": 13269,
+      "with_classified_mailing_address": 13267,
+      "counts": {
+       "hawaii": 1984,
+       "other_us_state": 10110,
+       "foreign": 1173,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.1495,
+       "other_us_state": 0.762,
+       "foreign": 0.0884,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.8505
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.7619,
+       "foreign": 0.0884,
+       "non_hawaii_total": 0.8503
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1731,
+       "oahu": 219,
+       "hawaii_island": 28,
+       "kauai": 6,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1275
+      }
+     }
+    },
+    "by_tmk_zone": {
+     "1": {
+      "parcels": 2098,
+      "with_classified_mailing_address": 1787,
+      "counts": {
+       "hawaii": 1263,
+       "other_us_state": 519,
+       "foreign": 5,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 311,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7068,
+       "other_us_state": 0.2904,
+       "foreign": 0.0028,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2932
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2474,
+       "foreign": 0.0024,
+       "non_hawaii_total": 0.2498
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1069,
+       "oahu": 173,
+       "hawaii_island": 17,
+       "kauai": 4,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1536
+      },
+      "label_approx": "Zone 1 - Hana district (East Maui)",
+      "top_situs_cities_parcelinfo": {
+       "HANA": 2082,
+       "(none)": 13,
+       "KEANAE": 2,
+       "HAIKU": 1
+      }
+     },
+     "2": {
+      "parcels": 20609,
+      "with_classified_mailing_address": 19559,
+      "counts": {
+       "hawaii": 15313,
+       "other_us_state": 3792,
+       "foreign": 450,
+       "us_territory": 2,
+       "us_military_apo_fpo": 2,
+       "no_address": 1048,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7829,
+       "other_us_state": 0.1939,
+       "foreign": 0.023,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.2171
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.184,
+       "foreign": 0.0218,
+       "non_hawaii_total": 0.206
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 14441,
+       "oahu": 795,
+       "hawaii_island": 52,
+       "kauai": 23,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0568
+      },
+      "label_approx": "Zone 2 - Makawao district (Upcountry/Paia/Haiku; includes Wailea-Makena, section 2-1)",
+      "top_situs_cities_parcelinfo": {
+       "MAKAWAO": 5539,
+       "KIHEI": 4963,
+       "KULA": 4413,
+       "HAIKU": 4330,
+       "PAIA": 1104,
+       "(none)": 212
+      }
+     },
+     "3": {
+      "parcels": 31835,
+      "with_classified_mailing_address": 31010,
+      "counts": {
+       "hawaii": 23822,
+       "other_us_state": 6409,
+       "foreign": 776,
+       "us_territory": 1,
+       "us_military_apo_fpo": 2,
+       "no_address": 824,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7682,
+       "other_us_state": 0.2067,
+       "foreign": 0.025,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.2318
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2013,
+       "foreign": 0.0244,
+       "non_hawaii_total": 0.2258
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 21843,
+       "oahu": 1855,
+       "hawaii_island": 101,
+       "kauai": 22,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.083
+      },
+      "label_approx": "Zone 3 - Wailuku district (Wailuku/Kahului/Waikapu; includes Kihei, section 3-9)",
+      "top_situs_cities_parcelinfo": {
+       "KIHEI": 12896,
+       "WAILUKU": 12002,
+       "KAHULUI": 6625,
+       "PAIA": 253,
+       "(none)": 50,
+       "PUUNENE": 7
+      }
+     },
+     "4": {
+      "parcels": 19765,
+      "with_classified_mailing_address": 19312,
+      "counts": {
+       "hawaii": 8639,
+       "other_us_state": 10101,
+       "foreign": 571,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 453,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4473,
+       "other_us_state": 0.523,
+       "foreign": 0.0296,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.5527
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5111,
+       "foreign": 0.0289,
+       "non_hawaii_total": 0.54
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 7582,
+       "oahu": 992,
+       "hawaii_island": 47,
+       "kauai": 18,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1224
+      },
+      "label_approx": "Zone 4 - Lahaina district (West Maui; includes Lanai, section 4-9)",
+      "top_situs_cities_parcelinfo": {
+       "LAHAINA": 18207,
+       "LANAI": 1498,
+       "LANAI CITY": 36,
+       "(none)": 21,
+       "WAILUKU": 3
+      }
+     },
+     "5": {
+      "parcels": 6142,
+      "with_classified_mailing_address": 5680,
+      "counts": {
+       "hawaii": 4264,
+       "other_us_state": 1381,
+       "foreign": 33,
+       "us_territory": 2,
+       "us_military_apo_fpo": 0,
+       "no_address": 462,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7507,
+       "other_us_state": 0.2431,
+       "foreign": 0.0058,
+       "us_territory": 0.0004,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2493
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2248,
+       "foreign": 0.0054,
+       "non_hawaii_total": 0.2305
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 3225,
+       "oahu": 920,
+       "hawaii_island": 78,
+       "kauai": 41,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2437
+      },
+      "label_approx": "Zone 5 - Molokai",
+      "top_situs_cities_parcelinfo": {
+       "KAUNAKAKAI": 3980,
+       "MAUNALOA": 998,
+       "HOOLEHUA": 906,
+       "KUALAPUU": 210,
+       "(none)": 48
+      }
+     },
+     "6": {
+      "parcels": 8,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 8,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "label_approx": "Zone 6 - Kalawao (Kalaupapa)",
+      "top_situs_cities_parcelinfo": {
+       "KALAUPAPA": 6,
+       "KALAPAPA": 2
+      }
+     }
+    },
+    "selected_tmk_zone_sections": {
+     "Wailea-Makena (TMK 2-1)": {
+      "parcels": 4472,
+      "with_classified_mailing_address": 4388,
+      "counts": {
+       "hawaii": 1903,
+       "other_us_state": 2125,
+       "foreign": 360,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 83,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4337,
+       "other_us_state": 0.4843,
+       "foreign": 0.082,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5663
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.4752,
+       "foreign": 0.0805,
+       "non_hawaii_total": 0.5557
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1706,
+       "oahu": 189,
+       "hawaii_island": 5,
+       "kauai": 3,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1035
+      }
+     },
+     "Kihei (TMK 3-9)": {
+      "parcels": 11193,
+      "with_classified_mailing_address": 11047,
+      "counts": {
+       "hawaii": 6038,
+       "other_us_state": 4338,
+       "foreign": 669,
+       "us_territory": 1,
+       "us_military_apo_fpo": 1,
+       "no_address": 146,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5466,
+       "other_us_state": 0.3927,
+       "foreign": 0.0606,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.4534
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.3876,
+       "foreign": 0.0598,
+       "non_hawaii_total": 0.4475
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 5493,
+       "oahu": 516,
+       "hawaii_island": 27,
+       "kauai": 2,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0903
+      }
+     },
+     "Lanai (TMK 4-9)": {
+      "parcels": 1534,
+      "with_classified_mailing_address": 1497,
+      "counts": {
+       "hawaii": 1286,
+       "other_us_state": 205,
+       "foreign": 6,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 37,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8591,
+       "other_us_state": 0.1369,
+       "foreign": 0.004,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1409
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1336,
+       "foreign": 0.0039,
+       "non_hawaii_total": 0.1375
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 694,
+       "oahu": 578,
+       "hawaii_island": 9,
+       "kauai": 5,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.4603
+      }
+     }
+    },
+    "by_situs_region": {
+     "Central Maui": {
+      "parcels": 18637,
+      "with_classified_mailing_address": 18046,
+      "counts": {
+       "hawaii": 16569,
+       "other_us_state": 1432,
+       "foreign": 44,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 591,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9182,
+       "other_us_state": 0.0794,
+       "foreign": 0.0024,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.0818
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0768,
+       "foreign": 0.0024,
+       "non_hawaii_total": 0.0793
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 15200,
+       "oahu": 1279,
+       "hawaii_island": 70,
+       "kauai": 19,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0826
+      }
+     },
+     "West Maui (postal Lahaina: Lahaina/Kaanapali/Napili/Kapalua)": {
+      "parcels": 18207,
+      "with_classified_mailing_address": 17815,
+      "counts": {
+       "hawaii": 7353,
+       "other_us_state": 9896,
+       "foreign": 565,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 392,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4127,
+       "other_us_state": 0.5555,
+       "foreign": 0.0317,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.5873
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5435,
+       "foreign": 0.031,
+       "non_hawaii_total": 0.5746
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 6888,
+       "oahu": 414,
+       "hawaii_island": 38,
+       "kauai": 13,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0632
+      }
+     },
+     "South Maui (postal Kihei: Kihei/Wailea/Makena)": {
+      "parcels": 17860,
+      "with_classified_mailing_address": 17611,
+      "counts": {
+       "hawaii": 9355,
+       "other_us_state": 7155,
+       "foreign": 1099,
+       "us_territory": 1,
+       "us_military_apo_fpo": 1,
+       "no_address": 247,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5312,
+       "other_us_state": 0.4063,
+       "foreign": 0.0624,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.4688
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.4006,
+       "foreign": 0.0615,
+       "non_hawaii_total": 0.4623
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 8591,
+       "oahu": 723,
+       "hawaii_island": 35,
+       "kauai": 6,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0817
+      }
+     },
+     "Upcountry/North Shore": {
+      "parcels": 15687,
+      "with_classified_mailing_address": 14827,
+      "counts": {
+       "hawaii": 13135,
+       "other_us_state": 1606,
+       "foreign": 82,
+       "us_territory": 2,
+       "us_military_apo_fpo": 2,
+       "no_address": 859,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8859,
+       "other_us_state": 0.1083,
+       "foreign": 0.0055,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.1141
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1024,
+       "foreign": 0.0052,
+       "non_hawaii_total": 0.1079
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 12432,
+       "oahu": 633,
+       "hawaii_island": 48,
+       "kauai": 20,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0534
+      }
+     },
+     "Molokai": {
+      "parcels": 6103,
+      "with_classified_mailing_address": 5681,
+      "counts": {
+       "hawaii": 4265,
+       "other_us_state": 1381,
+       "foreign": 33,
+       "us_territory": 2,
+       "us_military_apo_fpo": 0,
+       "no_address": 422,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7507,
+       "other_us_state": 0.2431,
+       "foreign": 0.0058,
+       "us_territory": 0.0004,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2493
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2263,
+       "foreign": 0.0054,
+       "non_hawaii_total": 0.232
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 3226,
+       "oahu": 920,
+       "hawaii_island": 78,
+       "kauai": 41,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2436
+      }
+     },
+     "East Maui (Hana)": {
+      "parcels": 2084,
+      "with_classified_mailing_address": 1786,
+      "counts": {
+       "hawaii": 1262,
+       "other_us_state": 519,
+       "foreign": 5,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 298,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7066,
+       "other_us_state": 0.2906,
+       "foreign": 0.0028,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2934
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.249,
+       "foreign": 0.0024,
+       "non_hawaii_total": 0.2514
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1068,
+       "oahu": 173,
+       "hawaii_island": 17,
+       "kauai": 4,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1537
+      }
+     },
+     "Lanai": {
+      "parcels": 1534,
+      "with_classified_mailing_address": 1497,
+      "counts": {
+       "hawaii": 1286,
+       "other_us_state": 205,
+       "foreign": 6,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 37,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8591,
+       "other_us_state": 0.1369,
+       "foreign": 0.004,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1409
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1336,
+       "foreign": 0.0039,
+       "non_hawaii_total": 0.1375
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 694,
+       "oahu": 578,
+       "hawaii_island": 9,
+       "kauai": 5,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.4603
+      }
+     },
+     "no situs city": {
+      "parcels": 279,
+      "with_classified_mailing_address": 85,
+      "counts": {
+       "hawaii": 76,
+       "other_us_state": 8,
+       "foreign": 1,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 194,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8941,
+       "other_us_state": 0.0941,
+       "foreign": 0.0118,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1059
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0287,
+       "foreign": 0.0036,
+       "non_hawaii_total": 0.0323
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 61,
+       "oahu": 15,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1974
+      }
+     },
+     "no PARCELINFO match": {
+      "parcels": 65,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 65,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      }
+     },
+     "Kahoolawe": {
+      "parcels": 1,
+      "with_classified_mailing_address": 0,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 1,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      }
+     }
+    },
+    "by_situs_city": {
+     "LAHAINA": {
+      "parcels": 18207,
+      "with_classified_mailing_address": 17815,
+      "counts": {
+       "hawaii": 7353,
+       "other_us_state": 9896,
+       "foreign": 565,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 392,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4127,
+       "other_us_state": 0.5555,
+       "foreign": 0.0317,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.5873
+      }
+     },
+     "KIHEI": {
+      "parcels": 17859,
+      "with_classified_mailing_address": 17611,
+      "counts": {
+       "hawaii": 9355,
+       "other_us_state": 7155,
+       "foreign": 1099,
+       "us_territory": 1,
+       "us_military_apo_fpo": 1,
+       "no_address": 246,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5312,
+       "other_us_state": 0.4063,
+       "foreign": 0.0624,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.4688
+      }
+     },
+     "WAILUKU": {
+      "parcels": 12005,
+      "with_classified_mailing_address": 11667,
+      "counts": {
+       "hawaii": 10649,
+       "other_us_state": 980,
+       "foreign": 37,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 338,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9127,
+       "other_us_state": 0.084,
+       "foreign": 0.0032,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.0873
+      }
+     },
+     "KAHULUI": {
+      "parcels": 6625,
+      "with_classified_mailing_address": 6373,
+      "counts": {
+       "hawaii": 5914,
+       "other_us_state": 452,
+       "foreign": 7,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 252,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.928,
+       "other_us_state": 0.0709,
+       "foreign": 0.0011,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.072
+      }
+     },
+     "MAKAWAO": {
+      "parcels": 5540,
+      "with_classified_mailing_address": 5367,
+      "counts": {
+       "hawaii": 4952,
+       "other_us_state": 405,
+       "foreign": 9,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 173,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9227,
+       "other_us_state": 0.0755,
+       "foreign": 0.0017,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0002,
+       "non_hawaii_total": 0.0773
+      }
+     },
+     "KULA": {
+      "parcels": 4414,
+      "with_classified_mailing_address": 4061,
+      "counts": {
+       "hawaii": 3549,
+       "other_us_state": 493,
+       "foreign": 18,
+       "us_territory": 1,
+       "us_military_apo_fpo": 0,
+       "no_address": 352,
+       "placeholder_nonaddress": 0,
+       "unparsed": 1,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8739,
+       "other_us_state": 0.1214,
+       "foreign": 0.0044,
+       "us_territory": 0.0002,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1261
+      }
+     },
+     "HAIKU": {
+      "parcels": 4331,
+      "with_classified_mailing_address": 4077,
+      "counts": {
+       "hawaii": 3569,
+       "other_us_state": 476,
+       "foreign": 31,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 254,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8754,
+       "other_us_state": 0.1168,
+       "foreign": 0.0076,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0002,
+       "non_hawaii_total": 0.1246
+      }
+     },
+     "KAUNAKAKAI": {
+      "parcels": 3980,
+      "with_classified_mailing_address": 3703,
+      "counts": {
+       "hawaii": 2797,
+       "other_us_state": 892,
+       "foreign": 12,
+       "us_territory": 2,
+       "us_military_apo_fpo": 0,
+       "no_address": 277,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7553,
+       "other_us_state": 0.2409,
+       "foreign": 0.0032,
+       "us_territory": 0.0005,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2447
+      }
+     },
+     "HANA": {
+      "parcels": 2082,
+      "with_classified_mailing_address": 1784,
+      "counts": {
+       "hawaii": 1261,
+       "other_us_state": 518,
+       "foreign": 5,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 298,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7068,
+       "other_us_state": 0.2904,
+       "foreign": 0.0028,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2932
+      }
+     },
+     "LANAI": {
+      "parcels": 1498,
+      "with_classified_mailing_address": 1462,
+      "counts": {
+       "hawaii": 1258,
+       "other_us_state": 198,
+       "foreign": 6,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 36,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8605,
+       "other_us_state": 0.1354,
+       "foreign": 0.0041,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1395
+      }
+     },
+     "PAIA": {
+      "parcels": 1357,
+      "with_classified_mailing_address": 1277,
+      "counts": {
+       "hawaii": 1022,
+       "other_us_state": 230,
+       "foreign": 24,
+       "us_territory": 1,
+       "us_military_apo_fpo": 0,
+       "no_address": 80,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8003,
+       "other_us_state": 0.1801,
+       "foreign": 0.0188,
+       "us_territory": 0.0008,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1997
+      }
+     },
+     "MAUNALOA": {
+      "parcels": 998,
+      "with_classified_mailing_address": 984,
+      "counts": {
+       "hawaii": 555,
+       "other_us_state": 411,
+       "foreign": 18,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 14,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.564,
+       "other_us_state": 0.4177,
+       "foreign": 0.0183,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.436
+      }
+     },
+     "HOOLEHUA": {
+      "parcels": 906,
+      "with_classified_mailing_address": 786,
+      "counts": {
+       "hawaii": 718,
+       "other_us_state": 65,
+       "foreign": 3,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 120,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9135,
+       "other_us_state": 0.0827,
+       "foreign": 0.0038,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0865
+      }
+     },
+     "KUALAPUU": {
+      "parcels": 211,
+      "with_classified_mailing_address": 208,
+      "counts": {
+       "hawaii": 195,
+       "other_us_state": 13,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 3,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9375,
+       "other_us_state": 0.0625,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0625
+      }
+     }
+    },
+    "residential_classes_by_situs_region": {
+     "South Maui (postal Kihei: Kihei/Wailea/Makena)": {
+      "parcels": 16434,
+      "with_classified_mailing_address": 16302,
+      "counts": {
+       "hawaii": 8461,
+       "other_us_state": 6750,
+       "foreign": 1089,
+       "us_territory": 1,
+       "us_military_apo_fpo": 1,
+       "no_address": 130,
+       "placeholder_nonaddress": 0,
+       "unparsed": 2,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.519,
+       "other_us_state": 0.4141,
+       "foreign": 0.0668,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.481
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.4107,
+       "foreign": 0.0663,
+       "non_hawaii_total": 0.4771
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 8061,
+       "oahu": 365,
+       "hawaii_island": 33,
+       "kauai": 2,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0473
+      }
+     },
+     "Central Maui": {
+      "parcels": 15802,
+      "with_classified_mailing_address": 15607,
+      "counts": {
+       "hawaii": 14418,
+       "other_us_state": 1146,
+       "foreign": 42,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 195,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9238,
+       "other_us_state": 0.0734,
+       "foreign": 0.0027,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.0762
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0725,
+       "foreign": 0.0027,
+       "non_hawaii_total": 0.0752
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 13673,
+       "oahu": 678,
+       "hawaii_island": 52,
+       "kauai": 14,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0516
+      }
+     },
+     "West Maui (postal Lahaina: Lahaina/Kaanapali/Napili/Kapalua)": {
+      "parcels": 14149,
+      "with_classified_mailing_address": 13963,
+      "counts": {
+       "hawaii": 5927,
+       "other_us_state": 7478,
+       "foreign": 557,
+       "us_territory": 0,
+       "us_military_apo_fpo": 1,
+       "no_address": 186,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.4245,
+       "other_us_state": 0.5356,
+       "foreign": 0.0399,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.5755
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5285,
+       "foreign": 0.0394,
+       "non_hawaii_total": 0.568
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 5633,
+       "oahu": 255,
+       "hawaii_island": 29,
+       "kauai": 10,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0496
+      }
+     },
+     "Upcountry/North Shore": {
+      "parcels": 12378,
+      "with_classified_mailing_address": 12146,
+      "counts": {
+       "hawaii": 10970,
+       "other_us_state": 1109,
+       "foreign": 64,
+       "us_territory": 1,
+       "us_military_apo_fpo": 2,
+       "no_address": 232,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9032,
+       "other_us_state": 0.0913,
+       "foreign": 0.0053,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0002,
+       "non_hawaii_total": 0.0968
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0896,
+       "foreign": 0.0052,
+       "non_hawaii_total": 0.095
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 10546,
+       "oahu": 378,
+       "hawaii_island": 32,
+       "kauai": 13,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0386
+      }
+     },
+     "Molokai": {
+      "parcels": 3853,
+      "with_classified_mailing_address": 3737,
+      "counts": {
+       "hawaii": 2809,
+       "other_us_state": 897,
+       "foreign": 30,
+       "us_territory": 1,
+       "us_military_apo_fpo": 0,
+       "no_address": 116,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7517,
+       "other_us_state": 0.24,
+       "foreign": 0.008,
+       "us_territory": 0.0003,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2483
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2328,
+       "foreign": 0.0078,
+       "non_hawaii_total": 0.2409
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 2368,
+       "oahu": 383,
+       "hawaii_island": 31,
+       "kauai": 27,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.157
+      }
+     },
+     "Lanai": {
+      "parcels": 1310,
+      "with_classified_mailing_address": 1290,
+      "counts": {
+       "hawaii": 1094,
+       "other_us_state": 192,
+       "foreign": 4,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 20,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.8481,
+       "other_us_state": 0.1488,
+       "foreign": 0.0031,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1519
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.1466,
+       "foreign": 0.0031,
+       "non_hawaii_total": 0.1496
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 676,
+       "oahu": 406,
+       "hawaii_island": 7,
+       "kauai": 5,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.3821
+      }
+     },
+     "East Maui (Hana)": {
+      "parcels": 771,
+      "with_classified_mailing_address": 742,
+      "counts": {
+       "hawaii": 583,
+       "other_us_state": 156,
+       "foreign": 3,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 29,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7857,
+       "other_us_state": 0.2102,
+       "foreign": 0.004,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2143
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2023,
+       "foreign": 0.0039,
+       "non_hawaii_total": 0.2062
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 538,
+       "oahu": 36,
+       "hawaii_island": 9,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0772
+      }
+     },
+     "no situs city": {
+      "parcels": 98,
+      "with_classified_mailing_address": 48,
+      "counts": {
+       "hawaii": 46,
+       "other_us_state": 2,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 50,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9583,
+       "other_us_state": 0.0417,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0417
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0204,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0204
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 33,
+       "oahu": 13,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.2826
+      }
+     }
+    },
+    "by_owner_type_certified_roll": {
+     "FEE OWNER": {
+      "parcels": 75630,
+      "with_classified_mailing_address": 72880,
+      "counts": {
+       "hawaii": 51606,
+       "other_us_state": 19462,
+       "foreign": 1802,
+       "us_territory": 5,
+       "us_military_apo_fpo": 5,
+       "no_address": 2747,
+       "placeholder_nonaddress": 0,
+       "unparsed": 3,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7081,
+       "other_us_state": 0.267,
+       "foreign": 0.0247,
+       "us_territory": 0.0001,
+       "us_military_apo_fpo": 0.0001,
+       "non_hawaii_total": 0.2919
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2573,
+       "foreign": 0.0238,
+       "non_hawaii_total": 0.2813
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 46778,
+       "oahu": 4435,
+       "hawaii_island": 285,
+       "kauai": 105,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0935
+      }
+     },
+     "LEASEE": {
+      "parcels": 2192,
+      "with_classified_mailing_address": 2173,
+      "counts": {
+       "hawaii": 1380,
+       "other_us_state": 766,
+       "foreign": 27,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 19,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.6351,
+       "other_us_state": 0.3525,
+       "foreign": 0.0124,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.3649
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.3495,
+       "foreign": 0.0123,
+       "non_hawaii_total": 0.3618
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1143,
+       "oahu": 228,
+       "hawaii_island": 6,
+       "kauai": 3,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1717
+      }
+     },
+     "TIMESHARE PLAN MANAGER": {
+      "parcels": 1939,
+      "with_classified_mailing_address": 1939,
+      "counts": {
+       "hawaii": 80,
+       "other_us_state": 1857,
+       "foreign": 2,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.0413,
+       "other_us_state": 0.9577,
+       "foreign": 0.001,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.9587
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.9577,
+       "foreign": 0.001,
+       "non_hawaii_total": 0.9587
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 72,
+       "oahu": 8,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1
+      }
+     },
+     "EXECUTIVE ORDER": {
+      "parcels": 319,
+      "with_classified_mailing_address": 126,
+      "counts": {
+       "hawaii": 98,
+       "other_us_state": 28,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 193,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7778,
+       "other_us_state": 0.2222,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2222
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0878,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0878
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 58,
+       "oahu": 38,
+       "hawaii_island": 2,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.4082
+      }
+     },
+     "blank/no match": {
+      "parcels": 150,
+      "with_classified_mailing_address": 10,
+      "counts": {
+       "hawaii": 9,
+       "other_us_state": 1,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 140,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.9,
+       "other_us_state": 0.1,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.1
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0067,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0067
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 8,
+       "oahu": 1,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1111
+      }
+     },
+     "OTHER": {
+      "parcels": 98,
+      "with_classified_mailing_address": 95,
+      "counts": {
+       "hawaii": 67,
+       "other_us_state": 28,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 3,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.7053,
+       "other_us_state": 0.2947,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.2947
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.2857,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.2857
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 45,
+       "oahu": 22,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.3284
+      }
+     },
+     "SUB-LESSEE": {
+      "parcels": 77,
+      "with_classified_mailing_address": 77,
+      "counts": {
+       "hawaii": 29,
+       "other_us_state": 45,
+       "foreign": 3,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.3766,
+       "other_us_state": 0.5844,
+       "foreign": 0.039,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.6234
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.5844,
+       "foreign": 0.039,
+       "non_hawaii_total": 0.6234
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 26,
+       "oahu": 2,
+       "hawaii_island": 1,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.1034
+      }
+     },
+     "A/S ON FEE": {
+      "parcels": 41,
+      "with_classified_mailing_address": 38,
+      "counts": {
+       "hawaii": 25,
+       "other_us_state": 13,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 3,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.6579,
+       "other_us_state": 0.3421,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.3421
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.3171,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.3171
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 23,
+       "oahu": 1,
+       "hawaii_island": 1,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.08
+      }
+     },
+     "MULTICLAIMANT": {
+      "parcels": 7,
+      "with_classified_mailing_address": 6,
+      "counts": {
+       "hawaii": 6,
+       "other_us_state": 0,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 1,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 1.0,
+       "other_us_state": 0.0,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.0
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0,
+       "foreign": 0.0,
+       "non_hawaii_total": 0.0
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 6,
+       "oahu": 0,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0
+      }
+     },
+     "SUB-A/S ON FEE": {
+      "parcels": 2,
+      "with_classified_mailing_address": 2,
+      "counts": {
+       "hawaii": 1,
+       "other_us_state": 0,
+       "foreign": 1,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.5,
+       "other_us_state": 0.0,
+       "foreign": 0.5,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 0.5
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 0.0,
+       "foreign": 0.5,
+       "non_hawaii_total": 0.5
+      },
+      "hawaii_mailing_split_by_island_zip": {
+       "maui_county": 1,
+       "oahu": 0,
+       "hawaii_island": 0,
+       "kauai": 0,
+       "other_or_unknown_hi_zip": 0,
+       "off_island_share_of_hawaii": 0.0
+      }
+     },
+     "A/S ON LEASE": {
+      "parcels": 2,
+      "with_classified_mailing_address": 2,
+      "counts": {
+       "hawaii": 0,
+       "other_us_state": 2,
+       "foreign": 0,
+       "us_territory": 0,
+       "us_military_apo_fpo": 0,
+       "no_address": 0,
+       "placeholder_nonaddress": 0,
+       "unparsed": 0,
+       "condo_master_placeholder": 0
+      },
+      "share_of_classified": {
+       "hawaii": 0.0,
+       "other_us_state": 1.0,
+       "foreign": 0.0,
+       "us_territory": 0.0,
+       "us_military_apo_fpo": 0.0,
+       "non_hawaii_total": 1.0
+      },
+      "share_of_all_parcels_lower_bound": {
+       "other_us_state": 1.0,
+       "foreign": 0.0,
+       "non_hawaii_total": 1.0
+      }
+     }
+    },
+    "crosscheck_live_fabric_vs_certified_rpfmail": {
+     "method": "Category of the live parcel-fabric mailing address (2026-10-04) vs the first classifiable owner mailing record of the certified 2026 roll (RPFMAIL, 2026-04-10) for the same 13-digit TMK.",
+     "compared_parcels": 75652,
+     "category_agreement": 71383,
+     "category_agreement_share": 0.9436,
+     "state_agreement_us": 68226,
+     "state_compared": 73673,
+     "confusion_top": [
+      {
+       "fabric": "other_us_state",
+       "certified": "hawaii",
+       "parcels": 1933
+      },
+      {
+       "fabric": "hawaii",
+       "certified": "other_us_state",
+       "parcels": 1897
+      },
+      {
+       "fabric": "foreign",
+       "certified": "other_us_state",
+       "parcels": 164
+      },
+      {
+       "fabric": "foreign",
+       "certified": "hawaii",
+       "parcels": 110
+      },
+      {
+       "fabric": "hawaii",
+       "certified": "foreign",
+       "parcels": 96
+      },
+      {
+       "fabric": "other_us_state",
+       "certified": "foreign",
+       "parcels": 63
+      },
+      {
+       "fabric": "other_us_state",
+       "certified": "us_territory",
+       "parcels": 2
+      },
+      {
+       "fabric": "us_military_apo_fpo",
+       "certified": "hawaii",
+       "parcels": 2
+      }
+     ]
+    },
+    "_parse_method_counts": {
+     "no_address": 3106,
+     "state_field": 75492,
+     "country_field": 1825,
+     "hi_zip_no_state": 19,
+     "country_override": 9,
+     "country_word": 2,
+     "unparsed": 3,
+     "us_regex": 1
+    },
+    "_unparsed_count": 3,
+    "official_county_owner_by_mail_aggregates": {
+     "2022": {
+      "hi_zip_layer_total": 60314,
+      "us_state_layer_total": 85318,
+      "hawaii": 60315,
+      "other_us_and_territories": 25003,
+      "world_layer_total": 87473,
+      "foreign": 2154,
+      "non_hawaii_share_of_world_total": 0.3105,
+      "top_states": [
+       [
+        "HI",
+        60315
+       ],
+       [
+        "CA",
+        10702
+       ],
+       [
+        "WA",
+        2847
+       ],
+       [
+        "FL",
+        1561
+       ],
+       [
+        "NV",
+        1555
+       ],
+       [
+        "CO",
+        973
+       ],
+       [
+        "OR",
+        938
+       ],
+       [
+        "TX",
+        775
+       ]
+      ],
+      "top_countries": [
+       [
+        "United States of America",
+        85319
+       ],
+       [
+        "Canada",
+        1878
+       ],
+       [
+        "Japan",
+        115
+       ],
+       [
+        "Germany",
+        34
+       ],
+       [
+        "Australia",
+        22
+       ],
+       [
+        "U.K. of Great Britain and Northern Ireland",
+        20
+       ]
+      ]
+     },
+     "2023": {
+      "hi_zip_layer_total": 60490,
+      "us_state_layer_total": 85381,
+      "hawaii": 60492,
+      "other_us_and_territories": 24889,
+      "world_layer_total": 87444,
+      "foreign": 2063,
+      "non_hawaii_share_of_world_total": 0.3082,
+      "top_states": [
+       [
+        "HI",
+        60492
+       ],
+       [
+        "CA",
+        10653
+       ],
+       [
+        "WA",
+        2917
+       ],
+       [
+        "NV",
+        1573
+       ],
+       [
+        "FL",
+        1570
+       ],
+       [
+        "CO",
+        988
+       ],
+       [
+        "OR",
+        962
+       ],
+       [
+        "TX",
+        791
+       ]
+      ],
+      "top_countries": [
+       [
+        "United States of America",
+        85381
+       ],
+       [
+        "Canada",
+        1813
+       ],
+       [
+        "Japan",
+        104
+       ],
+       [
+        "Germany",
+        33
+       ],
+       [
+        "Australia",
+        19
+       ],
+       [
+        "U.K. of Great Britain and Northern Ireland",
+        18
+       ]
+      ]
+     },
+     "note": "County-published aggregates (Maui County GIS, items c00981ae146e45b5a250355d07e48427 and 31f0468d66b94ba4aaab66b50c5074cb). Counts are of mailing records (~87k, more than parcels), method undocumented; shown only for trend context, not directly comparable to the parcel-level shares above."
+    }
+   }
+  },
+  "hawaii": {
+   "status": "mailing_data_not_obtained",
+   "attempts": [
+    "https://www.hawaiipropertytax.com/ (County RPT site) -> 302 to hawaiipropertytax.com -> HTTP 403 with 'cf-mitigated: challenge' (Cloudflare JS challenge) using a desktop Chrome User-Agent; no download pages reachable.",
+    "https://www.hawaiicounty.gov/ -> HTTP 403 Akamai 'Access Denied'. https://geoportal.hawaiicounty.gov/ -> proxy CONNECT 502.",
+    "https://gis.hawaiicounty.gov/arcgis/rest/services (County ArcGIS Server 11.5) is reachable, but folders RPT, Planning_TaxMapping, Planning, Planning_LRP, OHCD, Civil_Defense, Imagery, Public_Works(_Engineering/_Highways) all return 499 'Token Required'; public folders (Hosted, DIT, Utilities, Wastewater, Public_Works_Traffic) contain no owner/mailing layers (Hosted/cohParcels_prod_pa11_VIEW has only objectid/name/globalid). /public/downloads/ directory listing is 403.",
+    "County ArcGIS Online org services1.arcgis.com/C2LPusZs5OXNGFDn: all 183 non-Survey123 FeatureServices' /layers schemas were scanned for MAIL/ZIP/COUNTRY/owner+address fields; none carries owner mailing addresses. cohRPT/cohRPT2026 (135,718 parcel polygons, data edited 2026-04-28) carries owner names (MajorOwner/BigstOwner) but no mailing address; used only for the homeowner-exemption proxy below.",
+    "ArcGIS Online search ('Hawaii County parcels owner', 'Hawaii County real property tax parcels', 'Hawaii Island TMK', 'hawaii county owner mailing address', 'big island out of state owners', 'hawaii county RPT mailing', 'owner zip hawaii island'): no public layer with Hawaii County owner mailing addresses; third-party Hawaii_County_Parcels_2020 (UH org) has owner name only.",
+    "qpublic.net / qpublic.schneidercorp.com (Schneider qPublic, used for property records) -> proxy 'Host not in allowlist' / 403."
+   ],
+   "proxy_homeowner_exemption_not_mailing": {
+    "all_records": {
+     "records": 135718,
+     "homeowner_flag": {
+      "N": 93208,
+      "Y": 42486,
+      "U": 24
+     },
+     "homeowner_Y_share": 0.313,
+     "improved_records_bldgvalue_gt0": 73800,
+     "homeowner_Y_share_of_improved": 0.5757
+    },
+    "by_tmk_zone": {
+     "1": {
+      "records": 57245,
+      "homeowner_flag": {
+       "N": 43921,
+       "Y": 13322,
+       "U": 2
+      },
+      "homeowner_Y_share": 0.2327,
+      "improved_records_bldgvalue_gt0": 23139,
+      "homeowner_Y_share_of_improved": 0.5757,
+      "label": "Zone 1 - Puna"
+     },
+     "2": {
+      "records": 21442,
+      "homeowner_flag": {
+       "N": 11082,
+       "Y": 10345,
+       "U": 15
+      },
+      "homeowner_Y_share": 0.4825,
+      "improved_records_bldgvalue_gt0": 17223,
+      "homeowner_Y_share_of_improved": 0.6007,
+      "label": "Zone 2 - South Hilo"
+     },
+     "3": {
+      "records": 1693,
+      "homeowner_flag": {
+       "N": 1120,
+       "Y": 573
+      },
+      "homeowner_Y_share": 0.3385,
+      "improved_records_bldgvalue_gt0": 967,
+      "homeowner_Y_share_of_improved": 0.5926,
+      "label": "Zone 3 - North Hilo"
+     },
+     "4": {
+      "records": 4227,
+      "homeowner_flag": {
+       "N": 2716,
+       "Y": 1511
+      },
+      "homeowner_Y_share": 0.3575,
+      "improved_records_bldgvalue_gt0": 2537,
+      "homeowner_Y_share_of_improved": 0.5956,
+      "label": "Zone 4 - Hamakua"
+     },
+     "5": {
+      "records": 3586,
+      "homeowner_flag": {
+       "N": 2165,
+       "Y": 1421
+      },
+      "homeowner_Y_share": 0.3963,
+      "improved_records_bldgvalue_gt0": 2321,
+      "homeowner_Y_share_of_improved": 0.6122,
+      "label": "Zone 5 - North Kohala"
+     },
+     "6": {
+      "records": 8491,
+      "homeowner_flag": {
+       "N": 4608,
+       "Y": 3882,
+       "U": 1
+      },
+      "homeowner_Y_share": 0.4572,
+      "improved_records_bldgvalue_gt0": 6485,
+      "homeowner_Y_share_of_improved": 0.5986,
+      "label": "Zone 6 - South Kohala (Waikoloa/Kohala Coast/Waimea)"
+     },
+     "7": {
+      "records": 15637,
+      "homeowner_flag": {
+       "N": 8490,
+       "Y": 7144,
+       "U": 3
+      },
+      "homeowner_Y_share": 0.4569,
+      "improved_records_bldgvalue_gt0": 12417,
+      "homeowner_Y_share_of_improved": 0.5753,
+      "label": "Zone 7 - North Kona (Kailua-Kona)"
+     },
+     "8": {
+      "records": 6349,
+      "homeowner_flag": {
+       "N": 4467,
+       "Y": 1879,
+       "U": 3
+      },
+      "homeowner_Y_share": 0.296,
+      "improved_records_bldgvalue_gt0": 3643,
+      "homeowner_Y_share_of_improved": 0.5158,
+      "label": "Zone 8 - South Kona"
+     },
+     "9": {
+      "records": 17048,
+      "homeowner_flag": {
+       "N": 14639,
+       "Y": 2409
+      },
+      "homeowner_Y_share": 0.1413,
+      "improved_records_bldgvalue_gt0": 5068,
+      "homeowner_Y_share_of_improved": 0.4753,
+      "label": "Zone 9 - Kau"
+     }
+    },
+    "by_pittcode_unlabeled": {
+     "100": {
+      "records": 64341,
+      "homeowner_flag": {
+       "N": 41575,
+       "Y": 22766
+      },
+      "homeowner_Y_share": 0.3538,
+      "improved_records_bldgvalue_gt0": 39724,
+      "homeowner_Y_share_of_improved": 0.5731
+     },
+     "500": {
+      "records": 64303,
+      "homeowner_flag": {
+       "N": 44963,
+       "Y": 19340
+      },
+      "homeowner_Y_share": 0.3008,
+      "improved_records_bldgvalue_gt0": 30860,
+      "homeowner_Y_share_of_improved": 0.6267
+     },
+     "300": {
+      "records": 1875,
+      "homeowner_flag": {
+       "N": 1815,
+       "Y": 60
+      },
+      "homeowner_Y_share": 0.032,
+      "improved_records_bldgvalue_gt0": 1353,
+      "homeowner_Y_share_of_improved": 0.0443
+     },
+     "600": {
+      "records": 1644,
+      "homeowner_flag": {
+       "N": 1594,
+       "Y": 50
+      },
+      "homeowner_Y_share": 0.0304,
+      "improved_records_bldgvalue_gt0": 387,
+      "homeowner_Y_share_of_improved": 0.1292
+     },
+     "0": {
+      "records": 1303,
+      "homeowner_flag": {
+       "N": 1279,
+       "U": 24
+      },
+      "homeowner_Y_share": 0.0,
+      "improved_records_bldgvalue_gt0": 0,
+      "homeowner_Y_share_of_improved": null
+     },
+     "400": {
+      "records": 1113,
+      "homeowner_flag": {
+       "N": 1113
+      },
+      "homeowner_Y_share": 0.0,
+      "improved_records_bldgvalue_gt0": 713,
+      "homeowner_Y_share_of_improved": 0.0
+     },
+     "200": {
+      "records": 646,
+      "homeowner_flag": {
+       "N": 479,
+       "Y": 167
+      },
+      "homeowner_Y_share": 0.2585,
+      "improved_records_bldgvalue_gt0": 436,
+      "homeowner_Y_share_of_improved": 0.383
+     },
+     "999": {
+      "records": 383,
+      "homeowner_flag": {
+       "N": 280,
+       "Y": 103
+      },
+      "homeowner_Y_share": 0.2689,
+      "improved_records_bldgvalue_gt0": 266,
+      "homeowner_Y_share_of_improved": 0.3872
+     },
+     "700": {
+      "records": 110,
+      "homeowner_flag": {
+       "N": 110
+      },
+      "homeowner_Y_share": 0.0,
+      "improved_records_bldgvalue_gt0": 61,
+      "homeowner_Y_share_of_improved": 0.0
+     }
+    },
+    "pittcode_100_and_500_by_zone_homeowner_Y_share": {
+     "1": 0.2364,
+     "2": 0.5373,
+     "3": 0.3704,
+     "4": 0.3805,
+     "5": 0.4149,
+     "6": 0.4904,
+     "7": 0.4954,
+     "8": 0.3234,
+     "9": 0.1434
+    },
+    "tmk_digit_length": {
+     "9": 135718
+    },
+    "data_date": "cohRPT2026 data edited 2026-04-28"
+   }
+  },
+  "kauai": {
+   "status": "mailing_data_not_obtained",
+   "attempts": [
+    "https://www.kauaipropertytax.com/ -> connection reset at the proxy (tunnel closed); https://www.kauai.gov/ -> HTTP 403 Akamai 'Access Denied'.",
+    "County ArcGIS Online org services1.arcgis.com/0DaVqrPt2eyXUS9g (KauaiGIS): all 540 non-Survey123 FeatureServices' /layers schemas scanned. Owner-bearing layers (TY26_PropertyTaxData, ALL_PARCELS_CPRS, Parcels_and_CPRs, COK_2025_LLC_OWNER_TAX_TYPE, VAC_RENTAL_OWNERSHIP 2021) carry OWN1 (first owner name) only - no mailing street/city/state/ZIP/country. CutOff_Properties/CutOff_WithLIVUNIT/Kukuiula_Area_NBHD_Codes have CITYNAME/ZIP1 but these are situs (property location) fields on small subsets (<=1,133 records). VAC_RENTAL_OWNERSHIP (2021) has KAUAIOWN/HIOWN flags but only for 1,029 vacation-rental records.",
+    "ArcGIS Online search ('Kauai parcels owner', 'Kauai County real property tax', 'kauai owner mailing', 'kauai out of state owners', 'kauai residency owners'): no public owner-mailing layer for Kauai.",
+    "qpublic.net (Schneider qPublic) -> proxy 'Host not in allowlist'."
+   ],
+   "proxy_tax_class_not_mailing": {
+    "all_records": {
+     "records": 37655,
+     "by_tax_class": {
+      "8:OWNER-OCCUPIED": 11702,
+      "1:NON-OWNER-OCCUPIED RESIDENTIAL": 9858,
+      "2:VACATION RENTAL": 3974,
+      "7:HOTEL AND RESORT": 3597,
+      "5:AGRICULTURAL": 2872,
+      "10:OWNER-OCCUPIED MIXED-USE": 2073,
+      "3:COMMERCIAL": 1235,
+      "11:LONG TERM AFFORDABLE RENTAL": 1120,
+      "4:INDUSTRIAL": 782,
+      "6:CONSERVATION": 442
+     },
+     "residential_records_classes_1_2_8_10": 27607,
+     "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.499,
+     "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.1439,
+     "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.501
+    },
+    "by_tmk_zone": {
+     "1": {
+      "records": 3617,
+      "by_tax_class": {
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 1272,
+       "8:OWNER-OCCUPIED": 1272,
+       "5:AGRICULTURAL": 363,
+       "3:COMMERCIAL": 190,
+       "10:OWNER-OCCUPIED MIXED-USE": 184,
+       "6:CONSERVATION": 130,
+       "11:LONG TERM AFFORDABLE RENTAL": 119,
+       "4:INDUSTRIAL": 44,
+       "2:VACATION RENTAL": 40,
+       "7:HOTEL AND RESORT": 3
+      },
+      "residential_records_classes_1_2_8_10": 2768,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.526,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.0145,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.474,
+      "label_approx": "Zone 1 - Waimea district (West Kauai)"
+     },
+     "2": {
+      "records": 10084,
+      "by_tax_class": {
+       "8:OWNER-OCCUPIED": 2958,
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 2812,
+       "2:VACATION RENTAL": 1724,
+       "7:HOTEL AND RESORT": 1038,
+       "5:AGRICULTURAL": 499,
+       "10:OWNER-OCCUPIED MIXED-USE": 473,
+       "3:COMMERCIAL": 239,
+       "11:LONG TERM AFFORDABLE RENTAL": 239,
+       "4:INDUSTRIAL": 71,
+       "6:CONSERVATION": 31
+      },
+      "residential_records_classes_1_2_8_10": 7967,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.4307,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.2164,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.5693,
+      "label_approx": "Zone 2 - Koloa district (Poipu/Koloa/Kalaheo)"
+     },
+     "3": {
+      "records": 7712,
+      "by_tax_class": {
+       "8:OWNER-OCCUPIED": 2701,
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 1604,
+       "7:HOTEL AND RESORT": 1288,
+       "4:INDUSTRIAL": 605,
+       "3:COMMERCIAL": 468,
+       "10:OWNER-OCCUPIED MIXED-USE": 357,
+       "11:LONG TERM AFFORDABLE RENTAL": 223,
+       "2:VACATION RENTAL": 211,
+       "5:AGRICULTURAL": 210,
+       "6:CONSERVATION": 45
+      },
+      "residential_records_classes_1_2_8_10": 4873,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.6275,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.0433,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.3725,
+      "label_approx": "Zone 3 - Lihue district"
+     },
+     "4": {
+      "records": 9958,
+      "by_tax_class": {
+       "8:OWNER-OCCUPIED": 3391,
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 2588,
+       "5:AGRICULTURAL": 1184,
+       "10:OWNER-OCCUPIED MIXED-USE": 751,
+       "2:VACATION RENTAL": 653,
+       "7:HOTEL AND RESORT": 592,
+       "11:LONG TERM AFFORDABLE RENTAL": 413,
+       "3:COMMERCIAL": 254,
+       "6:CONSERVATION": 82,
+       "4:INDUSTRIAL": 50
+      },
+      "residential_records_classes_1_2_8_10": 7383,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.561,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.0884,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.439,
+      "label_approx": "Zone 4 - Kawaihau district (Kapaa/Wailua/Anahola)"
+     },
+     "5": {
+      "records": 6284,
+      "by_tax_class": {
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 1582,
+       "8:OWNER-OCCUPIED": 1380,
+       "2:VACATION RENTAL": 1346,
+       "7:HOTEL AND RESORT": 676,
+       "5:AGRICULTURAL": 616,
+       "10:OWNER-OCCUPIED MIXED-USE": 308,
+       "6:CONSERVATION": 154,
+       "11:LONG TERM AFFORDABLE RENTAL": 126,
+       "3:COMMERCIAL": 84,
+       "4:INDUSTRIAL": 12
+      },
+      "residential_records_classes_1_2_8_10": 4616,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.3657,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.2916,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.6343,
+      "label_approx": "Zone 5 - Hanalei district (North Shore/Princeville)"
+     }
+    },
+    "by_condo": {
+     "cpr_unit_suffix_ne_0000": {
+      "records": 14684,
+      "by_tax_class": {
+       "7:HOTEL AND RESORT": 3515,
+       "2:VACATION RENTAL": 3185,
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 2791,
+       "8:OWNER-OCCUPIED": 2788,
+       "5:AGRICULTURAL": 1163,
+       "10:OWNER-OCCUPIED MIXED-USE": 404,
+       "3:COMMERCIAL": 294,
+       "4:INDUSTRIAL": 292,
+       "11:LONG TERM AFFORDABLE RENTAL": 232,
+       "6:CONSERVATION": 20
+      },
+      "residential_records_classes_1_2_8_10": 9168,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.3482,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.3474,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.6518
+     },
+     "suffix_0000": {
+      "records": 22971,
+      "by_tax_class": {
+       "8:OWNER-OCCUPIED": 8914,
+       "1:NON-OWNER-OCCUPIED RESIDENTIAL": 7067,
+       "5:AGRICULTURAL": 1709,
+       "10:OWNER-OCCUPIED MIXED-USE": 1669,
+       "3:COMMERCIAL": 941,
+       "11:LONG TERM AFFORDABLE RENTAL": 888,
+       "2:VACATION RENTAL": 789,
+       "4:INDUSTRIAL": 490,
+       "6:CONSERVATION": 422,
+       "7:HOTEL AND RESORT": 82
+      },
+      "residential_records_classes_1_2_8_10": 18439,
+      "owner_occupied_share_of_residential_(8+10)/(1+2+8+10)": 0.5739,
+      "vacation_rental_share_of_residential_2/(1+2+8+10)": 0.0428,
+      "non_owner_occupied_share_of_residential_(1+2)/(1+2+8+10)": 0.4261
+     }
+    },
+    "by_record_type": {
+     "TMK Parcel": 20420,
+     "CPRX Multi-Unit Complex": 8753,
+     "CPR Unit": 5403,
+     "TMK Parcel - STATE": 2120,
+     "TMK Parcel - COUNTY": 399,
+     "CPRX Lease - STATE": 334,
+     "CPRX Commercial": 107,
+     "TMK Parcel - FEDERAL": 34,
+     "CPRX Commercial - COUNTY": 28,
+     "CPR Unit - COUNTY": 25,
+     "CPRX HHL Lessee - STATE": 10,
+     "CPRX Utility - STATE": 8,
+     "CPRX Commercial - STATE": 5,
+     "CPR Unit - FEDERAL": 3,
+     "CPRX Lease - COUNTY": 2,
+     "CPRX Utility - COUNTY": 2,
+     "CPRX Lease": 2
+    },
+    "taxyr": {
+     "2026": 37654,
+     "null": 1
+    },
+    "data_date": "TY26_PropertyTaxData data edited 2026-02-11 (tax year 2026)"
+   }
+  }
+ }
+}

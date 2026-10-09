@@ -1,0 +1,2056 @@
+{
+ "key": "luxury",
+ "title": "Published luxury-market figures, Hawaii 2022-2026 (counts, dollar volume, submarkets, records, non-homeowner share)",
+ "as_of": "2026-10-08",
+ "standard_tiers": {
+  "entry": "<$750K",
+  "mid": "$750K-1.5M",
+  "upper": "$1.5M-3M",
+  "luxury": "$3M-10M",
+  "ultra": ">=$10M"
+ },
+ "tier_mapping_note": "Hawaii Life bands are $3-5.99M, $6-9.99M, $10M+ -> luxury tier = first two; ultra = $10M+. Hawaii Life gives no $1M or $5M cut: $5M+ comes from List Sotheby's (Oahu single-family $5-10M + $10M+; Oahu condo $5M+) and Maui RPT; $1M+ from Maui RPT, List Sotheby's Oahu condos ($1-2.5M + $2.5M+) and the South Kohala blog. Hawaii Life 'Maui' covers Maui County MLS (map shows Molokai and Lanai sales).",
+ "hawaii_life": {
+  "company_reported": true,
+  "definition": "Full-market MLS (not just Hawaii Life) closed sales; luxury = $3M+, ultra = $10M+; island stats (median, $/sf, DOM, inventory, volume) are single-family; type and price-band splits cover homes, condos and land.",
+  "editions": {
+   "2022_YE": {
+    "url": "https://smarket.hawaiilife.com/s/HL-LuxReport-2022-EOY-web.pdf",
+    "via": "Hawaii Appleseed transcription luxury_report_counts.csv (commit 48761b8)",
+    "blog": "https://hawaiilife.com/blog/2022-year-end-luxury-market-report"
+   },
+   "H1_2025": {
+    "url": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2025-midyear",
+    "pdf": "https://drive.google.com/file/d/1Z3i4Bf9zIieWPOGueQDEPKBjdSHKxhWv/view",
+    "published": "2025-08-20",
+    "period": "2025-01-01..2025-06-30"
+   },
+   "2025_YE": {
+    "url": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2025-year-end",
+    "pdf": "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view",
+    "published": "2026-01-26",
+    "period": "2025-01-01..2025-12-31"
+   },
+   "H1_2026": {
+    "url": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2026-midyear",
+    "pdf": "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view",
+    "published": "2026-07-24",
+    "period": "2026-01-01..2026-06-30"
+   },
+   "2024_YE": {
+    "url": null,
+    "status": "not found (smarket product URL for 2024 year-end returns 404; 2024 values below come from YoY references in the 2025 editions)"
+   }
+  },
+  "by_period_island": {
+   "2022": {
+    "Oahu": {
+     "sf_3m": 164,
+     "condo_3m": 57,
+     "land_3m": 3,
+     "all_3m_to_6m": 178,
+     "all_6m_to_10m": 32,
+     "all_10m_plus": 14,
+     "pdf_page": "8",
+     "all_3m": 224,
+     "all_6m_plus": 46
+    },
+    "Maui": {
+     "sf_3m": 99,
+     "condo_3m": 72,
+     "land_3m": 13,
+     "all_3m_to_6m": 137,
+     "all_6m_to_10m": 27,
+     "all_10m_plus": 20,
+     "pdf_page": "31",
+     "all_3m": 184,
+     "all_6m_plus": 47
+    },
+    "Hawaii Island": {
+     "sf_3m": 73,
+     "condo_3m": 64,
+     "land_3m": 20,
+     "all_3m_to_6m": 113,
+     "all_6m_to_10m": 28,
+     "all_10m_plus": 16,
+     "pdf_page": "18",
+     "all_3m": 157,
+     "all_6m_plus": 44
+    },
+    "Kauai": {
+     "sf_3m": 73,
+     "condo_3m": 9,
+     "land_3m": 5,
+     "all_3m_to_6m": 60,
+     "all_6m_to_10m": 14,
+     "all_10m_plus": 13,
+     "pdf_page": "43",
+     "all_3m": 87,
+     "all_6m_plus": 27
+    }
+   },
+   "H1_2025": {
+    "Oahu": {
+     "pdf_page": 5,
+     "sf_3m": 74,
+     "condo_3m": 24,
+     "land_3m": 2,
+     "all_3m": 100,
+     "all_3m_to_6m": 81,
+     "all_6m_to_10m": 15,
+     "all_10m_plus": 4,
+     "all_6m_plus": 19,
+     "sf_10m_plus": 3,
+     "sf_3m_median": 3900000.0,
+     "sf_3m_avg_price_per_sqft": 1487,
+     "sf_3m_avg_dom": 75,
+     "sf_3m_active_inventory": 127,
+     "sf_3m_months_inventory": 10.6,
+     "highest_sale": 65750000.0,
+     "highest_sale_desc": "Kahala legacy estate, closed March 2025",
+     "sf_3m_dollar_volume_reported": 610000000.0,
+     "prior_period_refs": {
+      "H1_2024_sf_3m": 51,
+      "H1_2024_sf_3m_median": 4500000.0,
+      "H1_2015_sf_3m": 31
+     },
+     "source": "hl_2025mid"
+    },
+    "Maui": {
+     "pdf_page": 10,
+     "sf_3m": 37,
+     "condo_3m": 28,
+     "land_3m": 6,
+     "all_3m": 71,
+     "all_3m_to_6m": 46,
+     "all_6m_to_10m": 17,
+     "all_10m_plus": 8,
+     "all_6m_plus": 25,
+     "sf_10m_plus": 4,
+     "sf_3m_median": 5500000.0,
+     "sf_3m_avg_price_per_sqft": 1613,
+     "sf_3m_avg_dom": 105,
+     "sf_3m_active_inventory": 118,
+     "sf_3m_months_inventory": 19.1,
+     "highest_sale": 28560000.0,
+     "highest_sale_desc": "Keawakapu Beach estate (South Maui), June 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "H1_2024_sf_3m": 41,
+      "H1_2024_sf_3m_median": 4700000.0,
+      "H1_2015_sf_3m": 21
+     },
+     "source": "hl_2025mid"
+    },
+    "Hawaii Island": {
+     "pdf_page": 15,
+     "sf_3m": 34,
+     "condo_3m": 18,
+     "land_3m": 8,
+     "all_3m": 60,
+     "all_3m_to_6m": 34,
+     "all_6m_to_10m": 13,
+     "all_10m_plus": 13,
+     "all_6m_plus": 26,
+     "sf_10m_plus": 10,
+     "sf_3m_median": 6800000.0,
+     "sf_3m_avg_price_per_sqft": 2138,
+     "sf_3m_avg_dom": 51,
+     "sf_3m_active_inventory": 62,
+     "sf_3m_months_inventory": 10.9,
+     "highest_sale": 23300000.0,
+     "highest_sale_desc": "North Kona estate, March 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "H1_2024_sf_3m": 57,
+      "H1_2024_sf_3m_median": 5400000.0,
+      "H1_2015_sf_3m": 16
+     },
+     "source": "hl_2025mid"
+    },
+    "Kauai": {
+     "pdf_page": 20,
+     "sf_3m": 26,
+     "condo_3m": 2,
+     "land_3m": 5,
+     "all_3m": 33,
+     "all_3m_to_6m": 23,
+     "all_6m_to_10m": 7,
+     "all_10m_plus": 3,
+     "all_6m_plus": 10,
+     "sf_10m_plus": 2,
+     "sf_3m_median": 4100000.0,
+     "sf_3m_avg_price_per_sqft": 1692,
+     "sf_3m_avg_dom": 111,
+     "sf_3m_active_inventory": 83,
+     "sf_3m_months_inventory": 19.2,
+     "highest_sale": 16700000.0,
+     "highest_sale_desc": "Kukui'ula-area custom home (South Shore), June 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "H1_2024_sf_3m": 36,
+      "H1_2024_sf_3m_median": 4700000.0,
+      "H1_2015_sf_3m": 12
+     },
+     "source": "hl_2025mid"
+    }
+   },
+   "2025": {
+    "Oahu": {
+     "pdf_page": 11,
+     "sf_3m": 144,
+     "condo_3m": 48,
+     "land_3m": 4,
+     "all_3m": 196,
+     "all_3m_to_6m": 155,
+     "all_6m_to_10m": 32,
+     "all_10m_plus": 9,
+     "all_6m_plus": 41,
+     "sf_10m_plus": 7,
+     "sf_3m_median": 3850000.0,
+     "sf_3m_avg_price_per_sqft": 1367,
+     "sf_3m_avg_dom": 79,
+     "sf_3m_active_inventory": 137,
+     "sf_3m_months_inventory": 11.3,
+     "highest_sale": 65750000.0,
+     "highest_sale_desc": "Kahala legacy estate, closed March 2025",
+     "sf_3m_dollar_volume_reported": 765300000.0,
+     "prior_period_refs": {
+      "2024_sf_3m": 111,
+      "2024_sf_3m_median": 3950000.0,
+      "2015_sf_3m": 60,
+      "2025_vs_2024_dollar_volume_pct": 33.8
+     },
+     "source": "hl_2025ye"
+    },
+    "Maui": {
+     "pdf_page": 16,
+     "sf_3m": 71,
+     "condo_3m": 41,
+     "land_3m": 13,
+     "all_3m": 125,
+     "all_3m_to_6m": 83,
+     "all_6m_to_10m": 28,
+     "all_10m_plus": 14,
+     "all_6m_plus": 42,
+     "sf_10m_plus": 7,
+     "sf_3m_median": 4500000.0,
+     "sf_3m_avg_price_per_sqft": 1563,
+     "sf_3m_avg_dom": 124,
+     "sf_3m_active_inventory": 127,
+     "sf_3m_months_inventory": 21.1,
+     "highest_sale": 28560000.0,
+     "highest_sale_desc": "Keawakapu Beach estate (South Maui), June 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "2024_sf_3m": 70,
+      "2024_sf_3m_median": 4680000.0,
+      "2015_sf_3m": 32
+     },
+     "source": "hl_2025ye"
+    },
+    "Hawaii Island": {
+     "pdf_page": 21,
+     "sf_3m": 56,
+     "condo_3m": 44,
+     "land_3m": 15,
+     "all_3m": 115,
+     "all_3m_to_6m": 67,
+     "all_6m_to_10m": 26,
+     "all_10m_plus": 22,
+     "all_6m_plus": 48,
+     "sf_10m_plus": 17,
+     "sf_3m_median": 7230000.0,
+     "sf_3m_avg_price_per_sqft": 1951,
+     "sf_3m_avg_dom": 87,
+     "sf_3m_active_inventory": 85,
+     "sf_3m_months_inventory": 18.2,
+     "highest_sale": 23250000.0,
+     "highest_sale_desc": "North Kona estate, March 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "2024_sf_3m": 85,
+      "2024_sf_3m_median": 5350000.0,
+      "2015_sf_3m": 33
+     },
+     "source": "hl_2025ye"
+    },
+    "Kauai": {
+     "pdf_page": 26,
+     "sf_3m": 67,
+     "condo_3m": 6,
+     "land_3m": 10,
+     "all_3m": 83,
+     "all_3m_to_6m": 54,
+     "all_6m_to_10m": 22,
+     "all_10m_plus": 7,
+     "all_6m_plus": 29,
+     "sf_10m_plus": 4,
+     "sf_3m_median": 4300000.0,
+     "sf_3m_avg_price_per_sqft": 1856,
+     "sf_3m_avg_dom": 128,
+     "sf_3m_active_inventory": 85,
+     "sf_3m_months_inventory": 15.2,
+     "highest_sale": 27600000.0,
+     "highest_sale_desc": "Limahuli Valley estate (North Shore), August 2025",
+     "sf_3m_dollar_volume_reported": null,
+     "prior_period_refs": {
+      "2024_sf_3m": 60,
+      "2024_sf_3m_median": 4800000.0,
+      "2015_sf_3m": 33
+     },
+     "source": "hl_2025ye"
+    }
+   },
+   "H1_2026": {
+    "Oahu": {
+     "pdf_page": 11,
+     "sf_3m": 69,
+     "condo_3m": 23,
+     "land_3m": 0,
+     "all_3m": 92,
+     "all_3m_to_6m": 70,
+     "all_6m_to_10m": 14,
+     "all_10m_plus": 8,
+     "all_6m_plus": 22,
+     "sf_10m_plus": 4,
+     "sf_3m_median": 3980000.0,
+     "sf_3m_avg_price_per_sqft": 1321,
+     "sf_3m_avg_dom": 86,
+     "sf_3m_active_inventory": 138,
+     "sf_3m_months_inventory": 12.4,
+     "highest_sale": 11780000.0,
+     "highest_sale_desc": "Kailua oceanfront estate, January 2026",
+     "sf_3m_dollar_volume_reported": 473400000.0,
+     "prior_period_refs": {
+      "H1_2025_sf_3m": 74,
+      "H1_2025_sf_3m_median": 3850000.0,
+      "H1_2016_sf_3m": 26
+     },
+     "source": "hl_2026mid",
+     "sf_10m_spotlight": {
+      "sold": 4,
+      "pending": 4,
+      "median": 10500000.0,
+      "avg_dom": 127,
+      "sold_to_list": 0.89,
+      "months_inventory": 26.4
+     }
+    },
+    "Maui": {
+     "pdf_page": 18,
+     "sf_3m": 27,
+     "condo_3m": 16,
+     "land_3m": 5,
+     "all_3m": 48,
+     "all_3m_to_6m": 41,
+     "all_6m_to_10m": 5,
+     "all_10m_plus": 2,
+     "all_6m_plus": 7,
+     "sf_10m_plus": 1,
+     "sf_3m_median": 4150000.0,
+     "sf_3m_avg_price_per_sqft": 1475,
+     "sf_3m_avg_dom": 125,
+     "sf_3m_active_inventory": 133,
+     "sf_3m_months_inventory": 29.5,
+     "highest_sale": 11000000.0,
+     "highest_sale_desc": "Spreckelsville estate (North Shore), June 2026",
+     "sf_3m_dollar_volume_reported": 133200000.0,
+     "prior_period_refs": {
+      "H1_2025_sf_3m": 37,
+      "H1_2025_sf_3m_median": 5500000.0,
+      "H1_2016_sf_3m": 21
+     },
+     "source": "hl_2026mid",
+     "sf_10m_spotlight": {
+      "sold": 1,
+      "pending": 2,
+      "median": 11000000.0,
+      "avg_dom": 0,
+      "sold_to_list": 1.0,
+      "months_inventory": 174.0
+     }
+    },
+    "Hawaii Island": {
+     "pdf_page": 29,
+     "sf_3m": 36,
+     "condo_3m": 26,
+     "land_3m": 17,
+     "all_3m": 79,
+     "all_3m_to_6m": 43,
+     "all_6m_to_10m": 19,
+     "all_10m_plus": 17,
+     "all_6m_plus": 36,
+     "sf_10m_plus": 15,
+     "sf_3m_median": 8560000.0,
+     "sf_3m_avg_price_per_sqft": 2267,
+     "sf_3m_avg_dom": 151,
+     "sf_3m_active_inventory": 75,
+     "sf_3m_months_inventory": 12.5,
+     "highest_sale": 38250000.0,
+     "highest_sale_desc": "Kuki'o estate (North Kona), January 2026",
+     "sf_3m_dollar_volume_reported": 385300000.0,
+     "prior_period_refs": {
+      "H1_2025_sf_3m": 34,
+      "H1_2025_sf_3m_median": 6750000.0,
+      "H1_2016_sf_3m": 26
+     },
+     "source": "hl_2026mid",
+     "sf_10m_spotlight": {
+      "sold": 15,
+      "pending": 16,
+      "median": 16200000.0,
+      "avg_dom": 153,
+      "sold_to_list": 0.91,
+      "months_inventory": 6.8
+     }
+    },
+    "Kauai": {
+     "pdf_page": 35,
+     "sf_3m": 37,
+     "condo_3m": 3,
+     "land_3m": 5,
+     "all_3m": 45,
+     "all_3m_to_6m": 37,
+     "all_6m_to_10m": 6,
+     "all_10m_plus": 2,
+     "all_6m_plus": 8,
+     "sf_10m_plus": 2,
+     "sf_3m_median": 3800000.0,
+     "sf_3m_avg_price_per_sqft": 1577,
+     "sf_3m_avg_dom": 121,
+     "sf_3m_active_inventory": 89,
+     "sf_3m_months_inventory": 14.4,
+     "highest_sale": 16000000.0,
+     "highest_sale_desc": "22-acre beachfront estate, Kilauea (North Shore), February 2026",
+     "sf_3m_dollar_volume_reported": 181400000.0,
+     "prior_period_refs": {
+      "H1_2025_sf_3m": 26,
+      "H1_2025_sf_3m_median": 4090000.0,
+      "H1_2016_sf_3m": 11
+     },
+     "source": "hl_2026mid",
+     "sf_10m_spotlight": {
+      "sold": 2,
+      "pending": 1,
+      "median": 13750000.0,
+      "avg_dom": 64,
+      "sold_to_list": 0.9,
+      "months_inventory": 36.0
+     }
+    }
+   }
+  },
+  "statewide_sums_our_arithmetic": {
+   "H1_2025": {
+    "sf_3m": 171,
+    "condo_3m": 72,
+    "land_3m": 21,
+    "all_3m": 264,
+    "all_3m_to_6m": 184,
+    "all_6m_to_10m": 52,
+    "all_10m_plus": 28,
+    "all_6m_plus": 80,
+    "sf_10m_plus": 19
+   },
+   "2025": {
+    "sf_3m": 338,
+    "condo_3m": 139,
+    "land_3m": 42,
+    "all_3m": 519,
+    "all_3m_to_6m": 359,
+    "all_6m_to_10m": 108,
+    "all_10m_plus": 52,
+    "all_6m_plus": 160,
+    "sf_10m_plus": 35
+   },
+   "H1_2026": {
+    "sf_3m": 169,
+    "condo_3m": 68,
+    "land_3m": 27,
+    "all_3m": 264,
+    "all_3m_to_6m": 191,
+    "all_6m_to_10m": 44,
+    "all_10m_plus": 29,
+    "all_6m_plus": 73,
+    "sf_10m_plus": 22,
+    "sf_3m_dollar_volume_sum_of_islands": 1173300000
+   },
+   "2022": {
+    "sf_3m": 409,
+    "condo_3m": 202,
+    "land_3m": 41,
+    "all_3m": 652,
+    "all_3m_to_6m": 488,
+    "all_6m_to_10m": 101,
+    "all_10m_plus": 63,
+    "all_6m_plus": 164
+   },
+   "2024_from_yoy_refs": {
+    "sf_3m": 326
+   },
+   "H1_2024_from_yoy_refs": {
+    "sf_3m": 185
+   }
+  },
+  "statewide_company_text": {
+   "2022_all_types_3m_plus": 652,
+   "2022_all_types_10m_plus": 63,
+   "2021_all_types_3m_plus": 838,
+   "H1_2026_sf_3m_plus": 169,
+   "H1_2025_sf_3m_plus": 171,
+   "H1_2026_sf_10m_plus": 22,
+   "H1_2025_sf_10m_plus": 19,
+   "H1_2016_sf_3m_plus": 84,
+   "H1_2016_sf_10m_plus": 6,
+   "H1_2026_hawaii_island_share_of_sf_10m_plus": "15 of 22, median $16.2M, 16 more pending",
+   "H1_2026_active_luxury_inventory_change": "+~10% statewide"
+  },
+  "oahu_2024_sf_3m_dollar_volume_implied": {
+   "value": 571973094,
+   "how": "765.3e6 / 1.338 (2025 total and its stated +33.8% YoY); derived, not printed"
+  },
+  "dollar_volume_caveats": [
+   "Island 'total of $X million' figures are single-family $3M+: for Maui and Hawaii Island H1 2026 and Oahu 2025 an all-types basis is arithmetically impossible (the band floors alone exceed the total).",
+   "Oahu H1 2025 '$610 million' is inconsistent with Oahu full-year 2025 '$765.3 million' (it would leave ~$155M for 70 H2 single-family sales, under $3M each); treat the H1 2025 figure as unreliable.",
+   "The 2025 year-end edition prints dollar volume only for Oahu; Maui, Hawaii Island and Kauai 2025 totals are not published there."
+  ],
+  "conflicts": [
+   "Kauai 2025 single-family $3M+: report says 67 (+11.7% from 60); Hawaii Life agent blog (2026-04-08) says 66 (+8.2% from 61). Both company-reported.",
+   "Hawaii Island 2025 single-family $10M+: 17 in the 2025 YE text; Hawaii Appleseed notes the 2026 midyear 10-year chart implies 23.",
+   "Prior-year medians differ by edition (e.g. Oahu H1 2025 median $3.9M in the 2025 midyear vs $3.85M quoted as the 'from' value in 2026 midyear; Hawaii Island $6.8M vs $6.75M)."
+  ],
+  "submarkets_sf_3m_plus_from_maps": {
+   "H1_2026": {
+    "Hawaii Island": {
+     "North Kohala": 2,
+     "South Kohala (Kohala Coast resorts: Mauna Kea, Mauna Lani, Waikoloa)": 11,
+     "North Kona (Kuki'o / Hualalai / Kailua-Kona)": 22,
+     "South Kona (Captain Cook)": 1
+    },
+    "Kauai": {
+     "Hanalei": 4,
+     "Princeville": 3,
+     "Kilauea": 8,
+     "Aliomanu/Anahola": 4,
+     "Kapaa": 2,
+     "Lihue/Nawiliwili": 1,
+     "Koloa (Poipu / Kukui'ula)": 13,
+     "Kalaheo": 2
+    },
+    "Maui": {
+     "West Maui (Kapalua 2, Ka'anapali 4, Lahaina 3, Olowalu 1)": 10,
+     "North Shore (Spreckelsville/Haiku/Kahului)": 5,
+     "Upcountry (Makawao/Kula)": 3,
+     "South Maui (Kihei 2, Wailea-Makena 6)": 8,
+     "Molokai": 1
+    }
+   },
+   "2025": {
+    "Hawaii Island": {
+     "North Kohala (Hawi)": 1,
+     "South Kohala (map label 'Waimea'; Kohala Coast resorts)": 17,
+     "North Kona (Kailua-Kona, incl. Kuki'o/Hualalai/Kohanaiki)": 31,
+     "Holualoa": 4,
+     "Kealakekua": 1,
+     "Hamakua/Hilo coast (Hakalau 1, Pepe'ekeo 1)": 2
+    },
+    "Kauai": {
+     "Princeville": 11,
+     "Kilauea": 12,
+     "Hanalei": 6,
+     "Anahola": 5,
+     "Kapaa": 1,
+     "Koloa (Poipu / Kukui'ula)": 32
+    },
+    "Maui": {
+     "West Maui (Kapalua 11, Napili-Honokowai 7, Ka'anapali 16, Lahaina 4)": 38,
+     "North Shore + Upcountry (Spreckelsville/Kahului/Haiku/Makawao/Kula)": 12,
+     "South Maui (Kihei 7, Wailea-Makena 13)": 20,
+     "Lanai": 1
+    },
+    "Oahu_approx": {
+     "North Shore (Kahuku/Pupukea/Haleiwa/Waialua)": 14,
+     "Windward (Kailua/Lanikai/Kaneohe/Waimanalo)": 38,
+     "East & urban Honolulu (Diamond Head/Kahala/Kaimuki/Aina Haina/Hawaii Kai)": 91,
+     "_note": "bubbles sum to 143 vs 144 stated; one bubble not recovered from the PDF text layer"
+    }
+   },
+   "H1_2025": {
+    "Hawaii Island": {
+     "North Kohala": 1,
+     "South Kohala": 9,
+     "North Kona (Kailua-Kona)": 24
+    },
+    "Kauai": {
+     "Hanalei area": 9,
+     "Kilauea": 1,
+     "Anahola": 3,
+     "Kapaa": 1,
+     "Koloa (Poipu / Kukui'ula)": 12
+    },
+    "Maui": {
+     "West Maui (Kapalua 5, Napili-Honokowai 2, Ka'anapali 10, Lahaina 3)": 20,
+     "North Shore + Upcountry": 5,
+     "South Maui (Kihei 7, Wailea-Makena 5)": 12
+    },
+    "Oahu": {
+     "North Shore": 8,
+     "Windward (Kailua/Lanikai/Waimanalo)": 23,
+     "East & urban Honolulu": 43
+    }
+   }
+  },
+  "submarket_method": "Bubble counts on each island's 'A Deeper Look' map page, assigned to the nearest place label by pdftotext -bbox coordinates; kept only where bubbles sum to the island's stated single-family $3M+ total; ambiguous neighbours grouped. Kauai 2025 North Shore split independently confirmed by the Kauai blog (Princeville 11, Kilauea 12, Hanalei 6). Oahu H1 2026 map omitted (bubbles sum to 80 vs 69 stated).",
+  "qualitative_buyer_notes_company": [
+   "2026 midyear: luxury buyers 'arrive from elsewhere, on their own travel schedules' (p.17-18).",
+   "2026 midyear: on Maui 'local buyers are stepping selectively into the $3 million tier where they see dislocation'; softness concentrated in West Maui, Upcountry rose.",
+   "2026 midyear: most of 2025's Hawaii Island ultra-luxury closings occurred off-market; fewer than twenty $10M homes publicly listed at any time.",
+   "2025 midyear (Oahu): 'international interest, particularly from Japan, remains soft'."
+  ]
+ },
+ "resort_enclaves": {
+  "mauna_kea_resort": {
+   "sales": {
+    "2022": 65,
+    "2023": 20,
+    "2024": 33,
+    "2025": 30
+   },
+   "volume_usd": {
+    "2022": 258000000.0,
+    "2023": 87000000.0,
+    "2024": 143000000.0,
+    "2025": 159000000.0
+   },
+   "avg_price_usd": {
+    "2023": 4330000.0,
+    "2024": 4330000.0,
+    "2025": 6810000.0
+   },
+   "records_2025": [
+    "Hapuna Beach Residences condo $11.0M (May)",
+    "new home in Fairways South $10.25M (Sept)",
+    "villa $9.3M (Dec)"
+   ]
+  },
+  "south_kohala_district": {
+   "sales_1m_plus": {
+    "2022": 239,
+    "2023": 160,
+    "2024": 207,
+    "2025": 196
+   },
+   "sales_3m_plus": {
+    "2022": 62,
+    "2023": 27,
+    "2024": 45,
+    "2025": 42
+   },
+   "sales_10m_plus": {
+    "2022": 3,
+    "2023": 1,
+    "2024": 1,
+    "2025": 3
+   },
+   "total_volume_usd": {
+    "2022": 796000000.0,
+    "2023": 506000000.0,
+    "2024": 630000000.0,
+    "2025": 634000000.0
+   },
+   "avg_price_usd": {
+    "2022": 1480000.0,
+    "2023": 1210000.0,
+    "2024": 1580000.0,
+    "2025": 1620000.0
+   }
+  },
+  "source": {
+   "url": "https://www.hawaiilife.com/blog/mauna-kea-resort-2025-year-end-market-recap-and-2026-outlook",
+   "published": "2026-02-04",
+   "company_reported": true,
+   "note": "Hawaii Life agent blog; property types not stated (likely all residential incl. condos/land); not reconciled with MLS."
+  },
+  "oahu_condo_5m_plus_q2_2026_by_building": {
+   "Park Lane": 4,
+   "Waiea": 3,
+   "Victoria Place": 1,
+   "Ritz-Carlton Residences": 1,
+   "Ocean Villas at Turtle Bay": 1,
+   "source": "https://listsothebysrealty.com/2026/07/27/luxury-market-report-2026-q2",
+   "company_reported": true
+  }
+ },
+ "list_sothebys_oahu": {
+  "company_reported": true,
+  "data_basis": "HiCentral MLS via ShowingTime; Oahu only; single-family $2M+ in 4 bands, condos $1M+ in 2 bands plus a $5M+ count",
+  "via": "Hawaii Appleseed transcription (luxury_report_counts.csv) of each quarterly page; spot-checked against downloaded Q4 2025, Q1 2026, Q2 2026 pages",
+  "quarterly": {
+   "2022Q3": {
+    "condo_1M_2.5M": 97,
+    "condo_2.5M_plus": 14,
+    "condo_5M_plus": 2,
+    "house_2M_3M": 64,
+    "house_3M_5M": 21,
+    "house_5M_10M": 8,
+    "house_10M_plus": 1
+   },
+   "2022Q4": {
+    "condo_1M_2.5M": 93,
+    "condo_2.5M_plus": 18,
+    "condo_5M_plus": 4,
+    "house_2M_3M": 41,
+    "house_3M_5M": 18,
+    "house_5M_10M": 7,
+    "house_10M_plus": 0
+   },
+   "2023Q1": {
+    "condo_1M_2.5M": 94,
+    "condo_2.5M_plus": 7,
+    "condo_5M_plus": 4,
+    "house_2M_3M": 37,
+    "house_3M_5M": 14,
+    "house_5M_10M": 8,
+    "house_10M_plus": 3
+   },
+   "2023Q2": {
+    "condo_1M_2.5M": 95,
+    "condo_2.5M_plus": 13,
+    "condo_5M_plus": 6,
+    "house_2M_3M": 47,
+    "house_3M_5M": 14,
+    "house_5M_10M": 10,
+    "house_10M_plus": 0
+   },
+   "2023Q3": {
+    "condo_1M_2.5M": 105,
+    "condo_2.5M_plus": 14,
+    "condo_5M_plus": 4,
+    "house_2M_3M": 43,
+    "house_3M_5M": 18,
+    "house_5M_10M": 12,
+    "house_10M_plus": 1
+   },
+   "2023Q4": {
+    "condo_1M_2.5M": 84,
+    "condo_2.5M_plus": 14,
+    "condo_5M_plus": 6,
+    "house_2M_3M": 32,
+    "house_3M_5M": 14,
+    "house_5M_10M": 8,
+    "house_10M_plus": 0
+   },
+   "2024Q1": {
+    "condo_1M_2.5M": 61,
+    "condo_2.5M_plus": 10,
+    "condo_5M_plus": 1,
+    "house_2M_3M": 48,
+    "house_3M_5M": 10,
+    "house_5M_10M": 7,
+    "house_10M_plus": 5
+   },
+   "2024Q2": {
+    "condo_1M_2.5M": 120,
+    "condo_2.5M_plus": 15,
+    "house_2M_3M": 52,
+    "house_3M_5M": 20,
+    "house_5M_10M": 8,
+    "house_10M_plus": 1
+   },
+   "2024Q3": {
+    "condo_1M_2.5M": 116,
+    "condo_2.5M_plus": 6,
+    "condo_5M_plus": 3,
+    "house_2M_3M": 50,
+    "house_3M_5M": 30,
+    "house_5M_10M": 4,
+    "house_10M_plus": 1
+   },
+   "2024Q4": {
+    "condo_1M_2.5M": 87,
+    "condo_2.5M_plus": 18,
+    "house_2M_3M": 39,
+    "house_3M_5M": 19,
+    "house_5M_10M": 4,
+    "house_10M_plus": 1
+   },
+   "2025Q1": {
+    "condo_1M_2.5M": 85,
+    "condo_2.5M_plus": 16,
+    "condo_5M_plus": 3,
+    "house_2M_3M": 48,
+    "house_3M_5M": 21,
+    "house_5M_10M": 11,
+    "house_10M_plus": 1
+   },
+   "2025Q2": {
+    "condo_1M_2.5M": 102,
+    "condo_2.5M_plus": 20,
+    "condo_5M_plus": 5,
+    "house_2M_3M": 57,
+    "house_3M_5M": 33,
+    "house_5M_10M": 7,
+    "house_10M_plus": 2
+   },
+   "2025Q3": {
+    "condo_1M_2.5M": 117,
+    "condo_2.5M_plus": 23,
+    "condo_5M_plus": 6,
+    "house_2M_3M": 25,
+    "house_3M_5M": 22,
+    "house_5M_10M": 6,
+    "house_10M_plus": 2
+   },
+   "2025Q4": {
+    "condo_1M_2.5M": 101,
+    "condo_2.5M_plus": 24,
+    "condo_5M_plus": 9,
+    "house_2M_3M": 60,
+    "house_3M_5M": 31,
+    "house_5M_10M": 12,
+    "house_10M_plus": 2
+   },
+   "2026Q1": {
+    "condo_2.5M_plus": 13,
+    "house_2M_3M": 47,
+    "house_3M_5M": 31
+   },
+   "2026Q2": {
+    "condo_1M_2.5M": 111,
+    "condo_2.5M_plus": 23,
+    "condo_5M_plus": 10,
+    "house_2M_3M": 67,
+    "house_3M_5M": 19,
+    "house_5M_10M": 9,
+    "house_10M_plus": 1
+   }
+  },
+  "quarter_urls": {
+   "2022Q3": "https://listsothebysrealty.com/2022/11/07/luxury-market-report-2022-q3",
+   "2022Q4": "https://listsothebysrealty.com/2023/02/01/luxury-market-report-2022-q4",
+   "2023Q1": "https://listsothebysrealty.com/2023/05/02/luxury-market-report-2023-q1",
+   "2023Q2": "https://listsothebysrealty.com/2023/07/26/luxury-market-report-2023-q2",
+   "2023Q3": "https://listsothebysrealty.com/2023/10/26/luxury-market-report-2023-q3",
+   "2023Q4": "https://listsothebysrealty.com/2024/02/02/luxury-market-report-2023-q4",
+   "2024Q1": "https://listsothebysrealty.com/2024/04/24/luxury-market-report-2024-q1",
+   "2024Q2": "https://listsothebysrealty.com/2024/08/01/luxury-market-report-2024-q2",
+   "2024Q3": "https://listsothebysrealty.com/2024/10/24/luxury-market-report-2024-q3",
+   "2024Q4": "https://listsothebysrealty.com/2025/01/28/luxury-market-report-2024-q4",
+   "2025Q1": "https://listsothebysrealty.com/2025/04/23/luxury-market-report-2025-q1",
+   "2025Q2": "https://listsothebysrealty.com/2025/07/30/luxury-market-report-2025-q2",
+   "2025Q3": "https://listsothebysrealty.com/2025/10/23/luxury-market-report-2025-q3",
+   "2025Q4": "https://listsothebysrealty.com/2026/02/06/luxury-market-report-2025-q4",
+   "2026Q2": "https://listsothebysrealty.com/2026/07/27/luxury-market-report-2026-q2",
+   "2026Q1": "https://listsothebysrealty.com/2026/04/29/luxury-market-report-2026-q1"
+  },
+  "annual_sums_our_arithmetic": {
+   "2023": {
+    "house_2M_3M": 159,
+    "house_3M_5M": 60,
+    "house_5M_10M": 38,
+    "house_10M_plus": 4,
+    "condo_1M_2.5M": 378,
+    "condo_2.5M_plus": 48,
+    "condo_5M_plus": 20,
+    "house_3M_plus": 102,
+    "house_5M_plus": 42,
+    "condo_1M_plus": 426
+   },
+   "2024": {
+    "house_2M_3M": 189,
+    "house_3M_5M": 79,
+    "house_5M_10M": 23,
+    "house_10M_plus": 8,
+    "condo_1M_2.5M": 384,
+    "condo_2.5M_plus": 49,
+    "condo_5M_plus": null,
+    "condo_5M_plus_quarters_missing": [
+     "2024Q2",
+     "2024Q4"
+    ],
+    "house_3M_plus": 110,
+    "house_5M_plus": 31,
+    "condo_1M_plus": 433
+   },
+   "2025": {
+    "house_2M_3M": 190,
+    "house_3M_5M": 107,
+    "house_5M_10M": 36,
+    "house_10M_plus": 7,
+    "condo_1M_2.5M": 405,
+    "condo_2.5M_plus": 83,
+    "condo_5M_plus": 23,
+    "house_3M_plus": 150,
+    "house_5M_plus": 43,
+    "condo_1M_plus": 488
+   },
+   "H1_2026": {
+    "house_2M_3M": 114,
+    "house_3M_5M": 50,
+    "house_5M_10M": null,
+    "house_5M_10M_quarters_missing": [
+     "2026Q1"
+    ],
+    "house_10M_plus": null,
+    "house_10M_plus_quarters_missing": [
+     "2026Q1"
+    ],
+    "condo_1M_2.5M": null,
+    "condo_1M_2.5M_quarters_missing": [
+     "2026Q1"
+    ],
+    "condo_2.5M_plus": 36,
+    "condo_5M_plus": null,
+    "condo_5M_plus_quarters_missing": [
+     "2026Q1"
+    ]
+   },
+   "H1_2025": {
+    "house_2M_3M": 105,
+    "house_3M_5M": 54,
+    "house_5M_10M": 18,
+    "house_10M_plus": 3,
+    "condo_1M_2.5M": 187,
+    "condo_2.5M_plus": 36,
+    "condo_5M_plus": 8,
+    "house_3M_plus": 75,
+    "house_5M_plus": 21,
+    "condo_1M_plus": 223
+   }
+  },
+  "gaps": [
+   "2026 Q1 page text gives only SF $2-3M (47), SF $3-5M (31) and condo $2.5M+ (13); other Q1 2026 bands (in images) not transcribed.",
+   "Condo $5M+ missing for 2024 Q2 and 2024 Q4."
+  ]
+ },
+ "maui_rpt_nonhomeowner_share": {
+  "what": "Maui County recorded conveyances by fiscal year (Jul-Jun) and the HRS 247-2 conveyance-tax schedule actually paid: schedule (2) = condo or single-family home bought by a buyer NOT eligible for the county homeowner exemption ('nonowner' = second home, investor, non-resident, most entities); 'owner' = schedule (1) on an improved residential parcel (buyer eligible for the exemption); 'nonres' = schedule (1) on other property (vacant land, commercial, resort) plus unmatched. 5+ unit building sales excluded. Thresholds on recorded price.",
+  "derived_by": "Hawaii Appleseed (maui_sales_extract.py, commit 48761b8) from County of Maui RPT Sales Data File 2026-09-22 + assessment listing 2026-04-06; shares computed by us (pull/mm_luxury/maui_rpt.py)",
+  "source_url": "https://www.mauicounty.gov/DocumentCenter/View/8070/RPT-Sales-Data-File-",
+  "appleseed_url": "https://github.com/Hawaii-Appleseed/Census-Forecaster/tree/48761b8953bae45ab928b5cfa85fe93f0011a30e/packages/tax_modeler/src/tax_modeler/data/raw/conveyance",
+  "company_reported": false,
+  "caveat": "Schedule (2) is read from the tax paid (robust); the owner vs nonres split uses 2026 parcel attributes, so for older FYs a then-vacant parcel now built on can be miscounted. Prefer FY2023+.",
+  "by_fy": {
+   "2016": {
+    "ge_1M": {
+     "count_owner_sched1": 112,
+     "count_nonowner_sched2": 284,
+     "count_nonres_or_unmatched": 60,
+     "count_all": 456,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 202446732,
+     "sum_price_nonowner": 600671740,
+     "sum_price_all": 1561237089,
+     "nonowner_share_of_home_sales_count": 0.7172,
+     "nonowner_share_of_home_sales_dollars": 0.7479,
+     "sched2_share_of_all_conveyances_count": 0.6228
+    },
+    "ge_3M": {
+     "count_owner_sched1": 9,
+     "count_nonowner_sched2": 51,
+     "count_nonres_or_unmatched": 27,
+     "count_all": 87,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 54322000,
+     "sum_price_nonowner": 219807259,
+     "sum_price_all": 978707931,
+     "nonowner_share_of_home_sales_count": 0.85,
+     "nonowner_share_of_home_sales_dollars": 0.8018,
+     "sched2_share_of_all_conveyances_count": 0.5862
+    },
+    "ge_5M": {
+     "count_owner_sched1": 5,
+     "count_nonowner_sched2": 10,
+     "count_nonres_or_unmatched": 20,
+     "count_all": 35,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 39500000,
+     "sum_price_nonowner": 62023309,
+     "sum_price_all": 777597268,
+     "nonowner_share_of_home_sales_count": 0.6667,
+     "nonowner_share_of_home_sales_dollars": 0.6109,
+     "sched2_share_of_all_conveyances_count": 0.2857
+    },
+    "ge_10M": {
+     "count_owner_sched1": 1,
+     "count_nonowner_sched2": 0,
+     "count_nonres_or_unmatched": 9,
+     "count_all": 10,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 10800000,
+     "sum_price_nonowner": 0,
+     "sum_price_all": 594829959,
+     "nonowner_share_of_home_sales_count": 0.0,
+     "nonowner_share_of_home_sales_dollars": 0.0,
+     "sched2_share_of_all_conveyances_count": 0.0
+    }
+   },
+   "2017": {
+    "ge_1M": {
+     "count_owner_sched1": 131,
+     "count_nonowner_sched2": 331,
+     "count_nonres_or_unmatched": 80,
+     "count_all": 542,
+     "excluded_5plus_unit_building_sales": 3,
+     "sum_price_owner": 238002231,
+     "sum_price_nonowner": 759026431,
+     "sum_price_all": 1507265787,
+     "nonowner_share_of_home_sales_count": 0.7165,
+     "nonowner_share_of_home_sales_dollars": 0.7613,
+     "sched2_share_of_all_conveyances_count": 0.6107
+    },
+    "ge_3M": {
+     "count_owner_sched1": 14,
+     "count_nonowner_sched2": 75,
+     "count_nonres_or_unmatched": 29,
+     "count_all": 118,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 75948602,
+     "sum_price_nonowner": 357317799,
+     "sum_price_all": 858746343,
+     "nonowner_share_of_home_sales_count": 0.8427,
+     "nonowner_share_of_home_sales_dollars": 0.8247,
+     "sched2_share_of_all_conveyances_count": 0.6356
+    },
+    "ge_5M": {
+     "count_owner_sched1": 5,
+     "count_nonowner_sched2": 17,
+     "count_nonres_or_unmatched": 17,
+     "count_all": 39,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 42408602,
+     "sum_price_nonowner": 142551499,
+     "sum_price_all": 564823962,
+     "nonowner_share_of_home_sales_count": 0.7727,
+     "nonowner_share_of_home_sales_dollars": 0.7707,
+     "sched2_share_of_all_conveyances_count": 0.4359
+    },
+    "ge_10M": {
+     "count_owner_sched1": 1,
+     "count_nonowner_sched2": 4,
+     "count_nonres_or_unmatched": 9,
+     "count_all": 14,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 13250000,
+     "sum_price_nonowner": 57300000,
+     "sum_price_all": 385435859,
+     "nonowner_share_of_home_sales_count": 0.8,
+     "nonowner_share_of_home_sales_dollars": 0.8122,
+     "sched2_share_of_all_conveyances_count": 0.2857
+    }
+   },
+   "2018": {
+    "ge_1M": {
+     "count_owner_sched1": 169,
+     "count_nonowner_sched2": 406,
+     "count_nonres_or_unmatched": 81,
+     "count_all": 656,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 291088105,
+     "sum_price_nonowner": 905240948,
+     "sum_price_all": 2691127960,
+     "nonowner_share_of_home_sales_count": 0.7061,
+     "nonowner_share_of_home_sales_dollars": 0.7567,
+     "sched2_share_of_all_conveyances_count": 0.6189
+    },
+    "ge_3M": {
+     "count_owner_sched1": 17,
+     "count_nonowner_sched2": 95,
+     "count_nonres_or_unmatched": 30,
+     "count_all": 142,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 73033700,
+     "sum_price_nonowner": 416020525,
+     "sum_price_all": 1904492917,
+     "nonowner_share_of_home_sales_count": 0.8482,
+     "nonowner_share_of_home_sales_dollars": 0.8507,
+     "sched2_share_of_all_conveyances_count": 0.669
+    },
+    "ge_5M": {
+     "count_owner_sched1": 3,
+     "count_nonowner_sched2": 15,
+     "count_nonres_or_unmatched": 26,
+     "count_all": 44,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 22163048,
+     "sum_price_nonowner": 116425887,
+     "sum_price_all": 1539939180,
+     "nonowner_share_of_home_sales_count": 0.8333,
+     "nonowner_share_of_home_sales_dollars": 0.8401,
+     "sched2_share_of_all_conveyances_count": 0.3409
+    },
+    "ge_10M": {
+     "count_owner_sched1": 0,
+     "count_nonowner_sched2": 2,
+     "count_nonres_or_unmatched": 13,
+     "count_all": 15,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 0,
+     "sum_price_nonowner": 27350000,
+     "sum_price_all": 1339699245,
+     "nonowner_share_of_home_sales_count": 1.0,
+     "nonowner_share_of_home_sales_dollars": 1.0,
+     "sched2_share_of_all_conveyances_count": 0.1333
+    }
+   },
+   "2019": {
+    "ge_1M": {
+     "count_owner_sched1": 167,
+     "count_nonowner_sched2": 419,
+     "count_nonres_or_unmatched": 117,
+     "count_all": 703,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 316681068,
+     "sum_price_nonowner": 905916926,
+     "sum_price_all": 1977146064,
+     "nonowner_share_of_home_sales_count": 0.715,
+     "nonowner_share_of_home_sales_dollars": 0.741,
+     "sched2_share_of_all_conveyances_count": 0.596
+    },
+    "ge_3M": {
+     "count_owner_sched1": 9,
+     "count_nonowner_sched2": 75,
+     "count_nonres_or_unmatched": 43,
+     "count_all": 127,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 84703773,
+     "sum_price_nonowner": 375173867,
+     "sum_price_all": 1088533173,
+     "nonowner_share_of_home_sales_count": 0.8929,
+     "nonowner_share_of_home_sales_dollars": 0.8158,
+     "sched2_share_of_all_conveyances_count": 0.5906
+    },
+    "ge_5M": {
+     "count_owner_sched1": 7,
+     "count_nonowner_sched2": 23,
+     "count_nonres_or_unmatched": 32,
+     "count_all": 62,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 78175773,
+     "sum_price_nonowner": 182430000,
+     "sum_price_all": 850910126,
+     "nonowner_share_of_home_sales_count": 0.7667,
+     "nonowner_share_of_home_sales_dollars": 0.7,
+     "sched2_share_of_all_conveyances_count": 0.371
+    },
+    "ge_10M": {
+     "count_owner_sched1": 4,
+     "count_nonowner_sched2": 4,
+     "count_nonres_or_unmatched": 12,
+     "count_all": 20,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 54350374,
+     "sum_price_nonowner": 54250000,
+     "sum_price_all": 552009160,
+     "nonowner_share_of_home_sales_count": 0.5,
+     "nonowner_share_of_home_sales_dollars": 0.4995,
+     "sched2_share_of_all_conveyances_count": 0.2
+    }
+   },
+   "2020": {
+    "ge_1M": {
+     "count_owner_sched1": 168,
+     "count_nonowner_sched2": 404,
+     "count_nonres_or_unmatched": 72,
+     "count_all": 644,
+     "excluded_5plus_unit_building_sales": 4,
+     "sum_price_owner": 277008365,
+     "sum_price_nonowner": 907483850,
+     "sum_price_all": 1403241739,
+     "nonowner_share_of_home_sales_count": 0.7063,
+     "nonowner_share_of_home_sales_dollars": 0.7661,
+     "sched2_share_of_all_conveyances_count": 0.6273
+    },
+    "ge_3M": {
+     "count_owner_sched1": 9,
+     "count_nonowner_sched2": 70,
+     "count_nonres_or_unmatched": 15,
+     "count_all": 94,
+     "excluded_5plus_unit_building_sales": 3,
+     "sum_price_owner": 44580000,
+     "sum_price_nonowner": 352129962,
+     "sum_price_all": 521522165,
+     "nonowner_share_of_home_sales_count": 0.8861,
+     "nonowner_share_of_home_sales_dollars": 0.8876,
+     "sched2_share_of_all_conveyances_count": 0.7447
+    },
+    "ge_5M": {
+     "count_owner_sched1": 2,
+     "count_nonowner_sched2": 22,
+     "count_nonres_or_unmatched": 9,
+     "count_all": 33,
+     "excluded_5plus_unit_building_sales": 3,
+     "sum_price_owner": 20400000,
+     "sum_price_nonowner": 178277044,
+     "sum_price_all": 301489249,
+     "nonowner_share_of_home_sales_count": 0.9167,
+     "nonowner_share_of_home_sales_dollars": 0.8973,
+     "sched2_share_of_all_conveyances_count": 0.6667
+    },
+    "ge_10M": {
+     "count_owner_sched1": 1,
+     "count_nonowner_sched2": 4,
+     "count_nonres_or_unmatched": 4,
+     "count_all": 9,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 14000000,
+     "sum_price_nonowner": 46249764,
+     "sum_price_all": 129086444,
+     "nonowner_share_of_home_sales_count": 0.8,
+     "nonowner_share_of_home_sales_dollars": 0.7676,
+     "sched2_share_of_all_conveyances_count": 0.4444
+    }
+   },
+   "2021": {
+    "ge_1M": {
+     "count_owner_sched1": 344,
+     "count_nonowner_sched2": 738,
+     "count_nonres_or_unmatched": 141,
+     "count_all": 1223,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 654244484,
+     "sum_price_nonowner": 1873300013,
+     "sum_price_all": 3129332201,
+     "nonowner_share_of_home_sales_count": 0.6821,
+     "nonowner_share_of_home_sales_dollars": 0.7412,
+     "sched2_share_of_all_conveyances_count": 0.6034
+    },
+    "ge_3M": {
+     "count_owner_sched1": 33,
+     "count_nonowner_sched2": 175,
+     "count_nonres_or_unmatched": 35,
+     "count_all": 243,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 180932000,
+     "sum_price_nonowner": 961683025,
+     "sum_price_all": 1570256126,
+     "nonowner_share_of_home_sales_count": 0.8413,
+     "nonowner_share_of_home_sales_dollars": 0.8417,
+     "sched2_share_of_all_conveyances_count": 0.7202
+    },
+    "ge_5M": {
+     "count_owner_sched1": 11,
+     "count_nonowner_sched2": 69,
+     "count_nonres_or_unmatched": 22,
+     "count_all": 102,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 91695000,
+     "sum_price_nonowner": 559936255,
+     "sum_price_all": 1030226042,
+     "nonowner_share_of_home_sales_count": 0.8625,
+     "nonowner_share_of_home_sales_dollars": 0.8593,
+     "sched2_share_of_all_conveyances_count": 0.6765
+    },
+    "ge_10M": {
+     "count_owner_sched1": 1,
+     "count_nonowner_sched2": 16,
+     "count_nonres_or_unmatched": 9,
+     "count_all": 26,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 24000000,
+     "sum_price_nonowner": 224200088,
+     "sum_price_all": 530737427,
+     "nonowner_share_of_home_sales_count": 0.9412,
+     "nonowner_share_of_home_sales_dollars": 0.9033,
+     "sched2_share_of_all_conveyances_count": 0.6154
+    }
+   },
+   "2022": {
+    "ge_1M": {
+     "count_owner_sched1": 469,
+     "count_nonowner_sched2": 974,
+     "count_nonres_or_unmatched": 172,
+     "count_all": 1615,
+     "excluded_5plus_unit_building_sales": 3,
+     "sum_price_owner": 876406653,
+     "sum_price_nonowner": 2513006553,
+     "sum_price_all": 4329552130,
+     "nonowner_share_of_home_sales_count": 0.675,
+     "nonowner_share_of_home_sales_dollars": 0.7414,
+     "sched2_share_of_all_conveyances_count": 0.6031
+    },
+    "ge_3M": {
+     "count_owner_sched1": 46,
+     "count_nonowner_sched2": 200,
+     "count_nonres_or_unmatched": 58,
+     "count_all": 304,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 232240600,
+     "sum_price_nonowner": 1250212453,
+     "sum_price_all": 2239342351,
+     "nonowner_share_of_home_sales_count": 0.813,
+     "nonowner_share_of_home_sales_dollars": 0.8433,
+     "sched2_share_of_all_conveyances_count": 0.6579
+    },
+    "ge_5M": {
+     "count_owner_sched1": 12,
+     "count_nonowner_sched2": 86,
+     "count_nonres_or_unmatched": 27,
+     "count_all": 125,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 101725700,
+     "sum_price_nonowner": 812317369,
+     "sum_price_all": 1556420463,
+     "nonowner_share_of_home_sales_count": 0.8776,
+     "nonowner_share_of_home_sales_dollars": 0.8887,
+     "sched2_share_of_all_conveyances_count": 0.688
+    },
+    "ge_10M": {
+     "count_owner_sched1": 2,
+     "count_nonowner_sched2": 26,
+     "count_nonres_or_unmatched": 11,
+     "count_all": 39,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 39390700,
+     "sum_price_nonowner": 415589369,
+     "sum_price_all": 996614463,
+     "nonowner_share_of_home_sales_count": 0.9286,
+     "nonowner_share_of_home_sales_dollars": 0.9134,
+     "sched2_share_of_all_conveyances_count": 0.6667
+    }
+   },
+   "2023": {
+    "ge_1M": {
+     "count_owner_sched1": 306,
+     "count_nonowner_sched2": 604,
+     "count_nonres_or_unmatched": 126,
+     "count_all": 1036,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 565129446,
+     "sum_price_nonowner": 1412555473,
+     "sum_price_all": 2346147554,
+     "nonowner_share_of_home_sales_count": 0.6637,
+     "nonowner_share_of_home_sales_dollars": 0.7142,
+     "sched2_share_of_all_conveyances_count": 0.583
+    },
+    "ge_3M": {
+     "count_owner_sched1": 30,
+     "count_nonowner_sched2": 106,
+     "count_nonres_or_unmatched": 33,
+     "count_all": 169,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 157487992,
+     "sum_price_nonowner": 650429141,
+     "sum_price_all": 1025764284,
+     "nonowner_share_of_home_sales_count": 0.7794,
+     "nonowner_share_of_home_sales_dollars": 0.8051,
+     "sched2_share_of_all_conveyances_count": 0.6272
+    },
+    "ge_5M": {
+     "count_owner_sched1": 13,
+     "count_nonowner_sched2": 49,
+     "count_nonres_or_unmatched": 12,
+     "count_all": 74,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 94225000,
+     "sum_price_nonowner": 433908042,
+     "sum_price_all": 665079103,
+     "nonowner_share_of_home_sales_count": 0.7903,
+     "nonowner_share_of_home_sales_dollars": 0.8216,
+     "sched2_share_of_all_conveyances_count": 0.6622
+    },
+    "ge_10M": {
+     "count_owner_sched1": 0,
+     "count_nonowner_sched2": 14,
+     "count_nonres_or_unmatched": 6,
+     "count_all": 20,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 0,
+     "sum_price_nonowner": 209890152,
+     "sum_price_all": 307815152,
+     "nonowner_share_of_home_sales_count": 1.0,
+     "nonowner_share_of_home_sales_dollars": 1.0,
+     "sched2_share_of_all_conveyances_count": 0.7
+    }
+   },
+   "2024": {
+    "ge_1M": {
+     "count_owner_sched1": 377,
+     "count_nonowner_sched2": 620,
+     "count_nonres_or_unmatched": 123,
+     "count_all": 1120,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 629210524,
+     "sum_price_nonowner": 1712193489,
+     "sum_price_all": 3151768761,
+     "nonowner_share_of_home_sales_count": 0.6219,
+     "nonowner_share_of_home_sales_dollars": 0.7313,
+     "sched2_share_of_all_conveyances_count": 0.5536
+    },
+    "ge_3M": {
+     "count_owner_sched1": 22,
+     "count_nonowner_sched2": 151,
+     "count_nonres_or_unmatched": 50,
+     "count_all": 223,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 104103885,
+     "sum_price_nonowner": 939369153,
+     "sum_price_all": 1727413455,
+     "nonowner_share_of_home_sales_count": 0.8728,
+     "nonowner_share_of_home_sales_dollars": 0.9002,
+     "sched2_share_of_all_conveyances_count": 0.6771
+    },
+    "ge_5M": {
+     "count_owner_sched1": 6,
+     "count_nonowner_sched2": 63,
+     "count_nonres_or_unmatched": 33,
+     "count_all": 102,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 48073610,
+     "sum_price_nonowner": 606390452,
+     "sum_price_all": 1272103479,
+     "nonowner_share_of_home_sales_count": 0.913,
+     "nonowner_share_of_home_sales_dollars": 0.9265,
+     "sched2_share_of_all_conveyances_count": 0.6176
+    },
+    "ge_10M": {
+     "count_owner_sched1": 1,
+     "count_nonowner_sched2": 22,
+     "count_nonres_or_unmatched": 9,
+     "count_all": 32,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 12365651,
+     "sum_price_nonowner": 344003963,
+     "sum_price_all": 810412748,
+     "nonowner_share_of_home_sales_count": 0.9565,
+     "nonowner_share_of_home_sales_dollars": 0.9653,
+     "sched2_share_of_all_conveyances_count": 0.6875
+    }
+   },
+   "2025": {
+    "ge_1M": {
+     "count_owner_sched1": 399,
+     "count_nonowner_sched2": 509,
+     "count_nonres_or_unmatched": 105,
+     "count_all": 1013,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 740529031,
+     "sum_price_nonowner": 1320593669,
+     "sum_price_all": 2422807202,
+     "nonowner_share_of_home_sales_count": 0.5606,
+     "nonowner_share_of_home_sales_dollars": 0.6407,
+     "sched2_share_of_all_conveyances_count": 0.5025
+    },
+    "ge_3M": {
+     "count_owner_sched1": 33,
+     "count_nonowner_sched2": 111,
+     "count_nonres_or_unmatched": 36,
+     "count_all": 180,
+     "excluded_5plus_unit_building_sales": 2,
+     "sum_price_owner": 185445953,
+     "sum_price_nonowner": 672861542,
+     "sum_price_all": 1098674487,
+     "nonowner_share_of_home_sales_count": 0.7708,
+     "nonowner_share_of_home_sales_dollars": 0.7839,
+     "sched2_share_of_all_conveyances_count": 0.6167
+    },
+    "ge_5M": {
+     "count_owner_sched1": 15,
+     "count_nonowner_sched2": 49,
+     "count_nonres_or_unmatched": 18,
+     "count_all": 82,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 118794207,
+     "sum_price_nonowner": 435560354,
+     "sum_price_all": 725502953,
+     "nonowner_share_of_home_sales_count": 0.7656,
+     "nonowner_share_of_home_sales_dollars": 0.7857,
+     "sched2_share_of_all_conveyances_count": 0.5976
+    },
+    "ge_10M": {
+     "count_owner_sched1": 2,
+     "count_nonowner_sched2": 12,
+     "count_nonres_or_unmatched": 6,
+     "count_all": 20,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 30770000,
+     "sum_price_nonowner": 196573337,
+     "sum_price_all": 313216162,
+     "nonowner_share_of_home_sales_count": 0.8571,
+     "nonowner_share_of_home_sales_dollars": 0.8647,
+     "sched2_share_of_all_conveyances_count": 0.6
+    }
+   },
+   "2026": {
+    "ge_1M": {
+     "count_owner_sched1": 359,
+     "count_nonowner_sched2": 453,
+     "count_nonres_or_unmatched": 167,
+     "count_all": 979,
+     "excluded_5plus_unit_building_sales": 1,
+     "sum_price_owner": 630138585,
+     "sum_price_nonowner": 1058202291,
+     "sum_price_all": 2287437140,
+     "nonowner_share_of_home_sales_count": 0.5579,
+     "nonowner_share_of_home_sales_dollars": 0.6268,
+     "sched2_share_of_all_conveyances_count": 0.4627
+    },
+    "ge_3M": {
+     "count_owner_sched1": 23,
+     "count_nonowner_sched2": 96,
+     "count_nonres_or_unmatched": 37,
+     "count_all": 156,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 122924500,
+     "sum_price_nonowner": 476221697,
+     "sum_price_all": 947498163,
+     "nonowner_share_of_home_sales_count": 0.8067,
+     "nonowner_share_of_home_sales_dollars": 0.7948,
+     "sched2_share_of_all_conveyances_count": 0.6154
+    },
+    "ge_5M": {
+     "count_owner_sched1": 10,
+     "count_nonowner_sched2": 31,
+     "count_nonres_or_unmatched": 24,
+     "count_all": 65,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 77035000,
+     "sum_price_nonowner": 231419999,
+     "sum_price_all": 609518420,
+     "nonowner_share_of_home_sales_count": 0.7561,
+     "nonowner_share_of_home_sales_dollars": 0.7503,
+     "sched2_share_of_all_conveyances_count": 0.4769
+    },
+    "ge_10M": {
+     "count_owner_sched1": 2,
+     "count_nonowner_sched2": 5,
+     "count_nonres_or_unmatched": 11,
+     "count_all": 18,
+     "excluded_5plus_unit_building_sales": 0,
+     "sum_price_owner": 24400000,
+     "sum_price_nonowner": 72200000,
+     "sum_price_all": 305160878,
+     "nonowner_share_of_home_sales_count": 0.7143,
+     "nonowner_share_of_home_sales_dollars": 0.7474,
+     "sched2_share_of_all_conveyances_count": 0.2778
+    }
+   }
+  },
+  "largest_home_conveyance_by_fy_usd": {
+   "2016": 10800000.0,
+   "2017": 18000000.0,
+   "2018": 16000000.0,
+   "2019": 20000000.0,
+   "2020": 14000000.0,
+   "2021": 25000000.0,
+   "2022": 45000000.0,
+   "2023": 32673491.0,
+   "2024": 43579000.0,
+   "2025": 26450000.0,
+   "2026": 18500000.0
+  }
+ },
+ "oahu_stock_not_owner_occupied_by_assessed_value": {
+  "rows": [
+   {
+    "assessed_value_band": "$4M-$6M",
+    "homes_not_owner_occupied": 727,
+    "homes_owner_occupied": 598,
+    "share_not_owner_occupied": 0.5487,
+    "entity_held_share_of_not_owner_occupied": 0.447,
+    "entity_held_share_of_owner_occupied": 0.0368,
+    "resales_not_owner_occupied": 106,
+    "resales_owner_occupied": 45,
+    "developer_first_sales": 70,
+    "resale_window": "2023-12-05 to 2026-09-25",
+    "owner_roll_tax_year": "2027"
+   },
+   {
+    "assessed_value_band": "$6M-$10M",
+    "homes_not_owner_occupied": 373,
+    "homes_owner_occupied": 175,
+    "share_not_owner_occupied": 0.6807,
+    "entity_held_share_of_not_owner_occupied": 0.5228,
+    "entity_held_share_of_owner_occupied": 0.0914,
+    "resales_not_owner_occupied": 48,
+    "resales_owner_occupied": 23,
+    "developer_first_sales": 0,
+    "resale_window": "2023-12-05 to 2026-09-25",
+    "owner_roll_tax_year": "2027"
+   },
+   {
+    "assessed_value_band": "$10M-",
+    "homes_not_owner_occupied": 122,
+    "homes_owner_occupied": 23,
+    "share_not_owner_occupied": 0.8414,
+    "entity_held_share_of_not_owner_occupied": 0.623,
+    "entity_held_share_of_owner_occupied": 0.2174,
+    "resales_not_owner_occupied": 18,
+    "resales_owner_occupied": 1,
+    "developer_first_sales": 0,
+    "resale_window": "2023-12-05 to 2026-09-25",
+    "owner_roll_tax_year": "2027"
+   }
+  ],
+  "company_reported": false,
+  "derived_by": "Hawaii Appleseed (honolulu_entity_share.py) from City & County of Honolulu ASMTPITT/OWNDAT (tax year 2026/2027, pulled 2026-09-25)",
+  "url": "https://github.com/Hawaii-Appleseed/Census-Forecaster/tree/48761b8953bae45ab928b5cfa85fe93f0011a30e/packages/tax_modeler/src/tax_modeler/data/raw/conveyance/honolulu_entity_share_by_band.csv",
+  "note": "Stock (homes by assessed value), not sales; 'owner-occupied' = home exemption on file."
+ },
+ "buyer_origin": {
+  "luxury_specific_published": null,
+  "gap": "No 2023-2026 publication found giving buyer origin (state/country) for $1M+/$3M+/$10M+ Hawaii sales. Title Guaranty Buyer Stats are all-price; Hawaii Life gives only qualitative notes.",
+  "tg_all_price_context": {
+   "Statewide 2025": {
+    "sales": 16909,
+    "sales_share_hi_us_foreign": [
+     78,
+     20,
+     2
+    ],
+    "dollars": "$15.5B",
+    "dollar_share_hi_us_foreign": [
+     70,
+     27,
+     3
+    ],
+    "file": "Buyer-Stats-Kauai-Q4-2025.pdf (statewide panel)",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+    "sha256": "1e7365b4a5f15b98e714f78a08971d0ad7b28b1cffb6de9b908046ab5240158c",
+    "out_of_state_share_of_sales_pct": 22,
+    "out_of_state_share_of_dollars_pct": 30
+   },
+   "Oahu 2025": {
+    "sales": 11097,
+    "sales_share_hi_us_foreign": [
+     83,
+     14,
+     3
+    ],
+    "dollars": "$9.8B",
+    "dollar_share_hi_us_foreign": [
+     81,
+     15,
+     4
+    ],
+    "file": "Buyer-Stats-Oahu-Q4-2025.pdf",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+    "sha256": "50118586da491d557e14566ae820f3afd1f84c55b6cfd2266e306092ddc41c43",
+    "out_of_state_share_of_sales_pct": 17,
+    "out_of_state_share_of_dollars_pct": 19
+   },
+   "Maui 2025": {
+    "sales": 1247,
+    "sales_share_hi_us_foreign": [
+     73,
+     25,
+     1
+    ],
+    "dollars": "$1.8B",
+    "dollar_share_hi_us_foreign": [
+     57,
+     40,
+     4
+    ],
+    "file": "Buyer-Stats-Maui-Q4-2025.pdf",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2025.pdf",
+    "sha256": "f41fea1fa1619587a2806feb31e8237f178fecfb8bca8b0caff0860b3d0622b2",
+    "out_of_state_share_of_sales_pct": 26,
+    "out_of_state_share_of_dollars_pct": 44
+   },
+   "Kauai 2025": {
+    "sales": 890,
+    "sales_share_hi_us_foreign": [
+     68,
+     32,
+     0
+    ],
+    "dollars": "$1.2B",
+    "dollar_share_hi_us_foreign": [
+     51,
+     49,
+     0
+    ],
+    "file": "Buyer-Stats-Kauai-Q4-2025.pdf",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+    "sha256": "1e7365b4a5f15b98e714f78a08971d0ad7b28b1cffb6de9b908046ab5240158c",
+    "out_of_state_share_of_sales_pct": 32,
+    "out_of_state_share_of_dollars_pct": 49
+   },
+   "Hawaii Island 2025": {
+    "sales": 3675,
+    "sales_share_hi_us_foreign": [
+     67,
+     32,
+     1
+    ],
+    "dollars": "$2.7B",
+    "dollar_share_hi_us_foreign": [
+     45,
+     53,
+     3
+    ],
+    "file": "Buyer-Stats-Hawaii-Q4-2025.pdf",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+    "sha256": "89d1f45d6db88cd222f9fcaed4f1e5ca64b2439eebfbc7a69e0ac0281b208c9f",
+    "out_of_state_share_of_sales_pct": 33,
+    "out_of_state_share_of_dollars_pct": 56
+   },
+   "Statewide Jan-Jun 2026": {
+    "sales": 7726,
+    "sales_share_hi_us_foreign": [
+     78,
+     19,
+     3
+    ],
+    "dollars": "$7.9B",
+    "dollar_share_hi_us_foreign": [
+     68,
+     28,
+     4
+    ],
+    "file": "Buyer-Stats-Oahu-Q2-2026.pdf (statewide panel)",
+    "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf",
+    "sha256": "f9f6eb03cec1ae8d38dbee806fd7f6c603fb3bfb0a0a83632fc0a50bd3475be4",
+    "out_of_state_share_of_sales_pct": 22,
+    "out_of_state_share_of_dollars_pct": 32
+   }
+  },
+  "tg_reading": "Out-of-state buyers' share of dollar volume exceeds their share of sales on every island (e.g. Maui 2025: 26% of sales, 44% of dollars; Hawaii Island 2025: 33% vs 56%), consistent with out-of-state buyers skewing to higher price points; not a luxury-tier figure.",
+  "company_reported": "TG = title company (Title Guaranty of Hawaii) compilation of recorded deeds"
+ },
+ "record_sales": [
+  {
+   "rank_note": "state record (publicly recorded residential)",
+   "price": 65750000,
+   "island": "Oahu",
+   "area": "Kahala (East Honolulu)",
+   "name": "Hale Hanohano",
+   "type": "single-family oceanfront estate (3 residences, ~1.5 ac)",
+   "closed": "2025-03-14",
+   "buyer": "undisclosed",
+   "sources": [
+    [
+     "khon2",
+     "https://digital-release.khon2.com/local-news/kahalas-hale-hanohano-sells-for-record-65-75m/amp"
+    ],
+    [
+     "coldwell_banker_luxury_editorial_2025-03-14",
+     "https://www.coldwellbankerluxury.com/editorial/hale-hanohano-honolulu-s-house-of-honor-shatters-hawaii-real-estate-records-with-65-75-million-sale"
+    ],
+    [
+     "hawaii_life_2025_ye_report_p11",
+     "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view"
+    ]
+   ],
+   "company_reported": true,
+   "note": "KHON2 independent news; Coldwell Banker (listing brokerage) and Hawaii Life (co-agent firm) are company-reported. Hawaii Life's 2025 narrative rounds to '$65 million'."
+  },
+  {
+   "rank_note": "previous state record",
+   "price": 46100000,
+   "island": "Kauai",
+   "area": "North Shore",
+   "name": "Hale 'Ae Kai",
+   "type": "15-acre waterfront estate",
+   "closed": "2018-11 (reported 2018-11-12)",
+   "sources": [
+    [
+     "the_real_deal_2018-11-12",
+     "https://therealdeal.com/miami/2018/11/12/hawaii-most-expensive-home-kauai/"
+    ]
+   ],
+   "company_reported": false
+  },
+  {
+   "rank_note": "record before 2018 (per The Real Deal)",
+   "price": 41800000,
+   "island": "Maui",
+   "area": null,
+   "name": null,
+   "type": "home",
+   "closed": "2015",
+   "sources": [
+    [
+     "the_real_deal_2018-11-12",
+     "https://therealdeal.com/miami/2018/11/12/hawaii-most-expensive-home-kauai/"
+    ]
+   ],
+   "company_reported": false
+  },
+  {
+   "rank_note": "highest MLS-listed sale recorded on Maui (as of Jan 2023, per listing agent)",
+   "price": 32760000,
+   "island": "Maui",
+   "area": "Makena (South Maui)",
+   "name": "Makena Modern",
+   "type": "single-family",
+   "closed": "2023-01-06 (Friday before 2023-01-10 article)",
+   "sources": [
+    [
+     "maui_now_2023-01-10",
+     "https://mauinow.com/2023/01/10/one-of-priciest-home-sales-in-maui-history-makena-mansion-sells-for-32-76m/"
+    ]
+   ],
+   "company_reported": "agent claim reported by news"
+  },
+  {
+   "rank_note": "2026 H1 statewide high (Hawaii Life)",
+   "price": 38250000,
+   "island": "Hawaii Island",
+   "area": "Kuki'o (North Kona)",
+   "type": "single-family estate",
+   "closed": "2026-01",
+   "sources": [
+    [
+     "hawaii_life_2026_midyear_p29",
+     "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "2025 Maui high (Hawaii Life)",
+   "price": 28560000,
+   "island": "Maui",
+   "area": "Keawakapu Beach (South Maui)",
+   "type": "single-family estate",
+   "closed": "2025-06",
+   "sources": [
+    [
+     "hawaii_life_2025_ye_p16",
+     "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "2025 Kauai high (Hawaii Life)",
+   "price": 27600000,
+   "island": "Kauai",
+   "area": "Limahuli Valley (North Shore)",
+   "type": "single-family estate",
+   "closed": "2025-08",
+   "sources": [
+    [
+     "hawaii_life_2025_ye_p26",
+     "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "2025 Hawaii Island high (Hawaii Life)",
+   "price": 23250000,
+   "island": "Hawaii Island",
+   "area": "North Kona",
+   "type": "single-family estate",
+   "closed": "2025-03",
+   "sources": [
+    [
+     "hawaii_life_2025_ye_p21",
+     "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view"
+    ]
+   ],
+   "company_reported": true,
+   "note": "2025 midyear edition prints $23.3M for the same sale"
+  },
+  {
+   "rank_note": "2026 H1 Kauai high",
+   "price": 16000000,
+   "island": "Kauai",
+   "area": "Kilauea (North Shore)",
+   "type": "22-acre beachfront estate",
+   "closed": "2026-02",
+   "sources": [
+    [
+     "hawaii_life_2026_midyear_p35",
+     "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "2026 H1 Oahu high (single-family)",
+   "price": 11780000,
+   "island": "Oahu",
+   "area": "Kailua (Windward), oceanfront",
+   "type": "single-family",
+   "closed": "2026-01",
+   "sources": [
+    [
+     "hawaii_life_2026_midyear_p11",
+     "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view"
+    ],
+    [
+     "list_sothebys_2026q1",
+     "https://listsothebysrealty.com/2026/04/29/luxury-market-report-2026-q1"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "2026 H1 Maui high",
+   "price": 11000000,
+   "island": "Maui",
+   "area": "Spreckelsville (North Shore)",
+   "type": "single-family estate",
+   "closed": "2026-06",
+   "sources": [
+    [
+     "hawaii_life_2026_midyear_p18",
+     "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "Oahu condo, top sale Q1 2026",
+   "price": 14500000,
+   "island": "Oahu",
+   "area": "Kaka'ako (Ward Village)",
+   "name": "Anaha (building)",
+   "type": "condo",
+   "closed": "2026-Q1",
+   "sources": [
+    [
+     "list_sothebys_2026q1",
+     "https://listsothebysrealty.com/2026/04/29/luxury-market-report-2026-q1"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "Oahu condo, top sale Q4 2025",
+   "price": 14499000,
+   "island": "Oahu",
+   "area": "Waikiki",
+   "name": "The Ritz-Carlton Residences (building)",
+   "type": "condo",
+   "closed": "2025-Q4",
+   "sources": [
+    [
+     "list_sothebys_2025q4",
+     "https://listsothebysrealty.com/2026/02/06/luxury-market-report-2025-q4"
+    ]
+   ],
+   "company_reported": true
+  },
+  {
+   "rank_note": "Mauna Kea Resort record (condo)",
+   "price": 11000000,
+   "island": "Hawaii Island",
+   "area": "Mauna Kea Resort (South Kohala)",
+   "name": "Hapuna Beach Residences (building)",
+   "type": "condo",
+   "closed": "2025-05",
+   "sources": [
+    [
+     "hawaii_life_maunakea_blog_2026-02-04",
+     "https://www.hawaiilife.com/blog/mauna-kea-resort-2025-year-end-market-recap-and-2026-outlook"
+    ]
+   ],
+   "company_reported": true
+  }
+ ],
+ "key_figures": {
+  "statewide_sf_3m_plus": {
+   "2022": 409,
+   "2024": 326,
+   "2025": 338,
+   "H1_2024": 185,
+   "H1_2025": 171,
+   "H1_2026": 169
+  },
+  "statewide_all_types_3m_plus": {
+   "2022": 652,
+   "2025": 519,
+   "H1_2025": 264,
+   "H1_2026": 264
+  },
+  "statewide_all_types_6m_plus": {
+   "2022": 164,
+   "2025": 160,
+   "H1_2025": 80,
+   "H1_2026": 73
+  },
+  "statewide_all_types_10m_plus": {
+   "2022": 63,
+   "2025": 52,
+   "H1_2025": 28,
+   "H1_2026": 29
+  },
+  "statewide_sf_10m_plus": {
+   "2025": 35,
+   "H1_2025": 19,
+   "H1_2026": 22
+  },
+  "statewide_sf_3m_dollar_volume_H1_2026": 1173300000,
+  "oahu_sf_3m_dollar_volume_2024_implied": 571973094
+ },
+ "gaps": [
+  "Hawaii Life 2023 and 2024 year-end luxury reports not located (2024 product URL 404); 2023 has no Hawaii Life island figures here; 2024 only single-family $3M+ counts and medians via YoY references.",
+  "No published statewide $1M+ or $5M+ count from Hawaii Life; $1M+/$5M+ available only for Maui (RPT), Oahu condos/single-family $5M+ (List Sotheby's), South Kohala ($1M+).",
+  "Hawaii Life 2025 year-end dollar volume printed only for Oahu.",
+  "Luxury-tier buyer origin not published (see buyer_origin).",
+  "Kauai, Hawaii Island and Oahu county RPT tax-schedule splits not available (Maui only).",
+  "Bezos Makena purchase (widely reported ~$78M, structured as a holding-company purchase) not in downloaded sources; excluded from records."
+ ],
+ "source": {
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/mm_luxury",
+  "manifest": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/mm_luxury/MANIFEST.txt",
+  "tg_raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/tg",
+  "scripts": [
+   "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/mm_luxury/build.py",
+   "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/mm_luxury/maui_rpt.py",
+   "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/mm_luxury/fetch.sh",
+   "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/mm_luxury/txt.py",
+   "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/mm_luxury/mapwords.py"
+  ],
+  "pdf_text": "pdftotext -layout on each Hawaii Life PDF -> PULL/hl_lux_*.txt; map coordinates via pdftotext -bbox -> PULL/bbox_*.html",
+  "urls": {
+   "hl_2025mid": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2025-midyear",
+   "hl_2025mid_pdf": "https://drive.google.com/file/d/1Z3i4Bf9zIieWPOGueQDEPKBjdSHKxhWv/view",
+   "hl_2025ye": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2025-year-end",
+   "hl_2025ye_pdf": "https://drive.google.com/file/d/1tU9ceJbiCm4gq_F4K8RlaCa9-Fg8NB0E/view",
+   "hl_2026mid": "https://smarket.hawaiilife.com/products/hl-luxury-market-report-2026-midyear",
+   "hl_2026mid_pdf": "https://drive.google.com/file/d/1vPAUD50jHWw5e_CTyBfeiJRtmAOFoSWD/view",
+   "hl_2022ye_pdf": "https://smarket.hawaiilife.com/s/HL-LuxReport-2022-EOY-web.pdf",
+   "hl_2022ye_blog": "https://hawaiilife.com/blog/2022-year-end-luxury-market-report",
+   "hl_kauai_blog": "https://www.hawaiilife.com/blog/kaua%CA%BBi-luxury-real-estate-market-in-2025-what-the-data-shows/",
+   "hl_maunakea_blog": "https://www.hawaiilife.com/blog/mauna-kea-resort-2025-year-end-market-recap-and-2026-outlook",
+   "khon2": "https://digital-release.khon2.com/local-news/kahalas-hale-hanohano-sells-for-record-65-75m/amp",
+   "cbl": "https://www.coldwellbankerluxury.com/editorial/hale-hanohano-honolulu-s-house-of-honor-shatters-hawaii-real-estate-records-with-65-75-million-sale",
+   "trd": "https://therealdeal.com/miami/2018/11/12/hawaii-most-expensive-home-kauai/",
+   "mauinow": "https://mauinow.com/2023/01/10/one-of-priciest-home-sales-in-maui-history-makena-mansion-sells-for-32-76m/",
+   "lsir_2025q4": "https://listsothebysrealty.com/2026/02/06/luxury-market-report-2025-q4",
+   "lsir_2026q1": "https://listsothebysrealty.com/2026/04/29/luxury-market-report-2026-q1",
+   "lsir_2026q2": "https://listsothebysrealty.com/2026/07/27/luxury-market-report-2026-q2",
+   "appleseed": "https://github.com/Hawaii-Appleseed/Census-Forecaster/tree/48761b8953bae45ab928b5cfa85fe93f0011a30e/packages/tax_modeler/src/tax_modeler/data/raw/conveyance",
+   "maui_rpt": "https://www.mauicounty.gov/DocumentCenter/View/8070/RPT-Sales-Data-File-",
+   "tg_buyer": "https://www.tghawaii.com/wp-content/uploads/"
+  },
+  "published": {
+   "hl_2025mid": "2025-08-20",
+   "hl_2025ye": "2026-01-26",
+   "hl_2026mid": "2026-07-24",
+   "hl_kauai_blog": "2026-04-08",
+   "hl_maunakea_blog": "2026-02-04",
+   "khon2": "2025-03-14 (sale date; article dated same week)",
+   "cbl": "2025-03-14",
+   "trd": "2018-11-12",
+   "mauinow": "2023-01-10",
+   "lsir_2025q4": "2026-02-06",
+   "lsir_2026q1": "2026-04-29",
+   "lsir_2026q2": "2026-07-27",
+   "hl_2022ye_blog": "2023-01/02 (2022 year-end)"
+  },
+  "input_sha256": {
+   "hl_lux_2025mid.pdf": "e215372690f46295690ddb5c276ff952f12b4d69eba5ddc29d8c569de0c72006",
+   "hl_lux_2025ye.pdf": "5e8e0f4055625d0a88ecf24921756e57bbe1a405f2f301d2f19f380a5383bf78",
+   "hl_lux_2026mid.pdf": "ca98a4d6288c3114dbe2a25889f56616fea5fee21f15339003c926517b8b2626",
+   "appleseed/luxury_report_counts.csv": "77a30f00e9e2578ce693d1952b6231260d980dbcbd1b3e544de8956faf2af750",
+   "appleseed/maui_sales_history_fy2016_2026.csv": "6670591b8c3e7ddad5a93e1d589f195698441da4a4002ccb3a93af1d0377e5a8",
+   "appleseed/honolulu_entity_share_by_band.csv": "3ababd29de112e9dbb9e9010f466a900799a83e34edbaebb1565d0faa2329bae"
+  },
+  "evidence_snippets_checked": 199,
+  "appleseed_crosscheck_2025_H1_2026": "56/56 cells match"
+ },
+ "notes": [
+  "Company-reported = brokerage publications (Hawaii Life, List Sotheby's, Coldwell Banker). Maui RPT and Oahu stock figures are public-record derived (Hawaii Appleseed processing). Statewide sums are our arithmetic over island figures unless listed under statewide_company_text.",
+  "Hawaii Life 'Oahu/Maui/Hawaii Island/Kauai' = MLS island; 'Maui' includes Molokai/Lanai sales shown on its map.",
+  "Periods: H1 = Jan 1-Jun 30; YE = calendar year; Maui RPT FY = Jul 1-Jun 30 named for the ending year (FY2026 = Jul 2025-Jun 2026).",
+  "No owner names or street addresses recorded; sales identified by estate/building name and neighborhood only."
+ ]
+}

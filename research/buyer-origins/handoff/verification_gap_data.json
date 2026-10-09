@@ -1,0 +1,372 @@
+[
+ {
+  "key": "hmda_tract",
+  "summary": "I built the HMDA buyer profiles by census tract, county subdivision (CCD), place (CDP) and ZIP (ZCTA) for all islands, with 2025 as the main year and a CCD-level comparison with 2019. Loan counts match the existing `an/new/hmda.json` county totals in both years, and a separate recomputation in pandas matched every CCD and every tract with 20 or more loans.\n\n**Output:** `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/gap/hmda_tract.json` (includes source, method, checks, notes and key figures).\n- Scripts are in `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/pull/gap_hmda_tract/`.\n- Raw Census downloads and `MANIFEST.txt` are in `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/gap_hmda_tract/`.\n\n**How it was done**\n- **Loans included:** the same filters as `hmda.json` (originated, home purchase, site-built, 1\u20134 units). That gives 9,875 loans in 2025 and 13,797 in 2019, all lien positions kept.\n- **Tract to CCD:** Hawaii's Census block files have no CCD column, so I took each census block's CCD from the TIGER/Line \"faces\" files and weighted blocks by housing units. Each tract goes to the CCD holding most of its housing units.\n- **How clean the mapping is:** tracts sit inside a single CCD almost everywhere. Two tracts on Maui are split; their 25 loans in 2025 went to the larger side (Kahului and Kihei).\n- **2019 comparison:** HMDA uses 2010 tracts for 2019 and 2020 tracts for 2025, so I built a mapping for each. CCD codes are the same in both years, so CCD comparisons are like-for-like. Tract-level results can't be compared across years.\n- **Place names:** a tract gets a CDP name if that CDP holds at least 60% of its housing units. Otherwise it is labelled \"mixed tract\" or \"outside a single CDP\". ZIP groups use the same idea (50% threshold).\n- **Small cells:** every group with fewer than 20 loans is flagged, and the rankings below use only groups with 20 or more.\n\n**Key figures (2025)**\n1. **Coverage:** 9,875 loans across 394 tracts. The 153 tracts with at least 20 loans hold 7,278 loans (73.7%).\n2. **Kauai, second-home + investor share** (loans coded second home or investment, divided by all loans in the area): Koloa-Poipu CCD 72.3% (n=83) and Hanalei CCD 71.2% (n=80). At tract level, the Poipu tract is 86% (n=50) and Princeville 78% (n=59).\n3. **Maui, same share:** Lahaina CCD 68.0% (n=122), up from 47.8% (n=435) in 2019. Kihei CCD is 48.7% (n=228). The Kaanapali tract (315.03) is 82% (n=45).\n4. **Hawaii Island, same share:**\n   - Pahoa-Kalapana CCD 52.4% (n=82), almost all of it investment loans (47.6%).\n   - North Kona CCD 41.1% (n=409) and South Kohala CCD 40.6% (n=217).\n   - The Waikoloa Beach Resort / Waikoloa Village tract (217.08) is 65% (n=107).\n5. **Oahu, same share:** 15.7% island-wide. The Waikiki ZIP 96815 is 54.5% (n=378), and Waikiki tract 19.01 is 90% (n=30). Koolauloa CCD is the highest Oahu CCD at 31.9%.\n6. **Highest median applicant income by island** (median over loans that report income; thousands of dollars, not adjusted for inflation):\n   - Kauai: Hanalei CCD $406k.\n   - Maui: Kula CCD $325k; the Wailea tract inside Kula CCD is $509.5k.\n   - Hawaii Island: North Kona CCD $222.5k.\n   - Oahu: Koolaupoko CCD $230k; the Ko Olina tract is $534k (n=26).\n7. **VA-heavy areas on Oahu** (VA loans divided by all loans):\n   - 27.1% island-wide.\n   - By CCD: Ewa 44.1% (n=2,618), Waianae 37.1%, Wahiawa 36.4%, Koolaupoko 32.8%, Honolulu 10.4%.\n   - Ocean Pointe CDP is 70.9% (n=158). 19 Oahu tracts are at least half VA; the highest is tract 84.07 at 81% (n=42).\n8. **Median property value by CCD** (HMDA reports values as $10k bands, so these are band midpoints): highest are Kula $1.66M and Hanalei $1.39M; lowest are Pahoa-Kalapana and Kau at $335k and Keaau-Mountain View at $420k.\n9. **Lahaina after the 2023 fire:** purchase loans in Lahaina CCD fell from 435 in 2019 to 122 in 2025 (\u221272%). Median income rose from $154k to $298k. Tracts mainly in Lahaina town had only 21 loans in 2025.\n\n**Caveats**\n- HMDA has no cash purchases, so these shares describe financed buyers only.\n- Lenders changed how they split second homes from investment loans between 2019 and 2025, so compare the combined share rather than either part.\n- Income is missing for 645 loans in 2025, many of them investor loans, so income medians in investor-heavy areas cover only part of the buyers.\n- Molokai (27 loans) and Lanai (5) are reported at island level only. Every CCD there, plus Hana and three on Hawaii Island, has fewer than 20 loans and is flagged.",
+  "verify": {
+   "key": "hmda_tract",
+   "checked": [
+    {
+     "claim": "Raw file integrity: 19 Census geography files in raw/gap_hmda_tract and 2 HMDA CSVs in raw/hmda match MANIFEST bytes and sha256",
+     "ok": true,
+     "recomputed": "21/21 files match (sha256sum + stat)"
+    },
+    {
+     "claim": "Universe 2025 = 9,875 loans; 2019 = 13,797 (originated, home purchase, site-built, 1-4 units, all liens)",
+     "ok": true,
+     "recomputed": "Own csv.DictReader parse: 9,908 raw rows -> 9,875 (2025); 13,859 -> 13,797 (2019). 1 loan with census_tract NA in 2025, 0 in 2019; every other tract is in my crosswalk",
+     "note": "The rows dropped by the filter are 5+ unit, 25+ unit and manufactured-home records"
+    },
+    {
+     "claim": "County counts reconcile with an/new/hmda.json (2025: 1774/6746/469/886; 2019: 2220/8786/781/2010)",
+     "ok": true,
+     "recomputed": "Identical. The county non-owner counts, median income and median property value also equal hmda.json in both years"
+    },
+    {
+     "claim": "Crosswalk: each block's CCD and place come from the TIGER faces files, weighted by block housing units; 0 conflicts; faces place matches BAF 2020 INCPLACE_CDP for all 14,732 blocks; 44 CCDs with the same names in 2010 and 2020",
+     "ok": true,
+     "recomputed": "Own dBASE reader: 14,732 2020 blocks and 25,016 2010 blocks, 0 missing housing-unit weights, 0 conflicts, 0 mismatches against BAF; 44 = 44 CCD names, all identical"
+    },
+    {
+     "claim": "Only two land tracts are split across CCDs in 2020: 15009031900 (Kahului 87%) and 15009032000 (Kihei 56% / Lahaina 44%); their 25 loans in 2025 went to the larger side",
+     "ok": true,
+     "recomputed": "Kahului 1638/1879 = 0.8717; Kihei 561/1001 = 0.5604; loans 14 + 11 = 25. In 2019 the same two tracts held 28 + 24 loans"
+    },
+    {
+     "claim": "Coverage: 394 tracts with loans; 153 tracts with at least 20 loans hold 7,278 loans (73.7%); 241 tracts under 20 hold 2,596",
+     "ok": true,
+     "recomputed": "394; 153; 7,278 / 9,875 = 73.70%; 241 / 2,596. For 2019: 207 tracts with at least 20 loans, 84 under 20 holding 967 loans"
+    },
+    {
+     "claim": "Full tables (2025 and 2019): 4 counties, 6 islands, 40 CCDs and every tract with at least 20 loans; 20 metrics each plus occupancy and loan-type counts",
+     "ok": true,
+     "recomputed": "0 mismatches across 203 groups (2025) and 257 groups (2019), on shares (tolerance 0.0005), medians, p25/p75 and n values. The CCD assigned to each tract, its housing units, CCD and place shares, and tract labels also match for all 153 tracts",
+     "note": "Medians computed with my own linear-interpolation quantile, not numpy or pandas"
+    },
+    {
+     "claim": "Place groups (rule: 60% / 20% / outside) and ZIP groups (ZCTA, 50% rule)",
+     "ok": true,
+     "recomputed": "2025: 117 place groups and 66 ZCTA groups, 0 mismatches. 2019: 62 ZCTA groups, 0 mismatches; 107 place groups, 106 match exactly",
+     "note": "The one 2019 difference is a labelling edge case: 1 loan in an offshore water tract that has no housing units (see problems)"
+    },
+    {
+     "claim": "ccd_change_2019_2025 table (40 CCDs)",
+     "ok": true,
+     "recomputed": "Every n, percentage change, share, VA, median income, median value and low_n_flag matches. Lahaina 435 -> 122 = -71.95%"
+    },
+    {
+     "claim": "Kauai second-home + investor share: Koloa-Poipu CCD 72.3% (n=83), Hanalei CCD 71.2% (n=80); Poipu tract 86% (n=50), Princeville tract 78% (n=59)",
+     "ok": true,
+     "recomputed": "72.3% / 83; 71.2% / 80; tract 406.03 86.0% / 50 (65.8% of its housing units in Poipu CDP, 33% Koloa); tract 401.06 78.0% / 59 (100% Princeville)"
+    },
+    {
+     "claim": "Maui: Lahaina CCD 68.0% (n=122) vs 47.8% (n=435) in 2019; Kihei CCD 48.7% (n=228); Kaanapali tract 315.03 82.2% (n=45)",
+     "ok": true,
+     "recomputed": "68.0 / 122; 47.8 / 435; 48.7 / 228; 82.2 / 45 (housing units 62% Kaanapali CDP, 38% Napili-Honokowai CDP)"
+    },
+    {
+     "claim": "Hawaii Island: Pahoa-Kalapana CCD 52.4% (n=82; investment alone 47.6%), North Kona 41.1% (n=409), South Kohala 40.6% (n=217); tract 217.08 65.4% (n=107)",
+     "ok": true,
+     "recomputed": "52.4 / 82 (investment 47.6); 41.1 / 409; 40.6 / 217; 65.4 / 107"
+    },
+    {
+     "claim": "Oahu: 15.7% island-wide; ZCTA 96815 54.5% (n=378); tract 19.01 90% (n=30); Koolauloa is the top Oahu CCD at 31.9% (n=94)",
+     "ok": true,
+     "recomputed": "15.7%; 54.5% / 378; 90.0% / 30; Koolauloa 31.9% / 94, ahead of Honolulu 22.7% and Waialua 22.4%"
+    },
+    {
+     "claim": "Highest median income by island among CCDs with at least 20 loans: Hanalei $406k, Kula $325k, North Kona $222.5k, Koolaupoko $230k; Wailea tract 303.07 (Kula CCD) $509.5k; Ko Olina tract 86.10 $534k (n=26)",
+     "ok": true,
+     "recomputed": "406.0, 325.0, 222.5, 230.0 (each the island maximum); tract 303.07 is 509.5 (n=38, 34 report income, 95.5% of housing units in Wailea CDP, Kula CCD); tract 86.10 is 534.0 (n=26, 25 report income)",
+     "note": "Correct as stated, but the top Maui tract by income is actually 315.03 Kaanapali at $547k (see problems)"
+    },
+    {
+     "claim": "Oahu VA share: 27.1% island-wide; Ewa 44.1% (n=2,618), Waianae 37.1%, Wahiawa 36.4%, Koolaupoko 32.8%, Honolulu 10.4%; Ocean Pointe CDP 70.9% (n=158); 19 tracts at least half VA; top is 84.07 at 81% (n=42)",
+     "ok": true,
+     "recomputed": "All identical. Waialua 25.4% and Koolauloa 13.8% complete the list. The next tracts are 89.39 (78.8%) and 86.30 (77.3%)"
+    },
+    {
+     "claim": "Median property value by CCD (at least 20 loans): highest Kula $1.66M, Hanalei $1.39M, Haiku-Pauwela $1.25M; lowest Pahoa-Kalapana and Kau $335k, Keaau-Mountain View $420k",
+     "ok": true,
+     "recomputed": "1,655,000; 1,385,000; 1,255,000; 335,000 / 335,000; 420,000",
+     "note": "Haiku-Pauwela's 1,255,000 is rounded down to $1.25M (minor)"
+    },
+    {
+     "claim": "Lahaina: purchase loans 435 -> 122 (-72%), median income $154k -> $298k; tracts mainly in Lahaina town had 21 loans in 2025",
+     "ok": true,
+     "recomputed": "-72.0%; 154.0 -> 298.0; Lahaina CDP holds at least 60% of housing units in tracts 314.02 (8 loans), 314.04 (10) and 314.05 (3), total 21"
+    },
+    {
+     "claim": "Income missing for 645 loans in 2025; property value missing for 134",
+     "ok": true,
+     "recomputed": "9,875 - 9,230 = 645; 9,875 - 9,741 = 134"
+    },
+    {
+     "claim": "All four counties: second-home share 9.1% -> 4.9%, investment 12.0% -> 16.5% (2019 -> 2025)",
+     "ok": true,
+     "recomputed": "9.1 / 4.9; 12.0 / 16.5"
+    },
+    {
+     "claim": "Molokai 27 loans and Lanai 5; every group under 20 loans carries low_n_flag",
+     "ok": true,
+     "recomputed": "Molokai 27 (East 17, West 10), Lanai 5. low_n_flag equals (n_loans < 20) for every county, island, CCD, place and ZCTA group in both years. 2025 CCDs under 20: Honokaa-Kukuihaele 19, Paauhau-Paauilo 17, North Hilo 11, Kaumakani-Hanapepe 11, Hana 8, East Molokai 17, West Molokai 10, Lanai 5"
+    },
+    {
+     "claim": "Aggregates only: no owner names, addresses, parcel ids or lender identifiers",
+     "ok": true,
+     "recomputed": "Regex scan of the output: 0 LEI-like tokens, no 'lei' key, no street-address or TMK/parcel patterns. It contains only public tract, ZCTA, CCD and CDP codes and names"
+    }
+   ],
+   "problems": [
+    "Minor, wording: the Maui income key figure cites the Wailea tract 303.07 ($509.5k) and says nothing about the highest-income Maui tract, Kaanapali 315.03 at $547k (n=45, 40 report income). The Oahu figure, by contrast, cites its top tract (Ko Olina $534k). The numbers are right but the framing is inconsistent and could be read as Wailea being the Maui maximum.",
+    "Minor, summary prose: the caveat lists the CCDs under 20 loans as Molokai, Lanai, Hana and three on Hawaii Island. It leaves out Kaumakani-Hanapepe CCD on Kauai (n=11). The JSON itself flags it (low_n_flag=true, and it appears in highlights Kauai.groups_with_n_lt_20), so only the summary text is incomplete.",
+    "Cosmetic: low_n_fields leaves out median_property_value_first_lien and median_loan_amount_first_lien in 9 groups for 2025 and 6 for 2019, even though those medians rest on fewer than 20 values. All of these groups already have low_n_flag=true, so no small cell goes unflagged.",
+    "Edge case, not disclosed: in 2019, one loan is geocoded to the offshore water tract 15009990200, which has 0 housing units. It is assigned to Kula CCD because Kula has the most blocks there, and it shows up as a place group 'Kula CCD, outside a single CDP' (n=1, flagged). The notes only say water tracts have no 2025 loans. This does not materially affect the results.",
+    "Disclosed, worth keeping in mind: split tract 15009032000 (Maalaea\u2013Launiupoko; 44% of its housing units are in Lahaina CCD) is counted in Kihei CCD in both years (11 loans in 2025, 24 in 2019). Lahaina CCD totals therefore leave out the Launiupoko side, but the treatment is the same in both years, so the -72% comparison holds.",
+    "Rounding: Haiku-Pauwela's median of 1,255,000 is shown as $1.25M while Hanalei's 1,385,000 is shown as $1.39M, so half-way values are rounded inconsistently (probably a float artifact). Trivial.",
+    "Labelling: 'Kailua CDP' appears under Koolaupoko CCD (Oahu, n=244) and under North Kona CCD (Hawaii Island, Kailua-Kona, n=235). These are different CDPs, so any downstream use needs to keep the CCD or island name attached."
+   ]
+  }
+ },
+ {
+  "key": "tg_districts",
+  "summary": "I pulled district-level buyer origin for all 26 Title Guaranty districts across the four islands, for full-year 2025 and Jan\u2013Jun 2026. I added 2024 and Jan\u2013Jun 2025 for comparison. In every period, the district totals add up exactly to the island totals TG prints.\n\n**Output:** `/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/an/gap/tg_districts.json`. It contains source, method, notes, checks, a one-row-per-district summary, the full tables, year-over-year changes, revisions between editions, and a list of TG's own inconsistencies.\n\n**How the numbers were built**\n- The table at the foot of each district page gives a \"US TOTAL\" and a \"FOREIGN TOTAL\" per district, but doesn't say which column is which district. I matched each column to its district panel by the fill colour drawn in the PDF. A second colour check agreed for every panel. The numbers also match the earlier `an/new/tg.json` exactly (130 records, 0 differences), which used a different matching method.\n- Per district:\n  - total sales = US TOTAL + FOREIGN TOTAL\n  - Hawaii-resident buyers = the \"HI\" row\n  - other-US buyers = US TOTAL minus Hawaii buyers (TG's US TOTAL includes Hawaii residents)\n  - foreign buyers = FOREIGN TOTAL\n- My shares match TG's printed percentages within 0.5 points. The Hawaii-buyer sums match each island's printed Hawaii count.\n- **Names:** I used TG's printed district names. Most of the names in your request don't exist in the PDFs:\n  - **Oahu:** Honolulu, East Honolulu, Leeward, Central, Windward, North Shore\n  - **Maui County:** Central, South Side, Up Country, West Side, North Shore, East Maui, Molokai, Lanai\n  - **Hawaii Island:** Puna, Kona, Kohala Coast, Hilo, Kau, North Kohala, Hamakua (there is no Waimea district)\n  - **Kauai:** Lihue, Koloa, Kawaihau, Hanalei, Waimea\n- **Dollars:** TG doesn't print a total dollar figure for each district. It prints Hawaii-buyer dollars plus the top 4 other states and top 3 countries. I kept those as partial \"listed\" figures, with how much of the category they cover.\n- **Small numbers:** every row lists which counts are below 20. East Maui and Lanai have fewer than 20 sales in total in most periods. Foreign counts outside Honolulu are almost all below 20.\n\n**Key figures**\n1. **Honolulu district (2025):** 5,135 sales, 320 foreign (6.2%). That is 90% of Oahu's 356 foreign buyers. In Jan\u2013Jun 2026 it had 181 foreign of 2,186 (8.3%), 93% of Oahu's 195.\n2. **Highest Hawaii-resident share, Central Oahu:** 94.1% in 2025 (1,630 of 1,733) and 94.7% in Jan\u2013Jun 2026.\n3. **Hanalei (Kauai) is the most out-of-state district:** 66.2% other-US in 2025 (90 of 136) and 70.4% in Jan\u2013Jun 2026 (38 of 54). Hawaii buyers spent $104.6M there; the California buyers listed spent $183.5M.\n4. **Kohala Coast (Hawaii Island), 2025:** 47.0% other-US (302 of 643). The 132 California buyers spent $555.2M (about $4.2M each), against $386.4M from 328 Hawaii buyers. Kona was 43.3% other-US (331 of 764).\n5. **Maui West Side:** 46.7% other-US in 2025 (84 of 180), up 14.0 points from 2024 (32.7%). Jan\u2013Jun 2026 was 41.1% (37 of 90). South Side was 36.6% other-US with 7 foreign buyers out of 309.\n6. **Hawaii Island districts were redrawn between editions.** The Q4 2024 edition shows 2024 Kohala Coast at 1,364 sales and Kona at 90. The Q4 2025 edition restates 2024 as Kohala Coast 699 and Kona 754. Together they are unchanged (1,454 vs 1,453), so about 665 sales moved from Kohala Coast to Kona. The new split is already used in the Q2 2025 edition, and TG gives no explanation. I couldn't check the Q1 2025 edition because its link redirects to TG's home page. For trends, use the restated 2024 figures; the 2023 and original 2024 figures are on the old split.\n7. **Other 2024 restatements:**\n   - Maui: Up Country went from 243 to 260 (other-US 37 to 52), South Side from 444 to 435, and Central from 374 to 365.\n   - Oahu: districts changed by -4 to +5.\n   - Jan\u2013Jun 2025 as reprinted in the Q2 2026 edition differs only for Maui Central (172 to 170) and South Side (147 to 149).\n8. **Oddities kept as published:**\n   - Hilo's 2024 other-US count of 279 includes 232 California buyers ($35.0M, about $151K each), against 88 other-US in 2025. That inflates Hilo's 2024 other-US share (41.8%) and Hawaii Island's.\n   - Kauai's Lihue fell from 170 sales in Jan\u2013Jun 2025 to 66 in Jan\u2013Jun 2026 (-61%).\n9. **TG error on Kauai:** in 4 of the 5 Kauai editions, the countries printed in the Koloa and Lihue panels don't match those districts' foreign totals. They look swapped between the two. I used the foreign totals, which agree with TG's own pie-chart percentages. Only 0\u20132 sales per period are affected.\n\nScripts are in `scratchpad/pull/gap_tg_districts/` (`districts.py`, `build.py`, `finalize.py`). The manifest is `scratchpad/raw/gap_tg_districts/MANIFEST.txt`. It records the failed Q1 2025 download and confirms the 20 input PDFs still match the earlier download (same checksums).",
+  "verify": {
+   "key": "tg_districts",
+   "checked": [
+    {
+     "claim": "Matching method: I wrote my own parser (vparse.py) in pull/gap_tg_districts-verify/. It does not use fill colours. It builds words from de-duplicated characters, then matches each foot-row column to a district panel by finding the assignment that best fits the printed pie % (HI / other-US / foreign) and the rule HI <= US TOTAL in both periods.",
+     "ok": true,
+     "recomputed": "All 20 PDFs gave one clear best assignment. The total pie error was 3.1 to 5.3 points; the next-best assignment was at least 4.9 points worse (in most files about 1,000, because it broke the HI <= US rule).",
+     "note": "Every computed pie share was within 0.5 points of the printed value. Every island-share % I could read (16 editions) was within 0.5 points. In the Q4 2024 editions my parser did not read the island-share %. One panel name per Q4 2024 edition (Hamakua, Hanalei, Maui North Shore) was filled in by elimination, and I confirmed each against the page text."
+    },
+    {
+     "claim": "All 260 district-period records (10 periods x 26 districts) match on total, HI, other-US and foreign counts, with HI dollars and shares checked on every record and printed pie % and island share on the current-period records.",
+     "ok": true,
+     "recomputed": "260 of 260 records compared, 0 differences in counts, HI dollars, the 1-decimal shares, printed pie % or island share %. The listed state rows (number and $) match on every record that has them.",
+     "note": "The only differences in the listed countries are how names are written (my parser runs multi-word names together). See problems for two text glitches in the puller's names."
+    },
+    {
+     "claim": "In every period the district totals add up exactly to the island totals TG prints. The Hawaii-buyer sums match each island's printed HI count.",
+     "ok": true,
+     "recomputed": "Totals match in 40 of 40 island tables (20 editions x current and prior period). HI sums match in 20 of 20 current periods. 2025 island totals (total/HI/other-US/foreign): Oahu 11097/9202/1539/356, Maui County 1247/915/316/16, Hawaii Island 3675/2467/1175/33, Kauai 890/604/284/2. All match the output's island_totals."
+    },
+    {
+     "claim": "Key figure 1: Honolulu 2025 had 5,135 sales and 320 foreign (6.2%), 90% of Oahu's 356 foreign. In Jan\u2013Jun 2026: 181 of 2,186 (8.3%), 93% of Oahu's 195.",
+     "ok": true,
+     "recomputed": "5135, 320, 6.2%, 356, 89.9% / 181, 2186, 8.3%, 195, 92.8%"
+    },
+    {
+     "claim": "Key figure 2: Central Oahu has the highest Hawaii-resident share: 94.1% in 2025 (1,630 of 1,733) and 94.7% in Jan\u2013Jun 2026.",
+     "ok": true,
+     "recomputed": "94.1% (1630/1733) is the highest of the 26 districts in 2025. The next highest is Maui Central at 89.7%. Jan\u2013Jun 2026: 94.7% (779/823), then Kauai Waimea at 92.6%."
+    },
+    {
+     "claim": "Key figure 3: Hanalei is the most out-of-state district: 66.2% other-US in 2025 (90 of 136) and 70.4% in Jan\u2013Jun 2026 (38 of 54). Hawaii buyers spent $104.6M there; the California buyers listed spent $183.5M.",
+     "ok": true,
+     "recomputed": "Highest of the 26 districts in both periods: 66.2% (90/136) and 70.4% (38/54). In Jan\u2013Jun 2026 the next is East Maui at 57.1%, but that is only 4 of 7 sales (n<20). HI dollars $104.6M; CA 41 buyers, $183.5M."
+    },
+    {
+     "claim": "Key figure 4: Kohala Coast 2025 was 47.0% other-US (302 of 643). The 132 CA buyers spent $555.2M (about $4.2M each), against $386.4M from 328 HI buyers. Kona was 43.3% other-US (331 of 764).",
+     "ok": true,
+     "recomputed": "47.0% (302/643); CA 132, $555.2M, $4.21M each; HI 328, $386.4M; Kona 43.3% (331/764)."
+    },
+    {
+     "claim": "Key figure 5: Maui West Side was 46.7% other-US in 2025 (84 of 180), up 14.0 points from the restated 2024 (32.7%). Jan\u2013Jun 2026 was 41.1% (37 of 90). South Side was 36.6% other-US, with 7 foreign out of 309.",
+     "ok": true,
+     "recomputed": "46.7 (84/180); 32.7; +14.0 points; 41.1 (37/90); South Side 36.6%, 7 foreign of 309."
+    },
+    {
+     "claim": "Key figure 6: The Q4 2024 edition shows 2024 Kohala Coast at 1,364 and Kona at 90. The Q4 2025 edition restates them as 699 and 754. Combined they are unchanged (1,454 vs 1,453). The other Hawaii Island districts are identical in both. The new split already appears in the Q2 2025 edition.",
+     "ok": true,
+     "recomputed": "1364/90 became 699/754; combined 1454 vs 1453; HI 683 vs 683, other-US 739 vs 738, foreign 32 vs 32; Kohala Coast -665, Kona +664. Hamakua, North Kohala, Hilo, Puna and Kau are identical in both editions. The Q2 2025 edition prints Jan\u2013Jun 2024 as Kohala Coast 378 and Kona 395 (new split). The Q4 2024 edition prints 2023 as 1310 and 89 (old split).",
+     "note": "Calling it a redrawing of districts is the puller's inference, since TG gives no reason. The numbers themselves are confirmed."
+    },
+    {
+     "claim": "Key figure 7: Other 2024 restatements: Maui Up Country 243 to 260 (other-US 37 to 52), South Side 444 to 435, Central 374 to 365. Oahu districts changed by -4 to +5. Jan\u2013Jun 2025 as reprinted differs only for Maui Central (172 to 170) and South Side (147 to 149).",
+     "ok": true,
+     "recomputed": "I found the same 12 revisions on my own; the output's revisions list also has 12. Oahu changes: -4, -4, -1, -1, +5. The only Jan\u2013Jun 2025 changes are Maui Central 172 to 170 and South Side 147 to 149."
+    },
+    {
+     "claim": "Key figure 8: Hilo's 2024 other-US count of 279 includes 232 CA buyers ($35.0M, about $151K each), against 88 other-US in 2025, giving a 2024 other-US share of 41.8%. Kauai's Lihue fell from 170 sales (Jan\u2013Jun 2025) to 66 (Jan\u2013Jun 2026), -61%.",
+     "ok": true,
+     "recomputed": "279; CA 232, $35.0M, $150.9K each; 88 in 2025; 41.8% (279/668). Lihue 170 to 66 is -61.2%. Both editions print Lihue Jan\u2013Jun 2025 as 170."
+    },
+    {
+     "claim": "Key figure 9: Kauai country rows in the Koloa and Lihue panels conflict with the FOREIGN TOTAL row in 4 of 5 editions (all except Q1 2026). Only 0\u20132 sales are affected.",
+     "ok": true,
+     "recomputed": "My independent scan found the same 8 conflicting district-periods: Q4 2024, Q2 2025, Q4 2025 and Q2 2026 editions, with no conflict in Q1 2026. Each conflict is 1 or 2 sales.",
+     "note": "The printed pie % only tells the two districts apart in 2 of the 4 editions. In Jan\u2013Jun 2025 Lihue's pie shows 1% foreign; in Jan\u2013Jun 2026 Koloa's shows 2%. In the 2024 and 2025 editions both pies show 0%, so there the pie neither supports nor contradicts the FOREIGN TOTAL figures."
+    },
+    {
+     "claim": "Small-number flags: East Maui and Lanai have fewer than 20 total sales in 2025, Jan\u2013Jun 2026 and Jan\u2013Jun 2025, and East Maui in 2024. Foreign counts outside Honolulu are almost all below 20.",
+     "ok": true,
+     "recomputed": "Below 20 sales: 2025 East Maui 16 and Lanai 10; Jan\u2013Jun 2026 East Maui 7 and Lanai 13; Jan\u2013Jun 2025 East Maui 10 and Lanai 5; restated 2024 East Maui 16. No district outside Honolulu has 20 or more foreign buyers in 2025 or Jan\u2013Jun 2026. The n_lt20_cells and small_n_flag fields are correct on all 260 records."
+    },
+    {
+     "claim": "The district_summary and the two year-over-year sections are computed correctly.",
+     "ok": true,
+     "recomputed": "district_summary: all 1,040 cells recomputed, 0 differences (for example Honolulu +9.4% sales 2025 vs 2024). Year-over-year sections: 0 differences."
+    },
+    {
+     "claim": "Coverage fields for the listed states and countries, and the conversion of printed dollar strings to numbers.",
+     "ok": true,
+     "recomputed": "0 differences. Example: Honolulu 2025 listed states cover 66.7% of other-US buyers (568/852) and listed countries cover 91.6% of foreign (293/320)."
+    },
+    {
+     "claim": "Extra figures: 2025 Puna, Leeward, Up Country and Lihue; Jan\u2013Jun Central Oahu.",
+     "ok": true,
+     "recomputed": "Puna 2025: 1497 sales (HI 1133, other-US 359 = 24.0%, foreign 5). Leeward 2025: 2018 (other-US 245, foreign 7). Up Country 2025: 222 vs 260 restated 2024 (other-US 36 vs 52). Lihue 2025: 280 vs 150 in 2024. Central Oahu foreign: 10 in Jan\u2013Jun 2025, 0 in Jan\u2013Jun 2026. All match the output."
+    },
+    {
+     "claim": "Matches the earlier an/new/tg.json exactly (130 records, 0 differences).",
+     "ok": true,
+     "recomputed": "Compared against my own parse rather than the puller's: 130 district records, 0 differences in total, HI, other-US or foreign."
+    },
+    {
+     "claim": "The manifest is correct: the 20 input PDFs still have the recorded checksums, and the Q1 2025 link redirects to TG's home page.",
+     "ok": true,
+     "recomputed": "sha256 and byte size match for all 22 manifest entries. The headers show HTTP 301 to www.tghawaii.com. The saved body is a 158,740-byte HTML page titled 'Title Guaranty', the same size as raw/tg/home.html."
+    },
+    {
+     "claim": "Privacy: aggregates only, with no names, addresses or parcel ids.",
+     "ok": true,
+     "recomputed": "No parcel-id (TMK) patterns or street addresses found in the output JSON. It contains only counts and rounded dollar figures by district."
+    }
+   ],
+   "problems": [
+    "Minor, cosmetic: two country names in listed_foreign_countries carry PDF text glitches. ' Australia' has a leading space (2025 Maui West Side), and 'Switzer- Land' is a broken hyphenation of Switzerland (Maui South Side in the original 2024 figures, Q4 2024 edition). The counts and dollars on both rows are correct.",
+    "Minor: in the Kauai cases where TG's country rows conflict with the foreign totals, the district record still lists the panel's country rows and dollars, although foreign_buyers is 0. Examples: Lihue Jan\u2013Jun 2026 lists Canada 2 with listed_foreign_dollars_sum $8.9M; Koloa 2025 lists Canada 1 ($51.1K); Lihue in the original 2024 figures lists Norway 1 ($1.9M). The record has no flag of its own; the conflict is recorded only in country_list_vs_foreign_total_mismatches. Anyone summing listed foreign dollars by district would credit them to the wrong district.",
+    "Nuance on key figure 9: the claim that the foreign totals 'agree with TG's own pie-chart percentages' is a real test in only 2 of the 4 affected editions (Jan\u2013Jun 2025 and Jan\u2013Jun 2026). In the 2024 and 2025 editions both districts' pies show 0% foreign, so the check tells us nothing there. The matching of columns to districts is still sound, because each column's total sales matches its panel's printed HI share and island share.",
+    "Wording on key figure 6: 'redrawn' is an inference. TG gives no reason, and the numbers fit a re-cut of the boundary or a correction of mis-assigned sales equally well. The figures themselves (1364/90 restated to 699/754, combined total unchanged, new split already used in the Q2 2025 edition) are confirmed.",
+    "Context, not an error: Lihue also jumped from 150 sales in 2024 to 280 in 2025 (HI 113 to 230), before falling to 66 in Jan\u2013Jun 2026. The output flags only the half-year drop; the whole series looks unstable, so treat Lihue trends with care.",
+    "Trivial: dl/hdr.txt shows a response Date of 19:06:33 GMT, while MANIFEST.txt records the request at 19:04:29Z (that response's Expires header implies 19:04:31). The difference is probably server clock or caching and does not affect the data."
+   ]
+  }
+ },
+ {
+  "key": "owner_fields",
+  "summary": "I found no public owner-mailing-address data for Hawaii County or Kauai County. Nothing I could reach without getting past a bot check or login has owner mailing city, state, ZIP or country. Because of that, the Oahu-style breakdown can't be computed for either county: Hawaii vs mainland vs foreign, top states, mainland metros by ZIP3, foreign countries, district/ZIP, condo vs not, and addresses shared by 10+ parcels. The output file lists every place I searched and what to ask each county for. It also adds three partial public figures, with validation and caveats.\n\n**Where I searched**\n- **County ArcGIS Online:** I checked the field list of every public layer and table. Hawaii County has 222 services (272 layers/tables); Kauai has 616 services (911 layers/tables). They carry owner names only (Hawaii County: major-owner fields; Kauai: first owner).\n- **Hawaii County's own GIS server (gis.hawaiicounty.gov):** the RPT, Planning_TaxMapping and Planning folders need a login (\"Token Required\").\n- **Property tax websites:** hawaiipropertytax.com and the qPublic record pages are behind a Cloudflare bot challenge. kauai.gov returns an Akamai 403 and kauaipropertytax.com resets the connection. I didn't try to get past any of these.\n- **Wider ArcGIS Online:** 109 keyword searches; I checked 1,359 services from the results. Copies of parcel data with mailing fields exist only for Maui and Oahu.\n- **State of Hawaii Statewide GIS Program:** neither its map server nor its parcel download files have mailing fields (Hawaii County file 135,718 records; Kauai 25,119). Its metadata marks the county owner field \"NOT TO BE DISTRIBUTED TO PUBLIC\". The state and county open-data catalogs had nothing more.\n\n**What to request:** the file names who to ask in each county Finance Department and exactly what to ask for. The main ask is mailing state, ZIP5 and country by parcel (including condo unit). A cheaper alternative is counts by tax district and mailing state, or for Hawaii County, access to the login-gated RPT map services.\n\n**Partial figures:**\n\n| # | Figure | How computed |\n|---|---|---|\n| 1 | Hawaii County: 10.2% of homes owned out of state (2,367 of 23,277), about 2023 | Regrid's public census-tract layer (an outside data vendor), counts only. It covers just 35 tracts, so it does not represent the island. |\n| 2 | Hawaii County coverage is uneven: Puna 771 homes vs 23,139 built-on parcels (3%); Ka'u and North Hilo have no data | Tract centers matched to the State's tax-district map, compared against built-on parcel counts from the county's 2026 roll |\n| 3 | Hawaii County by district: North Kona 15.4% out of state (6,382 homes), South Kohala 14.8% (3,503), South Kona 13.1% (1,270), South Hilo 4.5% (10,797) | Out-of-state homes \u00f7 homes per district |\n| 4 | Checked against our full Oahu and Maui rolls: Oahu 7.2% vs 7.4% from the roll (other US states only; districts differ by 0.7 pts on average). Maui 24.4% vs 27.8% (districts differ by 7.0 pts) | Regrid figures compared with owners_oahu and owners_neighbor. Regrid matches mainland-owned shares but seems to leave out foreign owners and drop condo units, so the Kona and Kohala resort figures are likely too low. |\n| 5 | Kauai: Regrid has no Kauai tracts at all | Counted tracts for Kauai's county code (15007) |\n| 6 | Kauai vacation rentals, 2021: 40.1% flagged Kauai-owned, 4.3% other-Hawaii-owned, 55.6% neither (1,029 records) | County layer, counted on the server. How the flags were set isn't documented, and the layer covers only part of the 3,974 vacation-rental-class records in the 2026 tax data. |\n| 7 | Kauai vacation rentals with no local flag, by district: Koloa 61.0% (328), Hanalei 60.3% (481), Kawaihau 32.2% (143). Lihue has only 20 records, so its cells are marked n<20. | Same layer, by tax district |\n| 8 | Kauai LLC-owned parcels, 2025: 2,584 (838 of them condo units). That is about 9.5% of non-owner-occupied residential (935), 6.8% of vacation rental (270) and 0.7% of owner-occupied (83) | County Housing Agency layer counted by tax class; class totals come from the 2026 tax data, so shares are approximate. This is ownership type, not mailing location. |\n\nEvery count cell carries an n<20 flag. The output has no owner names, street addresses or parcel IDs. The Kauai counts were computed on the county's server without downloading any owner records.\n\nFiles are in /tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad:\n- an/gap/owner_fields.json\n- pull/gap_owner_fields/build.py\n- raw/gap_owner_fields/MANIFEST.txt",
+  "verify": {
+   "key": "owner_fields",
+   "checked": [
+    {
+     "claim": "Raw MANIFEST integrity (3,000 data rows; sha256 recorded in output)",
+     "ok": true,
+     "recomputed": "Manifest sha256 5d329a5f...f2b \u2713. 2,990 files match their size and sha256. 9 rows are ERR fetches with 0 bytes, so no file is expected. 1 row does not match: peek/p24_count.json is listed twice, the second download overwrote the first, and the second row matches. No files on disk are missing from the manifest.",
+     "note": "Script: pull/gap_owner_fields-verify/v01_manifest.py"
+    },
+    {
+     "claim": "Hawaii County: 10.2% of homes owned out of state (2,367 of 23,277), 35 tracts, Regrid ~2023",
+     "ok": true,
+     "recomputed": "2,367 / 23,277 = 10.17% over 35 tracts. Counts are summed from raw regrid/hi_tracts_00.json, using only 11-character GEOIDs that start with 15001.",
+     "note": "The 376 rows include 4 malformed IDs (15700, 15800, 1500, 15900) with no centroid. The envelope count of 372 confirms they are outside Hawaii, so dropping them is correct. Script v02_regrid.py"
+    },
+    {
+     "claim": "Oahu 7.2% (15,589/217,037, 295 tracts); Maui 24.4% (10,408/42,699, 42 tracts); Kauai and Kalawao have 0 tracts",
+     "ok": true,
+     "recomputed": "Oahu 7.18%, Maui 24.38%. There are 0 rows for 15007 (Kauai) and 15005 (Kalawao).",
+     "note": ""
+    },
+    {
+     "claim": "Hawaii County by district: North Kona 15.4% (6,382 homes), South Kohala 14.8% (3,503), South Kona 13.1% (1,270), South Hilo 4.5% (10,797); Puna 771 homes; no tracts in Ka'u or North Hilo",
+     "ok": true,
+     "recomputed": "North Kona 981/6,382 = 15.37%. South Kohala 518/3,503 = 14.79%. South Kona 166/1,270 = 13.07%. South Hilo 489/10,797 = 4.53%. Puna 166/771 = 21.53% (5 tracts). Hamakua 40/383 = 10.44%. North Kohala 7/171 = 4.09%. North Hilo and Ka'u have 0 tracts.",
+     "note": "All 372 lookups in raw/tractzone were made at the tract's own Regrid centroid (372/372, script v12). There are 0 county mismatches against the TMK Zones layer, and all 35 Hawaii County tracts were assigned a zone."
+    },
+    {
+     "claim": "Puna coverage 3% (771 homes vs 23,139 built-on parcels in the 2026 roll)",
+     "ok": true,
+     "recomputed": "771 / 23,139 = 3.33%. I re-derived the built-on counts independently from the State's hawtmk.dbf (BldgValue>0 by ZONE, read straight from the raw zip). They match the output in all 9 zones exactly: 23,139 / 17,223 / 967 / 2,537 / 2,321 / 6,485 / 12,417 / 3,643 / 5,068, total 73,800. Island-wide coverage is 23,277 / 73,800 = 31.5%.",
+     "note": "Script v06_dbf.py"
+    },
+    {
+     "claim": "Oahu check: Regrid 7.2% vs roll 7.4% (other US states only); districts differ by 0.7 pts on average",
+     "ok": true,
+     "recomputed": "7.18% vs 7.41% (8.51% counting all non-Hawaii owners). Mean absolute difference across 9 zones: 0.73 pts against other US states, 1.33 pts against all non-Hawaii. Homes-weighted mean difference against other US states: -0.03 pts.",
+     "note": "Reference is owners_oahu by_tmk_zone_residential_class1."
+    },
+    {
+     "claim": "Maui check: Regrid 24.4% vs roll 27.8%; districts differ by 7.0 pts on average",
+     "ok": true,
+     "recomputed": "24.38% vs 27.77% (residential classes 1, 2, 9, 10, 11, 12). Zone mean absolute difference: 6.99 pts against other US states, 8.23 pts against all non-Hawaii.",
+     "note": "Correct as computed, but the zone comparison uses an all-parcels reference and includes an 11-home zone. See problems."
+    },
+    {
+     "claim": "In-state outside-ZIP share = (outzip - outstate)/homes; Hawaii County 13.5%",
+     "ok": true,
+     "recomputed": "3,145 / 23,277 = 13.51%. In 11 Hawaii tracts outstate + outzip > homes. That rules out reading outzip as 'in-state only' (the field alias) and supports the puller's reading that outzip includes out-of-state owners. The alias reading would have given 23.7%.",
+     "note": "The caveat says the percent fields are inconsistent and cites peroutzip = 1 - peroutst. That pattern holds in only 13 of 372 tracts. In 346 tracts peroutzip = outzip/homes, which follows the alias."
+    },
+    {
+     "claim": "Kauai vacation rentals (2021 layer): 40.1% flagged Kauai-owned, 4.3% other-Hawaii-owned, 55.6% neither (1,029 records)",
+     "ok": true,
+     "recomputed": "413 / 44 / 572 of 1,029 = 40.14% / 4.28% / 55.59% from the raw layer3_flags.json. A live server re-query today returned the same counts. Distinct PARID = 1,029 = records.",
+     "note": "Script v09_kauai_live.py; raw files in raw/gap_owner_fields-verify"
+    },
+    {
+     "claim": "Kauai vacation rentals with no local flag, by district: Koloa 61.0% (328), Hanalei 60.3% (481), Kawaihau 32.2% (143); Lihue 20 records with cells n<20",
+     "ok": true,
+     "recomputed": "Koloa 200/328 = 60.98%. Hanalei 290/481 = 60.29%. Kawaihau 46/143 = 32.17%. Waimea 27/57 = 47.4%. Lihue 9/20 = 45%; its sub-cells (10, 1, 9) are listed in cells_lt_20. The zones sum to 1,029. A live zone-by-flag groupBy matches every cell.",
+     "note": ""
+    },
+    {
+     "claim": "Vacation-rental records with a CPR unit: 194 (93 Kauai-owned / 1 other-Hawaii / 100 neither)",
+     "ok": true,
+     "recomputed": "CPR_UNIT is a string field. String predicates confirm 194 four-character unit values and 835 blank values; CPR_UNIT > 0 also gives 194.",
+     "note": "Script v11_cpr_values.py"
+    },
+    {
+     "claim": "Kauai LLC-owned 2025: 2,584 records (838 CPR units); about 9.5% of non-owner-occupied residential, 6.8% of vacation rental, 0.7% of owner-occupied",
+     "ok": true,
+     "recomputed": "Live count 2,584, with 2,584 distinct PARID (no duplicates). TYPE: 838 CPR Unit / 1,746 TMK Parcel. 935/9,858 = 9.48%. 270/3,974 = 6.79%. 83/11,702 = 0.71%. The class rows sum to 2,584.",
+     "note": "The figures are right, but calling the 838 CPR units 'condo units' is misleading. See problems."
+    },
+    {
+     "claim": "No public owner-mailing fields in Hawaii County or Kauai ArcGIS Online orgs (222 services / 272 layers+tables; 616 / 911)",
+     "ok": true,
+     "recomputed": "Hawaii County: 222 service files, 272 layers and tables. Kauai: 616 files (615 parsed, 1 error), 911 layers and tables. My own field-name scan found no owner-mailing schema. The Kauai layers with address fields (CutOff_Properties, CutOff_WithLIVUNIT, Kukuiula NBHD) carry situs addresses: a live groupBy shows CITYNAME and ZIP1 are all HANALEI/96714 or KOLOA/96756.",
+     "note": "Scripts v04_schema_scan.py and v05_situs_check.py"
+    },
+    {
+     "claim": "State parcel files have no mailing fields (Hawaii County 135,718 records; Kauai 25,119)",
+     "ok": true,
+     "recomputed": "hawtmk.dbf has 135,718 records and kauctytmk.dbf has 25,119. Neither has any MAIL, ZIP, STATE, CITY or ADDR field. The State ParcelsZoning layers 5 (Hawaii County) and 9 (Kauai) carry owner names only.",
+     "note": ""
+    },
+    {
+     "claim": "Wider ArcGIS Online search: mailing-field parcel copies exist only for Maui and Oahu (1,359 services checked)",
+     "ok": true,
+     "recomputed": "1,359 unique service URLs were requested, but only 1,256 returned a readable schema. Of the 103 that never did, most are malformed layer-level geodata.hawaii.gov URLs (covered by the separate State scan) and 30 are token-gated. Located by layer extent and projection, every readable layer with mailing fields falls in Maui or Oahu; none is on Hawaii Island or Kauai.",
+     "note": "Script v08_wide_scan.py"
+    },
+    {
+     "claim": "Bot checks recorded and not bypassed",
+     "ok": true,
+     "recomputed": "hawaiipropertytax.com and both qPublic apps return Cloudflare 'Just a moment' challenge pages. kauai.gov returns Akamai 'Access Denied'. maps.kauai.gov returns 522. The gis.hawaiicounty.gov RPT, Planning_TaxMapping and Planning folders return 499 'Token Required'.",
+     "note": ""
+    },
+    {
+     "claim": "Privacy: no owner names, street addresses or parcel IDs in the output",
+     "ok": true,
+     "recomputed": "No TMK-formatted strings, street-address patterns or entity-name patterns. The only 8 to 13 digit tokens are 35 census tract GEOIDs, plus one date inside a Survey123 service name.",
+     "note": "Script v07_privacy.py"
+    },
+    {
+     "claim": "Every count cell carries an n<20 flag",
+     "ok": false,
+     "recomputed": "6 Regrid count cells under 20 are not flagged. Hawaii County zone 5 (North Kohala) has 7 out-of-state homes with flag_n_lt_20 = false. Five tract rows have out-of-state counts of 4, 10, 17, 19 and 7 with the flag false; one of those tracts has only 22 homes.",
+     "note": "For Regrid the flag is set only on the homes denominator. The Kauai tables flag the numerator cells."
+    }
+   ],
+   "problems": [
+    "Six small cells are unflagged, so the claim that every count cell carries an n<20 flag is overstated. In the Regrid tables flag_n_lt_20 tests only the homes count. Out-of-state counts under 20 are therefore unflagged: North Kohala zone has 7 (based on 171 homes), and five tract rows have 4, 10, 17, 19 and 7 (one of them a 22-home tract). The Kauai tables do flag cells like these, so the two parts of the output are inconsistent.",
+    "The Maui district check compares different things. Its roll side is owners_neighbor maui by_tmk_zone, which counts all parcels (80,457). The Oahu side uses residential class 1, and the Maui county-level check uses residential classes (64,795 parcels, 27.8%). The output does not say this. The 7.0-pt average also includes zone 1, which has only 11 homes and is flagged n<20; without it the average is 6.0 pts.",
+    "'838 of them condo units' (Kauai LLC) is misleading. A live TAXCLASS \u00d7 TYPE count shows 484 of the 838 CPR units are Agricultural class (likely ag-land CPRs). Only 226 are non-owner-occupied residential, 57 vacation rental and 23 owner-occupied.",
+    "The Regrid caveat on the percent fields understates the main pattern. It cites peroutzip = 1 - peroutst, which holds in only 13 of 372 tracts. In 346 tracts peroutzip = outzip/homes, consistent with the field alias 'Out of Zip Code, In State'. The puller's (outzip - outstate) reading is still supported: 11 tracts have outstate + outzip > homes, which the alias reading cannot explain. But the stated evidence (outzip >= outstate everywhere) is weaker than this, and the in-state outside-ZIP shares (Hawaii County 13.5%, vs 23.7% under the alias reading) depend on that reading.",
+    "'Checked 1,359 services' slightly overstates the wider search. That is the number of unique service URLs requested; only 1,256 returned a readable schema. Of the 103 that never did, most are malformed layer-level geodata.hawaii.gov URLs (covered by the separate State scan) and 30 are token-gated, including a Hawaii Island 'KonaBaliKaiParcels' service. This does not change the not-found conclusion.",
+    "Minor manifest issue: peek/p24_count.json appears twice. The first row's sha256 and byte count refer to content that was later overwritten. The 9 ERR rows correctly have no file.",
+    "Minor format point: the output has no top-level 'method' key. Methods are recorded per source under source.partial_sources.*.method and method_per_publisher."
+   ]
+  }
+ }
+]

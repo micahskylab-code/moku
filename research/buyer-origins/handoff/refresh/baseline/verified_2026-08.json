@@ -1,0 +1,5975 @@
+{
+ "counties": {
+  "hawaii": {
+   "2006-01": {
+    "condo_median": 425000,
+    "condo_sales": 61,
+    "sf_median": 392500,
+    "sf_sales": 142
+   },
+   "2006-02": {
+    "condo_median": 425000,
+    "condo_sales": 48,
+    "sf_median": 392500,
+    "sf_sales": 135
+   },
+   "2006-03": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-04": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-05": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-06": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-07": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-08": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-09": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-10": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-11": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-12": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-01": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-02": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-03": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-04": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-05": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-06": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-07": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-08": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-09": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-10": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-11": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-12": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2008-01": {
+    "condo_median": 450722,
+    "condo_sales": null,
+    "sf_median": 330000,
+    "sf_sales": null
+   },
+   "2008-02": {
+    "condo_median": 453500,
+    "condo_sales": null,
+    "sf_median": 395000,
+    "sf_sales": null
+   },
+   "2008-03": {
+    "condo_median": 515000,
+    "condo_sales": null,
+    "sf_median": 389000,
+    "sf_sales": null
+   },
+   "2008-04": {
+    "condo_median": 500000,
+    "condo_sales": null,
+    "sf_median": 385000,
+    "sf_sales": null
+   },
+   "2008-05": {
+    "condo_median": 450000,
+    "condo_sales": null,
+    "sf_median": 415000,
+    "sf_sales": null
+   },
+   "2008-06": {
+    "condo_median": 301702,
+    "condo_sales": null,
+    "sf_median": 329285,
+    "sf_sales": null
+   },
+   "2008-07": {
+    "condo_median": 324500,
+    "condo_sales": null,
+    "sf_median": 299000,
+    "sf_sales": null
+   },
+   "2008-08": {
+    "condo_median": 287000,
+    "condo_sales": null,
+    "sf_median": 320000,
+    "sf_sales": null
+   },
+   "2008-09": {
+    "condo_median": 315000,
+    "condo_sales": null,
+    "sf_median": 322500,
+    "sf_sales": null
+   },
+   "2008-10": {
+    "condo_median": 252450,
+    "condo_sales": null,
+    "sf_median": 300000,
+    "sf_sales": null
+   },
+   "2008-11": {
+    "condo_median": 226200,
+    "condo_sales": null,
+    "sf_median": 282500,
+    "sf_sales": null
+   },
+   "2008-12": {
+    "condo_median": 342000,
+    "condo_sales": null,
+    "sf_median": 297000,
+    "sf_sales": null
+   },
+   "2009-01": {
+    "condo_median": 435000,
+    "condo_sales": null,
+    "sf_median": 263000,
+    "sf_sales": null
+   },
+   "2009-02": {
+    "condo_median": 435000,
+    "condo_sales": null,
+    "sf_median": 294000,
+    "sf_sales": null
+   },
+   "2009-03": {
+    "condo_median": 307250,
+    "condo_sales": null,
+    "sf_median": 320000,
+    "sf_sales": null
+   },
+   "2009-04": {
+    "condo_median": 260750,
+    "condo_sales": null,
+    "sf_median": 237000,
+    "sf_sales": null
+   },
+   "2009-05": {
+    "condo_median": 314250,
+    "condo_sales": null,
+    "sf_median": 300500,
+    "sf_sales": null
+   },
+   "2009-06": {
+    "condo_median": 322000,
+    "condo_sales": null,
+    "sf_median": 280000,
+    "sf_sales": null
+   },
+   "2009-07": {
+    "condo_median": 220000,
+    "condo_sales": null,
+    "sf_median": 258000,
+    "sf_sales": null
+   },
+   "2009-08": {
+    "condo_median": 202500,
+    "condo_sales": null,
+    "sf_median": 290000,
+    "sf_sales": null
+   },
+   "2009-09": {
+    "condo_median": 315000,
+    "condo_sales": null,
+    "sf_median": 226500,
+    "sf_sales": null
+   },
+   "2009-10": {
+    "condo_median": 357000,
+    "condo_sales": null,
+    "sf_median": 278500,
+    "sf_sales": null
+   },
+   "2009-11": {
+    "condo_median": 208000,
+    "condo_sales": null,
+    "sf_median": 285000,
+    "sf_sales": null
+   },
+   "2009-12": {
+    "condo_median": 255000,
+    "condo_sales": null,
+    "sf_median": 275000,
+    "sf_sales": null
+   },
+   "2010-01": {
+    "condo_median": 265000,
+    "condo_sales": null,
+    "sf_median": 234250,
+    "sf_sales": null
+   },
+   "2010-02": {
+    "condo_median": 266175,
+    "condo_sales": null,
+    "sf_median": 237000,
+    "sf_sales": null
+   },
+   "2010-03": {
+    "condo_median": 298000,
+    "condo_sales": null,
+    "sf_median": 297500,
+    "sf_sales": null
+   },
+   "2010-04": {
+    "condo_median": 263500,
+    "condo_sales": null,
+    "sf_median": 237000,
+    "sf_sales": null
+   },
+   "2010-05": {
+    "condo_median": 306250,
+    "condo_sales": null,
+    "sf_median": 265000,
+    "sf_sales": null
+   },
+   "2010-06": {
+    "condo_median": 183750,
+    "condo_sales": null,
+    "sf_median": 285000,
+    "sf_sales": null
+   },
+   "2010-07": {
+    "condo_median": 235000,
+    "condo_sales": null,
+    "sf_median": 242500,
+    "sf_sales": null
+   },
+   "2010-08": {
+    "condo_median": 207000,
+    "condo_sales": null,
+    "sf_median": 270000,
+    "sf_sales": null
+   },
+   "2010-09": {
+    "condo_median": 240000,
+    "condo_sales": null,
+    "sf_median": 251000,
+    "sf_sales": null
+   },
+   "2010-10": {
+    "condo_median": 285000,
+    "condo_sales": null,
+    "sf_median": 274000,
+    "sf_sales": null
+   },
+   "2010-11": {
+    "condo_median": 295000,
+    "condo_sales": null,
+    "sf_median": 255500,
+    "sf_sales": null
+   },
+   "2010-12": {
+    "condo_median": 270000,
+    "condo_sales": null,
+    "sf_median": 235450,
+    "sf_sales": null
+   },
+   "2011-01": {
+    "condo_median": 219000,
+    "condo_sales": null,
+    "sf_median": 230000,
+    "sf_sales": null
+   },
+   "2011-02": {
+    "condo_median": 242500,
+    "condo_sales": null,
+    "sf_median": 262000,
+    "sf_sales": null
+   },
+   "2011-03": {
+    "condo_median": 200000,
+    "condo_sales": null,
+    "sf_median": 326000,
+    "sf_sales": null
+   },
+   "2011-04": {
+    "condo_median": 254000,
+    "condo_sales": null,
+    "sf_median": 259950,
+    "sf_sales": null
+   },
+   "2011-05": {
+    "condo_median": 199900,
+    "condo_sales": null,
+    "sf_median": 239000,
+    "sf_sales": null
+   },
+   "2011-06": {
+    "condo_median": 259000,
+    "condo_sales": null,
+    "sf_median": 257500,
+    "sf_sales": null
+   },
+   "2011-07": {
+    "condo_median": 155000,
+    "condo_sales": null,
+    "sf_median": 227500,
+    "sf_sales": null
+   },
+   "2011-08": {
+    "condo_median": 247000,
+    "condo_sales": null,
+    "sf_median": 252500,
+    "sf_sales": null
+   },
+   "2011-09": {
+    "condo_median": 213750,
+    "condo_sales": null,
+    "sf_median": 225000,
+    "sf_sales": null
+   },
+   "2011-10": {
+    "condo_median": 215000,
+    "condo_sales": null,
+    "sf_median": 242000,
+    "sf_sales": null
+   },
+   "2011-11": {
+    "condo_median": 171500,
+    "condo_sales": null,
+    "sf_median": 248500,
+    "sf_sales": null
+   },
+   "2011-12": {
+    "condo_median": 225900,
+    "condo_sales": null,
+    "sf_median": 265000,
+    "sf_sales": null
+   },
+   "2012-01": {
+    "condo_median": 182500,
+    "condo_sales": null,
+    "sf_median": 231000,
+    "sf_sales": null
+   },
+   "2012-02": {
+    "condo_median": 216500,
+    "condo_sales": null,
+    "sf_median": 235000,
+    "sf_sales": null
+   },
+   "2012-03": {
+    "condo_median": 309950,
+    "condo_sales": null,
+    "sf_median": 215000,
+    "sf_sales": null
+   },
+   "2012-04": {
+    "condo_median": 275000,
+    "condo_sales": null,
+    "sf_median": 241500,
+    "sf_sales": null
+   },
+   "2012-05": {
+    "condo_median": 240000,
+    "condo_sales": null,
+    "sf_median": 300000,
+    "sf_sales": null
+   },
+   "2012-06": {
+    "condo_median": 292000,
+    "condo_sales": null,
+    "sf_median": 242500,
+    "sf_sales": null
+   },
+   "2012-07": {
+    "condo_median": 217500,
+    "condo_sales": null,
+    "sf_median": 260000,
+    "sf_sales": null
+   },
+   "2012-08": {
+    "condo_median": 225000,
+    "condo_sales": null,
+    "sf_median": 270000,
+    "sf_sales": null
+   },
+   "2012-09": {
+    "condo_median": 269500,
+    "condo_sales": null,
+    "sf_median": 247500,
+    "sf_sales": null
+   },
+   "2012-10": {
+    "condo_median": 215000,
+    "condo_sales": null,
+    "sf_median": 299999,
+    "sf_sales": null
+   },
+   "2012-11": {
+    "condo_median": 220000,
+    "condo_sales": null,
+    "sf_median": 245000,
+    "sf_sales": null
+   },
+   "2012-12": {
+    "condo_median": 326000,
+    "condo_sales": null,
+    "sf_median": 306650,
+    "sf_sales": null
+   },
+   "2013-01": {
+    "condo_median": 195000,
+    "condo_sales": 46,
+    "sf_median": 265000,
+    "sf_sales": 108
+   },
+   "2013-02": {
+    "condo_median": 218000,
+    "condo_sales": 40,
+    "sf_median": 293750,
+    "sf_sales": 124
+   },
+   "2013-03": {
+    "condo_median": 310750,
+    "condo_sales": 54,
+    "sf_median": 270000,
+    "sf_sales": 141
+   },
+   "2013-04": {
+    "condo_median": 355000,
+    "condo_sales": 61,
+    "sf_median": 329500,
+    "sf_sales": 185
+   },
+   "2013-05": {
+    "condo_median": 291500,
+    "condo_sales": 49,
+    "sf_median": 300000,
+    "sf_sales": 164
+   },
+   "2013-06": {
+    "condo_median": 196000,
+    "condo_sales": 62,
+    "sf_median": 350000,
+    "sf_sales": 177
+   },
+   "2013-07": {
+    "condo_median": 239000,
+    "condo_sales": 65,
+    "sf_median": 290000,
+    "sf_sales": 162
+   },
+   "2013-08": {
+    "condo_median": 280000,
+    "condo_sales": 62,
+    "sf_median": 320000,
+    "sf_sales": 175
+   },
+   "2013-09": {
+    "condo_median": 305000,
+    "condo_sales": 44,
+    "sf_median": 277500,
+    "sf_sales": 180
+   },
+   "2013-10": {
+    "condo_median": 219475,
+    "condo_sales": 62,
+    "sf_median": 266500,
+    "sf_sales": 160
+   },
+   "2013-11": {
+    "condo_median": 244000,
+    "condo_sales": 57,
+    "sf_median": 309500,
+    "sf_sales": 162
+   },
+   "2013-12": {
+    "condo_median": 230950,
+    "condo_sales": 45,
+    "sf_median": 285000,
+    "sf_sales": 146
+   },
+   "2014-01": {
+    "condo_median": 255500,
+    "condo_sales": 51,
+    "sf_median": 327000,
+    "sf_sales": 116
+   },
+   "2014-02": {
+    "condo_median": 225000,
+    "condo_sales": 51,
+    "sf_median": 312000,
+    "sf_sales": 149
+   },
+   "2014-03": {
+    "condo_median": 315000,
+    "condo_sales": 63,
+    "sf_median": 323500,
+    "sf_sales": 140
+   },
+   "2014-04": {
+    "condo_median": 320000,
+    "condo_sales": 65,
+    "sf_median": 315000,
+    "sf_sales": 185
+   },
+   "2014-05": {
+    "condo_median": 330000,
+    "condo_sales": 69,
+    "sf_median": 293000,
+    "sf_sales": 163
+   },
+   "2014-06": {
+    "condo_median": 266500,
+    "condo_sales": 54,
+    "sf_median": 300000,
+    "sf_sales": 170
+   },
+   "2014-07": {
+    "condo_median": 377000,
+    "condo_sales": 53,
+    "sf_median": 330000,
+    "sf_sales": 182
+   },
+   "2014-08": {
+    "condo_median": 265000,
+    "condo_sales": 46,
+    "sf_median": 300000,
+    "sf_sales": 168
+   },
+   "2014-09": {
+    "condo_median": 318000,
+    "condo_sales": 55,
+    "sf_median": 331500,
+    "sf_sales": 142
+   },
+   "2014-10": {
+    "condo_median": 297500,
+    "condo_sales": 50,
+    "sf_median": 325750,
+    "sf_sales": 148
+   },
+   "2014-11": {
+    "condo_median": 205000,
+    "condo_sales": 37,
+    "sf_median": 350000,
+    "sf_sales": 144
+   },
+   "2014-12": {
+    "condo_median": 235000,
+    "condo_sales": 51,
+    "sf_median": 310000,
+    "sf_sales": 177
+   },
+   "2015-01": {
+    "condo_median": 251250,
+    "condo_sales": 54,
+    "sf_median": 352500,
+    "sf_sales": 152
+   },
+   "2015-02": {
+    "condo_median": 223500,
+    "condo_sales": 58,
+    "sf_median": 329000,
+    "sf_sales": 142
+   },
+   "2015-03": {
+    "condo_median": 339000,
+    "condo_sales": 57,
+    "sf_median": 330000,
+    "sf_sales": 149
+   },
+   "2015-04": {
+    "condo_median": 260000,
+    "condo_sales": 79,
+    "sf_median": 378950,
+    "sf_sales": 180
+   },
+   "2015-05": {
+    "condo_median": 329000,
+    "condo_sales": 57,
+    "sf_median": 317979,
+    "sf_sales": 197
+   },
+   "2015-06": {
+    "condo_median": 285000,
+    "condo_sales": 55,
+    "sf_median": 285000,
+    "sf_sales": 170
+   },
+   "2015-07": {
+    "condo_median": 254000,
+    "condo_sales": 57,
+    "sf_median": 343500,
+    "sf_sales": 190
+   },
+   "2015-08": {
+    "condo_median": 267500,
+    "condo_sales": 46,
+    "sf_median": 336500,
+    "sf_sales": 182
+   },
+   "2015-09": {
+    "condo_median": 375000,
+    "condo_sales": 49,
+    "sf_median": 365000,
+    "sf_sales": 149
+   },
+   "2015-10": {
+    "condo_median": 267500,
+    "condo_sales": 42,
+    "sf_median": 295000,
+    "sf_sales": 193
+   },
+   "2015-11": {
+    "condo_median": 300000,
+    "condo_sales": 41,
+    "sf_median": 328500,
+    "sf_sales": 133
+   },
+   "2015-12": {
+    "condo_median": 270000,
+    "condo_sales": 68,
+    "sf_median": 309000,
+    "sf_sales": 179
+   },
+   "2016-01": {
+    "condo_median": 254000,
+    "condo_sales": 54,
+    "sf_median": 290450,
+    "sf_sales": 156
+   },
+   "2016-02": {
+    "condo_median": 337500,
+    "condo_sales": 44,
+    "sf_median": 300000,
+    "sf_sales": 193
+   },
+   "2016-03": {
+    "condo_median": 275000,
+    "condo_sales": 75,
+    "sf_median": 305000,
+    "sf_sales": 205
+   },
+   "2016-04": {
+    "condo_median": 345500,
+    "condo_sales": 83,
+    "sf_median": 365000,
+    "sf_sales": 196
+   },
+   "2016-05": {
+    "condo_median": 339500,
+    "condo_sales": 66,
+    "sf_median": 314000,
+    "sf_sales": 218
+   },
+   "2016-06": {
+    "condo_median": 300000,
+    "condo_sales": 43,
+    "sf_median": 371500,
+    "sf_sales": 191
+   },
+   "2016-07": {
+    "condo_median": 285000,
+    "condo_sales": 48,
+    "sf_median": 305000,
+    "sf_sales": 212
+   },
+   "2016-08": {
+    "condo_median": 285000,
+    "condo_sales": 75,
+    "sf_median": 353750,
+    "sf_sales": 200
+   },
+   "2016-09": {
+    "condo_median": 312500,
+    "condo_sales": 54,
+    "sf_median": 327000,
+    "sf_sales": 179
+   },
+   "2016-10": {
+    "condo_median": 361250,
+    "condo_sales": 58,
+    "sf_median": 380000,
+    "sf_sales": 162
+   },
+   "2016-11": {
+    "condo_median": 321000,
+    "condo_sales": 52,
+    "sf_median": 359000,
+    "sf_sales": 185
+   },
+   "2016-12": {
+    "condo_median": 295000,
+    "condo_sales": 59,
+    "sf_median": 285000,
+    "sf_sales": 209
+   },
+   "2017-01": {
+    "condo_median": 330500,
+    "condo_sales": 58,
+    "sf_median": 344500,
+    "sf_sales": 152
+   },
+   "2017-02": {
+    "condo_median": 387000,
+    "condo_sales": 54,
+    "sf_median": 344250,
+    "sf_sales": 166
+   },
+   "2017-03": {
+    "condo_median": 365000,
+    "condo_sales": 81,
+    "sf_median": 377500,
+    "sf_sales": 234
+   },
+   "2017-04": {
+    "condo_median": 313750,
+    "condo_sales": 70,
+    "sf_median": 337500,
+    "sf_sales": 218
+   },
+   "2017-05": {
+    "condo_median": 275000,
+    "condo_sales": 95,
+    "sf_median": 320000,
+    "sf_sales": 239
+   },
+   "2017-06": {
+    "condo_median": 368750,
+    "condo_sales": 82,
+    "sf_median": 351250,
+    "sf_sales": 226
+   },
+   "2017-07": {
+    "condo_median": 292000,
+    "condo_sales": 78,
+    "sf_median": 325000,
+    "sf_sales": 219
+   },
+   "2017-08": {
+    "condo_median": 300000,
+    "condo_sales": 59,
+    "sf_median": 370000,
+    "sf_sales": 215
+   },
+   "2017-09": {
+    "condo_median": 302000,
+    "condo_sales": 72,
+    "sf_median": 332450,
+    "sf_sales": 204
+   },
+   "2017-10": {
+    "condo_median": 265000,
+    "condo_sales": 75,
+    "sf_median": 383250,
+    "sf_sales": 231
+   },
+   "2017-11": {
+    "condo_median": 336000,
+    "condo_sales": 63,
+    "sf_median": 371250,
+    "sf_sales": 188
+   },
+   "2017-12": {
+    "condo_median": 281500,
+    "condo_sales": 68,
+    "sf_median": 340000,
+    "sf_sales": 205
+   },
+   "2018-01": {
+    "condo_median": 347000,
+    "condo_sales": 55,
+    "sf_median": 329000,
+    "sf_sales": 173
+   },
+   "2018-02": {
+    "condo_median": 332500,
+    "condo_sales": 60,
+    "sf_median": 322500,
+    "sf_sales": 160
+   },
+   "2018-03": {
+    "condo_median": 410000,
+    "condo_sales": 85,
+    "sf_median": 382500,
+    "sf_sales": 250
+   },
+   "2018-04": {
+    "condo_median": 372500,
+    "condo_sales": 90,
+    "sf_median": 388800,
+    "sf_sales": 199
+   },
+   "2018-05": {
+    "condo_median": 382500,
+    "condo_sales": 80,
+    "sf_median": 400000,
+    "sf_sales": 207
+   },
+   "2018-06": {
+    "condo_median": 362500,
+    "condo_sales": 79,
+    "sf_median": 381250,
+    "sf_sales": 226
+   },
+   "2018-07": {
+    "condo_median": 292200,
+    "condo_sales": 47,
+    "sf_median": 320000,
+    "sf_sales": 188
+   },
+   "2018-08": {
+    "condo_median": 330000,
+    "condo_sales": 80,
+    "sf_median": 355000,
+    "sf_sales": 195
+   },
+   "2018-09": {
+    "condo_median": 297500,
+    "condo_sales": 59,
+    "sf_median": 356720,
+    "sf_sales": 188
+   },
+   "2018-10": {
+    "condo_median": 323000,
+    "condo_sales": 69,
+    "sf_median": 335000,
+    "sf_sales": 183
+   },
+   "2018-11": {
+    "condo_median": 324000,
+    "condo_sales": 51,
+    "sf_median": 364900,
+    "sf_sales": 182
+   },
+   "2018-12": {
+    "condo_median": 384000,
+    "condo_sales": 78,
+    "sf_median": 399000,
+    "sf_sales": 189
+   },
+   "2019-01": {
+    "condo_median": 325000,
+    "condo_sales": 64,
+    "sf_median": 359850,
+    "sf_sales": 148
+   },
+   "2019-02": {
+    "condo_median": 380000,
+    "condo_sales": 59,
+    "sf_median": 382000,
+    "sf_sales": 154
+   },
+   "2019-03": {
+    "condo_median": 375000,
+    "condo_sales": 71,
+    "sf_median": 381360,
+    "sf_sales": 210
+   },
+   "2019-04": {
+    "condo_median": 419000,
+    "condo_sales": 109,
+    "sf_median": 352500,
+    "sf_sales": 216
+   },
+   "2019-05": {
+    "condo_median": 375000,
+    "condo_sales": 79,
+    "sf_median": 413000,
+    "sf_sales": 232
+   },
+   "2019-06": {
+    "condo_median": 385000,
+    "condo_sales": 75,
+    "sf_median": 370000,
+    "sf_sales": 209
+   },
+   "2019-07": {
+    "condo_median": 330000,
+    "condo_sales": 64,
+    "sf_median": 375000,
+    "sf_sales": 223
+   },
+   "2019-08": {
+    "condo_median": 325000,
+    "condo_sales": 77,
+    "sf_median": 396053,
+    "sf_sales": 242
+   },
+   "2019-09": {
+    "condo_median": 354500,
+    "condo_sales": 61,
+    "sf_median": 393750,
+    "sf_sales": 169
+   },
+   "2019-10": {
+    "condo_median": 363500,
+    "condo_sales": 78,
+    "sf_median": 350000,
+    "sf_sales": 217
+   },
+   "2019-11": {
+    "condo_median": 372750,
+    "condo_sales": 54,
+    "sf_median": 394500,
+    "sf_sales": 202
+   },
+   "2019-12": {
+    "condo_median": 350000,
+    "condo_sales": 71,
+    "sf_median": 359875,
+    "sf_sales": 212
+   },
+   "2020-01": {
+    "condo_median": 430000,
+    "condo_sales": 59,
+    "sf_median": 448000,
+    "sf_sales": 217
+   },
+   "2020-02": {
+    "condo_median": 324000,
+    "condo_sales": 67,
+    "sf_median": 450000,
+    "sf_sales": 180
+   },
+   "2020-03": {
+    "condo_median": 410000,
+    "condo_sales": 66,
+    "sf_median": 412000,
+    "sf_sales": 237
+   },
+   "2020-04": {
+    "condo_median": 349900,
+    "condo_sales": 43,
+    "sf_median": 362500,
+    "sf_sales": 178
+   },
+   "2020-05": {
+    "condo_median": 319000,
+    "condo_sales": 29,
+    "sf_median": 370000,
+    "sf_sales": 133
+   },
+   "2020-06": {
+    "condo_median": 378000,
+    "condo_sales": 43,
+    "sf_median": 375000,
+    "sf_sales": 165
+   },
+   "2020-07": {
+    "condo_median": 327500,
+    "condo_sales": 54,
+    "sf_median": 357000,
+    "sf_sales": 224
+   },
+   "2020-08": {
+    "condo_median": 475000,
+    "condo_sales": 65,
+    "sf_median": 439000,
+    "sf_sales": 241
+   },
+   "2020-09": {
+    "condo_median": 410000,
+    "condo_sales": 65,
+    "sf_median": 420000,
+    "sf_sales": 253
+   },
+   "2020-10": {
+    "condo_median": 450000,
+    "condo_sales": 81,
+    "sf_median": 402500,
+    "sf_sales": 281
+   },
+   "2020-11": {
+    "condo_median": 447500,
+    "condo_sales": 82,
+    "sf_median": 447000,
+    "sf_sales": 257
+   },
+   "2020-12": {
+    "condo_median": 385000,
+    "condo_sales": 97,
+    "sf_median": 477000,
+    "sf_sales": 296
+   },
+   "2021-01": {
+    "condo_median": 465000,
+    "condo_sales": 85,
+    "sf_median": 450000,
+    "sf_sales": 248
+   },
+   "2021-02": {
+    "condo_median": 480000,
+    "condo_sales": 100,
+    "sf_median": 525000,
+    "sf_sales": 238
+   },
+   "2021-03": {
+    "condo_median": 497000,
+    "condo_sales": 138,
+    "sf_median": 409000,
+    "sf_sales": 319
+   },
+   "2021-04": {
+    "condo_median": 474500,
+    "condo_sales": 152,
+    "sf_median": 475000,
+    "sf_sales": 290
+   },
+   "2021-05": {
+    "condo_median": 449500,
+    "condo_sales": 108,
+    "sf_median": 500000,
+    "sf_sales": 261
+   },
+   "2021-06": {
+    "condo_median": 485000,
+    "condo_sales": 106,
+    "sf_median": 470000,
+    "sf_sales": 279
+   },
+   "2021-07": {
+    "condo_median": 484500,
+    "condo_sales": 82,
+    "sf_median": 426000,
+    "sf_sales": 261
+   },
+   "2021-08": {
+    "condo_median": 450000,
+    "condo_sales": 90,
+    "sf_median": 495000,
+    "sf_sales": 268
+   },
+   "2021-09": {
+    "condo_median": 467500,
+    "condo_sales": 82,
+    "sf_median": 482500,
+    "sf_sales": 270
+   },
+   "2021-10": {
+    "condo_median": 555000,
+    "condo_sales": 76,
+    "sf_median": 480000,
+    "sf_sales": 259
+   },
+   "2021-11": {
+    "condo_median": 535000,
+    "condo_sales": 73,
+    "sf_median": 525000,
+    "sf_sales": 230
+   },
+   "2021-12": {
+    "condo_median": 471088,
+    "condo_sales": 85,
+    "sf_median": 520000,
+    "sf_sales": 293
+   },
+   "2022-01": {
+    "condo_median": 500000,
+    "condo_sales": 69,
+    "sf_median": 536500,
+    "sf_sales": 222
+   },
+   "2022-02": {
+    "condo_median": 545000,
+    "condo_sales": 85,
+    "sf_median": 514250,
+    "sf_sales": 228
+   },
+   "2022-03": {
+    "condo_median": 606000,
+    "condo_sales": 86,
+    "sf_median": 520000,
+    "sf_sales": 291
+   },
+   "2022-04": {
+    "condo_median": 689900,
+    "condo_sales": 87,
+    "sf_median": 525000,
+    "sf_sales": 245
+   },
+   "2022-05": {
+    "condo_median": 556750,
+    "condo_sales": 98,
+    "sf_median": 501000,
+    "sf_sales": 271
+   },
+   "2022-06": {
+    "condo_median": 612500,
+    "condo_sales": 86,
+    "sf_median": 475950,
+    "sf_sales": 256
+   },
+   "2022-07": {
+    "condo_median": 540000,
+    "condo_sales": 65,
+    "sf_median": 455000,
+    "sf_sales": 183
+   },
+   "2022-08": {
+    "condo_median": 597000,
+    "condo_sales": 58,
+    "sf_median": 483725,
+    "sf_sales": 206
+   },
+   "2022-09": {
+    "condo_median": 620000,
+    "condo_sales": 50,
+    "sf_median": 530000,
+    "sf_sales": 205
+   },
+   "2022-10": {
+    "condo_median": 504500,
+    "condo_sales": 40,
+    "sf_median": 509500,
+    "sf_sales": 186
+   },
+   "2022-11": {
+    "condo_median": 440000,
+    "condo_sales": 31,
+    "sf_median": 492500,
+    "sf_sales": 172
+   },
+   "2022-12": {
+    "condo_median": 610000,
+    "condo_sales": 39,
+    "sf_median": 462000,
+    "sf_sales": 153
+   },
+   "2023-01": {
+    "condo_median": 625250,
+    "condo_sales": 38,
+    "sf_median": 505000,
+    "sf_sales": 139
+   },
+   "2023-02": {
+    "condo_median": 554000,
+    "condo_sales": 48,
+    "sf_median": 459500,
+    "sf_sales": 133
+   },
+   "2023-03": {
+    "condo_median": 595000,
+    "condo_sales": 58,
+    "sf_median": 550000,
+    "sf_sales": 164
+   },
+   "2023-04": {
+    "condo_median": 549000,
+    "condo_sales": 63,
+    "sf_median": 447500,
+    "sf_sales": 164
+   },
+   "2023-05": {
+    "condo_median": 550000,
+    "condo_sales": 57,
+    "sf_median": 492500,
+    "sf_sales": 190
+   },
+   "2023-06": {
+    "condo_median": 600000,
+    "condo_sales": 80,
+    "sf_median": 512804,
+    "sf_sales": 204
+   },
+   "2023-07": {
+    "condo_median": 625000,
+    "condo_sales": 47,
+    "sf_median": 495000,
+    "sf_sales": 155
+   },
+   "2023-08": {
+    "condo_median": 612500,
+    "condo_sales": 52,
+    "sf_median": 495000,
+    "sf_sales": 185
+   },
+   "2023-09": {
+    "condo_median": 620000,
+    "condo_sales": 56,
+    "sf_median": 525000,
+    "sf_sales": 165
+   },
+   "2023-10": {
+    "condo_median": 539950,
+    "condo_sales": 48,
+    "sf_median": 550000,
+    "sf_sales": 173
+   },
+   "2023-11": {
+    "condo_median": 530750,
+    "condo_sales": 30,
+    "sf_median": 499000,
+    "sf_sales": 139
+   },
+   "2023-12": {
+    "condo_median": 598500,
+    "condo_sales": 30,
+    "sf_median": 550000,
+    "sf_sales": 143
+   },
+   "2024-01": {
+    "condo_median": 608500,
+    "condo_sales": 32,
+    "sf_median": 499000,
+    "sf_sales": 159
+   },
+   "2024-02": {
+    "condo_median": 700000,
+    "condo_sales": 43,
+    "sf_median": 504000,
+    "sf_sales": 170
+   },
+   "2024-03": {
+    "condo_median": 672500,
+    "condo_sales": 58,
+    "sf_median": 595000,
+    "sf_sales": 153
+   },
+   "2024-04": {
+    "condo_median": 787500,
+    "condo_sales": 78,
+    "sf_median": 533000,
+    "sf_sales": 182
+   },
+   "2024-05": {
+    "condo_median": 680000,
+    "condo_sales": 75,
+    "sf_median": 548000,
+    "sf_sales": 183
+   },
+   "2024-06": {
+    "condo_median": 552000,
+    "condo_sales": 33,
+    "sf_median": 627775,
+    "sf_sales": 160
+   },
+   "2024-07": {
+    "condo_median": 725000,
+    "condo_sales": 53,
+    "sf_median": 580000,
+    "sf_sales": 185
+   },
+   "2024-08": {
+    "condo_median": 550000,
+    "condo_sales": 43,
+    "sf_median": 549000,
+    "sf_sales": 179
+   },
+   "2024-09": {
+    "condo_median": 719000,
+    "condo_sales": 27,
+    "sf_median": 556500,
+    "sf_sales": 148
+   },
+   "2024-10": {
+    "condo_median": 610000,
+    "condo_sales": 42,
+    "sf_median": 545000,
+    "sf_sales": 172
+   },
+   "2024-11": {
+    "condo_median": 650000,
+    "condo_sales": 45,
+    "sf_median": 550000,
+    "sf_sales": 158
+   },
+   "2024-12": {
+    "condo_median": 464000,
+    "condo_sales": 47,
+    "sf_median": 502500,
+    "sf_sales": 172
+   },
+   "2025-01": {
+    "condo_median": 680000,
+    "condo_sales": 39,
+    "sf_median": 585000,
+    "sf_sales": 173
+   },
+   "2025-02": {
+    "condo_median": 750000,
+    "condo_sales": 46,
+    "sf_median": 565000,
+    "sf_sales": 142
+   },
+   "2025-03": {
+    "condo_median": 620000,
+    "condo_sales": 53,
+    "sf_median": 630000,
+    "sf_sales": 187
+   },
+   "2025-04": {
+    "condo_median": 582500,
+    "condo_sales": 48,
+    "sf_median": 597500,
+    "sf_sales": 156
+   },
+   "2025-05": {
+    "condo_median": 816000,
+    "condo_sales": 48,
+    "sf_median": 550000,
+    "sf_sales": 174
+   },
+   "2025-06": {
+    "condo_median": 575000,
+    "condo_sales": 43,
+    "sf_median": 602650,
+    "sf_sales": 192
+   },
+   "2025-07": {
+    "condo_median": 620000,
+    "condo_sales": 43,
+    "sf_median": 525000,
+    "sf_sales": 165
+   },
+   "2025-08": {
+    "condo_median": 572500,
+    "condo_sales": 37,
+    "sf_median": 523500,
+    "sf_sales": 166
+   },
+   "2025-09": {
+    "condo_median": 640000,
+    "condo_sales": 49,
+    "sf_median": 590000,
+    "sf_sales": 171
+   },
+   "2025-10": {
+    "condo_median": 615000,
+    "condo_sales": 39,
+    "sf_median": 499000,
+    "sf_sales": 185
+   },
+   "2025-11": {
+    "condo_median": 604913,
+    "condo_sales": 38,
+    "sf_median": 525000,
+    "sf_sales": 131
+   },
+   "2025-12": {
+    "condo_median": 720000,
+    "condo_sales": 59,
+    "sf_median": 550000,
+    "sf_sales": 174
+   },
+   "2026-01": {
+    "condo_median": 615000,
+    "condo_sales": 41,
+    "sf_median": 574500,
+    "sf_sales": 154
+   },
+   "2026-02": {
+    "condo_median": 736500,
+    "condo_sales": 40,
+    "sf_median": 575000,
+    "sf_sales": 128
+   },
+   "2026-03": {
+    "condo_median": 777500,
+    "condo_sales": 54,
+    "sf_median": 619000,
+    "sf_sales": 169
+   },
+   "2026-04": {
+    "condo_median": 582500,
+    "condo_sales": 52,
+    "sf_median": 570000,
+    "sf_sales": 161
+   },
+   "2026-05": {
+    "condo_median": 479000,
+    "condo_sales": 39,
+    "sf_median": 470000,
+    "sf_sales": 182
+   },
+   "2026-06": {
+    "condo_median": 535000,
+    "condo_sales": 44,
+    "sf_median": 599800,
+    "sf_sales": 187
+   },
+   "2026-07": {
+    "condo_median": 838750,
+    "condo_sales": 42,
+    "sf_median": 535000,
+    "sf_sales": 183
+   },
+   "2026-08": {
+    "condo_median": 493000,
+    "condo_sales": 31,
+    "sf_median": 580000,
+    "sf_sales": 153
+   }
+  },
+  "honolulu": {
+   "2006-01": {
+    "condo_median": 295000,
+    "condo_sales": 504,
+    "sf_median": 615000,
+    "sf_sales": 303
+   },
+   "2006-02": {
+    "condo_median": 315000,
+    "condo_sales": 487,
+    "sf_median": 613500,
+    "sf_sales": 248
+   },
+   "2006-03": {
+    "condo_median": 312000,
+    "condo_sales": 696,
+    "sf_median": 650000,
+    "sf_sales": 392
+   },
+   "2006-04": {
+    "condo_median": 296500,
+    "condo_sales": 584,
+    "sf_median": 615000,
+    "sf_sales": 332
+   },
+   "2006-05": {
+    "condo_median": 306000,
+    "condo_sales": 605,
+    "sf_median": 668300,
+    "sf_sales": 374
+   },
+   "2006-06": {
+    "condo_median": 310000,
+    "condo_sales": 641,
+    "sf_median": 639000,
+    "sf_sales": 368
+   },
+   "2006-07": {
+    "condo_median": 329000,
+    "condo_sales": 498,
+    "sf_median": 660000,
+    "sf_sales": 379
+   },
+   "2006-08": {
+    "condo_median": 305000,
+    "condo_sales": 580,
+    "sf_median": 635000,
+    "sf_sales": 351
+   },
+   "2006-09": {
+    "condo_median": 320000,
+    "condo_sales": 481,
+    "sf_median": 620000,
+    "sf_sales": 359
+   },
+   "2006-10": {
+    "condo_median": 310000,
+    "condo_sales": 425,
+    "sf_median": 645000,
+    "sf_sales": 296
+   },
+   "2006-11": {
+    "condo_median": 310000,
+    "condo_sales": 421,
+    "sf_median": 610000,
+    "sf_sales": 293
+   },
+   "2006-12": {
+    "condo_median": 315500,
+    "condo_sales": 458,
+    "sf_median": 613500,
+    "sf_sales": 346
+   },
+   "2007-01": {
+    "condo_median": 320000,
+    "condo_sales": 418,
+    "sf_median": 600000,
+    "sf_sales": 263
+   },
+   "2007-02": {
+    "condo_median": 320000,
+    "condo_sales": 402,
+    "sf_median": 614500,
+    "sf_sales": 272
+   },
+   "2007-03": {
+    "condo_median": 321000,
+    "condo_sales": 541,
+    "sf_median": 643500,
+    "sf_sales": 330
+   },
+   "2007-04": {
+    "condo_median": 325000,
+    "condo_sales": 527,
+    "sf_median": 665000,
+    "sf_sales": 342
+   },
+   "2007-05": {
+    "condo_median": 325000,
+    "condo_sales": 543,
+    "sf_median": 650000,
+    "sf_sales": 357
+   },
+   "2007-06": {
+    "condo_median": 334000,
+    "condo_sales": 547,
+    "sf_median": 685000,
+    "sf_sales": 338
+   },
+   "2007-07": {
+    "condo_median": 335000,
+    "condo_sales": 457,
+    "sf_median": 640000,
+    "sf_sales": 339
+   },
+   "2007-08": {
+    "condo_median": 325000,
+    "condo_sales": 495,
+    "sf_median": 650000,
+    "sf_sales": 381
+   },
+   "2007-09": {
+    "condo_median": 335000,
+    "condo_sales": 414,
+    "sf_median": 650000,
+    "sf_sales": 255
+   },
+   "2007-10": {
+    "condo_median": 322500,
+    "condo_sales": 423,
+    "sf_median": 655000,
+    "sf_sales": 265
+   },
+   "2007-11": {
+    "condo_median": 315000,
+    "condo_sales": 379,
+    "sf_median": 610000,
+    "sf_sales": 245
+   },
+   "2007-12": {
+    "condo_median": 320000,
+    "condo_sales": 353,
+    "sf_median": 610000,
+    "sf_sales": 240
+   },
+   "2008-01": {
+    "condo_median": 324000,
+    "condo_sales": 324,
+    "sf_median": 600000,
+    "sf_sales": 228
+   },
+   "2008-02": {
+    "condo_median": 335000,
+    "condo_sales": 321,
+    "sf_median": 599000,
+    "sf_sales": 163
+   },
+   "2008-03": {
+    "condo_median": 325000,
+    "condo_sales": 392,
+    "sf_median": 630500,
+    "sf_sales": 282
+   },
+   "2008-04": {
+    "condo_median": 325000,
+    "condo_sales": 407,
+    "sf_median": 639500,
+    "sf_sales": 260
+   },
+   "2008-05": {
+    "condo_median": 338000,
+    "condo_sales": 367,
+    "sf_median": 644000,
+    "sf_sales": 246
+   },
+   "2008-06": {
+    "condo_median": 330000,
+    "condo_sales": 357,
+    "sf_median": 625000,
+    "sf_sales": 231
+   },
+   "2008-07": {
+    "condo_median": 332750,
+    "condo_sales": 471,
+    "sf_median": 620000,
+    "sf_sales": 268
+   },
+   "2008-08": {
+    "condo_median": 325000,
+    "condo_sales": 364,
+    "sf_median": 627000,
+    "sf_sales": 251
+   },
+   "2008-09": {
+    "condo_median": 300000,
+    "condo_sales": 317,
+    "sf_median": 611450,
+    "sf_sales": 213
+   },
+   "2008-10": {
+    "condo_median": 325000,
+    "condo_sales": 319,
+    "sf_median": 610000,
+    "sf_sales": 243
+   },
+   "2008-11": {
+    "condo_median": 320000,
+    "condo_sales": 195,
+    "sf_median": 600000,
+    "sf_sales": 163
+   },
+   "2008-12": {
+    "condo_median": 300000,
+    "condo_sales": 254,
+    "sf_median": 620000,
+    "sf_sales": 198
+   },
+   "2009-01": {
+    "condo_median": 302500,
+    "condo_sales": 145,
+    "sf_median": 532500,
+    "sf_sales": 114
+   },
+   "2009-02": {
+    "condo_median": 295000,
+    "condo_sales": 160,
+    "sf_median": 575000,
+    "sf_sales": 141
+   },
+   "2009-03": {
+    "condo_median": 300000,
+    "condo_sales": 258,
+    "sf_median": 575000,
+    "sf_sales": 190
+   },
+   "2009-04": {
+    "condo_median": 314950,
+    "condo_sales": 263,
+    "sf_median": 600000,
+    "sf_sales": 187
+   },
+   "2009-05": {
+    "condo_median": 300000,
+    "condo_sales": 262,
+    "sf_median": 542000,
+    "sf_sales": 216
+   },
+   "2009-06": {
+    "condo_median": 310000,
+    "condo_sales": 288,
+    "sf_median": 570000,
+    "sf_sales": 264
+   },
+   "2009-07": {
+    "condo_median": 307250,
+    "condo_sales": 343,
+    "sf_median": 595000,
+    "sf_sales": 266
+   },
+   "2009-08": {
+    "condo_median": 290000,
+    "condo_sales": 348,
+    "sf_median": 560000,
+    "sf_sales": 238
+   },
+   "2009-09": {
+    "condo_median": 309500,
+    "condo_sales": 354,
+    "sf_median": 605000,
+    "sf_sales": 253
+   },
+   "2009-10": {
+    "condo_median": 300000,
+    "condo_sales": 395,
+    "sf_median": 604500,
+    "sf_sales": 290
+   },
+   "2009-11": {
+    "condo_median": 310500,
+    "condo_sales": 408,
+    "sf_median": 590000,
+    "sf_sales": 258
+   },
+   "2009-12": {
+    "condo_median": 302500,
+    "condo_sales": 350,
+    "sf_median": 555000,
+    "sf_sales": 272
+   },
+   "2010-01": {
+    "condo_median": 299000,
+    "condo_sales": 242,
+    "sf_median": 595000,
+    "sf_sales": 179
+   },
+   "2010-02": {
+    "condo_median": 299000,
+    "condo_sales": 244,
+    "sf_median": 575000,
+    "sf_sales": 177
+   },
+   "2010-03": {
+    "condo_median": 310000,
+    "condo_sales": 360,
+    "sf_median": 600000,
+    "sf_sales": 255
+   },
+   "2010-04": {
+    "condo_median": 307000,
+    "condo_sales": 406,
+    "sf_median": 565000,
+    "sf_sales": 285
+   },
+   "2010-05": {
+    "condo_median": 305000,
+    "condo_sales": 368,
+    "sf_median": 600000,
+    "sf_sales": 287
+   },
+   "2010-06": {
+    "condo_median": 300000,
+    "condo_sales": 442,
+    "sf_median": 582500,
+    "sf_sales": 295
+   },
+   "2010-07": {
+    "condo_median": 300000,
+    "condo_sales": 327,
+    "sf_median": 604500,
+    "sf_sales": 270
+   },
+   "2010-08": {
+    "condo_median": 303000,
+    "condo_sales": 294,
+    "sf_median": 641277,
+    "sf_sales": 231
+   },
+   "2010-09": {
+    "condo_median": 330000,
+    "condo_sales": 306,
+    "sf_median": 620000,
+    "sf_sales": 273
+   },
+   "2010-10": {
+    "condo_median": 300000,
+    "condo_sales": 319,
+    "sf_median": 592500,
+    "sf_sales": 245
+   },
+   "2010-11": {
+    "condo_median": 312000,
+    "condo_sales": 316,
+    "sf_median": 574500,
+    "sf_sales": 248
+   },
+   "2010-12": {
+    "condo_median": 300000,
+    "condo_sales": 356,
+    "sf_median": 585000,
+    "sf_sales": 312
+   },
+   "2011-01": {
+    "condo_median": 299950,
+    "condo_sales": 280,
+    "sf_median": 570000,
+    "sf_sales": 198
+   },
+   "2011-02": {
+    "condo_median": 320000,
+    "condo_sales": 306,
+    "sf_median": 570000,
+    "sf_sales": 182
+   },
+   "2011-03": {
+    "condo_median": 315000,
+    "condo_sales": 342,
+    "sf_median": 550000,
+    "sf_sales": 255
+   },
+   "2011-04": {
+    "condo_median": 305000,
+    "condo_sales": 387,
+    "sf_median": 585000,
+    "sf_sales": 233
+   },
+   "2011-05": {
+    "condo_median": 290000,
+    "condo_sales": 331,
+    "sf_median": 579000,
+    "sf_sales": 254
+   },
+   "2011-06": {
+    "condo_median": 302000,
+    "condo_sales": 367,
+    "sf_median": 570000,
+    "sf_sales": 248
+   },
+   "2011-07": {
+    "condo_median": 279000,
+    "condo_sales": 307,
+    "sf_median": 592500,
+    "sf_sales": 253
+   },
+   "2011-08": {
+    "condo_median": 300000,
+    "condo_sales": 341,
+    "sf_median": 560000,
+    "sf_sales": 278
+   },
+   "2011-09": {
+    "condo_median": 319500,
+    "condo_sales": 371,
+    "sf_median": 575000,
+    "sf_sales": 287
+   },
+   "2011-10": {
+    "condo_median": 305000,
+    "condo_sales": 324,
+    "sf_median": 576000,
+    "sf_sales": 236
+   },
+   "2011-11": {
+    "condo_median": 296847,
+    "condo_sales": 341,
+    "sf_median": 580000,
+    "sf_sales": 258
+   },
+   "2011-12": {
+    "condo_median": 285000,
+    "condo_sales": 338,
+    "sf_median": 600000,
+    "sf_sales": 272
+   },
+   "2012-01": {
+    "condo_median": 307154,
+    "condo_sales": 277,
+    "sf_median": 610000,
+    "sf_sales": 184
+   },
+   "2012-02": {
+    "condo_median": 310000,
+    "condo_sales": 227,
+    "sf_median": 619500,
+    "sf_sales": 217
+   },
+   "2012-03": {
+    "condo_median": 311750,
+    "condo_sales": 338,
+    "sf_median": 625000,
+    "sf_sales": 222
+   },
+   "2012-04": {
+    "condo_median": 317000,
+    "condo_sales": 355,
+    "sf_median": 596000,
+    "sf_sales": 224
+   },
+   "2012-05": {
+    "condo_median": 300000,
+    "condo_sales": 371,
+    "sf_median": 664000,
+    "sf_sales": 243
+   },
+   "2012-06": {
+    "condo_median": 297000,
+    "condo_sales": 342,
+    "sf_median": 620000,
+    "sf_sales": 279
+   },
+   "2012-07": {
+    "condo_median": 320000,
+    "condo_sales": 364,
+    "sf_median": 635000,
+    "sf_sales": 265
+   },
+   "2012-08": {
+    "condo_median": 320000,
+    "condo_sales": 409,
+    "sf_median": 609000,
+    "sf_sales": 293
+   },
+   "2012-09": {
+    "condo_median": 319500,
+    "condo_sales": 350,
+    "sf_median": 637000,
+    "sf_sales": 304
+   },
+   "2012-10": {
+    "condo_median": 325000,
+    "condo_sales": 425,
+    "sf_median": 625000,
+    "sf_sales": 282
+   },
+   "2012-11": {
+    "condo_median": 325000,
+    "condo_sales": 363,
+    "sf_median": 640000,
+    "sf_sales": 290
+   },
+   "2012-12": {
+    "condo_median": 335000,
+    "condo_sales": 401,
+    "sf_median": 600000,
+    "sf_sales": 291
+   },
+   "2013-01": {
+    "condo_median": 315000,
+    "condo_sales": 286,
+    "sf_median": 595000,
+    "sf_sales": 227
+   },
+   "2013-02": {
+    "condo_median": 340000,
+    "condo_sales": 279,
+    "sf_median": 600000,
+    "sf_sales": 201
+   },
+   "2013-03": {
+    "condo_median": 340000,
+    "condo_sales": 411,
+    "sf_median": 640000,
+    "sf_sales": 231
+   },
+   "2013-04": {
+    "condo_median": 335000,
+    "condo_sales": 457,
+    "sf_median": 625000,
+    "sf_sales": 280
+   },
+   "2013-05": {
+    "condo_median": 315000,
+    "condo_sales": 452,
+    "sf_median": 630000,
+    "sf_sales": 266
+   },
+   "2013-06": {
+    "condo_median": 330000,
+    "condo_sales": 392,
+    "sf_median": 677250,
+    "sf_sales": 308
+   },
+   "2013-07": {
+    "condo_median": 345500,
+    "condo_sales": 426,
+    "sf_median": 647500,
+    "sf_sales": 290
+   },
+   "2013-08": {
+    "condo_median": 350000,
+    "condo_sales": 460,
+    "sf_median": 665000,
+    "sf_sales": 366
+   },
+   "2013-09": {
+    "condo_median": 348000,
+    "condo_sales": 421,
+    "sf_median": 675000,
+    "sf_sales": 303
+   },
+   "2013-10": {
+    "condo_median": 325000,
+    "condo_sales": 419,
+    "sf_median": 640000,
+    "sf_sales": 290
+   },
+   "2013-11": {
+    "condo_median": 330000,
+    "condo_sales": 407,
+    "sf_median": 684000,
+    "sf_sales": 296
+   },
+   "2013-12": {
+    "condo_median": 330000,
+    "condo_sales": 390,
+    "sf_median": 685000,
+    "sf_sales": 283
+   },
+   "2014-01": {
+    "condo_median": 320000,
+    "condo_sales": 310,
+    "sf_median": 629500,
+    "sf_sales": 246
+   },
+   "2014-02": {
+    "condo_median": 359450,
+    "condo_sales": 296,
+    "sf_median": 679000,
+    "sf_sales": 190
+   },
+   "2014-03": {
+    "condo_median": 350000,
+    "condo_sales": 387,
+    "sf_median": 657000,
+    "sf_sales": 246
+   },
+   "2014-04": {
+    "condo_median": 355000,
+    "condo_sales": 445,
+    "sf_median": 648000,
+    "sf_sales": 247
+   },
+   "2014-05": {
+    "condo_median": 355000,
+    "condo_sales": 457,
+    "sf_median": 682000,
+    "sf_sales": 305
+   },
+   "2014-06": {
+    "condo_median": 360000,
+    "condo_sales": 411,
+    "sf_median": 700000,
+    "sf_sales": 303
+   },
+   "2014-07": {
+    "condo_median": 351750,
+    "condo_sales": 444,
+    "sf_median": 683500,
+    "sf_sales": 300
+   },
+   "2014-08": {
+    "condo_median": 350000,
+    "condo_sales": 444,
+    "sf_median": 650000,
+    "sf_sales": 323
+   },
+   "2014-09": {
+    "condo_median": 347000,
+    "condo_sales": 415,
+    "sf_median": 678500,
+    "sf_sales": 318
+   },
+   "2014-10": {
+    "condo_median": 352750,
+    "condo_sales": 448,
+    "sf_median": 690000,
+    "sf_sales": 298
+   },
+   "2014-11": {
+    "condo_median": 343000,
+    "condo_sales": 363,
+    "sf_median": 719500,
+    "sf_sales": 225
+   },
+   "2014-12": {
+    "condo_median": 361250,
+    "condo_sales": 390,
+    "sf_median": 690000,
+    "sf_sales": 284
+   },
+   "2015-01": {
+    "condo_median": 381500,
+    "condo_sales": 286,
+    "sf_median": 675000,
+    "sf_sales": 210
+   },
+   "2015-02": {
+    "condo_median": 326000,
+    "condo_sales": 290,
+    "sf_median": 648000,
+    "sf_sales": 201
+   },
+   "2015-03": {
+    "condo_median": 380000,
+    "condo_sales": 403,
+    "sf_median": 700000,
+    "sf_sales": 244
+   },
+   "2015-04": {
+    "condo_median": 370475,
+    "condo_sales": 454,
+    "sf_median": 674900,
+    "sf_sales": 301
+   },
+   "2015-05": {
+    "condo_median": 375000,
+    "condo_sales": 450,
+    "sf_median": 698000,
+    "sf_sales": 309
+   },
+   "2015-06": {
+    "condo_median": 338500,
+    "condo_sales": 500,
+    "sf_median": 700000,
+    "sf_sales": 324
+   },
+   "2015-07": {
+    "condo_median": 350000,
+    "condo_sales": 501,
+    "sf_median": 710000,
+    "sf_sales": 337
+   },
+   "2015-08": {
+    "condo_median": 354000,
+    "condo_sales": 428,
+    "sf_median": 699000,
+    "sf_sales": 344
+   },
+   "2015-09": {
+    "condo_median": 366000,
+    "condo_sales": 480,
+    "sf_median": 730000,
+    "sf_sales": 329
+   },
+   "2015-10": {
+    "condo_median": 370000,
+    "condo_sales": 454,
+    "sf_median": 720000,
+    "sf_sales": 313
+   },
+   "2015-11": {
+    "condo_median": 347500,
+    "condo_sales": 358,
+    "sf_median": 715500,
+    "sf_sales": 246
+   },
+   "2015-12": {
+    "condo_median": 386250,
+    "condo_sales": 424,
+    "sf_median": 700000,
+    "sf_sales": 297
+   },
+   "2016-01": {
+    "condo_median": 374500,
+    "condo_sales": 338,
+    "sf_median": 733500,
+    "sf_sales": 232
+   },
+   "2016-02": {
+    "condo_median": 378444,
+    "condo_sales": 324,
+    "sf_median": 700000,
+    "sf_sales": 240
+   },
+   "2016-03": {
+    "condo_median": 385000,
+    "condo_sales": 491,
+    "sf_median": 725000,
+    "sf_sales": 297
+   },
+   "2016-04": {
+    "condo_median": 389500,
+    "condo_sales": 460,
+    "sf_median": 720000,
+    "sf_sales": 301
+   },
+   "2016-05": {
+    "condo_median": 373000,
+    "condo_sales": 477,
+    "sf_median": 719000,
+    "sf_sales": 319
+   },
+   "2016-06": {
+    "condo_median": 405500,
+    "condo_sales": 548,
+    "sf_median": 760000,
+    "sf_sales": 324
+   },
+   "2016-07": {
+    "condo_median": 400000,
+    "condo_sales": 444,
+    "sf_median": 746000,
+    "sf_sales": 322
+   },
+   "2016-08": {
+    "condo_median": 398000,
+    "condo_sales": 481,
+    "sf_median": 747500,
+    "sf_sales": 344
+   },
+   "2016-09": {
+    "condo_median": 383250,
+    "condo_sales": 512,
+    "sf_median": 750000,
+    "sf_sales": 329
+   },
+   "2016-10": {
+    "condo_median": 396000,
+    "condo_sales": 428,
+    "sf_median": 742000,
+    "sf_sales": 335
+   },
+   "2016-11": {
+    "condo_median": 395000,
+    "condo_sales": 421,
+    "sf_median": 750000,
+    "sf_sales": 294
+   },
+   "2016-12": {
+    "condo_median": 390000,
+    "condo_sales": 525,
+    "sf_median": 730000,
+    "sf_sales": 341
+   },
+   "2017-01": {
+    "condo_median": 380000,
+    "condo_sales": 378,
+    "sf_median": 730000,
+    "sf_sales": 247
+   },
+   "2017-02": {
+    "condo_median": 385000,
+    "condo_sales": 362,
+    "sf_median": 755000,
+    "sf_sales": 221
+   },
+   "2017-03": {
+    "condo_median": 400000,
+    "condo_sales": 495,
+    "sf_median": 752000,
+    "sf_sales": 309
+   },
+   "2017-04": {
+    "condo_median": 415500,
+    "condo_sales": 486,
+    "sf_median": 712500,
+    "sf_sales": 280
+   },
+   "2017-05": {
+    "condo_median": 406500,
+    "condo_sales": 540,
+    "sf_median": 745000,
+    "sf_sales": 362
+   },
+   "2017-06": {
+    "condo_median": 400000,
+    "condo_sales": 536,
+    "sf_median": 795000,
+    "sf_sales": 370
+   },
+   "2017-07": {
+    "condo_median": 425000,
+    "condo_sales": 475,
+    "sf_median": 750000,
+    "sf_sales": 335
+   },
+   "2017-08": {
+    "condo_median": 419000,
+    "condo_sales": 575,
+    "sf_median": 786250,
+    "sf_sales": 362
+   },
+   "2017-09": {
+    "condo_median": 425000,
+    "condo_sales": 526,
+    "sf_median": 760000,
+    "sf_sales": 374
+   },
+   "2017-10": {
+    "condo_median": 397500,
+    "condo_sales": 489,
+    "sf_median": 752000,
+    "sf_sales": 355
+   },
+   "2017-11": {
+    "condo_median": 405000,
+    "condo_sales": 501,
+    "sf_median": 773500,
+    "sf_sales": 332
+   },
+   "2017-12": {
+    "condo_median": 405000,
+    "condo_sales": 461,
+    "sf_median": 750000,
+    "sf_sales": 361
+   },
+   "2018-01": {
+    "condo_median": 430000,
+    "condo_sales": 374,
+    "sf_median": 772000,
+    "sf_sales": 252
+   },
+   "2018-02": {
+    "condo_median": 409000,
+    "condo_sales": 385,
+    "sf_median": 772500,
+    "sf_sales": 217
+   },
+   "2018-03": {
+    "condo_median": 435000,
+    "condo_sales": 485,
+    "sf_median": 760000,
+    "sf_sales": 305
+   },
+   "2018-04": {
+    "condo_median": 416000,
+    "condo_sales": 547,
+    "sf_median": 790000,
+    "sf_sales": 289
+   },
+   "2018-05": {
+    "condo_median": 430000,
+    "condo_sales": 495,
+    "sf_median": 778000,
+    "sf_sales": 332
+   },
+   "2018-06": {
+    "condo_median": 420000,
+    "condo_sales": 547,
+    "sf_median": 782388,
+    "sf_sales": 365
+   },
+   "2018-07": {
+    "condo_median": 429500,
+    "condo_sales": 502,
+    "sf_median": 789500,
+    "sf_sales": 330
+   },
+   "2018-08": {
+    "condo_median": 427000,
+    "condo_sales": 521,
+    "sf_median": 810000,
+    "sf_sales": 354
+   },
+   "2018-09": {
+    "condo_median": 428000,
+    "condo_sales": 511,
+    "sf_median": 812500,
+    "sf_sales": 309
+   },
+   "2018-10": {
+    "condo_median": 390000,
+    "condo_sales": 443,
+    "sf_median": 800000,
+    "sf_sales": 309
+   },
+   "2018-11": {
+    "condo_median": 420000,
+    "condo_sales": 429,
+    "sf_median": 797000,
+    "sf_sales": 288
+   },
+   "2018-12": {
+    "condo_median": 398500,
+    "condo_sales": 440,
+    "sf_median": 788000,
+    "sf_sales": 259
+   },
+   "2019-01": {
+    "condo_median": 399000,
+    "condo_sales": 326,
+    "sf_median": 767500,
+    "sf_sales": 246
+   },
+   "2019-02": {
+    "condo_median": 415000,
+    "condo_sales": 321,
+    "sf_median": 789000,
+    "sf_sales": 208
+   },
+   "2019-03": {
+    "condo_median": 429000,
+    "condo_sales": 467,
+    "sf_median": 782500,
+    "sf_sales": 276
+   },
+   "2019-04": {
+    "condo_median": 418950,
+    "condo_sales": 476,
+    "sf_median": 766750,
+    "sf_sales": 318
+   },
+   "2019-05": {
+    "condo_median": 417500,
+    "condo_sales": 520,
+    "sf_median": 770000,
+    "sf_sales": 320
+   },
+   "2019-06": {
+    "condo_median": 432500,
+    "condo_sales": 473,
+    "sf_median": 800000,
+    "sf_sales": 327
+   },
+   "2019-07": {
+    "condo_median": 461500,
+    "condo_sales": 513,
+    "sf_median": 835000,
+    "sf_sales": 372
+   },
+   "2019-08": {
+    "condo_median": 419500,
+    "condo_sales": 512,
+    "sf_median": 790000,
+    "sf_sales": 360
+   },
+   "2019-09": {
+    "condo_median": 445000,
+    "condo_sales": 466,
+    "sf_median": 777000,
+    "sf_sales": 347
+   },
+   "2019-10": {
+    "condo_median": 441000,
+    "condo_sales": 472,
+    "sf_median": 780000,
+    "sf_sales": 347
+   },
+   "2019-11": {
+    "condo_median": 415000,
+    "condo_sales": 434,
+    "sf_median": 794750,
+    "sf_sales": 320
+   },
+   "2019-12": {
+    "condo_median": 425500,
+    "condo_sales": 428,
+    "sf_median": 820000,
+    "sf_sales": 309
+   },
+   "2020-01": {
+    "condo_median": 429000,
+    "condo_sales": 379,
+    "sf_median": 770000,
+    "sf_sales": 265
+   },
+   "2020-02": {
+    "condo_median": 430000,
+    "condo_sales": 316,
+    "sf_median": 765000,
+    "sf_sales": 247
+   },
+   "2020-03": {
+    "condo_median": 435000,
+    "condo_sales": 410,
+    "sf_median": 810000,
+    "sf_sales": 303
+   },
+   "2020-04": {
+    "condo_median": 450000,
+    "condo_sales": 343,
+    "sf_median": 809000,
+    "sf_sales": 248
+   },
+   "2020-05": {
+    "condo_median": 399000,
+    "condo_sales": 254,
+    "sf_median": 797000,
+    "sf_sales": 248
+   },
+   "2020-06": {
+    "condo_median": 421500,
+    "condo_sales": 312,
+    "sf_median": 770000,
+    "sf_sales": 302
+   },
+   "2020-07": {
+    "condo_median": 440000,
+    "condo_sales": 426,
+    "sf_median": 815000,
+    "sf_sales": 361
+   },
+   "2020-08": {
+    "condo_median": 430000,
+    "condo_sales": 409,
+    "sf_median": 839000,
+    "sf_sales": 370
+   },
+   "2020-09": {
+    "condo_median": 445000,
+    "condo_sales": 456,
+    "sf_median": 880000,
+    "sf_sales": 391
+   },
+   "2020-10": {
+    "condo_median": 439500,
+    "condo_sales": 480,
+    "sf_median": 865000,
+    "sf_sales": 345
+   },
+   "2020-11": {
+    "condo_median": 420000,
+    "condo_sales": 407,
+    "sf_median": 872500,
+    "sf_sales": 338
+   },
+   "2020-12": {
+    "condo_median": 455000,
+    "condo_sales": 514,
+    "sf_median": 870000,
+    "sf_sales": 420
+   },
+   "2021-01": {
+    "condo_median": 452000,
+    "condo_sales": 392,
+    "sf_median": 883000,
+    "sf_sales": 291
+   },
+   "2021-02": {
+    "condo_median": 457500,
+    "condo_sales": 446,
+    "sf_median": 917500,
+    "sf_sales": 260
+   },
+   "2021-03": {
+    "condo_median": 451000,
+    "condo_sales": 626,
+    "sf_median": 950000,
+    "sf_sales": 361
+   },
+   "2021-04": {
+    "condo_median": 450000,
+    "condo_sales": 645,
+    "sf_median": 928000,
+    "sf_sales": 375
+   },
+   "2021-05": {
+    "condo_median": 457750,
+    "condo_sales": 598,
+    "sf_median": 978000,
+    "sf_sales": 405
+   },
+   "2021-06": {
+    "condo_median": 460000,
+    "condo_sales": 730,
+    "sf_median": 979000,
+    "sf_sales": 451
+   },
+   "2021-07": {
+    "condo_median": 475000,
+    "condo_sales": 671,
+    "sf_median": 992500,
+    "sf_sales": 404
+   },
+   "2021-08": {
+    "condo_median": 500000,
+    "condo_sales": 675,
+    "sf_median": 1050000,
+    "sf_sales": 425
+   },
+   "2021-09": {
+    "condo_median": 478000,
+    "condo_sales": 615,
+    "sf_median": 1050000,
+    "sf_sales": 424
+   },
+   "2021-10": {
+    "condo_median": 500000,
+    "condo_sales": 611,
+    "sf_median": 1000000,
+    "sf_sales": 381
+   },
+   "2021-11": {
+    "condo_median": 500000,
+    "condo_sales": 601,
+    "sf_median": 1050000,
+    "sf_sales": 371
+   },
+   "2021-12": {
+    "condo_median": 485000,
+    "condo_sales": 593,
+    "sf_median": 1050000,
+    "sf_sales": 378
+   },
+   "2022-01": {
+    "condo_median": 510000,
+    "condo_sales": 552,
+    "sf_median": 1050000,
+    "sf_sales": 326
+   },
+   "2022-02": {
+    "condo_median": 497000,
+    "condo_sales": 486,
+    "sf_median": 1125000,
+    "sf_sales": 241
+   },
+   "2022-03": {
+    "condo_median": 515500,
+    "condo_sales": 672,
+    "sf_median": 1150000,
+    "sf_sales": 321
+   },
+   "2022-04": {
+    "condo_median": 510000,
+    "condo_sales": 672,
+    "sf_median": 1105000,
+    "sf_sales": 365
+   },
+   "2022-05": {
+    "condo_median": 516500,
+    "condo_sales": 688,
+    "sf_median": 1153500,
+    "sf_sales": 344
+   },
+   "2022-06": {
+    "condo_median": 534000,
+    "condo_sales": 626,
+    "sf_median": 1100000,
+    "sf_sales": 357
+   },
+   "2022-07": {
+    "condo_median": 500000,
+    "condo_sales": 518,
+    "sf_median": 1107944,
+    "sf_sales": 312
+   },
+   "2022-08": {
+    "condo_median": 498500,
+    "condo_sales": 508,
+    "sf_median": 1125500,
+    "sf_sales": 314
+   },
+   "2022-09": {
+    "condo_median": 502500,
+    "condo_sales": 496,
+    "sf_median": 1100000,
+    "sf_sales": 278
+   },
+   "2022-10": {
+    "condo_median": 520000,
+    "condo_sales": 435,
+    "sf_median": 1050000,
+    "sf_sales": 222
+   },
+   "2022-11": {
+    "condo_median": 480000,
+    "condo_sales": 340,
+    "sf_median": 1149500,
+    "sf_sales": 192
+   },
+   "2022-12": {
+    "condo_median": 502500,
+    "condo_sales": 360,
+    "sf_median": 1049500,
+    "sf_sales": 202
+   },
+   "2023-01": {
+    "condo_median": 495000,
+    "condo_sales": 275,
+    "sf_median": 970000,
+    "sf_sales": 150
+   },
+   "2023-02": {
+    "condo_median": 480000,
+    "condo_sales": 325,
+    "sf_median": 987000,
+    "sf_sales": 173
+   },
+   "2023-03": {
+    "condo_median": 536000,
+    "condo_sales": 444,
+    "sf_median": 1083750,
+    "sf_sales": 236
+   },
+   "2023-04": {
+    "condo_median": 500000,
+    "condo_sales": 420,
+    "sf_median": 999995,
+    "sf_sales": 208
+   },
+   "2023-05": {
+    "condo_median": 505000,
+    "condo_sales": 438,
+    "sf_median": 1109000,
+    "sf_sales": 262
+   },
+   "2023-06": {
+    "condo_median": 510000,
+    "condo_sales": 470,
+    "sf_median": 1050000,
+    "sf_sales": 248
+   },
+   "2023-07": {
+    "condo_median": 500000,
+    "condo_sales": 422,
+    "sf_median": 1090000,
+    "sf_sales": 224
+   },
+   "2023-08": {
+    "condo_median": 515000,
+    "condo_sales": 422,
+    "sf_median": 1110000,
+    "sf_sales": 252
+   },
+   "2023-09": {
+    "condo_median": 532500,
+    "condo_sales": 376,
+    "sf_median": 1050000,
+    "sf_sales": 232
+   },
+   "2023-10": {
+    "condo_median": 515000,
+    "condo_sales": 399,
+    "sf_median": 1100000,
+    "sf_sales": 213
+   },
+   "2023-11": {
+    "condo_median": 516179,
+    "condo_sales": 310,
+    "sf_median": 1100055,
+    "sf_sales": 180
+   },
+   "2023-12": {
+    "condo_median": 510000,
+    "condo_sales": 272,
+    "sf_median": 996500,
+    "sf_sales": 182
+   },
+   "2024-01": {
+    "condo_median": 502500,
+    "condo_sales": 292,
+    "sf_median": 1021016,
+    "sf_sales": 184
+   },
+   "2024-02": {
+    "condo_median": 512500,
+    "condo_sales": 334,
+    "sf_median": 1075000,
+    "sf_sales": 179
+   },
+   "2024-03": {
+    "condo_median": 500000,
+    "condo_sales": 344,
+    "sf_median": 1100000,
+    "sf_sales": 230
+   },
+   "2024-04": {
+    "condo_median": 528000,
+    "condo_sales": 431,
+    "sf_median": 1100000,
+    "sf_sales": 262
+   },
+   "2024-05": {
+    "condo_median": 495000,
+    "condo_sales": 478,
+    "sf_median": 1085000,
+    "sf_sales": 249
+   },
+   "2024-06": {
+    "condo_median": 530000,
+    "condo_sales": 355,
+    "sf_median": 1120000,
+    "sf_sales": 258
+   },
+   "2024-07": {
+    "condo_median": 509000,
+    "condo_sales": 389,
+    "sf_median": 1140000,
+    "sf_sales": 269
+   },
+   "2024-08": {
+    "condo_median": 500000,
+    "condo_sales": 401,
+    "sf_median": 1122000,
+    "sf_sales": 253
+   },
+   "2024-09": {
+    "condo_median": 517500,
+    "condo_sales": 366,
+    "sf_median": 1112722,
+    "sf_sales": 217
+   },
+   "2024-10": {
+    "condo_median": 525000,
+    "condo_sales": 405,
+    "sf_median": 1100000,
+    "sf_sales": 261
+   },
+   "2024-11": {
+    "condo_median": 530000,
+    "condo_sales": 341,
+    "sf_median": 1115000,
+    "sf_sales": 203
+   },
+   "2024-12": {
+    "condo_median": 540000,
+    "condo_sales": 323,
+    "sf_median": 1054500,
+    "sf_sales": 228
+   },
+   "2025-01": {
+    "condo_median": 539500,
+    "condo_sales": 312,
+    "sf_median": 1120000,
+    "sf_sales": 196
+   },
+   "2025-02": {
+    "condo_median": 494000,
+    "condo_sales": 293,
+    "sf_median": 1185000,
+    "sf_sales": 167
+   },
+   "2025-03": {
+    "condo_median": 500000,
+    "condo_sales": 369,
+    "sf_median": 1160000,
+    "sf_sales": 206
+   },
+   "2025-04": {
+    "condo_median": 505000,
+    "condo_sales": 395,
+    "sf_median": 1170000,
+    "sf_sales": 241
+   },
+   "2025-05": {
+    "condo_median": 500000,
+    "condo_sales": 374,
+    "sf_median": 1175000,
+    "sf_sales": 235
+   },
+   "2025-06": {
+    "condo_median": 510000,
+    "condo_sales": 358,
+    "sf_median": 1125000,
+    "sf_sales": 289
+   },
+   "2025-07": {
+    "condo_median": 490000,
+    "condo_sales": 389,
+    "sf_median": 1075000,
+    "sf_sales": 249
+   },
+   "2025-08": {
+    "condo_median": 515000,
+    "condo_sales": 391,
+    "sf_median": 1105500,
+    "sf_sales": 259
+   },
+   "2025-09": {
+    "condo_median": 508750,
+    "condo_sales": 408,
+    "sf_median": 1155000,
+    "sf_sales": 276
+   },
+   "2025-10": {
+    "condo_median": 535000,
+    "condo_sales": 443,
+    "sf_median": 1162500,
+    "sf_sales": 261
+   },
+   "2025-11": {
+    "condo_median": 487450,
+    "condo_sales": 316,
+    "sf_median": 1100000,
+    "sf_sales": 241
+   },
+   "2025-12": {
+    "condo_median": 512000,
+    "condo_sales": 360,
+    "sf_median": 1100000,
+    "sf_sales": 270
+   },
+   "2026-01": {
+    "condo_median": 529000,
+    "condo_sales": 297,
+    "sf_median": 1122500,
+    "sf_sales": 194
+   },
+   "2026-02": {
+    "condo_median": 500000,
+    "condo_sales": 291,
+    "sf_median": 1205000,
+    "sf_sales": 177
+   },
+   "2026-03": {
+    "condo_median": 510000,
+    "condo_sales": 351,
+    "sf_median": 1199500,
+    "sf_sales": 260
+   },
+   "2026-04": {
+    "condo_median": 500000,
+    "condo_sales": 378,
+    "sf_median": 1150000,
+    "sf_sales": 230
+   },
+   "2026-05": {
+    "condo_median": 520000,
+    "condo_sales": 339,
+    "sf_median": 1166000,
+    "sf_sales": 255
+   },
+   "2026-06": {
+    "condo_median": 528000,
+    "condo_sales": 397,
+    "sf_median": 1242500,
+    "sf_sales": 270
+   },
+   "2026-07": {
+    "condo_median": 504500,
+    "condo_sales": 416,
+    "sf_median": 1224500,
+    "sf_sales": 300
+   },
+   "2026-08": {
+    "condo_median": 510000,
+    "condo_sales": 365,
+    "sf_median": 1240000,
+    "sf_sales": 264
+   }
+  },
+  "kauai": {
+   "2006-01": {
+    "condo_median": 440400,
+    "condo_sales": 53,
+    "sf_median": 650000,
+    "sf_sales": 35
+   },
+   "2006-02": {
+    "condo_median": 439000,
+    "condo_sales": 51,
+    "sf_median": 649000,
+    "sf_sales": 36
+   },
+   "2006-03": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-04": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-05": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-06": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-07": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-08": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-09": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-10": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-11": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2006-12": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-01": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-02": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-03": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-04": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-05": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-06": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-07": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-08": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-09": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-10": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-11": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2007-12": {
+    "condo_median": null,
+    "condo_sales": null,
+    "sf_median": null,
+    "sf_sales": null
+   },
+   "2008-01": {
+    "condo_median": 586000,
+    "condo_sales": null,
+    "sf_median": 585000,
+    "sf_sales": null
+   },
+   "2008-02": {
+    "condo_median": 565000,
+    "condo_sales": null,
+    "sf_median": 760000,
+    "sf_sales": null
+   },
+   "2008-03": {
+    "condo_median": 677500,
+    "condo_sales": null,
+    "sf_median": 681450,
+    "sf_sales": null
+   },
+   "2008-04": {
+    "condo_median": 420000,
+    "condo_sales": null,
+    "sf_median": 575000,
+    "sf_sales": null
+   },
+   "2008-05": {
+    "condo_median": 330000,
+    "condo_sales": null,
+    "sf_median": 705000,
+    "sf_sales": null
+   },
+   "2008-06": {
+    "condo_median": 695000,
+    "condo_sales": null,
+    "sf_median": 705000,
+    "sf_sales": null
+   },
+   "2008-07": {
+    "condo_median": 435000,
+    "condo_sales": null,
+    "sf_median": 575000,
+    "sf_sales": null
+   },
+   "2008-08": {
+    "condo_median": 299000,
+    "condo_sales": null,
+    "sf_median": 530000,
+    "sf_sales": null
+   },
+   "2008-09": {
+    "condo_median": 495000,
+    "condo_sales": null,
+    "sf_median": 525000,
+    "sf_sales": null
+   },
+   "2008-10": {
+    "condo_median": 520000,
+    "condo_sales": null,
+    "sf_median": 515000,
+    "sf_sales": null
+   },
+   "2008-11": {
+    "condo_median": 425000,
+    "condo_sales": null,
+    "sf_median": 615000,
+    "sf_sales": null
+   },
+   "2008-12": {
+    "condo_median": 625000,
+    "condo_sales": null,
+    "sf_median": 490000,
+    "sf_sales": null
+   },
+   "2009-01": {
+    "condo_median": 254000,
+    "condo_sales": null,
+    "sf_median": 466785,
+    "sf_sales": null
+   },
+   "2009-02": {
+    "condo_median": 290000,
+    "condo_sales": null,
+    "sf_median": 400000,
+    "sf_sales": null
+   },
+   "2009-03": {
+    "condo_median": 220000,
+    "condo_sales": null,
+    "sf_median": 479000,
+    "sf_sales": null
+   },
+   "2009-04": {
+    "condo_median": 222250,
+    "condo_sales": null,
+    "sf_median": 600000,
+    "sf_sales": null
+   },
+   "2009-05": {
+    "condo_median": 330000,
+    "condo_sales": null,
+    "sf_median": 600000,
+    "sf_sales": null
+   },
+   "2009-06": {
+    "condo_median": 385000,
+    "condo_sales": null,
+    "sf_median": 410000,
+    "sf_sales": null
+   },
+   "2009-07": {
+    "condo_median": 530000,
+    "condo_sales": null,
+    "sf_median": 430000,
+    "sf_sales": null
+   },
+   "2009-08": {
+    "condo_median": 313000,
+    "condo_sales": null,
+    "sf_median": 471000,
+    "sf_sales": null
+   },
+   "2009-09": {
+    "condo_median": 501500,
+    "condo_sales": null,
+    "sf_median": 474500,
+    "sf_sales": null
+   },
+   "2009-10": {
+    "condo_median": 435000,
+    "condo_sales": null,
+    "sf_median": 456500,
+    "sf_sales": null
+   },
+   "2009-11": {
+    "condo_median": 300000,
+    "condo_sales": null,
+    "sf_median": 558000,
+    "sf_sales": null
+   },
+   "2009-12": {
+    "condo_median": 370000,
+    "condo_sales": null,
+    "sf_median": 545000,
+    "sf_sales": null
+   },
+   "2010-01": {
+    "condo_median": 335000,
+    "condo_sales": null,
+    "sf_median": 375000,
+    "sf_sales": null
+   },
+   "2010-02": {
+    "condo_median": 370000,
+    "condo_sales": null,
+    "sf_median": 446500,
+    "sf_sales": null
+   },
+   "2010-03": {
+    "condo_median": 345000,
+    "condo_sales": null,
+    "sf_median": 515000,
+    "sf_sales": null
+   },
+   "2010-04": {
+    "condo_median": 298750,
+    "condo_sales": null,
+    "sf_median": 577000,
+    "sf_sales": null
+   },
+   "2010-05": {
+    "condo_median": 180000,
+    "condo_sales": null,
+    "sf_median": 410000,
+    "sf_sales": null
+   },
+   "2010-06": {
+    "condo_median": 325000,
+    "condo_sales": null,
+    "sf_median": 480000,
+    "sf_sales": null
+   },
+   "2010-07": {
+    "condo_median": 362500,
+    "condo_sales": null,
+    "sf_median": 550000,
+    "sf_sales": null
+   },
+   "2010-08": {
+    "condo_median": 290000,
+    "condo_sales": null,
+    "sf_median": 540000,
+    "sf_sales": null
+   },
+   "2010-09": {
+    "condo_median": 260000,
+    "condo_sales": null,
+    "sf_median": 529500,
+    "sf_sales": null
+   },
+   "2010-10": {
+    "condo_median": 217500,
+    "condo_sales": null,
+    "sf_median": 575250,
+    "sf_sales": null
+   },
+   "2010-11": {
+    "condo_median": 390000,
+    "condo_sales": null,
+    "sf_median": 452500,
+    "sf_sales": null
+   },
+   "2010-12": {
+    "condo_median": 345750,
+    "condo_sales": null,
+    "sf_median": 475000,
+    "sf_sales": null
+   },
+   "2011-01": {
+    "condo_median": 219000,
+    "condo_sales": null,
+    "sf_median": 420000,
+    "sf_sales": null
+   },
+   "2011-02": {
+    "condo_median": 144500,
+    "condo_sales": null,
+    "sf_median": 600000,
+    "sf_sales": null
+   },
+   "2011-03": {
+    "condo_median": 187450,
+    "condo_sales": null,
+    "sf_median": 435000,
+    "sf_sales": null
+   },
+   "2011-04": {
+    "condo_median": 204900,
+    "condo_sales": null,
+    "sf_median": 446250,
+    "sf_sales": null
+   },
+   "2011-05": {
+    "condo_median": 216000,
+    "condo_sales": null,
+    "sf_median": 600000,
+    "sf_sales": null
+   },
+   "2011-06": {
+    "condo_median": 282500,
+    "condo_sales": null,
+    "sf_median": 430000,
+    "sf_sales": null
+   },
+   "2011-07": {
+    "condo_median": 207450,
+    "condo_sales": null,
+    "sf_median": 430000,
+    "sf_sales": null
+   },
+   "2011-08": {
+    "condo_median": 262000,
+    "condo_sales": null,
+    "sf_median": 447500,
+    "sf_sales": null
+   },
+   "2011-09": {
+    "condo_median": 235500,
+    "condo_sales": null,
+    "sf_median": 440000,
+    "sf_sales": null
+   },
+   "2011-10": {
+    "condo_median": 250000,
+    "condo_sales": null,
+    "sf_median": 450000,
+    "sf_sales": null
+   },
+   "2011-11": {
+    "condo_median": 212500,
+    "condo_sales": null,
+    "sf_median": 463500,
+    "sf_sales": null
+   },
+   "2011-12": {
+    "condo_median": 315000,
+    "condo_sales": null,
+    "sf_median": 429000,
+    "sf_sales": null
+   },
+   "2012-01": {
+    "condo_median": 200000,
+    "condo_sales": null,
+    "sf_median": 402500,
+    "sf_sales": null
+   },
+   "2012-02": {
+    "condo_median": 270000,
+    "condo_sales": null,
+    "sf_median": 449000,
+    "sf_sales": null
+   },
+   "2012-03": {
+    "condo_median": 285000,
+    "condo_sales": null,
+    "sf_median": 350000,
+    "sf_sales": null
+   },
+   "2012-04": {
+    "condo_median": 312000,
+    "condo_sales": null,
+    "sf_median": 680000,
+    "sf_sales": null
+   },
+   "2012-05": {
+    "condo_median": 264500,
+    "condo_sales": null,
+    "sf_median": 480000,
+    "sf_sales": null
+   },
+   "2012-06": {
+    "condo_median": 435000,
+    "condo_sales": null,
+    "sf_median": 400000,
+    "sf_sales": null
+   },
+   "2012-07": {
+    "condo_median": 252800,
+    "condo_sales": null,
+    "sf_median": 410000,
+    "sf_sales": null
+   },
+   "2012-08": {
+    "condo_median": 242000,
+    "condo_sales": null,
+    "sf_median": 460000,
+    "sf_sales": null
+   },
+   "2012-09": {
+    "condo_median": 325000,
+    "condo_sales": null,
+    "sf_median": 524500,
+    "sf_sales": null
+   },
+   "2012-10": {
+    "condo_median": 250000,
+    "condo_sales": null,
+    "sf_median": 410000,
+    "sf_sales": null
+   },
+   "2012-11": {
+    "condo_median": 294000,
+    "condo_sales": null,
+    "sf_median": 522500,
+    "sf_sales": null
+   },
+   "2012-12": {
+    "condo_median": 290000,
+    "condo_sales": null,
+    "sf_median": 458750,
+    "sf_sales": null
+   },
+   "2013-01": {
+    "condo_median": 335500,
+    "condo_sales": 14,
+    "sf_median": 405000,
+    "sf_sales": 29
+   },
+   "2013-02": {
+    "condo_median": 225000,
+    "condo_sales": 21,
+    "sf_median": 512400,
+    "sf_sales": 24
+   },
+   "2013-03": {
+    "condo_median": 395000,
+    "condo_sales": 25,
+    "sf_median": 477500,
+    "sf_sales": 37
+   },
+   "2013-04": {
+    "condo_median": 335000,
+    "condo_sales": 43,
+    "sf_median": 575000,
+    "sf_sales": 55
+   },
+   "2013-05": {
+    "condo_median": 364750,
+    "condo_sales": 30,
+    "sf_median": 519500,
+    "sf_sales": 42
+   },
+   "2013-06": {
+    "condo_median": 271000,
+    "condo_sales": 42,
+    "sf_median": 530000,
+    "sf_sales": 39
+   },
+   "2013-07": {
+    "condo_median": 268000,
+    "condo_sales": 38,
+    "sf_median": 432500,
+    "sf_sales": 40
+   },
+   "2013-08": {
+    "condo_median": 274000,
+    "condo_sales": 27,
+    "sf_median": 685000,
+    "sf_sales": 37
+   },
+   "2013-09": {
+    "condo_median": 207500,
+    "condo_sales": 28,
+    "sf_median": 490000,
+    "sf_sales": 39
+   },
+   "2013-10": {
+    "condo_median": 320000,
+    "condo_sales": 33,
+    "sf_median": 580000,
+    "sf_sales": 32
+   },
+   "2013-11": {
+    "condo_median": 290000,
+    "condo_sales": 27,
+    "sf_median": 589500,
+    "sf_sales": 30
+   },
+   "2013-12": {
+    "condo_median": 311000,
+    "condo_sales": 21,
+    "sf_median": 454500,
+    "sf_sales": 42
+   },
+   "2014-01": {
+    "condo_median": 310000,
+    "condo_sales": 33,
+    "sf_median": 483750,
+    "sf_sales": 20
+   },
+   "2014-02": {
+    "condo_median": 304500,
+    "condo_sales": 22,
+    "sf_median": 499000,
+    "sf_sales": 31
+   },
+   "2014-03": {
+    "condo_median": 310000,
+    "condo_sales": 22,
+    "sf_median": 562500,
+    "sf_sales": 46
+   },
+   "2014-04": {
+    "condo_median": 378000,
+    "condo_sales": 33,
+    "sf_median": 542500,
+    "sf_sales": 40
+   },
+   "2014-05": {
+    "condo_median": 385000,
+    "condo_sales": 37,
+    "sf_median": 530000,
+    "sf_sales": 47
+   },
+   "2014-06": {
+    "condo_median": 307000,
+    "condo_sales": 36,
+    "sf_median": 560750,
+    "sf_sales": 52
+   },
+   "2014-07": {
+    "condo_median": 378500,
+    "condo_sales": 30,
+    "sf_median": 495000,
+    "sf_sales": 35
+   },
+   "2014-08": {
+    "condo_median": 300000,
+    "condo_sales": 20,
+    "sf_median": 521500,
+    "sf_sales": 49
+   },
+   "2014-09": {
+    "condo_median": 240000,
+    "condo_sales": 25,
+    "sf_median": 522500,
+    "sf_sales": 40
+   },
+   "2014-10": {
+    "condo_median": 238338,
+    "condo_sales": 30,
+    "sf_median": 475000,
+    "sf_sales": 37
+   },
+   "2014-11": {
+    "condo_median": 397500,
+    "condo_sales": 16,
+    "sf_median": 499000,
+    "sf_sales": 35
+   },
+   "2014-12": {
+    "condo_median": 385000,
+    "condo_sales": 25,
+    "sf_median": 875000,
+    "sf_sales": 35
+   },
+   "2015-01": {
+    "condo_median": 430000,
+    "condo_sales": 26,
+    "sf_median": 497000,
+    "sf_sales": 33
+   },
+   "2015-02": {
+    "condo_median": 315000,
+    "condo_sales": 23,
+    "sf_median": 730000,
+    "sf_sales": 25
+   },
+   "2015-03": {
+    "condo_median": 297504,
+    "condo_sales": 32,
+    "sf_median": 967500,
+    "sf_sales": 34
+   },
+   "2015-04": {
+    "condo_median": 385000,
+    "condo_sales": 25,
+    "sf_median": 551750,
+    "sf_sales": 36
+   },
+   "2015-05": {
+    "condo_median": 373000,
+    "condo_sales": 42,
+    "sf_median": 615000,
+    "sf_sales": 51
+   },
+   "2015-06": {
+    "condo_median": 306504,
+    "condo_sales": 42,
+    "sf_median": 570000,
+    "sf_sales": 47
+   },
+   "2015-07": {
+    "condo_median": 447500,
+    "condo_sales": 36,
+    "sf_median": 612000,
+    "sf_sales": 41
+   },
+   "2015-08": {
+    "condo_median": 247250,
+    "condo_sales": 20,
+    "sf_median": 645000,
+    "sf_sales": 57
+   },
+   "2015-09": {
+    "condo_median": 390000,
+    "condo_sales": 29,
+    "sf_median": 550500,
+    "sf_sales": 36
+   },
+   "2015-10": {
+    "condo_median": 318000,
+    "condo_sales": 35,
+    "sf_median": 675000,
+    "sf_sales": 49
+   },
+   "2015-11": {
+    "condo_median": 430000,
+    "condo_sales": 29,
+    "sf_median": 585000,
+    "sf_sales": 31
+   },
+   "2015-12": {
+    "condo_median": 364500,
+    "condo_sales": 32,
+    "sf_median": 575000,
+    "sf_sales": 49
+   },
+   "2016-01": {
+    "condo_median": 477500,
+    "condo_sales": 36,
+    "sf_median": 645000,
+    "sf_sales": 32
+   },
+   "2016-02": {
+    "condo_median": 310500,
+    "condo_sales": 22,
+    "sf_median": 650000,
+    "sf_sales": 37
+   },
+   "2016-03": {
+    "condo_median": 355000,
+    "condo_sales": 37,
+    "sf_median": 652000,
+    "sf_sales": 55
+   },
+   "2016-04": {
+    "condo_median": 429975,
+    "condo_sales": 34,
+    "sf_median": 550000,
+    "sf_sales": 47
+   },
+   "2016-05": {
+    "condo_median": 340000,
+    "condo_sales": 37,
+    "sf_median": 510000,
+    "sf_sales": 35
+   },
+   "2016-06": {
+    "condo_median": 344000,
+    "condo_sales": 22,
+    "sf_median": 690999,
+    "sf_sales": 63
+   },
+   "2016-07": {
+    "condo_median": 391000,
+    "condo_sales": 32,
+    "sf_median": 750000,
+    "sf_sales": 40
+   },
+   "2016-08": {
+    "condo_median": 468000,
+    "condo_sales": 26,
+    "sf_median": 600000,
+    "sf_sales": 59
+   },
+   "2016-09": {
+    "condo_median": 445000,
+    "condo_sales": 31,
+    "sf_median": 580000,
+    "sf_sales": 47
+   },
+   "2016-10": {
+    "condo_median": 440000,
+    "condo_sales": 31,
+    "sf_median": 624000,
+    "sf_sales": 37
+   },
+   "2016-11": {
+    "condo_median": 390000,
+    "condo_sales": 29,
+    "sf_median": 598000,
+    "sf_sales": 61
+   },
+   "2016-12": {
+    "condo_median": 400000,
+    "condo_sales": 41,
+    "sf_median": 690000,
+    "sf_sales": 55
+   },
+   "2017-01": {
+    "condo_median": 301000,
+    "condo_sales": 39,
+    "sf_median": 632000,
+    "sf_sales": 50
+   },
+   "2017-02": {
+    "condo_median": 464000,
+    "condo_sales": 31,
+    "sf_median": 682500,
+    "sf_sales": 34
+   },
+   "2017-03": {
+    "condo_median": 425000,
+    "condo_sales": 33,
+    "sf_median": 669000,
+    "sf_sales": 45
+   },
+   "2017-04": {
+    "condo_median": 430000,
+    "condo_sales": 35,
+    "sf_median": 641000,
+    "sf_sales": 34
+   },
+   "2017-05": {
+    "condo_median": 467500,
+    "condo_sales": 42,
+    "sf_median": 750000,
+    "sf_sales": 53
+   },
+   "2017-06": {
+    "condo_median": 430000,
+    "condo_sales": 51,
+    "sf_median": 702500,
+    "sf_sales": 54
+   },
+   "2017-07": {
+    "condo_median": 360000,
+    "condo_sales": 32,
+    "sf_median": 565000,
+    "sf_sales": 51
+   },
+   "2017-08": {
+    "condo_median": 428500,
+    "condo_sales": 24,
+    "sf_median": 622063,
+    "sf_sales": 44
+   },
+   "2017-09": {
+    "condo_median": 437500,
+    "condo_sales": 36,
+    "sf_median": 640000,
+    "sf_sales": 46
+   },
+   "2017-10": {
+    "condo_median": 465000,
+    "condo_sales": 58,
+    "sf_median": 700000,
+    "sf_sales": 51
+   },
+   "2017-11": {
+    "condo_median": 406000,
+    "condo_sales": 30,
+    "sf_median": 682500,
+    "sf_sales": 48
+   },
+   "2017-12": {
+    "condo_median": 542500,
+    "condo_sales": 42,
+    "sf_median": 587500,
+    "sf_sales": 42
+   },
+   "2018-01": {
+    "condo_median": 287500,
+    "condo_sales": 34,
+    "sf_median": 770000,
+    "sf_sales": 45
+   },
+   "2018-02": {
+    "condo_median": 333000,
+    "condo_sales": 36,
+    "sf_median": 725000,
+    "sf_sales": 53
+   },
+   "2018-03": {
+    "condo_median": 441500,
+    "condo_sales": 44,
+    "sf_median": 758000,
+    "sf_sales": 64
+   },
+   "2018-04": {
+    "condo_median": 463500,
+    "condo_sales": 42,
+    "sf_median": 635000,
+    "sf_sales": 40
+   },
+   "2018-05": {
+    "condo_median": 284000,
+    "condo_sales": 47,
+    "sf_median": 737500,
+    "sf_sales": 50
+   },
+   "2018-06": {
+    "condo_median": 575000,
+    "condo_sales": 73,
+    "sf_median": 730000,
+    "sf_sales": 56
+   },
+   "2018-07": {
+    "condo_median": 475000,
+    "condo_sales": 35,
+    "sf_median": 615000,
+    "sf_sales": 57
+   },
+   "2018-08": {
+    "condo_median": 440000,
+    "condo_sales": 36,
+    "sf_median": 695000,
+    "sf_sales": 53
+   },
+   "2018-09": {
+    "condo_median": 792500,
+    "condo_sales": 40,
+    "sf_median": 677000,
+    "sf_sales": 59
+   },
+   "2018-10": {
+    "condo_median": 430000,
+    "condo_sales": 37,
+    "sf_median": 745000,
+    "sf_sales": 36
+   },
+   "2018-11": {
+    "condo_median": 550000,
+    "condo_sales": 37,
+    "sf_median": 782500,
+    "sf_sales": 40
+   },
+   "2018-12": {
+    "condo_median": 658938,
+    "condo_sales": 42,
+    "sf_median": 625000,
+    "sf_sales": 45
+   },
+   "2019-01": {
+    "condo_median": 570000,
+    "condo_sales": 31,
+    "sf_median": 685750,
+    "sf_sales": 48
+   },
+   "2019-02": {
+    "condo_median": 355000,
+    "condo_sales": 23,
+    "sf_median": 689000,
+    "sf_sales": 28
+   },
+   "2019-03": {
+    "condo_median": 521750,
+    "condo_sales": 34,
+    "sf_median": 609919,
+    "sf_sales": 31
+   },
+   "2019-04": {
+    "condo_median": 550000,
+    "condo_sales": 41,
+    "sf_median": 622504,
+    "sf_sales": 58
+   },
+   "2019-05": {
+    "condo_median": 580000,
+    "condo_sales": 49,
+    "sf_median": 660000,
+    "sf_sales": 57
+   },
+   "2019-06": {
+    "condo_median": 528000,
+    "condo_sales": 41,
+    "sf_median": 620000,
+    "sf_sales": 63
+   },
+   "2019-07": {
+    "condo_median": 630000,
+    "condo_sales": 37,
+    "sf_median": 650000,
+    "sf_sales": 59
+   },
+   "2019-08": {
+    "condo_median": 585750,
+    "condo_sales": 24,
+    "sf_median": 657000,
+    "sf_sales": 56
+   },
+   "2019-09": {
+    "condo_median": 510000,
+    "condo_sales": 32,
+    "sf_median": 615000,
+    "sf_sales": 51
+   },
+   "2019-10": {
+    "condo_median": 556000,
+    "condo_sales": 46,
+    "sf_median": 680500,
+    "sf_sales": 46
+   },
+   "2019-11": {
+    "condo_median": 565000,
+    "condo_sales": 27,
+    "sf_median": 800000,
+    "sf_sales": 43
+   },
+   "2019-12": {
+    "condo_median": 689660,
+    "condo_sales": 45,
+    "sf_median": 715000,
+    "sf_sales": 41
+   },
+   "2020-01": {
+    "condo_median": 468750,
+    "condo_sales": 22,
+    "sf_median": 795000,
+    "sf_sales": 34
+   },
+   "2020-02": {
+    "condo_median": 720000,
+    "condo_sales": 31,
+    "sf_median": 802500,
+    "sf_sales": 33
+   },
+   "2020-03": {
+    "condo_median": 699950,
+    "condo_sales": 39,
+    "sf_median": 750000,
+    "sf_sales": 54
+   },
+   "2020-04": {
+    "condo_median": 497250,
+    "condo_sales": 32,
+    "sf_median": 725000,
+    "sf_sales": 41
+   },
+   "2020-05": {
+    "condo_median": 367500,
+    "condo_sales": 26,
+    "sf_median": 772500,
+    "sf_sales": 20
+   },
+   "2020-06": {
+    "condo_median": 470000,
+    "condo_sales": 17,
+    "sf_median": 605000,
+    "sf_sales": 23
+   },
+   "2020-07": {
+    "condo_median": 549500,
+    "condo_sales": 26,
+    "sf_median": 813750,
+    "sf_sales": 37
+   },
+   "2020-08": {
+    "condo_median": 415000,
+    "condo_sales": 19,
+    "sf_median": 750000,
+    "sf_sales": 47
+   },
+   "2020-09": {
+    "condo_median": 597500,
+    "condo_sales": 30,
+    "sf_median": 810000,
+    "sf_sales": 49
+   },
+   "2020-10": {
+    "condo_median": 562500,
+    "condo_sales": 32,
+    "sf_median": 976250,
+    "sf_sales": 64
+   },
+   "2020-11": {
+    "condo_median": 659000,
+    "condo_sales": 35,
+    "sf_median": 772007,
+    "sf_sales": 60
+   },
+   "2020-12": {
+    "condo_median": 507000,
+    "condo_sales": 41,
+    "sf_median": 922504,
+    "sf_sales": 72
+   },
+   "2021-01": {
+    "condo_median": 549000,
+    "condo_sales": 41,
+    "sf_median": 1036000,
+    "sf_sales": 57
+   },
+   "2021-02": {
+    "condo_median": 665000,
+    "condo_sales": 39,
+    "sf_median": 975000,
+    "sf_sales": 49
+   },
+   "2021-03": {
+    "condo_median": 650000,
+    "condo_sales": 59,
+    "sf_median": 1077500,
+    "sf_sales": 68
+   },
+   "2021-04": {
+    "condo_median": 478500,
+    "condo_sales": 60,
+    "sf_median": 979500,
+    "sf_sales": 70
+   },
+   "2021-05": {
+    "condo_median": 622000,
+    "condo_sales": 68,
+    "sf_median": 1125000,
+    "sf_sales": 69
+   },
+   "2021-06": {
+    "condo_median": 610000,
+    "condo_sales": 71,
+    "sf_median": 1100000,
+    "sf_sales": 85
+   },
+   "2021-07": {
+    "condo_median": 604500,
+    "condo_sales": 68,
+    "sf_median": 1327500,
+    "sf_sales": 44
+   },
+   "2021-08": {
+    "condo_median": 517500,
+    "condo_sales": 60,
+    "sf_median": 910000,
+    "sf_sales": 72
+   },
+   "2021-09": {
+    "condo_median": 588000,
+    "condo_sales": 55,
+    "sf_median": 1172500,
+    "sf_sales": 67
+   },
+   "2021-10": {
+    "condo_median": 729000,
+    "condo_sales": 45,
+    "sf_median": 1000000,
+    "sf_sales": 49
+   },
+   "2021-11": {
+    "condo_median": 674250,
+    "condo_sales": 56,
+    "sf_median": 1213000,
+    "sf_sales": 48
+   },
+   "2021-12": {
+    "condo_median": 595000,
+    "condo_sales": 63,
+    "sf_median": 1625000,
+    "sf_sales": 67
+   },
+   "2022-01": {
+    "condo_median": 475000,
+    "condo_sales": 27,
+    "sf_median": 925000,
+    "sf_sales": 52
+   },
+   "2022-02": {
+    "condo_median": 735000,
+    "condo_sales": 47,
+    "sf_median": 1341000,
+    "sf_sales": 44
+   },
+   "2022-03": {
+    "condo_median": 568750,
+    "condo_sales": 56,
+    "sf_median": 1228000,
+    "sf_sales": 55
+   },
+   "2022-04": {
+    "condo_median": 820000,
+    "condo_sales": 48,
+    "sf_median": 1175000,
+    "sf_sales": 60
+   },
+   "2022-05": {
+    "condo_median": 900000,
+    "condo_sales": 44,
+    "sf_median": 1028000,
+    "sf_sales": 51
+   },
+   "2022-06": {
+    "condo_median": 750000,
+    "condo_sales": 45,
+    "sf_median": 1550000,
+    "sf_sales": 42
+   },
+   "2022-07": {
+    "condo_median": 1035500,
+    "condo_sales": 30,
+    "sf_median": 1194000,
+    "sf_sales": 24
+   },
+   "2022-08": {
+    "condo_median": 529000,
+    "condo_sales": 45,
+    "sf_median": 975000,
+    "sf_sales": 42
+   },
+   "2022-09": {
+    "condo_median": 675000,
+    "condo_sales": 29,
+    "sf_median": 987500,
+    "sf_sales": 28
+   },
+   "2022-10": {
+    "condo_median": 735000,
+    "condo_sales": 39,
+    "sf_median": 1022500,
+    "sf_sales": 30
+   },
+   "2022-11": {
+    "condo_median": 757500,
+    "condo_sales": 20,
+    "sf_median": 1650000,
+    "sf_sales": 25
+   },
+   "2022-12": {
+    "condo_median": 749000,
+    "condo_sales": 19,
+    "sf_median": 1468254,
+    "sf_sales": 22
+   },
+   "2023-01": {
+    "condo_median": 781975,
+    "condo_sales": 26,
+    "sf_median": 809500,
+    "sf_sales": 16
+   },
+   "2023-02": {
+    "condo_median": 650000,
+    "condo_sales": 25,
+    "sf_median": 1000000,
+    "sf_sales": 25
+   },
+   "2023-03": {
+    "condo_median": 575000,
+    "condo_sales": 39,
+    "sf_median": 1075000,
+    "sf_sales": 26
+   },
+   "2023-04": {
+    "condo_median": 630000,
+    "condo_sales": 24,
+    "sf_median": 1570000,
+    "sf_sales": 22
+   },
+   "2023-05": {
+    "condo_median": 605000,
+    "condo_sales": 29,
+    "sf_median": 1125000,
+    "sf_sales": 30
+   },
+   "2023-06": {
+    "condo_median": 685000,
+    "condo_sales": 30,
+    "sf_median": 1075000,
+    "sf_sales": 36
+   },
+   "2023-07": {
+    "condo_median": 1035000,
+    "condo_sales": 24,
+    "sf_median": 1300000,
+    "sf_sales": 16
+   },
+   "2023-08": {
+    "condo_median": 1012500,
+    "condo_sales": 24,
+    "sf_median": 1800000,
+    "sf_sales": 19
+   },
+   "2023-09": {
+    "condo_median": 525000,
+    "condo_sales": 29,
+    "sf_median": 1185000,
+    "sf_sales": 16
+   },
+   "2023-10": {
+    "condo_median": 896000,
+    "condo_sales": 19,
+    "sf_median": 982500,
+    "sf_sales": 26
+   },
+   "2023-11": {
+    "condo_median": 598056,
+    "condo_sales": 26,
+    "sf_median": 1300000,
+    "sf_sales": 25
+   },
+   "2023-12": {
+    "condo_median": 650000,
+    "condo_sales": 21,
+    "sf_median": 1292500,
+    "sf_sales": 28
+   },
+   "2024-01": {
+    "condo_median": 992500,
+    "condo_sales": 16,
+    "sf_median": 1411500,
+    "sf_sales": 30
+   },
+   "2024-02": {
+    "condo_median": 610000,
+    "condo_sales": 23,
+    "sf_median": 1425000,
+    "sf_sales": 28
+   },
+   "2024-03": {
+    "condo_median": 759000,
+    "condo_sales": 31,
+    "sf_median": 1600000,
+    "sf_sales": 29
+   },
+   "2024-04": {
+    "condo_median": 994800,
+    "condo_sales": 27,
+    "sf_median": 1107000,
+    "sf_sales": 37
+   },
+   "2024-05": {
+    "condo_median": 615000,
+    "condo_sales": 35,
+    "sf_median": 1450000,
+    "sf_sales": 33
+   },
+   "2024-06": {
+    "condo_median": 790000,
+    "condo_sales": 32,
+    "sf_median": 1092000,
+    "sf_sales": 23
+   },
+   "2024-07": {
+    "condo_median": 894000,
+    "condo_sales": 21,
+    "sf_median": 1300000,
+    "sf_sales": 37
+   },
+   "2024-08": {
+    "condo_median": 632000,
+    "condo_sales": 22,
+    "sf_median": 1330000,
+    "sf_sales": 41
+   },
+   "2024-09": {
+    "condo_median": 640000,
+    "condo_sales": 25,
+    "sf_median": 1712500,
+    "sf_sales": 26
+   },
+   "2024-10": {
+    "condo_median": 857500,
+    "condo_sales": 28,
+    "sf_median": 1200000,
+    "sf_sales": 24
+   },
+   "2024-11": {
+    "condo_median": 1006000,
+    "condo_sales": 18,
+    "sf_median": 1387500,
+    "sf_sales": 22
+   },
+   "2024-12": {
+    "condo_median": 680500,
+    "condo_sales": 26,
+    "sf_median": 1105500,
+    "sf_sales": 28
+   },
+   "2025-01": {
+    "condo_median": 780000,
+    "condo_sales": 33,
+    "sf_median": 1325000,
+    "sf_sales": 29
+   },
+   "2025-02": {
+    "condo_median": 979000,
+    "condo_sales": 19,
+    "sf_median": 1059000,
+    "sf_sales": 32
+   },
+   "2025-03": {
+    "condo_median": 887500,
+    "condo_sales": 28,
+    "sf_median": 1160000,
+    "sf_sales": 41
+   },
+   "2025-04": {
+    "condo_median": 750000,
+    "condo_sales": 29,
+    "sf_median": 1112500,
+    "sf_sales": 34
+   },
+   "2025-05": {
+    "condo_median": 875000,
+    "condo_sales": 23,
+    "sf_median": 1105000,
+    "sf_sales": 19
+   },
+   "2025-06": {
+    "condo_median": 660000,
+    "condo_sales": 25,
+    "sf_median": 1236000,
+    "sf_sales": 44
+   },
+   "2025-07": {
+    "condo_median": 795000,
+    "condo_sales": 20,
+    "sf_median": 1212500,
+    "sf_sales": 34
+   },
+   "2025-08": {
+    "condo_median": 680000,
+    "condo_sales": 26,
+    "sf_median": 1185000,
+    "sf_sales": 28
+   },
+   "2025-09": {
+    "condo_median": 820000,
+    "condo_sales": 17,
+    "sf_median": 1370000,
+    "sf_sales": 36
+   },
+   "2025-10": {
+    "condo_median": 656500,
+    "condo_sales": 24,
+    "sf_median": 1595000,
+    "sf_sales": 47
+   },
+   "2025-11": {
+    "condo_median": 702500,
+    "condo_sales": 22,
+    "sf_median": 1052500,
+    "sf_sales": 42
+   },
+   "2025-12": {
+    "condo_median": 684500,
+    "condo_sales": 22,
+    "sf_median": 1250000,
+    "sf_sales": 37
+   },
+   "2026-01": {
+    "condo_median": 965000,
+    "condo_sales": 21,
+    "sf_median": 987500,
+    "sf_sales": 18
+   },
+   "2026-02": {
+    "condo_median": 636700,
+    "condo_sales": 11,
+    "sf_median": 1369000,
+    "sf_sales": 32
+   },
+   "2026-03": {
+    "condo_median": 700000,
+    "condo_sales": 19,
+    "sf_median": 1550000,
+    "sf_sales": 25
+   },
+   "2026-04": {
+    "condo_median": 875000,
+    "condo_sales": 21,
+    "sf_median": 1135000,
+    "sf_sales": 32
+   },
+   "2026-05": {
+    "condo_median": 817500,
+    "condo_sales": 22,
+    "sf_median": 1550000,
+    "sf_sales": 37
+   },
+   "2026-06": {
+    "condo_median": 989500,
+    "condo_sales": 22,
+    "sf_median": 1600000,
+    "sf_sales": 29
+   },
+   "2026-07": {
+    "condo_median": 901938,
+    "condo_sales": 18,
+    "sf_median": 1195000,
+    "sf_sales": 35
+   },
+   "2026-08": {
+    "condo_median": 999999,
+    "condo_sales": 15,
+    "sf_median": 1088000,
+    "sf_sales": 28
+   }
+  },
+  "maui": {
+   "2006-01": {
+    "condo_median": 433872,
+    "condo_sales": 130,
+    "sf_median": 690500,
+    "sf_sales": 86
+   },
+   "2006-02": {
+    "condo_median": 430100,
+    "condo_sales": 119,
+    "sf_median": 669500,
+    "sf_sales": 60
+   },
+   "2006-03": {
+    "condo_median": 527625,
+    "condo_sales": 144,
+    "sf_median": 725000,
+    "sf_sales": 107
+   },
+   "2006-04": {
+    "condo_median": 539000,
+    "condo_sales": 117,
+    "sf_median": 700000,
+    "sf_sales": 72
+   },
+   "2006-05": {
+    "condo_median": 600000,
+    "condo_sales": 137,
+    "sf_median": 729000,
+    "sf_sales": 87
+   },
+   "2006-06": {
+    "condo_median": 647000,
+    "condo_sales": 112,
+    "sf_median": 725000,
+    "sf_sales": 87
+   },
+   "2006-07": {
+    "condo_median": 512500,
+    "condo_sales": 84,
+    "sf_median": 780000,
+    "sf_sales": 88
+   },
+   "2006-08": {
+    "condo_median": 495000,
+    "condo_sales": 69,
+    "sf_median": 749500,
+    "sf_sales": 100
+   },
+   "2006-09": {
+    "condo_median": 494500,
+    "condo_sales": 74,
+    "sf_median": 769000,
+    "sf_sales": 63
+   },
+   "2006-10": {
+    "condo_median": 515000,
+    "condo_sales": 93,
+    "sf_median": 650000,
+    "sf_sales": 86
+   },
+   "2006-11": {
+    "condo_median": 575000,
+    "condo_sales": 77,
+    "sf_median": 609881,
+    "sf_sales": 117
+   },
+   "2006-12": {
+    "condo_median": 525000,
+    "condo_sales": 93,
+    "sf_median": 625205,
+    "sf_sales": 129
+   },
+   "2007-01": {
+    "condo_median": 600000,
+    "condo_sales": 99,
+    "sf_median": 602000,
+    "sf_sales": 106
+   },
+   "2007-02": {
+    "condo_median": 596000,
+    "condo_sales": 84,
+    "sf_median": 635000,
+    "sf_sales": 104
+   },
+   "2007-03": {
+    "condo_median": 469500,
+    "condo_sales": 95,
+    "sf_median": 625000,
+    "sf_sales": 131
+   },
+   "2007-04": {
+    "condo_median": 485000,
+    "condo_sales": 117,
+    "sf_median": 671000,
+    "sf_sales": 96
+   },
+   "2007-05": {
+    "condo_median": 531325,
+    "condo_sales": 111,
+    "sf_median": 653746,
+    "sf_sales": 101
+   },
+   "2007-06": {
+    "condo_median": 475000,
+    "condo_sales": 113,
+    "sf_median": 667000,
+    "sf_sales": 112
+   },
+   "2007-07": {
+    "condo_median": 510000,
+    "condo_sales": 99,
+    "sf_median": 650000,
+    "sf_sales": 86
+   },
+   "2007-08": {
+    "condo_median": 592000,
+    "condo_sales": 115,
+    "sf_median": 639996,
+    "sf_sales": 83
+   },
+   "2007-09": {
+    "condo_median": 599000,
+    "condo_sales": 84,
+    "sf_median": 586000,
+    "sf_sales": 74
+   },
+   "2007-10": {
+    "condo_median": 552000,
+    "condo_sales": 112,
+    "sf_median": 591000,
+    "sf_sales": 80
+   },
+   "2007-11": {
+    "condo_median": 640156,
+    "condo_sales": 86,
+    "sf_median": 631900,
+    "sf_sales": 83
+   },
+   "2007-12": {
+    "condo_median": 626000,
+    "condo_sales": 73,
+    "sf_median": 582002,
+    "sf_sales": 87
+   },
+   "2008-01": {
+    "condo_median": 610000,
+    "condo_sales": 89,
+    "sf_median": 563225,
+    "sf_sales": 57
+   },
+   "2008-02": {
+    "condo_median": 575000,
+    "condo_sales": 95,
+    "sf_median": 624391,
+    "sf_sales": 76
+   },
+   "2008-03": {
+    "condo_median": 538500,
+    "condo_sales": 92,
+    "sf_median": 620000,
+    "sf_sales": 95
+   },
+   "2008-04": {
+    "condo_median": 600000,
+    "condo_sales": 94,
+    "sf_median": 577500,
+    "sf_sales": 78
+   },
+   "2008-05": {
+    "condo_median": 512500,
+    "condo_sales": 84,
+    "sf_median": 567000,
+    "sf_sales": 97
+   },
+   "2008-06": {
+    "condo_median": 577500,
+    "condo_sales": 56,
+    "sf_median": 606000,
+    "sf_sales": 76
+   },
+   "2008-07": {
+    "condo_median": 615000,
+    "condo_sales": 68,
+    "sf_median": 610000,
+    "sf_sales": 97
+   },
+   "2008-08": {
+    "condo_median": 647500,
+    "condo_sales": 56,
+    "sf_median": 645000,
+    "sf_sales": 66
+   },
+   "2008-09": {
+    "condo_median": 442500,
+    "condo_sales": 56,
+    "sf_median": 537500,
+    "sf_sales": 66
+   },
+   "2008-10": {
+    "condo_median": 420000,
+    "condo_sales": 51,
+    "sf_median": 510000,
+    "sf_sales": 81
+   },
+   "2008-11": {
+    "condo_median": 399000,
+    "condo_sales": 29,
+    "sf_median": 475500,
+    "sf_sales": 66
+   },
+   "2008-12": {
+    "condo_median": 577680,
+    "condo_sales": 43,
+    "sf_median": 570000,
+    "sf_sales": 55
+   },
+   "2009-01": {
+    "condo_median": 820000,
+    "condo_sales": 110,
+    "sf_median": 558000,
+    "sf_sales": 31
+   },
+   "2009-02": {
+    "condo_median": 692500,
+    "condo_sales": 84,
+    "sf_median": 545000,
+    "sf_sales": 34
+   },
+   "2009-03": {
+    "condo_median": 480000,
+    "condo_sales": 71,
+    "sf_median": 504500,
+    "sf_sales": 56
+   },
+   "2009-04": {
+    "condo_median": 411000,
+    "condo_sales": 42,
+    "sf_median": 497000,
+    "sf_sales": 50
+   },
+   "2009-05": {
+    "condo_median": 399000,
+    "condo_sales": 52,
+    "sf_median": 482500,
+    "sf_sales": 60
+   },
+   "2009-06": {
+    "condo_median": 484500,
+    "condo_sales": 56,
+    "sf_median": 495000,
+    "sf_sales": 65
+   },
+   "2009-07": {
+    "condo_median": 417000,
+    "condo_sales": 78,
+    "sf_median": 532000,
+    "sf_sales": 59
+   },
+   "2009-08": {
+    "condo_median": 371250,
+    "condo_sales": 66,
+    "sf_median": 500000,
+    "sf_sales": 53
+   },
+   "2009-09": {
+    "condo_median": 307500,
+    "condo_sales": 63,
+    "sf_median": 440000,
+    "sf_sales": 54
+   },
+   "2009-10": {
+    "condo_median": 400842,
+    "condo_sales": 61,
+    "sf_median": 488500,
+    "sf_sales": 74
+   },
+   "2009-11": {
+    "condo_median": 399000,
+    "condo_sales": 70,
+    "sf_median": 465000,
+    "sf_sales": 67
+   },
+   "2009-12": {
+    "condo_median": 401500,
+    "condo_sales": 82,
+    "sf_median": 477000,
+    "sf_sales": 90
+   },
+   "2010-01": {
+    "condo_median": 404000,
+    "condo_sales": 75,
+    "sf_median": 464500,
+    "sf_sales": 48
+   },
+   "2010-02": {
+    "condo_median": 424000,
+    "condo_sales": 95,
+    "sf_median": 504150,
+    "sf_sales": 54
+   },
+   "2010-03": {
+    "condo_median": 499000,
+    "condo_sales": 125,
+    "sf_median": 460000,
+    "sf_sales": 72
+   },
+   "2010-04": {
+    "condo_median": 450000,
+    "condo_sales": 162,
+    "sf_median": 465000,
+    "sf_sales": 91
+   },
+   "2010-05": {
+    "condo_median": 410000,
+    "condo_sales": 105,
+    "sf_median": 442000,
+    "sf_sales": 81
+   },
+   "2010-06": {
+    "condo_median": 435000,
+    "condo_sales": 106,
+    "sf_median": 480000,
+    "sf_sales": 81
+   },
+   "2010-07": {
+    "condo_median": 390000,
+    "condo_sales": 69,
+    "sf_median": 500000,
+    "sf_sales": 61
+   },
+   "2010-08": {
+    "condo_median": 310000,
+    "condo_sales": 81,
+    "sf_median": 460000,
+    "sf_sales": 69
+   },
+   "2010-09": {
+    "condo_median": 315635,
+    "condo_sales": 98,
+    "sf_median": 440000,
+    "sf_sales": 65
+   },
+   "2010-10": {
+    "condo_median": 320000,
+    "condo_sales": 73,
+    "sf_median": 427500,
+    "sf_sales": 64
+   },
+   "2010-11": {
+    "condo_median": 349990,
+    "condo_sales": 66,
+    "sf_median": 445000,
+    "sf_sales": 58
+   },
+   "2010-12": {
+    "condo_median": 352000,
+    "condo_sales": 93,
+    "sf_median": 460000,
+    "sf_sales": 73
+   },
+   "2011-01": {
+    "condo_median": 295000,
+    "condo_sales": 87,
+    "sf_median": 495415,
+    "sf_sales": 54
+   },
+   "2011-02": {
+    "condo_median": 371200,
+    "condo_sales": 98,
+    "sf_median": 440000,
+    "sf_sales": 59
+   },
+   "2011-03": {
+    "condo_median": 289000,
+    "condo_sales": 125,
+    "sf_median": 450000,
+    "sf_sales": 89
+   },
+   "2011-04": {
+    "condo_median": 338603,
+    "condo_sales": 120,
+    "sf_median": 500000,
+    "sf_sales": 89
+   },
+   "2011-05": {
+    "condo_median": 349500,
+    "condo_sales": 114,
+    "sf_median": 418000,
+    "sf_sales": 71
+   },
+   "2011-06": {
+    "condo_median": 294500,
+    "condo_sales": 102,
+    "sf_median": 429000,
+    "sf_sales": 81
+   },
+   "2011-07": {
+    "condo_median": 320000,
+    "condo_sales": 98,
+    "sf_median": 394500,
+    "sf_sales": 68
+   },
+   "2011-08": {
+    "condo_median": 266000,
+    "condo_sales": 86,
+    "sf_median": 410000,
+    "sf_sales": 81
+   },
+   "2011-09": {
+    "condo_median": 334950,
+    "condo_sales": 84,
+    "sf_median": 412000,
+    "sf_sales": 80
+   },
+   "2011-10": {
+    "condo_median": 310000,
+    "condo_sales": 77,
+    "sf_median": 482500,
+    "sf_sales": 74
+   },
+   "2011-11": {
+    "condo_median": 265000,
+    "condo_sales": 77,
+    "sf_median": 422500,
+    "sf_sales": 76
+   },
+   "2011-12": {
+    "condo_median": 304000,
+    "condo_sales": 89,
+    "sf_median": 411000,
+    "sf_sales": 79
+   },
+   "2012-01": {
+    "condo_median": 330000,
+    "condo_sales": 91,
+    "sf_median": 399000,
+    "sf_sales": 50
+   },
+   "2012-02": {
+    "condo_median": 287000,
+    "condo_sales": 83,
+    "sf_median": 513750,
+    "sf_sales": 78
+   },
+   "2012-03": {
+    "condo_median": 368043,
+    "condo_sales": 130,
+    "sf_median": 435000,
+    "sf_sales": 82
+   },
+   "2012-04": {
+    "condo_median": 399000,
+    "condo_sales": 129,
+    "sf_median": 469000,
+    "sf_sales": 79
+   },
+   "2012-05": {
+    "condo_median": 336000,
+    "condo_sales": 113,
+    "sf_median": 382000,
+    "sf_sales": 65
+   },
+   "2012-06": {
+    "condo_median": 372990,
+    "condo_sales": 122,
+    "sf_median": 575500,
+    "sf_sales": 86
+   },
+   "2012-07": {
+    "condo_median": 332000,
+    "condo_sales": 82,
+    "sf_median": 488000,
+    "sf_sales": 76
+   },
+   "2012-08": {
+    "condo_median": 342450,
+    "condo_sales": 98,
+    "sf_median": 509000,
+    "sf_sales": 77
+   },
+   "2012-09": {
+    "condo_median": 325000,
+    "condo_sales": 67,
+    "sf_median": 425000,
+    "sf_sales": 77
+   },
+   "2012-10": {
+    "condo_median": 349995,
+    "condo_sales": 96,
+    "sf_median": 485000,
+    "sf_sales": 99
+   },
+   "2012-11": {
+    "condo_median": 400000,
+    "condo_sales": 100,
+    "sf_median": 465000,
+    "sf_sales": 85
+   },
+   "2012-12": {
+    "condo_median": 376000,
+    "condo_sales": 142,
+    "sf_median": 508000,
+    "sf_sales": 84
+   },
+   "2013-01": {
+    "condo_median": 297000,
+    "condo_sales": 63,
+    "sf_median": 550000,
+    "sf_sales": 63
+   },
+   "2013-02": {
+    "condo_median": 360000,
+    "condo_sales": 101,
+    "sf_median": 537500,
+    "sf_sales": 66
+   },
+   "2013-03": {
+    "condo_median": 375000,
+    "condo_sales": 101,
+    "sf_median": 509500,
+    "sf_sales": 80
+   },
+   "2013-04": {
+    "condo_median": 370000,
+    "condo_sales": 144,
+    "sf_median": 470000,
+    "sf_sales": 79
+   },
+   "2013-05": {
+    "condo_median": 380000,
+    "condo_sales": 139,
+    "sf_median": 549000,
+    "sf_sales": 109
+   },
+   "2013-06": {
+    "condo_median": 400000,
+    "condo_sales": 125,
+    "sf_median": 599000,
+    "sf_sales": 93
+   },
+   "2013-07": {
+    "condo_median": 357625,
+    "condo_sales": 112,
+    "sf_median": 475000,
+    "sf_sales": 93
+   },
+   "2013-08": {
+    "condo_median": 420000,
+    "condo_sales": 113,
+    "sf_median": 585000,
+    "sf_sales": 81
+   },
+   "2013-09": {
+    "condo_median": 345000,
+    "condo_sales": 121,
+    "sf_median": 470000,
+    "sf_sales": 85
+   },
+   "2013-10": {
+    "condo_median": 305500,
+    "condo_sales": 91,
+    "sf_median": 540000,
+    "sf_sales": 82
+   },
+   "2013-11": {
+    "condo_median": 350000,
+    "condo_sales": 96,
+    "sf_median": 515000,
+    "sf_sales": 75
+   },
+   "2013-12": {
+    "condo_median": 365000,
+    "condo_sales": 120,
+    "sf_median": 512500,
+    "sf_sales": 78
+   },
+   "2014-01": {
+    "condo_median": 441000,
+    "condo_sales": 94,
+    "sf_median": 695000,
+    "sf_sales": 65
+   },
+   "2014-02": {
+    "condo_median": 345000,
+    "condo_sales": 89,
+    "sf_median": 560000,
+    "sf_sales": 60
+   },
+   "2014-03": {
+    "condo_median": 420000,
+    "condo_sales": 127,
+    "sf_median": 590500,
+    "sf_sales": 70
+   },
+   "2014-04": {
+    "condo_median": 403500,
+    "condo_sales": 136,
+    "sf_median": 583000,
+    "sf_sales": 84
+   },
+   "2014-05": {
+    "condo_median": 472000,
+    "condo_sales": 117,
+    "sf_median": 537500,
+    "sf_sales": 86
+   },
+   "2014-06": {
+    "condo_median": 444500,
+    "condo_sales": 94,
+    "sf_median": 530000,
+    "sf_sales": 93
+   },
+   "2014-07": {
+    "condo_median": 375000,
+    "condo_sales": 83,
+    "sf_median": 570250,
+    "sf_sales": 100
+   },
+   "2014-08": {
+    "condo_median": 410000,
+    "condo_sales": 95,
+    "sf_median": 570000,
+    "sf_sales": 68
+   },
+   "2014-09": {
+    "condo_median": 462500,
+    "condo_sales": 80,
+    "sf_median": 570000,
+    "sf_sales": 95
+   },
+   "2014-10": {
+    "condo_median": 419000,
+    "condo_sales": 95,
+    "sf_median": 566000,
+    "sf_sales": 84
+   },
+   "2014-11": {
+    "condo_median": 366250,
+    "condo_sales": 68,
+    "sf_median": 587500,
+    "sf_sales": 76
+   },
+   "2014-12": {
+    "condo_median": 380000,
+    "condo_sales": 125,
+    "sf_median": 565000,
+    "sf_sales": 63
+   },
+   "2015-01": {
+    "condo_median": 378000,
+    "condo_sales": 83,
+    "sf_median": 577000,
+    "sf_sales": 75
+   },
+   "2015-02": {
+    "condo_median": 475000,
+    "condo_sales": 95,
+    "sf_median": 558625,
+    "sf_sales": 60
+   },
+   "2015-03": {
+    "condo_median": 440000,
+    "condo_sales": 123,
+    "sf_median": 632625,
+    "sf_sales": 86
+   },
+   "2015-04": {
+    "condo_median": 410000,
+    "condo_sales": 105,
+    "sf_median": 581000,
+    "sf_sales": 87
+   },
+   "2015-05": {
+    "condo_median": 459500,
+    "condo_sales": 110,
+    "sf_median": 607098,
+    "sf_sales": 88
+   },
+   "2015-06": {
+    "condo_median": 355000,
+    "condo_sales": 99,
+    "sf_median": 650000,
+    "sf_sales": 101
+   },
+   "2015-07": {
+    "condo_median": 399000,
+    "condo_sales": 79,
+    "sf_median": 590000,
+    "sf_sales": 129
+   },
+   "2015-08": {
+    "condo_median": 336000,
+    "condo_sales": 101,
+    "sf_median": 550000,
+    "sf_sales": 96
+   },
+   "2015-09": {
+    "condo_median": 399500,
+    "condo_sales": 110,
+    "sf_median": 573300,
+    "sf_sales": 97
+   },
+   "2015-10": {
+    "condo_median": 392900,
+    "condo_sales": 105,
+    "sf_median": 592000,
+    "sf_sales": 106
+   },
+   "2015-11": {
+    "condo_median": 475000,
+    "condo_sales": 74,
+    "sf_median": 550000,
+    "sf_sales": 72
+   },
+   "2015-12": {
+    "condo_median": 410000,
+    "condo_sales": 101,
+    "sf_median": 550000,
+    "sf_sales": 93
+   },
+   "2016-01": {
+    "condo_median": 395000,
+    "condo_sales": 83,
+    "sf_median": 631650,
+    "sf_sales": 72
+   },
+   "2016-02": {
+    "condo_median": 431950,
+    "condo_sales": 104,
+    "sf_median": 595000,
+    "sf_sales": 69
+   },
+   "2016-03": {
+    "condo_median": 494000,
+    "condo_sales": 104,
+    "sf_median": 611500,
+    "sf_sales": 99
+   },
+   "2016-04": {
+    "condo_median": 444500,
+    "condo_sales": 126,
+    "sf_median": 665000,
+    "sf_sales": 100
+   },
+   "2016-05": {
+    "condo_median": 422000,
+    "condo_sales": 119,
+    "sf_median": 622500,
+    "sf_sales": 94
+   },
+   "2016-06": {
+    "condo_median": 384000,
+    "condo_sales": 110,
+    "sf_median": 659000,
+    "sf_sales": 99
+   },
+   "2016-07": {
+    "condo_median": 440000,
+    "condo_sales": 111,
+    "sf_median": 600000,
+    "sf_sales": 93
+   },
+   "2016-08": {
+    "condo_median": 420000,
+    "condo_sales": 124,
+    "sf_median": 672063,
+    "sf_sales": 96
+   },
+   "2016-09": {
+    "condo_median": 379000,
+    "condo_sales": 99,
+    "sf_median": 665000,
+    "sf_sales": 83
+   },
+   "2016-10": {
+    "condo_median": 460000,
+    "condo_sales": 97,
+    "sf_median": 632500,
+    "sf_sales": 82
+   },
+   "2016-11": {
+    "condo_median": 382500,
+    "condo_sales": 112,
+    "sf_median": 635000,
+    "sf_sales": 91
+   },
+   "2016-12": {
+    "condo_median": 411000,
+    "condo_sales": 121,
+    "sf_median": 701000,
+    "sf_sales": 98
+   },
+   "2017-01": {
+    "condo_median": 525000,
+    "condo_sales": 97,
+    "sf_median": 660000,
+    "sf_sales": 66
+   },
+   "2017-02": {
+    "condo_median": 465000,
+    "condo_sales": 112,
+    "sf_median": 672575,
+    "sf_sales": 63
+   },
+   "2017-03": {
+    "condo_median": 390000,
+    "condo_sales": 133,
+    "sf_median": 756000,
+    "sf_sales": 105
+   },
+   "2017-04": {
+    "condo_median": 490000,
+    "condo_sales": 117,
+    "sf_median": 673000,
+    "sf_sales": 98
+   },
+   "2017-05": {
+    "condo_median": 475000,
+    "condo_sales": 130,
+    "sf_median": 700000,
+    "sf_sales": 95
+   },
+   "2017-06": {
+    "condo_median": 430000,
+    "condo_sales": 124,
+    "sf_median": 740000,
+    "sf_sales": 120
+   },
+   "2017-07": {
+    "condo_median": 440000,
+    "condo_sales": 101,
+    "sf_median": 701000,
+    "sf_sales": 92
+   },
+   "2017-08": {
+    "condo_median": 400000,
+    "condo_sales": 110,
+    "sf_median": 700000,
+    "sf_sales": 106
+   },
+   "2017-09": {
+    "condo_median": 423750,
+    "condo_sales": 126,
+    "sf_median": 650000,
+    "sf_sales": 81
+   },
+   "2017-10": {
+    "condo_median": 517500,
+    "condo_sales": 135,
+    "sf_median": 668675,
+    "sf_sales": 112
+   },
+   "2017-11": {
+    "condo_median": 399500,
+    "condo_sales": 128,
+    "sf_median": 688000,
+    "sf_sales": 73
+   },
+   "2017-12": {
+    "condo_median": 432500,
+    "condo_sales": 140,
+    "sf_median": 685500,
+    "sf_sales": 90
+   },
+   "2018-01": {
+    "condo_median": 506000,
+    "condo_sales": 121,
+    "sf_median": 705000,
+    "sf_sales": 87
+   },
+   "2018-02": {
+    "condo_median": 469250,
+    "condo_sales": 124,
+    "sf_median": 684350,
+    "sf_sales": 98
+   },
+   "2018-03": {
+    "condo_median": 450000,
+    "condo_sales": 127,
+    "sf_median": 680000,
+    "sf_sales": 101
+   },
+   "2018-04": {
+    "condo_median": 506113,
+    "condo_sales": 176,
+    "sf_median": 725000,
+    "sf_sales": 92
+   },
+   "2018-05": {
+    "condo_median": 472500,
+    "condo_sales": 172,
+    "sf_median": 690000,
+    "sf_sales": 113
+   },
+   "2018-06": {
+    "condo_median": 515000,
+    "condo_sales": 151,
+    "sf_median": 727500,
+    "sf_sales": 86
+   },
+   "2018-07": {
+    "condo_median": 513163,
+    "condo_sales": 138,
+    "sf_median": 764500,
+    "sf_sales": 114
+   },
+   "2018-08": {
+    "condo_median": 500000,
+    "condo_sales": 149,
+    "sf_median": 700000,
+    "sf_sales": 109
+   },
+   "2018-09": {
+    "condo_median": 492500,
+    "condo_sales": 123,
+    "sf_median": 754248,
+    "sf_sales": 80
+   },
+   "2018-10": {
+    "condo_median": 500000,
+    "condo_sales": 134,
+    "sf_median": 774223,
+    "sf_sales": 88
+   },
+   "2018-11": {
+    "condo_median": 528650,
+    "condo_sales": 120,
+    "sf_median": 740398,
+    "sf_sales": 76
+   },
+   "2018-12": {
+    "condo_median": 491000,
+    "condo_sales": 122,
+    "sf_median": 707500,
+    "sf_sales": 95
+   },
+   "2019-01": {
+    "condo_median": 528450,
+    "condo_sales": 130,
+    "sf_median": 730000,
+    "sf_sales": 63
+   },
+   "2019-02": {
+    "condo_median": 525000,
+    "condo_sales": 121,
+    "sf_median": 790000,
+    "sf_sales": 79
+   },
+   "2019-03": {
+    "condo_median": 508500,
+    "condo_sales": 154,
+    "sf_median": 712718,
+    "sf_sales": 96
+   },
+   "2019-04": {
+    "condo_median": 444444,
+    "condo_sales": 138,
+    "sf_median": 819500,
+    "sf_sales": 78
+   },
+   "2019-05": {
+    "condo_median": 510000,
+    "condo_sales": 145,
+    "sf_median": 705000,
+    "sf_sales": 134
+   },
+   "2019-06": {
+    "condo_median": 554000,
+    "condo_sales": 123,
+    "sf_median": 750000,
+    "sf_sales": 89
+   },
+   "2019-07": {
+    "condo_median": 494875,
+    "condo_sales": 162,
+    "sf_median": 788000,
+    "sf_sales": 87
+   },
+   "2019-08": {
+    "condo_median": 504500,
+    "condo_sales": 120,
+    "sf_median": 825250,
+    "sf_sales": 100
+   },
+   "2019-09": {
+    "condo_median": 542500,
+    "condo_sales": 120,
+    "sf_median": 719435,
+    "sf_sales": 119
+   },
+   "2019-10": {
+    "condo_median": 521600,
+    "condo_sales": 137,
+    "sf_median": 732000,
+    "sf_sales": 104
+   },
+   "2019-11": {
+    "condo_median": 499000,
+    "condo_sales": 142,
+    "sf_median": 729998,
+    "sf_sales": 74
+   },
+   "2019-12": {
+    "condo_median": 514120,
+    "condo_sales": 125,
+    "sf_median": 740000,
+    "sf_sales": 97
+   },
+   "2020-01": {
+    "condo_median": 562000,
+    "condo_sales": 128,
+    "sf_median": 777500,
+    "sf_sales": 85
+   },
+   "2020-02": {
+    "condo_median": 553500,
+    "condo_sales": 134,
+    "sf_median": 747150,
+    "sf_sales": 83
+   },
+   "2020-03": {
+    "condo_median": 555000,
+    "condo_sales": 161,
+    "sf_median": 835000,
+    "sf_sales": 91
+   },
+   "2020-04": {
+    "condo_median": 602494,
+    "condo_sales": 87,
+    "sf_median": 754523,
+    "sf_sales": 84
+   },
+   "2020-05": {
+    "condo_median": 680000,
+    "condo_sales": 54,
+    "sf_median": 800000,
+    "sf_sales": 42
+   },
+   "2020-06": {
+    "condo_median": 503000,
+    "condo_sales": 67,
+    "sf_median": 773250,
+    "sf_sales": 72
+   },
+   "2020-07": {
+    "condo_median": 505000,
+    "condo_sales": 93,
+    "sf_median": 779690,
+    "sf_sales": 89
+   },
+   "2020-08": {
+    "condo_median": 663500,
+    "condo_sales": 118,
+    "sf_median": 799000,
+    "sf_sales": 99
+   },
+   "2020-09": {
+    "condo_median": 497500,
+    "condo_sales": 86,
+    "sf_median": 782500,
+    "sf_sales": 108
+   },
+   "2020-10": {
+    "condo_median": 593900,
+    "condo_sales": 122,
+    "sf_median": 867500,
+    "sf_sales": 96
+   },
+   "2020-11": {
+    "condo_median": 560500,
+    "condo_sales": 140,
+    "sf_median": 852500,
+    "sf_sales": 102
+   },
+   "2020-12": {
+    "condo_median": 630000,
+    "condo_sales": 171,
+    "sf_median": 849000,
+    "sf_sales": 108
+   },
+   "2021-01": {
+    "condo_median": 560000,
+    "condo_sales": 115,
+    "sf_median": 980000,
+    "sf_sales": 101
+   },
+   "2021-02": {
+    "condo_median": 556990,
+    "condo_sales": 167,
+    "sf_median": 895000,
+    "sf_sales": 101
+   },
+   "2021-03": {
+    "condo_median": 642500,
+    "condo_sales": 232,
+    "sf_median": 985000,
+    "sf_sales": 123
+   },
+   "2021-04": {
+    "condo_median": 690000,
+    "condo_sales": 264,
+    "sf_median": 975000,
+    "sf_sales": 135
+   },
+   "2021-05": {
+    "condo_median": 612500,
+    "condo_sales": 242,
+    "sf_median": 1019000,
+    "sf_sales": 122
+   },
+   "2021-06": {
+    "condo_median": 620000,
+    "condo_sales": 251,
+    "sf_median": 1105000,
+    "sf_sales": 113
+   },
+   "2021-07": {
+    "condo_median": 711500,
+    "condo_sales": 210,
+    "sf_median": 1050000,
+    "sf_sales": 110
+   },
+   "2021-08": {
+    "condo_median": 647500,
+    "condo_sales": 190,
+    "sf_median": 1045000,
+    "sf_sales": 122
+   },
+   "2021-09": {
+    "condo_median": 729125,
+    "condo_sales": 182,
+    "sf_median": 995000,
+    "sf_sales": 115
+   },
+   "2021-10": {
+    "condo_median": 672500,
+    "condo_sales": 134,
+    "sf_median": 930000,
+    "sf_sales": 111
+   },
+   "2021-11": {
+    "condo_median": 725000,
+    "condo_sales": 154,
+    "sf_median": 1000000,
+    "sf_sales": 105
+   },
+   "2021-12": {
+    "condo_median": 700000,
+    "condo_sales": 176,
+    "sf_median": 1075000,
+    "sf_sales": 120
+   },
+   "2022-01": {
+    "condo_median": 713750,
+    "condo_sales": 156,
+    "sf_median": 1157500,
+    "sf_sales": 92
+   },
+   "2022-02": {
+    "condo_median": 730500,
+    "condo_sales": 162,
+    "sf_median": 1100000,
+    "sf_sales": 88
+   },
+   "2022-03": {
+    "condo_median": 810000,
+    "condo_sales": 186,
+    "sf_median": 1177500,
+    "sf_sales": 104
+   },
+   "2022-04": {
+    "condo_median": 820000,
+    "condo_sales": 177,
+    "sf_median": 1242500,
+    "sf_sales": 110
+   },
+   "2022-05": {
+    "condo_median": 717500,
+    "condo_sales": 154,
+    "sf_median": 1212500,
+    "sf_sales": 100
+   },
+   "2022-06": {
+    "condo_median": 807500,
+    "condo_sales": 154,
+    "sf_median": 1252500,
+    "sf_sales": 86
+   },
+   "2022-07": {
+    "condo_median": 789500,
+    "condo_sales": 99,
+    "sf_median": 1100000,
+    "sf_sales": 90
+   },
+   "2022-08": {
+    "condo_median": 808379,
+    "condo_sales": 105,
+    "sf_median": 983575,
+    "sf_sales": 87
+   },
+   "2022-09": {
+    "condo_median": 800000,
+    "condo_sales": 98,
+    "sf_median": 1016850,
+    "sf_sales": 58
+   },
+   "2022-10": {
+    "condo_median": 800000,
+    "condo_sales": 89,
+    "sf_median": 1075000,
+    "sf_sales": 79
+   },
+   "2022-11": {
+    "condo_median": 850000,
+    "condo_sales": 71,
+    "sf_median": 1025000,
+    "sf_sales": 63
+   },
+   "2022-12": {
+    "condo_median": 770000,
+    "condo_sales": 69,
+    "sf_median": 1081250,
+    "sf_sales": 66
+   },
+   "2023-01": {
+    "condo_median": 657500,
+    "condo_sales": 54,
+    "sf_median": 1175000,
+    "sf_sales": 61
+   },
+   "2023-02": {
+    "condo_median": 915000,
+    "condo_sales": 67,
+    "sf_median": 1079000,
+    "sf_sales": 45
+   },
+   "2023-03": {
+    "condo_median": 798250,
+    "condo_sales": 122,
+    "sf_median": 1191000,
+    "sf_sales": 74
+   },
+   "2023-04": {
+    "condo_median": 888000,
+    "condo_sales": 90,
+    "sf_median": 1112500,
+    "sf_sales": 58
+   },
+   "2023-05": {
+    "condo_median": 830000,
+    "condo_sales": 91,
+    "sf_median": 1271500,
+    "sf_sales": 74
+   },
+   "2023-06": {
+    "condo_median": 979900,
+    "condo_sales": 93,
+    "sf_median": 1032000,
+    "sf_sales": 72
+   },
+   "2023-07": {
+    "condo_median": 845000,
+    "condo_sales": 76,
+    "sf_median": 1200000,
+    "sf_sales": 69
+   },
+   "2023-08": {
+    "condo_median": 750000,
+    "condo_sales": 101,
+    "sf_median": 1200000,
+    "sf_sales": 59
+   },
+   "2023-09": {
+    "condo_median": 779000,
+    "condo_sales": 67,
+    "sf_median": 1294500,
+    "sf_sales": 66
+   },
+   "2023-10": {
+    "condo_median": 817000,
+    "condo_sales": 63,
+    "sf_median": 1269025,
+    "sf_sales": 48
+   },
+   "2023-11": {
+    "condo_median": 890000,
+    "condo_sales": 53,
+    "sf_median": 1112500,
+    "sf_sales": 48
+   },
+   "2023-12": {
+    "condo_median": 850000,
+    "condo_sales": 94,
+    "sf_median": 1200000,
+    "sf_sales": 57
+   },
+   "2024-01": {
+    "condo_median": 800000,
+    "condo_sales": 93,
+    "sf_median": 1342581,
+    "sf_sales": 57
+   },
+   "2024-02": {
+    "condo_median": 740000,
+    "condo_sales": 65,
+    "sf_median": 1272000,
+    "sf_sales": 62
+   },
+   "2024-03": {
+    "condo_median": 1301250,
+    "condo_sales": 94,
+    "sf_median": 1299346,
+    "sf_sales": 76
+   },
+   "2024-04": {
+    "condo_median": 962500,
+    "condo_sales": 108,
+    "sf_median": 1300000,
+    "sf_sales": 72
+   },
+   "2024-05": {
+    "condo_median": 850000,
+    "condo_sales": 77,
+    "sf_median": 1295000,
+    "sf_sales": 75
+   },
+   "2024-06": {
+    "condo_median": 980000,
+    "condo_sales": 59,
+    "sf_median": 1395000,
+    "sf_sales": 67
+   },
+   "2024-07": {
+    "condo_median": 799000,
+    "condo_sales": 67,
+    "sf_median": 1200000,
+    "sf_sales": 57
+   },
+   "2024-08": {
+    "condo_median": 1000000,
+    "condo_sales": 67,
+    "sf_median": 1325000,
+    "sf_sales": 64
+   },
+   "2024-09": {
+    "condo_median": 990000,
+    "condo_sales": 51,
+    "sf_median": 1428894,
+    "sf_sales": 52
+   },
+   "2024-10": {
+    "condo_median": 920000,
+    "condo_sales": 65,
+    "sf_median": 1285000,
+    "sf_sales": 53
+   },
+   "2024-11": {
+    "condo_median": 735000,
+    "condo_sales": 53,
+    "sf_median": 1300000,
+    "sf_sales": 63
+   },
+   "2024-12": {
+    "condo_median": 860000,
+    "condo_sales": 53,
+    "sf_median": 1366738,
+    "sf_sales": 54
+   },
+   "2025-01": {
+    "condo_median": 675000,
+    "condo_sales": 55,
+    "sf_median": 1200000,
+    "sf_sales": 59
+   },
+   "2025-02": {
+    "condo_median": 960000,
+    "condo_sales": 51,
+    "sf_median": 1395319,
+    "sf_sales": 48
+   },
+   "2025-03": {
+    "condo_median": 820000,
+    "condo_sales": 61,
+    "sf_median": 1295000,
+    "sf_sales": 49
+   },
+   "2025-04": {
+    "condo_median": 715000,
+    "condo_sales": 67,
+    "sf_median": 1377500,
+    "sf_sales": 70
+   },
+   "2025-05": {
+    "condo_median": 762500,
+    "condo_sales": 64,
+    "sf_median": 1290000,
+    "sf_sales": 56
+   },
+   "2025-06": {
+    "condo_median": 685000,
+    "condo_sales": 58,
+    "sf_median": 1300000,
+    "sf_sales": 67
+   },
+   "2025-07": {
+    "condo_median": 675000,
+    "condo_sales": 53,
+    "sf_median": 1315000,
+    "sf_sales": 60
+   },
+   "2025-08": {
+    "condo_median": 650000,
+    "condo_sales": 57,
+    "sf_median": 1302500,
+    "sf_sales": 62
+   },
+   "2025-09": {
+    "condo_median": 652500,
+    "condo_sales": 46,
+    "sf_median": 1292500,
+    "sf_sales": 56
+   },
+   "2025-10": {
+    "condo_median": 637500,
+    "condo_sales": 61,
+    "sf_median": 1245000,
+    "sf_sales": 64
+   },
+   "2025-11": {
+    "condo_median": 625000,
+    "condo_sales": 51,
+    "sf_median": 1150000,
+    "sf_sales": 51
+   },
+   "2025-12": {
+    "condo_median": 641250,
+    "condo_sales": 78,
+    "sf_median": 1330000,
+    "sf_sales": 65
+   },
+   "2026-01": {
+    "condo_median": 629950,
+    "condo_sales": 44,
+    "sf_median": 1415000,
+    "sf_sales": 53
+   },
+   "2026-02": {
+    "condo_median": 845000,
+    "condo_sales": 65,
+    "sf_median": 1250000,
+    "sf_sales": 46
+   },
+   "2026-03": {
+    "condo_median": 675000,
+    "condo_sales": 75,
+    "sf_median": 1200000,
+    "sf_sales": 78
+   },
+   "2026-04": {
+    "condo_median": 651250,
+    "condo_sales": 70,
+    "sf_median": 1295000,
+    "sf_sales": 50
+   },
+   "2026-05": {
+    "condo_median": 597000,
+    "condo_sales": 51,
+    "sf_median": 1159000,
+    "sf_sales": 59
+   },
+   "2026-06": {
+    "condo_median": 625000,
+    "condo_sales": 90,
+    "sf_median": 1356975,
+    "sf_sales": 78
+   },
+   "2026-07": {
+    "condo_median": 690000,
+    "condo_sales": 82,
+    "sf_median": 1150000,
+    "sf_sales": 55
+   },
+   "2026-08": {
+    "condo_median": 564950,
+    "condo_sales": 68,
+    "sf_median": 1200000,
+    "sf_sales": 64
+   }
+  }
+ },
+ "dataset": "dbedt_mei_county_housing",
+ "provenance": {
+  "known_gaps": "Kauaʻi and Hawaiʻi County have no monthly sales counts from March 2006 to December 2012 and no monthly medians from March 2006 to December 2007 (null here, as published).",
+  "source": "research/buyer-origins/page_data.json (keys months and islands.*.sf_sales/sf_median/condo_sales/condo_median) at commit 2ef4b98, the series the report uses",
+  "use": "Regression baseline for the refresh: differences are listed as revisions against the report snapshot, and a mass difference fails the run.",
+  "verification": [
+   "handoff/verification_primary_sources.json: DBEDT monthly figures matched the Honolulu Board of REALTORS and REALTORS Association of Maui on all figures checked (2026-10-08).",
+   "Re-checked 2026-10-09 against DBEDT county workbooks of the August 2026 edition (released 2026-10-01): 3,968 cells (3,552 non-null values), 0 differences."
+  ]
+ },
+ "through": "2026-08"
+}

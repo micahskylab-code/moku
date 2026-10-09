@@ -1,0 +1,3452 @@
+{
+ "key": "official_sources",
+ "title": "Official source confirmation: IRS SOI migration files, Title Guaranty Buyer Statistics and Freddie Mac PMMS",
+ "generated": "2026-10-09T01:26:00Z",
+ "source": {
+  "irs": {
+   "publisher": "Internal Revenue Service, Statistics of Income (SOI) Division",
+   "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+   "index_page_last_reviewed": "2026-07-20",
+   "year_pages": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-YYYY-YYYY (2011-2012 to 2022-2023)",
+   "latest_edition": "2022–2023 (released 2026-03-19; files last-modified Thu, 19 Mar 2026 11:11 GMT)",
+   "release_schedule": "https://www.irs.gov/pub/irs-soi/soi-public-release-list.xlsx",
+   "release_schedule_revision": "SOURCE: Statistics of Income, revised 9/10/2026.",
+   "upcoming_releases_page": "https://www.irs.gov/statistics/soi-tax-stats-upcoming-data-releases",
+   "retrieved_utc": "2026-10-09"
+  },
+  "title_guaranty": {
+   "publisher": "Title Guaranty of Hawaii, LLC (company site; publisher of the counts, so marked company-published, not government)",
+   "index_page": "https://www.tghawaii.com/market/#buyer",
+   "index_page_sha256": "ecb3b4070e828218ee33e99b647deda350aefb3651fad907ab497875b294abd7",
+   "posting_dates_from": "https://www.tghawaii.com/wp-json/wp/v2/media?search=Buyer-Stats (public WordPress media listing: upload date in site time, HST, and in GMT)",
+   "latest_edition": "Q2 2026 (Jan–Jun 2026), posted 2026-08-31 HST",
+   "retrieved_utc": "2026-10-09"
+  },
+  "freddie_mac": {
+   "publisher": "Freddie Mac, Primary Mortgage Market Survey (PMMS)",
+   "page": "https://www.freddiemac.com/pmms",
+   "history_files": [
+    "https://www.freddiemac.com/pmms/docs/historicalweeklydata.xlsx",
+    "https://www.freddiemac.com/pmms/docs/PMMS_history.csv"
+   ],
+   "edition": "Weekly release of 2026-10-08 (page reads \"U.S. weekly mortgage rate averages as of 10/08/2026\"); history files last-modified Thu, 08 Oct 2026 13:37 GMT",
+   "retrieved_utc": "2026-10-09"
+  }
+ },
+ "method": [
+  "IRS: listed every migration file the report scripts read (an/irs_20yr.py, an/irs_decade.py, research/buyer-origins/irs_states.py and irs_instate.py; local folders irs2/, irsdec/, irsout/, irsold/) and the hashes in research/buyer-origins/irs_sha256.txt and irs_outflow_sha256.txt.",
+  "IRS: took each file URL from the official year pages (soi-tax-stats-migration-data-YYYY-YYYY) or, for 2004–05 to 2010–11, from the county ZIP links on the migration index page, then downloaded every file again from irs.gov on 2026-10-09 with curl (no redirects) and computed sha256.",
+  "IRS 2004–05 to 2010–11: IRS publishes these county years only as ZIPs of per-state workbooks (countyYYYY.zip). Downloaded the 7 ZIPs, extracted only the named Hawaii members, and hashed them. Direct URLs for the members return 404 except co1011ihi.xls and co1011ohi.xls.",
+  "IRS: compared each fresh hash with the hash the report recorded (CSV files) and with the report's local copy (all files). Where bytes differed, compared every cell with xlrd.",
+  "IRS: re-derived two published figures from the fresh files (2022–23 different-state totals for the four counties; Hawaii net households lost to Washington and Nevada, 2011–12 to 2022–23) as a content check.",
+  "IRS schedule: read the 2026 full calendar year public release list (soi-public-release-list.xlsx) and the Upcoming Data Releases page; HEAD-probed the 2023–24 file and page URLs.",
+  "Title Guaranty: extracted every Title Guaranty Buyer Statistics citation in hawaii-buyer-origins.src.html (links and edition names in citation text), expanded group citations (for example \"Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)\") into individual PDFs, HEAD-requested all 140 Buyer-Stats links on tghawaii.com/market/, read posting dates from the site's public WordPress media listing, re-downloaded the 23 core PDFs (all linked PDFs plus every Q4 2024, Q2 2025, Q4 2025, Q1 2026 and Q2 2026 island edition) and compared sha256 with the report's copies; read PDF metadata with pdfinfo.",
+  "Title Guaranty Q3 2026: checked the market page (unchanged byte-for-byte since 2026-10-08), the homepage, the media listing for every upload since 2026-08-30, and HEAD-probed 16 plausible Q3 2026 file names.",
+  "Freddie Mac: downloaded the PMMS page and both history files; read the 30-year fixed column; checked the two files agree for every 2026 week."
+ ],
+ "notes": [
+  "Aggregates only. No owner names, street addresses, parcel IDs or TMKs appear here. The Title Guaranty media listing in raw/ also contains unrelated marketing flyers; only Buyer-Stats entries are reported.",
+  "Fewer-than-20 flag: no cell in this file is a count of fewer than 20 units. The IRS county totals shown (2022–23) range from 940 to 20,909 returns. IRS itself suppresses county-to-county pairs under 20 returns.",
+  "IRS Last-Modified headers are not publication dates: many files show a blanket 2025-11-07 date or 1970-01-01 from the IRS web host. Only the 2022–23 files (2026-03-19) line up with a scheduled release.",
+  "Title Guaranty posting dates are the WordPress upload times, in site time (HST) and GMT. The Q4 2025 PDFs went up 2026-02-12 14:24 HST, which is 2026-02-13 00:24 UTC. Both dates appear in the report.",
+  "Title Guaranty edition names follow the files: \"Qn YYYY\" is year to date through the end of that quarter (Q1 = Jan–Mar, Q2 = Jan–Jun, Q3 = Jan–Sep, Q4 = Jan–Dec), as printed on page 1 of each PDF. The Q2 2026 Hawaiʻi Island file is named Buyer-Stats-Hawaii-Island-Q2-2026.pdf; Buyer-Stats-Hawaii-Q2-2026.pdf does not exist (301 to homepage).",
+  "Title Guaranty also posts combined all-island PDFs (for example Buyer-Stats-Q2-2026.pdf, 15,675,541 bytes, posted 2026-08-31 12:32 HST). They are not linked on the market page and the report does not use them.",
+  "The market page links Buyer-Stats-Hawaii-Q1-2025.pdf, but that URL redirects (301) to the homepage. The report does not cite that edition.",
+  "PMMS: the report text already uses the 2026-10-08 reading (7.40%). The monthly chart (page_data mortgage series) still shows October 2026 as the single 2026-10-01 reading (7.28%); with both October weeks the month-to-date average is 7.34%. The Jul, Aug and Sep 2026 monthly values (6.54, 6.67, 6.86) match the weekly file.",
+  "PMMS checks of report text, all confirmed: 6.05% February 2026 average (6.0475), 7 straight weekly increases to 2026-10-08, first week below 6% since 2022-09-08 on 2026-02-26, H1 2026 average 6.27% against H1 2025 6.80% (these reproduce as the mean of monthly averages, 6.265 and 6.802; a plain mean of weekly readings gives 6.27% and 6.81%), 7.79% October 2023 peak (2023-10-26), and a 14.9% payment rise from 6.05% to 7.40%."
+ ],
+ "gaps": [
+  "IRS does not publish sha256 or checksums. \"Match\" means the file served on 2026-10-09 is byte-identical to the report's copy, not that IRS certifies either one.",
+  "The report kept no recorded hashes for the 14 early-year Hawaii county workbooks or the 12 Hawaii state workbooks. Those were compared against the local copies in irsold/ that the scripts read.",
+  "IRS 2023–24 migration data is not out yet: countyinflow2324.csv, countyoutflow2324.csv, 2324hi.xlsx and the 2023-2024 page all returned 404 on 2026-10-09. The release list schedules it for 2026-11-20, and IRS calls release dates tentative.",
+  "Title Guaranty: Q4 2015–Q4 2018 server copies were re-uploaded on 2020-01-24, so the site does not show their original posting dates. PDF creation dates (2016-02-04, 2017-02-14, 2018-01-31, 2019-03-15/16) are shown instead.",
+  "Title Guaranty: 31 historical editions the report cites (Q4 2015–Q4 2023 Maui and Hawaiʻi Island, Q1–Q3 2024 for all islands, Oahu Q4 2019, Maui Q1 2024, Oahu Q1 2025) were not downloaded again. For these, the server Content-Length equals the size of the report's copy and the posting date comes from the media listing.",
+  "Title Guaranty does not publish its method or a release calendar, so no expected date for Q3 2026 can be given. Past Q3 editions went up 2023-12-13, 2025-01-09 and 2025-11-24 (HST).",
+  "The \"Q1–Q3 2024 editions\" citation does not name islands. Four islands are assumed, matching the report's working copies in ca_tg24/.",
+  "No host blocked access. irs.gov, tghawaii.com and freddiemac.com all served plain HTTPS without bot checks."
+ ],
+ "key_figures": [
+  {
+   "name": "IRS county inflow/outflow CSVs 2011–12 to 2022–23 byte-identical to the report's recorded sha256",
+   "value": "24 of 24",
+   "how_to_rederive": "Download https://www.irs.gov/pub/irs-soi/county{inflow,outflow}YYZZ.csv for YYZZ=1112…2223; sha256sum; compare with research/buyer-origins/irs_sha256.txt and irs_outflow_sha256.txt."
+  },
+  {
+   "name": "IRS 2004–05 to 2010–11 Hawaii county workbooks (inside countyYYZZ.zip) byte-identical to the report's irsold/ copies",
+   "value": "14 of 14",
+   "how_to_rederive": "Download https://www.irs.gov/pub/irs-soi/county0405.zip … county1011.zip; unzip -j only the co*HI* members; sha256sum; compare with irsold/co*.xls."
+  },
+  {
+   "name": "IRS Hawaii state workbooks 2011–12 to 2022–23 (YYZZhi.xls/xlsx) matching the report's copies",
+   "value": "11 of 12 byte-identical; 12 of 12 identical in every cell (1112hi.xls differs only in file metadata)",
+   "how_to_rederive": "Download https://www.irs.gov/pub/irs-soi/YYZZhi.xls(x); sha256sum vs irsold/; for 1112hi.xls run pull/up_official_sources/xlsdiff.py (0 differing cells)."
+  },
+  {
+   "name": "All IRS files checked: byte-identical / content-identical",
+   "value": "49 of 50 / 50 of 50",
+   "how_to_rederive": "Sum of the three rows above (24 CSV + 14 early workbooks + 12 state workbooks)."
+  },
+  {
+   "name": "IRS scheduled public release date for 2023–2024 state and county migration data",
+   "value": "2026-11-20",
+   "how_to_rederive": "https://www.irs.gov/pub/irs-soi/soi-public-release-list.xlsx, sheet 'SOI Public Release List', row 63 ('Individuals, State and County Migration data', program year 2023-2024); SOURCE: Statistics of Income, revised 9/10/2026."
+  },
+  {
+   "name": "Re-derived IRS net households Hawaiʻi lost to Washington / Nevada, 2011–12 to 2022–23 (report says 6,667 and 9,900)",
+   "value": "6,667 / 9,900",
+   "how_to_rederive": "From fresh YYZZhi.xls(x): State Outflow column 5 (returns) minus State Inflow column 5 for WA and NV, summed over 12 years (pull/up_official_sources/irs_rederive.py)."
+  },
+  {
+   "name": "Latest Title Guaranty Buyer Statistics edition on tghawaii.com",
+   "value": "Q2 2026 (Jan–Jun 2026), posted 2026-08-31 12:32 HST",
+   "how_to_rederive": "https://www.tghawaii.com/wp-json/wp/v2/media?search=Buyer-Stats, newest items; also Last-Modified Mon, 31 Aug 2026 22:31:58–22:32:11 GMT on the four Q2 2026 island PDFs."
+  },
+  {
+   "name": "Title Guaranty Q3 2026 Buyer Statistics posted?",
+   "value": "No (as of 2026-10-09 01:24 UTC)",
+   "how_to_rederive": "Market page unchanged (sha256 ecb3b4070e828218…, the same as on 2026-10-08) and lists 2026 Q2 as newest; no Buyer-Stats upload since 2026-08-31 in the media listing; 16 Q3-2026 URL guesses all 301 to the homepage."
+  },
+  {
+   "name": "Title Guaranty Buyer Statistics PDFs the report cites / links",
+   "value": "54 editions / 14 linked",
+   "how_to_rederive": "pull/up_official_sources/tg_set.py: expands every Title Guaranty citation in hawaii-buyer-origins.src.html; all 54 URLs return 200 with Content-Length equal to the report copy."
+  },
+  {
+   "name": "Re-downloaded core Title Guaranty PDFs byte-identical to the report's copies",
+   "value": "23 of 23",
+   "how_to_rederive": "Download the 23 URLs in pull/up_official_sources/tg_core.txt; sha256 vs raw/tg/, aud_claims_dl/, ca_tg24/, jk/tg/ copies."
+  },
+  {
+   "name": "Title Guaranty citation dates needing correction",
+   "value": "2 wrong: 'Buyer Statistics Q4 2025, 2026-01' (posted 2026-02-12 HST) and 'Q1–Q3 2024 editions, 2024-10-03 (posted)' (Q3 2024 posted 2025-01-09 HST). 2 group citations dated by an earlier edition: the Kauai and Oahu district-panel citations that include Q2 2026 (posted 2026-08-31). 1 combined Howard Hughes/TG citation dated 2025-02 (TG Q4 2024 posted 2025-03-10). Also 8 citations use 2026-02-13 (UTC) where TG posted Q4 2025 on 2026-02-12 HST, while 3 others use 2026-02-12: not wrong, but inconsistent.",
+   "how_to_rederive": "pull/up_official_sources/tg_cite_dates.py compares each citation date with the WordPress posting date of the editions it names; results.title_guaranty.citation_date_flags."
+  },
+  {
+   "name": "Freddie Mac PMMS 30-year fixed, week of 2026-10-01",
+   "value": "7.28%",
+   "how_to_rederive": "https://www.freddiemac.com/pmms/docs/PMMS_history.csv row date=10/1/2026, column pmms30 (same in historicalweeklydata.xlsx, sheet Full History)."
+  },
+  {
+   "name": "Freddie Mac PMMS 30-year fixed, week of 2026-10-08",
+   "value": "7.40%",
+   "how_to_rederive": "PMMS_history.csv row 10/8/2026, pmms30; also the freddiemac.com/pmms headline \"as of 10/08/2026 … 7.40%\". This is also the 2026 high so far."
+  },
+  {
+   "name": "Freddie Mac PMMS 2026 low (30-year fixed)",
+   "value": "5.98% on 2026-02-26",
+   "how_to_rederive": "Minimum of pmms30 over the 40 weekly rows dated 2026 (2026-01-08 to 2026-10-08); the only 2026 week below 6%."
+  }
+ ],
+ "results": {
+  "irs": {
+   "summary": "49 of 50 files byte-identical; 50 of 50 identical in content. Only difference: 1112hi.xls (file metadata, no cell changed).",
+   "files": [
+    {
+     "file": "countyinflow1112.csv",
+     "filing_years": "2011-12",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1112.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2011-2012",
+     "bytes": 6314809,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:14:24Z",
+     "sha256_fresh": "f530d6f2bba87fb82faf4005fdca73a2463b24bd4e61f3ef3e00cf34ba05fd1c",
+     "sha256_report_recorded": "f530d6f2bba87fb82faf4005fdca73a2463b24bd4e61f3ef3e00cf34ba05fd1c",
+     "sha256_report_local_copy": "f530d6f2bba87fb82faf4005fdca73a2463b24bd4e61f3ef3e00cf34ba05fd1c",
+     "report_local_copy": "irs2/countyinflow1112.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1112.csv",
+     "filing_years": "2011-12",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1112.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2011-2012",
+     "bytes": 6324246,
+     "server_last_modified": "Wed, 22 Jul 2015 02:31:14 GMT",
+     "downloaded_utc": "2026-10-09T01:14:26Z",
+     "sha256_fresh": "6aad88954ec14e62c4d90e4cf2eb142454d0eb62d229270739174b17767efba5",
+     "sha256_report_recorded": "6aad88954ec14e62c4d90e4cf2eb142454d0eb62d229270739174b17767efba5",
+     "sha256_report_local_copy": "6aad88954ec14e62c4d90e4cf2eb142454d0eb62d229270739174b17767efba5",
+     "report_local_copy": "irs2/countyoutflow1112.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1213.csv",
+     "filing_years": "2012-13",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1213.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2012-2013",
+     "bytes": 6396716,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:14:28Z",
+     "sha256_fresh": "7cf2a0f6251783047a7ade7dce53dbd0251ef6fd66de40f80d2761ea6160129e",
+     "sha256_report_recorded": "7cf2a0f6251783047a7ade7dce53dbd0251ef6fd66de40f80d2761ea6160129e",
+     "sha256_report_local_copy": "7cf2a0f6251783047a7ade7dce53dbd0251ef6fd66de40f80d2761ea6160129e",
+     "report_local_copy": "irs2/countyinflow1213.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1213.csv",
+     "filing_years": "2012-13",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1213.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2012-2013",
+     "bytes": 6401659,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:14:29Z",
+     "sha256_fresh": "cdf78a97255b98767ae7bf1e273b22872be55d735c23ad6d991ffa71444bbb85",
+     "sha256_report_recorded": "cdf78a97255b98767ae7bf1e273b22872be55d735c23ad6d991ffa71444bbb85",
+     "sha256_report_local_copy": "cdf78a97255b98767ae7bf1e273b22872be55d735c23ad6d991ffa71444bbb85",
+     "report_local_copy": "irs2/countyoutflow1213.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1314.csv",
+     "filing_years": "2013-14",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1314.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2013-2014",
+     "bytes": 4441497,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:14:32Z",
+     "sha256_fresh": "1ec398625a217fa47fb7244aac9c576405a612f4d6a4c1d5ad4cc2dce542293e",
+     "sha256_report_recorded": "1ec398625a217fa47fb7244aac9c576405a612f4d6a4c1d5ad4cc2dce542293e",
+     "sha256_report_local_copy": "1ec398625a217fa47fb7244aac9c576405a612f4d6a4c1d5ad4cc2dce542293e",
+     "report_local_copy": "irs2/countyinflow1314.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1314.csv",
+     "filing_years": "2013-14",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1314.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2013-2014",
+     "bytes": 4449201,
+     "server_last_modified": "Thu, 24 Mar 2016 02:07:49 GMT",
+     "downloaded_utc": "2026-10-09T01:14:33Z",
+     "sha256_fresh": "2427141c0663481a880618d4421d7a700dad2ffa865f7c98c2f8e52e136a19ac",
+     "sha256_report_recorded": "2427141c0663481a880618d4421d7a700dad2ffa865f7c98c2f8e52e136a19ac",
+     "sha256_report_local_copy": "2427141c0663481a880618d4421d7a700dad2ffa865f7c98c2f8e52e136a19ac",
+     "report_local_copy": "irs2/countyoutflow1314.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1415.csv",
+     "filing_years": "2014-15",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1415.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2014-2015",
+     "bytes": 3958876,
+     "server_last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+     "downloaded_utc": "2026-10-09T01:14:35Z",
+     "sha256_fresh": "a9da15d0acfcfb9a1b7708e9cdd0acc81b41fd8f5e63daef89717c2f390a6dcf",
+     "sha256_report_recorded": "a9da15d0acfcfb9a1b7708e9cdd0acc81b41fd8f5e63daef89717c2f390a6dcf",
+     "sha256_report_local_copy": "a9da15d0acfcfb9a1b7708e9cdd0acc81b41fd8f5e63daef89717c2f390a6dcf",
+     "report_local_copy": "irsdec/countyinflow1415.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1415.csv",
+     "filing_years": "2014-15",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1415.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2014-2015",
+     "bytes": 3973689,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:14:36Z",
+     "sha256_fresh": "5c9e1616b68a534a7cb841ac0019be670d4c800a50c935e9aeb976c30957a4bd",
+     "sha256_report_recorded": "5c9e1616b68a534a7cb841ac0019be670d4c800a50c935e9aeb976c30957a4bd",
+     "sha256_report_local_copy": "5c9e1616b68a534a7cb841ac0019be670d4c800a50c935e9aeb976c30957a4bd",
+     "report_local_copy": "irsout/countyoutflow1415.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1516.csv",
+     "filing_years": "2015-16",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1516.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2015-2016",
+     "bytes": 4447035,
+     "server_last_modified": "Wed, 29 Nov 2017 03:01:11 GMT",
+     "downloaded_utc": "2026-10-09T01:14:38Z",
+     "sha256_fresh": "5194d9b62a3539267ce5b697800cbfaab138750b3002f33b4498dd4d4799e4b1",
+     "sha256_report_recorded": "5194d9b62a3539267ce5b697800cbfaab138750b3002f33b4498dd4d4799e4b1",
+     "sha256_report_local_copy": "5194d9b62a3539267ce5b697800cbfaab138750b3002f33b4498dd4d4799e4b1",
+     "report_local_copy": "irsdec/countyinflow1516.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1516.csv",
+     "filing_years": "2015-16",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1516.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2015-2016",
+     "bytes": 4453758,
+     "server_last_modified": "Fri, 07 Nov 2025 08:57:51 GMT",
+     "downloaded_utc": "2026-10-09T01:14:40Z",
+     "sha256_fresh": "186a041e6a6e76991593ba0b7bbf6f0ab4620a4cf7f5c1681a6731b8b900ac16",
+     "sha256_report_recorded": "186a041e6a6e76991593ba0b7bbf6f0ab4620a4cf7f5c1681a6731b8b900ac16",
+     "sha256_report_local_copy": "186a041e6a6e76991593ba0b7bbf6f0ab4620a4cf7f5c1681a6731b8b900ac16",
+     "report_local_copy": "irsout/countyoutflow1516.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1617.csv",
+     "filing_years": "2016-17",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1617.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2016-2017",
+     "bytes": 5007096,
+     "server_last_modified": "Wed, 18 Dec 2019 03:14:36 GMT",
+     "downloaded_utc": "2026-10-09T01:14:41Z",
+     "sha256_fresh": "fa6237a4aa8fce712a077aaff5670369feafbdccce1dba9752199c5f3e22df2c",
+     "sha256_report_recorded": "fa6237a4aa8fce712a077aaff5670369feafbdccce1dba9752199c5f3e22df2c",
+     "sha256_report_local_copy": "fa6237a4aa8fce712a077aaff5670369feafbdccce1dba9752199c5f3e22df2c",
+     "report_local_copy": "irsdec/countyinflow1617.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1617.csv",
+     "filing_years": "2016-17",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1617.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2016-2017",
+     "bytes": 5006537,
+     "server_last_modified": "Wed, 18 Dec 2019 03:14:37 GMT",
+     "downloaded_utc": "2026-10-09T01:14:43Z",
+     "sha256_fresh": "224a13bd13cee1bea496253a316a885d125319741a4d03ed748abb28d06ee2aa",
+     "sha256_report_recorded": "224a13bd13cee1bea496253a316a885d125319741a4d03ed748abb28d06ee2aa",
+     "sha256_report_local_copy": "224a13bd13cee1bea496253a316a885d125319741a4d03ed748abb28d06ee2aa",
+     "report_local_copy": "irsout/countyoutflow1617.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1718.csv",
+     "filing_years": "2017-18",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1718.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2017-2018",
+     "bytes": 4515744,
+     "server_last_modified": "Fri, 20 Dec 2019 03:11:39 GMT",
+     "downloaded_utc": "2026-10-09T01:14:44Z",
+     "sha256_fresh": "405b527993dcf112b998981827a9f7a7be289c77ee9f454d25289a8041e0ddfb",
+     "sha256_report_recorded": "405b527993dcf112b998981827a9f7a7be289c77ee9f454d25289a8041e0ddfb",
+     "sha256_report_local_copy": "405b527993dcf112b998981827a9f7a7be289c77ee9f454d25289a8041e0ddfb",
+     "report_local_copy": "irsdec/countyinflow1718.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1718.csv",
+     "filing_years": "2017-18",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1718.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2017-2018",
+     "bytes": 4506864,
+     "server_last_modified": "Fri, 20 Dec 2019 03:11:40 GMT",
+     "downloaded_utc": "2026-10-09T01:14:46Z",
+     "sha256_fresh": "d7c263f8995b59ec46293a873e7d04bd9fae799f77120cae95db2f5c6896c344",
+     "sha256_report_recorded": "d7c263f8995b59ec46293a873e7d04bd9fae799f77120cae95db2f5c6896c344",
+     "sha256_report_local_copy": "d7c263f8995b59ec46293a873e7d04bd9fae799f77120cae95db2f5c6896c344",
+     "report_local_copy": "irsout/countyoutflow1718.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1819.csv",
+     "filing_years": "2018-19",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1819.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2018-2019",
+     "bytes": 4268559,
+     "server_last_modified": "Tue, 25 May 2021 02:11:16 GMT",
+     "downloaded_utc": "2026-10-09T01:14:47Z",
+     "sha256_fresh": "e547e8b75d6792c37a55d5f02623f16108de5f91d97784d70c8af1190a83792f",
+     "sha256_report_recorded": "e547e8b75d6792c37a55d5f02623f16108de5f91d97784d70c8af1190a83792f",
+     "sha256_report_local_copy": "e547e8b75d6792c37a55d5f02623f16108de5f91d97784d70c8af1190a83792f",
+     "report_local_copy": "irsdec/countyinflow1819.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1819.csv",
+     "filing_years": "2018-19",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1819.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2018-2019",
+     "bytes": 4275091,
+     "server_last_modified": "Tue, 25 May 2021 02:11:17 GMT",
+     "downloaded_utc": "2026-10-09T01:14:49Z",
+     "sha256_fresh": "ca26084b492c3c0152c82494ecb42fe24e044421351a8a36cd353d1102d05688",
+     "sha256_report_recorded": "ca26084b492c3c0152c82494ecb42fe24e044421351a8a36cd353d1102d05688",
+     "sha256_report_local_copy": "ca26084b492c3c0152c82494ecb42fe24e044421351a8a36cd353d1102d05688",
+     "report_local_copy": "irsout/countyoutflow1819.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow1920.csv",
+     "filing_years": "2019-20",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow1920.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2019-2020",
+     "bytes": 4448418,
+     "server_last_modified": "Tue, 24 May 2022 02:11:03 GMT",
+     "downloaded_utc": "2026-10-09T01:14:50Z",
+     "sha256_fresh": "a6c85b3fbd187f861862c40b25508371e585e33ab4ab25768b9176c29defd53c",
+     "sha256_report_recorded": "a6c85b3fbd187f861862c40b25508371e585e33ab4ab25768b9176c29defd53c",
+     "sha256_report_local_copy": "a6c85b3fbd187f861862c40b25508371e585e33ab4ab25768b9176c29defd53c",
+     "report_local_copy": "irsdec/countyinflow1920.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow1920.csv",
+     "filing_years": "2019-20",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow1920.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2019-2020",
+     "bytes": 4429398,
+     "server_last_modified": "Tue, 24 May 2022 02:11:04 GMT",
+     "downloaded_utc": "2026-10-09T01:14:52Z",
+     "sha256_fresh": "79724ba660a3c64ebe3e98c0de54124bf77cf600d7cc85f8f4200470f7386a3f",
+     "sha256_report_recorded": "79724ba660a3c64ebe3e98c0de54124bf77cf600d7cc85f8f4200470f7386a3f",
+     "sha256_report_local_copy": "79724ba660a3c64ebe3e98c0de54124bf77cf600d7cc85f8f4200470f7386a3f",
+     "report_local_copy": "irsout/countyoutflow1920.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow2021.csv",
+     "filing_years": "2020-21",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow2021.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2020-2021",
+     "bytes": 4442060,
+     "server_last_modified": "Fri, 02 Jun 2023 02:11:08 GMT",
+     "downloaded_utc": "2026-10-09T01:14:53Z",
+     "sha256_fresh": "37bfbf656cbbb953bb6cdaeea480ced653849456d49313c141b096b2e6aed495",
+     "sha256_report_recorded": "37bfbf656cbbb953bb6cdaeea480ced653849456d49313c141b096b2e6aed495",
+     "sha256_report_local_copy": "37bfbf656cbbb953bb6cdaeea480ced653849456d49313c141b096b2e6aed495",
+     "report_local_copy": "irsdec/countyinflow2021.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow2021.csv",
+     "filing_years": "2020-21",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow2021.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2020-2021",
+     "bytes": 4414697,
+     "server_last_modified": "Fri, 02 Jun 2023 02:11:09 GMT",
+     "downloaded_utc": "2026-10-09T01:14:55Z",
+     "sha256_fresh": "ff4fb70dc4f4dee63ef0b2587c8df76c7bf75aa9cd8c3c29cd9297862dc79914",
+     "sha256_report_recorded": "ff4fb70dc4f4dee63ef0b2587c8df76c7bf75aa9cd8c3c29cd9297862dc79914",
+     "sha256_report_local_copy": "ff4fb70dc4f4dee63ef0b2587c8df76c7bf75aa9cd8c3c29cd9297862dc79914",
+     "report_local_copy": "irsout/countyoutflow2021.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow2122.csv",
+     "filing_years": "2021-22",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow2122.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2021-2022",
+     "bytes": 4482703,
+     "server_last_modified": "Thu, 27 Jun 2024 02:11:03 GMT",
+     "downloaded_utc": "2026-10-09T01:14:56Z",
+     "sha256_fresh": "9c0778ed91553866820301bf1b9352c135c21cb27c2a73db0caac60502383f92",
+     "sha256_report_recorded": "9c0778ed91553866820301bf1b9352c135c21cb27c2a73db0caac60502383f92",
+     "sha256_report_local_copy": "9c0778ed91553866820301bf1b9352c135c21cb27c2a73db0caac60502383f92",
+     "report_local_copy": "irsdec/countyinflow2122.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow2122.csv",
+     "filing_years": "2021-22",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow2122.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2021-2022",
+     "bytes": 4468798,
+     "server_last_modified": "Thu, 27 Jun 2024 02:11:04 GMT",
+     "downloaded_utc": "2026-10-09T01:14:58Z",
+     "sha256_fresh": "51b988a3b170e37a45f1598bfbe18e136ef3236dcda7227b458e6714cf0535e4",
+     "sha256_report_recorded": "51b988a3b170e37a45f1598bfbe18e136ef3236dcda7227b458e6714cf0535e4",
+     "sha256_report_local_copy": "51b988a3b170e37a45f1598bfbe18e136ef3236dcda7227b458e6714cf0535e4",
+     "report_local_copy": "irsout/countyoutflow2122.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyinflow2223.csv",
+     "filing_years": "2022-23",
+     "kind": "county inflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyinflow2223.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023",
+     "bytes": 4571970,
+     "server_last_modified": "Thu, 19 Mar 2026 11:11:21 GMT",
+     "downloaded_utc": "2026-10-09T01:15:00Z",
+     "sha256_fresh": "813ba2ef550c6a598a5121ccf98edcc79f61f1af69eb495bf44cd830b1586745",
+     "sha256_report_recorded": "813ba2ef550c6a598a5121ccf98edcc79f61f1af69eb495bf44cd830b1586745",
+     "sha256_report_local_copy": "813ba2ef550c6a598a5121ccf98edcc79f61f1af69eb495bf44cd830b1586745",
+     "report_local_copy": "irsdec/countyinflow2223.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "countyoutflow2223.csv",
+     "filing_years": "2022-23",
+     "kind": "county outflow (national CSV)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/countyoutflow2223.csv",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023",
+     "bytes": 4584439,
+     "server_last_modified": "Thu, 19 Mar 2026 11:11:21 GMT",
+     "downloaded_utc": "2026-10-09T01:15:01Z",
+     "sha256_fresh": "364dba518f0db092515ccde03dda987815f6e54bcc8859640001e9185d4c106e",
+     "sha256_report_recorded": "364dba518f0db092515ccde03dda987815f6e54bcc8859640001e9185d4c106e",
+     "sha256_report_local_copy": "364dba518f0db092515ccde03dda987815f6e54bcc8859640001e9185d4c106e",
+     "report_local_copy": "irsout/countyoutflow2223.csv",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0405HIi.xls",
+     "filing_years": "2004-05",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0405.zip",
+     "zip_member": "co0405HIi.xls",
+     "zip_sha256": "c36251cd79c55a67b0c02928bcb1ab0d3c7a2c6400a1cd368617c883f462e7e2",
+     "zip_bytes": 12542602,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0405HIi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:07Z",
+     "sha256_fresh": "ab80165a3b04bf7335bb89ea4c7e7565399aa5ef3c9ce9d2f26185ae1c3093c6",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "ab80165a3b04bf7335bb89ea4c7e7565399aa5ef3c9ce9d2f26185ae1c3093c6",
+     "report_local_copy": "irsold/co0405HIi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0405HIo.xls",
+     "filing_years": "2004-05",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0405.zip",
+     "zip_member": "co0405HIo.xls",
+     "zip_sha256": "c36251cd79c55a67b0c02928bcb1ab0d3c7a2c6400a1cd368617c883f462e7e2",
+     "zip_bytes": 12542602,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0405HIo.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:07Z",
+     "sha256_fresh": "c11ab0b0e00f5d5591b88f2cbf2689bcbc333569584cb86bc871d6e98210069c",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "c11ab0b0e00f5d5591b88f2cbf2689bcbc333569584cb86bc871d6e98210069c",
+     "report_local_copy": "irsold/co0405HIo.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0506HIi.xls",
+     "filing_years": "2005-06",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0506.zip",
+     "zip_member": "co0506HIi.xls",
+     "zip_sha256": "d13b4e80d14636d7abe8fb94a804ba45c667195b803e6a47a877d7f98a4c2bb1",
+     "zip_bytes": 12971806,
+     "server_last_modified": "Fri, 29 May 2020 14:40:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0506HIi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:09Z",
+     "sha256_fresh": "3688c9bfe36105e6238e837f4cc2859a9435073841a908dab5d2dae1e3c1c79e",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "3688c9bfe36105e6238e837f4cc2859a9435073841a908dab5d2dae1e3c1c79e",
+     "report_local_copy": "irsold/co0506HIi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0506HIo.xls",
+     "filing_years": "2005-06",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0506.zip",
+     "zip_member": "co0506HIo.xls",
+     "zip_sha256": "d13b4e80d14636d7abe8fb94a804ba45c667195b803e6a47a877d7f98a4c2bb1",
+     "zip_bytes": 12971806,
+     "server_last_modified": "Fri, 29 May 2020 14:40:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0506HIo.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:09Z",
+     "sha256_fresh": "e5c06ad75e507a4ddba9776b2fe3200e089fc42678755d2fbe228f1b6209f765",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "e5c06ad75e507a4ddba9776b2fe3200e089fc42678755d2fbe228f1b6209f765",
+     "report_local_copy": "irsold/co0506HIo.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0607Hii.xls",
+     "filing_years": "2006-07",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0607.zip",
+     "zip_member": "co0607Hii.xls",
+     "zip_sha256": "4052a0f58e9b167989a10da03b8a3dcd5197f38ca0e57a31ed0db5c74308680d",
+     "zip_bytes": 12836644,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0607Hii.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:11Z",
+     "sha256_fresh": "cda0bbd0ab2c9c99efe61818995a7f79c2963d581a8ac22e68d0a39d24ce450f",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "cda0bbd0ab2c9c99efe61818995a7f79c2963d581a8ac22e68d0a39d24ce450f",
+     "report_local_copy": "irsold/co0607Hii.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0607Hio.xls",
+     "filing_years": "2006-07",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0607.zip",
+     "zip_member": "co0607Hio.xls",
+     "zip_sha256": "4052a0f58e9b167989a10da03b8a3dcd5197f38ca0e57a31ed0db5c74308680d",
+     "zip_bytes": 12836644,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0607Hio.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:11Z",
+     "sha256_fresh": "10aaa4ee2cbd5e8efe28bf3b31834b90321bbf1cb4441e84bffe7747cbc0d9e7",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "10aaa4ee2cbd5e8efe28bf3b31834b90321bbf1cb4441e84bffe7747cbc0d9e7",
+     "report_local_copy": "irsold/co0607Hio.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0708iHi.xls",
+     "filing_years": "2007-08",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0708.zip",
+     "zip_member": "co0708iHi.xls",
+     "zip_sha256": "f56cb2e394e526d73f85069fcaa8e5261dc922dbd1f51b42a5f80aa5d9f172d4",
+     "zip_bytes": 13345072,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0708iHi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:14Z",
+     "sha256_fresh": "62d00e90ac104f725618d3c2545b890b57c15617eb6f9ee34079721eacd2d5ec",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "62d00e90ac104f725618d3c2545b890b57c15617eb6f9ee34079721eacd2d5ec",
+     "report_local_copy": "irsold/co0708iHi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0708oHi.xls",
+     "filing_years": "2007-08",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0708.zip",
+     "zip_member": "co0708oHi.xls",
+     "zip_sha256": "f56cb2e394e526d73f85069fcaa8e5261dc922dbd1f51b42a5f80aa5d9f172d4",
+     "zip_bytes": 13345072,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0708oHi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:14Z",
+     "sha256_fresh": "c4b0f0ca535930459d452787d67504e70cadd5abfe1f4ad9a44df86ac6db6e90",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "c4b0f0ca535930459d452787d67504e70cadd5abfe1f4ad9a44df86ac6db6e90",
+     "report_local_copy": "irsold/co0708oHi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0809iHi.xls",
+     "filing_years": "2008-09",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0809.zip",
+     "zip_member": "co0809iHi.xls",
+     "zip_sha256": "56299c47411ba3e3e13d25de9c36daaf29daa1e810eb1adeafaa0a2a4f456bae",
+     "zip_bytes": 15062571,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0809iHi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:16Z",
+     "sha256_fresh": "540a6cb24b000515a608d04aed597d9e26d2ac7c3215b5abc0c91db349097ed0",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "540a6cb24b000515a608d04aed597d9e26d2ac7c3215b5abc0c91db349097ed0",
+     "report_local_copy": "irsold/co0809iHi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0809oHi.xls",
+     "filing_years": "2008-09",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0809.zip",
+     "zip_member": "co0809oHi.xls",
+     "zip_sha256": "56299c47411ba3e3e13d25de9c36daaf29daa1e810eb1adeafaa0a2a4f456bae",
+     "zip_bytes": 15062571,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0809oHi.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:16Z",
+     "sha256_fresh": "99b73ec1fb75d382fc87c4090df0d6b6eb3ded641e9fda094ccb90ff2258af50",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "99b73ec1fb75d382fc87c4090df0d6b6eb3ded641e9fda094ccb90ff2258af50",
+     "report_local_copy": "irsold/co0809oHi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0910iHI.xls",
+     "filing_years": "2009-10",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0910.zip",
+     "zip_member": "co0910iHI.xls",
+     "zip_sha256": "f890fe8c479e9cc5eac200d2ff27422bdbcc25c342c158c0d226db4aa0534a0d",
+     "zip_bytes": 12744701,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0910iHI.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:18Z",
+     "sha256_fresh": "2ef23d4b3494767a8c3ecd0f8235e7f9db616f7db051b9e26808bfe3dd1bf186",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "2ef23d4b3494767a8c3ecd0f8235e7f9db616f7db051b9e26808bfe3dd1bf186",
+     "report_local_copy": "irsold/co0910iHI.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co0910oHI.xls",
+     "filing_years": "2009-10",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county0910.zip",
+     "zip_member": "co0910oHI.xls",
+     "zip_sha256": "f890fe8c479e9cc5eac200d2ff27422bdbcc25c342c158c0d226db4aa0534a0d",
+     "zip_bytes": 12744701,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co0910oHI.xls -> HTTP 404",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:18Z",
+     "sha256_fresh": "780a3cd785de9668c8290d3d56a8751dda41c73529eb457b0c9303463c7658f5",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "780a3cd785de9668c8290d3d56a8751dda41c73529eb457b0c9303463c7658f5",
+     "report_local_copy": "irsold/co0910oHI.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co1011ihi.xls",
+     "filing_years": "2010-11",
+     "kind": "Hawaii county inflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county1011.zip",
+     "zip_member": "co1011ihi.xls",
+     "zip_sha256": "f51d2d0d3a2b28f36dd7517fc44f8a0a028f3ecc5daeb791ad50a2f12d01fdac",
+     "zip_bytes": 13113806,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:20 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co1011ihi.xls -> HTTP 200",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:20Z",
+     "sha256_fresh": "a6147630dd4e0443233c4257a417ffe063f89f65cacea285468cd717d084ef2b",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "a6147630dd4e0443233c4257a417ffe063f89f65cacea285468cd717d084ef2b",
+     "report_local_copy": "irsold/co1011ihi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "co1011ohi.xls",
+     "filing_years": "2010-11",
+     "kind": "Hawaii county outflow workbook (member of county ZIP)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/county1011.zip",
+     "zip_member": "co1011ohi.xls",
+     "zip_sha256": "f51d2d0d3a2b28f36dd7517fc44f8a0a028f3ecc5daeb791ad50a2f12d01fdac",
+     "zip_bytes": 13113806,
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:20 GMT",
+     "direct_file_url_probe": "https://www.irs.gov/pub/irs-soi/co1011ohi.xls -> HTTP 200",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+     "downloaded_utc": "2026-10-09T01:16:20Z",
+     "sha256_fresh": "5cda07e9f09fb25a576206bfb4667fa8daffe5cb59762187f9285928d5e5ef62",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "5cda07e9f09fb25a576206bfb4667fa8daffe5cb59762187f9285928d5e5ef62",
+     "report_local_copy": "irsold/co1011ohi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1112hi.xls",
+     "filing_years": "2011-12",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1112hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2011-2012",
+     "bytes": 189440,
+     "server_last_modified": "Fri, 07 Nov 2025 08:57:49 GMT",
+     "downloaded_utc": "2026-10-09T01:15:03Z",
+     "sha256_fresh": "3f04eec68c665ef184c2b47c460ed04ff761a76f936c4109652cdab4de8df0de",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "15c8220029ad27101bf5d8490438392d3ab55ab8af3050244ffd675c5f7f740f",
+     "report_local_copy": "irsold/1112hi.xls",
+     "byte_identical": false,
+     "content_identical": true,
+     "mismatch_detail": "Byte mismatch only. All four sheets (State Outflow, State Inflow, County Outflow, County Inflow) have 0 differing cells (xlrd cell-by-cell compare, pull/up_official_sources/xlsdiff.py). The 19 differing bytes sit in the workbook \"last saved by\" user-name record and the document-summary properties. The copy inside https://www.irs.gov/pub/irs-soi/1112migrationdata.zip is byte-identical to the fresh direct download, so the report copy is an older packaging of the same numbers."
+    },
+    {
+     "file": "1213hi.xls",
+     "filing_years": "2012-13",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1213hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2012-2013",
+     "bytes": 202240,
+     "server_last_modified": "Sat, 22 Aug 2015 02:02:33 GMT",
+     "downloaded_utc": "2026-10-09T01:15:33Z",
+     "sha256_fresh": "dfd1e24156d2f4de18e002f4f200df165b0852131054f30cf376dce47c4c7888",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "dfd1e24156d2f4de18e002f4f200df165b0852131054f30cf376dce47c4c7888",
+     "report_local_copy": "irsold/1213hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1314hi.xls",
+     "filing_years": "2013-14",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1314hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2013-2014",
+     "bytes": 146432,
+     "server_last_modified": "Thu, 24 Mar 2016 02:02:30 GMT",
+     "downloaded_utc": "2026-10-09T01:15:35Z",
+     "sha256_fresh": "668cb0f1da5867a935c746158ea9e0aae7005dd929f9458f8d45c09de12a00c5",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "668cb0f1da5867a935c746158ea9e0aae7005dd929f9458f8d45c09de12a00c5",
+     "report_local_copy": "irsold/1314hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1415hi.xls",
+     "filing_years": "2014-15",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1415hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2014-2015",
+     "bytes": 131584,
+     "server_last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+     "downloaded_utc": "2026-10-09T01:15:36Z",
+     "sha256_fresh": "5b1c18b7103dbc8143bded3a2dd0eeb904b0715bec6e63757f88f7c47bf2a252",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "5b1c18b7103dbc8143bded3a2dd0eeb904b0715bec6e63757f88f7c47bf2a252",
+     "report_local_copy": "irsold/1415hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1516hi.xls",
+     "filing_years": "2015-16",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1516hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2015-2016",
+     "bytes": 146432,
+     "server_last_modified": "Fri, 07 Nov 2025 08:57:50 GMT",
+     "downloaded_utc": "2026-10-09T01:15:41Z",
+     "sha256_fresh": "a3fca55cd2d30115f5603b123dac6a76415c250a3b19444b56227e5875f9cac5",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "a3fca55cd2d30115f5603b123dac6a76415c250a3b19444b56227e5875f9cac5",
+     "report_local_copy": "irsold/1516hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1617hi.xls",
+     "filing_years": "2016-17",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1617hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2016-2017",
+     "bytes": 164352,
+     "server_last_modified": "Wed, 18 Dec 2019 03:13:47 GMT",
+     "downloaded_utc": "2026-10-09T01:15:43Z",
+     "sha256_fresh": "a4b85180609a46e47f516782cfc18098262a7905861ad77969163c0feeafa0d2",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "a4b85180609a46e47f516782cfc18098262a7905861ad77969163c0feeafa0d2",
+     "report_local_copy": "irsold/1617hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1718hi.xls",
+     "filing_years": "2017-18",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1718hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2017-2018",
+     "bytes": 147456,
+     "server_last_modified": "Fri, 20 Dec 2019 03:11:02 GMT",
+     "downloaded_utc": "2026-10-09T01:15:45Z",
+     "sha256_fresh": "3db4beabd3f03da7d2ea67b53abc33ec7ffc26c875f3d273d717245c38d4e615",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "3db4beabd3f03da7d2ea67b53abc33ec7ffc26c875f3d273d717245c38d4e615",
+     "report_local_copy": "irsold/1718hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1819hi.xls",
+     "filing_years": "2018-19",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1819hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2018-2019",
+     "bytes": 152064,
+     "server_last_modified": "Tue, 25 May 2021 02:10:38 GMT",
+     "downloaded_utc": "2026-10-09T01:15:46Z",
+     "sha256_fresh": "c73a0b58f9a0f9aaec219083ad14be202c0271d04766cedb2c2c595b856008cc",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "c73a0b58f9a0f9aaec219083ad14be202c0271d04766cedb2c2c595b856008cc",
+     "report_local_copy": "irsold/1819hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "1920hi.xls",
+     "filing_years": "2019-20",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/1920hi.xls",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2019-2020",
+     "bytes": 155648,
+     "server_last_modified": "Tue, 24 May 2022 02:10:34 GMT",
+     "downloaded_utc": "2026-10-09T01:15:47Z",
+     "sha256_fresh": "6efc8861efc3dd0f713d1e9365367a9f7cee96bf604f40c00ff913fad8542a64",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "6efc8861efc3dd0f713d1e9365367a9f7cee96bf604f40c00ff913fad8542a64",
+     "report_local_copy": "irsold/1920hi.xls",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "2021hi.xlsx",
+     "filing_years": "2020-21",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/2021hi.xlsx",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2020-2021",
+     "bytes": 70576,
+     "server_last_modified": "Fri, 02 Jun 2023 02:10:33 GMT",
+     "downloaded_utc": "2026-10-09T01:16:03Z",
+     "sha256_fresh": "ee9de120ae51b845b83b144040d95db04dbd5220c7e87e301c32c67d63ca142d",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "ee9de120ae51b845b83b144040d95db04dbd5220c7e87e301c32c67d63ca142d",
+     "report_local_copy": "irsold/2021hi.xlsx",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "2122hi.xlsx",
+     "filing_years": "2021-22",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/2122hi.xlsx",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2021-2022",
+     "bytes": 70190,
+     "server_last_modified": "Thu, 27 Jun 2024 02:10:29 GMT",
+     "downloaded_utc": "2026-10-09T01:16:05Z",
+     "sha256_fresh": "2d9048f60e99fe4c63e94c9ce5df1eae971be0ddec8fb524f48e39aec39a880d",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "2d9048f60e99fe4c63e94c9ce5df1eae971be0ddec8fb524f48e39aec39a880d",
+     "report_local_copy": "irsold/2122hi.xlsx",
+     "byte_identical": true,
+     "content_identical": true
+    },
+    {
+     "file": "2223hi.xlsx",
+     "filing_years": "2022-23",
+     "kind": "Hawaii state workbook (state and county inflow/outflow sheets)",
+     "official_url": "https://www.irs.gov/pub/irs-soi/2223hi.xlsx",
+     "index_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023",
+     "bytes": 63373,
+     "server_last_modified": "Thu, 19 Mar 2026 11:10:46 GMT",
+     "downloaded_utc": "2026-10-09T01:16:06Z",
+     "sha256_fresh": "49bd4bc233c61f8fada46c9902e6f2ed8b3551063c6a3097846b1839148ca79e",
+     "sha256_report_recorded": null,
+     "sha256_report_local_copy": "49bd4bc233c61f8fada46c9902e6f2ed8b3551063c6a3097846b1839148ca79e",
+     "report_local_copy": "irsold/2223hi.xlsx",
+     "byte_identical": true,
+     "content_identical": true
+    }
+   ],
+   "early_year_zips": [
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0405.zip",
+     "bytes": 12542602,
+     "sha256": "c36251cd79c55a67b0c02928bcb1ab0d3c7a2c6400a1cd368617c883f462e7e2",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:07Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0506.zip",
+     "bytes": 12971806,
+     "sha256": "d13b4e80d14636d7abe8fb94a804ba45c667195b803e6a47a877d7f98a4c2bb1",
+     "server_last_modified": "Fri, 29 May 2020 14:40:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:09Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0607.zip",
+     "bytes": 12836644,
+     "sha256": "4052a0f58e9b167989a10da03b8a3dcd5197f38ca0e57a31ed0db5c74308680d",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:11Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0708.zip",
+     "bytes": 13345072,
+     "sha256": "f56cb2e394e526d73f85069fcaa8e5261dc922dbd1f51b42a5f80aa5d9f172d4",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:14Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0809.zip",
+     "bytes": 15062571,
+     "sha256": "56299c47411ba3e3e13d25de9c36daaf29daa1e810eb1adeafaa0a2a4f456bae",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:16Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county0910.zip",
+     "bytes": 12744701,
+     "sha256": "f890fe8c479e9cc5eac200d2ff27422bdbcc25c342c158c0d226db4aa0534a0d",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:15 GMT",
+     "downloaded_utc": "2026-10-09T01:16:18Z"
+    },
+    {
+     "url": "https://www.irs.gov/pub/irs-soi/county1011.zip",
+     "bytes": 13113806,
+     "sha256": "f51d2d0d3a2b28f36dd7517fc44f8a0a028f3ecc5daeb791ad50a2f12d01fdac",
+     "server_last_modified": "Fri, 07 Nov 2025 08:58:20 GMT",
+     "downloaded_utc": "2026-10-09T01:16:20Z"
+    }
+   ],
+   "other_irs_files_cited": [
+    {
+     "file": "stateoutflow2223.csv",
+     "official_url": "https://www.irs.gov/pub/irs-soi/stateoutflow2223.csv",
+     "bytes": 100548,
+     "sha256_fresh": "59d594df259ecb5b97ec832f8e4069bca4b8fce56e989d44ce511f3151332ceb",
+     "server_last_modified": "Thu, 19 Mar 2026 11:11:23 GMT",
+     "report_working_copy": "chk/irs/stateoutflow2223.csv",
+     "sha256_working_copy": "59d594df259ecb5b97ec832f8e4069bca4b8fce56e989d44ce511f3151332ceb",
+     "byte_identical": true
+    },
+    {
+     "file": "stateinflow2223.csv",
+     "official_url": "https://www.irs.gov/pub/irs-soi/stateinflow2223.csv",
+     "bytes": 100523,
+     "sha256_fresh": "ea95debe27153e2a60aeb67e386250ad67d3ebe7ce226e02b540ca9b7ab01d73",
+     "server_last_modified": "Thu, 19 Mar 2026 11:11:22 GMT",
+     "report_working_copy": "skeptic_leavers/dl/stateinflow2223.csv",
+     "sha256_working_copy": "ea95debe27153e2a60aeb67e386250ad67d3ebe7ce226e02b540ca9b7ab01d73",
+     "byte_identical": true
+    },
+    {
+     "file": "2223inpublicmigdoc.pdf",
+     "official_url": "https://www.irs.gov/pub/irs-soi/2223inpublicmigdoc.pdf",
+     "bytes": 431090,
+     "sha256_fresh": "ad72b67cf7c34b4d2d0fc9cac9d165895be57aebb648947270c73b997e719532",
+     "server_last_modified": "Thu, 19 Mar 2026 11:10:52 GMT"
+    }
+   ],
+   "release_schedule": {
+    "source": "https://www.irs.gov/pub/irs-soi/soi-public-release-list.xlsx",
+    "revision": "SOURCE: Statistics of Income, revised 9/10/2026.",
+    "sha256": "d89843a7be837a2b6034f8e1464065257be0d3ee6bfb633846e1288e7219c917",
+    "migration_rows": [
+     {
+      "sheet_row": 18,
+      "date_of_public_release": "2026-03-19",
+      "program_name": "Individuals, State and County Migration data",
+      "program_year": "2022-2023"
+     },
+     {
+      "sheet_row": 63,
+      "date_of_public_release": "2026-11-20",
+      "program_name": "Individuals, State and County Migration data",
+      "program_year": "2023-2024"
+     }
+    ],
+    "scheduled_2023_2024": "2026-11-20",
+    "released_2022_2023_as_scheduled": "2026-03-19",
+    "upcoming_page_note": "The Upcoming Data Releases page (last reviewed 29-Sep-2026) covers Jul 1–Sep 30, 2026 and has no migration entry.",
+    "status_2023_2024_on_2026_10_09": "Not released: 2023–24 files and page return 404."
+   },
+   "content_checks": {
+    "diff_state_2022_23": {
+     "Hawaii Island inflow": {
+      "fresh": [
+       3200,
+       5462,
+       292461
+      ],
+      "report_json": [
+       3200,
+       5462,
+       292461
+      ],
+      "equal": true
+     },
+     "Hawaii Island outflow": {
+      "fresh": [
+       2935,
+       4904,
+       186460
+      ],
+      "report_json": [
+       2935,
+       4904,
+       186460
+      ],
+      "equal": true
+     },
+     "Oahu inflow": {
+      "fresh": [
+       18542,
+       34431,
+       1360143
+      ],
+      "report_json": [
+       18542,
+       34431,
+       1360143
+      ],
+      "equal": true
+     },
+     "Oahu outflow": {
+      "fresh": [
+       20909,
+       40709,
+       1472046
+      ],
+      "report_json": [
+       20909,
+       40709,
+       1472046
+      ],
+      "equal": true
+     },
+     "Kauai inflow": {
+      "fresh": [
+       940,
+       1484,
+       90288
+      ],
+      "report_json": [
+       940,
+       1484,
+       90288
+      ],
+      "equal": true
+     },
+     "Kauai outflow": {
+      "fresh": [
+       1034,
+       1716,
+       79230
+      ],
+      "report_json": [
+       1034,
+       1716,
+       79230
+      ],
+      "equal": true
+     },
+     "Maui inflow": {
+      "fresh": [
+       2344,
+       3654,
+       211204
+      ],
+      "report_json": [
+       2344,
+       3654,
+       211204
+      ],
+      "equal": true
+     },
+     "Maui outflow": {
+      "fresh": [
+       2745,
+       4527,
+       219718
+      ],
+      "report_json": [
+       2745,
+       4527,
+       219718
+      ],
+      "equal": true
+     }
+    },
+    "net_to_WA_NV_2011_12_to_2022_23": {
+     "WA": 6667,
+     "NV": 9900
+    },
+    "net_by_year": {
+     "WA": {
+      "1112": -100,
+      "1213": 168,
+      "1314": 244,
+      "1415": 333,
+      "1516": 688,
+      "1617": 1403,
+      "1718": 688,
+      "1819": 725,
+      "1920": 659,
+      "2021": 565,
+      "2122": 604,
+      "2223": 690
+     },
+     "NV": {
+      "1112": 305,
+      "1213": 503,
+      "1314": 481,
+      "1415": 456,
+      "1516": 828,
+      "1617": 1282,
+      "1718": 1005,
+      "1819": 1032,
+      "1920": 882,
+      "2021": 978,
+      "2122": 1158,
+      "2223": 990
+     }
+    }
+   }
+  },
+  "title_guaranty": {
+   "q3_2026_posted": false,
+   "q3_2026_evidence": {
+    "market_page_sha256": "ecb3b4070e828218ee33e99b647deda350aefb3651fad907ab497875b294abd7",
+    "market_page_unchanged_since": "2026-10-08T05:23:52Z",
+    "buyer_stats_uploads_since_2026_08_30": [
+     {
+      "file": "Buyer-Stats-Kauai-Q2-2026.pdf",
+      "posted_HST": "2026-08-31T12:32:11"
+     },
+     {
+      "file": "Buyer-Stats-Hawaii-Island-Q2-2026.pdf",
+      "posted_HST": "2026-08-31T12:32:09"
+     },
+     {
+      "file": "Buyer-Stats-Q2-2026.pdf",
+      "posted_HST": "2026-08-31T12:32:06"
+     },
+     {
+      "file": "Buyer-Stats-Oahu-Q2-2026.pdf",
+      "posted_HST": "2026-08-31T12:32:01"
+     },
+     {
+      "file": "Buyer-Stats-Maui-Q2-2026.pdf",
+      "posted_HST": "2026-08-31T12:31:58"
+     }
+    ],
+    "url_probes": [
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Island-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Isl-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Big-Island-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q3-2026-1.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q3-2026-1.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q3-2026-1.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Island-Q3-2026-1.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     },
+     {
+      "url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Statewide-Q3-2026.pdf",
+      "http": "301",
+      "location": "https://www.tghawaii.com"
+     }
+    ]
+   },
+   "latest_edition": {
+    "name": "Q2 2026 (Jan–Jun 2026)",
+    "posted_HST": "2026-08-31T12:32:11",
+    "files": [
+     "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Island-Q2-2026.pdf",
+     "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2026.pdf",
+     "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf"
+    ]
+   },
+   "editions_cited": [
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2015",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2015",
+     "period_covered": "Jan–Dec 2015 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2015.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2015)",
+     "posted_HST": "2020-01-24T11:04:08",
+     "posted_UTC": "2020-01-24T21:04:08",
+     "server_last_modified": "Fri, 24 Jan 2020 21:04:08 GMT",
+     "bytes": 1743148,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2016-02-04T08:41:29-10",
+     "pdf_mod_date": "2016-02-04T08:42:18-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2015.pdf",
+       "sha256": "0d4c5eec5912a7d70864e9207ba040dbf73adb287a29ddbdd5007fe0b83a72cc",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2015",
+     "island": "Maui",
+     "quarter": "Q4 2015",
+     "period_covered": "Jan–Dec 2015 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2015.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2015)",
+     "posted_HST": "2020-01-24T11:03:57",
+     "posted_UTC": "2020-01-24T21:03:57",
+     "server_last_modified": "Fri, 24 Jan 2020 21:03:57 GMT",
+     "bytes": 1747687,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2016-02-04T08:42:47-10",
+     "pdf_mod_date": "2016-02-04T08:43:00-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2015.pdf",
+       "sha256": "bc672321f9f11a52085da0de9e429031def9fc478a43861ce5f9b7c7ef7b3ae7",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2016",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2016",
+     "period_covered": "Jan–Dec 2016 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2016.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2016)",
+     "posted_HST": "2020-01-24T11:03:04",
+     "posted_UTC": "2020-01-24T21:03:04",
+     "server_last_modified": "Fri, 24 Jan 2020 21:03:04 GMT",
+     "bytes": 1867003,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2017-02-14T10:55:58+08",
+     "pdf_mod_date": "2017-02-16T16:34:56-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2016.pdf",
+       "sha256": "5e049c909cb132b229818955bc45e768a9d1a6f034d42bb83c5dcc1e607d519f",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2016",
+     "island": "Maui",
+     "quarter": "Q4 2016",
+     "period_covered": "Jan–Dec 2016 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2016.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2016)",
+     "posted_HST": "2020-01-24T11:03:19",
+     "posted_UTC": "2020-01-24T21:03:19",
+     "server_last_modified": "Fri, 24 Jan 2020 21:03:19 GMT",
+     "bytes": 2018965,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2017-02-14T10:56:54+08",
+     "pdf_mod_date": "2017-02-16T16:33:43-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2016.pdf",
+       "sha256": "564be6dfe412783b04bd458c41a6b113649f61bcbfd9b7998a5a4b7335586a0b",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2017",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2017",
+     "period_covered": "Jan–Dec 2017 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2017.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2017)",
+     "posted_HST": "2020-01-24T11:01:50",
+     "posted_UTC": "2020-01-24T21:01:50",
+     "server_last_modified": "Fri, 24 Jan 2020 21:01:50 GMT",
+     "bytes": 1927243,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2018-01-31T17:20:30-10",
+     "pdf_mod_date": "2018-01-31T17:21:07-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2017.pdf",
+       "sha256": "5e97a89f2bae472c95405036dc826b304e775cd5501ba64878717c72231429f2",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2017",
+     "island": "Maui",
+     "quarter": "Q4 2017",
+     "period_covered": "Jan–Dec 2017 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2017.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2017)",
+     "posted_HST": "2020-01-24T11:02:00",
+     "posted_UTC": "2020-01-24T21:02:00",
+     "server_last_modified": "Fri, 24 Jan 2020 21:02:00 GMT",
+     "bytes": 1741166,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2018-01-31T17:21:50-10",
+     "pdf_mod_date": "2018-01-31T17:22:07-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2017.pdf",
+       "sha256": "98e6ebdb714d7e4e357c0d7422fe8c802d37d2e496f611227d97631f49998e60",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2018",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2018",
+     "period_covered": "Jan–Dec 2018 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2018.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2018)",
+     "posted_HST": "2020-01-24T10:44:54",
+     "posted_UTC": "2020-01-24T20:44:54",
+     "server_last_modified": "Fri, 24 Jan 2020 20:44:54 GMT",
+     "bytes": 1021404,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2019-03-16T08:18:37+08",
+     "pdf_mod_date": "2019-03-15T14:38:36-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2018.pdf",
+       "sha256": "18a3f0e3f37a59c0a61325205a535b3ab81080dbf774ec1817fdd10ad191ff47",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2018",
+     "island": "Maui",
+     "quarter": "Q4 2018",
+     "period_covered": "Jan–Dec 2018 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2018.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2018)",
+     "posted_HST": "2020-01-24T10:45:01",
+     "posted_UTC": "2020-01-24T20:45:01",
+     "server_last_modified": "Fri, 24 Jan 2020 20:45:01 GMT",
+     "bytes": 1084163,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2019-03-16T08:18:37+08",
+     "pdf_mod_date": "2019-03-15T14:41:25-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2018.pdf",
+       "sha256": "7a9c612d7ff8ca72bceecb869890da2510f09514e8d3bab119f5aeedcd58a499",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Server copy was re-uploaded 2020-01-24 (HST); original posting date not shown on tghawaii.com. PDF creation date is the best evidence of the edition date."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2019",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2019",
+     "period_covered": "Jan–Dec 2019 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Isl-Q4-2019.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii Isl (Q4 2019)",
+     "posted_HST": "2020-02-11T10:42:24",
+     "posted_UTC": "2020-02-11T20:42:24",
+     "server_last_modified": "Tue, 11 Feb 2020 20:42:24 GMT",
+     "bytes": 2133960,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2020-02-11T11:20:07+08",
+     "pdf_mod_date": "2020-02-11T11:21:33+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Isl-Q4-2019.pdf",
+       "sha256": "55627d0ca47b04cc5b6091311845eeb751e87098a99951956258403b56e53744",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2019",
+     "island": "Maui",
+     "quarter": "Q4 2019",
+     "period_covered": "Jan–Dec 2019 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2019.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2019)",
+     "posted_HST": "2020-02-11T10:42:27",
+     "posted_UTC": "2020-02-11T20:42:27",
+     "server_last_modified": "Tue, 11 Feb 2020 20:42:27 GMT",
+     "bytes": 2125988,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2020-02-11T11:24:15+08",
+     "pdf_mod_date": "2020-02-11T11:24:32+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2019.pdf",
+       "sha256": "7815be2c516a42985f5ae1d09f844c87d0429a7ea95535a8938af97fcbd1a4ed",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q4 2019",
+     "island": "Oahu",
+     "quarter": "Q4 2019",
+     "period_covered": "Jan–Dec 2019 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2019.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q4 2019)",
+     "posted_HST": "2020-02-11T10:42:28",
+     "posted_UTC": "2020-02-11T20:42:28",
+     "server_last_modified": "Tue, 11 Feb 2020 20:42:28 GMT",
+     "bytes": 2023622,
+     "linked_in_report": false,
+     "report_basis": [
+      "'Hawaii Business Magazine (Title Guaranty data); TG Oahu Q4 2019' (reported via press)"
+     ],
+     "pdf_creation_date": "2020-02-11T11:24:42+08",
+     "pdf_mod_date": "2020-02-11T11:24:48+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "jk/tg/Buyer-Stats-Oahu-Q4-2019.pdf",
+       "sha256": "e6cfcb3eb72919c8af17894806d59531d969343730a794436914b0e05b6fe4bb",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "The report cites this edition only through Hawaii Business Magazine (reported), 2022-07-19."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2020",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2020",
+     "period_covered": "Jan–Dec 2020 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2020.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2020)",
+     "posted_HST": "2021-03-02T18:00:45",
+     "posted_UTC": "2021-03-03T04:00:45",
+     "server_last_modified": "Wed, 03 Mar 2021 04:00:45 GMT",
+     "bytes": 2017251,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2021-03-03T10:15:47+08",
+     "pdf_mod_date": "2021-03-03T11:24:48+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2020.pdf",
+       "sha256": "bb37b6874643bb96eb091874bdcb5c68a3e896844edeb39bc6ffe51447368f56",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2020",
+     "island": "Maui",
+     "quarter": "Q4 2020",
+     "period_covered": "Jan–Dec 2020 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2020.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2020)",
+     "posted_HST": "2021-03-02T18:00:48",
+     "posted_UTC": "2021-03-03T04:00:48",
+     "server_last_modified": "Wed, 03 Mar 2021 04:00:48 GMT",
+     "bytes": 2076664,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2021-03-03T10:15:47+08",
+     "pdf_mod_date": "2021-03-03T11:25:41+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2020.pdf",
+       "sha256": "da435a9b2350a8aa1923447684ed60d3218385510a90327adcb7f80a27b5167f",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2021",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2021",
+     "period_covered": "Jan–Dec 2021 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2021.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2021)",
+     "posted_HST": "2022-02-17T17:07:30",
+     "posted_UTC": "2022-02-18T03:07:30",
+     "server_last_modified": "Fri, 18 Feb 2022 03:07:30 GMT",
+     "bytes": 2072943,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2022-02-18T07:38:44+08",
+     "pdf_mod_date": "2022-02-17T17:05:48-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2021.pdf",
+       "sha256": "df998f319334e1c4d3cd21185b1acb12ced00f360a9c6a4893a726b7c3e0eacc",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2021",
+     "island": "Maui",
+     "quarter": "Q4 2021",
+     "period_covered": "Jan–Dec 2021 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2021.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2021)",
+     "posted_HST": "2022-02-17T17:07:37",
+     "posted_UTC": "2022-02-18T03:07:37",
+     "server_last_modified": "Fri, 18 Feb 2022 03:07:37 GMT",
+     "bytes": 2162497,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2022-02-18T07:38:44+08",
+     "pdf_mod_date": "2022-02-17T17:04:56-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2021.pdf",
+       "sha256": "c7067bc4f74137f8c53a70e06a3ef3657834ee136af9824d6ec02a34d148ab63",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2022",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2022",
+     "period_covered": "Jan–Dec 2022 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2022.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2022)",
+     "posted_HST": "2023-03-03T15:03:05",
+     "posted_UTC": "2023-03-04T01:03:05",
+     "server_last_modified": "Sat, 04 Mar 2023 01:03:05 GMT",
+     "bytes": 2077350,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2023-03-01T12:47:16+08",
+     "pdf_mod_date": "2023-03-03T15:02:47-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2022.pdf",
+       "sha256": "1dce06b05c17ca643d66194681803857ed5118dad216504b5dda75b46bf88b90",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2022",
+     "island": "Maui",
+     "quarter": "Q4 2022",
+     "period_covered": "Jan–Dec 2022 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2022.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2022)",
+     "posted_HST": "2023-03-03T15:03:08",
+     "posted_UTC": "2023-03-04T01:03:08",
+     "server_last_modified": "Sat, 04 Mar 2023 01:03:08 GMT",
+     "bytes": 2134821,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2023-03-01T12:47:16+08",
+     "pdf_mod_date": "2023-03-03T15:00:20-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2022.pdf",
+       "sha256": "9e1baf81409cd6546c2d0b1fd7725d6f24cd572b9ab822fb5be2a2f87bae4055",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2023",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2023",
+     "period_covered": "Jan–Dec 2023 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2023.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2023).",
+     "posted_HST": "2024-03-18T13:59:06",
+     "posted_UTC": "2024-03-18T23:59:06",
+     "server_last_modified": "Mon, 18 Mar 2024 23:59:06 GMT",
+     "bytes": 2048589,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2024-03-19T06:27:03+08",
+     "pdf_mod_date": "2024-03-18T13:57:29-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q4-2023.pdf",
+       "sha256": "f268d17fb254e404792e40d1a5600ea5ab02f58ca29f6152f67855c1578ff1e9",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2023",
+     "island": "Maui",
+     "quarter": "Q4 2023",
+     "period_covered": "Jan–Dec 2023 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2023.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2023).",
+     "posted_HST": "2024-03-18T13:59:09",
+     "posted_UTC": "2024-03-18T23:59:09",
+     "server_last_modified": "Mon, 18 Mar 2024 23:59:09 GMT",
+     "bytes": 2149873,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'"
+     ],
+     "pdf_creation_date": "2024-03-19T06:27:03+08",
+     "pdf_mod_date": "2024-03-18T13:58:06-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q4-2023.pdf",
+       "sha256": "114b58eb9474a6b523fc79229711c18614200d74e83b0d11ed3ad5320c02477b",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q1 2024",
+     "island": "Hawaii Island",
+     "quarter": "Q1 2024",
+     "period_covered": "Jan–Mar 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q1-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q1 2024)",
+     "posted_HST": "2024-10-03T16:23:55",
+     "posted_UTC": "2024-10-04T02:23:55",
+     "server_last_modified": "Fri, 04 Oct 2024 02:23:55 GMT",
+     "bytes": 7841806,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T07:48:57+08",
+     "pdf_mod_date": "2024-10-03T15:41:22-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q1-2024.pdf",
+       "sha256": "f21d7c4318b34e269dd90fd3191587679c5a24750700d53bd9d869a73117c414",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q2 2024",
+     "island": "Hawaii Island",
+     "quarter": "Q2 2024",
+     "period_covered": "Jan–Jun 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q2-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q2 2024)",
+     "posted_HST": "2024-10-03T16:24:09",
+     "posted_UTC": "2024-10-04T02:24:09",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:09 GMT",
+     "bytes": 7895407,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T09:59:03+08",
+     "pdf_mod_date": "2024-10-03T16:19:24-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q2-2024.pdf",
+       "sha256": "7cba337c10a46d67cfe847ca81f164610d78dc7cfc6fff4151ce37faec95deb1",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q3 2024",
+     "island": "Hawaii Island",
+     "quarter": "Q3 2024",
+     "period_covered": "Jan–Sep 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q3-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q3 2024)",
+     "posted_HST": "2025-01-09T16:21:17",
+     "posted_UTC": "2025-01-10T02:21:17",
+     "server_last_modified": "Fri, 10 Jan 2025 02:21:17 GMT",
+     "bytes": 7905793,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2025-01-07T07:05:10+08",
+     "pdf_mod_date": "2025-01-06T16:39:45-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Hawaii-Q3-2024.pdf",
+       "sha256": "1f5393c9f3f6ce974df44403994eb370a7436a3017fbefe5e59aac81f273de71",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Posted 2025-01-09 HST, not 2024-10-03 as the report says for the Q1–Q3 2024 group (only Q1 and Q2 2024 were posted 2024-10-03)."
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2024",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2024",
+     "period_covered": "Jan–Dec 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2024)",
+     "posted_HST": "2025-03-10T17:25:50",
+     "posted_UTC": "2025-03-11T03:25:50",
+     "server_last_modified": "Tue, 11 Mar 2025 03:25:50 GMT",
+     "bytes": 7463869,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'",
+      "'Q4 2024 and Q4 2025 editions' / 'Q4 2024, Q4 2025 and Q2 2026 island editions' / data-table credit"
+     ],
+     "pdf_creation_date": "2025-03-11T07:04:13+08",
+     "pdf_mod_date": "2025-03-11T07:10:32+08",
+     "sha256_fresh": "0b6f4fe321e91b4b359f3ceff4cd9d797a0ed9b1f3cbbeb0ef1c1880f50e40c0",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Hawaii-Q4-2024.pdf",
+       "sha256": "0b6f4fe321e91b4b359f3ceff4cd9d797a0ed9b1f3cbbeb0ef1c1880f50e40c0",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q1 2024",
+     "island": "Kauai",
+     "quarter": "Q1 2024",
+     "period_covered": "Jan–Mar 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q1-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q1 2024)",
+     "posted_HST": "2024-10-03T16:23:59",
+     "posted_UTC": "2024-10-04T02:23:59",
+     "server_last_modified": "Fri, 04 Oct 2024 02:23:59 GMT",
+     "bytes": 7036773,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T07:48:57+08",
+     "pdf_mod_date": "2024-10-03T15:42:07-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Kauai-Q1-2024.pdf",
+       "sha256": "1a890fc38e430f267b8227383ce33dc35f2ce3130c52680052af5978766897ed",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q2 2024",
+     "island": "Kauai",
+     "quarter": "Q2 2024",
+     "period_covered": "Jan–Jun 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q2 2024)",
+     "posted_HST": "2024-10-03T16:24:12",
+     "posted_UTC": "2024-10-04T02:24:12",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:12 GMT",
+     "bytes": 7039667,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T09:59:03+08",
+     "pdf_mod_date": "2024-10-03T16:20:43-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Kauai-Q2-2024.pdf",
+       "sha256": "cf4fcf302438479ab726d5225f225201b5260744ee1c4d27714361692e1021fa",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q3 2024",
+     "island": "Kauai",
+     "quarter": "Q3 2024",
+     "period_covered": "Jan–Sep 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q3-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q3 2024)",
+     "posted_HST": "2025-01-09T16:21:36",
+     "posted_UTC": "2025-01-10T02:21:36",
+     "server_last_modified": "Fri, 10 Jan 2025 02:21:36 GMT",
+     "bytes": 7214233,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2025-01-07T07:05:10+08",
+     "pdf_mod_date": "2025-01-09T11:20:40-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Kauai-Q3-2024.pdf",
+       "sha256": "cdebf548a637da09af01d44671baae48013a345a3a938bf8a4c791f09a6e2ac5",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Posted 2025-01-09 HST, not 2024-10-03 as the report says for the Q1–Q3 2024 group (only Q1 and Q2 2024 were posted 2024-10-03)."
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q4 2024",
+     "island": "Kauai",
+     "quarter": "Q4 2024",
+     "period_covered": "Jan–Dec 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q4 2024)",
+     "posted_HST": "2025-03-10T17:25:53",
+     "posted_UTC": "2025-03-11T03:25:53",
+     "server_last_modified": "Tue, 11 Mar 2025 03:25:53 GMT",
+     "bytes": 6769136,
+     "linked_in_report": false,
+     "report_basis": [
+      "'Q4 2024 and Q4 2025 editions' / 'Q4 2024, Q4 2025 and Q2 2026 island editions' / data-table credit"
+     ],
+     "pdf_creation_date": "2025-03-11T07:04:13+08",
+     "pdf_mod_date": "2025-03-11T07:11:13+08",
+     "sha256_fresh": "595778919793d29d7cba1a7e45db199c5fa5ca1a901d3fd760acf074d4115d09",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Kauai-Q4-2024.pdf",
+       "sha256": "595778919793d29d7cba1a7e45db199c5fa5ca1a901d3fd760acf074d4115d09",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q1 2024",
+     "island": "Maui",
+     "quarter": "Q1 2024",
+     "period_covered": "Jan–Mar 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q1-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q1 2024)",
+     "posted_HST": "2024-10-03T16:24:03",
+     "posted_UTC": "2024-10-04T02:24:03",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:03 GMT",
+     "bytes": 7966474,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)",
+      "'Buyer Statistics Maui Q1 2024 and Q1 2025'"
+     ],
+     "pdf_creation_date": "2024-10-04T07:48:57+08",
+     "pdf_mod_date": "2024-10-03T15:40:34-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q1-2024.pdf",
+       "sha256": "581d7874e73e61925932f4176f457b73778f67c6f5f65dda28fde6248a5377f7",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q2 2024",
+     "island": "Maui",
+     "quarter": "Q2 2024",
+     "period_covered": "Jan–Jun 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q2 2024)",
+     "posted_HST": "2024-10-03T16:24:16",
+     "posted_UTC": "2024-10-04T02:24:16",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:16 GMT",
+     "bytes": 7897810,
+     "linked_in_report": true,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T09:59:03+08",
+     "pdf_mod_date": "2024-10-03T16:17:22-10",
+     "sha256_fresh": "82f3f5d66ba30b944ef3bf3ac22574470188a80e25b0fd2c1fe9397acaa2f017",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q2-2024.pdf",
+       "sha256": "82f3f5d66ba30b944ef3bf3ac22574470188a80e25b0fd2c1fe9397acaa2f017",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q3 2024",
+     "island": "Maui",
+     "quarter": "Q3 2024",
+     "period_covered": "Jan–Sep 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q3-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q3 2024)",
+     "posted_HST": "2025-01-09T16:21:32",
+     "posted_UTC": "2025-01-10T02:21:32",
+     "server_last_modified": "Fri, 10 Jan 2025 02:21:32 GMT",
+     "bytes": 7835752,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2025-01-07T07:05:10+08",
+     "pdf_mod_date": "2025-01-09T11:21:09-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q3-2024.pdf",
+       "sha256": "024674525b0a550f4286cf6c5433cf4770e6bfb9c0065648c95ebee9bade4f73",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Posted 2025-01-09 HST, not 2024-10-03 as the report says for the Q1–Q3 2024 group (only Q1 and Q2 2024 were posted 2024-10-03)."
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2024",
+     "island": "Maui",
+     "quarter": "Q4 2024",
+     "period_covered": "Jan–Dec 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2024)",
+     "posted_HST": "2025-03-10T17:25:56",
+     "posted_UTC": "2025-03-11T03:25:56",
+     "server_last_modified": "Tue, 11 Mar 2025 03:25:56 GMT",
+     "bytes": 7502474,
+     "linked_in_report": true,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'",
+      "'Q4 2024 and Q4 2025 editions' / 'Q4 2024, Q4 2025 and Q2 2026 island editions' / data-table credit"
+     ],
+     "pdf_creation_date": "2025-03-11T07:04:13+08",
+     "pdf_mod_date": "2025-03-11T07:09:44+08",
+     "sha256_fresh": "6f42503dc80e43a813c3819660c0e9e4e9fe9e6c62c18c32a3db465d3b16c966",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Maui-Q4-2024.pdf",
+       "sha256": "6f42503dc80e43a813c3819660c0e9e4e9fe9e6c62c18c32a3db465d3b16c966",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q1 2024",
+     "island": "Oahu",
+     "quarter": "Q1 2024",
+     "period_covered": "Jan–Mar 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q1-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q1 2024)",
+     "posted_HST": "2024-10-03T16:24:06",
+     "posted_UTC": "2024-10-04T02:24:06",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:06 GMT",
+     "bytes": 7516666,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2024-10-04T07:48:57+08",
+     "pdf_mod_date": "2024-10-03T15:39:31-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Oahu-Q1-2024.pdf",
+       "sha256": "d4a932cc6d6afb8ca19da579fdb247b6e11d2263bef1d0334487f7a20b63fba1",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q2 2024",
+     "island": "Oahu",
+     "quarter": "Q2 2024",
+     "period_covered": "Jan–Jun 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q2 2024)",
+     "posted_HST": "2024-10-03T16:24:21",
+     "posted_UTC": "2024-10-04T02:24:21",
+     "server_last_modified": "Fri, 04 Oct 2024 02:24:21 GMT",
+     "bytes": 7497539,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)",
+      "'Buyer Statistics (Oahu Q2 2024, Q4 2024, Q2 2025, Q4 2025, Q2 2026)'"
+     ],
+     "pdf_creation_date": "2024-10-04T09:59:03+08",
+     "pdf_mod_date": "2024-10-03T16:15:18-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Oahu-Q2-2024.pdf",
+       "sha256": "73073548e5819eb2b9d74fcde2a0bfd204c0581f4ee947edacdfad8e115b6f89",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q3 2024",
+     "island": "Oahu",
+     "quarter": "Q3 2024",
+     "period_covered": "Jan–Sep 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q3-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q3 2024)",
+     "posted_HST": "2025-01-09T16:21:21",
+     "posted_UTC": "2025-01-10T02:21:21",
+     "server_last_modified": "Fri, 10 Jan 2025 02:21:21 GMT",
+     "bytes": 7485115,
+     "linked_in_report": false,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q1–Q3 2024 editions' (island not stated; 4 islands assumed, matching local working copies)"
+     ],
+     "pdf_creation_date": "2025-01-07T07:05:10+08",
+     "pdf_mod_date": "2025-01-09T16:20:30-10",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "jk/tg/Buyer-Stats-Oahu-Q3-2024.pdf",
+       "sha256": "d79f1e0e3724aef96e1900b92ca2b09b716a87b6ea826f417f0e2a9481dc4d32",
+       "size_matches_server": true
+      },
+      {
+       "path": "ca_tg24/Buyer-Stats-Oahu-Q3-2024.pdf",
+       "sha256": "d79f1e0e3724aef96e1900b92ca2b09b716a87b6ea826f417f0e2a9481dc4d32",
+       "size_matches_server": true
+      }
+     ],
+     "posting_note": "Posted 2025-01-09 HST, not 2024-10-03 as the report says for the Q1–Q3 2024 group (only Q1 and Q2 2024 were posted 2024-10-03)."
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q4 2024",
+     "island": "Oahu",
+     "quarter": "Q4 2024",
+     "period_covered": "Jan–Dec 2024 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2024.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q4 2024)",
+     "posted_HST": "2025-03-10T17:25:58",
+     "posted_UTC": "2025-03-11T03:25:58",
+     "server_last_modified": "Tue, 11 Mar 2025 03:25:58 GMT",
+     "bytes": 7114086,
+     "linked_in_report": false,
+     "report_basis": [
+      "'Q4 2024 and Q4 2025 editions' / 'Q4 2024, Q4 2025 and Q2 2026 island editions' / data-table credit"
+     ],
+     "pdf_creation_date": "2025-03-11T07:04:13+08",
+     "pdf_mod_date": "2025-03-11T07:08:49+08",
+     "sha256_fresh": "2cc95def2f12e9225e9fa4e0c9c17a26c1541e9dc42ff6f1e80dff919f2af929",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Oahu-Q4-2024.pdf",
+       "sha256": "2cc95def2f12e9225e9fa4e0c9c17a26c1541e9dc42ff6f1e80dff919f2af929",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q2 2025",
+     "island": "Hawaii Island",
+     "quarter": "Q2 2025",
+     "period_covered": "Jan–Jun 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q2-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q2 2025)",
+     "posted_HST": "2025-08-29T13:23:43",
+     "posted_UTC": "2025-08-29T23:23:43",
+     "server_last_modified": "Fri, 29 Aug 2025 23:23:43 GMT",
+     "bytes": 7507692,
+     "linked_in_report": true,
+     "report_basis": [
+      "data-table credit 'Q4 2024, Q2 2025, Q4 2025 and Q2 2026 editions'; tg.json 2025H1"
+     ],
+     "pdf_creation_date": "2025-08-30T05:52:03+08",
+     "pdf_mod_date": "2025-08-30T05:55:54+08",
+     "sha256_fresh": "31c37792a38954ede2ceb4ba61aff47eb2c5e74610a60f1c097843dddec77375",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Hawaii-Q2-2025.pdf",
+       "sha256": "31c37792a38954ede2ceb4ba61aff47eb2c5e74610a60f1c097843dddec77375",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q4 2025",
+     "island": "Hawaii Island",
+     "quarter": "Q4 2025",
+     "period_covered": "Jan–Dec 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q4 2025)",
+     "posted_HST": "2026-02-12T14:24:37",
+     "posted_UTC": "2026-02-13T00:24:37",
+     "server_last_modified": "Fri, 13 Feb 2026 00:24:37 GMT",
+     "bytes": 7452917,
+     "linked_in_report": true,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'",
+      "'Buyer Statistics Q4 2025 island PDFs' / statewide panel; tg.json 2025FY"
+     ],
+     "pdf_creation_date": "2026-02-12T08:33:54+08",
+     "pdf_mod_date": "2026-02-13T07:38:18+08",
+     "sha256_fresh": "89d1f45d6db88cd222f9fcaed4f1e5ca64b2439eebfbc7a69e0ac0281b208c9f",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Hawaii-Q4-2025.pdf",
+       "sha256": "89d1f45d6db88cd222f9fcaed4f1e5ca64b2439eebfbc7a69e0ac0281b208c9f",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q2 2025",
+     "island": "Kauai",
+     "quarter": "Q2 2025",
+     "period_covered": "Jan–Jun 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q2 2025)",
+     "posted_HST": "2025-08-21T15:19:05",
+     "posted_UTC": "2025-08-22T01:19:05",
+     "server_last_modified": "Fri, 22 Aug 2025 01:19:05 GMT",
+     "bytes": 6750701,
+     "linked_in_report": true,
+     "report_basis": [
+      "data-table credit 'Q4 2024, Q2 2025, Q4 2025 and Q2 2026 editions'; tg.json 2025H1"
+     ],
+     "pdf_creation_date": "2025-08-21T11:29:55+08",
+     "pdf_mod_date": "2025-08-22T07:24:35+08",
+     "sha256_fresh": "8025868661583d07c6844524c0802cc2eca9a21e3d2ec1adcf30f29b4026f9e5",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Kauai-Q2-2025.pdf",
+       "sha256": "8025868661583d07c6844524c0802cc2eca9a21e3d2ec1adcf30f29b4026f9e5",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q4 2025",
+     "island": "Kauai",
+     "quarter": "Q4 2025",
+     "period_covered": "Jan–Dec 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q4 2025)",
+     "posted_HST": "2026-02-12T14:24:40",
+     "posted_UTC": "2026-02-13T00:24:40",
+     "server_last_modified": "Fri, 13 Feb 2026 00:24:40 GMT",
+     "bytes": 6729665,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q4 2025 island PDFs' / statewide panel; tg.json 2025FY"
+     ],
+     "pdf_creation_date": "2026-02-12T08:33:54+08",
+     "pdf_mod_date": "2026-02-13T07:39:59+08",
+     "sha256_fresh": "1e7365b4a5f15b98e714f78a08971d0ad7b28b1cffb6de9b908046ab5240158c",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Kauai-Q4-2025.pdf",
+       "sha256": "1e7365b4a5f15b98e714f78a08971d0ad7b28b1cffb6de9b908046ab5240158c",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q1 2025",
+     "island": "Maui",
+     "quarter": "Q1 2025",
+     "period_covered": "Jan–Mar 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q1-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q1 2025)",
+     "posted_HST": "2025-05-19T14:40:15",
+     "posted_UTC": "2025-05-20T00:40:15",
+     "server_last_modified": "Tue, 20 May 2025 00:40:15 GMT",
+     "bytes": 11154715,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Maui Q1 2024 and Q1 2025' (linked)"
+     ],
+     "pdf_creation_date": "2025-05-17T12:02:17+08",
+     "pdf_mod_date": "2025-05-20T08:27:27+08",
+     "sha256_fresh": "f50445a78ba5c697ef263937282c4c4e28a17be5acd33d4a2044c8f06c5c79a3",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "ca_tg24/Buyer-Stats-Maui-Q1-2025.pdf",
+       "sha256": "f50445a78ba5c697ef263937282c4c4e28a17be5acd33d4a2044c8f06c5c79a3",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q2 2025",
+     "island": "Maui",
+     "quarter": "Q2 2025",
+     "period_covered": "Jan–Jun 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q2 2025)",
+     "posted_HST": "2025-08-21T15:19:08",
+     "posted_UTC": "2025-08-22T01:19:08",
+     "server_last_modified": "Fri, 22 Aug 2025 01:19:08 GMT",
+     "bytes": 7564212,
+     "linked_in_report": false,
+     "report_basis": [
+      "data-table credit 'Q4 2024, Q2 2025, Q4 2025 and Q2 2026 editions'; tg.json 2025H1"
+     ],
+     "pdf_creation_date": "2025-08-21T11:29:55+08",
+     "pdf_mod_date": "2025-08-22T07:21:51+08",
+     "sha256_fresh": "6df85bdb3fabf2ed353f59d451dcea6fe9e2ced45e2a4303fc157611125a50f8",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Maui-Q2-2025.pdf",
+       "sha256": "6df85bdb3fabf2ed353f59d451dcea6fe9e2ced45e2a4303fc157611125a50f8",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q4 2025",
+     "island": "Maui",
+     "quarter": "Q4 2025",
+     "period_covered": "Jan–Dec 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q4 2025)",
+     "posted_HST": "2026-02-12T14:24:42",
+     "posted_UTC": "2026-02-13T00:24:42",
+     "server_last_modified": "Fri, 13 Feb 2026 00:24:42 GMT",
+     "bytes": 7516221,
+     "linked_in_report": true,
+     "report_basis": [
+      "Canada section: 'Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)'",
+      "'Buyer Statistics Q4 2025 island PDFs' / statewide panel; tg.json 2025FY"
+     ],
+     "pdf_creation_date": "2026-02-12T08:33:54+08",
+     "pdf_mod_date": "2026-02-13T07:40:39+08",
+     "sha256_fresh": "f41fea1fa1619587a2806feb31e8237f178fecfb8bca8b0caff0860b3d0622b2",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Maui-Q4-2025.pdf",
+       "sha256": "f41fea1fa1619587a2806feb31e8237f178fecfb8bca8b0caff0860b3d0622b2",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q1 2025",
+     "island": "Oahu",
+     "quarter": "Q1 2025",
+     "period_covered": "Jan–Mar 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q1-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q1 2025)",
+     "posted_HST": "2025-05-19T14:40:19",
+     "posted_UTC": "2025-05-20T00:40:19",
+     "server_last_modified": "Tue, 20 May 2025 00:40:19 GMT",
+     "bytes": 10819628,
+     "linked_in_report": false,
+     "report_basis": [
+      "'Oahu editions Q1-2025, Q2-2025, Q3-2025, Q4-2025, Q1-2026, Q2-2026'"
+     ],
+     "pdf_creation_date": "2025-05-17T12:02:17+08",
+     "pdf_mod_date": "2025-05-20T08:27:50+08",
+     "sha256_fresh": null,
+     "fresh_matches_report_copy": null,
+     "report_copies": [
+      {
+       "path": "jk/tg/Buyer-Stats-Oahu-Q1-2025.pdf",
+       "sha256": "4e6309cb17a5bb3be2c3e59ddd822065dd9c38b4591abe63b412c1a17ed8c93f",
+       "size_matches_server": true
+      },
+      {
+       "path": "ca_tg24/Buyer-Stats-Oahu-Q1-2025.pdf",
+       "sha256": "4e6309cb17a5bb3be2c3e59ddd822065dd9c38b4591abe63b412c1a17ed8c93f",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q2 2025",
+     "island": "Oahu",
+     "quarter": "Q2 2025",
+     "period_covered": "Jan–Jun 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q2 2025)",
+     "posted_HST": "2025-08-21T15:19:11",
+     "posted_UTC": "2025-08-22T01:19:11",
+     "server_last_modified": "Fri, 22 Aug 2025 01:19:11 GMT",
+     "bytes": 7151748,
+     "linked_in_report": false,
+     "report_basis": [
+      "data-table credit 'Q4 2024, Q2 2025, Q4 2025 and Q2 2026 editions'; tg.json 2025H1"
+     ],
+     "pdf_creation_date": "2025-08-21T11:29:55+08",
+     "pdf_mod_date": "2025-08-22T07:20:56+08",
+     "sha256_fresh": "2e128462475919cd28071dab2693bfb0022b1b415daf6c64de4ba64db6ebd77f",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Oahu-Q2-2025.pdf",
+       "sha256": "2e128462475919cd28071dab2693bfb0022b1b415daf6c64de4ba64db6ebd77f",
+       "size_matches_server": true
+      },
+      {
+       "path": "aud_claims_dl/Buyer-Stats-Oahu-Q2-2025.pdf",
+       "sha256": "2e128462475919cd28071dab2693bfb0022b1b415daf6c64de4ba64db6ebd77f",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q3 2025",
+     "island": "Oahu",
+     "quarter": "Q3 2025",
+     "period_covered": "Jan–Sep 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q3-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q3 2025)",
+     "posted_HST": "2025-11-24T16:11:29",
+     "posted_UTC": "2025-11-25T02:11:29",
+     "server_last_modified": "Tue, 25 Nov 2025 02:11:29 GMT",
+     "bytes": 7153357,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Oahu Q3-2025 and Q4-2025 editions (district panel)' (linked)"
+     ],
+     "pdf_creation_date": "2025-11-20T08:26:12+08",
+     "pdf_mod_date": "2025-11-25T08:43:48+08",
+     "sha256_fresh": "af68cd98fdc4eb7a72ce938acad607337f580f4703c7dba94c57e6df819bb59b",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "jk/tg/Buyer-Stats-Oahu-Q3-2025.pdf",
+       "sha256": "af68cd98fdc4eb7a72ce938acad607337f580f4703c7dba94c57e6df819bb59b",
+       "size_matches_server": true
+      },
+      {
+       "path": "ca_tg24/Buyer-Stats-Oahu-Q3-2025.pdf",
+       "sha256": "af68cd98fdc4eb7a72ce938acad607337f580f4703c7dba94c57e6df819bb59b",
+       "size_matches_server": true
+      },
+      {
+       "path": "aud_claims_dl/Buyer-Stats-Oahu-Q3-2025.pdf",
+       "sha256": "af68cd98fdc4eb7a72ce938acad607337f580f4703c7dba94c57e6df819bb59b",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q4 2025",
+     "island": "Oahu",
+     "quarter": "Q4 2025",
+     "period_covered": "Jan–Dec 2025 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q4 2025)",
+     "posted_HST": "2026-02-12T14:24:45",
+     "posted_UTC": "2026-02-13T00:24:45",
+     "server_last_modified": "Fri, 13 Feb 2026 00:24:45 GMT",
+     "bytes": 7149846,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q4 2025 island PDFs' / statewide panel; tg.json 2025FY"
+     ],
+     "pdf_creation_date": "2026-02-12T08:33:54+08",
+     "pdf_mod_date": "2026-02-13T07:41:14+08",
+     "sha256_fresh": "50118586da491d557e14566ae820f3afd1f84c55b6cfd2266e306092ddc41c43",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Oahu-Q4-2025.pdf",
+       "sha256": "50118586da491d557e14566ae820f3afd1f84c55b6cfd2266e306092ddc41c43",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q2 2026",
+     "island": "Hawaii Island",
+     "quarter": "Q2 2026",
+     "period_covered": "Jan–Jun 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Island-Q2-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii Island (Q2 2026)",
+     "posted_HST": "2026-08-31T12:32:09",
+     "posted_UTC": "2026-08-31T22:32:09",
+     "server_last_modified": "Mon, 31 Aug 2026 22:32:09 GMT",
+     "bytes": 7415788,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q2 2026' / island editions; tg.json 2026H1"
+     ],
+     "pdf_creation_date": "2026-08-22T10:34:43+08",
+     "pdf_mod_date": "2026-08-31T11:47:49-10",
+     "sha256_fresh": "8eca267963fc71d9d283dc70f62bdd39fc3bdbfd1b305b2654681b875ade3be6",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Hawaii-Island-Q2-2026.pdf",
+       "sha256": "8eca267963fc71d9d283dc70f62bdd39fc3bdbfd1b305b2654681b875ade3be6",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Hawaii Island Q1 2026",
+     "island": "Hawaii Island",
+     "quarter": "Q1 2026",
+     "period_covered": "Jan–Mar 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q1-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Hawaii (Q1 2026)",
+     "posted_HST": "2026-05-14T14:05:05",
+     "posted_UTC": "2026-05-15T00:05:05",
+     "server_last_modified": "Fri, 15 May 2026 00:05:05 GMT",
+     "bytes": 7492083,
+     "linked_in_report": false,
+     "report_basis": [
+      "tg.json 2026Q1 (supplementary)"
+     ],
+     "pdf_creation_date": "2026-05-14T11:48:18+08",
+     "pdf_mod_date": "2026-05-14T18:10:55+08",
+     "sha256_fresh": "8b86fbfb89e32b50155bbad8f99ae600d0f39a40a8f9771626cea5479bc9ba87",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Hawaii-Q1-2026.pdf",
+       "sha256": "8b86fbfb89e32b50155bbad8f99ae600d0f39a40a8f9771626cea5479bc9ba87",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q1 2026",
+     "island": "Kauai",
+     "quarter": "Q1 2026",
+     "period_covered": "Jan–Mar 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q1-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q1 2026)",
+     "posted_HST": "2026-05-14T14:05:20",
+     "posted_UTC": "2026-05-15T00:05:20",
+     "server_last_modified": "Fri, 15 May 2026 00:05:20 GMT",
+     "bytes": 6799599,
+     "linked_in_report": false,
+     "report_basis": [
+      "tg.json 2026Q1 (supplementary)"
+     ],
+     "pdf_creation_date": "2026-05-14T11:48:18+08",
+     "pdf_mod_date": "2026-05-14T18:11:17+08",
+     "sha256_fresh": "6e0ee54f11f620db010c44588f29d68c975fd970e37da18ccb3e8b498b05066e",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Kauai-Q1-2026.pdf",
+       "sha256": "6e0ee54f11f620db010c44588f29d68c975fd970e37da18ccb3e8b498b05066e",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Kauai Q2 2026",
+     "island": "Kauai",
+     "quarter": "Q2 2026",
+     "period_covered": "Jan–Jun 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Kauai (Q2 2026)",
+     "posted_HST": "2026-08-31T12:32:11",
+     "posted_UTC": "2026-08-31T22:32:11",
+     "server_last_modified": "Mon, 31 Aug 2026 22:32:11 GMT",
+     "bytes": 6702606,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q2 2026' / island editions; tg.json 2026H1"
+     ],
+     "pdf_creation_date": "2026-08-22T10:34:43+08",
+     "pdf_mod_date": "2026-08-31T11:48:49-10",
+     "sha256_fresh": "3b25f801462cfd24ee57f27738365cc80547226b0efc544b0d8868bdc967f5bf",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Kauai-Q2-2026.pdf",
+       "sha256": "3b25f801462cfd24ee57f27738365cc80547226b0efc544b0d8868bdc967f5bf",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q1 2026",
+     "island": "Maui",
+     "quarter": "Q1 2026",
+     "period_covered": "Jan–Mar 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q1-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q1 2026)",
+     "posted_HST": "2026-05-14T14:04:54",
+     "posted_UTC": "2026-05-15T00:04:54",
+     "server_last_modified": "Fri, 15 May 2026 00:04:54 GMT",
+     "bytes": 7544451,
+     "linked_in_report": false,
+     "report_basis": [
+      "tg.json 2026Q1 (supplementary)"
+     ],
+     "pdf_creation_date": "2026-05-14T11:48:18+08",
+     "pdf_mod_date": "2026-05-14T18:11:46+08",
+     "sha256_fresh": "862babb91e72e669c394e782e1475c3fdf0b3f6111e3844ff59f8d9310a8ee97",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Maui-Q1-2026.pdf",
+       "sha256": "862babb91e72e669c394e782e1475c3fdf0b3f6111e3844ff59f8d9310a8ee97",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Maui Q2 2026",
+     "island": "Maui",
+     "quarter": "Q2 2026",
+     "period_covered": "Jan–Jun 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Maui (Q2 2026)",
+     "posted_HST": "2026-08-31T12:31:58",
+     "posted_UTC": "2026-08-31T22:31:58",
+     "server_last_modified": "Mon, 31 Aug 2026 22:31:58 GMT",
+     "bytes": 7480618,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q2 2026' / island editions; tg.json 2026H1"
+     ],
+     "pdf_creation_date": "2026-08-22T10:34:43+08",
+     "pdf_mod_date": "2026-08-31T11:46:51-10",
+     "sha256_fresh": "8fbe96618e0077c72abd09129ecb5ec406446c832207f96cfc8f5476d6cd62c5",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Maui-Q2-2026.pdf",
+       "sha256": "8fbe96618e0077c72abd09129ecb5ec406446c832207f96cfc8f5476d6cd62c5",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q1 2026",
+     "island": "Oahu",
+     "quarter": "Q1 2026",
+     "period_covered": "Jan–Mar 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q1-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q1 2026)",
+     "posted_HST": "2026-05-14T14:04:56",
+     "posted_UTC": "2026-05-15T00:04:56",
+     "server_last_modified": "Fri, 15 May 2026 00:04:56 GMT",
+     "bytes": 7220162,
+     "linked_in_report": false,
+     "report_basis": [
+      "tg.json 2026Q1 (supplementary)"
+     ],
+     "pdf_creation_date": "2026-05-14T11:48:18+08",
+     "pdf_mod_date": "2026-05-14T18:12:12+08",
+     "sha256_fresh": "4d47e3fe492b46a43f1691c338c6cc3de1cb17ec64a9cd9140f4d2a0d2e3d18e",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Oahu-Q1-2026.pdf",
+       "sha256": "4d47e3fe492b46a43f1691c338c6cc3de1cb17ec64a9cd9140f4d2a0d2e3d18e",
+       "size_matches_server": true
+      }
+     ]
+    },
+    {
+     "edition": "Buyer Statistics Oahu Q2 2026",
+     "island": "Oahu",
+     "quarter": "Q2 2026",
+     "period_covered": "Jan–Jun 2026 (year to date)",
+     "official_url": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf",
+     "wordpress_media_title": "Buyer Stats Oahu (Q2 2026)",
+     "posted_HST": "2026-08-31T12:32:01",
+     "posted_UTC": "2026-08-31T22:32:01",
+     "server_last_modified": "Mon, 31 Aug 2026 22:32:01 GMT",
+     "bytes": 7118464,
+     "linked_in_report": true,
+     "report_basis": [
+      "'Buyer Statistics Q2 2026' / island editions; tg.json 2026H1"
+     ],
+     "pdf_creation_date": "2026-08-22T10:34:43+08",
+     "pdf_mod_date": "2026-08-31T11:45:53-10",
+     "sha256_fresh": "f9f6eb03cec1ae8d38dbee806fd7f6c603fb3bfb0a0a83632fc0a50bd3475be4",
+     "fresh_matches_report_copy": true,
+     "report_copies": [
+      {
+       "path": "raw/tg/Buyer-Stats-Oahu-Q2-2026.pdf",
+       "sha256": "f9f6eb03cec1ae8d38dbee806fd7f6c603fb3bfb0a0a83632fc0a50bd3475be4",
+       "size_matches_server": true
+      }
+     ]
+    }
+   ],
+   "citation_date_checks": [
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2025.pdf",
+     "citation": "DBEDT Data Book 2025 Table 21.38; Title Guaranty Buyer Statistics Maui Q4 2025",
+     "cited_date": "2026-02-12",
+     "editions_named": [
+      "Maui Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Maui Q4 2024, Q4 2025, Q2 2026",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Maui Q4 2024",
+      "Maui Q4 2025",
+      "Maui Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty of Hawaii, Buyer Statistics Q4 2025 (statewide panel), computed here",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025 island PDFs",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q2 2026",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Maui Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q2-2025.pdf",
+     "citation": "Title Guaranty Hawaii Island district panels, Q2 2025 and Q4 2024 editions",
+     "cited_date": "2025",
+     "editions_named": [
+      "Hawaii Q4 2024",
+      "Hawaii Q2 2025"
+     ],
+     "latest_named_posted_HST": "2025-08-29",
+     "verdict": "year consistent with latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "citation": "Derived from Title Guaranty editions",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Maui Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Oahu Q4 2025 district panels",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 2025 edition (statewide panel)",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Island-Q2-2026.pdf",
+     "citation": "Derived from Title Guaranty Q4 2024, Q4 2025 and Q2 2026 island editions",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Oahu Q4 2024",
+      "Maui Q4 2024",
+      "Kauai Q4 2024",
+      "Hawaii Q4 2024",
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025",
+      "Oahu Q2 2026",
+      "Maui Q2 2026",
+      "Kauai Q2 2026",
+      "Hawaii Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Kauai Q4 2024, Q2 2025, Q4 2025 and Q2 2026 district panels",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2024",
+      "Kauai Q2 2025",
+      "Kauai Q4 2025",
+      "Kauai Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-08-31"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf",
+     "citation": "Title Guaranty of Hawaii, Buyer Statistics, Oahu editions Q1-2025, Q2-2025, Q3-2025, Q4-2025, Q1-2026, Q2-2026",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Oahu Q1 2025",
+      "Oahu Q2 2025",
+      "Hawaii Q2 2025",
+      "Oahu Q3 2025",
+      "Hawaii Q3 2025",
+      "Oahu Q4 2025",
+      "Hawaii Q4 2025",
+      "Oahu Q1 2026",
+      "Hawaii Q1 2026",
+      "Oahu Q2 2026",
+      "Hawaii Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q3-2025.pdf",
+     "citation": "Title Guaranty of Hawaii, Buyer Statistics, Oahu Q3-2025 and Q4-2025 editions (district panel)",
+     "cited_date": "2026-02-12",
+     "editions_named": [
+      "Oahu Q3 2025",
+      "Hawaii Q3 2025",
+      "Oahu Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Oahu Q4 2025 and Q2 2026 district panels",
+     "cited_date": "2026-02-12",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Oahu Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-08-31"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2024.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)",
+     "cited_date": "2025-03-10 (Q4 2024 edition); series accessed 2026-10-08",
+     "editions_named": [
+      "Hawaii Q4 2015",
+      "Hawaii Q4 2016",
+      "Hawaii Q4 2017",
+      "Hawaii Q4 2018",
+      "Hawaii Q4 2019",
+      "Hawaii Q4 2020",
+      "Hawaii Q4 2021",
+      "Hawaii Q4 2022",
+      "Hawaii Q4 2023",
+      "Hawaii Q4 2024",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-02-12"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 2025",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics (Oahu Q2 2024, Q4 2024, Q2 2025, Q4 2025, Q2 2026)",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Oahu Q2 2024",
+      "Hawaii Q2 2024",
+      "Oahu Q4 2024",
+      "Hawaii Q4 2024",
+      "Oahu Q2 2025",
+      "Hawaii Q2 2025",
+      "Oahu Q4 2025",
+      "Hawaii Q4 2025",
+      "Oahu Q2 2026",
+      "Hawaii Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2024.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q1–Q3 2024 editions",
+     "cited_date": "2024-10-03 (posted)",
+     "editions_named": [
+      "Hawaii Q1 2024",
+      "Hawaii Q2 2024",
+      "Hawaii Q3 2024"
+     ],
+     "latest_named_posted_HST": "2025-01-09",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2025-01-09"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2026.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q2 2026 and Q2 2025 editions",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Hawaii Q2 2025",
+      "Hawaii Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q1-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Maui Q1 2024 and Q1 2025",
+     "cited_date": "2025 (Q1 edition)",
+     "editions_named": [
+      "Maui Q1 2024",
+      "Hawaii Q1 2024",
+      "Maui Q1 2025"
+     ],
+     "latest_named_posted_HST": "2025-05-19",
+     "verdict": "year consistent with latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Kauai",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025",
+     "cited_date": "2026-01",
+     "editions_named": [
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "DATE PRECEDES POSTING of every named edition (earliest posted 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q2-2026.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Oahu Q2 2025 and Q2 2026 editions",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Oahu Q2 2025",
+      "Oahu Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2026.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Kauai Q2 2025, Q2 2026, Q4 2024 and Q4 2025 editions",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Kauai Q4 2024",
+      "Kauai Q2 2025",
+      "Kauai Q4 2025",
+      "Kauai Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q2-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Kauai Q2 2025 and Q2 2026",
+     "cited_date": "2026-08-31",
+     "editions_named": [
+      "Kauai Q2 2025",
+      "Kauai Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "matches posting date (HST) of latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Q4 2024 and Q4 2025 editions",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2024",
+      "Kauai Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    }
+   ],
+   "citation_date_flags": [
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty of Hawaii, Buyer Statistics Q4 2025 (statewide panel), computed here",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025 island PDFs",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q2-2025.pdf",
+     "citation": "Title Guaranty Hawaii Island district panels, Q2 2025 and Q4 2024 editions",
+     "cited_date": "2025",
+     "editions_named": [
+      "Hawaii Q4 2024",
+      "Hawaii Q2 2025"
+     ],
+     "latest_named_posted_HST": "2025-08-29",
+     "verdict": "year consistent with latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Oahu Q4 2025 district panels",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 2025 edition (statewide panel)",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Maui Q4 2025",
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Kauai Q4 2024, Q2 2025, Q4 2025 and Q2 2026 district panels",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2024",
+      "Kauai Q2 2025",
+      "Kauai Q4 2025",
+      "Kauai Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-08-31"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Oahu-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Oahu Q4 2025 and Q2 2026 district panels",
+     "cited_date": "2026-02-12",
+     "editions_named": [
+      "Oahu Q4 2025",
+      "Oahu Q2 2026"
+     ],
+     "latest_named_posted_HST": "2026-08-31",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-08-31"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2024.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)",
+     "cited_date": "2025-03-10 (Q4 2024 edition); series accessed 2026-10-08",
+     "editions_named": [
+      "Hawaii Q4 2015",
+      "Hawaii Q4 2016",
+      "Hawaii Q4 2017",
+      "Hawaii Q4 2018",
+      "Hawaii Q4 2019",
+      "Hawaii Q4 2020",
+      "Hawaii Q4 2021",
+      "Hawaii Q4 2022",
+      "Hawaii Q4 2023",
+      "Hawaii Q4 2024",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2026-02-12"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q4 2025",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q2-2024.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Q1–Q3 2024 editions",
+     "cited_date": "2024-10-03 (posted)",
+     "editions_named": [
+      "Hawaii Q1 2024",
+      "Hawaii Q2 2024",
+      "Hawaii Q3 2024"
+     ],
+     "latest_named_posted_HST": "2025-01-09",
+     "verdict": "dated by an earlier named edition; latest named edition was posted 2025-01-09"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Maui-Q1-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Maui Q1 2024 and Q1 2025",
+     "cited_date": "2025 (Q1 edition)",
+     "editions_named": [
+      "Maui Q1 2024",
+      "Hawaii Q1 2024",
+      "Maui Q1 2025"
+     ],
+     "latest_named_posted_HST": "2025-05-19",
+     "verdict": "year consistent with latest named edition"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Hawaii, Buyer Statistics Kauai",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2025",
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Hawaii-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics Q4 2025",
+     "cited_date": "2026-01",
+     "editions_named": [
+      "Hawaii Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "DATE PRECEDES POSTING of every named edition (earliest posted 2026-02-12)"
+    },
+    {
+     "link": "https://www.tghawaii.com/wp-content/uploads/Buyer-Stats-Kauai-Q4-2025.pdf",
+     "citation": "Title Guaranty Buyer Statistics, Q4 2024 and Q4 2025 editions",
+     "cited_date": "2026-02-13",
+     "editions_named": [
+      "Kauai Q4 2024",
+      "Kauai Q4 2025"
+     ],
+     "latest_named_posted_HST": "2026-02-12",
+     "verdict": "matches posting date in UTC of latest named edition (HST date is 2026-02-12)"
+    },
+    {
+     "link": "https://www.sec.gov/Archives/edgar/data/1981792/000162828025008123/hhhearningsreleaseq42024.htm",
+     "citation": "Howard Hughes Q4 2024 release; DBEDT QSER; Title Guaranty Q4 2024",
+     "cited_date": "2025-02",
+     "editions_named": [
+      "Oahu Q4 2024"
+     ],
+     "latest_named_posted_HST": "2025-03-10",
+     "verdict": "Combined citation. 2025-02 fits the Howard Hughes release only; the Title Guaranty Q4 2024 edition was posted 2025-03-10 HST."
+    }
+   ],
+   "other_title_guaranty_files_cited": [
+    {
+     "url": "https://www.tghawaii.com/wp-content/uploads/8.2026-Statewide-Housing-Statistics.pdf",
+     "kind": "Statewide Housing Statistics (board data), not Buyer Statistics",
+     "posted_HST": "2026-09-24 15:37",
+     "http": "200"
+    },
+    {
+     "url": "https://www.tghawaii.com/wp-content/uploads/Residential-Sales-Report-Oahu-Island-9.2026.pdf",
+     "kind": "Residential Sales Report, not Buyer Statistics",
+     "posted_HST": "2026-10-05 08:14",
+     "http": "200"
+    }
+   ]
+  },
+  "pmms": {
+   "rate_30yr_week_2026_10_01": 7.28,
+   "rate_30yr_week_2026_10_08": 7.4,
+   "low_2026": {
+    "rate": 5.98,
+    "dates": [
+     "2026-02-26"
+    ]
+   },
+   "high_2026": {
+    "rate": 7.4,
+    "dates": [
+     "2026-10-08"
+    ]
+   },
+   "other_checks": {
+    "feb_2026_avg": 6.0475,
+    "oct_2026_avg_two_weeks": 7.34,
+    "h1_2026_avg": 6.268,
+    "h1_2025_avg": 6.8081,
+    "consecutive_weekly_increases_to_2026_10_08": 7,
+    "peak_2023": {
+     "rate": 7.79,
+     "date": "2023-10-26"
+    },
+    "payment_change_pct_6_05_to_7_40": 14.87,
+    "last_week_below_6_before_2026": "2022-09-08 (5.89%)"
+   },
+   "files": {
+    "csv": {
+     "url": "https://www.freddiemac.com/pmms/docs/PMMS_history.csv",
+     "sha256": "7a032cd18a7ac8cd89b4c1351b36c8453063af0ce66030f72cb442d9e47f13b0",
+     "last_modified": "Thu, 08 Oct 2026 13:37:14 GMT"
+    },
+    "xlsx": {
+     "url": "https://www.freddiemac.com/pmms/docs/historicalweeklydata.xlsx",
+     "sha256": "9ab1fd61a6ca280c677df107ce118c0c9048712c5b11ea35a01ad93bda8dbb89",
+     "last_modified": "Thu, 08 Oct 2026 13:37:34 GMT",
+     "note": "Byte-identical to the report's raw/pmms_check/pmms.xlsx (downloaded 2026-10-09 01:00Z)."
+    },
+    "page": {
+     "url": "https://www.freddiemac.com/pmms",
+     "headline": "U.S. weekly mortgage rate averages as of 10/08/2026: 30-year 7.40%, 15-year 6.73%"
+    }
+   },
+   "csv_xlsx_agree_2026": true,
+   "note": "Weeks run Thursday to Thursday. The 2026-01-01 week was released 2025-12-31 (6.15%) and counts as 2025 in the history files."
+  }
+ },
+ "verification": {
+  "verified": "2026-10-09",
+  "corrections": [
+   "irsold/1112hi.xls (the copy the report used) is a 2026-08-14 re-save of the IRS file from an undocumented source, not an older IRS packaging. Every cell is identical to the irs.gov file, so no report number changes; use the irs.gov file as the raw copy.",
+   "13 (not 16) of the probed URLs were Q3 2026 guesses; all redirect to the homepage. Conclusion unchanged: Q3 2026 Title Guaranty buyer statistics not posted as of 2026-10-09.",
+   "Title Guaranty Q4 2025 citations: 9 were dated 2026-02-13 (UTC) and 3 dated 2026-02-12 (HST). The report now uses 2026-02-12 throughout.",
+   "Also corrected in the report: the \"Derived from Title Guaranty Q4 2024 and Q4 2025 editions plus Census\" citation (was 2026-01-27) and the Q4 2015–2025 series citation.",
+   "Title Guaranty files are company-published; the report labels them per its tag rules."
+  ]
+ }
+}

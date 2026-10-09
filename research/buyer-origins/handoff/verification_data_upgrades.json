@@ -1,0 +1,552 @@
+{
+ "generated": "2026-10-09",
+ "what": "Data upgrades run 2026-10-09: each dataset built by one agent and independently re-derived by a second (skeptic) agent. Builder summaries are omitted; this file keeps the verifier checks and problems. How each problem was handled is in handoff_resolution.",
+ "handoff_resolution": {
+  "occupancy_kh": "Rebuilt with owners/occupancy_kh.py (duplicate Kauai record dropped, X999 label fixed, reconciliation note corrected); ordinance citation, tier and exempt-parcel caveats added to sources/occupancy_kh.json notes. Unflagged sub-counts under 20 remain in the detail and are not shown in the report.",
+  "visitors_2025": "JSON was correct; the report uses its 2025 values (Table 56). Summary rounding/wording errors did not reach the report.",
+  "official_sources": "Report citation dates corrected (why/build_why.py fix_date). IRS provenance note recorded; no numbers changed.",
+  "market_oct": "Kauai and Hawaii Island September board figures added from the verifier; mislabelled Aug-edition YTD key renamed; Hawaii Island Aug YTD attribution noted. September figures shown in #now with sources; DBEDT remains canonical for the monthly series."
+ },
+ "results": [
+  {
+   "key": "occupancy_kh",
+   "checks": [
+    {
+     "claim": "Raw inputs are intact and current",
+     "ok": true,
+     "recomputed": "sha256 matches MANIFEST for 126 roll/meta files (raw/owners_neighbor) and all 125 files in raw/up_occupancy_kh. A live re-query of the Kauai TY26 layer gives identical counts and ASSDTOT sums for every TAXCLASS. The live Hawaii cohRPT counts match the cache after TMK dedupe. The State records PDF was re-fetched with the same sha256. Re-fetches are logged in raw/up_occupancy_kh-verify/MANIFEST.txt."
+    },
+    {
+     "claim": "Kauai owner-occupied tax class (8+10) = 50.8% (13,775 / 27,098); vacation rental 14.7% (3,971)",
+     "ok": true,
+     "recomputed": "13,775/27,098 = 0.5083 and VR 3,971 = 0.1465, after dropping 97 condo masters with listed units and 1,532 class-1 TAXABLE=0 records. Removing one duplicated class-11 record gives 27,097 = 0.5084."
+    },
+    {
+     "claim": "Kauai condo units 15.5% OO / 58.5% VR (5,138); non-condo lots 59.1% OO",
+     "ok": true,
+     "recomputed": "Condo: 796 OO and 3,008 VR of 5,138 = 0.1549 / 0.5854. Non-condo: 12,979/21,960 = 0.5910."
+    },
+    {
+     "claim": "Hanalei (zone 5) 63.2% not OO, 29.3% VR, 4,584 units",
+     "ok": true,
+     "recomputed": "Not OO 0.6318, VR 1,344/4,584 = 0.2932. All 5 zone rows match: Waimea 2,501, Koloa 7,905, Lihue 4,977, Kawaihau 7,131, Hanalei 4,584."
+    },
+    {
+     "claim": "Poipu zone-section 2-8: 81.0% not OO, 47.0% VR, 2,992 units; Poipu CDP holds 83% of centroids",
+     "ok": true,
+     "recomputed": "0.8102 / 0.4699 / 2,992. My own point-in-polygon test puts 82.7% of centroids in Poipu CDP and 16.4% in Koloa."
+    },
+    {
+     "claim": "Kauai $3M+ (MODTOT) 72.8% not OO (987 / 1,356)",
+     "ok": true,
+     "recomputed": "987/1,356 = 0.7279. On ASSDTOT it is 0.8558 of 1,130. MODTOT as market value is supported: 89.5% of class-8 records have MODTOT > ASSDTOT (median ratio 1.38), and the Kauai ordinance text applies a 3% assessment cap to owner-occupied homes."
+    },
+    {
+     "claim": "Kauai tier tables and value shares",
+     "ok": true,
+     "recomputed": "All five MODTOT tiers match (8,042 / 13,093 / 4,607 / 1,223 / 133), as do all ASSDTOT tiers. Owner-occupied value share 0.4582, VR 0.1959."
+    },
+    {
+     "claim": "Hawaii County improved house parcels with homeowner exemption 63.1% (42,105 / 66,761); Residential class only 61.5%",
+     "ok": true,
+     "recomputed": "0.6307. PITT100 22,766/37,035 = 0.6147; PITT500 19,339/29,726 = 0.6506. Fully exempt parcels without a home exemption: 3,822. Improved 100/500 parcels: 70,583."
+    },
+    {
+     "claim": "Lowest districts: Ka'u 49.7%, South Kona 55.9%, Puna 59.9% (Puna residential-only 47.7%)",
+     "ok": true,
+     "recomputed": "Ka'u 2,405/4,843 = 0.4966, S Kona 1,840/3,292 = 0.5589, Puna 13,308/22,218 = 0.5990, Puna PITT100 3,739/7,838 = 0.4770. The next lowest is North Hilo at 0.6398."
+    },
+    {
+     "claim": "Hawaii $3M+ 84.3% without exemption (1,145); $10M+ 92.4% (343)",
+     "ok": true,
+     "recomputed": "965/1,145 = 0.8428 and 317/343 = 0.9242. 342 of the 343 $10M+ parcels are PITT100, with a median tax area of 0.78 ac. All tier rows match: 54,488 / 9,152 / 1,976 / 802 / 343."
+    },
+    {
+     "claim": "1,029 Hawaii multi-unit TMKs left out; State counts 8,727 Apartment records",
+     "ok": true,
+     "recomputed": "646 PITT200 + 383 PITT999 = 1,029 distinct TMKs (702 improved, 270 with a Y flag). The State FY27 records PDF shows 8,727 Apartment records for Hawaii County."
+    },
+    {
+     "claim": "Official TY2026-27 OO shares: Kauai 50.4%, Maui 46.2%, Hawaii 48.1%",
+     "ok": true,
+     "recomputed": "Kauai 13,623/27,051 = 0.5036. Maui 28,387/61,494 = 0.4616. Hawaii 45,162/93,910 = 0.4809. Home exemptions: Kauai 13,509 + 297 = 13,806; Hawaii 46,232."
+    },
+    {
+     "claim": "Maui/Oahu comparison: 30.6% outside HI, 44.8% OO class, 46% of non-OO Hawaii-mailing; Oahu 62% with exemption, 82% of no-exemption Hawaii-addressed",
+     "ok": true,
+     "recomputed": "From owners_neighbor.json: 0.3059, 29,013/64,795 = 0.4478, 0.4621. From owners_oahu.json: 159,924/257,694 = 0.6206 and 97,770/119,715 = 0.8167. The report HTML does show 30.6% for Maui."
+    },
+    {
+     "claim": "Edition/period: Kauai layer = TY July 1 2026-June 30 2027; Hawaii = certified April 2026 roll",
+     "ok": true,
+     "recomputed": "Layer class-10 sums equal the official FY27 Kauai report exactly: gross $2,204,808K, exemptions $570,648K, net $1,634,160K. The FY26 report figure ($2,033,885K) does not match. Kauai dataLastEdit is 2026-02-11 and Hawaii's is 2026-04-28, consistent with the item text."
+    },
+    {
+     "claim": "Class decoding",
+     "ok": true,
+     "recomputed": "Kauai County Code 5A-9.1 as amended by Bill 2944 (kauai.gov PDF, fetched 200 today) says: Owner-Occupied and OO Mixed-Use require a granted home exemption, and Long-Term Affordable Rental is a separate class covering residential leases of State land. The layer's codes 10 and 11 are internal numbers; the ordinance lists these classes as (9) and (10), but the labels match. Hawaii PittCode list matches the County's ArcGIS item description. Every Homeowner=Y parcel carries a nonzero exemption."
+    },
+    {
+     "claim": "District numbering and agreement",
+     "ok": true,
+     "recomputed": "Hawaii TMK first digit is always 3 (the county code), so the zone is the 2nd digit; the builder's counts use it correctly. The county layers map 1 Puna through 9 Ka'u, and Kauai zones 1 Waimea, 2 Koloa, 3 Lihue, 4 Kawaihau, 5 Hanalei. My point-in-polygon sample of 3,000 per county agrees 99.83% (Hawaii) and 99.5% (Kauai)."
+    },
+    {
+     "claim": "Top-15 neighborhood rankings and labels",
+     "ok": true,
+     "recomputed": "Same 15 Kauai zone-sections and same 15 Hawaii NHoodCodes, in the same order, from 34 and 166 eligible groups respectively (100+ units). Independent point-in-polygon on TIGER 2020 CDPs reproduces every CDP share."
+    },
+    {
+     "claim": "Dedupe / double counting",
+     "ok": false,
+     "recomputed": "Hawaii: 52 multipart TMKs, 76 extra records, all attribute-identical, correctly dropped. Kauai: one class-11 parcel appears twice with identical PARID and values and is counted twice (layer 1,120 vs official 1,119). Effect is under 0.01 point."
+    },
+    {
+     "claim": "Sensitivities",
+     "ok": true,
+     "recomputed": "Including 3,512 hotel-class condos gives 0.4500. Counting fully exempt records as not OO gives 0.4811 (Kauai) and 0.5965 (Hawaii). Removing 2,057 unmatched class-1/11 lots gives a 0.5501 upper bound. 606 flag-N parcels carry home-like exemption amounts. 343 Y parcels have partial exemptions over $300K."
+    },
+    {
+     "claim": "Aggregates only / no identifiers",
+     "ok": true,
+     "recomputed": "None of the five 8+-digit integers in the output matches any TMK, PARID or COTMK. There are no dashed TMK patterns. No owner fields appear in either query's outFields."
+    },
+    {
+     "claim": "Small cells (<20) flagged",
+     "ok": false,
+     "recomputed": "Every main district, tier, district-by-tier and unit-type cell under 20 is flagged. Unflagged: Hawaii by_district North Hilo probable_multi_unit_tmks_separate (6 TMKs) and by_district_tmks North Hilo 6; improved / with-exemption sub-counts of 1-19 in Puna, Hamakua, N Kohala, S Kona and Ka'u; Kauai fully-exempt federal 9; 14 owner_type_mix entries of 1-19 inside zone-sections."
+    }
+   ],
+   "problems": [
+    "Minor double count: one Kauai class-11 parcel is in the layer twice (same PARID and values), so the Kauai universe should be 27,097 (class 11 = 1,119, which matches the official count). Headline shares change by less than 0.01 point.",
+    "The reconciliation note's line 'The State summary counts taxable records' is not supported. Kauai's taxable class-8 count (11,156) and total class-8 count (11,702) both differ from the official 11,550, and other classes don't line up either. Say instead that the cause of the small differences is unknown.",
+    "The gap is out of date: kauai.gov is reachable now. The Bill 2944 PDF the builder logged as HTTP 403 returned 200 on re-check. Its text (Kauai County Code 5A-9.1) confirms the class decoding and the 3% owner-occupied assessment cap, which supports reading MODTOT as market value. That ordinance should be cited as the official class definition. Note that the layer's codes 10 and 11 differ from the ordinance's list numbers (9) and (10); the labels match.",
+    "Some small cells are not flagged: Hawaii North Hilo multi-unit TMKs (6, in two places), the 1-19 improved / with-exemption sub-counts in five districts, Kauai fully-exempt federal 9, and 14 owner_type_mix counts of 1-19 (e.g. county 1, state 1).",
+    "Mislabel: the Hawaii bottom-5 NHoodCode X999 is labelled 'North Kona CCD (mostly outside Census-designated places)'. Only 23.7% of its parcels are outside a CDP, and it spans several districts (40.9% North Kona), so it is a catch-all code. It is not in the top 15.",
+    "Caveat to add: Hawaii County tiers use whole-TMK summed values. 343 owner-occupied TMKs have exemptions above $300K (likely two or more homes on one lot), so a few multi-home lots may sit in higher tiers. The layer also does not say whether PITT 500 LandValue is agricultural-use or market value.",
+    "The task asked for assessed-value tiers, but the Kauai $3M+ headline (72.8% of 1,356) uses MODTOT, an undocumented field read as market value. On assessed value (ASSDTOT) the figure is 85.6% of 1,130. Both tables are in the file and the inference is disclosed; make sure the report wording says 'market value'.",
+    "The 3,822 fully exempt Hawaii parcels left out are described as 'mostly DHHL, government and nonprofit'. A County BigstOwner aggregate shows DHHL 1,908, other State 200, County 110, Federal 14 (58% government in total) and 'other' 1,568 (41%). The nonprofit share of 'other' cannot be checked."
+   ]
+  },
+  {
+   "key": "visitors_2025",
+   "checks": [
+    {
+     "claim": "The 2024 workbook on DBEDT's official /archive/ URL is byte-identical to the mirror (sha256 86bf9ca5...a0da06d70df361269c68d8951cf94acad0a35c), and the non-archive URL returns 404",
+     "ok": true,
+     "recomputed": "Re-fetched 2026-10-09T01:37Z: 1,223,704 bytes, sha256 86bf9ca5711671f3a4333bba15a0da06d70df361269c68d8951cf94acad0a35c, Last-Modified Wed, 20 Aug 2025 20:38:40 GMT. The non-archive path returns HTTP 404 (196 bytes). The builder's first-pull and r2 copies have the same hash."
+    },
+    {
+     "claim": "2025 workbook sha256 08b54f4b...26175c, Last-Modified 28 Sep 2026",
+     "ok": true,
+     "recomputed": "Re-fetched: 1,171,485 bytes, sha256 08b54f4bd135e94b2df5f96fd02e9d928cb21958c0a7dafd22c031311726175c, Last-Modified Mon, 28 Sep 2026 23:43:50 GMT"
+    },
+    {
+     "claim": "In 2025 the metro-by-island table is TABLE 56. TABLE 55 is now Length of Stay, so vis_cbsa.py run unchanged would fail",
+     "ok": true,
+     "recomputed": "Found by sheet title: 2025 'TABLE 56. 2025 Domestic U.S. Air Visitor Arrivals by Island and Top CBSA*', and 2025 TABLE 55 is length of stay. The PDF table list agrees. Running vis_cbsa.py unchanged on the 2025 file raises AssertionError."
+    },
+    {
+     "claim": "Column decoding: TOTAL=1, O'ahu=2, MAUI (island, not county)=4, KAUA'I=7, HAWAI'I ISLAND=8, the same in both years",
+     "ok": true,
+     "recomputed": "Header row in both 2025 TABLE 56 and 2024 TABLE 55: TOTAL, O'AHU, MAUI COUNTY, MAUI, MOLOKA'I, LANA'I, KAUA'I, HAWAI'I ISLAND, HILO, KONA. Columns were mapped by header text, not by position."
+    },
+    {
+     "claim": "Same 67 CBSAs in both years with identical names; combining Utah's three metros gives 65",
+     "ok": true,
+     "recomputed": "67/67 rows, identical name sets; Salt Lake City UT + Provo-Orem UT + Ogden-Clearfield UT are separate CBSAs, so combining them double-counts nothing"
+    },
+    {
+     "claim": "vis_cbsa.py on the official 2024 file reproduces an/vis_cbsa.json exactly",
+     "ok": true,
+     "recomputed": "Ran an/vis_cbsa.py on my own re-pulled 2024 file; cmp shows the output byte-identical to an/vis_cbsa.json"
+    },
+    {
+     "claim": "Every 2024 metro figure in the report (top 4 metros per island in K; top 5 over-index per island) reproduces",
+     "ok": true,
+     "recomputed": "Oahu 496/296/209/156K; Maui 211/159/127/70K; Kauai 123/86/61/49K; Hawaii Island 129/101/87/48K. Over-index: Oahu 1.33/1.32/1.29/1.24/1.23; Maui 1.31/1.25/1.14/1.11/1.10; Kauai 1.44/1.32/1.29/1.18/1.17; Hawaii Island 1.42/1.28/1.22/1.21/1.17, all matching"
+    },
+    {
+     "claim": "U.S. visitors on domestic flights 2025: 7,415,500, +0.65% vs 7,367,315",
+     "ok": true,
+     "recomputed": "TABLE 19 United States: 7,415,500.21 and 7,367,314.98, +0.654%. The 50 state rows of TABLE 53 sum to the same total."
+    },
+    {
+     "claim": "The 65 metros total 5,882,366 = 79.3% of U.S. domestic-flight visitors (2024: 5,903,279 = 80.1%)",
+     "ok": true,
+     "recomputed": "Sum of TABLE 56 TOTAL = 5,882,366 (0.79325); 2024 TABLE 55 = 5,903,279 (0.80128). Numerator and denominator are both on domestic flights."
+    },
+    {
+     "claim": "Island bases 2025 (2024): Oahu 52.6% (53.6), Maui 28.9% (27.0), Kauai 15.9% (16.1), Hawaii Island 18.2% (18.3)",
+     "ok": true,
+     "recomputed": "0.526171 / 0.289289 / 0.158694 / 0.182322 (2024: 0.535991 / 0.270231 / 0.161470 / 0.183450)"
+    },
+    {
+     "claim": "Oahu biggest 2025: LA 502,085 +1.3%; SF 288,580 -2.4%; Seattle 252,380 +20.6%; New York 140,165 +22.5% (#4, was #7); Riverside 134,434 +15.2% (#5, was #6); San Diego 126,509 -19.1% (#6, was #4)",
+     "ok": true,
+     "recomputed": "All counts, % changes and ranks reproduced; % changes equal DBEDT TABLE 57"
+    },
+    {
+     "claim": "Top-15 per island with 2024 value, ranks, change, % change and idx (results.islands.*.top15_2025_with_change), plus the dropped-from-top-15 lists",
+     "ok": true,
+     "recomputed": "All 4 islands x 15 rows match my recomputation, including the metros dropped from the top 15 (e.g. Oahu: Dallas-Fort Worth, rank 13 -> 17)"
+    },
+    {
+     "claim": "Oahu over-index 2025 (>=20K): Baltimore 1.35, Atlanta 1.26, San Antonio 1.25, Washington DC 1.24 (was 1.33), Riverside 1.21. Virginia Beach is highest overall at 1.39 with 13,030 visitors",
+     "ok": true,
+     "recomputed": "Baltimore 1.348 (20,665), Atlanta 1.262 (41,068), San Antonio 1.25 (21,605), DC 1.24 (80,914; 2024 1.333), Riverside 1.21 (134,434). Virginia Beach ranks #1 of all 65 at 1.39 with 13,030."
+    },
+    {
+     "claim": "Maui over-index 2025 (>=20K): Portland 1.22, Denver 1.20, Chicago 1.16 (was 1.25), San Diego 1.16, New York 1.15. Minneapolis 1.31 -> 1.09",
+     "ok": true,
+     "recomputed": "Reproduced, including the Chicago/San Diego order on unrounded values. Minneapolis 1.31 -> 1.09."
+    },
+    {
+     "claim": "Kauai over-index 2025 (>=10K): Denver 1.67 (46,890, +69%), SLC-Provo-Ogden 1.47, Boise 1.40, Phoenix 1.37, Austin 1.31",
+     "ok": true,
+     "recomputed": "Reproduced. Denver Kauai +69.17% (TABLE 57 69.17)."
+    },
+    {
+     "claim": "Hawaii Island over-index 2025 (>=15K): Anchorage 1.41 (was 1.42), Boston 1.31 (17,188), Portland 1.24, New York 1.22, Minneapolis 1.20. SF 126,431 passes LA 118,764",
+     "ok": true,
+     "recomputed": "Reproduced. Boston 14,097 in 2024. In 2024 LA (129K) led SF (101K)."
+    },
+    {
+     "claim": "Full over-index lists at the report thresholds, 2025 and 2024, and the vis_cbsa replica (>=10K) top-10 lists",
+     "ok": true,
+     "recomputed": "Every list (all lengths) matches in membership, order, n and idx to 1e-5"
+    },
+    {
+     "claim": "Changes to the report block if moved to 2025 (Oahu: +Atlanta, +Riverside, -New York, -Boston; Maui: Portland, Denver, San Diego replace Minneapolis, Dallas, Sacramento; Kauai: Boise, Phoenix, Austin replace Minneapolis, Chicago, Boston; Hawaii Island: Boston replaces Denver)",
+     "ok": true,
+     "recomputed": "Confirmed by comparing my 2025 top 5 with the report's 2024 top 5"
+    },
+    {
+     "claim": "Builder's statement that 'Boston (now 17,188 visitors, [is] above the threshold for the first time)'",
+     "ok": false,
+     "recomputed": "Boston to Hawaii Island was 15,487 in 2022 (2022 workbook TABLE 53, above 15K), 14,361 in 2023 and 14,097 in 2024. The output JSON correctly says only 'was 14,097'."
+    },
+    {
+     "claim": "Pooled 2024+2025 index leaders: Baltimore 1.34 (Oahu), Chicago 1.20 (Maui), Denver 1.52 (Kauai), Anchorage 1.42 (Hawaii Island)",
+     "ok": false,
+     "recomputed": "Leaders are correct, and the JSON values match mine (Baltimore 1.334837, Chicago 1.203602, Denver 1.514950, Anchorage 1.418013). The summary's prose rounds them wrong: Baltimore should be 1.33, not 1.34, and Denver 1.51, not 1.52."
+    },
+    {
+     "claim": "Dallas -38.5%, Phoenix -33.5%, Phoenix-to-Maui -45.8% (DBEDT's own swings)",
+     "ok": true,
+     "recomputed": "-38.53 / -33.54 / -45.77; the same values are in TABLE 57"
+    },
+    {
+     "claim": "2025 workbook did not revise 2024: computed changes equal TABLE 57 and TABLE 54",
+     "ok": true,
+     "recomputed": "Unrounded max difference: TABLE 57 0.0 across 67 metros x 10 columns; TABLE 54 1.4e-14 across 50 rows. TABLE 21's 2024 column also equals 2024 TABLE 55 for all 61 common metros."
+    },
+    {
+     "claim": "Top states 2025: CA 2,795,276 (-3.05%), WA 710,596 (+4.8%), TX 334,290 (-17.33%), OR 320,610 (+15.36%), CO 305,856 (+34.29%), UT 230,133 (+6.6%), AZ 186,747 (-30.29%), NY 169,748 (+12.3%)",
+     "ok": true,
+     "recomputed": "2025 TABLE 53 vs 2024 TABLE 52 reproduce. Next are IL 167,114 and FL 165,752."
+    },
+    {
+     "claim": "California is 12.0% below its 2022 peak and 6.0% above 2019, matching the report sentence",
+     "ok": true,
+     "recomputed": "TABLE 19: 2022 = 3,177,044 is the peak of 2013-2025. 2025/2022 -12.02%; 2025/2019 (2,637,893) +5.97%."
+    },
+    {
+     "claim": "Japan by region: Kanto 343,042 (+13.9%), Kinki 160,865 (-2.0%), Chubu 138,804 (+3.9%). The 9 regions sum to 743,614 (international flights). 97.8% visit Oahu. About 6,000 Japanese visitors on domestic flights are excluded",
+     "ok": true,
+     "recomputed": "Reproduced. Region sum = TABLE 22 international-flight arrivals 743,614 (2024 699,901). Oahu 727,408/743,614 = 97.82%. Hawaii Island 6.2%, Maui 1.9%, Kauai 0.9%. Domestic-flight gap 749,596 - 743,614 = 5,982."
+    },
+    {
+     "claim": "Canada: total 389,241 (-12.7%); BC 173,436 (-17.6%), Ontario 90,863 (-14.7%), Alberta 61,019 (-8.8%); island reach Oahu 56.4%, Maui 40.8%, Hawaii Island 17.9%, Kauai 11.1%",
+     "ok": true,
+     "recomputed": "Reproduced. Provinces sum to the Visitors column, which equals TABLE 24 TOTAL (including 73,912 on domestic flights). Maui reach uses Maui island (158,780), not the county (159,940)."
+    },
+    {
+     "claim": "TABLE 21 notes: rank follows 2024 arrivals, Omaha added, totals equal TABLE 56/55, population labelled 2025",
+     "ok": true,
+     "recomputed": "Rank is in descending 2024 order. 61 metros match TABLE 56 2025 totals and 2024 TABLE 55 exactly; Omaha has no TABLE 56 row; 6 TABLE 56 metros are absent from TABLE 21. Footnote: 'Based on 2025 population estimates'."
+    },
+    {
+     "claim": "Small cells: 62 cells under 20 are flagged, all Molokai/Lanai except Okinawa-to-Kauai = 0 in both years. None feed the metro lists. Smallest main-island metro cell is Modesto-to-Kauai 2025 at 2,138",
+     "ok": true,
+     "recomputed": "Every <20 count cell in the state, Japan and Canada rows has a row-level flag_lt20. The metro table has no Molokai/Lanai columns. The 9 listed 2025 metro Molokai/Lanai cells are the only <20 metro cells (none in 2024). The smallest main-island cell is 2,138.3 (Modesto-to-Kauai, 2025). DBEDT's own footnote warns that Molokai/Lanai samples are small."
+    },
+    {
+     "claim": "Aggregates only: no owner names, addresses or TMKs",
+     "ok": true,
+     "recomputed": "The output holds only DBEDT survey aggregates (metro, state, region, province). A regex scan found no TMK or parcel-ID patterns."
+    },
+    {
+     "claim": "No host blocked access",
+     "ok": true,
+     "recomputed": "My re-fetches of the 2025, 2024, 2023 and 2022 workbooks from files.hawaii.gov all returned 200 with no bot checks"
+    },
+    {
+     "claim": "Builder wrote only its own outputs",
+     "ok": true,
+     "recomputed": "build.py, assemble.py and manifest.py write only build_out.json, an/up/visitors_2025.json and raw/up_visitors_2025/MANIFEST.txt. The context files (vis_cbsa.*, an/new/visitors.json, page_data.json, raw/visitors) have unchanged mtimes from 2026-10-08."
+    }
+   ],
+   "problems": [
+    "Summary only (the JSON is correct): the pooled 2024+2025 over-index leaders are rounded wrong. Baltimore (Oahu) is 1.334837, so 1.33 not 1.34, and Denver (Kauai) is 1.514950, so 1.51 not 1.52. This looks like double rounding. Chicago 1.20 and Anchorage 1.42 are right.",
+    "Summary only: 'Boston (now 17,188 visitors, above the threshold for the first time)' is false. DBEDT's 2022 workbook (TABLE 53, the CBSA table that year) shows Boston to Hawaii Island at 15,487, above the 15K threshold; 2023 was 14,361 and 2024 14,097. It should say 'back above 15K (was 14,097 in 2024)'. The JSON note words this correctly.",
+    "Minor presentation issue in the summary: the Oahu 'biggest metros' table lists #1-#4 and then #6 San Diego, but leaves out #5 Riverside-San Bernardino (134,434, +15.2%, was #6), so it reads as if San Diego were 5th. The JSON key figure lists Riverside correctly."
+   ]
+  },
+  {
+   "key": "official_sources",
+   "checks": [
+    {
+     "claim": "IRS: 24 of 24 county inflow and outflow CSVs (2011-12 to 2022-23) are byte-identical to the hashes the report recorded",
+     "ok": true,
+     "recomputed": "I downloaded all 24 again from irs.gov/pub/irs-soi/county{inflow,outflow}YYZZ.csv on 2026-10-09 (all 200). Their sha256 values match irs_sha256.txt and irs_outflow_sha256.txt 24 of 24. They also match the local copies in irs2/, irsdec/ and irsout/, and the builder's sha256_fresh values. Each URL is linked on its official year page (soi-tax-stats-migration-data-YYYY-YYYY)."
+    },
+    {
+     "claim": "IRS: 14 of 14 Hawaii county workbooks for 2004-05 to 2010-11 (members of county0405.zip to county1011.zip) match irsold/",
+     "ok": true,
+     "recomputed": "I re-downloaded the 7 ZIPs; their sha256 values match the builder's. I extracted the co*HI* members myself and all 14 hash-match irsold/. The direct URLs for the members return 404, except co1011ihi.xls and co1011ohi.xls, which return 200 and are byte-identical to the ZIP members."
+    },
+    {
+     "claim": "IRS: Hawaii state workbooks 1112hi.xls to 2223hi.xlsx: 11 of 12 byte-identical, 12 of 12 identical cell for cell; 49/50 byte-identical and 50/50 same content overall",
+     "ok": true,
+     "recomputed": "Confirmed. In 1112hi.xls I compared 10,692 cells across all 4 sheets and none differ. The two copies differ in 19 bytes, in 4 runs."
+    },
+    {
+     "claim": "IRS: the 1112hi.xls byte difference is only metadata, and the report copy is 'an older packaging of the same numbers'",
+     "ok": false,
+     "recomputed": "The numbers are unaffected, but the provenance explanation is wrong. The report's copy (irsold/1112hi.xls) has a personal 'last saved by' user name and an OLE Root Entry modified timestamp of 2026-08-14T17:07:57Z. The current irs.gov file, and the copy inside 1112migrationdata.zip (member dated 2015-05-13), both carry 'Department of Treasury' and no such timestamp. So the report copy was re-saved in 2026 from an undocumented source; it is not an older IRS packaging. The 4th differing byte run is that OLE directory timestamp, not 'document-summary properties'."
+    },
+    {
+     "claim": "IRS 2023-24 migration data is scheduled for 2026-11-20 (soi-public-release-list.xlsx row 63, revised 9/10/2026, tentative)",
+     "ok": true,
+     "recomputed": "Parsed the xlsx (sha256 d89843a7…, same file as the builder's). Row 63: 2026-11-20, 'Individuals, State and County Migration data', 2023-2024. Row 18: 2026-03-19 for 2022-2023. Footer: 'revised 9/10/2026'. The Upcoming Data Releases page says release dates are tentative; it was last reviewed 29-Sep-2026, covers Jul 1 to Sep 30, 2026 and has no migration entry. On 2026-10-09, countyinflow2324.csv, countyoutflow2324.csv, 2324hi.xlsx, stateinflow2324.csv and the 2023-2024 year page all return 404."
+    },
+    {
+     "claim": "Hawaii lost a net 6,667 households (returns) to Washington and 9,900 to Nevada, 2011-12 to 2022-23",
+     "ok": true,
+     "recomputed": "Two independent routes give 6,667 and 9,900: the 24 national stateoutflow/stateinflow CSVs (n1, HI to WA/NV minus WA/NV to HI), and the State Outflow/Inflow sheets of the fresh YYZZhi workbooks (column 'Number of returns'). The per-year values equal the builder's net_by_year."
+    },
+    {
+     "claim": "2022-23 out-of-state totals for the 4 counties match irs_20yr.json; range 940 to 20,909 returns",
+     "ok": true,
+     "recomputed": "From the fresh countyinflow2223/countyoutflow2223 rows with code 97/003 ('<County> Total Migration-Different State'): Hawaii in 3,200 / out 2,935; Honolulu in 18,542 / out 20,909; Kauai in 940 / out 1,034; Maui in 2,344 / out 2,745. All equal irs_20yr.json. The code is decoded the same way in the 2004-05, 2007-08 and 2009-10 workbooks (97/003 = 'Tot Mig-Diff St'), and the report's early-year totals (for example Honolulu 2004-05 in 15,671) match the fresh files."
+    },
+    {
+     "claim": "Latest Title Guaranty Buyer Statistics edition is Q2 2026 (Jan-Jun), posted 2026-08-31 about 12:32 HST",
+     "ok": true,
+     "recomputed": "The WordPress media listing (149 Buyer-Stats items, no duplicates) shows the newest uploads are the Q2 2026 Maui, Oahu, statewide, Hawaii-Island and Kauai PDFs, 2026-08-31 12:31:58 to 12:32:11 HST (22:31:58 to 22:32:11 GMT). Page 1 of each PDF reads 'JAN-JUN 2026'."
+    },
+    {
+     "claim": "Q3 2026 Title Guaranty edition not posted as of 2026-10-09",
+     "ok": true,
+     "recomputed": "The market page sha256 (ecb3b407…) is unchanged since 2026-10-08, and its newest links are 2026 Q1 and Q2. None of the 43 media uploads since 2026-08-30 is a Buyer-Stats file after 08-31. I probed 10 Q3-2026 file names (Oahu, Maui, Kauai, Hawaii, Hawaii-Island, statewide, Statewide, Molokai, Lanai, Oahu -1); all return 301 to the homepage."
+    },
+    {
+     "claim": "'16 Q3-2026 URL guesses all 301 to the homepage'",
+     "ok": false,
+     "recomputed": "The builder's probe file has 16 URLs, but only 13 are Q3-2026 guesses (its JSON url_probes lists 13). Of the other 3, Buyer-Stats-Hawaii-Q2-2026.pdf returns 301, and 8.2026-Statewide-Housing-Statistics.pdf and Residential-Sales-Report-Oahu-Island-9.2026.pdf return 200. The conclusion still holds."
+    },
+    {
+     "claim": "The report cites 54 Title Guaranty Buyer Statistics PDFs and links 14",
+     "ok": true,
+     "recomputed": "My own parse of the report finds 14 distinct Buyer-Stats links. The 54 is 51 editions named in report citations (counting 'Q1-Q3 2024 editions' as all 4 islands) plus the Hawaii, Kauai and Maui Q1 2026 PDFs, which the report uses only through an/new/tg.json. So '54 the report uses' is right; '54 the report cites' overstates by 3."
+    },
+    {
+     "claim": "23 of 23 core Title Guaranty PDFs re-downloaded are byte-identical to the report's copies; 31 older editions checked by size only",
+     "ok": true,
+     "recomputed": "I re-downloaded all 54 (all 200), and 54 of 54 are byte-identical to every report copy (ca_tg24/, raw/tg/, aud_claims_dl/, jk/tg/). Posting dates for all 54 match the media listing (HST and GMT). The page-1 period label of all 54 matches Qn = Jan to Mar/Jun/Sep/Dec (Q4 2018 reads 'JANUARY-DECEMBER 2018')."
+    },
+    {
+     "claim": "Citation date errors: 'Q4 2025, 2026-01' should be 2026-02-12; 'Q1-Q3 2024, 2024-10-03 (posted)' (Q3 posted 2025-01-09); Kauai and Oahu district-panel citations that include Q2 2026 are dated by an earlier edition; HH/TG Q4 2024 dated 2025-02 vs TG posted 2025-03-10",
+     "ok": true,
+     "recomputed": "All confirmed against the media listing. Q4 2025 posted 2026-02-12 14:24 HST (2026-02-13 00:24 UTC). Q1/Q2 2024 posted 2024-10-03; Q3 2024 posted 2025-01-09. Q2 2026 posted 2026-08-31. Q4 2024 posted 2025-03-10 17:25 HST."
+    },
+    {
+     "claim": "8 Title Guaranty citations are dated 2026-02-13 and 3 are dated 2026-02-12",
+     "ok": false,
+     "recomputed": "There are 9 dated 2026-02-13 and 3 dated 2026-02-12; the builder's own citation_date_checks also shows 9. Each count includes one group citation that is separately flagged, so it should read either 9 vs 3, or 8 vs 2 if the flagged ones are excluded."
+    },
+    {
+     "claim": "Citation date check covers every Title Guaranty citation",
+     "ok": false,
+     "recomputed": "Missed: 'Derived from Title Guaranty Q4 2024 and Q4 2025 editions plus Census NST-EST2025-ALLDATA', dated 2026-01-27. That is before the Q4 2025 edition was posted (2026-02-12), the same kind of issue as the Howard Hughes combined citation the builder flagged. It was skipped because its link goes to census.gov. Also unchecked: 'Hawaii Business Magazine (Title Guaranty data); TG Oahu Q4 2019', dated 2022-07-19; that date fits the press article, and Oahu Q4 2019 was posted 2020-02-11."
+    },
+    {
+     "claim": "Freddie Mac PMMS 30-year fixed: 7.28% for the week of 2026-10-01 and 7.40% for 2026-10-08",
+     "ok": true,
+     "recomputed": "PMMS_history.csv (sha256 7a032cd1…, Last-Modified 2026-10-08 13:37:14 GMT) gives 10/1/2026 7.28 and 10/8/2026 7.40. The freddiemac.com/pmms headline reads 'as of 10/08/2026 … 7.40%', up from 7.28%. historicalweeklydata.xlsx agrees for all 40 weeks of 2026 and is byte-identical to the report's raw/pmms_check/pmms.xlsx."
+    },
+    {
+     "claim": "2026 low is 5.98% on 2026-02-26, the only 2026 week below 6%; Oct 8 (7.40%) is the 2026 high",
+     "ok": true,
+     "recomputed": "Min and max over the 40 weekly rows dated 2026-01-08 to 2026-10-08 are 5.98 (2026-02-26 only) and 7.40 (2026-10-08). The last week below 6% before that was 2022-09-08 (5.89)."
+    },
+    {
+     "claim": "Report chart shows Oct 2026 as 7.28%; month-to-date average 7.34%; Jul/Aug/Sep 6.54/6.67/6.86; other PMMS text checks",
+     "ok": true,
+     "recomputed": "page_data.json has mortgage[-1] = 7.28 for 2026-10; the mean of 7.28 and 7.40 is 7.34. Other values: Feb 2026 avg 6.0475; H1 2026 mean of monthly averages 6.2653 (weekly mean 6.268); H1 2025 6.8015 (weekly 6.8081); 7 straight weekly increases; 2023 peak 7.79 on 2023-10-26; 30-year payment change from 6.05% to 7.40% is +14.87%."
+    },
+    {
+     "claim": "Aggregates only; no cells under 20",
+     "ok": true,
+     "recomputed": "The builder JSON has no owner names, street addresses, parcel IDs or TMKs. Its only numeric leaves under 20 are rates, a sheet row number and a streak length, not unit counts. Raw tghawaii media listings (both builder's and mine) contain unrelated marketing-flyer file names that include street addresses; these are in raw/ only, not in any output."
+    }
+   ],
+   "problems": [
+    "1112hi.xls provenance is misstated. The builder calls the report's copy 'an older packaging' of the IRS file. It is actually a 2026-08-14 re-save: its OLE Root Entry timestamp is 2026-08-14T17:07:57Z, it carries a personal 'last saved by' name, and its source is undocumented. The IRS direct file and the 2015 ZIP member are identical to each other. The 4th differing byte run is that OLE timestamp, not document-summary properties. The cell values are identical, so no report number changes.",
+    "Key figure 8 / gaps say '16 Q3-2026 URL guesses all 301'. Only 13 of the 16 probed URLs were Q3-2026 guesses, and 2 of the 16 returned 200 (non-Buyer-Stats files). The JSON url_probes lists 13.",
+    "Key figure 11 says 8 citations use 2026-02-13 and 3 use 2026-02-12. The report has 9 and 3, and the builder's own citation_date_checks shows 9. The two counts treat the flagged group citations inconsistently.",
+    "The citation-date check missed 'Derived from Title Guaranty Q4 2024 and Q4 2025 editions plus Census NST-EST2025-ALLDATA', dated 2026-01-27. That date is before the Q4 2025 posting (2026-02-12), the same kind of issue as the flagged Howard Hughes/TG citation. The 'Hawaii Business Magazine; TG Oahu Q4 2019' citation (2022-07-19) was also not checked, though its date fits the press article.",
+    "Key figure 11's tally leaves out the third 'dated by an earlier edition' flag from its own results: 'Q4 editions 2015–2025 (Maui and Hawaii Island PDFs)', dated '2025-03-10 (Q4 2024 edition)', though it includes Q4 2025 (posted 2026-02-12). Low severity, because the date is explicitly qualified.",
+    "'54 editions the report cites' should read 'uses'. The Hawaii, Kauai and Maui Q1 2026 PDFs appear only in an/new/tg.json (supplementary), not in report citations; Oahu Q1 2026 is cited. Also, the report_basis for Oahu Q1 2026 omits the Oahu-editions citation that names it.",
+    "editions_named in citation_date_flags is mis-parsed in places. 'Title Guaranty Hawaii, …' is read as a Hawaiʻi Island edition (for example the Maui Q4 2025 link becomes 'Hawaii Q4 2025', and a spurious 'Hawaii Q1 2024' appears). Maui is missing from the Q4 2015–2025 group, and the Q1–Q3 2024 group lists only Hawaiʻi Island despite the 4-island assumption used elsewhere. The verdicts are unaffected, because the same-quarter island PDFs share posting dates.",
+    "Minor time-zone inconsistency: the Q4 2016 PDF creation date is given as 2017-02-14, which is the +08 local date; in HST it is 2017-02-13. The Q4 2018 date is given as '2019-03-15/16', so the two are not handled the same way.",
+    "Minor: the summary says IRS publishes the 2004-05 to 2010-11 Hawaii workbooks only inside ZIPs. co1011ihi.xls and co1011ohi.xls are also served directly (200, identical bytes); the method notes say so, but the summary does not.",
+    "Labelling: the rules say to mark company-site data as 'reported'. The builder labels Title Guaranty 'company-published' instead. No Title Guaranty counts appear in the output, so the impact is small.",
+    "Context only: past Q3 Title Guaranty postings also include 2020-10-30, 2021-11-22 and 2022-12-01, not just the three listed. A Q3 2026 edition could still appear in late October.",
+    "Scope note, not an error: IRS also publishes early-year state-level ZIPs (state0405.zip to state1011.zip). The report's state-level data covers only 2011-12 to 2022-23 (irs_states.json), so they were rightly not checked.",
+    "Verification artefacts: scripts are in scratchpad/pull/up_official_sources-verify/. Fresh downloads (IRS 24 county CSVs, 12 Hawaii workbooks, 7 county ZIPs plus 1112migrationdata.zip, 24 state CSVs, release list, all 54 Title Guaranty PDFs, media listings, PMMS files) are in scratchpad/raw/up_official_sources-verify/ with MANIFEST.txt. No host blocked access."
+   ]
+  },
+  {
+   "key": "market_oct",
+   "checks": [
+    {
+     "claim": "Raw files match MANIFEST.txt (bytes + sha256)",
+     "ok": true,
+     "recomputed": "48/48 rows re-hashed in raw/up_market_oct: all bytes and sha256 match."
+    },
+    {
+     "claim": "HBR Sep 2026 not yet on HBR's own channels; Sep MSR available only via oahure.com mirror",
+     "ok": true,
+     "recomputed": "Re-fetched 2026-10-09T01:46Z: hicentral /mpr/mpr-2026-09.php still 404; press-release index lists up to mpr-2026-08; Prezly feed newest 2026-09-06; sitemap's 'September' items are the 2024/2025 releases. oahure Sep MSR re-fetched with an identical sha256 (a6a5d1e7...). PDF metadata: Author Honolulu Board of REALTORS, created 2026-10-06."
+    },
+    {
+     "claim": "Mirror fidelity: oahure Aug MSR numerically identical to HBR's own (Google Drive) Aug MSR",
+     "ok": true,
+     "recomputed": "Own pdftotext of raw/mm_district_stats/hbr_08-2026-Aug-A-MSR.pdf vs raw/up_market_oct/oahure_08-2026-Aug-A-MSR.pdf: 5,746 vs 5,746 numeric tokens, all identical. Same PDF CreationDate (2026-09-05 22:02:18 UTC)."
+    },
+    {
+     "claim": "Oahu Sep 2026 closed sales 293 SF (+6.2%), 375 condo (-8.1%); medians $1,110,000 (-3.9%), $523,000 (+2.8%)",
+     "ok": true,
+     "recomputed": "PDF p.3 (printed p.2) Monthly Indicators: 293 vs 276 = +6.16%; 375 vs 408 = -8.09%; 1,110,000 vs 1,155,000 = -3.90%; 523,000 vs 508,750 = +2.80%."
+    },
+    {
+     "claim": "Oahu YTD Jan-Sep 2026: 2,243 SF at $1,180,000 (+5.9%), 3,209 condo at $515,000 (-2.4%); equals sum of Jan-Sep monthly rows",
+     "ok": true,
+     "recomputed": "Own parse of the closed-sales table (printed p.5): Jan-Sep 2026 sums to 2,243 SF and 3,209 condo. YTD changes: 2,243/2,118 = +5.9%; 3,209/3,289 = -2.4%; medians +3.1% and +2.0%."
+    },
+    {
+     "claim": "Oahu median DOM 16 SF / 41 condo (Sep), 16 / 42 YTD; HBR DOM = median days from listing to offer accepted",
+     "ok": true,
+     "recomputed": "Page 2 values match. The definition text is in the PDF verbatim ('first listed to when an offer is accepted ... median of all sales')."
+    },
+    {
+     "claim": "HBR months supply 3.2 SF / 7.0 condo (Aug 3.2 / 6.9); 798/(3,015/12)=3.18 and 2,509/(4,328/12)=6.96",
+     "ok": true,
+     "recomputed": "12-month closed Oct-25..Sep-26 = 3,015 SF and 4,328 condo, giving 3.176 and 6.957. Aug: 3.178 and 6.912, rounding to 3.2 and 6.9. HBR definition 'rolling 12-month average closed sales' confirmed in the PDF."
+    },
+    {
+     "claim": "Oahu active 798 SF (0.0%), 2,509 condo (+7.8%); pending 236 (-1.3%), 292 (-28.6%)",
+     "ok": true,
+     "recomputed": "Page 2 and the monthly tables (printed pp.11-12) match. YoY recomputed: 0.0, +7.8, -1.3, -28.6."
+    },
+    {
+     "claim": "Maui RAM Sep 2026 months supply 11.0 all / 7.8 SF / 12.1 condo; 457/(707/12)=7.76, 822/(818/12)=12.06; Aug first published 11.1/8.1/12.2; Sep report revises Aug to 8.2/12.3",
+     "ok": true,
+     "recomputed": "Own parse of RAM pp.5, 12 and 13: 12-month pending 707 SF and 818 condo, giving 7.757 and 12.059. RAM Aug report (current as of 2026-09-01): 8.1 / 12.2 / 11.1 with inventory 473/839/1,533. Sep report Aug-2026 rows: 477/8.2 and 844/12.3. The RAM Sep PDF is byte-identical to the earlier pull (sha cce8dc9d...)."
+    },
+    {
+     "claim": "Maui inventory 457 (+1.6%), 822 (-5.6%), 1,511 (+0.3%); pending 59 (+9.3%), 50 (-9.1%), 120 (+1.7%)",
+     "ok": true,
+     "recomputed": "Pages 2, 3 and 14 match. YoY recomputed from 450, 871, 1,507, 54, 55 and 118."
+    },
+    {
+     "claim": "DOM/price-received definitions: RAM = average days listing-to-close; % of most recent list price (average)",
+     "ok": true,
+     "recomputed": "RAM definition pages: 'Average number of days between when a property is listed and when it closed'; 'by its most recent list price, then taking the average'."
+    },
+    {
+     "claim": "Report method Aug 2026 reproduced: Oahu 5.2, Maui 9.6, Kauai 8.4, Hawaii Island 6.5",
+     "ok": true,
+     "recomputed": "Own read of DBEDT MEI Aug-2026 xlsx (cols 40 and 43: SF and condo resales), Jun-Aug sums: Honolulu 667/716/629, Maui 168/137/132, Kauai 51/53/43, Hawaii 231/225/184. Realtor.com county CSV Aug active: 3,494 / 1,400 / 414 / 1,387. Results: 5.21 / 9.61 / 8.45 / 6.50. July (5.32 / 10.39 / 7.69 / 5.98) matches page_data ext.mos index 246."
+    },
+    {
+     "claim": "Report method rolled to Sep (provisional): Oahu 5.2, Maui 10.4, Kauai 9.6, Hawaii Island 7.1",
+     "ok": true,
+     "recomputed": "3,483/mean(716,629,668) = 5.19; 1,367/mean(137,132,124) = 10.44; 385/mean(53,43,24) = 9.63; 1,365/mean(225,184,167) = 7.11. Sep substitutes (668 = HBR, 124 = RAM, 24 and 167 = TG) also equal the HBR/RAM/HIS board figures."
+    },
+    {
+     "claim": "Definition comparison: Oahu SF+condo by HBR method 5.40; HBR inventory with 3-month divisor 4.93; Realtor.com 176 more listings; Maui SF+condo RAM method 10.06",
+     "ok": true,
+     "recomputed": "3,307/(7,343/12) = 5.404; 3,307/(2,013/3) = 4.928; 3,483 - 3,307 = 176; 1,279/((707+818)/12) = 10.064. Other cells also match: Maui SF 3-month 7.92, condo 11.01, 12-month closed 7.65 / 12.18; Oahu pending-based 3.09 / 6.97 / 5.35."
+    },
+    {
+     "claim": "Realtor.com quality-flags Maui every month since Dec 2025",
+     "ok": true,
+     "recomputed": "county_fips 15009 quality_flag = 0 through 2025-11 and 1 for 2025-12 through 2026-09. S3 Last-Modified 2026-09-30, size unchanged, so the local CSV is current."
+    },
+    {
+     "claim": "Title Guaranty Sep 2026 RSR: Oahu 309/$1.10M/391/$529K; Maui 52/$1.15M/72/$660K; Hawaii 135/$499K/32/$604.5K; Kauai 18/$1.49M/6/$726.5K, with arrow-glyph signs",
+     "ok": true,
+     "recomputed": "Own parser on page 1 of all 8 RSRs (Aug and Sep): counts, medians, $ volume and all MoM/YoY percentages with m/p = up and q = down match the JSON in 16/16 rows. Spot checks: 309/278 = +11.2%, 391/879 = -55.5%."
+    },
+    {
+     "claim": "TG DOM label: Oahu 'MEDIAN DOM', other islands 'AVERAGE DOM'; Oahu condo Sep-2025 count 879 in TG chart",
+     "ok": true,
+     "recomputed": "Rendered Oahu and Maui Sep page 1 at 110 dpi and checked visually: Oahu sidebar 'MEDIAN DOM' (17/40), Maui 'AVERAGE DOM' (134/210). The stacked chart shows Oahu condo Sep-2025 879 (total 991)."
+    },
+    {
+     "claim": "Kauai/Hawaii Island Aug YTD: Kauai 239 SF @ $1.30M, 152 condo @ $852.5K; Hawaii 1,335 SF @ $564K, 347 condo @ $625K",
+     "ok": false,
+     "recomputed": "Kauai figures match both TG statewide Aug and Fidelity Kauai Aug. Hawaii Island 1,335 / $564,000 comes from Fidelity/HIS only; TG statewide Aug prints 1,336 / $563,000. The summary attributes the figure to both sources."
+    },
+    {
+     "claim": "No Sep 2026 board figures or board inventory for Kauai/Hawaii Island; board sites return 403 (gaps 1, 2, 4; summary item 12)",
+     "ok": false,
+     "recomputed": "Plain curl (default UA, no captcha) at 2026-10-09T01:50Z returned HTTP 200 for kauaiboard.com, hawaiiislandrealtors.org and hawaiiinformation.com. Sep 2026 stats were posted 2026-10-08 ~05:00 UTC: kauaiboard.com/wp-content/uploads/2026/10/2026-09-Kauai-All.pdf, and hawaiiislandrealtors.org/.../2026-09-Hawaii-Island-All-scaled.png, pixel-identical to the HIS copy. Kauai: SF 18 sold, $1,490,000, DOM 110, active 195; condo 6, $726,500, DOM 81, active 171. Hawaii Island: SF 135, $499,000, DOM 62, active 1,066; condo 32, $604,500, DOM 96, active 353. These equal TG Sep RSR exactly."
+    },
+    {
+     "claim": "Small-cell flags (<20 units) applied",
+     "ok": true,
+     "recomputed": "Scanned all count-type numeric cells in results: 13 cells are below 20 and all 13 sit under a flag. Covers Kauai TG 18/6, TG Aug Kauai condo 15, the RAM residual (pending 11, closed 8), DBEDT Kauai months, and HBR brackets with implied closings under 20 (SF <$800K and $3M+; condo <$150K and $1.5M+)."
+    },
+    {
+     "claim": "Aggregates only: no owner names, addresses, TMKs",
+     "ok": true,
+     "recomputed": "Regex scan of market_oct.json for TMK patterns, street addresses and owner/entity names: no hits. Only matches are the words 'TMK tables' in a gap note and 'ShowingTime Plus, LLC'."
+    },
+    {
+     "claim": "Standard tiers for Oahu SF active listings: entry 56-96, mid 347-387, upper 226, $3M+ 129",
+     "ok": true,
+     "recomputed": "Brackets (printed p.26): 15+14+27 = 56, +40 = 96; 62+60+225 = 347, +40 = 387; 134+92 = 226; 129. They sum to 798. The bracket months-supply values match printed pp.31-32."
+    },
+    {
+     "claim": "DBEDT MEI Sep 2026 due on/about Oct 29",
+     "ok": true,
+     "recomputed": "dbedt_mei_index.html: 'MEI through September 2026 will be released on/about October 29th'."
+    },
+    {
+     "claim": "TG August-edition YTD blocks correctly labelled",
+     "ok": false,
+     "recomputed": "results.d_title_guaranty_rsr.aug_2026.*.ytd_jan_sep_2026 actually holds Jan-Aug YTD. tg_parse hard-codes the key and only 'edition' is overwritten for TG8. Example: Kauai Aug-edition SF YTD 237 + Sep 18 = 255, the Sep-edition YTD."
+    },
+    {
+     "claim": "Builder cross-checks: 57 pass, 7 expected mismatches",
+     "ok": true,
+     "recomputed": "checks_summary total 64, passed 57. All 7 failures are labelled expected: TG vs HBR universe, TG Maui condo DOM 210 vs 199, YTD 619 vs 620, Fidelity 1,335 vs TG 1,336, TG Hawaii Aug 150 vs DBEDT 153."
+    }
+   ],
+   "problems": [
+    "MATERIAL: Part (c) is wrong. Kauai and Hawaii Island September 2026 board/MLS statistics are published. Hawaii Information Service graphics are posted on the Kauai Board site (2026-09-Kauai-All.pdf, Last-Modified 2026-10-08 05:03 GMT), on Hawaii Island REALTORS (2026-09-Hawaii-Island-All-scaled.png, 05:00 GMT) and on hawaiiinformation.com/monthly-market-statistics. All returned HTTP 200 to a plain curl GET at 2026-10-09T01:50Z (no captcha). The builder's 403s came with its custom User-Agent ('Mozilla/5.0 (research; HawaiiIntelligence data audit)'). Gaps 1, 2 and 4, summary item 12 ('latest board-sourced data stops at August YTD') and c_kauai_hawaii_island.months_of_inventory_note are therefore incorrect. Copies and a MANIFEST are in raw/up_market_oct-verify/.",
+    "Board figures the builder missed. Kauai Sep 2026: SF 18 sold, median $1,490,000, DOM 110, active 195; condo 6 sold (both under 20, flag), $726,500, DOM 81, active 171; land active 104. Hawaii Island Sep 2026: SF 135, $499,000, DOM 62, active 1,066; condo 32, $604,500, DOM 96, active 353. These equal the Title Guaranty Sep RSR exactly, so the TG Kauai and Hawaii Sep figures are board/MLS-confirmed rather than only 'reported'. The boards print no months-of-supply figure. A derived value (active ÷ 12-month average closed, DBEDT Oct-25..Aug-26 + board Sep) is Kauai SF 6.2, condo 9.2, SF+condo 7.3, and Hawaii Island SF 6.6, condo 8.3, SF+condo 6.9 (see pull/up_market_oct-verify/neighbor_mos.py).",
+    "Numerator check should be extended. Realtor.com Sep active minus board active SF+condo is Kauai 385 vs 366 (+19) and Hawaii Island 1,365 vs 1,419 (-54). For Hawaii Island Realtor.com is lower than the MLS, the opposite of Oahu (+176).",
+    "Mislabelled period: results.d_title_guaranty_rsr.aug_2026.{oahu,maui,hawaii_island,kauai}.ytd_jan_sep_2026 contains Jan-Aug 2026 YTD from the August editions. build.py tg_parse hard-codes the key name; only 'edition' is overwritten.",
+    "Hawaii Island Aug YTD houses '1,335 at $564K' is attributed in the summary to both the TG statewide sheet and Fidelity. Only Fidelity/HIS prints 1,335 / $564,000; TG statewide prints 1,336 / $563,000. Cite Fidelity alone or show both.",
+    "Stale caveat: the Hawaii Island Sep provisional note says TG Aug 150/30 vs DBEDT 153/31, so 'treat as approximate'. The HIS August graphic shows 153/31 (= DBEDT) and the HIS September graphic 135/32 (= TG Sep), so the September substitute is on the same MLS universe as DBEDT. Separately, TG first prints are revised in later charts (Hawaii SF Aug 150 to 155, Kauai condo Aug 15 to 16, Maui condo Aug 68 to 70, Oahu SF Aug 274 to 278). Prefer board figures over TG RSR first prints for provisional rolls.",
+    "Provenance gap (minor): the HBR mirror-fidelity check relies on raw/mm_district_stats/hbr_08-2026-Aug-A-MSR.pdf (HBR Google Drive copy, sha256 ac1b36dd...), which is not listed in market_oct.json source[]. The check itself reproduces: 5,746 identical numeric tokens and the same PDF CreationDate.",
+    "Minor: HBR page references are printed page numbers (PDF page = printed + 1, because the narrative cover page is unnumbered). They are correct as printed page numbers but should say so."
+   ]
+  }
+ ]
+}

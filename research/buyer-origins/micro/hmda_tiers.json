@@ -1,0 +1,6700 @@
+{
+ "key": "hmda_tiers",
+ "title": "Who finances Hawaii home purchases, by county and price tier (HMDA 2025 vs 2019)",
+ "generated": "2026-10-08",
+ "source": {
+  "publisher": "FFIEC / CFPB HMDA Data Browser API, public loan-level LAR (modified LAR fields)",
+  "files": {
+   "2025": "raw/hmda/hmda_2025_hi4_orig_purchase.csv (https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?counties=15001,15003,15007,15009&years=2025&actions_taken=1&loan_purposes=1, downloaded 2026-10-08T05:48:14Z)",
+   "2019": "raw/hmda/hmda_2019_hi4_orig_purchase.csv (same query with years=2019, downloaded 2026-10-08T05:48:20Z)"
+  },
+  "input_sha256": {
+   "hmda_2025_hi4_orig_purchase.csv": "4e457ce05d68d3a43aa5b34d4e8871f7201d07d7cbe3c58cf4b9c2da3a9fda11",
+   "hmda_2019_hi4_orig_purchase.csv": "0f030ebd91b6dc2662ebdd12ea6a0817dd62c9ff6b4da1c52e713139b5914248"
+  },
+  "latest_year": "2025 is the latest HMDA activity year available (a 2026 request returned HTTP 400; see an/new/hmda.json). 2025 = loans originated in calendar 2025.",
+  "data_dictionary": "https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields",
+  "scripts": "pull/who_hmda_tiers/analyze.py (computation), pull/who_hmda_tiers/finalize.py (this wrapper)"
+ },
+ "method": [
+  "Universe: action_taken=1 (originated), loan_purpose=1 (home purchase), lien_status=1 (first lien), total_units in {1,2,3,4}, construction_method=1 (site-built; drops 1 manufactured-home loan each year, consistent with an/new/hmda.json), county_code in 15001/15003/15007/15009. Filter funnel per year in 'funnel'. Final n: 2025 = 9,707; 2019 = 13,312.",
+  "Unit = one first-lien purchase loan, i.e. one mortgage-financed purchase. Piggyback seconds are excluded by the first-lien filter.",
+  "Tier assigned from property_value: entry < $750K; mid $750K to < $1.5M; upper $1.5M to < $3M; luxury $3M to < $10M; ultra >= $10M. HMDA publishes property_value as the midpoint of the $10,000 interval containing the true value (e.g. 745000 = $740,000-$749,999). Every numeric value in both files ends in 5000, and all tier cut-offs are multiples of $10K, so each bin falls wholly inside one tier and the tier assignment is exact. Records with property_value NA or Exempt are kept in a separate 'unknown' tier (2025: 133; 2019: 202).",
+  "Occupancy mix from occupancy_type (1 principal residence, 2 second residence, 3 investment property). Loan type mix from loan_type (1 conventional, 2 FHA, 3 VA, 4 USDA/RHS-FSA). Shares are over all loans in the cell.",
+  "Median applicant income = median of the HMDA 'income' field (gross annual income relied on in the credit decision, applicant plus any co-applicant, in thousands of USD), NA excluded; n reported and n NA reported. Quantiles use linear interpolation (Excel PERCENTILE.INC).",
+  "Age mix from applicant_age (primary applicant's age band). 8888 = not a natural person (entity borrower) is shown as its own band; shares are given over all loans and over natural persons only. Summary shares under-35 (<25 + 25-34) and 55-plus (55-64 + 65-74 + >74) are over natural persons.",
+  "Jumbo = conforming_loan_limit flag 'NC' (loan amount above the FHFA conforming limit for that county and year). Given over all loans and over conventional loans only; the conventional share is the true 'jumbo product' share, because NC on a VA/FHA loan just means a large government loan.",
+  "Extra context fields per cell (not requested, labeled as such): business_or_commercial_purpose share, median combined loan-to-value and share with CLTV <= 60, median property value.",
+  "VA (military/veteran buyers): loan_type=3 within the same universe, by county and year: count, share of county loans, median and quartiles of property value, median income, occupancy and tier distribution, and VA share of each tier.",
+  "Small cells: every cell carries small_cell_flag_n_lt_20 = true when n < 20. Do not quote percentages from flagged cells as rates."
+ ],
+ "notes": [
+  "HMDA covers mortgage-financed purchases only. Cash purchases are absent, so the upper, luxury and ultra tiers show only the financed minority of buyers. Use the conveyance/sales data for total counts; this file describes who borrows.",
+  "HMDA does not separate condos from single-family houses: both fall under 'Single Family (1-4 Units):Site-Built'. A house vs condo split is not possible from this source.",
+  "Geography is county only in this file. Census tract is in the raw data, but no district or ZIP split was made here.",
+  "Second-home vs investment coding shifted between 2019 and 2025 (see an/new/hmda.json notes; GSE second-home pricing changes and more DSCR/business-purpose investor lending are plausible but untested causes). For trends, prefer the combined non-owner-occupied share.",
+  "Jumbo shares are not like-for-like across years. The conforming limit rose much more between 2019 and 2025 than many loan sizes did, which explains why the mid-tier conventional jumbo share fell from 28% to under 1%.",
+  "Ultra tier (>= $10M): 6 loans statewide in 2025 (Hawaii County 3, Honolulu 3) and 4 in 2019 (Hawaii County 2, Maui 2). Every ultra cell is flagged small and is reported for completeness only. Other small cells: 2019 luxury in Hawaii County (n=10) and Kauai (n=14), plus some 'unknown' property-value cells. 2025 county luxury cells clear the threshold but only just (Hawaii County 23, Kauai 22, Maui 32, Honolulu 73), so their mix percentages move by 4-5 points per loan.",
+  "Maui County 2025 volume reflects the post-August-2023 Lahaina wildfire market as well as interest rates; HMDA cannot separate these effects.",
+  "Income NA is more common for investor and entity loans (DSCR-style underwriting), so median income in investor-heavy cells describes only the borrowers whose income was used.",
+  "Race, ethnicity and sex fields were not read into any statistic or output. Only these fields were used: county_code, action_taken, loan_purpose, lien_status, total_units, construction_method, property_value, occupancy_type, loan_type, income, applicant_age, conforming_loan_limit, loan_to_value_ratio, business_or_commercial_purpose.",
+  "No owner names, addresses, parcel ids or loan-level records are output; all values are cell aggregates.",
+  "Edition: the 2025 data match the 2025 Snapshot. For 2019 the API does not say which edition it serves (snapshot, one-year or three-year), so counts may differ slightly from a specific static file."
+ ],
+ "key_figures": [
+  {
+   "figure": "2025 statewide financed purchases by tier (first-lien, 1-4 unit, known property value)",
+   "value": {
+    "entry": 4836,
+    "mid": 3718,
+    "upper": 864,
+    "luxury": 150,
+    "ultra": 6
+   },
+   "shares_pct": {
+    "entry": 50.5,
+    "mid": 38.8,
+    "upper": 9.0,
+    "luxury": 1.6,
+    "ultra": 0.1
+   }
+  },
+  {
+   "figure": "2019 statewide financed purchases by tier (first-lien, 1-4 unit, known property value)",
+   "value": {
+    "entry": 9510,
+    "mid": 3106,
+    "upper": 417,
+    "luxury": 73,
+    "ultra": 4
+   },
+   "shares_pct": {
+    "entry": 72.5,
+    "mid": 23.7,
+    "upper": 3.2,
+    "luxury": 0.6,
+    "ultra": 0.0
+   }
+  },
+  {
+   "figure": "Statewide entry tier (< $750K): 2025 vs 2019",
+   "n_loans": [
+    4836,
+    9510
+   ],
+   "principal_residence_pct": [
+    80.5,
+    80.4
+   ],
+   "second_home_pct": [
+    3.8,
+    8.0
+   ],
+   "investment_pct": [
+    15.7,
+    11.6
+   ],
+   "median_income_thousands": [
+    123.0,
+    102.0
+   ],
+   "VA_pct": [
+    23.1,
+    22.1
+   ],
+   "under35_pct_natural_persons": [
+    38.9,
+    32.8
+   ],
+   "age55plus_pct_natural_persons": [
+    20.0,
+    22.8
+   ],
+   "jumbo_NC_pct_conventional": [
+    0.0,
+    0.0
+   ],
+   "order": "[2025, 2019]"
+  },
+  {
+   "figure": "Statewide mid tier ($750K-<$1.5M): 2025 vs 2019",
+   "n_loans": [
+    3718,
+    3106
+   ],
+   "principal_residence_pct": [
+    80.2,
+    76.3
+   ],
+   "second_home_pct": [
+    4.2,
+    10.7
+   ],
+   "investment_pct": [
+    15.7,
+    13.0
+   ],
+   "median_income_thousands": [
+    202.0,
+    172.0
+   ],
+   "VA_pct": [
+    21.7,
+    14.9
+   ],
+   "under35_pct_natural_persons": [
+    22.7,
+    15.8
+   ],
+   "age55plus_pct_natural_persons": [
+    23.9,
+    28.4
+   ],
+   "jumbo_NC_pct_conventional": [
+    0.4,
+    28.1
+   ],
+   "order": "[2025, 2019]"
+  },
+  {
+   "figure": "Statewide upper tier ($1.5M-<$3M): 2025 vs 2019",
+   "n_loans": [
+    864,
+    417
+   ],
+   "principal_residence_pct": [
+    67.7,
+    57.3
+   ],
+   "second_home_pct": [
+    10.1,
+    26.4
+   ],
+   "investment_pct": [
+    22.2,
+    16.3
+   ],
+   "median_income_thousands": [
+    343.0,
+    370.0
+   ],
+   "VA_pct": [
+    12.7,
+    5.0
+   ],
+   "under35_pct_natural_persons": [
+    8.0,
+    6.4
+   ],
+   "age55plus_pct_natural_persons": [
+    34.6,
+    40.3
+   ],
+   "jumbo_NC_pct_conventional": [
+    44.2,
+    87.9
+   ],
+   "order": "[2025, 2019]"
+  },
+  {
+   "figure": "Statewide luxury tier ($3M-<$10M): 2025 vs 2019",
+   "n_loans": [
+    150,
+    73
+   ],
+   "principal_residence_pct": [
+    48.0,
+    28.8
+   ],
+   "second_home_pct": [
+    29.3,
+    45.2
+   ],
+   "investment_pct": [
+    22.7,
+    26.0
+   ],
+   "median_income_thousands": [
+    1024.0,
+    869.0
+   ],
+   "VA_pct": [
+    2.0,
+    1.4
+   ],
+   "under35_pct_natural_persons": [
+    2.1,
+    5.1
+   ],
+   "age55plus_pct_natural_persons": [
+    49.6,
+    45.8
+   ],
+   "jumbo_NC_pct_conventional": [
+    89.1,
+    97.2
+   ],
+   "order": "[2025, 2019]"
+  },
+  {
+   "figure": "2025 VA purchase loans by county (count, median property value USD, share of county loans)",
+   "value": {
+    "Hawaii state (4 counties)": [
+     2088,
+     705000.0,
+     21.5
+    ],
+    "Hawaii County": [
+     191,
+     525000.0,
+     10.9
+    ],
+    "Honolulu County": [
+     1830,
+     715000.0,
+     27.6
+    ],
+    "Kauai County": [
+     25,
+     895000.0,
+     5.4
+    ],
+    "Maui County": [
+     42,
+     875000.0,
+     4.8
+    ]
+   }
+  },
+  {
+   "figure": "2019 VA purchase loans by county (count, median property value USD, share of county loans)",
+   "value": {
+    "Hawaii state (4 counties)": [
+     2587,
+     575000.0,
+     19.4
+    ],
+    "Hawaii County": [
+     242,
+     365000.0,
+     11.0
+    ],
+    "Honolulu County": [
+     2205,
+     585000.0,
+     26.3
+    ],
+    "Kauai County": [
+     50,
+     570000.0,
+     6.6
+    ],
+    "Maui County": [
+     90,
+     645000.0,
+     4.6
+    ]
+   }
+  }
+ ],
+ "funnel": {
+  "2025": {
+   "rows_in_download": 9908,
+   "action1_purpose1": 9908,
+   "in_four_counties": 9908,
+   "total_units_1_to_4": 9876,
+   "site_built": 9875,
+   "first_lien_final_universe": 9707,
+   "final_by_county": {
+    "15009": 877,
+    "15003": 6623,
+    "15001": 1746,
+    "15007": 461
+   }
+  },
+  "2019": {
+   "rows_in_download": 13859,
+   "action1_purpose1": 13859,
+   "in_four_counties": 13859,
+   "total_units_1_to_4": 13798,
+   "site_built": 13797,
+   "first_lien_final_universe": 13312,
+   "final_by_county": {
+    "15009": 1973,
+    "15001": 2202,
+    "15007": 763,
+    "15003": 8374
+   }
+  }
+ },
+ "by_year": {
+  "2025": {
+   "all_four_counties": {
+    "name": "Hawaii state (4 counties)",
+    "all_tiers": {
+     "n_loans": 9707,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 7619,
+      "second_home": 477,
+      "investment": 1611
+     },
+     "occupancy_share": {
+      "principal": 0.7849,
+      "second_home": 0.0491,
+      "investment": 0.166
+     },
+     "non_owner_occupied_share": 0.2151,
+     "loan_type_counts": {
+      "conventional": 7023,
+      "FHA": 557,
+      "VA": 2088,
+      "USDA": 39
+     },
+     "loan_type_share": {
+      "conventional": 0.7235,
+      "FHA": 0.0574,
+      "VA": 0.2151,
+      "USDA": 0.004
+     },
+     "income_thousands_usd": {
+      "n_reported": 9065,
+      "n_not_reported_NA": 642,
+      "median": 165.0,
+      "p25": 114.0,
+      "p75": 247.0,
+      "median_excluding_le_zero": 167.0
+     },
+     "applicant_age_counts": {
+      "<25": 317,
+      "25-34": 2432,
+      "35-44": 2610,
+      "45-54": 1888,
+      "55-64": 1262,
+      "65-74": 727,
+      ">74": 218,
+      "8888": 253
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0327,
+      "25-34": 0.2505,
+      "35-44": 0.2689,
+      "45-54": 0.1945,
+      "55-64": 0.13,
+      "65-74": 0.0749,
+      ">74": 0.0225,
+      "8888": 0.0261
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0335,
+      "25-34": 0.2572,
+      "35-44": 0.2761,
+      "45-54": 0.1997,
+      "55-64": 0.1335,
+      "65-74": 0.0769,
+      ">74": 0.0231
+     },
+     "n_natural_person_age_reported": 9454,
+     "non_natural_person_share_age_8888": 0.0261,
+     "applicant_55_plus_share_natural_persons": 0.2334,
+     "applicant_under_35_share_natural_persons": 0.2908,
+     "jumbo_NC_share_all_loans": 0.0712,
+     "jumbo_NC_count_all_loans": 691,
+     "jumbo_NC_share_conventional": 0.0709,
+     "n_conventional": 7023,
+     "business_purpose_share": 0.1298,
+     "property_value_usd_bin_midpoint": {
+      "n": 9574,
+      "median": 745000.0
+     },
+     "combined_ltv_pct": {
+      "n": 9099,
+      "median": 80.0,
+      "share_ltv_le_60": 0.1846
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 4836,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 3895,
+       "second_home": 184,
+       "investment": 757
+      },
+      "occupancy_share": {
+       "principal": 0.8054,
+       "second_home": 0.038,
+       "investment": 0.1565
+      },
+      "non_owner_occupied_share": 0.1946,
+      "loan_type_counts": {
+       "conventional": 3255,
+       "FHA": 425,
+       "VA": 1117,
+       "USDA": 39
+      },
+      "loan_type_share": {
+       "conventional": 0.6731,
+       "FHA": 0.0879,
+       "VA": 0.231,
+       "USDA": 0.0081
+      },
+      "income_thousands_usd": {
+       "n_reported": 4538,
+       "n_not_reported_NA": 298,
+       "median": 123.0,
+       "p25": 94.0,
+       "p75": 167.0,
+       "median_excluding_le_zero": 125.0
+      },
+      "applicant_age_counts": {
+       "<25": 272,
+       "25-34": 1550,
+       "35-44": 1140,
+       "45-54": 789,
+       "55-64": 544,
+       "65-74": 293,
+       ">74": 100,
+       "8888": 148
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0562,
+       "25-34": 0.3205,
+       "35-44": 0.2357,
+       "45-54": 0.1632,
+       "55-64": 0.1125,
+       "65-74": 0.0606,
+       ">74": 0.0207,
+       "8888": 0.0306
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.058,
+       "25-34": 0.3306,
+       "35-44": 0.2432,
+       "45-54": 0.1683,
+       "55-64": 0.116,
+       "65-74": 0.0625,
+       ">74": 0.0213
+      },
+      "n_natural_person_age_reported": 4688,
+      "non_natural_person_share_age_8888": 0.0306,
+      "applicant_55_plus_share_natural_persons": 0.1999,
+      "applicant_under_35_share_natural_persons": 0.3887,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 3255,
+      "business_purpose_share": 0.1208,
+      "property_value_usd_bin_midpoint": {
+       "n": 4836,
+       "median": 515000.0
+      },
+      "combined_ltv_pct": {
+       "n": 4532,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1423
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 3718,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 2980,
+       "second_home": 156,
+       "investment": 582
+      },
+      "occupancy_share": {
+       "principal": 0.8015,
+       "second_home": 0.042,
+       "investment": 0.1565
+      },
+      "non_owner_occupied_share": 0.1985,
+      "loan_type_counts": {
+       "conventional": 2781,
+       "FHA": 129,
+       "VA": 808,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.748,
+       "FHA": 0.0347,
+       "VA": 0.2173,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 3510,
+       "n_not_reported_NA": 208,
+       "median": 202.0,
+       "p25": 155.0,
+       "p75": 270.0,
+       "median_excluding_le_zero": 203.0
+      },
+      "applicant_age_counts": {
+       "<25": 43,
+       "25-34": 788,
+       "35-44": 1144,
+       "45-54": 807,
+       "55-64": 486,
+       "65-74": 307,
+       ">74": 82,
+       "8888": 61
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0116,
+       "25-34": 0.2119,
+       "35-44": 0.3077,
+       "45-54": 0.2171,
+       "55-64": 0.1307,
+       "65-74": 0.0826,
+       ">74": 0.0221,
+       "8888": 0.0164
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0118,
+       "25-34": 0.2155,
+       "35-44": 0.3128,
+       "45-54": 0.2207,
+       "55-64": 0.1329,
+       "65-74": 0.0839,
+       ">74": 0.0224
+      },
+      "n_natural_person_age_reported": 3657,
+      "non_natural_person_share_age_8888": 0.0164,
+      "applicant_55_plus_share_natural_persons": 0.2393,
+      "applicant_under_35_share_natural_persons": 0.2272,
+      "jumbo_NC_share_all_loans": 0.0323,
+      "jumbo_NC_count_all_loans": 120,
+      "jumbo_NC_share_conventional": 0.0043,
+      "n_conventional": 2781,
+      "business_purpose_share": 0.1251,
+      "property_value_usd_bin_midpoint": {
+       "n": 3718,
+       "median": 1005000.0
+      },
+      "combined_ltv_pct": {
+       "n": 3573,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1962
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 864,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 585,
+       "second_home": 87,
+       "investment": 192
+      },
+      "occupancy_share": {
+       "principal": 0.6771,
+       "second_home": 0.1007,
+       "investment": 0.2222
+      },
+      "non_owner_occupied_share": 0.3229,
+      "loan_type_counts": {
+       "conventional": 754,
+       "FHA": 0,
+       "VA": 110,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.8727,
+       "FHA": 0.0,
+       "VA": 0.1273,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 783,
+       "n_not_reported_NA": 81,
+       "median": 343.0,
+       "p25": 246.0,
+       "p75": 525.5,
+       "median_excluding_le_zero": 347.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 67,
+       "35-44": 253,
+       "45-54": 229,
+       "55-64": 166,
+       "65-74": 96,
+       ">74": 29,
+       "8888": 24
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0775,
+       "35-44": 0.2928,
+       "45-54": 0.265,
+       "55-64": 0.1921,
+       "65-74": 0.1111,
+       ">74": 0.0336,
+       "8888": 0.0278
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0798,
+       "35-44": 0.3012,
+       "45-54": 0.2726,
+       "55-64": 0.1976,
+       "65-74": 0.1143,
+       ">74": 0.0345
+      },
+      "n_natural_person_age_reported": 840,
+      "non_natural_person_share_age_8888": 0.0278,
+      "applicant_55_plus_share_natural_persons": 0.3464,
+      "applicant_under_35_share_natural_persons": 0.0798,
+      "jumbo_NC_share_all_loans": 0.4792,
+      "jumbo_NC_count_all_loans": 414,
+      "jumbo_NC_share_conventional": 0.4416,
+      "n_conventional": 754,
+      "business_purpose_share": 0.1782,
+      "property_value_usd_bin_midpoint": {
+       "n": 864,
+       "median": 1775000.0
+      },
+      "combined_ltv_pct": {
+       "n": 840,
+       "median": 70.52,
+       "share_ltv_le_60": 0.3226
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 150,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 72,
+       "second_home": 44,
+       "investment": 34
+      },
+      "occupancy_share": {
+       "principal": 0.48,
+       "second_home": 0.2933,
+       "investment": 0.2267
+      },
+      "non_owner_occupied_share": 0.52,
+      "loan_type_counts": {
+       "conventional": 147,
+       "FHA": 0,
+       "VA": 3,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.98,
+       "FHA": 0.0,
+       "VA": 0.02,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 131,
+       "n_not_reported_NA": 19,
+       "median": 1024.0,
+       "p25": 619.0,
+       "p75": 1802.5,
+       "median_excluding_le_zero": 1044.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 3,
+       "35-44": 36,
+       "45-54": 32,
+       "55-64": 44,
+       "65-74": 23,
+       ">74": 3,
+       "8888": 9
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.02,
+       "35-44": 0.24,
+       "45-54": 0.2133,
+       "55-64": 0.2933,
+       "65-74": 0.1533,
+       ">74": 0.02,
+       "8888": 0.06
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0213,
+       "35-44": 0.2553,
+       "45-54": 0.227,
+       "55-64": 0.3121,
+       "65-74": 0.1631,
+       ">74": 0.0213
+      },
+      "n_natural_person_age_reported": 141,
+      "non_natural_person_share_age_8888": 0.06,
+      "applicant_55_plus_share_natural_persons": 0.4965,
+      "applicant_under_35_share_natural_persons": 0.0213,
+      "jumbo_NC_share_all_loans": 0.8933,
+      "jumbo_NC_count_all_loans": 134,
+      "jumbo_NC_share_conventional": 0.8912,
+      "n_conventional": 147,
+      "business_purpose_share": 0.2,
+      "property_value_usd_bin_midpoint": {
+       "n": 150,
+       "median": 3945000.0
+      },
+      "combined_ltv_pct": {
+       "n": 145,
+       "median": 65.0,
+       "share_ltv_le_60": 0.4138
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 6,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 0,
+       "second_home": 3,
+       "investment": 3
+      },
+      "occupancy_share": {
+       "principal": 0.0,
+       "second_home": 0.5,
+       "investment": 0.5
+      },
+      "non_owner_occupied_share": 1.0,
+      "loan_type_counts": {
+       "conventional": 6,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 3,
+       "n_not_reported_NA": 3,
+       "median": 2850.0,
+       "p25": 2177.0,
+       "p75": 3330.0,
+       "median_excluding_le_zero": 2850.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 2,
+       "55-64": 1,
+       "65-74": 0,
+       ">74": 0,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.3333,
+       "55-64": 0.1667,
+       "65-74": 0.0,
+       ">74": 0.0,
+       "8888": 0.5
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.6667,
+       "55-64": 0.3333,
+       "65-74": 0.0,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 3,
+      "non_natural_person_share_age_8888": 0.5,
+      "applicant_55_plus_share_natural_persons": 0.3333,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 6,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 6,
+      "business_purpose_share": 0.5,
+      "property_value_usd_bin_midpoint": {
+       "n": 6,
+       "median": 14400000.0
+      },
+      "combined_ltv_pct": {
+       "n": 6,
+       "median": 65.0,
+       "share_ltv_le_60": 0.5
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 133,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 87,
+       "second_home": 3,
+       "investment": 43
+      },
+      "occupancy_share": {
+       "principal": 0.6541,
+       "second_home": 0.0226,
+       "investment": 0.3233
+      },
+      "non_owner_occupied_share": 0.3459,
+      "loan_type_counts": {
+       "conventional": 80,
+       "FHA": 3,
+       "VA": 50,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.6015,
+       "FHA": 0.0226,
+       "VA": 0.3759,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 100,
+       "n_not_reported_NA": 33,
+       "median": 185.0,
+       "p25": 123.75,
+       "p75": 304.0,
+       "median_excluding_le_zero": 185.0
+      },
+      "applicant_age_counts": {
+       "<25": 2,
+       "25-34": 24,
+       "35-44": 37,
+       "45-54": 29,
+       "55-64": 21,
+       "65-74": 8,
+       ">74": 4,
+       "8888": 8
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.015,
+       "25-34": 0.1805,
+       "35-44": 0.2782,
+       "45-54": 0.218,
+       "55-64": 0.1579,
+       "65-74": 0.0602,
+       ">74": 0.0301,
+       "8888": 0.0602
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.016,
+       "25-34": 0.192,
+       "35-44": 0.296,
+       "45-54": 0.232,
+       "55-64": 0.168,
+       "65-74": 0.064,
+       ">74": 0.032
+      },
+      "n_natural_person_age_reported": 125,
+      "non_natural_person_share_age_8888": 0.0602,
+      "applicant_55_plus_share_natural_persons": 0.264,
+      "applicant_under_35_share_natural_persons": 0.208,
+      "jumbo_NC_share_all_loans": 0.1278,
+      "jumbo_NC_count_all_loans": 17,
+      "jumbo_NC_share_conventional": 0.2,
+      "n_conventional": 80,
+      "business_purpose_share": 0.1805,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 3,
+       "median": 80.0,
+       "share_ltv_le_60": 0.0
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 4836,
+      "share": 0.5051
+     },
+     "mid": {
+      "n": 3718,
+      "share": 0.3883
+     },
+     "upper": {
+      "n": 864,
+      "share": 0.0902
+     },
+     "luxury": {
+      "n": 150,
+      "share": 0.0157
+     },
+     "ultra": {
+      "n": 6,
+      "share": 0.0006
+     }
+    },
+    "n_property_value_unknown": 133
+   },
+   "15001": {
+    "name": "Hawaii County",
+    "all_tiers": {
+     "n_loans": 1746,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 1194,
+      "second_home": 149,
+      "investment": 403
+     },
+     "occupancy_share": {
+      "principal": 0.6838,
+      "second_home": 0.0853,
+      "investment": 0.2308
+     },
+     "non_owner_occupied_share": 0.3162,
+     "loan_type_counts": {
+      "conventional": 1365,
+      "FHA": 174,
+      "VA": 191,
+      "USDA": 16
+     },
+     "loan_type_share": {
+      "conventional": 0.7818,
+      "FHA": 0.0997,
+      "VA": 0.1094,
+      "USDA": 0.0092
+     },
+     "income_thousands_usd": {
+      "n_reported": 1555,
+      "n_not_reported_NA": 191,
+      "median": 145.0,
+      "p25": 99.0,
+      "p75": 240.0,
+      "median_excluding_le_zero": 147.0
+     },
+     "applicant_age_counts": {
+      "<25": 34,
+      "25-34": 284,
+      "35-44": 412,
+      "45-54": 352,
+      "55-64": 293,
+      "65-74": 186,
+      ">74": 66,
+      "8888": 119
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0195,
+      "25-34": 0.1627,
+      "35-44": 0.236,
+      "45-54": 0.2016,
+      "55-64": 0.1678,
+      "65-74": 0.1065,
+      ">74": 0.0378,
+      "8888": 0.0682
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0209,
+      "25-34": 0.1746,
+      "35-44": 0.2532,
+      "45-54": 0.2163,
+      "55-64": 0.1801,
+      "65-74": 0.1143,
+      ">74": 0.0406
+     },
+     "n_natural_person_age_reported": 1627,
+     "non_natural_person_share_age_8888": 0.0682,
+     "applicant_55_plus_share_natural_persons": 0.335,
+     "applicant_under_35_share_natural_persons": 0.1955,
+     "jumbo_NC_share_all_loans": 0.0527,
+     "jumbo_NC_count_all_loans": 92,
+     "jumbo_NC_share_conventional": 0.0608,
+     "n_conventional": 1365,
+     "business_purpose_share": 0.1907,
+     "property_value_usd_bin_midpoint": {
+      "n": 1726,
+      "median": 560000.0
+     },
+     "combined_ltv_pct": {
+      "n": 1662,
+      "median": 80.0,
+      "share_ltv_le_60": 0.1727
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 1158,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 828,
+       "second_home": 80,
+       "investment": 250
+      },
+      "occupancy_share": {
+       "principal": 0.715,
+       "second_home": 0.0691,
+       "investment": 0.2159
+      },
+      "non_owner_occupied_share": 0.285,
+      "loan_type_counts": {
+       "conventional": 830,
+       "FHA": 172,
+       "VA": 140,
+       "USDA": 16
+      },
+      "loan_type_share": {
+       "conventional": 0.7168,
+       "FHA": 0.1485,
+       "VA": 0.1209,
+       "USDA": 0.0138
+      },
+      "income_thousands_usd": {
+       "n_reported": 1023,
+       "n_not_reported_NA": 135,
+       "median": 118.0,
+       "p25": 86.0,
+       "p75": 164.0,
+       "median_excluding_le_zero": 118.0
+      },
+      "applicant_age_counts": {
+       "<25": 33,
+       "25-34": 228,
+       "35-44": 256,
+       "45-54": 225,
+       "55-64": 170,
+       "65-74": 106,
+       ">74": 43,
+       "8888": 97
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0285,
+       "25-34": 0.1969,
+       "35-44": 0.2211,
+       "45-54": 0.1943,
+       "55-64": 0.1468,
+       "65-74": 0.0915,
+       ">74": 0.0371,
+       "8888": 0.0838
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0311,
+       "25-34": 0.2149,
+       "35-44": 0.2413,
+       "45-54": 0.2121,
+       "55-64": 0.1602,
+       "65-74": 0.0999,
+       ">74": 0.0405
+      },
+      "n_natural_person_age_reported": 1061,
+      "non_natural_person_share_age_8888": 0.0838,
+      "applicant_55_plus_share_natural_persons": 0.3007,
+      "applicant_under_35_share_natural_persons": 0.246,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 830,
+      "business_purpose_share": 0.1796,
+      "property_value_usd_bin_midpoint": {
+       "n": 1158,
+       "median": 455000.0
+      },
+      "combined_ltv_pct": {
+       "n": 1111,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1287
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 417,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 284,
+       "second_home": 26,
+       "investment": 107
+      },
+      "occupancy_share": {
+       "principal": 0.6811,
+       "second_home": 0.0624,
+       "investment": 0.2566
+      },
+      "non_owner_occupied_share": 0.3189,
+      "loan_type_counts": {
+       "conventional": 375,
+       "FHA": 1,
+       "VA": 41,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.8993,
+       "FHA": 0.0024,
+       "VA": 0.0983,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 389,
+       "n_not_reported_NA": 28,
+       "median": 219.0,
+       "p25": 155.0,
+       "p75": 320.0,
+       "median_excluding_le_zero": 221.0
+      },
+      "applicant_age_counts": {
+       "<25": 1,
+       "25-34": 49,
+       "35-44": 117,
+       "45-54": 87,
+       "55-64": 74,
+       "65-74": 60,
+       ">74": 15,
+       "8888": 14
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0024,
+       "25-34": 0.1175,
+       "35-44": 0.2806,
+       "45-54": 0.2086,
+       "55-64": 0.1775,
+       "65-74": 0.1439,
+       ">74": 0.036,
+       "8888": 0.0336
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0025,
+       "25-34": 0.1216,
+       "35-44": 0.2903,
+       "45-54": 0.2159,
+       "55-64": 0.1836,
+       "65-74": 0.1489,
+       ">74": 0.0372
+      },
+      "n_natural_person_age_reported": 403,
+      "non_natural_person_share_age_8888": 0.0336,
+      "applicant_55_plus_share_natural_persons": 0.3697,
+      "applicant_under_35_share_natural_persons": 0.1241,
+      "jumbo_NC_share_all_loans": 0.012,
+      "jumbo_NC_count_all_loans": 5,
+      "jumbo_NC_share_conventional": 0.0027,
+      "n_conventional": 375,
+      "business_purpose_share": 0.2038,
+      "property_value_usd_bin_midpoint": {
+       "n": 417,
+       "median": 995000.0
+      },
+      "combined_ltv_pct": {
+       "n": 402,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2239
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 125,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 66,
+       "second_home": 26,
+       "investment": 33
+      },
+      "occupancy_share": {
+       "principal": 0.528,
+       "second_home": 0.208,
+       "investment": 0.264
+      },
+      "non_owner_occupied_share": 0.472,
+      "loan_type_counts": {
+       "conventional": 116,
+       "FHA": 0,
+       "VA": 9,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.928,
+       "FHA": 0.0,
+       "VA": 0.072,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 112,
+       "n_not_reported_NA": 13,
+       "median": 412.5,
+       "p25": 289.0,
+       "p75": 648.5,
+       "median_excluding_le_zero": 412.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 6,
+       "35-44": 28,
+       "45-54": 32,
+       "55-64": 37,
+       "65-74": 14,
+       ">74": 5,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.048,
+       "35-44": 0.224,
+       "45-54": 0.256,
+       "55-64": 0.296,
+       "65-74": 0.112,
+       ">74": 0.04,
+       "8888": 0.024
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0492,
+       "35-44": 0.2295,
+       "45-54": 0.2623,
+       "55-64": 0.3033,
+       "65-74": 0.1148,
+       ">74": 0.041
+      },
+      "n_natural_person_age_reported": 122,
+      "non_natural_person_share_age_8888": 0.024,
+      "applicant_55_plus_share_natural_persons": 0.459,
+      "applicant_under_35_share_natural_persons": 0.0492,
+      "jumbo_NC_share_all_loans": 0.488,
+      "jumbo_NC_count_all_loans": 61,
+      "jumbo_NC_share_conventional": 0.4828,
+      "n_conventional": 116,
+      "business_purpose_share": 0.224,
+      "property_value_usd_bin_midpoint": {
+       "n": 125,
+       "median": 1755000.0
+      },
+      "combined_ltv_pct": {
+       "n": 123,
+       "median": 70.42,
+       "share_ltv_le_60": 0.3577
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 23,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 6,
+       "second_home": 13,
+       "investment": 4
+      },
+      "occupancy_share": {
+       "principal": 0.2609,
+       "second_home": 0.5652,
+       "investment": 0.1739
+      },
+      "non_owner_occupied_share": 0.7391,
+      "loan_type_counts": {
+       "conventional": 23,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 19,
+       "n_not_reported_NA": 4,
+       "median": 1044.0,
+       "p25": 644.0,
+       "p75": 2145.0,
+       "median_excluding_le_zero": 1044.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 4,
+       "45-54": 2,
+       "55-64": 9,
+       "65-74": 4,
+       ">74": 1,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1739,
+       "45-54": 0.087,
+       "55-64": 0.3913,
+       "65-74": 0.1739,
+       ">74": 0.0435,
+       "8888": 0.1304
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.2,
+       "45-54": 0.1,
+       "55-64": 0.45,
+       "65-74": 0.2,
+       ">74": 0.05
+      },
+      "n_natural_person_age_reported": 20,
+      "non_natural_person_share_age_8888": 0.1304,
+      "applicant_55_plus_share_natural_persons": 0.7,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 23,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 23,
+      "business_purpose_share": 0.2609,
+      "property_value_usd_bin_midpoint": {
+       "n": 23,
+       "median": 4455000.0
+      },
+      "combined_ltv_pct": {
+       "n": 22,
+       "median": 69.99,
+       "share_ltv_le_60": 0.3636
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 3,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 0,
+       "second_home": 3,
+       "investment": 0
+      },
+      "occupancy_share": {
+       "principal": 0.0,
+       "second_home": 1.0,
+       "investment": 0.0
+      },
+      "non_owner_occupied_share": 1.0,
+      "loan_type_counts": {
+       "conventional": 3,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 2,
+       "n_not_reported_NA": 1,
+       "median": 2177.0,
+       "p25": 1840.5,
+       "p75": 2513.5,
+       "median_excluding_le_zero": 2177.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 1,
+       "55-64": 1,
+       "65-74": 0,
+       ">74": 0,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.3333,
+       "55-64": 0.3333,
+       "65-74": 0.0,
+       ">74": 0.0,
+       "8888": 0.3333
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.5,
+       "55-64": 0.5,
+       "65-74": 0.0,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 2,
+      "non_natural_person_share_age_8888": 0.3333,
+      "applicant_55_plus_share_natural_persons": 0.5,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 3,
+      "business_purpose_share": 0.3333,
+      "property_value_usd_bin_midpoint": {
+       "n": 3,
+       "median": 19005000.0
+      },
+      "combined_ltv_pct": {
+       "n": 3,
+       "median": 60.0,
+       "share_ltv_le_60": 0.6667
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 20,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 10,
+       "second_home": 1,
+       "investment": 9
+      },
+      "occupancy_share": {
+       "principal": 0.5,
+       "second_home": 0.05,
+       "investment": 0.45
+      },
+      "non_owner_occupied_share": 0.5,
+      "loan_type_counts": {
+       "conventional": 18,
+       "FHA": 1,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9,
+       "FHA": 0.05,
+       "VA": 0.05,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 10,
+       "n_not_reported_NA": 10,
+       "median": 163.0,
+       "p25": 142.5,
+       "p75": 287.0,
+       "median_excluding_le_zero": 163.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 1,
+       "35-44": 7,
+       "45-54": 5,
+       "55-64": 2,
+       "65-74": 2,
+       ">74": 2,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.05,
+       "35-44": 0.35,
+       "45-54": 0.25,
+       "55-64": 0.1,
+       "65-74": 0.1,
+       ">74": 0.1,
+       "8888": 0.05
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0526,
+       "35-44": 0.3684,
+       "45-54": 0.2632,
+       "55-64": 0.1053,
+       "65-74": 0.1053,
+       ">74": 0.1053
+      },
+      "n_natural_person_age_reported": 19,
+      "non_natural_person_share_age_8888": 0.05,
+      "applicant_55_plus_share_natural_persons": 0.3158,
+      "applicant_under_35_share_natural_persons": 0.0526,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 18,
+      "business_purpose_share": 0.25,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 1,
+       "median": 80.0,
+       "share_ltv_le_60": 0.0
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 1158,
+      "share": 0.6709
+     },
+     "mid": {
+      "n": 417,
+      "share": 0.2416
+     },
+     "upper": {
+      "n": 125,
+      "share": 0.0724
+     },
+     "luxury": {
+      "n": 23,
+      "share": 0.0133
+     },
+     "ultra": {
+      "n": 3,
+      "share": 0.0017
+     }
+    },
+    "n_property_value_unknown": 20
+   },
+   "15003": {
+    "name": "Honolulu County",
+    "all_tiers": {
+     "n_loans": 6623,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 5577,
+      "second_home": 198,
+      "investment": 848
+     },
+     "occupancy_share": {
+      "principal": 0.8421,
+      "second_home": 0.0299,
+      "investment": 0.128
+     },
+     "non_owner_occupied_share": 0.1579,
+     "loan_type_counts": {
+      "conventional": 4521,
+      "FHA": 252,
+      "VA": 1830,
+      "USDA": 20
+     },
+     "loan_type_share": {
+      "conventional": 0.6826,
+      "FHA": 0.038,
+      "VA": 0.2763,
+      "USDA": 0.003
+     },
+     "income_thousands_usd": {
+      "n_reported": 6292,
+      "n_not_reported_NA": 331,
+      "median": 162.0,
+      "p25": 115.0,
+      "p75": 238.0,
+      "median_excluding_le_zero": 165.0
+     },
+     "applicant_age_counts": {
+      "<25": 260,
+      "25-34": 1955,
+      "35-44": 1829,
+      "45-54": 1203,
+      "55-64": 754,
+      "65-74": 391,
+      ">74": 118,
+      "8888": 113
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0393,
+      "25-34": 0.2952,
+      "35-44": 0.2762,
+      "45-54": 0.1816,
+      "55-64": 0.1138,
+      "65-74": 0.059,
+      ">74": 0.0178,
+      "8888": 0.0171
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0399,
+      "25-34": 0.3003,
+      "35-44": 0.281,
+      "45-54": 0.1848,
+      "55-64": 0.1158,
+      "65-74": 0.0601,
+      ">74": 0.0181
+     },
+     "n_natural_person_age_reported": 6510,
+     "non_natural_person_share_age_8888": 0.0171,
+     "applicant_55_plus_share_natural_persons": 0.194,
+     "applicant_under_35_share_natural_persons": 0.3402,
+     "jumbo_NC_share_all_loans": 0.0658,
+     "jumbo_NC_count_all_loans": 436,
+     "jumbo_NC_share_conventional": 0.0584,
+     "n_conventional": 4521,
+     "business_purpose_share": 0.0977,
+     "property_value_usd_bin_midpoint": {
+      "n": 6530,
+      "median": 745000.0
+     },
+     "combined_ltv_pct": {
+      "n": 6168,
+      "median": 80.0,
+      "share_ltv_le_60": 0.1803
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 3309,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 2841,
+       "second_home": 76,
+       "investment": 392
+      },
+      "occupancy_share": {
+       "principal": 0.8586,
+       "second_home": 0.023,
+       "investment": 0.1185
+      },
+      "non_owner_occupied_share": 0.1414,
+      "loan_type_counts": {
+       "conventional": 2133,
+       "FHA": 198,
+       "VA": 958,
+       "USDA": 20
+      },
+      "loan_type_share": {
+       "conventional": 0.6446,
+       "FHA": 0.0598,
+       "VA": 0.2895,
+       "USDA": 0.006
+      },
+      "income_thousands_usd": {
+       "n_reported": 3176,
+       "n_not_reported_NA": 133,
+       "median": 124.0,
+       "p25": 96.0,
+       "p75": 166.0,
+       "median_excluding_le_zero": 125.0
+      },
+      "applicant_age_counts": {
+       "<25": 227,
+       "25-34": 1254,
+       "35-44": 774,
+       "45-54": 483,
+       "55-64": 322,
+       "65-74": 153,
+       ">74": 47,
+       "8888": 49
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0686,
+       "25-34": 0.379,
+       "35-44": 0.2339,
+       "45-54": 0.146,
+       "55-64": 0.0973,
+       "65-74": 0.0462,
+       ">74": 0.0142,
+       "8888": 0.0148
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0696,
+       "25-34": 0.3847,
+       "35-44": 0.2374,
+       "45-54": 0.1482,
+       "55-64": 0.0988,
+       "65-74": 0.0469,
+       ">74": 0.0144
+      },
+      "n_natural_person_age_reported": 3260,
+      "non_natural_person_share_age_8888": 0.0148,
+      "applicant_55_plus_share_natural_persons": 0.1601,
+      "applicant_under_35_share_natural_persons": 0.4543,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 2133,
+      "business_purpose_share": 0.0855,
+      "property_value_usd_bin_midpoint": {
+       "n": 3309,
+       "median": 525000.0
+      },
+      "combined_ltv_pct": {
+       "n": 3074,
+       "median": 81.47,
+       "share_ltv_le_60": 0.1457
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 2614,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 2226,
+       "second_home": 82,
+       "investment": 306
+      },
+      "occupancy_share": {
+       "principal": 0.8516,
+       "second_home": 0.0314,
+       "investment": 0.1171
+      },
+      "non_owner_occupied_share": 0.1484,
+      "loan_type_counts": {
+       "conventional": 1832,
+       "FHA": 53,
+       "VA": 729,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.7008,
+       "FHA": 0.0203,
+       "VA": 0.2789,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 2494,
+       "n_not_reported_NA": 120,
+       "median": 199.0,
+       "p25": 155.0,
+       "p75": 260.75,
+       "median_excluding_le_zero": 200.0
+      },
+      "applicant_age_counts": {
+       "<25": 32,
+       "25-34": 624,
+       "35-44": 833,
+       "45-54": 552,
+       "55-64": 308,
+       "65-74": 175,
+       ">74": 50,
+       "8888": 40
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0122,
+       "25-34": 0.2387,
+       "35-44": 0.3187,
+       "45-54": 0.2112,
+       "55-64": 0.1178,
+       "65-74": 0.0669,
+       ">74": 0.0191,
+       "8888": 0.0153
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0124,
+       "25-34": 0.2424,
+       "35-44": 0.3236,
+       "45-54": 0.2145,
+       "55-64": 0.1197,
+       "65-74": 0.068,
+       ">74": 0.0194
+      },
+      "n_natural_person_age_reported": 2574,
+      "non_natural_person_share_age_8888": 0.0153,
+      "applicant_55_plus_share_natural_persons": 0.2071,
+      "applicant_under_35_share_natural_persons": 0.2549,
+      "jumbo_NC_share_all_loans": 0.0417,
+      "jumbo_NC_count_all_loans": 109,
+      "jumbo_NC_share_conventional": 0.0049,
+      "n_conventional": 1832,
+      "business_purpose_share": 0.0941,
+      "property_value_usd_bin_midpoint": {
+       "n": 2614,
+       "median": 995000.0
+      },
+      "combined_ltv_pct": {
+       "n": 2505,
+       "median": 80.0,
+       "share_ltv_le_60": 0.19
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 531,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 399,
+       "second_home": 29,
+       "investment": 103
+      },
+      "occupancy_share": {
+       "principal": 0.7514,
+       "second_home": 0.0546,
+       "investment": 0.194
+      },
+      "non_owner_occupied_share": 0.2486,
+      "loan_type_counts": {
+       "conventional": 437,
+       "FHA": 0,
+       "VA": 94,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.823,
+       "FHA": 0.0,
+       "VA": 0.177,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 479,
+       "n_not_reported_NA": 52,
+       "median": 322.0,
+       "p25": 237.5,
+       "p75": 464.5,
+       "median_excluding_le_zero": 325.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 53,
+       "35-44": 178,
+       "45-54": 129,
+       "55-64": 85,
+       "65-74": 51,
+       ">74": 18,
+       "8888": 17
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0998,
+       "35-44": 0.3352,
+       "45-54": 0.2429,
+       "55-64": 0.1601,
+       "65-74": 0.096,
+       ">74": 0.0339,
+       "8888": 0.032
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.1031,
+       "35-44": 0.3463,
+       "45-54": 0.251,
+       "55-64": 0.1654,
+       "65-74": 0.0992,
+       ">74": 0.035
+      },
+      "n_natural_person_age_reported": 514,
+      "non_natural_person_share_age_8888": 0.032,
+      "applicant_55_plus_share_natural_persons": 0.2996,
+      "applicant_under_35_share_natural_persons": 0.1031,
+      "jumbo_NC_share_all_loans": 0.4783,
+      "jumbo_NC_count_all_loans": 254,
+      "jumbo_NC_share_conventional": 0.4233,
+      "n_conventional": 437,
+      "business_purpose_share": 0.1638,
+      "property_value_usd_bin_midpoint": {
+       "n": 531,
+       "median": 1755000.0
+      },
+      "combined_ltv_pct": {
+       "n": 514,
+       "median": 71.72,
+       "share_ltv_le_60": 0.3035
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 73,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 48,
+       "second_home": 9,
+       "investment": 16
+      },
+      "occupancy_share": {
+       "principal": 0.6575,
+       "second_home": 0.1233,
+       "investment": 0.2192
+      },
+      "non_owner_occupied_share": 0.3425,
+      "loan_type_counts": {
+       "conventional": 71,
+       "FHA": 0,
+       "VA": 2,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9726,
+       "FHA": 0.0,
+       "VA": 0.0274,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 67,
+       "n_not_reported_NA": 6,
+       "median": 939.0,
+       "p25": 554.5,
+       "p75": 1674.0,
+       "median_excluding_le_zero": 955.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 3,
+       "35-44": 21,
+       "45-54": 16,
+       "55-64": 23,
+       "65-74": 7,
+       ">74": 2,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0411,
+       "35-44": 0.2877,
+       "45-54": 0.2192,
+       "55-64": 0.3151,
+       "65-74": 0.0959,
+       ">74": 0.0274,
+       "8888": 0.0137
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0417,
+       "35-44": 0.2917,
+       "45-54": 0.2222,
+       "55-64": 0.3194,
+       "65-74": 0.0972,
+       ">74": 0.0278
+      },
+      "n_natural_person_age_reported": 72,
+      "non_natural_person_share_age_8888": 0.0137,
+      "applicant_55_plus_share_natural_persons": 0.4444,
+      "applicant_under_35_share_natural_persons": 0.0417,
+      "jumbo_NC_share_all_loans": 0.8082,
+      "jumbo_NC_count_all_loans": 59,
+      "jumbo_NC_share_conventional": 0.8028,
+      "n_conventional": 71,
+      "business_purpose_share": 0.1507,
+      "property_value_usd_bin_midpoint": {
+       "n": 73,
+       "median": 3715000.0
+      },
+      "combined_ltv_pct": {
+       "n": 70,
+       "median": 63.53,
+       "share_ltv_le_60": 0.4429
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 3,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 0,
+       "second_home": 0,
+       "investment": 3
+      },
+      "occupancy_share": {
+       "principal": 0.0,
+       "second_home": 0.0,
+       "investment": 1.0
+      },
+      "non_owner_occupied_share": 1.0,
+      "loan_type_counts": {
+       "conventional": 3,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 1,
+       "n_not_reported_NA": 2,
+       "median": 3810.0,
+       "p25": 3810.0,
+       "p75": 3810.0,
+       "median_excluding_le_zero": 3810.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 1,
+       "55-64": 0,
+       "65-74": 0,
+       ">74": 0,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.3333,
+       "55-64": 0.0,
+       "65-74": 0.0,
+       ">74": 0.0,
+       "8888": 0.6667
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 1.0,
+       "55-64": 0.0,
+       "65-74": 0.0,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 1,
+      "non_natural_person_share_age_8888": 0.6667,
+      "applicant_55_plus_share_natural_persons": 0.0,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 3,
+      "business_purpose_share": 0.6667,
+      "property_value_usd_bin_midpoint": {
+       "n": 3,
+       "median": 13505000.0
+      },
+      "combined_ltv_pct": {
+       "n": 3,
+       "median": 70.0,
+       "share_ltv_le_60": 0.3333
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 93,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 63,
+       "second_home": 2,
+       "investment": 28
+      },
+      "occupancy_share": {
+       "principal": 0.6774,
+       "second_home": 0.0215,
+       "investment": 0.3011
+      },
+      "non_owner_occupied_share": 0.3226,
+      "loan_type_counts": {
+       "conventional": 45,
+       "FHA": 1,
+       "VA": 47,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.4839,
+       "FHA": 0.0108,
+       "VA": 0.5054,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 75,
+       "n_not_reported_NA": 18,
+       "median": 193.0,
+       "p25": 123.5,
+       "p75": 285.5,
+       "median_excluding_le_zero": 193.0
+      },
+      "applicant_age_counts": {
+       "<25": 1,
+       "25-34": 21,
+       "35-44": 23,
+       "45-54": 22,
+       "55-64": 16,
+       "65-74": 5,
+       ">74": 1,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0108,
+       "25-34": 0.2258,
+       "35-44": 0.2473,
+       "45-54": 0.2366,
+       "55-64": 0.172,
+       "65-74": 0.0538,
+       ">74": 0.0108,
+       "8888": 0.043
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0112,
+       "25-34": 0.236,
+       "35-44": 0.2584,
+       "45-54": 0.2472,
+       "55-64": 0.1798,
+       "65-74": 0.0562,
+       ">74": 0.0112
+      },
+      "n_natural_person_age_reported": 89,
+      "non_natural_person_share_age_8888": 0.043,
+      "applicant_55_plus_share_natural_persons": 0.2472,
+      "applicant_under_35_share_natural_persons": 0.2472,
+      "jumbo_NC_share_all_loans": 0.1183,
+      "jumbo_NC_count_all_loans": 11,
+      "jumbo_NC_share_conventional": 0.2222,
+      "n_conventional": 45,
+      "business_purpose_share": 0.1935,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 2,
+       "median": 80.0,
+       "share_ltv_le_60": 0.0
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 3309,
+      "share": 0.5067
+     },
+     "mid": {
+      "n": 2614,
+      "share": 0.4003
+     },
+     "upper": {
+      "n": 531,
+      "share": 0.0813
+     },
+     "luxury": {
+      "n": 73,
+      "share": 0.0112
+     },
+     "ultra": {
+      "n": 3,
+      "share": 0.0005
+     }
+    },
+    "n_property_value_unknown": 93
+   },
+   "15007": {
+    "name": "Kauai County",
+    "all_tiers": {
+     "n_loans": 461,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 274,
+      "second_home": 43,
+      "investment": 144
+     },
+     "occupancy_share": {
+      "principal": 0.5944,
+      "second_home": 0.0933,
+      "investment": 0.3124
+     },
+     "non_owner_occupied_share": 0.4056,
+     "loan_type_counts": {
+      "conventional": 402,
+      "FHA": 33,
+      "VA": 25,
+      "USDA": 1
+     },
+     "loan_type_share": {
+      "conventional": 0.872,
+      "FHA": 0.0716,
+      "VA": 0.0542,
+      "USDA": 0.0022
+     },
+     "income_thousands_usd": {
+      "n_reported": 410,
+      "n_not_reported_NA": 51,
+      "median": 209.0,
+      "p25": 135.0,
+      "p75": 363.75,
+      "median_excluding_le_zero": 215.0
+     },
+     "applicant_age_counts": {
+      "<25": 6,
+      "25-34": 65,
+      "35-44": 146,
+      "45-54": 105,
+      "55-64": 68,
+      "65-74": 57,
+      ">74": 9,
+      "8888": 5
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.013,
+      "25-34": 0.141,
+      "35-44": 0.3167,
+      "45-54": 0.2278,
+      "55-64": 0.1475,
+      "65-74": 0.1236,
+      ">74": 0.0195,
+      "8888": 0.0108
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0132,
+      "25-34": 0.1425,
+      "35-44": 0.3202,
+      "45-54": 0.2303,
+      "55-64": 0.1491,
+      "65-74": 0.125,
+      ">74": 0.0197
+     },
+     "n_natural_person_age_reported": 456,
+     "non_natural_person_share_age_8888": 0.0108,
+     "applicant_55_plus_share_natural_persons": 0.2939,
+     "applicant_under_35_share_natural_persons": 0.1557,
+     "jumbo_NC_share_all_loans": 0.1475,
+     "jumbo_NC_count_all_loans": 68,
+     "jumbo_NC_share_conventional": 0.1542,
+     "n_conventional": 402,
+     "business_purpose_share": 0.2408,
+     "property_value_usd_bin_midpoint": {
+      "n": 456,
+      "median": 975000.0
+     },
+     "combined_ltv_pct": {
+      "n": 443,
+      "median": 75.0,
+      "share_ltv_le_60": 0.2235
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 104,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 58,
+       "second_home": 2,
+       "investment": 44
+      },
+      "occupancy_share": {
+       "principal": 0.5577,
+       "second_home": 0.0192,
+       "investment": 0.4231
+      },
+      "non_owner_occupied_share": 0.4423,
+      "loan_type_counts": {
+       "conventional": 89,
+       "FHA": 10,
+       "VA": 4,
+       "USDA": 1
+      },
+      "loan_type_share": {
+       "conventional": 0.8558,
+       "FHA": 0.0962,
+       "VA": 0.0385,
+       "USDA": 0.0096
+      },
+      "income_thousands_usd": {
+       "n_reported": 91,
+       "n_not_reported_NA": 13,
+       "median": 133.0,
+       "p25": 90.0,
+       "p75": 183.5,
+       "median_excluding_le_zero": 149.0
+      },
+      "applicant_age_counts": {
+       "<25": 2,
+       "25-34": 20,
+       "35-44": 35,
+       "45-54": 20,
+       "55-64": 13,
+       "65-74": 13,
+       ">74": 1,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0192,
+       "25-34": 0.1923,
+       "35-44": 0.3365,
+       "45-54": 0.1923,
+       "55-64": 0.125,
+       "65-74": 0.125,
+       ">74": 0.0096,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0192,
+       "25-34": 0.1923,
+       "35-44": 0.3365,
+       "45-54": 0.1923,
+       "55-64": 0.125,
+       "65-74": 0.125,
+       ">74": 0.0096
+      },
+      "n_natural_person_age_reported": 104,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.2596,
+      "applicant_under_35_share_natural_persons": 0.2115,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 89,
+      "business_purpose_share": 0.3365,
+      "property_value_usd_bin_midpoint": {
+       "n": 104,
+       "median": 545000.0
+      },
+      "combined_ltv_pct": {
+       "n": 102,
+       "median": 75.0,
+       "share_ltv_le_60": 0.1765
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 258,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 168,
+       "second_home": 21,
+       "investment": 69
+      },
+      "occupancy_share": {
+       "principal": 0.6512,
+       "second_home": 0.0814,
+       "investment": 0.2674
+      },
+      "non_owner_occupied_share": 0.3488,
+      "loan_type_counts": {
+       "conventional": 218,
+       "FHA": 23,
+       "VA": 17,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.845,
+       "FHA": 0.0891,
+       "VA": 0.0659,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 231,
+       "n_not_reported_NA": 27,
+       "median": 202.0,
+       "p25": 138.0,
+       "p75": 292.5,
+       "median_excluding_le_zero": 205.0
+      },
+      "applicant_age_counts": {
+       "<25": 4,
+       "25-34": 43,
+       "35-44": 75,
+       "45-54": 62,
+       "55-64": 34,
+       "65-74": 29,
+       ">74": 8,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0155,
+       "25-34": 0.1667,
+       "35-44": 0.2907,
+       "45-54": 0.2403,
+       "55-64": 0.1318,
+       "65-74": 0.1124,
+       ">74": 0.031,
+       "8888": 0.0116
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0157,
+       "25-34": 0.1686,
+       "35-44": 0.2941,
+       "45-54": 0.2431,
+       "55-64": 0.1333,
+       "65-74": 0.1137,
+       ">74": 0.0314
+      },
+      "n_natural_person_age_reported": 255,
+      "non_natural_person_share_age_8888": 0.0116,
+      "applicant_55_plus_share_natural_persons": 0.2784,
+      "applicant_under_35_share_natural_persons": 0.1843,
+      "jumbo_NC_share_all_loans": 0.0116,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 0.0046,
+      "n_conventional": 218,
+      "business_purpose_share": 0.2132,
+      "property_value_usd_bin_midpoint": {
+       "n": 258,
+       "median": 985000.0
+      },
+      "combined_ltv_pct": {
+       "n": 248,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2177
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 72,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 38,
+       "second_home": 11,
+       "investment": 23
+      },
+      "occupancy_share": {
+       "principal": 0.5278,
+       "second_home": 0.1528,
+       "investment": 0.3194
+      },
+      "non_owner_occupied_share": 0.4722,
+      "loan_type_counts": {
+       "conventional": 69,
+       "FHA": 0,
+       "VA": 3,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9583,
+       "FHA": 0.0,
+       "VA": 0.0417,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 65,
+       "n_not_reported_NA": 7,
+       "median": 406.0,
+       "p25": 304.0,
+       "p75": 701.0,
+       "median_excluding_le_zero": 421.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 2,
+       "35-44": 25,
+       "45-54": 18,
+       "55-64": 15,
+       "65-74": 11,
+       ">74": 0,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0278,
+       "35-44": 0.3472,
+       "45-54": 0.25,
+       "55-64": 0.2083,
+       "65-74": 0.1528,
+       ">74": 0.0,
+       "8888": 0.0139
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0282,
+       "35-44": 0.3521,
+       "45-54": 0.2535,
+       "55-64": 0.2113,
+       "65-74": 0.1549,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 71,
+      "non_natural_person_share_age_8888": 0.0139,
+      "applicant_55_plus_share_natural_persons": 0.3662,
+      "applicant_under_35_share_natural_persons": 0.0282,
+      "jumbo_NC_share_all_loans": 0.5833,
+      "jumbo_NC_count_all_loans": 42,
+      "jumbo_NC_share_conventional": 0.5652,
+      "n_conventional": 69,
+      "business_purpose_share": 0.1944,
+      "property_value_usd_bin_midpoint": {
+       "n": 72,
+       "median": 2005000.0
+      },
+      "combined_ltv_pct": {
+       "n": 71,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2958
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 22,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 5,
+       "second_home": 9,
+       "investment": 8
+      },
+      "occupancy_share": {
+       "principal": 0.2273,
+       "second_home": 0.4091,
+       "investment": 0.3636
+      },
+      "non_owner_occupied_share": 0.7727,
+      "loan_type_counts": {
+       "conventional": 21,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9545,
+       "FHA": 0.0,
+       "VA": 0.0455,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 18,
+       "n_not_reported_NA": 4,
+       "median": 994.5,
+       "p25": 712.75,
+       "p75": 1710.5,
+       "median_excluding_le_zero": 994.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 9,
+       "45-54": 4,
+       "55-64": 5,
+       "65-74": 3,
+       ">74": 0,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.4091,
+       "45-54": 0.1818,
+       "55-64": 0.2273,
+       "65-74": 0.1364,
+       ">74": 0.0,
+       "8888": 0.0455
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.4286,
+       "45-54": 0.1905,
+       "55-64": 0.2381,
+       "65-74": 0.1429,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 21,
+      "non_natural_person_share_age_8888": 0.0455,
+      "applicant_55_plus_share_natural_persons": 0.381,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 22,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 21,
+      "business_purpose_share": 0.3182,
+      "property_value_usd_bin_midpoint": {
+       "n": 22,
+       "median": 3490000.0
+      },
+      "combined_ltv_pct": {
+       "n": 22,
+       "median": 68.32,
+       "share_ltv_le_60": 0.2727
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 0,
+      "small_cell_flag_n_lt_20": true,
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 5,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 5,
+       "second_home": 0,
+       "investment": 0
+      },
+      "occupancy_share": {
+       "principal": 1.0,
+       "second_home": 0.0,
+       "investment": 0.0
+      },
+      "non_owner_occupied_share": 0.0,
+      "loan_type_counts": {
+       "conventional": 5,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 5,
+       "n_not_reported_NA": 0,
+       "median": 172.0,
+       "p25": 163.0,
+       "p75": 238.0,
+       "median_excluding_le_zero": 172.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 2,
+       "45-54": 1,
+       "55-64": 1,
+       "65-74": 1,
+       ">74": 0,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.4,
+       "45-54": 0.2,
+       "55-64": 0.2,
+       "65-74": 0.2,
+       ">74": 0.0,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.4,
+       "45-54": 0.2,
+       "55-64": 0.2,
+       "65-74": 0.2,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 5,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.4,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.2,
+      "jumbo_NC_count_all_loans": 1,
+      "jumbo_NC_share_conventional": 0.2,
+      "n_conventional": 5,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 0,
+       "median": null,
+       "share_ltv_le_60": null
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 104,
+      "share": 0.2281
+     },
+     "mid": {
+      "n": 258,
+      "share": 0.5658
+     },
+     "upper": {
+      "n": 72,
+      "share": 0.1579
+     },
+     "luxury": {
+      "n": 22,
+      "share": 0.0482
+     },
+     "ultra": {
+      "n": 0,
+      "share": 0.0
+     }
+    },
+    "n_property_value_unknown": 5
+   },
+   "15009": {
+    "name": "Maui County",
+    "all_tiers": {
+     "n_loans": 877,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 574,
+      "second_home": 87,
+      "investment": 216
+     },
+     "occupancy_share": {
+      "principal": 0.6545,
+      "second_home": 0.0992,
+      "investment": 0.2463
+     },
+     "non_owner_occupied_share": 0.3455,
+     "loan_type_counts": {
+      "conventional": 735,
+      "FHA": 98,
+      "VA": 42,
+      "USDA": 2
+     },
+     "loan_type_share": {
+      "conventional": 0.8381,
+      "FHA": 0.1117,
+      "VA": 0.0479,
+      "USDA": 0.0023
+     },
+     "income_thousands_usd": {
+      "n_reported": 808,
+      "n_not_reported_NA": 69,
+      "median": 216.5,
+      "p25": 145.0,
+      "p75": 338.25,
+      "median_excluding_le_zero": 223.0
+     },
+     "applicant_age_counts": {
+      "<25": 17,
+      "25-34": 128,
+      "35-44": 223,
+      "45-54": 228,
+      "55-64": 147,
+      "65-74": 93,
+      ">74": 25,
+      "8888": 16
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0194,
+      "25-34": 0.146,
+      "35-44": 0.2543,
+      "45-54": 0.26,
+      "55-64": 0.1676,
+      "65-74": 0.106,
+      ">74": 0.0285,
+      "8888": 0.0182
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0197,
+      "25-34": 0.1487,
+      "35-44": 0.259,
+      "45-54": 0.2648,
+      "55-64": 0.1707,
+      "65-74": 0.108,
+      ">74": 0.029
+     },
+     "n_natural_person_age_reported": 861,
+     "non_natural_person_share_age_8888": 0.0182,
+     "applicant_55_plus_share_natural_persons": 0.3078,
+     "applicant_under_35_share_natural_persons": 0.1684,
+     "jumbo_NC_share_all_loans": 0.1083,
+     "jumbo_NC_count_all_loans": 95,
+     "jumbo_NC_share_conventional": 0.1211,
+     "n_conventional": 735,
+     "business_purpose_share": 0.1927,
+     "property_value_usd_bin_midpoint": {
+      "n": 862,
+      "median": 1000000.0
+     },
+     "combined_ltv_pct": {
+      "n": 826,
+      "median": 75.0,
+      "share_ltv_le_60": 0.2203
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 265,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 168,
+       "second_home": 26,
+       "investment": 71
+      },
+      "occupancy_share": {
+       "principal": 0.634,
+       "second_home": 0.0981,
+       "investment": 0.2679
+      },
+      "non_owner_occupied_share": 0.366,
+      "loan_type_counts": {
+       "conventional": 203,
+       "FHA": 45,
+       "VA": 15,
+       "USDA": 2
+      },
+      "loan_type_share": {
+       "conventional": 0.766,
+       "FHA": 0.1698,
+       "VA": 0.0566,
+       "USDA": 0.0075
+      },
+      "income_thousands_usd": {
+       "n_reported": 248,
+       "n_not_reported_NA": 17,
+       "median": 141.0,
+       "p25": 103.75,
+       "p75": 223.25,
+       "median_excluding_le_zero": 145.0
+      },
+      "applicant_age_counts": {
+       "<25": 10,
+       "25-34": 48,
+       "35-44": 75,
+       "45-54": 61,
+       "55-64": 39,
+       "65-74": 21,
+       ">74": 9,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0377,
+       "25-34": 0.1811,
+       "35-44": 0.283,
+       "45-54": 0.2302,
+       "55-64": 0.1472,
+       "65-74": 0.0792,
+       ">74": 0.034,
+       "8888": 0.0075
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.038,
+       "25-34": 0.1825,
+       "35-44": 0.2852,
+       "45-54": 0.2319,
+       "55-64": 0.1483,
+       "65-74": 0.0798,
+       ">74": 0.0342
+      },
+      "n_natural_person_age_reported": 263,
+      "non_natural_person_share_age_8888": 0.0075,
+      "applicant_55_plus_share_natural_persons": 0.2624,
+      "applicant_under_35_share_natural_persons": 0.2205,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 203,
+      "business_purpose_share": 0.2189,
+      "property_value_usd_bin_midpoint": {
+       "n": 265,
+       "median": 575000.0
+      },
+      "combined_ltv_pct": {
+       "n": 245,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1469
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 429,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 302,
+       "second_home": 27,
+       "investment": 100
+      },
+      "occupancy_share": {
+       "principal": 0.704,
+       "second_home": 0.0629,
+       "investment": 0.2331
+      },
+      "non_owner_occupied_share": 0.296,
+      "loan_type_counts": {
+       "conventional": 356,
+       "FHA": 52,
+       "VA": 21,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.8298,
+       "FHA": 0.1212,
+       "VA": 0.049,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 396,
+       "n_not_reported_NA": 33,
+       "median": 217.0,
+       "p25": 166.0,
+       "p75": 304.0,
+       "median_excluding_le_zero": 218.0
+      },
+      "applicant_age_counts": {
+       "<25": 6,
+       "25-34": 72,
+       "35-44": 119,
+       "45-54": 106,
+       "55-64": 70,
+       "65-74": 43,
+       ">74": 9,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.014,
+       "25-34": 0.1678,
+       "35-44": 0.2774,
+       "45-54": 0.2471,
+       "55-64": 0.1632,
+       "65-74": 0.1002,
+       ">74": 0.021,
+       "8888": 0.0093
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0141,
+       "25-34": 0.1694,
+       "35-44": 0.28,
+       "45-54": 0.2494,
+       "55-64": 0.1647,
+       "65-74": 0.1012,
+       ">74": 0.0212
+      },
+      "n_natural_person_age_reported": 425,
+      "non_natural_person_share_age_8888": 0.0093,
+      "applicant_55_plus_share_natural_persons": 0.2871,
+      "applicant_under_35_share_natural_persons": 0.1835,
+      "jumbo_NC_share_all_loans": 0.007,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 0.0028,
+      "n_conventional": 356,
+      "business_purpose_share": 0.1841,
+      "property_value_usd_bin_midpoint": {
+       "n": 429,
+       "median": 1105000.0
+      },
+      "combined_ltv_pct": {
+       "n": 418,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1938
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 136,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 82,
+       "second_home": 21,
+       "investment": 33
+      },
+      "occupancy_share": {
+       "principal": 0.6029,
+       "second_home": 0.1544,
+       "investment": 0.2426
+      },
+      "non_owner_occupied_share": 0.3971,
+      "loan_type_counts": {
+       "conventional": 132,
+       "FHA": 0,
+       "VA": 4,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9706,
+       "FHA": 0.0,
+       "VA": 0.0294,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 127,
+       "n_not_reported_NA": 9,
+       "median": 338.0,
+       "p25": 261.0,
+       "p75": 550.5,
+       "median_excluding_le_zero": 349.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 6,
+       "35-44": 22,
+       "45-54": 50,
+       "55-64": 29,
+       "65-74": 20,
+       ">74": 6,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0441,
+       "35-44": 0.1618,
+       "45-54": 0.3676,
+       "55-64": 0.2132,
+       "65-74": 0.1471,
+       ">74": 0.0441,
+       "8888": 0.0221
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0451,
+       "35-44": 0.1654,
+       "45-54": 0.3759,
+       "55-64": 0.218,
+       "65-74": 0.1504,
+       ">74": 0.0451
+      },
+      "n_natural_person_age_reported": 133,
+      "non_natural_person_share_age_8888": 0.0221,
+      "applicant_55_plus_share_natural_persons": 0.4135,
+      "applicant_under_35_share_natural_persons": 0.0451,
+      "jumbo_NC_share_all_loans": 0.4191,
+      "jumbo_NC_count_all_loans": 57,
+      "jumbo_NC_share_conventional": 0.4015,
+      "n_conventional": 132,
+      "business_purpose_share": 0.1838,
+      "property_value_usd_bin_midpoint": {
+       "n": 136,
+       "median": 1800000.0
+      },
+      "combined_ltv_pct": {
+       "n": 132,
+       "median": 70.0,
+       "share_ltv_le_60": 0.3788
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 32,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 13,
+       "second_home": 13,
+       "investment": 6
+      },
+      "occupancy_share": {
+       "principal": 0.4062,
+       "second_home": 0.4062,
+       "investment": 0.1875
+      },
+      "non_owner_occupied_share": 0.5938,
+      "loan_type_counts": {
+       "conventional": 32,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 27,
+       "n_not_reported_NA": 5,
+       "median": 1260.0,
+       "p25": 651.0,
+       "p75": 1749.5,
+       "median_excluding_le_zero": 1260.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 2,
+       "45-54": 10,
+       "55-64": 7,
+       "65-74": 9,
+       ">74": 0,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0625,
+       "45-54": 0.3125,
+       "55-64": 0.2188,
+       "65-74": 0.2812,
+       ">74": 0.0,
+       "8888": 0.125
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0714,
+       "45-54": 0.3571,
+       "55-64": 0.25,
+       "65-74": 0.3214,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 28,
+      "non_natural_person_share_age_8888": 0.125,
+      "applicant_55_plus_share_natural_persons": 0.5714,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.9375,
+      "jumbo_NC_count_all_loans": 30,
+      "jumbo_NC_share_conventional": 0.9375,
+      "n_conventional": 32,
+      "business_purpose_share": 0.1875,
+      "property_value_usd_bin_midpoint": {
+       "n": 32,
+       "median": 5180000.0
+      },
+      "combined_ltv_pct": {
+       "n": 31,
+       "median": 60.72,
+       "share_ltv_le_60": 0.4839
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 0,
+      "small_cell_flag_n_lt_20": true,
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 15,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 9,
+       "second_home": 0,
+       "investment": 6
+      },
+      "occupancy_share": {
+       "principal": 0.6,
+       "second_home": 0.0,
+       "investment": 0.4
+      },
+      "non_owner_occupied_share": 0.4,
+      "loan_type_counts": {
+       "conventional": 12,
+       "FHA": 1,
+       "VA": 2,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.8,
+       "FHA": 0.0667,
+       "VA": 0.1333,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 10,
+       "n_not_reported_NA": 5,
+       "median": 137.5,
+       "p25": 118.25,
+       "p75": 401.0,
+       "median_excluding_le_zero": 145.0
+      },
+      "applicant_age_counts": {
+       "<25": 1,
+       "25-34": 2,
+       "35-44": 5,
+       "45-54": 1,
+       "55-64": 2,
+       "65-74": 0,
+       ">74": 1,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0667,
+       "25-34": 0.1333,
+       "35-44": 0.3333,
+       "45-54": 0.0667,
+       "55-64": 0.1333,
+       "65-74": 0.0,
+       ">74": 0.0667,
+       "8888": 0.2
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0833,
+       "25-34": 0.1667,
+       "35-44": 0.4167,
+       "45-54": 0.0833,
+       "55-64": 0.1667,
+       "65-74": 0.0,
+       ">74": 0.0833
+      },
+      "n_natural_person_age_reported": 12,
+      "non_natural_person_share_age_8888": 0.2,
+      "applicant_55_plus_share_natural_persons": 0.25,
+      "applicant_under_35_share_natural_persons": 0.25,
+      "jumbo_NC_share_all_loans": 0.3333,
+      "jumbo_NC_count_all_loans": 5,
+      "jumbo_NC_share_conventional": 0.4167,
+      "n_conventional": 12,
+      "business_purpose_share": 0.0667,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 0,
+       "median": null,
+       "share_ltv_le_60": null
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 265,
+      "share": 0.3074
+     },
+     "mid": {
+      "n": 429,
+      "share": 0.4977
+     },
+     "upper": {
+      "n": 136,
+      "share": 0.1578
+     },
+     "luxury": {
+      "n": 32,
+      "share": 0.0371
+     },
+     "ultra": {
+      "n": 0,
+      "share": 0.0
+     }
+    },
+    "n_property_value_unknown": 15
+   }
+  },
+  "2019": {
+   "all_four_counties": {
+    "name": "Hawaii state (4 counties)",
+    "all_tiers": {
+     "n_loans": 13312,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 10437,
+      "second_home": 1249,
+      "investment": 1626
+     },
+     "occupancy_share": {
+      "principal": 0.784,
+      "second_home": 0.0938,
+      "investment": 0.1221
+     },
+     "non_owner_occupied_share": 0.216,
+     "loan_type_counts": {
+      "conventional": 9680,
+      "FHA": 725,
+      "VA": 2587,
+      "USDA": 320
+     },
+     "loan_type_share": {
+      "conventional": 0.7272,
+      "FHA": 0.0545,
+      "VA": 0.1943,
+      "USDA": 0.024
+     },
+     "income_thousands_usd": {
+      "n_reported": 13052,
+      "n_not_reported_NA": 260,
+      "median": 117.0,
+      "p25": 85.0,
+      "p75": 176.0,
+      "median_excluding_le_zero": 117.0
+     },
+     "applicant_age_counts": {
+      "<25": 411,
+      "25-34": 3262,
+      "35-44": 3610,
+      "45-54": 2663,
+      "55-64": 2021,
+      "65-74": 997,
+      ">74": 271,
+      "8888": 77
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0309,
+      "25-34": 0.245,
+      "35-44": 0.2712,
+      "45-54": 0.2,
+      "55-64": 0.1518,
+      "65-74": 0.0749,
+      ">74": 0.0204,
+      "8888": 0.0058
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0311,
+      "25-34": 0.2465,
+      "35-44": 0.2728,
+      "45-54": 0.2012,
+      "55-64": 0.1527,
+      "65-74": 0.0753,
+      ">74": 0.0205
+     },
+     "n_natural_person_age_reported": 13235,
+     "non_natural_person_share_age_8888": 0.0058,
+     "applicant_55_plus_share_natural_persons": 0.2485,
+     "applicant_under_35_share_natural_persons": 0.2775,
+     "jumbo_NC_share_all_loans": 0.127,
+     "jumbo_NC_count_all_loans": 1691,
+     "jumbo_NC_share_conventional": 0.1225,
+     "n_conventional": 9680,
+     "business_purpose_share": 0.0591,
+     "property_value_usd_bin_midpoint": {
+      "n": 13110,
+      "median": 585000.0
+     },
+     "combined_ltv_pct": {
+      "n": 12958,
+      "median": 80.0,
+      "share_ltv_le_60": 0.1211
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 9510,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 7648,
+       "second_home": 764,
+       "investment": 1098
+      },
+      "occupancy_share": {
+       "principal": 0.8042,
+       "second_home": 0.0803,
+       "investment": 0.1155
+      },
+      "non_owner_occupied_share": 0.1958,
+      "loan_type_counts": {
+       "conventional": 6447,
+       "FHA": 677,
+       "VA": 2099,
+       "USDA": 287
+      },
+      "loan_type_share": {
+       "conventional": 0.6779,
+       "FHA": 0.0712,
+       "VA": 0.2207,
+       "USDA": 0.0302
+      },
+      "income_thousands_usd": {
+       "n_reported": 9372,
+       "n_not_reported_NA": 138,
+       "median": 102.0,
+       "p25": 78.0,
+       "p75": 140.0,
+       "median_excluding_le_zero": 102.0
+      },
+      "applicant_age_counts": {
+       "<25": 391,
+       "25-34": 2718,
+       "35-44": 2476,
+       "45-54": 1740,
+       "55-64": 1349,
+       "65-74": 654,
+       ">74": 162,
+       "8888": 20
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0411,
+       "25-34": 0.2858,
+       "35-44": 0.2604,
+       "45-54": 0.183,
+       "55-64": 0.1419,
+       "65-74": 0.0688,
+       ">74": 0.017,
+       "8888": 0.0021
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0412,
+       "25-34": 0.2864,
+       "35-44": 0.2609,
+       "45-54": 0.1834,
+       "55-64": 0.1421,
+       "65-74": 0.0689,
+       ">74": 0.0171
+      },
+      "n_natural_person_age_reported": 9490,
+      "non_natural_person_share_age_8888": 0.0021,
+      "applicant_55_plus_share_natural_persons": 0.2281,
+      "applicant_under_35_share_natural_persons": 0.3276,
+      "jumbo_NC_share_all_loans": 0.0106,
+      "jumbo_NC_count_all_loans": 101,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 6447,
+      "business_purpose_share": 0.0543,
+      "property_value_usd_bin_midpoint": {
+       "n": 9510,
+       "median": 485000.0
+      },
+      "combined_ltv_pct": {
+       "n": 9384,
+       "median": 90.0,
+       "share_ltv_le_60": 0.0912
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 3106,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 2369,
+       "second_home": 333,
+       "investment": 404
+      },
+      "occupancy_share": {
+       "principal": 0.7627,
+       "second_home": 0.1072,
+       "investment": 0.1301
+      },
+      "non_owner_occupied_share": 0.2373,
+      "loan_type_counts": {
+       "conventional": 2599,
+       "FHA": 44,
+       "VA": 462,
+       "USDA": 1
+      },
+      "loan_type_share": {
+       "conventional": 0.8368,
+       "FHA": 0.0142,
+       "VA": 0.1487,
+       "USDA": 0.0003
+      },
+      "income_thousands_usd": {
+       "n_reported": 3037,
+       "n_not_reported_NA": 69,
+       "median": 172.0,
+       "p25": 128.0,
+       "p75": 245.0,
+       "median_excluding_le_zero": 172.0
+      },
+      "applicant_age_counts": {
+       "<25": 15,
+       "25-34": 472,
+       "35-44": 977,
+       "45-54": 742,
+       "55-64": 526,
+       "65-74": 264,
+       ">74": 84,
+       "8888": 26
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0048,
+       "25-34": 0.152,
+       "35-44": 0.3146,
+       "45-54": 0.2389,
+       "55-64": 0.1693,
+       "65-74": 0.085,
+       ">74": 0.027,
+       "8888": 0.0084
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0049,
+       "25-34": 0.1532,
+       "35-44": 0.3172,
+       "45-54": 0.2409,
+       "55-64": 0.1708,
+       "65-74": 0.0857,
+       ">74": 0.0273
+      },
+      "n_natural_person_age_reported": 3080,
+      "non_natural_person_share_age_8888": 0.0084,
+      "applicant_55_plus_share_natural_persons": 0.2838,
+      "applicant_under_35_share_natural_persons": 0.1581,
+      "jumbo_NC_share_all_loans": 0.3583,
+      "jumbo_NC_count_all_loans": 1113,
+      "jumbo_NC_share_conventional": 0.2813,
+      "n_conventional": 2599,
+      "business_purpose_share": 0.0683,
+      "property_value_usd_bin_midpoint": {
+       "n": 3106,
+       "median": 905000.0
+      },
+      "combined_ltv_pct": {
+       "n": 3080,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1805
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 417,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 239,
+       "second_home": 110,
+       "investment": 68
+      },
+      "occupancy_share": {
+       "principal": 0.5731,
+       "second_home": 0.2638,
+       "investment": 0.1631
+      },
+      "non_owner_occupied_share": 0.4269,
+      "loan_type_counts": {
+       "conventional": 396,
+       "FHA": 0,
+       "VA": 21,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9496,
+       "FHA": 0.0,
+       "VA": 0.0504,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 398,
+       "n_not_reported_NA": 19,
+       "median": 370.0,
+       "p25": 253.75,
+       "p75": 554.0,
+       "median_excluding_le_zero": 370.0
+      },
+      "applicant_age_counts": {
+       "<25": 2,
+       "25-34": 24,
+       "35-44": 100,
+       "45-54": 117,
+       "55-64": 97,
+       "65-74": 50,
+       ">74": 17,
+       "8888": 10
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0048,
+       "25-34": 0.0576,
+       "35-44": 0.2398,
+       "45-54": 0.2806,
+       "55-64": 0.2326,
+       "65-74": 0.1199,
+       ">74": 0.0408,
+       "8888": 0.024
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0049,
+       "25-34": 0.059,
+       "35-44": 0.2457,
+       "45-54": 0.2875,
+       "55-64": 0.2383,
+       "65-74": 0.1229,
+       ">74": 0.0418
+      },
+      "n_natural_person_age_reported": 407,
+      "non_natural_person_share_age_8888": 0.024,
+      "applicant_55_plus_share_natural_persons": 0.4029,
+      "applicant_under_35_share_natural_persons": 0.0639,
+      "jumbo_NC_share_all_loans": 0.8825,
+      "jumbo_NC_count_all_loans": 368,
+      "jumbo_NC_share_conventional": 0.8788,
+      "n_conventional": 396,
+      "business_purpose_share": 0.1055,
+      "property_value_usd_bin_midpoint": {
+       "n": 417,
+       "median": 1805000.0
+      },
+      "combined_ltv_pct": {
+       "n": 415,
+       "median": 70.0,
+       "share_ltv_le_60": 0.2819
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 73,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 21,
+       "second_home": 33,
+       "investment": 19
+      },
+      "occupancy_share": {
+       "principal": 0.2877,
+       "second_home": 0.4521,
+       "investment": 0.2603
+      },
+      "non_owner_occupied_share": 0.7123,
+      "loan_type_counts": {
+       "conventional": 72,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9863,
+       "FHA": 0.0,
+       "VA": 0.0137,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 57,
+       "n_not_reported_NA": 16,
+       "median": 869.0,
+       "p25": 597.0,
+       "p75": 1406.0,
+       "median_excluding_le_zero": 878.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 3,
+       "35-44": 7,
+       "45-54": 22,
+       "55-64": 11,
+       "65-74": 13,
+       ">74": 3,
+       "8888": 14
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0411,
+       "35-44": 0.0959,
+       "45-54": 0.3014,
+       "55-64": 0.1507,
+       "65-74": 0.1781,
+       ">74": 0.0411,
+       "8888": 0.1918
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0508,
+       "35-44": 0.1186,
+       "45-54": 0.3729,
+       "55-64": 0.1864,
+       "65-74": 0.2203,
+       ">74": 0.0508
+      },
+      "n_natural_person_age_reported": 59,
+      "non_natural_person_share_age_8888": 0.1918,
+      "applicant_55_plus_share_natural_persons": 0.4576,
+      "applicant_under_35_share_natural_persons": 0.0508,
+      "jumbo_NC_share_all_loans": 0.9726,
+      "jumbo_NC_count_all_loans": 71,
+      "jumbo_NC_share_conventional": 0.9722,
+      "n_conventional": 72,
+      "business_purpose_share": 0.2055,
+      "property_value_usd_bin_midpoint": {
+       "n": 73,
+       "median": 3775000.0
+      },
+      "combined_ltv_pct": {
+       "n": 72,
+       "median": 60.0,
+       "share_ltv_le_60": 0.5139
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 4,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 1,
+       "second_home": 3,
+       "investment": 0
+      },
+      "occupancy_share": {
+       "principal": 0.25,
+       "second_home": 0.75,
+       "investment": 0.0
+      },
+      "non_owner_occupied_share": 0.75,
+      "loan_type_counts": {
+       "conventional": 4,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 4,
+       "n_not_reported_NA": 0,
+       "median": 2898.0,
+       "p25": 1169.25,
+       "p75": 4364.75,
+       "median_excluding_le_zero": 2898.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 1,
+       "55-64": 2,
+       "65-74": 1,
+       ">74": 0,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.25,
+       "55-64": 0.5,
+       "65-74": 0.25,
+       ">74": 0.0,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.25,
+       "55-64": 0.5,
+       "65-74": 0.25,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 4,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.75,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.75,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 0.75,
+      "n_conventional": 4,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 4,
+       "median": 13940000.0
+      },
+      "combined_ltv_pct": {
+       "n": 4,
+       "median": 62.5,
+       "share_ltv_le_60": 0.5
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 202,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 159,
+       "second_home": 6,
+       "investment": 37
+      },
+      "occupancy_share": {
+       "principal": 0.7871,
+       "second_home": 0.0297,
+       "investment": 0.1832
+      },
+      "non_owner_occupied_share": 0.2129,
+      "loan_type_counts": {
+       "conventional": 162,
+       "FHA": 4,
+       "VA": 4,
+       "USDA": 32
+      },
+      "loan_type_share": {
+       "conventional": 0.802,
+       "FHA": 0.0198,
+       "VA": 0.0198,
+       "USDA": 0.1584
+      },
+      "income_thousands_usd": {
+       "n_reported": 184,
+       "n_not_reported_NA": 18,
+       "median": 111.5,
+       "p25": 72.75,
+       "p75": 179.5,
+       "median_excluding_le_zero": 111.5
+      },
+      "applicant_age_counts": {
+       "<25": 3,
+       "25-34": 45,
+       "35-44": 50,
+       "45-54": 41,
+       "55-64": 36,
+       "65-74": 15,
+       ">74": 5,
+       "8888": 7
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0149,
+       "25-34": 0.2228,
+       "35-44": 0.2475,
+       "45-54": 0.203,
+       "55-64": 0.1782,
+       "65-74": 0.0743,
+       ">74": 0.0248,
+       "8888": 0.0347
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0154,
+       "25-34": 0.2308,
+       "35-44": 0.2564,
+       "45-54": 0.2103,
+       "55-64": 0.1846,
+       "65-74": 0.0769,
+       ">74": 0.0256
+      },
+      "n_natural_person_age_reported": 195,
+      "non_natural_person_share_age_8888": 0.0347,
+      "applicant_55_plus_share_natural_persons": 0.2872,
+      "applicant_under_35_share_natural_persons": 0.2462,
+      "jumbo_NC_share_all_loans": 0.1733,
+      "jumbo_NC_count_all_loans": 35,
+      "jumbo_NC_share_conventional": 0.2099,
+      "n_conventional": 162,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 3,
+       "median": 80.0,
+       "share_ltv_le_60": 0.3333
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 9510,
+      "share": 0.7254
+     },
+     "mid": {
+      "n": 3106,
+      "share": 0.2369
+     },
+     "upper": {
+      "n": 417,
+      "share": 0.0318
+     },
+     "luxury": {
+      "n": 73,
+      "share": 0.0056
+     },
+     "ultra": {
+      "n": 4,
+      "share": 0.0003
+     }
+    },
+    "n_property_value_unknown": 202
+   },
+   "15001": {
+    "name": "Hawaii County",
+    "all_tiers": {
+     "n_loans": 2202,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 1538,
+      "second_home": 433,
+      "investment": 231
+     },
+     "occupancy_share": {
+      "principal": 0.6985,
+      "second_home": 0.1966,
+      "investment": 0.1049
+     },
+     "non_owner_occupied_share": 0.3015,
+     "loan_type_counts": {
+      "conventional": 1701,
+      "FHA": 122,
+      "VA": 242,
+      "USDA": 137
+     },
+     "loan_type_share": {
+      "conventional": 0.7725,
+      "FHA": 0.0554,
+      "VA": 0.1099,
+      "USDA": 0.0622
+     },
+     "income_thousands_usd": {
+      "n_reported": 2178,
+      "n_not_reported_NA": 24,
+      "median": 101.0,
+      "p25": 70.0,
+      "p75": 163.0,
+      "median_excluding_le_zero": 101.0
+     },
+     "applicant_age_counts": {
+      "<25": 38,
+      "25-34": 351,
+      "35-44": 502,
+      "45-54": 468,
+      "55-64": 500,
+      "65-74": 286,
+      ">74": 52,
+      "8888": 5
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0173,
+      "25-34": 0.1594,
+      "35-44": 0.228,
+      "45-54": 0.2125,
+      "55-64": 0.2271,
+      "65-74": 0.1299,
+      ">74": 0.0236,
+      "8888": 0.0023
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0173,
+      "25-34": 0.1598,
+      "35-44": 0.2285,
+      "45-54": 0.213,
+      "55-64": 0.2276,
+      "65-74": 0.1302,
+      ">74": 0.0237
+     },
+     "n_natural_person_age_reported": 2197,
+     "non_natural_person_share_age_8888": 0.0023,
+     "applicant_55_plus_share_natural_persons": 0.3814,
+     "applicant_under_35_share_natural_persons": 0.1771,
+     "jumbo_NC_share_all_loans": 0.0563,
+     "jumbo_NC_count_all_loans": 124,
+     "jumbo_NC_share_conventional": 0.067,
+     "n_conventional": 1701,
+     "business_purpose_share": 0.0459,
+     "property_value_usd_bin_midpoint": {
+      "n": 2150,
+      "median": 405000.0
+     },
+     "combined_ltv_pct": {
+      "n": 2125,
+      "median": 80.0,
+      "share_ltv_le_60": 0.1256
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 1865,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 1365,
+       "second_home": 321,
+       "investment": 179
+      },
+      "occupancy_share": {
+       "principal": 0.7319,
+       "second_home": 0.1721,
+       "investment": 0.096
+      },
+      "non_owner_occupied_share": 0.2681,
+      "loan_type_counts": {
+       "conventional": 1406,
+       "FHA": 121,
+       "VA": 230,
+       "USDA": 108
+      },
+      "loan_type_share": {
+       "conventional": 0.7539,
+       "FHA": 0.0649,
+       "VA": 0.1233,
+       "USDA": 0.0579
+      },
+      "income_thousands_usd": {
+       "n_reported": 1846,
+       "n_not_reported_NA": 19,
+       "median": 94.0,
+       "p25": 66.0,
+       "p75": 135.75,
+       "median_excluding_le_zero": 95.0
+      },
+      "applicant_age_counts": {
+       "<25": 36,
+       "25-34": 327,
+       "35-44": 436,
+       "45-54": 378,
+       "55-64": 406,
+       "65-74": 237,
+       ">74": 43,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0193,
+       "25-34": 0.1753,
+       "35-44": 0.2338,
+       "45-54": 0.2027,
+       "55-64": 0.2177,
+       "65-74": 0.1271,
+       ">74": 0.0231,
+       "8888": 0.0011
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0193,
+       "25-34": 0.1755,
+       "35-44": 0.234,
+       "45-54": 0.2029,
+       "55-64": 0.2179,
+       "65-74": 0.1272,
+       ">74": 0.0231
+      },
+      "n_natural_person_age_reported": 1863,
+      "non_natural_person_share_age_8888": 0.0011,
+      "applicant_55_plus_share_natural_persons": 0.3682,
+      "applicant_under_35_share_natural_persons": 0.1948,
+      "jumbo_NC_share_all_loans": 0.0016,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 1406,
+      "business_purpose_share": 0.044,
+      "property_value_usd_bin_midpoint": {
+       "n": 1865,
+       "median": 365000.0
+      },
+      "combined_ltv_pct": {
+       "n": 1842,
+       "median": 87.69,
+       "share_ltv_le_60": 0.1042
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 238,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 116,
+       "second_home": 82,
+       "investment": 40
+      },
+      "occupancy_share": {
+       "principal": 0.4874,
+       "second_home": 0.3445,
+       "investment": 0.1681
+      },
+      "non_owner_occupied_share": 0.5126,
+      "loan_type_counts": {
+       "conventional": 227,
+       "FHA": 1,
+       "VA": 10,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9538,
+       "FHA": 0.0042,
+       "VA": 0.042,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 236,
+       "n_not_reported_NA": 2,
+       "median": 228.5,
+       "p25": 158.75,
+       "p75": 361.25,
+       "median_excluding_le_zero": 232.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 12,
+       "35-44": 44,
+       "45-54": 65,
+       "55-64": 77,
+       "65-74": 34,
+       ">74": 6,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0504,
+       "35-44": 0.1849,
+       "45-54": 0.2731,
+       "55-64": 0.3235,
+       "65-74": 0.1429,
+       ">74": 0.0252,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0504,
+       "35-44": 0.1849,
+       "45-54": 0.2731,
+       "55-64": 0.3235,
+       "65-74": 0.1429,
+       ">74": 0.0252
+      },
+      "n_natural_person_age_reported": 238,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.4916,
+      "applicant_under_35_share_natural_persons": 0.0504,
+      "jumbo_NC_share_all_loans": 0.3193,
+      "jumbo_NC_count_all_loans": 76,
+      "jumbo_NC_share_conventional": 0.3084,
+      "n_conventional": 227,
+      "business_purpose_share": 0.0672,
+      "property_value_usd_bin_midpoint": {
+       "n": 238,
+       "median": 925000.0
+      },
+      "combined_ltv_pct": {
+       "n": 236,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2627
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 35,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 8,
+       "second_home": 23,
+       "investment": 4
+      },
+      "occupancy_share": {
+       "principal": 0.2286,
+       "second_home": 0.6571,
+       "investment": 0.1143
+      },
+      "non_owner_occupied_share": 0.7714,
+      "loan_type_counts": {
+       "conventional": 34,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9714,
+       "FHA": 0.0,
+       "VA": 0.0286,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 35,
+       "n_not_reported_NA": 0,
+       "median": 594.0,
+       "p25": 416.0,
+       "p75": 861.5,
+       "median_excluding_le_zero": 594.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 1,
+       "35-44": 4,
+       "45-54": 12,
+       "55-64": 9,
+       "65-74": 8,
+       ">74": 1,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0286,
+       "35-44": 0.1143,
+       "45-54": 0.3429,
+       "55-64": 0.2571,
+       "65-74": 0.2286,
+       ">74": 0.0286,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0286,
+       "35-44": 0.1143,
+       "45-54": 0.3429,
+       "55-64": 0.2571,
+       "65-74": 0.2286,
+       ">74": 0.0286
+      },
+      "n_natural_person_age_reported": 35,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.5143,
+      "applicant_under_35_share_natural_persons": 0.0286,
+      "jumbo_NC_share_all_loans": 0.9429,
+      "jumbo_NC_count_all_loans": 33,
+      "jumbo_NC_share_conventional": 0.9412,
+      "n_conventional": 34,
+      "business_purpose_share": 0.0286,
+      "property_value_usd_bin_midpoint": {
+       "n": 35,
+       "median": 1805000.0
+      },
+      "combined_ltv_pct": {
+       "n": 35,
+       "median": 70.0,
+       "share_ltv_le_60": 0.2286
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 10,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 2,
+       "second_home": 5,
+       "investment": 3
+      },
+      "occupancy_share": {
+       "principal": 0.2,
+       "second_home": 0.5,
+       "investment": 0.3
+      },
+      "non_owner_occupied_share": 0.8,
+      "loan_type_counts": {
+       "conventional": 10,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 7,
+       "n_not_reported_NA": 3,
+       "median": 887.0,
+       "p25": 851.0,
+       "p75": 1150.5,
+       "median_excluding_le_zero": 887.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 1,
+       "45-54": 3,
+       "55-64": 1,
+       "65-74": 1,
+       ">74": 1,
+       "8888": 3
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1,
+       "45-54": 0.3,
+       "55-64": 0.1,
+       "65-74": 0.1,
+       ">74": 0.1,
+       "8888": 0.3
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1429,
+       "45-54": 0.4286,
+       "55-64": 0.1429,
+       "65-74": 0.1429,
+       ">74": 0.1429
+      },
+      "n_natural_person_age_reported": 7,
+      "non_natural_person_share_age_8888": 0.3,
+      "applicant_55_plus_share_natural_persons": 0.4286,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 10,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 10,
+      "business_purpose_share": 0.2,
+      "property_value_usd_bin_midpoint": {
+       "n": 10,
+       "median": 4550000.0
+      },
+      "combined_ltv_pct": {
+       "n": 10,
+       "median": 65.0,
+       "share_ltv_le_60": 0.4
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 2,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 0,
+       "second_home": 2,
+       "investment": 0
+      },
+      "occupancy_share": {
+       "principal": 0.0,
+       "second_home": 1.0,
+       "investment": 0.0
+      },
+      "non_owner_occupied_share": 1.0,
+      "loan_type_counts": {
+       "conventional": 2,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 2,
+       "n_not_reported_NA": 0,
+       "median": 2236.5,
+       "p25": 1206.75,
+       "p75": 3266.25,
+       "median_excluding_le_zero": 2236.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 0,
+       "55-64": 1,
+       "65-74": 1,
+       ">74": 0,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.0,
+       "55-64": 0.5,
+       "65-74": 0.5,
+       ">74": 0.0,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.0,
+       "55-64": 0.5,
+       "65-74": 0.5,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 2,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 1.0,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.5,
+      "jumbo_NC_count_all_loans": 1,
+      "jumbo_NC_share_conventional": 0.5,
+      "n_conventional": 2,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 2,
+       "median": 25890000.0
+      },
+      "combined_ltv_pct": {
+       "n": 2,
+       "median": 54.41,
+       "share_ltv_le_60": 0.5
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 52,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 47,
+       "second_home": 0,
+       "investment": 5
+      },
+      "occupancy_share": {
+       "principal": 0.9038,
+       "second_home": 0.0,
+       "investment": 0.0962
+      },
+      "non_owner_occupied_share": 0.0962,
+      "loan_type_counts": {
+       "conventional": 22,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 29
+      },
+      "loan_type_share": {
+       "conventional": 0.4231,
+       "FHA": 0.0,
+       "VA": 0.0192,
+       "USDA": 0.5577
+      },
+      "income_thousands_usd": {
+       "n_reported": 52,
+       "n_not_reported_NA": 0,
+       "median": 78.5,
+       "p25": 63.0,
+       "p75": 97.25,
+       "median_excluding_le_zero": 78.5
+      },
+      "applicant_age_counts": {
+       "<25": 2,
+       "25-34": 11,
+       "35-44": 17,
+       "45-54": 10,
+       "55-64": 6,
+       "65-74": 5,
+       ">74": 1,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0385,
+       "25-34": 0.2115,
+       "35-44": 0.3269,
+       "45-54": 0.1923,
+       "55-64": 0.1154,
+       "65-74": 0.0962,
+       ">74": 0.0192,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0385,
+       "25-34": 0.2115,
+       "35-44": 0.3269,
+       "45-54": 0.1923,
+       "55-64": 0.1154,
+       "65-74": 0.0962,
+       ">74": 0.0192
+      },
+      "n_natural_person_age_reported": 52,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.2308,
+      "applicant_under_35_share_natural_persons": 0.25,
+      "jumbo_NC_share_all_loans": 0.0192,
+      "jumbo_NC_count_all_loans": 1,
+      "jumbo_NC_share_conventional": 0.0455,
+      "n_conventional": 22,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 0,
+       "median": null,
+       "share_ltv_le_60": null
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 1865,
+      "share": 0.8674
+     },
+     "mid": {
+      "n": 238,
+      "share": 0.1107
+     },
+     "upper": {
+      "n": 35,
+      "share": 0.0163
+     },
+     "luxury": {
+      "n": 10,
+      "share": 0.0047
+     },
+     "ultra": {
+      "n": 2,
+      "share": 0.0009
+     }
+    },
+    "n_property_value_unknown": 52
+   },
+   "15003": {
+    "name": "Honolulu County",
+    "all_tiers": {
+     "n_loans": 8374,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 7152,
+      "second_home": 339,
+      "investment": 883
+     },
+     "occupancy_share": {
+      "principal": 0.8541,
+      "second_home": 0.0405,
+      "investment": 0.1054
+     },
+     "non_owner_occupied_share": 0.1459,
+     "loan_type_counts": {
+      "conventional": 5635,
+      "FHA": 371,
+      "VA": 2205,
+      "USDA": 163
+     },
+     "loan_type_share": {
+      "conventional": 0.6729,
+      "FHA": 0.0443,
+      "VA": 0.2633,
+      "USDA": 0.0195
+     },
+     "income_thousands_usd": {
+      "n_reported": 8198,
+      "n_not_reported_NA": 176,
+      "median": 117.0,
+      "p25": 87.0,
+      "p75": 167.0,
+      "median_excluding_le_zero": 117.0
+     },
+     "applicant_age_counts": {
+      "<25": 342,
+      "25-34": 2505,
+      "35-44": 2371,
+      "45-54": 1557,
+      "55-64": 943,
+      "65-74": 451,
+      ">74": 155,
+      "8888": 50
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0408,
+      "25-34": 0.2991,
+      "35-44": 0.2831,
+      "45-54": 0.1859,
+      "55-64": 0.1126,
+      "65-74": 0.0539,
+      ">74": 0.0185,
+      "8888": 0.006
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0411,
+      "25-34": 0.3009,
+      "35-44": 0.2848,
+      "45-54": 0.187,
+      "55-64": 0.1133,
+      "65-74": 0.0542,
+      ">74": 0.0186
+     },
+     "n_natural_person_age_reported": 8324,
+     "non_natural_person_share_age_8888": 0.006,
+     "applicant_55_plus_share_natural_persons": 0.1861,
+     "applicant_under_35_share_natural_persons": 0.342,
+     "jumbo_NC_share_all_loans": 0.146,
+     "jumbo_NC_count_all_loans": 1223,
+     "jumbo_NC_share_conventional": 0.1329,
+     "n_conventional": 5635,
+     "business_purpose_share": 0.0582,
+     "property_value_usd_bin_midpoint": {
+      "n": 8245,
+      "median": 605000.0
+     },
+     "combined_ltv_pct": {
+      "n": 8139,
+      "median": 85.6,
+      "share_ltv_le_60": 0.1137
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 5756,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 4984,
+       "second_home": 183,
+       "investment": 589
+      },
+      "occupancy_share": {
+       "principal": 0.8659,
+       "second_home": 0.0318,
+       "investment": 0.1023
+      },
+      "non_owner_occupied_share": 0.1341,
+      "loan_type_counts": {
+       "conventional": 3505,
+       "FHA": 338,
+       "VA": 1753,
+       "USDA": 160
+      },
+      "loan_type_share": {
+       "conventional": 0.6089,
+       "FHA": 0.0587,
+       "VA": 0.3046,
+       "USDA": 0.0278
+      },
+      "income_thousands_usd": {
+       "n_reported": 5664,
+       "n_not_reported_NA": 92,
+       "median": 102.0,
+       "p25": 80.0,
+       "p75": 133.0,
+       "median_excluding_le_zero": 102.0
+      },
+      "applicant_age_counts": {
+       "<25": 324,
+       "25-34": 2033,
+       "35-44": 1500,
+       "45-54": 958,
+       "55-64": 574,
+       "65-74": 268,
+       ">74": 87,
+       "8888": 12
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0563,
+       "25-34": 0.3532,
+       "35-44": 0.2606,
+       "45-54": 0.1664,
+       "55-64": 0.0997,
+       "65-74": 0.0466,
+       ">74": 0.0151,
+       "8888": 0.0021
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0564,
+       "25-34": 0.3539,
+       "35-44": 0.2611,
+       "45-54": 0.1668,
+       "55-64": 0.0999,
+       "65-74": 0.0467,
+       ">74": 0.0151
+      },
+      "n_natural_person_age_reported": 5744,
+      "non_natural_person_share_age_8888": 0.0021,
+      "applicant_55_plus_share_natural_persons": 0.1617,
+      "applicant_under_35_share_natural_persons": 0.4103,
+      "jumbo_NC_share_all_loans": 0.0165,
+      "jumbo_NC_count_all_loans": 95,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 3505,
+      "business_purpose_share": 0.0537,
+      "property_value_usd_bin_midpoint": {
+       "n": 5756,
+       "median": 505000.0
+      },
+      "combined_ltv_pct": {
+       "n": 5667,
+       "median": 90.0,
+       "share_ltv_le_60": 0.0843
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 2203,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 1867,
+       "second_home": 114,
+       "investment": 222
+      },
+      "occupancy_share": {
+       "principal": 0.8475,
+       "second_home": 0.0517,
+       "investment": 0.1008
+      },
+      "non_owner_occupied_share": 0.1525,
+      "loan_type_counts": {
+       "conventional": 1744,
+       "FHA": 29,
+       "VA": 429,
+       "USDA": 1
+      },
+      "loan_type_share": {
+       "conventional": 0.7916,
+       "FHA": 0.0132,
+       "VA": 0.1947,
+       "USDA": 0.0005
+      },
+      "income_thousands_usd": {
+       "n_reported": 2154,
+       "n_not_reported_NA": 49,
+       "median": 162.0,
+       "p25": 125.0,
+       "p75": 218.0,
+       "median_excluding_le_zero": 162.0
+      },
+      "applicant_age_counts": {
+       "<25": 15,
+       "25-34": 416,
+       "35-44": 768,
+       "45-54": 499,
+       "55-64": 286,
+       "65-74": 144,
+       ">74": 55,
+       "8888": 20
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0068,
+       "25-34": 0.1888,
+       "35-44": 0.3486,
+       "45-54": 0.2265,
+       "55-64": 0.1298,
+       "65-74": 0.0654,
+       ">74": 0.025,
+       "8888": 0.0091
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0069,
+       "25-34": 0.1906,
+       "35-44": 0.3518,
+       "45-54": 0.2286,
+       "55-64": 0.131,
+       "65-74": 0.066,
+       ">74": 0.0252
+      },
+      "n_natural_person_age_reported": 2183,
+      "non_natural_person_share_age_8888": 0.0091,
+      "applicant_55_plus_share_natural_persons": 0.2222,
+      "applicant_under_35_share_natural_persons": 0.1974,
+      "jumbo_NC_share_all_loans": 0.3849,
+      "jumbo_NC_count_all_loans": 848,
+      "jumbo_NC_share_conventional": 0.2804,
+      "n_conventional": 1744,
+      "business_purpose_share": 0.0635,
+      "property_value_usd_bin_midpoint": {
+       "n": 2203,
+       "median": 905000.0
+      },
+      "combined_ltv_pct": {
+       "n": 2184,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1625
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 262,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 187,
+       "second_home": 33,
+       "investment": 42
+      },
+      "occupancy_share": {
+       "principal": 0.7137,
+       "second_home": 0.126,
+       "investment": 0.1603
+      },
+      "non_owner_occupied_share": 0.2863,
+      "loan_type_counts": {
+       "conventional": 243,
+       "FHA": 0,
+       "VA": 19,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9275,
+       "FHA": 0.0,
+       "VA": 0.0725,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 248,
+       "n_not_reported_NA": 14,
+       "median": 338.5,
+       "p25": 231.75,
+       "p75": 484.25,
+       "median_excluding_le_zero": 339.0
+      },
+      "applicant_age_counts": {
+       "<25": 2,
+       "25-34": 23,
+       "35-44": 71,
+       "45-54": 68,
+       "55-64": 57,
+       "65-74": 24,
+       ">74": 9,
+       "8888": 8
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0076,
+       "25-34": 0.0878,
+       "35-44": 0.271,
+       "45-54": 0.2595,
+       "55-64": 0.2176,
+       "65-74": 0.0916,
+       ">74": 0.0344,
+       "8888": 0.0305
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0079,
+       "25-34": 0.0906,
+       "35-44": 0.2795,
+       "45-54": 0.2677,
+       "55-64": 0.2244,
+       "65-74": 0.0945,
+       ">74": 0.0354
+      },
+      "n_natural_person_age_reported": 254,
+      "non_natural_person_share_age_8888": 0.0305,
+      "applicant_55_plus_share_natural_persons": 0.3543,
+      "applicant_under_35_share_natural_persons": 0.0984,
+      "jumbo_NC_share_all_loans": 0.8702,
+      "jumbo_NC_count_all_loans": 228,
+      "jumbo_NC_share_conventional": 0.8642,
+      "n_conventional": 243,
+      "business_purpose_share": 0.126,
+      "property_value_usd_bin_midpoint": {
+       "n": 262,
+       "median": 1770000.0
+      },
+      "combined_ltv_pct": {
+       "n": 261,
+       "median": 70.0,
+       "share_ltv_le_60": 0.2835
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 24,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 14,
+       "second_home": 5,
+       "investment": 5
+      },
+      "occupancy_share": {
+       "principal": 0.5833,
+       "second_home": 0.2083,
+       "investment": 0.2083
+      },
+      "non_owner_occupied_share": 0.4167,
+      "loan_type_counts": {
+       "conventional": 23,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9583,
+       "FHA": 0.0,
+       "VA": 0.0417,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 18,
+       "n_not_reported_NA": 6,
+       "median": 746.0,
+       "p25": 477.75,
+       "p75": 1270.75,
+       "median_excluding_le_zero": 746.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 3,
+       "35-44": 1,
+       "45-54": 7,
+       "55-64": 1,
+       "65-74": 7,
+       ">74": 1,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.125,
+       "35-44": 0.0417,
+       "45-54": 0.2917,
+       "55-64": 0.0417,
+       "65-74": 0.2917,
+       ">74": 0.0417,
+       "8888": 0.1667
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.15,
+       "35-44": 0.05,
+       "45-54": 0.35,
+       "55-64": 0.05,
+       "65-74": 0.35,
+       ">74": 0.05
+      },
+      "n_natural_person_age_reported": 20,
+      "non_natural_person_share_age_8888": 0.1667,
+      "applicant_55_plus_share_natural_persons": 0.45,
+      "applicant_under_35_share_natural_persons": 0.15,
+      "jumbo_NC_share_all_loans": 0.9167,
+      "jumbo_NC_count_all_loans": 22,
+      "jumbo_NC_share_conventional": 0.913,
+      "n_conventional": 23,
+      "business_purpose_share": 0.2083,
+      "property_value_usd_bin_midpoint": {
+       "n": 24,
+       "median": 3775000.0
+      },
+      "combined_ltv_pct": {
+       "n": 24,
+       "median": 51.32,
+       "share_ltv_le_60": 0.7083
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 0,
+      "small_cell_flag_n_lt_20": true,
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 129,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 100,
+       "second_home": 4,
+       "investment": 25
+      },
+      "occupancy_share": {
+       "principal": 0.7752,
+       "second_home": 0.031,
+       "investment": 0.1938
+      },
+      "non_owner_occupied_share": 0.2248,
+      "loan_type_counts": {
+       "conventional": 120,
+       "FHA": 4,
+       "VA": 3,
+       "USDA": 2
+      },
+      "loan_type_share": {
+       "conventional": 0.9302,
+       "FHA": 0.031,
+       "VA": 0.0233,
+       "USDA": 0.0155
+      },
+      "income_thousands_usd": {
+       "n_reported": 114,
+       "n_not_reported_NA": 15,
+       "median": 131.0,
+       "p25": 81.25,
+       "p75": 212.0,
+       "median_excluding_le_zero": 131.0
+      },
+      "applicant_age_counts": {
+       "<25": 1,
+       "25-34": 30,
+       "35-44": 31,
+       "45-54": 25,
+       "55-64": 25,
+       "65-74": 8,
+       ">74": 3,
+       "8888": 6
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0078,
+       "25-34": 0.2326,
+       "35-44": 0.2403,
+       "45-54": 0.1938,
+       "55-64": 0.1938,
+       "65-74": 0.062,
+       ">74": 0.0233,
+       "8888": 0.0465
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0081,
+       "25-34": 0.2439,
+       "35-44": 0.252,
+       "45-54": 0.2033,
+       "55-64": 0.2033,
+       "65-74": 0.065,
+       ">74": 0.0244
+      },
+      "n_natural_person_age_reported": 123,
+      "non_natural_person_share_age_8888": 0.0465,
+      "applicant_55_plus_share_natural_persons": 0.2927,
+      "applicant_under_35_share_natural_persons": 0.252,
+      "jumbo_NC_share_all_loans": 0.2326,
+      "jumbo_NC_count_all_loans": 30,
+      "jumbo_NC_share_conventional": 0.2417,
+      "n_conventional": 120,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 3,
+       "median": 80.0,
+       "share_ltv_le_60": 0.3333
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 5756,
+      "share": 0.6981
+     },
+     "mid": {
+      "n": 2203,
+      "share": 0.2672
+     },
+     "upper": {
+      "n": 262,
+      "share": 0.0318
+     },
+     "luxury": {
+      "n": 24,
+      "share": 0.0029
+     },
+     "ultra": {
+      "n": 0,
+      "share": 0.0
+     }
+    },
+    "n_property_value_unknown": 129
+   },
+   "15007": {
+    "name": "Kauai County",
+    "all_tiers": {
+     "n_loans": 763,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 469,
+      "second_home": 150,
+      "investment": 144
+     },
+     "occupancy_share": {
+      "principal": 0.6147,
+      "second_home": 0.1966,
+      "investment": 0.1887
+     },
+     "non_owner_occupied_share": 0.3853,
+     "loan_type_counts": {
+      "conventional": 634,
+      "FHA": 71,
+      "VA": 50,
+      "USDA": 8
+     },
+     "loan_type_share": {
+      "conventional": 0.8309,
+      "FHA": 0.0931,
+      "VA": 0.0655,
+      "USDA": 0.0105
+     },
+     "income_thousands_usd": {
+      "n_reported": 748,
+      "n_not_reported_NA": 15,
+      "median": 143.0,
+      "p25": 96.0,
+      "p75": 240.25,
+      "median_excluding_le_zero": 143.0
+     },
+     "applicant_age_counts": {
+      "<25": 10,
+      "25-34": 120,
+      "35-44": 181,
+      "45-54": 187,
+      "55-64": 161,
+      "65-74": 80,
+      ">74": 16,
+      "8888": 8
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0131,
+      "25-34": 0.1573,
+      "35-44": 0.2372,
+      "45-54": 0.2451,
+      "55-64": 0.211,
+      "65-74": 0.1048,
+      ">74": 0.021,
+      "8888": 0.0105
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0132,
+      "25-34": 0.1589,
+      "35-44": 0.2397,
+      "45-54": 0.2477,
+      "55-64": 0.2132,
+      "65-74": 0.106,
+      ">74": 0.0212
+     },
+     "n_natural_person_age_reported": 755,
+     "non_natural_person_share_age_8888": 0.0105,
+     "applicant_55_plus_share_natural_persons": 0.3404,
+     "applicant_under_35_share_natural_persons": 0.1722,
+     "jumbo_NC_share_all_loans": 0.1298,
+     "jumbo_NC_count_all_loans": 99,
+     "jumbo_NC_share_conventional": 0.1498,
+     "n_conventional": 634,
+     "business_purpose_share": 0.0891,
+     "property_value_usd_bin_midpoint": {
+      "n": 755,
+      "median": 625000.0
+     },
+     "combined_ltv_pct": {
+      "n": 750,
+      "median": 80.0,
+      "share_ltv_le_60": 0.132
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 517,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 356,
+       "second_home": 80,
+       "investment": 81
+      },
+      "occupancy_share": {
+       "principal": 0.6886,
+       "second_home": 0.1547,
+       "investment": 0.1567
+      },
+      "non_owner_occupied_share": 0.3114,
+      "loan_type_counts": {
+       "conventional": 398,
+       "FHA": 68,
+       "VA": 43,
+       "USDA": 8
+      },
+      "loan_type_share": {
+       "conventional": 0.7698,
+       "FHA": 0.1315,
+       "VA": 0.0832,
+       "USDA": 0.0155
+      },
+      "income_thousands_usd": {
+       "n_reported": 510,
+       "n_not_reported_NA": 7,
+       "median": 117.0,
+       "p25": 88.0,
+       "p75": 174.75,
+       "median_excluding_le_zero": 117.0
+      },
+      "applicant_age_counts": {
+       "<25": 10,
+       "25-34": 106,
+       "35-44": 130,
+       "45-54": 118,
+       "55-64": 96,
+       "65-74": 46,
+       ">74": 9,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0193,
+       "25-34": 0.205,
+       "35-44": 0.2515,
+       "45-54": 0.2282,
+       "55-64": 0.1857,
+       "65-74": 0.089,
+       ">74": 0.0174,
+       "8888": 0.0039
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0194,
+       "25-34": 0.2058,
+       "35-44": 0.2524,
+       "45-54": 0.2291,
+       "55-64": 0.1864,
+       "65-74": 0.0893,
+       ">74": 0.0175
+      },
+      "n_natural_person_age_reported": 515,
+      "non_natural_person_share_age_8888": 0.0039,
+      "applicant_55_plus_share_natural_persons": 0.2932,
+      "applicant_under_35_share_natural_persons": 0.2252,
+      "jumbo_NC_share_all_loans": 0.0,
+      "jumbo_NC_count_all_loans": 0,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 398,
+      "business_purpose_share": 0.0832,
+      "property_value_usd_bin_midpoint": {
+       "n": 517,
+       "median": 555000.0
+      },
+      "combined_ltv_pct": {
+       "n": 514,
+       "median": 81.2,
+       "share_ltv_le_60": 0.0837
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 192,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 97,
+       "second_home": 47,
+       "investment": 48
+      },
+      "occupancy_share": {
+       "principal": 0.5052,
+       "second_home": 0.2448,
+       "investment": 0.25
+      },
+      "non_owner_occupied_share": 0.4948,
+      "loan_type_counts": {
+       "conventional": 182,
+       "FHA": 3,
+       "VA": 7,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9479,
+       "FHA": 0.0156,
+       "VA": 0.0365,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 188,
+       "n_not_reported_NA": 4,
+       "median": 224.5,
+       "p25": 148.75,
+       "p75": 337.25,
+       "median_excluding_le_zero": 224.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 12,
+       "35-44": 41,
+       "45-54": 51,
+       "55-64": 56,
+       "65-74": 26,
+       ">74": 4,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0625,
+       "35-44": 0.2135,
+       "45-54": 0.2656,
+       "55-64": 0.2917,
+       "65-74": 0.1354,
+       ">74": 0.0208,
+       "8888": 0.0104
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0632,
+       "35-44": 0.2158,
+       "45-54": 0.2684,
+       "55-64": 0.2947,
+       "65-74": 0.1368,
+       ">74": 0.0211
+      },
+      "n_natural_person_age_reported": 190,
+      "non_natural_person_share_age_8888": 0.0104,
+      "applicant_55_plus_share_natural_persons": 0.4526,
+      "applicant_under_35_share_natural_persons": 0.0632,
+      "jumbo_NC_share_all_loans": 0.2812,
+      "jumbo_NC_count_all_loans": 54,
+      "jumbo_NC_share_conventional": 0.2747,
+      "n_conventional": 182,
+      "business_purpose_share": 0.099,
+      "property_value_usd_bin_midpoint": {
+       "n": 192,
+       "median": 925000.0
+      },
+      "combined_ltv_pct": {
+       "n": 191,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2042
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 32,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 12,
+       "second_home": 15,
+       "investment": 5
+      },
+      "occupancy_share": {
+       "principal": 0.375,
+       "second_home": 0.4688,
+       "investment": 0.1562
+      },
+      "non_owner_occupied_share": 0.625,
+      "loan_type_counts": {
+       "conventional": 32,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 30,
+       "n_not_reported_NA": 2,
+       "median": 430.0,
+       "p25": 289.75,
+       "p75": 613.5,
+       "median_excluding_le_zero": 430.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 7,
+       "45-54": 10,
+       "55-64": 7,
+       "65-74": 4,
+       ">74": 2,
+       "8888": 2
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.2188,
+       "45-54": 0.3125,
+       "55-64": 0.2188,
+       "65-74": 0.125,
+       ">74": 0.0625,
+       "8888": 0.0625
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.2333,
+       "45-54": 0.3333,
+       "55-64": 0.2333,
+       "65-74": 0.1333,
+       ">74": 0.0667
+      },
+      "n_natural_person_age_reported": 30,
+      "non_natural_person_share_age_8888": 0.0625,
+      "applicant_55_plus_share_natural_persons": 0.4333,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.9062,
+      "jumbo_NC_count_all_loans": 29,
+      "jumbo_NC_share_conventional": 0.9062,
+      "n_conventional": 32,
+      "business_purpose_share": 0.125,
+      "property_value_usd_bin_midpoint": {
+       "n": 32,
+       "median": 1775000.0
+      },
+      "combined_ltv_pct": {
+       "n": 32,
+       "median": 68.88,
+       "share_ltv_le_60": 0.3125
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 14,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 1,
+       "second_home": 7,
+       "investment": 6
+      },
+      "occupancy_share": {
+       "principal": 0.0714,
+       "second_home": 0.5,
+       "investment": 0.4286
+      },
+      "non_owner_occupied_share": 0.9286,
+      "loan_type_counts": {
+       "conventional": 14,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 13,
+       "n_not_reported_NA": 1,
+       "median": 858.0,
+       "p25": 622.0,
+       "p75": 1495.0,
+       "median_excluding_le_zero": 878.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 2,
+       "45-54": 7,
+       "55-64": 0,
+       "65-74": 3,
+       ">74": 1,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1429,
+       "45-54": 0.5,
+       "55-64": 0.0,
+       "65-74": 0.2143,
+       ">74": 0.0714,
+       "8888": 0.0714
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1538,
+       "45-54": 0.5385,
+       "55-64": 0.0,
+       "65-74": 0.2308,
+       ">74": 0.0769
+      },
+      "n_natural_person_age_reported": 13,
+      "non_natural_person_share_age_8888": 0.0714,
+      "applicant_55_plus_share_natural_persons": 0.3077,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 14,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 14,
+      "business_purpose_share": 0.1429,
+      "property_value_usd_bin_midpoint": {
+       "n": 14,
+       "median": 3850000.0
+      },
+      "combined_ltv_pct": {
+       "n": 13,
+       "median": 60.0,
+       "share_ltv_le_60": 0.5385
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 0,
+      "small_cell_flag_n_lt_20": true,
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 8,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 3,
+       "second_home": 1,
+       "investment": 4
+      },
+      "occupancy_share": {
+       "principal": 0.375,
+       "second_home": 0.125,
+       "investment": 0.5
+      },
+      "non_owner_occupied_share": 0.625,
+      "loan_type_counts": {
+       "conventional": 8,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 7,
+       "n_not_reported_NA": 1,
+       "median": 123.0,
+       "p25": 108.0,
+       "p75": 189.5,
+       "median_excluding_le_zero": 123.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 2,
+       "35-44": 1,
+       "45-54": 1,
+       "55-64": 2,
+       "65-74": 1,
+       ">74": 0,
+       "8888": 1
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.25,
+       "35-44": 0.125,
+       "45-54": 0.125,
+       "55-64": 0.25,
+       "65-74": 0.125,
+       ">74": 0.0,
+       "8888": 0.125
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.2857,
+       "35-44": 0.1429,
+       "45-54": 0.1429,
+       "55-64": 0.2857,
+       "65-74": 0.1429,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 7,
+      "non_natural_person_share_age_8888": 0.125,
+      "applicant_55_plus_share_natural_persons": 0.4286,
+      "applicant_under_35_share_natural_persons": 0.2857,
+      "jumbo_NC_share_all_loans": 0.25,
+      "jumbo_NC_count_all_loans": 2,
+      "jumbo_NC_share_conventional": 0.25,
+      "n_conventional": 8,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 0,
+       "median": null,
+       "share_ltv_le_60": null
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 517,
+      "share": 0.6848
+     },
+     "mid": {
+      "n": 192,
+      "share": 0.2543
+     },
+     "upper": {
+      "n": 32,
+      "share": 0.0424
+     },
+     "luxury": {
+      "n": 14,
+      "share": 0.0185
+     },
+     "ultra": {
+      "n": 0,
+      "share": 0.0
+     }
+    },
+    "n_property_value_unknown": 8
+   },
+   "15009": {
+    "name": "Maui County",
+    "all_tiers": {
+     "n_loans": 1973,
+     "small_cell_flag_n_lt_20": false,
+     "occupancy_counts": {
+      "principal": 1278,
+      "second_home": 327,
+      "investment": 368
+     },
+     "occupancy_share": {
+      "principal": 0.6477,
+      "second_home": 0.1657,
+      "investment": 0.1865
+     },
+     "non_owner_occupied_share": 0.3523,
+     "loan_type_counts": {
+      "conventional": 1710,
+      "FHA": 161,
+      "VA": 90,
+      "USDA": 12
+     },
+     "loan_type_share": {
+      "conventional": 0.8667,
+      "FHA": 0.0816,
+      "VA": 0.0456,
+      "USDA": 0.0061
+     },
+     "income_thousands_usd": {
+      "n_reported": 1928,
+      "n_not_reported_NA": 45,
+      "median": 131.0,
+      "p25": 92.0,
+      "p75": 222.0,
+      "median_excluding_le_zero": 131.0
+     },
+     "applicant_age_counts": {
+      "<25": 21,
+      "25-34": 286,
+      "35-44": 556,
+      "45-54": 451,
+      "55-64": 417,
+      "65-74": 180,
+      ">74": 48,
+      "8888": 14
+     },
+     "applicant_age_share_all_loans": {
+      "<25": 0.0106,
+      "25-34": 0.145,
+      "35-44": 0.2818,
+      "45-54": 0.2286,
+      "55-64": 0.2114,
+      "65-74": 0.0912,
+      ">74": 0.0243,
+      "8888": 0.0071
+     },
+     "applicant_age_share_natural_persons": {
+      "<25": 0.0107,
+      "25-34": 0.146,
+      "35-44": 0.2838,
+      "45-54": 0.2302,
+      "55-64": 0.2129,
+      "65-74": 0.0919,
+      ">74": 0.0245
+     },
+     "n_natural_person_age_reported": 1959,
+     "non_natural_person_share_age_8888": 0.0071,
+     "applicant_55_plus_share_natural_persons": 0.3292,
+     "applicant_under_35_share_natural_persons": 0.1567,
+     "jumbo_NC_share_all_loans": 0.1242,
+     "jumbo_NC_count_all_loans": 245,
+     "jumbo_NC_share_conventional": 0.1333,
+     "n_conventional": 1710,
+     "business_purpose_share": 0.0664,
+     "property_value_usd_bin_midpoint": {
+      "n": 1960,
+      "median": 635000.0
+     },
+     "combined_ltv_pct": {
+      "n": 1944,
+      "median": 80.0,
+      "share_ltv_le_60": 0.143
+     }
+    },
+    "tiers": {
+     "entry": {
+      "n_loans": 1372,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 943,
+       "second_home": 180,
+       "investment": 249
+      },
+      "occupancy_share": {
+       "principal": 0.6873,
+       "second_home": 0.1312,
+       "investment": 0.1815
+      },
+      "non_owner_occupied_share": 0.3127,
+      "loan_type_counts": {
+       "conventional": 1138,
+       "FHA": 150,
+       "VA": 73,
+       "USDA": 11
+      },
+      "loan_type_share": {
+       "conventional": 0.8294,
+       "FHA": 0.1093,
+       "VA": 0.0532,
+       "USDA": 0.008
+      },
+      "income_thousands_usd": {
+       "n_reported": 1352,
+       "n_not_reported_NA": 20,
+       "median": 112.5,
+       "p25": 83.0,
+       "p75": 168.25,
+       "median_excluding_le_zero": 113.0
+      },
+      "applicant_age_counts": {
+       "<25": 21,
+       "25-34": 252,
+       "35-44": 410,
+       "45-54": 286,
+       "55-64": 273,
+       "65-74": 103,
+       ">74": 23,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0153,
+       "25-34": 0.1837,
+       "35-44": 0.2988,
+       "45-54": 0.2085,
+       "55-64": 0.199,
+       "65-74": 0.0751,
+       ">74": 0.0168,
+       "8888": 0.0029
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0154,
+       "25-34": 0.1842,
+       "35-44": 0.2997,
+       "45-54": 0.2091,
+       "55-64": 0.1996,
+       "65-74": 0.0753,
+       ">74": 0.0168
+      },
+      "n_natural_person_age_reported": 1368,
+      "non_natural_person_share_age_8888": 0.0029,
+      "applicant_55_plus_share_natural_persons": 0.2917,
+      "applicant_under_35_share_natural_persons": 0.1996,
+      "jumbo_NC_share_all_loans": 0.0022,
+      "jumbo_NC_count_all_loans": 3,
+      "jumbo_NC_share_conventional": 0.0,
+      "n_conventional": 1138,
+      "business_purpose_share": 0.0598,
+      "property_value_usd_bin_midpoint": {
+       "n": 1372,
+       "median": 535000.0
+      },
+      "combined_ltv_pct": {
+       "n": 1361,
+       "median": 80.0,
+       "share_ltv_le_60": 0.1051
+      },
+      "tier_label": "< $750K"
+     },
+     "mid": {
+      "n_loans": 473,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 289,
+       "second_home": 90,
+       "investment": 94
+      },
+      "occupancy_share": {
+       "principal": 0.611,
+       "second_home": 0.1903,
+       "investment": 0.1987
+      },
+      "non_owner_occupied_share": 0.389,
+      "loan_type_counts": {
+       "conventional": 446,
+       "FHA": 11,
+       "VA": 16,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9429,
+       "FHA": 0.0233,
+       "VA": 0.0338,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 459,
+       "n_not_reported_NA": 14,
+       "median": 188.0,
+       "p25": 129.5,
+       "p75": 296.0,
+       "median_excluding_le_zero": 189.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 32,
+       "35-44": 124,
+       "45-54": 127,
+       "55-64": 107,
+       "65-74": 60,
+       ">74": 19,
+       "8888": 4
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0677,
+       "35-44": 0.2622,
+       "45-54": 0.2685,
+       "55-64": 0.2262,
+       "65-74": 0.1268,
+       ">74": 0.0402,
+       "8888": 0.0085
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0682,
+       "35-44": 0.2644,
+       "45-54": 0.2708,
+       "55-64": 0.2281,
+       "65-74": 0.1279,
+       ">74": 0.0405
+      },
+      "n_natural_person_age_reported": 469,
+      "non_natural_person_share_age_8888": 0.0085,
+      "applicant_55_plus_share_natural_persons": 0.3966,
+      "applicant_under_35_share_natural_persons": 0.0682,
+      "jumbo_NC_share_all_loans": 0.2854,
+      "jumbo_NC_count_all_loans": 135,
+      "jumbo_NC_share_conventional": 0.2735,
+      "n_conventional": 446,
+      "business_purpose_share": 0.0782,
+      "property_value_usd_bin_midpoint": {
+       "n": 473,
+       "median": 895000.0
+      },
+      "combined_ltv_pct": {
+       "n": 469,
+       "median": 75.0,
+       "share_ltv_le_60": 0.2132
+      },
+      "tier_label": "$750K-<$1.5M"
+     },
+     "upper": {
+      "n_loans": 88,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 32,
+       "second_home": 39,
+       "investment": 17
+      },
+      "occupancy_share": {
+       "principal": 0.3636,
+       "second_home": 0.4432,
+       "investment": 0.1932
+      },
+      "non_owner_occupied_share": 0.6364,
+      "loan_type_counts": {
+       "conventional": 87,
+       "FHA": 0,
+       "VA": 1,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 0.9886,
+       "FHA": 0.0,
+       "VA": 0.0114,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 85,
+       "n_not_reported_NA": 3,
+       "median": 417.0,
+       "p25": 300.0,
+       "p75": 583.0,
+       "median_excluding_le_zero": 417.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 18,
+       "45-54": 27,
+       "55-64": 24,
+       "65-74": 14,
+       ">74": 5,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.2045,
+       "45-54": 0.3068,
+       "55-64": 0.2727,
+       "65-74": 0.1591,
+       ">74": 0.0568,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.2045,
+       "45-54": 0.3068,
+       "55-64": 0.2727,
+       "65-74": 0.1591,
+       ">74": 0.0568
+      },
+      "n_natural_person_age_reported": 88,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.4886,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 0.8864,
+      "jumbo_NC_count_all_loans": 78,
+      "jumbo_NC_share_conventional": 0.8851,
+      "n_conventional": 87,
+      "business_purpose_share": 0.0682,
+      "property_value_usd_bin_midpoint": {
+       "n": 88,
+       "median": 1905000.0
+      },
+      "combined_ltv_pct": {
+       "n": 87,
+       "median": 70.0,
+       "share_ltv_le_60": 0.2874
+      },
+      "tier_label": "$1.5M-<$3M"
+     },
+     "luxury": {
+      "n_loans": 25,
+      "small_cell_flag_n_lt_20": false,
+      "occupancy_counts": {
+       "principal": 4,
+       "second_home": 16,
+       "investment": 5
+      },
+      "occupancy_share": {
+       "principal": 0.16,
+       "second_home": 0.64,
+       "investment": 0.2
+      },
+      "non_owner_occupied_share": 0.84,
+      "loan_type_counts": {
+       "conventional": 25,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 19,
+       "n_not_reported_NA": 6,
+       "median": 952.0,
+       "p25": 680.5,
+       "p75": 1529.5,
+       "median_excluding_le_zero": 952.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 3,
+       "45-54": 5,
+       "55-64": 9,
+       "65-74": 2,
+       ">74": 0,
+       "8888": 6
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.12,
+       "45-54": 0.2,
+       "55-64": 0.36,
+       "65-74": 0.08,
+       ">74": 0.0,
+       "8888": 0.24
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.1579,
+       "45-54": 0.2632,
+       "55-64": 0.4737,
+       "65-74": 0.1053,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 19,
+      "non_natural_person_share_age_8888": 0.24,
+      "applicant_55_plus_share_natural_persons": 0.5789,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 25,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 25,
+      "business_purpose_share": 0.24,
+      "property_value_usd_bin_midpoint": {
+       "n": 25,
+       "median": 3555000.0
+      },
+      "combined_ltv_pct": {
+       "n": 25,
+       "median": 65.0,
+       "share_ltv_le_60": 0.36
+      },
+      "tier_label": "$3M-<$10M"
+     },
+     "ultra": {
+      "n_loans": 2,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 1,
+       "second_home": 1,
+       "investment": 0
+      },
+      "occupancy_share": {
+       "principal": 0.5,
+       "second_home": 0.5,
+       "investment": 0.0
+      },
+      "non_owner_occupied_share": 0.5,
+      "loan_type_counts": {
+       "conventional": 2,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 0
+      },
+      "loan_type_share": {
+       "conventional": 1.0,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0
+      },
+      "income_thousands_usd": {
+       "n_reported": 2,
+       "n_not_reported_NA": 0,
+       "median": 3035.5,
+       "p25": 2267.75,
+       "p75": 3803.25,
+       "median_excluding_le_zero": 3035.5
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 0,
+       "35-44": 0,
+       "45-54": 1,
+       "55-64": 1,
+       "65-74": 0,
+       ">74": 0,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.5,
+       "55-64": 0.5,
+       "65-74": 0.0,
+       ">74": 0.0,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.0,
+       "35-44": 0.0,
+       "45-54": 0.5,
+       "55-64": 0.5,
+       "65-74": 0.0,
+       ">74": 0.0
+      },
+      "n_natural_person_age_reported": 2,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.5,
+      "applicant_under_35_share_natural_persons": 0.0,
+      "jumbo_NC_share_all_loans": 1.0,
+      "jumbo_NC_count_all_loans": 2,
+      "jumbo_NC_share_conventional": 1.0,
+      "n_conventional": 2,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 2,
+       "median": 13005000.0
+      },
+      "combined_ltv_pct": {
+       "n": 2,
+       "median": 64.17,
+       "share_ltv_le_60": 0.5
+      },
+      "tier_label": ">= $10M"
+     },
+     "unknown": {
+      "n_loans": 13,
+      "small_cell_flag_n_lt_20": true,
+      "occupancy_counts": {
+       "principal": 9,
+       "second_home": 1,
+       "investment": 3
+      },
+      "occupancy_share": {
+       "principal": 0.6923,
+       "second_home": 0.0769,
+       "investment": 0.2308
+      },
+      "non_owner_occupied_share": 0.3077,
+      "loan_type_counts": {
+       "conventional": 12,
+       "FHA": 0,
+       "VA": 0,
+       "USDA": 1
+      },
+      "loan_type_share": {
+       "conventional": 0.9231,
+       "FHA": 0.0,
+       "VA": 0.0,
+       "USDA": 0.0769
+      },
+      "income_thousands_usd": {
+       "n_reported": 11,
+       "n_not_reported_NA": 2,
+       "median": 84.0,
+       "p25": 68.5,
+       "p75": 134.5,
+       "median_excluding_le_zero": 84.0
+      },
+      "applicant_age_counts": {
+       "<25": 0,
+       "25-34": 2,
+       "35-44": 1,
+       "45-54": 5,
+       "55-64": 3,
+       "65-74": 1,
+       ">74": 1,
+       "8888": 0
+      },
+      "applicant_age_share_all_loans": {
+       "<25": 0.0,
+       "25-34": 0.1538,
+       "35-44": 0.0769,
+       "45-54": 0.3846,
+       "55-64": 0.2308,
+       "65-74": 0.0769,
+       ">74": 0.0769,
+       "8888": 0.0
+      },
+      "applicant_age_share_natural_persons": {
+       "<25": 0.0,
+       "25-34": 0.1538,
+       "35-44": 0.0769,
+       "45-54": 0.3846,
+       "55-64": 0.2308,
+       "65-74": 0.0769,
+       ">74": 0.0769
+      },
+      "n_natural_person_age_reported": 13,
+      "non_natural_person_share_age_8888": 0.0,
+      "applicant_55_plus_share_natural_persons": 0.3846,
+      "applicant_under_35_share_natural_persons": 0.1538,
+      "jumbo_NC_share_all_loans": 0.1538,
+      "jumbo_NC_count_all_loans": 2,
+      "jumbo_NC_share_conventional": 0.1667,
+      "n_conventional": 12,
+      "business_purpose_share": 0.0,
+      "property_value_usd_bin_midpoint": {
+       "n": 0,
+       "median": null
+      },
+      "combined_ltv_pct": {
+       "n": 0,
+       "median": null,
+       "share_ltv_le_60": null
+      },
+      "tier_label": "property_value NA/Exempt"
+     }
+    },
+    "tier_distribution_known_pv": {
+     "entry": {
+      "n": 1372,
+      "share": 0.7
+     },
+     "mid": {
+      "n": 473,
+      "share": 0.2413
+     },
+     "upper": {
+      "n": 88,
+      "share": 0.0449
+     },
+     "luxury": {
+      "n": 25,
+      "share": 0.0128
+     },
+     "ultra": {
+      "n": 2,
+      "share": 0.001
+     }
+    },
+    "n_property_value_unknown": 13
+   }
+  }
+ },
+ "va_military_buyers": {
+  "2025": {
+   "all_four_counties": {
+    "name": "Hawaii state (4 counties)",
+    "n_va_loans": 2088,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.2151,
+    "median_property_value_usd": 705000.0,
+    "p25_property_value_usd": 515000.0,
+    "p75_property_value_usd": 1005000.0,
+    "n_property_value_reported": 2038,
+    "median_income_thousands_usd": 153.0,
+    "n_income_reported": 2087,
+    "occupancy_share": {
+     "principal": 0.9928,
+     "second_home": 0.0005,
+     "investment": 0.0067
+    },
+    "tier_counts": {
+     "entry": 1117,
+     "mid": 808,
+     "upper": 110,
+     "luxury": 3,
+     "ultra": 0,
+     "unknown": 50
+    },
+    "applicant_under_35_share_natural_persons": 0.4157,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 1117,
+      "tier_n": 4836,
+      "share": 0.231,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 808,
+      "tier_n": 3718,
+      "share": 0.2173,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 110,
+      "tier_n": 864,
+      "share": 0.1273,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 3,
+      "tier_n": 150,
+      "share": 0.02,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 6,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 50
+   },
+   "15001": {
+    "name": "Hawaii County",
+    "n_va_loans": 191,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.1094,
+    "median_property_value_usd": 525000.0,
+    "p25_property_value_usd": 385000.0,
+    "p75_property_value_usd": 762500.0,
+    "n_property_value_reported": 190,
+    "median_income_thousands_usd": 118.0,
+    "n_income_reported": 191,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 140,
+     "mid": 41,
+     "upper": 9,
+     "luxury": 0,
+     "ultra": 0,
+     "unknown": 1
+    },
+    "applicant_under_35_share_natural_persons": 0.1832,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 140,
+      "tier_n": 1158,
+      "share": 0.1209,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 41,
+      "tier_n": 417,
+      "share": 0.0983,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 9,
+      "tier_n": 125,
+      "share": 0.072,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 0,
+      "tier_n": 23,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 3,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 1
+   },
+   "15003": {
+    "name": "Honolulu County",
+    "n_va_loans": 1830,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.2763,
+    "median_property_value_usd": 715000.0,
+    "p25_property_value_usd": 525000.0,
+    "p75_property_value_usd": 1005000.0,
+    "n_property_value_reported": 1783,
+    "median_income_thousands_usd": 156.0,
+    "n_income_reported": 1829,
+    "occupancy_share": {
+     "principal": 0.9918,
+     "second_home": 0.0005,
+     "investment": 0.0077
+    },
+    "tier_counts": {
+     "entry": 958,
+     "mid": 729,
+     "upper": 94,
+     "luxury": 2,
+     "ultra": 0,
+     "unknown": 47
+    },
+    "applicant_under_35_share_natural_persons": 0.4459,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 958,
+      "tier_n": 3309,
+      "share": 0.2895,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 729,
+      "tier_n": 2614,
+      "share": 0.2789,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 94,
+      "tier_n": 531,
+      "share": 0.177,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 2,
+      "tier_n": 73,
+      "share": 0.0274,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 3,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 47
+   },
+   "15007": {
+    "name": "Kauai County",
+    "n_va_loans": 25,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.0542,
+    "median_property_value_usd": 895000.0,
+    "p25_property_value_usd": 785000.0,
+    "p75_property_value_usd": 1225000.0,
+    "n_property_value_reported": 25,
+    "median_income_thousands_usd": 210.0,
+    "n_income_reported": 25,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 4,
+     "mid": 17,
+     "upper": 3,
+     "luxury": 1,
+     "ultra": 0,
+     "unknown": 0
+    },
+    "applicant_under_35_share_natural_persons": 0.12,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 4,
+      "tier_n": 104,
+      "share": 0.0385,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 17,
+      "tier_n": 258,
+      "share": 0.0659,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 3,
+      "tier_n": 72,
+      "share": 0.0417,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 1,
+      "tier_n": 22,
+      "share": 0.0455,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 0,
+      "share": null,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 0
+   },
+   "15009": {
+    "name": "Maui County",
+    "n_va_loans": 42,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.0479,
+    "median_property_value_usd": 875000.0,
+    "p25_property_value_usd": 622500.0,
+    "p75_property_value_usd": 1205000.0,
+    "n_property_value_reported": 40,
+    "median_income_thousands_usd": 156.0,
+    "n_income_reported": 42,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 15,
+     "mid": 21,
+     "upper": 4,
+     "luxury": 0,
+     "ultra": 0,
+     "unknown": 2
+    },
+    "applicant_under_35_share_natural_persons": 0.3333,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 15,
+      "tier_n": 265,
+      "share": 0.0566,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 21,
+      "tier_n": 429,
+      "share": 0.049,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 4,
+      "tier_n": 136,
+      "share": 0.0294,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 0,
+      "tier_n": 32,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 0,
+      "share": null,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 2
+   }
+  },
+  "2019": {
+   "all_four_counties": {
+    "name": "Hawaii state (4 counties)",
+    "n_va_loans": 2587,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.1943,
+    "median_property_value_usd": 575000.0,
+    "p25_property_value_usd": 425000.0,
+    "p75_property_value_usd": 715000.0,
+    "n_property_value_reported": 2583,
+    "median_income_thousands_usd": 104.0,
+    "n_income_reported": 2584,
+    "occupancy_share": {
+     "principal": 0.9996,
+     "second_home": 0.0004,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 2099,
+     "mid": 462,
+     "upper": 21,
+     "luxury": 1,
+     "ultra": 0,
+     "unknown": 4
+    },
+    "applicant_under_35_share_natural_persons": 0.4642,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 2099,
+      "tier_n": 9510,
+      "share": 0.2207,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 462,
+      "tier_n": 3106,
+      "share": 0.1487,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 21,
+      "tier_n": 417,
+      "share": 0.0504,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 1,
+      "tier_n": 73,
+      "share": 0.0137,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 4,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 4
+   },
+   "15001": {
+    "name": "Hawaii County",
+    "n_va_loans": 242,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.1099,
+    "median_property_value_usd": 365000.0,
+    "p25_property_value_usd": 275000.0,
+    "p75_property_value_usd": 535000.0,
+    "n_property_value_reported": 241,
+    "median_income_thousands_usd": 80.5,
+    "n_income_reported": 242,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 230,
+     "mid": 10,
+     "upper": 1,
+     "luxury": 0,
+     "ultra": 0,
+     "unknown": 1
+    },
+    "applicant_under_35_share_natural_persons": 0.1777,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 230,
+      "tier_n": 1865,
+      "share": 0.1233,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 10,
+      "tier_n": 238,
+      "share": 0.042,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 1,
+      "tier_n": 35,
+      "share": 0.0286,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 0,
+      "tier_n": 10,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 2,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 1
+   },
+   "15003": {
+    "name": "Honolulu County",
+    "n_va_loans": 2205,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.2633,
+    "median_property_value_usd": 585000.0,
+    "p25_property_value_usd": 445000.0,
+    "p75_property_value_usd": 725000.0,
+    "n_property_value_reported": 2202,
+    "median_income_thousands_usd": 105.5,
+    "n_income_reported": 2202,
+    "occupancy_share": {
+     "principal": 0.9995,
+     "second_home": 0.0005,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 1753,
+     "mid": 429,
+     "upper": 19,
+     "luxury": 1,
+     "ultra": 0,
+     "unknown": 3
+    },
+    "applicant_under_35_share_natural_persons": 0.5129,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 1753,
+      "tier_n": 5756,
+      "share": 0.3046,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 429,
+      "tier_n": 2203,
+      "share": 0.1947,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 19,
+      "tier_n": 262,
+      "share": 0.0725,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 1,
+      "tier_n": 24,
+      "share": 0.0417,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 0,
+      "share": null,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 3
+   },
+   "15007": {
+    "name": "Kauai County",
+    "n_va_loans": 50,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.0655,
+    "median_property_value_usd": 570000.0,
+    "p25_property_value_usd": 455000.0,
+    "p75_property_value_usd": 632500.0,
+    "n_property_value_reported": 50,
+    "median_income_thousands_usd": 97.5,
+    "n_income_reported": 50,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 43,
+     "mid": 7,
+     "upper": 0,
+     "luxury": 0,
+     "ultra": 0,
+     "unknown": 0
+    },
+    "applicant_under_35_share_natural_persons": 0.24,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 43,
+      "tier_n": 517,
+      "share": 0.0832,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 7,
+      "tier_n": 192,
+      "share": 0.0365,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 0,
+      "tier_n": 32,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 0,
+      "tier_n": 14,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 0,
+      "share": null,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 0
+   },
+   "15009": {
+    "name": "Maui County",
+    "n_va_loans": 90,
+    "small_cell_flag_n_lt_20": false,
+    "va_share_of_county_first_lien_purchase_loans": 0.0456,
+    "median_property_value_usd": 645000.0,
+    "p25_property_value_usd": 437500.0,
+    "p75_property_value_usd": 732500.0,
+    "n_property_value_reported": 90,
+    "median_income_thousands_usd": 99.0,
+    "n_income_reported": 90,
+    "occupancy_share": {
+     "principal": 1.0,
+     "second_home": 0.0,
+     "investment": 0.0
+    },
+    "tier_counts": {
+     "entry": 73,
+     "mid": 16,
+     "upper": 1,
+     "luxury": 0,
+     "ultra": 0,
+     "unknown": 0
+    },
+    "applicant_under_35_share_natural_persons": 0.1667,
+    "va_share_of_tier": {
+     "entry": {
+      "va_n": 73,
+      "tier_n": 1372,
+      "share": 0.0532,
+      "small_cell_flag_n_lt_20": false
+     },
+     "mid": {
+      "va_n": 16,
+      "tier_n": 473,
+      "share": 0.0338,
+      "small_cell_flag_n_lt_20": false
+     },
+     "upper": {
+      "va_n": 1,
+      "tier_n": 88,
+      "share": 0.0114,
+      "small_cell_flag_n_lt_20": false
+     },
+     "luxury": {
+      "va_n": 0,
+      "tier_n": 25,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": false
+     },
+     "ultra": {
+      "va_n": 0,
+      "tier_n": 2,
+      "share": 0.0,
+      "small_cell_flag_n_lt_20": true
+     }
+    },
+    "n_va_with_unknown_property_value": 0
+   }
+  }
+ }
+}

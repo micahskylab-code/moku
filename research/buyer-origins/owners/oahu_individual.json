@@ -1,0 +1,633 @@
+{
+ "residential_parcels_with_address": 270163,
+ "residential_shares": {
+  "hawaii": 0.912,
+  "us": 0.0756,
+  "foreign_or_other": 0.01,
+  "military": 0.0018,
+  "territory": 0.0006
+ },
+ "residential_oos": 20423,
+ "residential_oos_institutional": 1121,
+ "residential_foreign": 2695,
+ "inst_threshold": "a mailing address shared by 10 or more Oahu parcels",
+ "top_inst_addresses_count": [
+  4403,
+  2049,
+  1288,
+  1009,
+  928,
+  674,
+  610,
+  583,
+  501,
+  473,
+  402,
+  320,
+  293,
+  255,
+  249
+ ],
+ "metro_individual": [
+  [
+   "San Francisco Bay Area CA",
+   3641
+  ],
+  [
+   "Los Angeles-Long Beach-Anaheim CA",
+   3064
+  ],
+  [
+   "Seattle-Tacoma WA",
+   1355
+  ],
+  [
+   "San Diego CA",
+   797
+  ],
+  [
+   "Las Vegas NV",
+   745
+  ],
+  [
+   "New York City NY-NJ",
+   667
+  ],
+  [
+   "Washington DC-MD-VA",
+   607
+  ],
+  [
+   "Portland OR-WA",
+   408
+  ],
+  [
+   "Sacramento CA",
+   370
+  ],
+  [
+   "Denver-Boulder CO",
+   355
+  ],
+  [
+   "Phoenix AZ",
+   297
+  ],
+  [
+   "Dallas-Fort Worth TX",
+   295
+  ],
+  [
+   "Salt Lake City UT",
+   247
+  ],
+  [
+   "Chicago IL",
+   244
+  ],
+  [
+   "Houston TX",
+   243
+  ],
+  [
+   "Riverside-San Bernardino CA (Inland Empire)",
+   209
+  ],
+  [
+   "San Antonio TX",
+   171
+  ],
+  [
+   "Reno-Tahoe NV/CA",
+   170
+  ],
+  [
+   "Boston MA",
+   160
+  ],
+  [
+   "Miami-Fort Lauderdale-West Palm Beach FL",
+   158
+  ],
+  [
+   "Anchorage AK",
+   150
+  ],
+  [
+   "Other VA (not mapped)",
+   129
+  ],
+  [
+   "Austin TX",
+   126
+  ],
+  [
+   "Baltimore MD",
+   123
+  ],
+  [
+   "Other FL (not mapped)",
+   123
+  ]
+ ],
+ "metro_all": [
+  [
+   "San Francisco Bay Area CA",
+   3860
+  ],
+  [
+   "Los Angeles-Long Beach-Anaheim CA",
+   3614
+  ],
+  [
+   "Seattle-Tacoma WA",
+   1453
+  ],
+  [
+   "San Diego CA",
+   797
+  ],
+  [
+   "Las Vegas NV",
+   779
+  ],
+  [
+   "New York City NY-NJ",
+   667
+  ],
+  [
+   "Washington DC-MD-VA",
+   607
+  ],
+  [
+   "Portland OR-WA",
+   421
+  ],
+  [
+   "Denver-Boulder CO",
+   378
+  ],
+  [
+   "Sacramento CA",
+   370
+  ],
+  [
+   "Dallas-Fort Worth TX",
+   363
+  ],
+  [
+   "Salt Lake City UT",
+   339
+  ],
+  [
+   "Phoenix AZ",
+   300
+  ],
+  [
+   "Chicago IL",
+   244
+  ],
+  [
+   "Houston TX",
+   243
+  ],
+  [
+   "Riverside-San Bernardino CA (Inland Empire)",
+   209
+  ],
+  [
+   "San Antonio TX",
+   171
+  ],
+  [
+   "Reno-Tahoe NV/CA",
+   170
+  ],
+  [
+   "Boston MA",
+   160
+  ],
+  [
+   "Miami-Fort Lauderdale-West Palm Beach FL",
+   158
+  ],
+  [
+   "Anchorage AK",
+   150
+  ],
+  [
+   "Other FL (not mapped)",
+   144
+  ],
+  [
+   "Other VA (not mapped)",
+   129
+  ],
+  [
+   "Austin TX",
+   126
+  ],
+  [
+   "Baltimore MD",
+   123
+  ]
+ ],
+ "states_individual": [
+  [
+   "CA",
+   8681
+  ],
+  [
+   "WA",
+   1669
+  ],
+  [
+   "TX",
+   980
+  ],
+  [
+   "NV",
+   898
+  ],
+  [
+   "VA",
+   649
+  ],
+  [
+   "FL",
+   624
+  ],
+  [
+   "NY",
+   557
+  ],
+  [
+   "CO",
+   482
+  ],
+  [
+   "OR",
+   466
+  ],
+  [
+   "AZ",
+   376
+  ],
+  [
+   "UT",
+   351
+  ],
+  [
+   "MD",
+   301
+  ],
+  [
+   "IL",
+   292
+  ],
+  [
+   "NJ",
+   253
+  ],
+  [
+   "MA",
+   206
+  ]
+ ],
+ "top_zips_individual": [
+  [
+   "94010",
+   96,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94122",
+   72,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "95014",
+   69,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94404",
+   64,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94539",
+   60,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "90274",
+   59,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "95120",
+   57,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "91754",
+   56,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "90275",
+   52,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "98006",
+   51,
+   "Seattle-Tacoma WA"
+  ],
+  [
+   "94501",
+   49,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94116",
+   47,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "95070",
+   47,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94030",
+   46,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94121",
+   46,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94080",
+   45,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "90505",
+   43,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "94109",
+   42,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "89135",
+   42,
+   "Las Vegas NV"
+  ],
+  [
+   "92620",
+   41,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "90503",
+   41,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "90266",
+   40,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "92660",
+   40,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "94015",
+   39,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "90703",
+   39,
+   "Los Angeles-Long Beach-Anaheim CA"
+  ],
+  [
+   "94024",
+   39,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94025",
+   38,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94118",
+   37,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "94087",
+   37,
+   "San Francisco Bay Area CA"
+  ],
+  [
+   "98004",
+   36,
+   "Seattle-Tacoma WA"
+  ]
+ ],
+ "inst_share_by_metro": {
+  "San Francisco Bay Area CA": 0.057,
+  "Los Angeles-Long Beach-Anaheim CA": 0.152,
+  "Seattle-Tacoma WA": 0.067,
+  "San Diego CA": 0.0,
+  "Las Vegas NV": 0.044,
+  "New York City NY-NJ": 0.0,
+  "Washington DC-MD-VA": 0.0,
+  "Portland OR-WA": 0.031,
+  "Denver-Boulder CO": 0.061,
+  "Sacramento CA": 0.0,
+  "Dallas-Fort Worth TX": 0.187,
+  "Salt Lake City UT": 0.271
+ },
+ "situs_zip": {
+  "96792": {
+   "n": 11610,
+   "mainland": 0.0891,
+   "foreign": 0.0067,
+   "hawaii": 0.9033
+  },
+  "96814": {
+   "n": 17373,
+   "mainland": 0.122,
+   "foreign": 0.0492,
+   "hawaii": 0.8259
+  },
+  "96813": {
+   "n": 11810,
+   "mainland": 0.0666,
+   "foreign": 0.0048,
+   "hawaii": 0.9268
+  },
+  "96797": {
+   "n": 16386,
+   "mainland": 0.0369,
+   "foreign": 0.0011,
+   "hawaii": 0.9601
+  },
+  "96744": {
+   "n": 15133,
+   "mainland": 0.0504,
+   "foreign": 0.0027,
+   "hawaii": 0.9446
+  },
+  "96789": {
+   "n": 17324,
+   "mainland": 0.0424,
+   "foreign": 0.0012,
+   "hawaii": 0.9521
+  },
+  "96817": {
+   "n": 9265,
+   "mainland": 0.0399,
+   "foreign": 0.0018,
+   "hawaii": 0.9577
+  },
+  "96786": {
+   "n": 4406,
+   "mainland": 0.0397,
+   "foreign": 0.0064,
+   "hawaii": 0.9526
+  },
+  "96821": {
+   "n": 6442,
+   "mainland": 0.0416,
+   "foreign": 0.0037,
+   "hawaii": 0.9545
+  },
+  "96701": {
+   "n": 11947,
+   "mainland": 0.0465,
+   "foreign": 0.0018,
+   "hawaii": 0.9486
+  },
+  "96815": {
+   "n": 17053,
+   "mainland": 0.2266,
+   "foreign": 0.0566,
+   "hawaii": 0.7135
+  },
+  "96816": {
+   "n": 12891,
+   "mainland": 0.052,
+   "foreign": 0.0051,
+   "hawaii": 0.9421
+  },
+  "96707": {
+   "n": 12316,
+   "mainland": 0.0919,
+   "foreign": 0.0055,
+   "hawaii": 0.8981
+  },
+  "96819": {
+   "n": 13206,
+   "mainland": 0.0415,
+   "foreign": 0.0014,
+   "hawaii": 0.9539
+  },
+  "96712": {
+   "n": 2089,
+   "mainland": 0.1661,
+   "foreign": 0.0062,
+   "hawaii": 0.8267
+  },
+  "96822": {
+   "n": 12868,
+   "mainland": 0.0593,
+   "foreign": 0.0026,
+   "hawaii": 0.937
+  },
+  "96734": {
+   "n": 12620,
+   "mainland": 0.0979,
+   "foreign": 0.0052,
+   "hawaii": 0.8937
+  },
+  "96782": {
+   "n": 8871,
+   "mainland": 0.0393,
+   "foreign": 0.0007,
+   "hawaii": 0.9585
+  },
+  "96706": {
+   "n": 20480,
+   "mainland": 0.0572,
+   "foreign": 0.0013,
+   "hawaii": 0.9369
+  },
+  "96826": {
+   "n": 9208,
+   "mainland": 0.081,
+   "foreign": 0.0058,
+   "hawaii": 0.9107
+  },
+  "96731": {
+   "n": 945,
+   "mainland": 0.255,
+   "foreign": 0.0095,
+   "hawaii": 0.7354
+  },
+  "96825": {
+   "n": 10920,
+   "mainland": 0.0788,
+   "foreign": 0.0052,
+   "hawaii": 0.9142
+  },
+  "96717": {
+   "n": 1361,
+   "mainland": 0.1822,
+   "foreign": 0.0125,
+   "hawaii": 0.8046
+  },
+  "96818": {
+   "n": 1440,
+   "mainland": 0.0271,
+   "foreign": 0.0021,
+   "hawaii": 0.9694
+  },
+  "96795": {
+   "n": 1944,
+   "mainland": 0.0298,
+   "foreign": 0.001,
+   "hawaii": 0.9686
+  },
+  "96762": {
+   "n": 713,
+   "mainland": 0.1445,
+   "foreign": 0.0042,
+   "hawaii": 0.8513
+  },
+  "96791": {
+   "n": 2113,
+   "mainland": 0.1216,
+   "foreign": 0.0033,
+   "hawaii": 0.8732
+  },
+  "96730": {
+   "n": 514,
+   "mainland": 0.1051,
+   "foreign": 0.0,
+   "hawaii": 0.8911
+  }
+ }
+}

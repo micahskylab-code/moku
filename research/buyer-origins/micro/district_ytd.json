@@ -1,0 +1,1016 @@
+{
+ "Oahu": {
+  "period": "Jan–Aug 2026 vs Jan–Aug 2025",
+  "source": "Honolulu Board of REALTORS / HiCentral MLS, via Fidelity National Title August 2026 Oʻahu report",
+  "file": "FINAL-Oahu-Stats-AUGUST-2026_1.pdf",
+  "data": {
+   "house": {
+    "Aina Haina - Kuliouou": {
+     "n26": 43,
+     "n25": 54,
+     "med26": 1965000,
+     "med25": 1750000
+    },
+    "Ala Moana - Kakaako": {
+     "n26": 2,
+     "n25": 7,
+     "med26": 952500,
+     "med25": 1200000
+    },
+    "Downtown - Nuuanu": {
+     "n26": 71,
+     "n25": 41,
+     "med26": 1435000,
+     "med25": 1300000
+    },
+    "Ewa Plain": {
+     "n26": 365,
+     "n25": 299,
+     "med26": 970000,
+     "med25": 935000
+    },
+    "Hawaii Kai": {
+     "n26": 96,
+     "n25": 99,
+     "med26": 1635000,
+     "med25": 1615000
+    },
+    "Kailua - Waimanalo": {
+     "n26": 177,
+     "n25": 163,
+     "med26": 1685000,
+     "med25": 1678900
+    },
+    "Kalihi - Palama": {
+     "n26": 66,
+     "n25": 78,
+     "med26": 1039000,
+     "med25": 1013750
+    },
+    "Kaneohe": {
+     "n26": 140,
+     "n25": 127,
+     "med26": 1277500,
+     "med25": 1250000
+    },
+    "Kapahulu - Diamond Head": {
+     "n26": 128,
+     "n25": 130,
+     "med26": 1390000,
+     "med25": 1300000
+    },
+    "Makaha - Nanakuli": {
+     "n26": 128,
+     "n25": 135,
+     "med26": 627000,
+     "med25": 680000
+    },
+    "Makakilo": {
+     "n26": 75,
+     "n25": 69,
+     "med26": 1015000,
+     "med25": 1099500
+    },
+    "Makiki - Moiliili": {
+     "n26": 77,
+     "n25": 65,
+     "med26": 1637500,
+     "med25": 1520000
+    },
+    "Mililani": {
+     "n26": 124,
+     "n25": 99,
+     "med26": 1125000,
+     "med25": 1080000
+    },
+    "Moanalua - Salt Lake": {
+     "n26": 32,
+     "n25": 30,
+     "med26": 1316000,
+     "med25": 1205000
+    },
+    "North Shore": {
+     "n26": 67,
+     "n25": 61,
+     "med26": 1575000,
+     "med25": 1387500
+    },
+    "Pearl City - Aiea": {
+     "n26": 138,
+     "n25": 129,
+     "med26": 1137500,
+     "med25": 1050000
+    },
+    "Wahiawa": {
+     "n26": 38,
+     "n25": 44,
+     "med26": 858000,
+     "med25": 852000
+    },
+    "Waialae - Kahala": {
+     "n26": 50,
+     "n25": 60,
+     "med26": 2655000,
+     "med25": 2750000
+    },
+    "Waikiki": {
+     "n26": null,
+     "n25": null,
+     "med26": null,
+     "med25": null
+    },
+    "Waipahu": {
+     "n26": 104,
+     "n25": 125,
+     "med26": 967500,
+     "med25": 940000
+    },
+    "Windward Coast": {
+     "n26": 29,
+     "n25": 27,
+     "med26": 1130000,
+     "med25": 1200000
+    },
+    "TOTAL": {
+     "n26": 1950,
+     "n25": 1842,
+     "med26": 1190000,
+     "med25": 1140000
+    }
+   },
+   "condo": {
+    "Aina Haina - Kuliouou": {
+     "n26": 4,
+     "n25": 1,
+     "med26": 827500,
+     "med25": 840000
+    },
+    "Ala Moana - Kakaako": {
+     "n26": 436,
+     "n25": 389,
+     "med26": 797000,
+     "med25": 767500
+    },
+    "Downtown - Nuuanu": {
+     "n26": 187,
+     "n25": 180,
+     "med26": 470000,
+     "med25": 526500
+    },
+    "Ewa Plain": {
+     "n26": 247,
+     "n25": 255,
+     "med26": 601999,
+     "med25": 650000
+    },
+    "Hawaii Kai": {
+     "n26": 96,
+     "n25": 104,
+     "med26": 788000,
+     "med25": 822500
+    },
+    "Kailua - Waimanalo": {
+     "n26": 61,
+     "n25": 68,
+     "med26": 752500,
+     "med25": 772500
+    },
+    "Kalihi - Palama": {
+     "n26": 59,
+     "n25": 57,
+     "med26": 369000,
+     "med25": 380000
+    },
+    "Kaneohe": {
+     "n26": 102,
+     "n25": 109,
+     "med26": 665000,
+     "med25": 660000
+    },
+    "Kapahulu - Diamond Head": {
+     "n26": 67,
+     "n25": 62,
+     "med26": 660000,
+     "med25": 620000
+    },
+    "Makaha - Nanakuli": {
+     "n26": 82,
+     "n25": 87,
+     "med26": 240000,
+     "med25": 223750
+    },
+    "Makakilo": {
+     "n26": 63,
+     "n25": 60,
+     "med26": 521000,
+     "med25": 547500
+    },
+    "Makiki - Moiliili": {
+     "n26": 310,
+     "n25": 293,
+     "med26": 372693,
+     "med25": 377500
+    },
+    "Mililani": {
+     "n26": 166,
+     "n25": 154,
+     "med26": 523500,
+     "med25": 517000
+    },
+    "Moanalua - Salt Lake": {
+     "n26": 86,
+     "n25": 89,
+     "med26": 430000,
+     "med25": 399900
+    },
+    "North Shore": {
+     "n26": 25,
+     "n25": 21,
+     "med26": 890000,
+     "med25": 680000
+    },
+    "Pearl City - Aiea": {
+     "n26": 178,
+     "n25": 165,
+     "med26": 420000,
+     "med25": 450000
+    },
+    "Wahiawa": {
+     "n26": 17,
+     "n25": 17,
+     "med26": 330000,
+     "med25": 315000
+    },
+    "Waialae - Kahala": {
+     "n26": 35,
+     "n25": 23,
+     "med26": 605000,
+     "med25": 611500
+    },
+    "Waikiki": {
+     "n26": 487,
+     "n25": 611,
+     "med26": 470000,
+     "med25": 430000
+    },
+    "Waipahu": {
+     "n26": 113,
+     "n25": 108,
+     "med26": 480000,
+     "med25": 495000
+    },
+    "Windward Coast": {
+     "n26": 13,
+     "n25": 28,
+     "med26": 335000,
+     "med25": 372000
+    },
+    "TOTAL": {
+     "n26": 2834,
+     "n25": 2881,
+     "med26": 512000,
+     "med25": 505000
+    }
+   }
+  },
+  "url": "https://hawaii.fntic.com/FNTRSHawaii/media/FNT-RS-Hawaii/PDF/FINAL-Oahu-Stats-AUGUST-2026_1.pdf",
+  "sha256": "0af45663a1623b70befbebc8ff05c2786fc3cc00e7ba69b1a17baafa7c1e296b"
+ },
+ "Hawaii Island": {
+  "period": "Jan–Aug 2026 vs Jan–Aug 2025",
+  "source": "Hawaii Information Service MLS, via Fidelity National Title August 2026 Big Island report",
+  "file": "FINAL-Big-Island-AUGUST-2026.pdf",
+  "data": {
+   "house": {
+    "PUNA": {
+     "n26": 585,
+     "n25": 563,
+     "med26": 400000,
+     "med25": 390000,
+     "vol26": 241324844,
+     "vol25": 227668093
+    },
+    "SOUTH HILO": {
+     "n26": 174,
+     "n25": 162,
+     "med26": 600000,
+     "med25": 608250,
+     "vol26": 114271332,
+     "vol25": 114719665
+    },
+    "NORTH HILO": {
+     "n26": 12,
+     "n25": 16,
+     "med26": 817500,
+     "med25": 1162500,
+     "vol26": 10507900,
+     "vol25": 19503000
+    },
+    "HAMAKUA": {
+     "n26": 37,
+     "n25": 27,
+     "med26": 700000,
+     "med25": 599500,
+     "vol26": 34650808,
+     "vol25": 19413420
+    },
+    "NORTH KOHALA": {
+     "n26": 31,
+     "n25": 47,
+     "med26": 1615000,
+     "med25": 950000,
+     "vol26": 52600814,
+     "vol25": 61664250
+    },
+    "SOUTH KOHALA": {
+     "n26": 115,
+     "n25": 121,
+     "med26": 1090000,
+     "med25": 1025000,
+     "vol26": 289353494,
+     "vol25": 195969859
+    },
+    "NORTH KONA": {
+     "n26": 264,
+     "n25": 243,
+     "med26": 1185000,
+     "med25": 1255000,
+     "vol26": 683792315,
+     "vol25": 529406938
+    },
+    "SOUTH KONA": {
+     "n26": 33,
+     "n25": 55,
+     "med26": 752000,
+     "med25": 782500,
+     "vol26": 34199799,
+     "vol25": 45510699
+    },
+    "KA'U": {
+     "n26": 84,
+     "n25": 119,
+     "med26": 332500,
+     "med25": 340000,
+     "vol26": 28419735,
+     "vol25": 44692334
+    },
+    "TOTAL": {
+     "n26": 1335,
+     "n25": 1353,
+     "med26": 564000,
+     "med25": 560000,
+     "vol26": 1489121041,
+     "vol25": 1258548258
+    }
+   },
+   "condo": {
+    "PUNA": {
+     "n26": null,
+     "n25": null,
+     "med26": null,
+     "med25": null,
+     "vol26": null,
+     "vol25": null
+    },
+    "SOUTH HILO": {
+     "n26": 44,
+     "n25": 37,
+     "med26": 292500,
+     "med25": 225000,
+     "vol26": 14052642,
+     "vol25": 10213300
+    },
+    "NORTH HILO": {
+     "n26": null,
+     "n25": null,
+     "med26": null,
+     "med25": null,
+     "vol26": null,
+     "vol25": null
+    },
+    "HAMAKUA": {
+     "n26": null,
+     "n25": null,
+     "med26": null,
+     "med25": null,
+     "vol26": null,
+     "vol25": null
+    },
+    "NORTH KOHALA": {
+     "n26": null,
+     "n25": null,
+     "med26": null,
+     "med25": null,
+     "vol26": null,
+     "vol25": null
+    },
+    "SOUTH KOHALA": {
+     "n26": 116,
+     "n25": 108,
+     "med26": 1232500,
+     "med25": 1180000,
+     "vol26": 210804750,
+     "vol25": 182661950
+    },
+    "NORTH KONA": {
+     "n26": 182,
+     "n25": 211,
+     "med26": 572500,
+     "med25": 621000,
+     "vol26": 192837569,
+     "vol25": 233020922
+    },
+    "SOUTH KONA": {
+     "n26": 3,
+     "n25": null,
+     "med26": 399000,
+     "med25": null,
+     "vol26": 1443000,
+     "vol25": null
+    },
+    "KA'U": {
+     "n26": 2,
+     "n25": 1,
+     "med26": 247500,
+     "med25": 235000,
+     "vol26": 495000,
+     "vol25": 235000
+    },
+    "TOTAL": {
+     "n26": 347,
+     "n25": 357,
+     "med26": 625000,
+     "med25": 630000,
+     "vol26": 419632961,
+     "vol25": 426131172
+    }
+   },
+   "land": {
+    "PUNA": {
+     "n26": 593,
+     "n25": 795,
+     "med26": 50000,
+     "med25": 45000,
+     "vol26": 43609234,
+     "vol25": 49545277
+    },
+    "SOUTH HILO": {
+     "n26": 58,
+     "n25": 38,
+     "med26": 316250,
+     "med25": 289000,
+     "vol26": 30326000,
+     "vol25": 13078400
+    },
+    "NORTH HILO": {
+     "n26": 5,
+     "n25": 15,
+     "med26": 590000,
+     "med25": 545000,
+     "vol26": 2251000,
+     "vol25": 7745200
+    },
+    "HAMAKUA": {
+     "n26": 7,
+     "n25": 15,
+     "med26": 375000,
+     "med25": 465000,
+     "vol26": 11044500,
+     "vol25": 8182000
+    },
+    "NORTH KOHALA": {
+     "n26": 34,
+     "n25": 11,
+     "med26": 422500,
+     "med25": 410000,
+     "vol26": 21414963,
+     "vol25": 6142500
+    },
+    "SOUTH KOHALA": {
+     "n26": 23,
+     "n25": 20,
+     "med26": 552500,
+     "med25": 607500,
+     "vol26": 55694500,
+     "vol25": 37212000
+    },
+    "NORTH KONA": {
+     "n26": 34,
+     "n25": 39,
+     "med26": 700000,
+     "med25": 725000,
+     "vol26": 79398500,
+     "vol25": 59762500
+    },
+    "SOUTH KONA": {
+     "n26": 32,
+     "n25": 55,
+     "med26": 300000,
+     "med25": 250000,
+     "vol26": 14167900,
+     "vol25": 16974687
+    },
+    "KA'U": {
+     "n26": 172,
+     "n25": 211,
+     "med26": 30000,
+     "med25": 21000,
+     "vol26": 9317499,
+     "vol25": 9342727
+    },
+    "TOTAL": {
+     "n26": 958,
+     "n25": 1199,
+     "med26": 58950,
+     "med25": 48000,
+     "vol26": 267224096,
+     "vol25": 207985291
+    }
+   }
+  },
+  "url": "https://hawaii.fntic.com/FNTRSHawaii/media/FNT-RS-Hawaii/PDF/FINAL-Big-Island-AUGUST-2026.pdf",
+  "sha256": "394c09de867f7656019230ce6331a3691ae025829fdb5b3a12015cabab50cc17"
+ },
+ "Kauai": {
+  "period": "Jan–Aug 2026 vs Jan–Aug 2025",
+  "source": "Kauai Board of REALTORS, via Fidelity National Title August 2026 Kauai report",
+  "file": "FINAL-Kauai-Stats-AUGUST-2026.pdf",
+  "data": {
+   "house": {
+    "WAIMEA": {
+     "n26": 21,
+     "n25": 22,
+     "med26": 825000,
+     "med25": 812500,
+     "vol26": 16881895,
+     "vol25": 18340000
+    },
+    "KOLOA": {
+     "n26": 66,
+     "n25": 95,
+     "med26": 1905940,
+     "med25": 1295000,
+     "vol26": 159072686,
+     "vol25": 189982675
+    },
+    "LIHUE": {
+     "n26": 27,
+     "n25": 29,
+     "med26": 1115000,
+     "med25": 1150000,
+     "vol26": 35493505,
+     "vol25": 37680600
+    },
+    "KAWAIHAU": {
+     "n26": 76,
+     "n25": 74,
+     "med26": 1053150,
+     "med25": 1022500,
+     "vol26": 105409110,
+     "vol25": 95326796
+    },
+    "HANALEI": {
+     "n26": 49,
+     "n25": 41,
+     "med26": 2525000,
+     "med25": 2615300,
+     "vol26": 161933128,
+     "vol25": 147495149
+    },
+    "TOTAL": {
+     "n26": 239,
+     "n25": 261,
+     "med26": 1300000,
+     "med25": 1175000,
+     "vol26": 478790324,
+     "vol25": 488825220
+    }
+   },
+   "condo": {
+    "WAIMEA": {
+     "n26": null,
+     "n25": 1,
+     "med26": null,
+     "med25": 735000,
+     "vol26": null,
+     "vol25": 735000
+    },
+    "KOLOA": {
+     "n26": 55,
+     "n25": 55,
+     "med26": 1050000,
+     "med25": 1050000,
+     "vol26": 63803725,
+     "vol25": 59892500
+    },
+    "LIHUE": {
+     "n26": 38,
+     "n25": 51,
+     "med26": 622500,
+     "med25": 525000,
+     "vol26": 34777526,
+     "vol25": 48909618
+    },
+    "KAWAIHAU": {
+     "n26": 19,
+     "n25": 26,
+     "med26": 560000,
+     "med25": 620000,
+     "vol26": 12958000,
+     "vol25": 20840000
+    },
+    "HANALEI": {
+     "n26": 40,
+     "n25": 60,
+     "med26": 1007499,
+     "med25": 1062500,
+     "vol26": 44902999,
+     "vol25": 71510499
+    },
+    "TOTAL": {
+     "n26": 152,
+     "n25": 193,
+     "med26": 852500,
+     "med25": 875000,
+     "vol26": 156442250,
+     "vol25": 201887617
+    }
+   },
+   "land": {
+    "WAIMEA": {
+     "n26": 2,
+     "n25": 4,
+     "med26": 322000,
+     "med25": 372500,
+     "vol26": 644000,
+     "vol25": 1585000
+    },
+    "KOLOA": {
+     "n26": 12,
+     "n25": 21,
+     "med26": 1412500,
+     "med25": 950000,
+     "vol26": 18790000,
+     "vol25": 24344000
+    },
+    "LIHUE": {
+     "n26": 2,
+     "n25": 6,
+     "med26": 925000,
+     "med25": 900000,
+     "vol26": 1850000,
+     "vol25": 5409000
+    },
+    "KAWAIHAU": {
+     "n26": 17,
+     "n25": 16,
+     "med26": 500000,
+     "med25": 510000,
+     "vol26": 11488500,
+     "vol25": 16504000
+    },
+    "HANALEI": {
+     "n26": 10,
+     "n25": 16,
+     "med26": 1562500,
+     "med25": 1985000,
+     "vol26": 28344108,
+     "vol25": 54741000
+    },
+    "TOTAL": {
+     "n26": 43,
+     "n25": 63,
+     "med26": 785000,
+     "med25": 950000,
+     "vol26": 61116608,
+     "vol25": 102583000
+    }
+   }
+  },
+  "url": "https://hawaii.fntic.com/FNTRSHawaii/media/FNT-RS-Hawaii/PDF/FINAL-Kauai-Stats-AUGUST-2026.pdf",
+  "sha256": "fbad7dbceb172c65ad02aba15337e28d8c7720b10605d7113fa8a4b9e919ed51"
+ },
+ "Maui County": {
+  "period": "Jan–Sep 2026 vs Jan–Sep 2025",
+  "source": "REALTORS Association of Maui, September 2026 report (data as of Oct 1, 2026)",
+  "url": "https://www.ramaui.com/housing-statistics",
+  "data": {
+   "house": {
+    "Haiku": {
+     "n26": 36,
+     "n25": 47,
+     "med26": 1325000,
+     "med25": 1497000
+    },
+    "Hana": {
+     "n26": 6,
+     "n25": 8,
+     "med26": 1750000,
+     "med25": 1248750
+    },
+    "Honokohau": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kaanapali": {
+     "n26": 10,
+     "n25": 14,
+     "med26": 3000000,
+     "med25": 4450000
+    },
+    "Kahakuloa": {
+     "n26": 0,
+     "n25": 1,
+     "med26": null,
+     "med25": 1100000
+    },
+    "Kahului": {
+     "n26": 72,
+     "n25": 61,
+     "med26": 1112500,
+     "med25": 1100000
+    },
+    "Kapalua": {
+     "n26": 5,
+     "n25": 9,
+     "med26": 5450000,
+     "med25": 7625000
+    },
+    "Kaupo": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Keanae": {
+     "n26": 1,
+     "n25": 1,
+     "med26": 620000,
+     "med25": 393751
+    },
+    "Kihei": {
+     "n26": 89,
+     "n25": 72,
+     "med26": 1230000,
+     "med25": 1372500
+    },
+    "Kipahulu": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kula/Ulupalakua/Kanaio": {
+     "n26": 49,
+     "n25": 43,
+     "med26": 1530000,
+     "med25": 1640000
+    },
+    "Lahaina": {
+     "n26": 17,
+     "n25": 11,
+     "med26": 2475000,
+     "med25": 2700000
+    },
+    "Maalaea": {
+     "n26": 0,
+     "n25": 1,
+     "med26": null,
+     "med25": 2500000
+    },
+    "Makawao/Olinda/Haliimaile": {
+     "n26": 49,
+     "n25": 58,
+     "med26": 1560000,
+     "med25": 1365000
+    },
+    "Maui Meadows": {
+     "n26": 13,
+     "n25": 13,
+     "med26": 2360000,
+     "med25": 2175000
+    },
+    "Nahiku": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Napili/Kahana/Honokowai": {
+     "n26": 17,
+     "n25": 22,
+     "med26": 1500000,
+     "med25": 1790000
+    },
+    "Olowalu": {
+     "n26": 1,
+     "n25": 0,
+     "med26": 5000000,
+     "med25": null
+    },
+    "Pukalani": {
+     "n26": 21,
+     "n25": 17,
+     "med26": 1249000,
+     "med25": 1140000
+    },
+    "Spreckelsville/Paia/Kuau": {
+     "n26": 14,
+     "n25": 11,
+     "med26": 1395000,
+     "med25": 1410000
+    },
+    "Wailea/Makena": {
+     "n26": 20,
+     "n25": 11,
+     "med26": 2900000,
+     "med25": 3850000
+    },
+    "Wailuku": {
+     "n26": 91,
+     "n25": 100,
+     "med26": 1025000,
+     "med25": 1200000
+    },
+    "Lanai": {
+     "n26": 6,
+     "n25": 5,
+     "med26": 672500,
+     "med25": 550000
+    },
+    "Molokai": {
+     "n26": 20,
+     "n25": 22,
+     "med26": 491500,
+     "med25": 515000
+    },
+    "TOTAL": {
+     "n26": 537,
+     "n25": 527,
+     "med26": 1219000,
+     "med25": 1300000
+    }
+   },
+   "condo": {
+    "Haiku": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Hana": {
+     "n26": 0,
+     "n25": 1,
+     "med26": null,
+     "med25": 1875000
+    },
+    "Honokohau": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kaanapali": {
+     "n26": 70,
+     "n25": 51,
+     "med26": 1027500,
+     "med25": 1152500
+    },
+    "Kahakuloa": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kahului": {
+     "n26": 11,
+     "n25": 9,
+     "med26": 150000,
+     "med25": 190000
+    },
+    "Kapalua": {
+     "n26": 18,
+     "n25": 18,
+     "med26": 1342500,
+     "med25": 1602500
+    },
+    "Kaupo": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Keanae": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kihei": {
+     "n26": 222,
+     "n25": 185,
+     "med26": 596000,
+     "med25": 675000
+    },
+    "Kipahulu": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Kula/Ulupalakua/Kanaio": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Lahaina": {
+     "n26": 31,
+     "n25": 23,
+     "med26": 657500,
+     "med25": 600000
+    },
+    "Maalaea": {
+     "n26": 14,
+     "n25": 14,
+     "med26": 512500,
+     "med25": 624500
+    },
+    "Makawao/Olinda/Haliimaile": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Maui Meadows": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Nahiku": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Napili/Kahana/Honokowai": {
+     "n26": 106,
+     "n25": 81,
+     "med26": 537500,
+     "med25": 610000
+    },
+    "Olowalu": {
+     "n26": 0,
+     "n25": 0,
+     "med26": null,
+     "med25": null
+    },
+    "Pukalani": {
+     "n26": 2,
+     "n25": 1,
+     "med26": 819500,
+     "med25": 782000
+    },
+    "Spreckelsville/Paia/Kuau": {
+     "n26": 0,
+     "n25": 2,
+     "med26": null,
+     "med25": 6087500
+    },
+    "Wailea/Makena": {
+     "n26": 66,
+     "n25": 57,
+     "med26": 2085000,
+     "med25": 2500000
+    },
+    "Wailuku": {
+     "n26": 51,
+     "n25": 51,
+     "med26": 592336,
+     "med25": 595000
+    },
+    "Lanai": {
+     "n26": 5,
+     "n25": 1,
+     "med26": 2575000,
+     "med25": 188000
+    },
+    "Molokai": {
+     "n26": 24,
+     "n25": 18,
+     "med26": 195000,
+     "med25": 209988
+    },
+    "TOTAL": {
+     "n26": 620,
+     "n25": 512,
+     "med26": 655000,
+     "med25": 702500
+    }
+   }
+  }
+ }
+}

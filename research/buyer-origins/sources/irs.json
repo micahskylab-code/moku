@@ -1,0 +1,84 @@
+{
+ "key": "irs",
+ "status": "not_published",
+ "year_requested": "2023-24",
+ "latest_published_year": "2022-23",
+ "checked_utc": "2026-10-08T06:01:22Z",
+ "irs20_new_year": null,
+ "irs20_entry": {},
+ "source": {
+  "landing_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+  "landing_page_last_reviewed": "20-Jul-2026",
+  "landing_page_text": "The data are available for Filing Years 1991 through 2023; 'Data year 2022–2023' is the newest entry; no 2023-2024 link.",
+  "whats_new_page": "https://www.irs.gov/statistics/soi-tax-stats-whats-new",
+  "whats_new_last_reviewed": "29-Sep-2026",
+  "whats_new_latest_migration_item": "March 19, 2026: State and County Migration Data, Calendar Years 2022-2023",
+  "latest_edition_page": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023",
+  "latest_edition_files_last_modified": "Thu, 19 Mar 2026 11:11:21-23 GMT (countyinflow2223.csv, countyoutflow2223.csv, stateinflow2223.csv, stateoutflow2223.csv)",
+  "probed_2324_urls_http_404": [
+   "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2023-2024",
+   "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2023-to-2024",
+   "https://www.irs.gov/pub/irs-soi/countyinflow2324.csv",
+   "https://www.irs.gov/pub/irs-soi/countyoutflow2324.csv",
+   "https://www.irs.gov/pub/irs-soi/stateinflow2324.csv",
+   "https://www.irs.gov/pub/irs-soi/stateoutflow2324.csv",
+   "https://www.irs.gov/pub/irs-soi/2324migrationdata.zip",
+   "https://www.irs.gov/pub/irs-soi/2324inpublicmigdoc.pdf",
+   "https://www.irs.gov/pub/irs-soi/2324inmigall.xls"
+  ],
+  "control_urls_http_200": [
+   "https://www.irs.gov/pub/irs-soi/countyinflow2223.csv",
+   "https://www.irs.gov/pub/irs-soi/countyoutflow2223.csv",
+   "https://www.irs.gov/pub/irs-soi/stateinflow2223.csv",
+   "https://www.irs.gov/pub/irs-soi/stateoutflow2223.csv",
+   "https://www.irs.gov/pub/irs-soi/2223inpublicmigdoc.pdf"
+  ],
+  "raw_dir": "/tmp/claude-0/-home-user-moku/72fb7234-fad9-5bdc-aaaa-c922016ddc21/scratchpad/raw/irs",
+  "raw_files": {
+   "probe_countyinflow2324_GET.html": {
+    "url": "https://www.irs.gov/pub/irs-soi/countyinflow2324.csv",
+    "status": "404 (IRS \"page not found\" HTML, not CSV)",
+    "downloaded_utc": "2026-10-08T06:00:47Z",
+    "bytes": 85741,
+    "sha256": "4146c7732dbfdbc8e03c67e098c8f5147c9b0975fce48a0d3981c9c2c85de22f"
+   },
+   "probe_soi-tax-stats-migration-data-2022-2023.html": {
+    "url": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2022-2023",
+    "status": "200",
+    "downloaded_utc": "2026-10-08T06:00:55Z",
+    "bytes": 116738,
+    "sha256": "6365e24af4e5d00ccfbd3572e52309b55c05d096d98984b23917e9f96bfa9b3e"
+   },
+   "probe_soi-tax-stats-migration-data-2023-2024.html": {
+    "url": "https://www.irs.gov/statistics/soi-tax-stats-migration-data-2023-2024",
+    "status": "404 (IRS \"page not found\" HTML)",
+    "downloaded_utc": "2026-10-08T05:59:46Z",
+    "bytes": 85765,
+    "sha256": "2edc102362cbcc77d18844fa1057dd671d98b01257c70b0028d07fb180f1948e"
+   },
+   "probe_soi-tax-stats-migration-data.html": {
+    "url": "https://www.irs.gov/statistics/soi-tax-stats-migration-data",
+    "status": "200",
+    "downloaded_utc": "2026-10-08T05:59:45Z",
+    "bytes": 125406,
+    "sha256": "0469cad7be9fe00f93844ca8380df4695b6d2e4c917ab5c9a4b5dc8f84d7108e"
+   },
+   "probe_soi-tax-stats-whats-new.html": {
+    "url": "https://www.irs.gov/statistics/soi-tax-stats-whats-new",
+    "status": "200",
+    "downloaded_utc": "2026-10-08T06:00:48Z",
+    "bytes": 319519,
+    "sha256": "6bcf0577051b213abdb9125eecf068c49e21d26be95c6ac45688884638c98d9a"
+   }
+  }
+ },
+ "notes": [
+  "IRS SOI 2023-2024 state and county migration data is NOT published as of 2026-10-08. The 2324 file names follow the 2022-23 page's own naming (countyinflow2223.csv etc.). Every one returns HTTP 404 with an IRS 'page not found' HTML body, while the same 2223 file names return 200 text/csv through the same proxy and User-Agent. So the 404s mean the files are missing, not that the network blocked them.",
+  "Per task instruction, stopped here: no 2023-24 flows computed. irs20_entry is empty on purpose and no numbers were invented.",
+  "2022-23 (released 19 Mar 2026 per SOI What's New) remains the latest edition. It is already in page_data.json irs20['2022-23'], built by an/irs_20yr.py from scratchpad/irsdec/countyinflow2223.csv (sha256 813ba2ef550c6a598a5121ccf98edcc79f61f1af69eb495bf44cd830b1586745) and scratchpad/irsout/countyoutflow2223.csv (sha256 364dba518f0db092515ccde03dda987815f6e54bcc8859640001e9185d4c106e).",
+  "Series-break caveat from the IRS landing page: 'Beginning with data for 2022-2023, SOI enhanced the matching process for individual income tax returns as a new series of information.' Comparing 2022-23 (and any future 2023-24) with 2021-22 and earlier mixes two matching methods.",
+  "Release cadence: 2022-23 was posted on 19 Mar 2026. If 2023-24 follows a similar lag, expect it around early-to-mid 2027. This is an inference, not an IRS-announced date.",
+  "For the eventual 2023-24 update, page_data irs20 entries look like {island: {in|out: {tot: [n1,n2,agi] from row 97/003 (row y?_statefips=97, countyfips=003 = 'Total Migration-Different State'), metros: {metro: [n1,n2,agi]} summed over county pairs with n1>=20 using the METRO county lists in an/irs_20yr.py, top: top 8 named US counties by n1 [name, state, n1, n2, agi]}}. Islands: 001 Hawaii Island, 003 Oahu, 007 Kauai, 009 Maui. Kalawao (005) is excluded. AGI is in $ thousands.",
+  "The linked 2223migrationdata.zip also returned 404 on HEAD today. That is irrelevant to the 2023-24 question but recorded here."
+ ]
+}
