@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Walkthrough</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #a9cfe6; font: 14px/1.4 system-ui, -apple-system, sans-serif; touch-action: none; }
+  canvas { display: block; }
+  #hud { position: fixed; top: 12px; left: 12px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); pointer-events: none; }
+  #plan-name { font-size: 12px; opacity: .85; }
+  #room { font-size: 20px; font-weight: 600; }
+  #minimap { position: fixed; right: 12px; bottom: 12px; width: 200px; background: rgba(255,255,255,.35); border-radius: 8px; backdrop-filter: blur(4px); cursor: crosshair; }
+  #overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); color: #fff; text-align: center; cursor: pointer; }
+  #overlay[hidden] { display: none; }
+  #overlay div { max-width: 340px; padding: 0 16px; }
+  #overlay b { font-size: 22px; display: block; margin-bottom: 8px; }
+  .shot #hud, .shot #minimap, .shot #overlay { display: none !important; }
+  @media (max-width: 600px) { #minimap { width: 130px; } }
+</style>
+</head>
+<body>
+<div id="hud"><div id="plan-name"></div><div id="room"></div></div>
+<canvas id="minimap" width="400" height="320"></canvas>
+<div id="overlay"><div>
+  <b>Tap to walk in</b>
+  Desktop: W A S D to walk, mouse to look, Shift to walk faster, Esc to stop.<br>
+  Phone: drag the left side to walk, the right side to look.<br>
+  Click the map to jump to a room.
+</div></div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

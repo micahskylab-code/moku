@@ -1,0 +1,50 @@
+{
+  "name": "Engine test plan (not Na Hiku)",
+  "note": "Placeholder used only to exercise the engine. Replace with plans/<plan-id>.json traced from the real floor plan.",
+  "units": "ft",
+  "wallHeight": 10,
+  "wallThickness": 0.5,
+  "start": { "pos": [20, 14], "look": [6, 2] },
+  "rooms": [
+    { "id": "great", "name": "Great Room", "polygon": [[0,0],[24,0],[24,18],[0,18]], "floor": "oak", "wall": "#efe9df" },
+    { "id": "kitchen", "name": "Kitchen", "polygon": [[24,0],[40,0],[40,18],[24,18]], "floor": "stone", "wall": "#f3efe8" },
+    { "id": "primary", "name": "Primary Bedroom", "polygon": [[0,18],[18,18],[18,32],[0,32]], "floor": "oak", "wall": "#e8e2d6" },
+    { "id": "bath", "name": "Primary Bath", "polygon": [[18,18],[28,18],[28,32],[18,32]], "floor": "tile", "wall": "#f5f3ef" },
+    { "id": "hall", "name": "Entry", "polygon": [[28,18],[40,18],[40,32],[28,32]], "floor": "stone", "wall": "#efe9df" },
+    { "id": "lanai", "name": "Lanai", "polygon": [[0,-12],[40,-12],[40,0],[0,0]], "floor": "deck", "outdoor": true }
+  ],
+  "walls": [
+    { "a": [0,0], "b": [40,0], "openings": [
+      { "type": "slider", "at": 3, "width": 16, "height": 8.5 },
+      { "type": "window", "at": 28, "width": 8, "height": 4, "sill": 3.5 }
+    ]},
+    { "a": [40,0], "b": [40,32], "openings": [{ "type": "window", "at": 6, "width": 6, "height": 5, "sill": 3 }] },
+    { "a": [40,32], "b": [0,32], "openings": [
+      { "type": "door", "at": 4, "width": 3.5, "height": 8 },
+      { "type": "window", "at": 28, "width": 8, "height": 5, "sill": 3 }
+    ]},
+    { "a": [0,32], "b": [0,0], "openings": [{ "type": "window", "at": 18, "width": 8, "height": 5, "sill": 3 }] },
+    { "a": [0,18], "b": [18,18], "openings": [{ "type": "door", "at": 13, "width": 3, "height": 7 }] },
+    { "a": [18,18], "b": [18,32], "openings": [{ "type": "door", "at": 2, "width": 2.75, "height": 7 }] },
+    { "a": [28,18], "b": [28,32], "openings": [] },
+    { "a": [18,18], "b": [28,18], "openings": [] },
+    { "a": [28,18], "b": [40,18], "openings": [{ "type": "cased", "at": 2, "width": 8, "height": 8.5 }] }
+  ],
+  "furniture": [
+    { "type": "sofa", "x": 10, "y": 11, "w": 8, "d": 3, "rot": 180, "color": "#d8d2c4" },
+    { "type": "rug", "x": 10, "y": 7.5, "w": 10, "d": 7, "color": "#b9ad97" },
+    { "type": "table", "x": 10, "y": 7.5, "w": 4, "d": 2, "h": 1.4, "color": "#6b4f36" },
+    { "type": "island", "x": 32, "y": 9, "w": 9, "d": 4, "color": "#2f3a40", "top": "#f2f0eb" },
+    { "type": "counter", "x": 32, "y": 16.75, "w": 14, "d": 2, "color": "#2f3a40", "top": "#f2f0eb" },
+    { "type": "bed", "x": 9, "y": 28.25, "w": 6.5, "d": 7, "rot": 180, "color": "#f4f1ea", "frame": "#7a5a3c" },
+    { "type": "vanity", "x": 23, "y": 31, "w": 7, "d": 1.8, "color": "#7a5a3c", "top": "#f2f0eb" },
+    { "type": "dining", "x": 20, "y": -6, "w": 7, "d": 3.5, "color": "#6b4f36", "chairs": 6 },
+    { "type": "lounger", "x": 5, "y": -6, "w": 2.2, "d": 6, "color": "#e9e4d8" }
+  ],
+  "viewpoints": [
+    { "id": "great-from-entry", "room": "great", "pos": [22, 16], "look": [4, 2], "photo": null },
+    { "id": "kitchen", "room": "kitchen", "pos": [26, 2], "look": [38, 14], "photo": null },
+    { "id": "primary", "room": "primary", "pos": [16, 23.5], "look": [2, 29], "photo": null },
+    { "id": "lanai", "room": "lanai", "pos": [38, -10], "look": [2, -2], "photo": null }
+  ]
+}
