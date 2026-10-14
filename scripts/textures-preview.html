@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8">
+<script type="importmap">{ "imports": { "three": "../vendor/three.module.js", "three/addons/": "../vendor/addons/" } }</script>
+<body style="margin:0;background:#888"><script type="module">
+import { texture } from '../src/textures.js';
+const names = (new URLSearchParams(location.search).get('t') ?? 'oak,coral,siding,ashlar,roofMetal,planks').split(',');
+for (const n of names) {
+  const t = texture(n).map, { data, width, height } = t.image;
+  const c = document.createElement('canvas'); c.width = width; c.height = height; c.style.width = '320px';
+  c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
+  document.body.append(c);
+}
+document.body.dataset.ready = '1';
+</script>

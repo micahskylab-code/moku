@@ -4,29 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Walkthrough</title>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
 <style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #a9cfe6; font: 14px/1.4 system-ui, -apple-system, sans-serif; touch-action: none; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1220; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; touch-action: none; }
   canvas { display: block; }
-  #hud { position: fixed; top: 12px; left: 12px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); pointer-events: none; }
-  #plan-name { font-size: 12px; opacity: .85; }
+  #hud { position: fixed; top: 12px; left: 16px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); pointer-events: none; }
+  #plan-name { font-size: 12px; opacity: .85; letter-spacing: .02em; }
   #room { font-size: 20px; font-weight: 600; }
-  #minimap { position: fixed; right: 12px; bottom: 12px; width: 200px; background: rgba(255,255,255,.35); border-radius: 8px; backdrop-filter: blur(4px); cursor: crosshair; }
+  #buttons { position: fixed; top: 12px; right: 16px; display: flex; gap: 8px; }
+  #buttons button { font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgba(255,255,255,.85); color: #18202c; cursor: pointer; backdrop-filter: blur(6px); }
+  #minimap { position: fixed; right: 16px; bottom: 16px; width: 170px; background: rgba(255,255,255,.35); border-radius: 10px; backdrop-filter: blur(4px); cursor: crosshair; }
   #overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); color: #fff; text-align: center; cursor: pointer; }
   #overlay[hidden] { display: none; }
   #overlay div { max-width: 340px; padding: 0 16px; }
   #overlay b { font-size: 22px; display: block; margin-bottom: 8px; }
-  .shot #hud, .shot #minimap, .shot #overlay { display: none !important; }
-  @media (max-width: 600px) { #minimap { width: 130px; } }
+  #caption { position: fixed; left: 0; right: 0; bottom: 9%; text-align: center; color: #f4efe6; font-size: 42px; letter-spacing: .32em; font-weight: 300; text-shadow: 0 2px 18px rgba(0,0,0,.7); opacity: 0; pointer-events: none; }
+  #caption small { display: block; font-size: 17px; letter-spacing: .3em; margin-top: 10px; opacity: .85; }
+  .shot #hud, .shot #minimap, .shot #overlay, .shot #buttons { display: none !important; }
+  @media (max-width: 600px) { #minimap { width: 120px; } #caption { font-size: 26px; } }
 </style>
 </head>
 <body>
 <div id="hud"><div id="plan-name"></div><div id="room"></div></div>
-<canvas id="minimap" width="400" height="320"></canvas>
+<div id="buttons"><button id="time">Night sky</button><button id="mode">Fly over</button></div>
+<canvas id="minimap" width="340" height="300"></canvas>
+<div id="caption"></div>
 <div id="overlay"><div>
   <b>Tap to walk in</b>
   Desktop: W A S D to walk, mouse to look, Shift to walk faster, Esc to stop.<br>
   Phone: drag the left side to walk, the right side to look.<br>
-  Click the map to jump to a room.
+  Tap the map to jump to a room. “Fly over” to see the neighbourhood.
 </div></div>
 <script type="module" src="src/main.js"></script>
 </body>

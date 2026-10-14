@@ -1,88 +1,88 @@
-// Procedural finishes drawn on canvas, so the model needs no image assets.
-// UVs on floors are in feet, so `repeat` below is "one texture tile per N feet".
-import * as THREE from '../vendor/three.module.js';
+// Material library. Names used in plan JSON map to these.
+// Palette follows the Na Hiku interior concept board: white oak, cane, coral stone,
+// white painted plank walls and ceilings, black fixtures; exterior white lap siding,
+// grey standing-seam roof, black window frames, wood shutters and beams.
+import * as THREE from 'three';
+import { texture, retile } from './textures.js';
 
 const cache = new Map();
+const once = (key, make) => { if (!cache.has(key)) cache.set(key, make()); return cache.get(key); };
 
-export function solid(color, roughness = 0.8) {
-  const key = `solid:${color}:${roughness}`;
-  if (!cache.has(key)) cache.set(key, new THREE.MeshStandardMaterial({ color, roughness, side: THREE.DoubleSide }));
-  return cache.get(key);
+export function solid(color, roughness = 0.8, metalness = 0, extra = {}) {
+  return once(`solid:${color}:${roughness}:${metalness}:${JSON.stringify(extra)}`, () => new THREE.MeshStandardMaterial({ color, roughness, metalness, ...extra }));
 }
 
-const FINISHES = {
-  oak: { tileFt: 8, draw: planks('#b48a5e', '#a07a50', 8, 0.5) },
-  walnut: { tileFt: 8, draw: planks('#6e4f36', '#5d4230', 8, 0.5) },
-  deck: { tileFt: 8, draw: planks('#8a6a4c', '#755a40', 8, 0.45, 3) },
-  stone: { tileFt: 6, draw: tiles('#d9d3c7', '#c9c2b5', 3, 3) },
-  tile: { tileFt: 4, draw: tiles('#eceae5', '#d6d3cc', 2, 2) },
-  travertine: { tileFt: 6, draw: tiles('#e2d6c0', '#cdbfa6', 2, 3) },
-  grass: { tileFt: 10, draw: noise('#6f8f4e', '#5f7f42') },
-  concrete: { tileFt: 10, draw: noise('#b8b5ae', '#a9a69f') },
+function textured(name, { tex, ft, color = '#ffffff', roughness = 1, metalness = 0, side = THREE.FrontSide, normalScale = 1, env = 1, interior, extra = {} } = {}) {
+  return once(`tex:${name}:${ft}:${color}:${side}`, () => {
+    let set = texture(tex);
+    if (ft && ft !== set.repeatFt) set = retile(set, ft);
+    const mm = new THREE.MeshStandardMaterial({
+      map: set.map, normalMap: set.normalMap, roughnessMap: set.roughnessMap,
+      normalScale: new THREE.Vector2(normalScale, normalScale),
+      color, roughness, metalness, side, envMapIntensity: env, ...extra,
+    });
+    if (interior ?? env < 1) mm.userData.interior = true;
+    return mm;
+  });
+}
+
+const LIB = {
+  oak: () => textured('oak', { tex: 'oak', env: 0.7, roughness: 1.1 }),
+  coral: () => textured('coral', { tex: 'coral', env: 0.5 }),
+  pavers: () => textured('pavers', { tex: 'pavers' }),
+  stepping: () => textured('stepping', { tex: 'stepping' }),
+  grassPavers: () => textured('grassPavers', { tex: 'grassPavers' }),
+  concrete: () => textured('concrete', { tex: 'concrete', env: 0.5 }),
+  grass: () => textured('grass', { tex: 'grass' }),
+  asphalt: () => textured('asphalt', { tex: 'asphalt' }),
+  siding: () => textured('siding', { tex: 'siding', normalScale: 1.2 }),
+  paint: () => textured('paint', { tex: 'paint', color: '#f7f5ef', env: 0.95 }),
+  batten: () => textured('batten', { tex: 'batten', env: 0.95 }),
+  louverWhite: () => textured('louverWhite', { tex: 'louverWhite', side: THREE.DoubleSide }),
+  fascia: () => solid('#60656a', 0.5, 0.3),
+  planks: () => textured('planks', { tex: 'planks', side: THREE.DoubleSide, env: 1.15, interior: true }),
+  soffit: () => textured('soffit', { tex: 'planks', side: THREE.DoubleSide, env: 1.15, interior: true }),
+  roof: () => textured('roof', { tex: 'roofMetal', metalness: 0.15, color: '#ffffff', env: 0.7, side: THREE.DoubleSide }),
+  ashlar: () => textured('ashlar', { tex: 'ashlar' }),
+  poolTile: () => textured('poolTile', { tex: 'poolTile' }),
+  teak: () => textured('teak', { tex: 'teak' }),
+  woodOak: () => textured('woodOak', { tex: 'oakVeneer', env: 0.8 }),       // furniture / cabinetry white oak
+  woodBeam: () => textured('woodBeam', { tex: 'oakVeneer', color: '#b79a77' }),
+  linen: () => textured('linen', { tex: 'linen', color: '#efe9de', env: 0.85 }),
+  linenWhite: () => textured('linenWhite', { tex: 'linen', color: '#f3efe7', env: 0.85 }),
+  linenSand: () => textured('linenSand', { tex: 'linen', color: '#d7c9b2' }),
+  linenSea: () => textured('linenSea', { tex: 'linen', color: '#9fb5b3' }),
+  jute: () => textured('jute', { tex: 'jute' }),
+  quartz: () => textured('quartz', { tex: 'quartz', env: 0.9 }),
+  cane: () => textured('cane', { tex: 'cane', side: THREE.DoubleSide, extra: { alphaTest: 0.5 } }),
+  louver: () => textured('louver', { tex: 'louver' }),
+  slats: () => textured('slats', { tex: 'slats', side: THREE.DoubleSide, extra: { alphaTest: 0.5 } }),
+  trim: () => solid('#f6f5f1', 0.55),
+  black: () => solid('#1a1a1a', 0.5, 0.05),
+  blackMatte: () => solid('#232323', 0.8),
+  steel: () => solid('#c9cdd0', 0.28, 0.9),
+  brass: () => solid('#b08d57', 0.35, 0.9),
+  porcelain: () => solid('#f7f7f4', 0.15),
+  rattan: () => solid('#c8a06a', 0.75),
+  glass: () => once('glass', () => new THREE.MeshPhysicalMaterial({ color: '#dde9ea', metalness: 0, roughness: 0.03, transparent: true, opacity: 0.16, envMapIntensity: 1.6, side: THREE.DoubleSide, depthWrite: false })),
+  mirror: () => solid('#cfd8da', 0.02, 1),
+  water: () => once('water', () => new THREE.MeshPhysicalMaterial({ color: '#1593b3', roughness: 0.03, metalness: 0, transparent: true, opacity: 0.8, envMapIntensity: 1.2, depthWrite: false })),
+  leaf: () => solid('#3f6b2f', 0.7),
+  screen: () => solid('#0c0d0f', 0.15, 0.2),
 };
 
-export function materialFor(name) {
-  if (name?.startsWith('#')) return solid(name);
-  const key = `finish:${name}`;
-  if (cache.has(key)) return cache.get(key);
-  const f = FINISHES[name] ?? FINISHES.oak;
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  f.draw(canvas.getContext('2d'), 512);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(1 / f.tileFt, 1 / f.tileFt);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: name === 'tile' || name === 'stone' ? 0.45 : 0.7 });
-  cache.set(key, mat);
-  return mat;
+// Furnishings and fixtures reflect the room around them, not the open sky.
+const INDOOR = new Set(['jute', 'linen', 'linenWhite', 'linenSand', 'linenSea', 'cane', 'rattan', 'woodOak', 'quartz', 'porcelain', 'steel', 'brass', 'black', 'blackMatte', 'mirror', 'screen', 'trim']);
+
+export function mat(name) {
+  if (!name) return LIB.paint();
+  if (name.startsWith('#')) { const m = solid(name); m.userData.interior = true; return m; }
+  const f = LIB[name];
+  if (!f) { console.warn('unknown material', name); return LIB.paint(); }
+  const m = f();
+  if (INDOOR.has(name)) m.userData.interior = true;
+  return m;
 }
 
-function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
-
-function planks(base, alt, boardsPerTile, boardFt, seed = 7) {
-  return (ctx, S) => {
-    const r = rng(seed), rows = boardsPerTile, h = S / rows;
-    for (let i = 0; i < rows; i++) {
-      let x = -r() * S;
-      while (x < S) {
-        const len = S * (0.35 + r() * 0.5);
-        ctx.fillStyle = r() > 0.5 ? base : alt;
-        ctx.fillRect(x, i * h, len, h);
-        ctx.globalAlpha = 0.08;
-        for (let k = 0; k < 6; k++) { ctx.fillStyle = r() > 0.5 ? '#000' : '#fff'; ctx.fillRect(x, i * h + r() * h, len, 1 + r() * 2); }
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = 'rgba(0,0,0,0.35)';
-        ctx.fillRect(x, i * h, 1.5, h);
-        x += len;
-      }
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(0, i * h, S, 1.5);
-    }
-  };
-}
-
-function tiles(base, grout, cols, rows) {
-  return (ctx, S) => {
-    const r = rng(11);
-    ctx.fillStyle = grout; ctx.fillRect(0, 0, S, S);
-    const w = S / cols, h = S / rows, g = 3;
-    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
-      ctx.fillStyle = base; ctx.fillRect(i * w + g / 2, j * h + g / 2, w - g, h - g);
-      ctx.globalAlpha = 0.05;
-      for (let k = 0; k < 40; k++) { ctx.fillStyle = r() > 0.5 ? '#000' : '#fff'; ctx.beginPath(); ctx.arc(i * w + r() * w, j * h + r() * h, 2 + r() * 10, 0, 7); ctx.fill(); }
-      ctx.globalAlpha = 1;
-    }
-  };
-}
-
-function noise(base, alt) {
-  return (ctx, S) => {
-    const r = rng(3);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, S, S);
-    ctx.fillStyle = alt; ctx.globalAlpha = 0.4;
-    for (let k = 0; k < 4000; k++) ctx.fillRect(r() * S, r() * S, 2, 2);
-    ctx.globalAlpha = 1;
-  };
-}
+// Emissive lamp shade / bulb material, brightened at night.
+export const glow = once('glow', () => new THREE.MeshStandardMaterial({ color: '#fff4e0', emissive: '#ffd9a0', emissiveIntensity: 0.4, roughness: 0.9 }));
