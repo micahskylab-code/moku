@@ -431,7 +431,7 @@ plan['viewpoints'] = [
     # hero views framed like the brochure renderings (2200x1161, 1.9:1; fov is vertical, ~24-26 mm lens)
     # suns are real moments at Kukui'ula (alt, world azimuth from +x toward +z; true north = world az 313.9,
     # from the site registration in geodata/realsite.json):
-    #   front: 21 Jun 10:00 HST (alt 53, compass 80)   back: ~22 Sep 3:25 pm HST (alt 44, compass 261)
+    #   front: 21 Jun 10:00 HST (alt 53, compass 80)   back: 20 Nov 1:30 pm HST (alt 45, compass 202)
     # front: from the brochure frame (horizon ~29% down, pavilions ~77% of the width, their bases ~85% down) ->
     # ~62 ft out from the pavilion fronts, ~27 ft up, pitched ~8.5 deg down; the street stays out of frame
     dict(id='front', pos=[170, 22.3], eye=21, absolute=True, look=[60, 22.3], lookH=2.0, fov=40, sun=[53, 34], aspect=1.895, photo='ref/front.png'),   # r3: ~48 ft out so the pavilions span ~77%

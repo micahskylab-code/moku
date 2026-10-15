@@ -1,0 +1,117 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "This is a usable internal concept draft and the best back view so far, but it is not buyer-ready. Since preview 1, nine defects are fixed: the column-like palm trunks (#2), the CG alocasia (#3), the black voids (#4, no pixel is below RGB 12 now), the cloudless sky (#7), the chartreuse foliage (#8), the bare soil (#10), the oversized gablet (#11), the dim lānai (#13, now side-lit by a 20 Nov 13:30 sun) and the generic caption (#15). Five are only partly fixed: the camera (#1, the height is right but the framing is loose), the falls (#5), the stone (#6), the cedar detailing (#12) and the neighbour copy (#14). The slab chaises (#9) are unchanged. The massing, roofs, gridded bedroom slider, TV wall and furnished lānai now match the p6 plan and the p5 rendering well. Four things still read as CG: hairline falls over dry stone dropping into an opaque mint basin; a broadleaf tree with flat leaves filling the top-left ~10% of the frame; a strip of lawn by the lānai where the grass is missing; and a hill of lollipop trees directly behind the roof. The house fills only about 18% of the frame, against about 29% in p5. There is also a labelling inconsistency to fix: the caption gives the sun as 20 Nov 13:30, while the assumptions register still says 22 Sep 15:25.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 6,
+  "clean_terrain_water": 6,
+  "polished_buyer_camera": 6
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "terrain-water",
+   "where": "The vanishing-edge falls at x≈765-1305, y≈585-790; the catch-basin water at x≈765-1310, y≈660-810; the right end of the falls against the pier at x≈1285-1320, y≈575-665.",
+   "issue": "Partly remains from earlier #5. The falls are sparse white hairline strands with a misty fade in the lower third. The stone between the strands is dry and fully sunlit, with no wet darkening and no refraction, so the falls read as a bead curtain hung in front of a wall rather than a sheet of water. There is no foam or ripple line where the water hits the basin. The basin water is an opaque, flat, pale-mint slab with no reflection of the falls or the wall and no sense of depth. At the right end the strands bunch into a heavier column against a shadowed wedge of the pier. This is the brochure's signature feature.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make a visible thin water sheet from the lip down: water BSDF, IOR 1.33, a ripple normal map, and opacity rising from about 30% at the lip to about 70% at the base. Cut the strand count and contrast by about half. Wet the stone behind it (albedo ×0.6, roughness about 0.15). Add a 5-10 cm foam band and ripple-ring displacement at the impact line. Give the basin the pool-water shader, with depth absorption and reflections. Stop the sheet about 10 cm short of the right pier and finish that end with a clean wall return."
+  },
+  {
+   "rank": 2,
+   "criterion": "materials-lighting",
+   "where": "The broadleaf tree at top left, x≈0-330, y≈0-500 (about 10% of the frame), the nearest object to the camera.",
+   "issue": "New prominence. The camera move brought this tree close, and it is now the strongest CG tell in the frame. Every leaf is a flat card of the same size, in saturated mid-green, with crisp polygon outlines and no translucency or size variation. It also hides the left end of the house and the side yard.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the tree 3-4 m toward the lot line, out of the frustum. If a left-edge frame is wanted, replace it with the pink-flowering tree p5 shows at far left, using a high-detail asset with leaf-size variation, backlit translucency and soft edges, and keep it under about 6% of the frame."
+  },
+  {
+   "rank": 3,
+   "criterion": "terrain-water",
+   "where": "A diagonal strip of lawn at x≈130-640, y≈505-590. It runs from the left side yard, behind both palm trunks, to the lānai slab edge and the pool's left end.",
+   "issue": "New regression. The ground here is flat, untextured, bright moss-green with isolated 3D grass tufts dotted across it, and reads like balding astroturf next to the hero lānai. The likely cause is that the lawn scatter leaves edge cells unfilled (the log reports 'lawn cells 16251 full, 58258 edge'). Another possibility is a grass-paver strip with almost no grass on it.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Scatter the lawn at 100% density right up to the slab, pool coping and trunk bases by rebuilding the edge-cell coverage. If this strip is meant to be grass pavers, give it about 90% grass over a faint paver pattern. Match the base albedo under the grass to the blades so any gaps read as shade rather than green paint."
+  },
+  {
+   "rank": 4,
+   "criterion": "camera",
+   "where": "Whole frame. The house is at x≈255-1080, y≈200-515, left of centre. The right third, x≈1080-1650, y≈0-560, holds a dark planting mass, the tall right palm trunk and two neighbour roofs. The left fifth holds the broadleaf tree and palm trunks.",
+   "issue": "Partly fixed from earlier #1. The eye height and lens shift are now right: the pool surface, spa and lānai furniture all read and the verticals are plumb. But the house fills only about 18% of the frame, against about 29% in p5. Much of the frame goes to planting and neighbours, so the buyer's eye splits between the house and the right-hand vegetation.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Keep the height and shift_y. Narrow the fov from 43° to about 38-39° and pan about 3-4° left, by moving the look target from plan (-4, 23) toward about (-7, 23), so the house spans about 25% of the frame and sits near centre. Accept cropping the blank far end of the right retaining wall, but keep the right pier and the whole vanishing edge in frame. Re-check the composition after the tree move in defect 2."
+  },
+  {
+   "rank": 5,
+   "criterion": "terrain-water",
+   "where": "The background hill directly behind and above the main roof apex, x≈640-1000, y≈185-270.",
+   "issue": "Remains from preview 3 (#11). The faceting is now smoothed, but the hill is larger in frame from the higher eye. It is a bright, smooth, saturated green mound with flat lighter patches. Sphere-canopy 'lollipop' trees stand on it on stick trunks, each with a blob shadow. There is no aerial perspective, and its crisp silhouette against the sky sits in the most-viewed part of the skyline, so it reads as a CG golf mound.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Apply aerial perspective to the far real-site mesh: desaturate it about 40%, lift it about 25% toward the horizon sky colour, and soften it slightly. Replace the sphere-canopy scatter with irregular, spreading canopies (monkeypod or kiawe types) of varied size, or raise a background tree line to break the ridge silhouette behind the roof."
+  },
+  {
+   "rank": 6,
+   "criterion": "materials-lighting",
+   "where": "The two chaise lounges at x≈335-450, y≈565-680, behind the bougainvillea planter and cut by the left palm trunk.",
+   "issue": "Remains from earlier #9. The cushions are still square white slabs near clipping (mean RGB about 225, max 232), with no bevel, welt piping, weave or rolled towel. They stand on the lawn, partly hidden, while p5 shows them on the pool deck, styled with towels. They read as placeholders next to the well-furnished lānai.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Reuse the lānai cushion treatment: 3-4 cm rounded bevels, welt piping, a weave normal map and albedo about 0.75. Add rolled towels. Move the pair about 1 m right and forward onto a paved deck strip at the pool's left end, clear of the trunk, so they read above the planter."
+  },
+  {
+   "rank": 7,
+   "criterion": "labeling-honesty",
+   "where": "The Sun line in the caption band of back-labelled.jpg (y≈1035); assumptions-register.md line 24 (the Supplied table); tools/gen_lot25.py line 434 header comment.",
+   "issue": "The caption says 'Sun: 20 Nov 13:30 HST (alt 45°, az 202°)', which matches the render (sunDir altitude 45.2°). The register's Supplied row and the generator's header comment still say back is about 22 Sep 15:25 HST (alt 44°, az 261°), so the documents contradict each other. The date was changed for art direction ('side-lights the facade'), and that is not recorded. The caption also still omits the lot width and neighbour spacing (I-6) and the document that would resolve the retaining wall and grading (both residuals of preview 3 #15).",
+   "cause_class": "defect (fixable now)",
+   "fix": "Update the register row and the gen_lot25.py comment to '20 Nov 13:30 HST (alt 45°, az 202°), date chosen for side-light; sun position is the real one for that date and site'. Append 'lot 61.5 ft wide, neighbours ~70 ft apart (needs subdivision plat)' to the neighbours line. Change the wall item to '~5 ft retaining wall + grading (needs civil grading plan)'."
+  },
+  {
+   "rank": 8,
+   "criterion": "architecture",
+   "where": "The neighbour roof at x≈1040-1290, y≈245-315, directly behind the right end of the wing roof (eave end x≈1075); a second neighbour copy at the right edge, x≈1540-1650, y≈280-370 (white siding and a window).",
+   "issue": "Partly fixed from earlier #14. The screen planting and the 13% veil help, but the first copy's hip roof sits at the same eave height and seam pattern, right next to this house's wing roof. The house therefore appears to continue to the right, and its true extent is ambiguous. The copied design and the spacing are both assumptions (I-6, I-14).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "The real fix needs the subdivision plat or boundary survey for the lot width (I-6), and the developer's site and architectural plans for Fairway 7 homes 1-14 (I-14). Until then, raise the screen planting behind the wing so it covers the neighbour roof below y≈300, or raise that roof's veil from 13% to about 30%, and keep a visible gap of sky or foliage between the two roofs."
+  },
+  {
+   "rank": 9,
+   "criterion": "architecture",
+   "where": "The lānai header and frieze band at x≈440-860, y≈335-355; the cedar posts at x≈450-470 and x≈838-850, y≈355-510.",
+   "issue": "Partly fixed from earlier #12. The TV, the windows on both sides of it and a header are now present and match p5. But the header reads as a pale, smooth, veneer-like band flush with the frieze, and the posts read as pale tan boards. p5 shows warm, dark, rough-sawn cedar posts and a beam standing proud of the wall with a shadow line. As drawn, the lānai frame lacks the weight that anchors the p5 image.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Set the cedar albedo to about (150,105,70) with a rough-sawn grain normal map and a little roughness variation. Bring the 10×14 beam about 2 in proud of the frieze so it casts a shadow line under the soffit, and make the posts read at 10-12 in. The exact member sizes stay under I-2a until exterior elevations and a framing plan are available."
+  },
+  {
+   "rank": 10,
+   "criterion": "materials-lighting",
+   "where": "The foreground planter wall at x≈235-760, y≈700-871; the catch-basin wall at x≈760-1410, y≈690-830; the long right retaining wall at x≈1410-1650, y≈515-690.",
+   "issue": "Earlier #6 (contrast) is fixed and the stone is now a warm tan. But it is one uniform crazy-paving scale with a peach cast everywhere. There is no base grime, no drip line under the coping and no damp darkening around the basin. The right wall is still a long, blank, unplanted face (residual of preview 3 #12), where p5 has a raised planter with bougainvillea spilling over.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add ±10% per-stone value and hue variation, with larger stones low and smaller ones high. Add a 15-20 cm grime band at the wall bases, a darker drip line under each coping, and damp darkening around the basin. Add a 0.6 m planter along the top of the right wall, with bougainvillea and groundcover trailing 0.3-0.6 m over the coping."
+  },
+  {
+   "rank": 11,
+   "criterion": "materials-lighting",
+   "where": "The bougainvillea in the foreground planter at x≈340-700, y≈600-780 and in the right bed at x≈1210-1510, y≈450-540; the ti at x≈310-400, y≈455-510 and x≈1005-1050, y≈435-460.",
+   "issue": "The flowers are blue-violet on compact, rounded shrubs, so they read as heliotrope or lavender rather than bougainvillea. p5 shows magenta bracts on arching canes. The ti is a vivid crimson-pink (hue about 355°, saturation about 0.6), against p5's dark burgundy, and it pulls the eye at the lānai's left corner.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Shift the bracts toward magenta (hue about 320°) and give the plants an arching, cane-like habit that spills over the planter coping. Darken the ti toward burgundy, at about 30% lower value and saturation."
+  },
+  {
+   "rank": 12,
+   "criterion": "terrain-water",
+   "where": "The lower-slope groundcover at x≈760-1650, y≈690-871, and its edge against the lower lawn at x≈1450-1650.",
+   "issue": "Earlier #10 (raw soil) is fixed: coverage is now 100%. But the mat is a uniform dark green peppered with tiny pure-white dots (max RGB 254) that read as specular glitter rather than jasmine flowers. It also meets the lower lawn along a hard, straight line.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Cut the white flower density by about 60%, enlarge the flowers slightly and give them a soft cream tone. Vary leaf scale and value across the mat. Feather the boundary with the lawn using a 0.3-0.5 m noise-driven blend, or add a stone or steel bed edge."
+  },
+  {
+   "rank": 13,
+   "criterion": "architecture",
+   "where": "The house's left side wall at x≈255-450, y≈330-470: two shuttered openings that show only as dark slits at x≈305-312 and x≈325-332.",
+   "issue": "p5 shows this wall face-on, with two cedar-shuttered windows. The p6 plan makes it the lānai's side wall, holding the outdoor kitchen, which runs perpendicular to the back face. A plan-faithful model therefore shows it receding, with the shutters nearly edge-on. This is a deliberate plan-over-rendering choice; p5 is disclaimed as not to scale.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the plan geometry. If the shutters should read, move the camera about 2 m toward the plan's top side yard, or let defect 2's tree removal open the view, so the wall is seen at about 30° instead of edge-on. Exterior elevations would confirm the opening sizes (I-2a)."
+  }
+ ]
+}

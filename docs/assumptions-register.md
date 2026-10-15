@@ -21,7 +21,7 @@ Each element below is classed as one of three kinds:
 | Sized labels on the plan | "36″ REF", "24″ SPEED OVEN" | p6 |
 | Terrain around the site | USGS 3DEP 1 m DEM (HI_FEMAR9Kauai_2019_D19), 1/3″ DEM | geodata/SOURCES.txt |
 | Ground colour, roads, footprints, trees | Sentinel-2 L2A 2023–26; OSM + Microsoft footprints (Overture); Meta/WRI canopy heights | geodata/SOURCES.txt |
-| Sun positions | Computed for real dates: front 21 Jun 10:00 HST (alt 53°, az 80°); back about 22 Sep 15:25 HST (alt 44°, az 261°) | tools/gen_lot25.py viewpoints |
+| Sun positions | Computed for real dates: front 21 Jun 10:00 HST (alt 53°, az 80°); back 20 Nov 13:30 HST (alt 45°, az 202°) | tools/gen_lot25.py viewpoints |
 
 ## Scale-derived estimates (E)
 | Item | Value | How derived and checked |
