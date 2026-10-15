@@ -119,10 +119,11 @@ cam_data = bpy.data.cameras.new('cam'); cam_data.sensor_fit = 'VERTICAL'; cam_da
 cam = bpy.data.objects.new('cam', cam_data); scene.collection.objects.link(cam); scene.camera = cam
 cam.rotation_mode = 'QUATERNION'
 
-def aim(pos, target, fov):
+def aim(pos, target, fov, shift_y=0.0):
     cam.location = b(pos)
     cam.rotation_quaternion = (b(target) - b(pos)).to_track_quat('-Z', 'Y')
     cam_data.angle_y = math.radians(fov)
+    cam_data.shift_y = shift_y          # lens shift: a level camera framed lower, verticals stay plumb (architectural view)
 
 # ---------------------------------------------------------------- 360 panoramas for the tour
 if args.panos:
@@ -151,7 +152,7 @@ if not args.night:
         v = meta['views'][vid]
         set_sun(v['sunDir'])
         if not v.get('interior') and hasattr(S, 'aim_clouds'): S.aim_clouds(v['pos'], v['target'], v['fov'], W / H)
-        aim(v['pos'], v['target'], v['fov'])
+        aim(v['pos'], v['target'], v['fov'], v.get('shiftY', 0.0))
         # interiors need more paths; exteriors converge fast
         c.samples = args.samples if v.get('interior') else max(64, args.samples // 2)
         r.filepath = os.path.join(args.out, f'{vid}.png')

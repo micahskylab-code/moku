@@ -331,8 +331,9 @@ plan['site'] = dict(
     paths=[dict(rect=[X(1753), 19.8, 152, 24.8], material='stepping'), dict(rect=[GX1, GY0, 152, GY1], material='grassPavers')],
     # coral retaining wall on the back lot line, returning down the bank at both side lines
     # (a wall's top follows the ground at its first point, so each run starts on the lot line)
-    walls=[dict(pts=[[-34.4, -8.6], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, -8.6], [-41, -8.6]], height=0.35),
-           dict(pts=[[-34.4, 31], [-34.4, 54.1]], height=0.35), dict(pts=[[-34.4, 54.1], [-41, 54.1]], height=0.35)],
+    # return walls step down the bank in 1.6 ft runs (each run's top follows the ground at its start), so no tall pier stands proud
+    walls=[dict(pts=[[-34.4, -8.6], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, -8.6], [-36, -8.6], [-37.6, -8.6], [-39.2, -8.6], [-41, -8.6]], height=0.35),
+           dict(pts=[[-34.4, 31], [-34.4, 54.1]], height=0.35), dict(pts=[[-34.4, 54.1], [-36, 54.1], [-37.6, 54.1], [-39.2, 54.1], [-41, 54.1]], height=0.35)],
     loungers=[[-28.5, -5, 90], [-24.5, -5, 90]],
     # tall palms [x, y, height ft, lean, kind] (scripts/palms.py grows the species): the brochure's queen palms
     # (Syagrus, 25-30 ft) - two in the left planter in front of the lanai, one at the right lawn corner - and the
@@ -421,9 +422,9 @@ plan['viewpoints'] = [
     #   front: 21 Jun 10:00 HST (alt 53, compass 80)   back: ~22 Sep 3:25 pm HST (alt 44, compass 261)
     # front: from the brochure frame (horizon ~29% down, pavilions ~77% of the width, their bases ~85% down) ->
     # ~62 ft out from the pavilion fronts, ~27 ft up, pitched ~8.5 deg down; the street stays out of frame
-    dict(id='front', pos=[170, 22.3], eye=21, absolute=True, look=[60, 22.3], lookH=4.5, fov=40, sun=[53, 34], aspect=1.895, photo='ref/front.png'),   # r3: ~48 ft out so the pavilions span ~77%
+    dict(id='front', pos=[170, 22.3], eye=21, absolute=True, look=[60, 22.3], lookH=2.0, fov=40, sun=[53, 34], aspect=1.895, photo='ref/front.png'),   # r3: ~48 ft out so the pavilions span ~77%
     # back: elevated three-quarter view over the vanishing edge onto pool, spa, chaises and lanai (critic r1)
-    dict(id='back', pos=[-79, -23.1], eye=5.0, absolute=True, look=[-4, 23], lookH=5.0, fov=37, sun=[44, 215], aspect=1.895, photo='ref/back.png'),   # r3: ~10.6 ft above the lower lawn, level (plumb verticals), ~28 mm
+    dict(id='back', pos=[-59.4, -11.2], eye=9.8, absolute=True, look=[-4, 23], lookH=9.8, fov=43, shiftY=-0.13, sun=[45.2, 156.3], aspect=1.895, photo='ref/back.png'),   # r4: in and up (~3 m above the deck), level + lens shift (plumb verticals); sun 20 Nov 13:30 HST (alt 45, compass 202) side-lights the facade
     dict(id='front-wide', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320]),
     dict(id='back-wide', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215]),
     dict(id='great-room', pos=[X(1240), Y(1150)], look=[X(620), Y(800)], fov=72),

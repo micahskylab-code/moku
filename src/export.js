@@ -18,7 +18,7 @@ export async function exportForBlender({ scene, plan, terrainH, lamps, siteLayou
     const p = new THREE.Vector3(v.pos[0], v.absolute ? v.eye : g + (v.eye ?? 5.4), v.pos[1]);
     const t = new THREE.Vector3(v.look[0], v.lookH ?? p.y - 0.4, v.look[1]);
     const [alt, az] = v.sun ?? plan.sun ?? [50, 230];
-    meta.views[v.id] = { pos: toM(p), target: toM(t), fov: v.fov ?? 70, sunDir: dirFromAltAz(alt, az).toArray(), interior: !v.sun };
+    meta.views[v.id] = { pos: toM(p), target: toM(t), fov: v.fov ?? 70, sunDir: dirFromAltAz(alt, az).toArray(), interior: !v.sun, shiftY: v.shiftY ?? 0 };
   }
   // night film camera, frame by frame
   const north = siteLayout(plan).north, date = new Date(plan.night?.date ?? '2026-03-20T07:00:00Z');
