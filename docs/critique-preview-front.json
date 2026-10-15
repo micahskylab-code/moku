@@ -1,0 +1,133 @@
+{
+ "view": "front",
+ "usable_internal_draft": true,
+ "verdict": "This works as an internal draft for massing and layout, as long as it carries the caption band. It is not ready for buyers. The architecture is broadly faithful to the plan and to the p4 rendering: \u02bbohana and garage pavilions on either side of the walk, Dutch-gablet hips on the wings, standing-seam roofs, white lap siding, shutters and a cedar carriage door. The camera does the most damage. It sits too low and too far back, so the house fills only the middle half of the frame, and yellowing near-field palm fronds and a dark trunk cover about a quarter of the image. There are also obvious artifacts: pure-black voids in the road, notches at the base of each gablet, and a garage that opens onto plain lawn. The metal roofs and the backdrop render flat, so it reads as good CG rather than a photograph. Re-shooting from about 34 ft at the front lot line with the framing palms pulled back is the single biggest fix, and it also brings the entry and the ocean into view. The remaining design differences (main roof ridge direction, \u02bbohana shutter size, landscape layout, neighbours) depend on assumptions and need a roof plan or elevations, a landscape plan and a developer site plan. The labelled front-labelled.jpg does not exist yet. A test band I generated is legible and accurate, at /tmp/claude-0/-home-user-moku/ed1d652b-1bcf-5826-a091-375544d493d0/scratchpad/critique-front/front-labelled-test.jpg.",
+ "scores": {
+  "plan_faithful_architecture": 6,
+  "realistic_materials_lighting": 5,
+  "clean_terrain_water": 4,
+  "polished_buyer_camera": 3
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "camera",
+   "where": "Whole frame. Camera in tools/gen_lot25.py line 397 (front: pos [196, 22.3], eye 19 ft, look [60, 22.3], lookH 7, fov 38)",
+   "issue": "The camera is too low and too far back, out over the street. The house spans only about x 380-1270 and y 325-660, roughly 54% of the width, against about 90% in p4. The bottom quarter is empty lawn and the top 40% is sky and fronds. Roofs read edge-on, the ocean is a sliver, and the horizon sits about 37% down the frame (p4: about 29%).",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise eye to about 32-36 ft and move pos to about x 178-182 (the front lot line). Aim at about x 70 with lookH about 0 and widen fov to about 48-52, so the \u02bbohana and garage fill about 85% of the width with the horizon in the upper third. The existing 'front-wide' viewpoint (eye 30, fov 50) is a starting point; pull it in closer."
+  },
+  {
+   "rank": 2,
+   "criterion": "camera",
+   "where": "Top-left x 0-720, y 0-560; right x 1340-1650, y 0-480; top x 960-1100, y 0-100; left edge x 0-20, full height",
+   "issue": "Fronds from the two far-verge framing queen palms hang across about 25% of the frame and cut across the \u02bbohana roof. They read as drought-stressed: yellow-olive with orange-brown tips, flat paper-thin leaflets. One trunk hugs the left edge at x 0-20 in deep shade (RGB about 20,28,22) and reads as a black border strip.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Delete the two far-verge framing palms or push them 10-15 ft back (gen_lot25.py around lines 336-337). Let at most healthy green frond tips enter the top corners, about 8-10% of the frame. Recolour the queen palm fronds to healthy green (palm rebuild task). Move the left-edge trunk out of the view frustum."
+  },
+  {
+   "rank": 3,
+   "criterion": "terrain-water",
+   "where": "Road strip at the bottom edge: x 390-435, 836-876 and 1277-1322, y 858-871",
+   "issue": "Three pure-black (0,0,0) parallelograms in the asphalt. These are holes in the road mesh, or lane dashes with an unlit or missing material, showing the void below the terrain. It is the most obviously broken pixel area in the image.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Fill the road mesh, or give the dashes a white or yellow paint material sitting 2-3 mm above the asphalt. The camera move in rank 1 should also crop the road out entirely. Add a curb or apron if any road stays in frame."
+  },
+  {
+   "rank": 4,
+   "criterion": "architecture",
+   "where": "End of the walk, x 800-880, y 440-500; palm trunks at x about 745 and 895, y 465-570",
+   "issue": "In p4 the focal point is the glass pivot entry with sidelights and its cedar header at the end of the walk. Here it is a dark void, hidden by the two palms planted right on the walk axis and by courtyard shade. The plan's central idea (walk, courtyard, entry) does not read.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the two walk-axis palms about 3 ft outward, toward the wing ends, as in p4 where they flank the door. Turn on warm foyer and great-room interior lights so the glazing reads through the courtyard shade. Check the result after the camera raise."
+  },
+  {
+   "rank": 5,
+   "criterion": "materials-lighting",
+   "where": "All roofs, e.g. the garage roof x 1000-1200, y 450-490; main ridge x 800-950, y 325-410; garage door lites x 1062-1195, y 520-542",
+   "issue": "The standing-seam roofs render pale and flat. The garage roof averages about 170 grey with a standard deviation of about 10 (no reflection gradient), and the main hip edge glows white. p4's Galvalume is about 110 with a visible sheen. The garage carriage-door lites are flat opaque black with no reflection. Both read as matte CG, not real metal and glass.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Roof material: base colour about 0.25-0.30 linear, metallic 0.8-1.0, roughness 0.3-0.4 with slight anisotropy along the seams, so the sky gives a gradient across each plane. Garage lites: real glass with reflection, plus a dim interior back panel or light."
+  },
+  {
+   "rank": 6,
+   "criterion": "architecture",
+   "where": "Base corners of each Dutch gablet: \u02bbohana x 422-447 and 607-630, y 446-451; garage x 1020-1042 and 1217-1240, y 446-451; also the wing gablets. Roof wells on the wing roofs at x 668-720, y 368-390 and x 915-975, y 375-395",
+   "issue": "Each gablet base has black rectangular notches at both ends where the vertical louvered wall fails to meet the hip skirt planes. They read as holes in the roof. The intended open slatted wells over the garden showers read as thin black slits with a few beams, so they look like more roof gaps rather than a designed feature.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Close the gablet ledge: extend the hip skirt planes to the gablet wall line, or add a flashing cap or cricket at each end. Space the well slats more closely in a lighter cedar tone and give them a light interior, so they read as deliberate openings. Or close them in the front view if they cannot be made legible."
+  },
+  {
+   "rank": 7,
+   "criterion": "terrain-water",
+   "where": "In front of the garage, x 1000-1330, y 660-860",
+   "issue": "The grass-paver driveway renders as plain lawn because the honeycomb ribs are invisible. Only a thin paver edge shows on the right, so the garage appears to open onto turf. p4 shows a clear hex grass-paver drive in a tan stone border.",
+   "cause_class": "defect (fixable now)",
+   "fix": "In plants_bpy.py, around line 1553, lower the 'lawn-pavers' turf (S[:,2] from 0.7 to about 0.35 and sink it further) and widen or lighten the concrete ribs so the hex pattern reads at this distance. Add the tan coral border band and a short apron at the door, per p4."
+  },
+  {
+   "rank": 8,
+   "criterion": "labeling-honesty",
+   "where": "shots/preview/: only the raw front.png exists. No front-finished.png or front-labelled.jpg",
+   "issue": "The front view has no concept-visualization caption yet, because run.sh labels both views only after the back view finishes rendering. If front.png is shared now, it carries no marking of estimates or assumptions. A test band from label_preview.py with the run.sh text is legible and correctly states concept status, the garage, \u02bbohana, lot width, neighbours and the sun date. Saved at /tmp/claude-0/-home-user-moku/ed1d652b-1bcf-5826-a091-375544d493d0/scratchpad/critique-front/front-labelled-test.jpg.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Label each view as soon as it renders, and never circulate an unlabelled PNG. Add two lines to the band: 'landscape layout assumed (no landscape plan)' and 'ocean/backdrop from DEM + satellite; view from lot not verified'."
+  },
+  {
+   "rank": 9,
+   "criterion": "terrain-water",
+   "where": "Background: x 1150-1650, y 285-340; ocean sliver x 700-900, y 318-330",
+   "issue": "The far land rising above the right-hand roofline renders as smeared khaki and olive horizontal bands (RGB about 95,89,54) and reads as a painted plateau, not fairway. The ocean sliver (RGB about 183,198,205) cannot be told apart from haze or sky. How much ocean shows is a real-site matter. Its colour and the backdrop texture are fixable.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Apply the fairway canvas shader (materials_bpy.py around lines 812-818, with mowing stripes) and a tree scatter to the far terrain instead of raw Sentinel-2. Ease the aerial haze. Deepen the ocean: darker water colour and lower roughness, so it reflects sky higher than the horizon. Do not enlarge the ocean beyond what the DEM and camera give."
+  },
+  {
+   "rank": 10,
+   "criterion": "architecture",
+   "where": "Main great-room roof at centre, x 800-950, y 325-410 (roof 'main' in gen_lot25.py line 138)",
+   "issue": "The main roof reads as a pointed hip end (an apex triangle). The model runs one hip over the l\u0101nai, great room and entry (about 54 x 28.5 ft), so its ridge runs away from the street. p4 shows a broad trapezoidal hip face with a short ridge running across the view, which suggests the great room has its own roof. The plan cannot settle this, and the brochure renderings are not to scale.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the roof plan and front elevation (register I-3). In the meantime, an option is to split the main hip at the great-room/l\u0101nai wall line so the great-room hip carries a cross ridge, matching p4. Record whichever choice is made in the register."
+  },
+  {
+   "rank": 11,
+   "criterion": "materials-lighting",
+   "where": "Foreground beds beside the walk, x 610-775 and 875-1015, y 700-848",
+   "issue": "The mondo and strappy groundcover renders as near-black, heavy masses that dominate the bottom of the frame. They read as holes in the planting. p4's low planting is lighter, with a silver-grey groundcover band.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise the mondo albedo and translucency, and swap the front rows for the silver dichondra ribbon, as intended in gen_lot25.py around line 369. Thin the instance density so leaf shapes read."
+  },
+  {
+   "rank": 12,
+   "criterion": "architecture",
+   "where": "\u02bbOhana street face: shutters at x 430-475 and 535-575, y 517-632",
+   "issue": "A black slot shows above each shutter (y about 517-522), where the shutter does not fill the opening's head. Separately, the shutters sit low at window height (bottom about 1.5 ft above grade). In p4 they hang high, from just under the eave to about mid-wall, set in trimmed panels. As it stands, the \u02bbohana reads as a shed.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Size each shutter to its opening, or add a head trim board, to close the black slot. Shutter height and sill are assumption-driven (register I-2/E-4). Until a \u02bbohana elevation or window schedule exists, match p4: raise the shutter head to about 8.5 ft, sill to about 4 ft, and add vertical trim boards."
+  },
+  {
+   "rank": 13,
+   "criterion": "terrain-water",
+   "where": "Front lawn and walk, x 380-1330, y 655-860",
+   "issue": "The front landscape is ruler-straight: a double row of stepping stones and rectangular lawn panels, running to the asphalt with no curb, edging or apron. p4 shows a curving lawn edge with stone edging, a separate diagonal path and a defined driveway. This is a landscape-design difference, not an artifact.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the landscape plan and a civil or site plan with the driveway and curb (register I-13, I-4/I-6). In the meantime, add a low curb or coral edging strip at the street line and curve the bed edges as in p4, labelled as assumed."
+  },
+  {
+   "rank": 14,
+   "criterion": "camera",
+   "where": "Right third, x 1250-1650, y 325-460; upper left, x 440-530, y 300-340",
+   "issue": "The neighbour copies' grey standing-seam roofs merge with the subject's roofs on the right and crowd the composition. A buyer cannot tell where the house for sale ends.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the developer's site and architectural plans for homes 1-14 (register I-14). For now, the tighter camera in rank 1 should push them mostly out of frame. Add side-yard planting depth, and/or render the neighbours with a slightly lighter, hazier roof value so the subject stays dominant."
+  },
+  {
+   "rank": 15,
+   "criterion": "materials-lighting",
+   "where": "Whole frame: sun 21 Jun 10:00 HST (alt 53\u00b0, az 80\u00b0); cloudless gradient sky",
+   "issue": "The high, flat, near-frontal mid-morning light gives short shadows and little modelling on the white walls, compared with p4's warmer, lower and more raking light and its wispy cirrus. This is a correct consequence of the real-date sun, not a bug.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it if real-date sun is the policy. For a more photographic buyer image, choose another real date and time with lower, more raking sun (e.g. early morning or late afternoon on a date when the sun is behind the camera's shoulder), state it in the caption, and add a light cirrus sky HDRI that matches it."
+  }
+ ]
+}

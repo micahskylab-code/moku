@@ -64,3 +64,15 @@ These modules are built but not yet reviewed. The agent that wrote them was stop
 - Seasonal sun and shade on the outdoor areas (lānai, pool, lawn) across the year. This builds on `src/ephemeris.js`, `src/sunpath.js` and `scripts/sun_moon.py`.
 - Labelled finish options that keep **confirmed inclusions** separate from **optional concepts**. No finish or inclusion may be shown as confirmed without a developer source: today only the p7 design board ("concept") exists, so everything is a concept (assumptions register I-12).
 - Shareable saved views with question context, so a buyer can send a specific view and ask about it.
+
+## Sky QA checks (later; not run, so no numerical validation is claimed)
+Run these against JPL Horizons (https://ssd.jpl.nasa.gov/horizons/manual.html) and the USNO rise/set
+definitions (https://aa.usno.navy.mil/faq/RST_defs) for a sample of dates across the years, before
+showing any sky, sun or moon claim to buyers:
+1. **Time zone.** Pacific/Honolulu, UTC−10 year-round, no DST. Check the UI's local-time to UTC conversion at both solstices and equinoxes and across year boundaries.
+2. **Azimuth convention.** Degrees clockwise from **true** north (not grid or magnetic north, not the plan's +x). Check the world-axis to compass mapping with `geodata/realsite.json` (north vector; plan +x bearing 46.3°).
+3. **Solar altitude.** Keep geometric (airless) and apparent (refracted) altitude distinct. Label which one is displayed. Use the USNO definition of sunrise/sunset: the upper limb at −0.833° geometric (refraction 34′ plus semidiameter 16′).
+4. **Sunset-visibility claims.** These depend on observer eye height (floor elevation plus about 5.2 ft standing, or seated) and on the obstruction horizon (terrain from DEM, plus buildings and vegetation). Neighbours and planting are assumed (assumptions register I-13, I-14). So "sun sets over the ocean from the lānai" may only be stated as a concept unless verified against a surveyed horizon.
+5. **Moon.** Topocentric, not geocentric, position: parallax is up to about 1°. Phase and illumination fraction at the instant shown. Moonrise/moonset by the USNO upper-limb definition.
+6. **Stars.** Positions depend on date and time: sidereal time at the site longitude, precession to the date, and atmospheric refraction near the horizon. Check that Nā Hiku (the Big Dipper) altitude and azimuth match Horizons or an equivalent catalogue for sample nights.
+7. **Site inputs.** Coordinates (±25 m registration), elevation (17.6 m from DEM) and true north are not survey-verified (assumptions register I-9). Record the inputs used with every validation run.
