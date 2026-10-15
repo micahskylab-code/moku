@@ -394,8 +394,11 @@ plan['viewpoints'] = [
     # suns are real moments at Kukui'ula (alt, world azimuth from +x toward +z; true north = world az 313.9,
     # from the site registration in geodata/realsite.json):
     #   front: 21 Jun 10:00 HST (alt 53, compass 80)   back: ~22 Sep 3:25 pm HST (alt 44, compass 261)
-    dict(id='front', pos=[196, 22.3], eye=19, absolute=True, look=[60, 22.3], lookH=7, fov=38, sun=[53, 34], aspect=1.895, photo='ref/front.png'),
-    dict(id='back', pos=[-50, -15], eye=2.4, absolute=True, look=[-4, 23], lookH=3.6, fov=40, sun=[44, 215], aspect=1.895, photo='ref/back.png'),
+    # front: from the brochure frame (horizon ~29% down, pavilions ~77% of the width, their bases ~85% down) ->
+    # ~62 ft out from the pavilion fronts, ~27 ft up, pitched ~8.5 deg down; the street stays out of frame
+    dict(id='front', pos=[184, 22.3], eye=27, absolute=True, look=[60, 22.3], lookH=8.5, fov=40, sun=[53, 34], aspect=1.895, photo='ref/front.png'),
+    # back: elevated three-quarter view over the vanishing edge onto pool, spa, chaises and lanai (critic r1)
+    dict(id='back', pos=[-61.6, -24.6], eye=11, absolute=True, look=[-4, 23], lookH=-0.8, fov=40, sun=[44, 215], aspect=1.895, photo='ref/back.png'),
     dict(id='front-wide', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320]),
     dict(id='back-wide', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215]),
     dict(id='great-room', pos=[X(1240), Y(1150)], look=[X(620), Y(800)], fov=72),
