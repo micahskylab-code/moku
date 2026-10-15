@@ -30,6 +30,9 @@ ap.add_argument('--hdri', default='autumn_field_puresky')                   # an
 ap.add_argument('--clouds', default='kloofendal_48d_partly_cloudy_puresky')   # its cumulus laid low on the horizon over --hdri ('' = none)
 ap.add_argument('--cloud-top', type=float, default=11.0)                    # clouds kept below this elevation (deg)
 ap.add_argument('--cloud-yaw', type=float, default=0.0)                     # turn the cloud layer (deg) to place the cumulus
+ap.add_argument('--cumulus-top', type=float, default=35.0)                  # trade-wind cumulus band up to this elevation (deg; <= cloud-top: off)
+ap.add_argument('--cirrus', type=float, default=0.3)                        # light cirrus above ~15 deg (peak opacity, 0 = none)
+ap.add_argument('--toe', type=float, default=0.007)                         # shadow toe lift: scene-linear value true black is raised to (0 = off)
 ap.add_argument('--sky-strength', type=float, default=1.0)                  # x the HDRI's measured sky + sun
 ap.add_argument('--sky-yaw', type=float, default=0.0)                       # turn the clouds (deg) away from the sun-matched angle
 ap.add_argument('--hdri-res', type=int, default=0)                          # cap the HDRI width (e.g. 4096 for tests; 0 = full 8K)
@@ -72,7 +75,8 @@ import water_bpy; water_bpy.apply(meta=meta, night=args.night, log=lambda s: pri
 S = materials_bpy.World(scene, mode='procedural' if (args.night or args.plate) else args.sky, hdri=args.hdri,
                         strength=args.sky_strength, yaw=args.sky_yaw, max_res=args.hdri_res,
                         polarizer=args.polarizer, log=lambda s: print(s, flush=True),
-                        clouds=args.clouds, cloud_top=args.cloud_top, cloud_yaw=args.cloud_yaw)
+                        clouds=args.clouds, cloud_top=args.cloud_top, cloud_yaw=args.cloud_yaw,
+                        cumulus_top=args.cumulus_top, cirrus=args.cirrus)
 nt, bg, camsky, sky, sun, sun_data = S.nt, S.bg, S.camsky, S.sky, S.sun, S.sun_data
 set_sun = S.set_sun
 if not args.night: S.auto_exposure(meta, args.exposure, args.interior_ev, only=args.views)   # interiors metered +EV, white-balanced
@@ -87,13 +91,29 @@ c.device = 'CPU'; c.samples = args.samples; c.use_adaptive_sampling = True; c.ad
 c.use_denoising = True
 try: c.denoiser = 'OPENIMAGEDENOISE'
 except Exception: pass
-c.max_bounces = 10; c.diffuse_bounces = 5; c.glossy_bounces = 5; c.transmission_bounces = 10; c.transparent_max_bounces = 24
+# diffuse 7 / transmission 10: light reaches the shade under dense planting through leaves and bounces
+# (critique-preview2-front #6: 2% of the frame was pure black there)
+c.max_bounces = 12; c.diffuse_bounces = 7; c.glossy_bounces = 5; c.transmission_bounces = 10; c.transparent_max_bounces = 24
 c.caustics_reflective = False; c.caustics_refractive = False
 c.sample_clamp_indirect = 8.0
 c.blur_glossy = 1.0
 scene.view_settings.view_transform = 'AgX'
 scene.view_settings.look = 'AgX - Medium High Contrast'
 scene.view_settings.exposure = args.exposure
+if args.toe > 0 and not args.night:
+    # a slight toe lift, as a photo's shadows keep detail (critique-preview2-front #6): Blender applies the view
+    # curve in scene-linear after exposure, before AgX, so a curve that adds `toe` at black and fades out by 0.12
+    # lifts true black to ~13 sRGB (0.003 -> ~17) and leaves mid-tones and highlights exactly as they were
+    try:
+        vs = scene.view_settings; vs.use_curve_mapping = True
+        cm = vs.curve_mapping; cm.extend = 'EXTRAPOLATED'
+        cv = cm.curves[3]
+        while len(cv.points) > 2: cv.points.remove(cv.points[1])
+        cv.points[0].location = (0.0, args.toe); cv.points[-1].location = (1.0, 1.0)
+        for x, y in ((0.012, 0.012 + args.toe * 0.55), (0.04, 0.04 + args.toe * 0.12), (0.12, 0.12)): cv.points.new(x, y)
+        for pt in cv.points: pt.handle_type = 'AUTO_CLAMPED'
+        cm.update()
+    except Exception as e: print('toe lift failed', e, flush=True)
 
 cam_data = bpy.data.cameras.new('cam'); cam_data.sensor_fit = 'VERTICAL'; cam_data.clip_start = 0.05; cam_data.clip_end = 20000
 cam = bpy.data.objects.new('cam', cam_data); scene.collection.objects.link(cam); scene.camera = cam
@@ -130,6 +150,7 @@ if not args.night:
     for vid in args.views or list(meta['views'].keys()):
         v = meta['views'][vid]
         set_sun(v['sunDir'])
+        if not v.get('interior') and hasattr(S, 'aim_clouds'): S.aim_clouds(v['pos'], v['target'], v['fov'], W / H)
         aim(v['pos'], v['target'], v['fov'])
         # interiors need more paths; exteriors converge fast
         c.samples = args.samples if v.get('interior') else max(64, args.samples // 2)

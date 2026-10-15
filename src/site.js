@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { mat } from './materials.js';
 import { fbm, texture } from './textures.js';
 import { footprint } from './house.js';
+import { chaiseInto } from './furniture.js';
 import { plantBed, plumeria, frondMaterial, foliageTexture, recording, recordPlant } from './plants.js';
 import { distToSeg } from './geom.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -402,11 +403,5 @@ function trunkMat() {
   return tMat;
 }
 
-function loungerInto(g) {
-  const b = (w, h, d, x, y, z, m) => { const mm = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(m)); mm.position.set(x, y, z); g.add(mm); return mm; };
-  b(2.3, 0.2, 6.3, 0, 1.0, 0, 'teak');
-  for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) b(0.2, 1.0, 0.2, sx * 1.0, 0.5, sz * 2.9, 'teak');
-  b(2.2, 0.3, 3.8, 0, 1.25, 1.1, 'linenWhite');
-  b(2.2, 0.3, 2.4, 0, 1.75, -1.9, 'linenWhite').rotation.x = 0.6;
-  b(1.6, 0.14, 0.9, 0, 1.47, 1.6, '#ffffff').rotation.y = 0.15;
-}
+// pool-deck chaise (p5): the shared teak chaise with welted canvas pads and rolled towels (src/furniture.js)
+function loungerInto(g) { chaiseInto(g, 2.3, 6.3); }

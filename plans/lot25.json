@@ -2751,7 +2751,7 @@
   {
    "type": "tv",
    "x": 9.78,
-   "y": 28.7,
+   "y": 28.16,
    "w": 5.5,
    "rot": 180,
    "elevation": 5.0,
@@ -3052,24 +3052,24 @@
   ],
   "palms": [
    [
-    -19.8,
-    -6.9,
-    14.5,
+    -19.9,
+    -6.7,
+    21,
     1,
     "queen"
    ],
    [
-    -26,
-    -1.2,
-    16.5,
+    -18.6,
+    -3.3,
+    19.5,
     1.2,
     "queen"
    ],
    [
-    -8,
-    47,
-    28,
-    1.4,
+    -31,
+    39,
+    24,
+    1.2,
     "queen"
    ],
    [
@@ -3109,34 +3109,14 @@
     12
    ],
    [
-    30,
-    -5,
-    15
-   ],
-   [
-    72,
-    -5,
-    12
-   ],
-   [
     36,
     50.5,
     14
    ],
    [
-    -40,
-    40,
-    15
-   ],
-   [
     140,
     -5,
     13
-   ],
-   [
-    -2,
-    50,
-    12
    ],
    [
     118,
@@ -3168,21 +3148,15 @@
     4
    ],
    [
-    106,
-    16.8,
+    96.8,
+    14.4,
     16,
     "christmas"
    ],
    [
-    101.5,
-    28.2,
+    94.4,
+    30.5,
     17,
-    "christmas"
-   ],
-   [
-    118,
-    28.0,
-    15,
     "christmas"
    ],
    [
@@ -3283,31 +3257,14 @@
     16
    ],
    [
-    5,
-    50.6,
-    22,
-    "foxtail"
-   ],
-   [
     14,
     50.2,
     14
    ],
    [
-    24,
-    50.8,
-    20,
-    "foxtail"
-   ],
-   [
     -14,
     48.6,
     13
-   ],
-   [
-    -29,
-    50.5,
-    12
    ],
    [
     147.4,
@@ -3367,7 +3324,8 @@
      -20,
      40
     ],
-    "kind": "bougainvillea"
+    "kind": "bougainvillea",
+    "curve": "x1y0y1"
    },
    {
     "rect": [
@@ -3380,13 +3338,24 @@
    },
    {
     "rect": [
+     -21.3,
+     -8.0,
+     -15.6,
+     -2.2
+    ],
+    "kind": "mondo",
+    "curve": "x0x1y0y1"
+   },
+   {
+    "rect": [
      -42,
      -8,
      -35.5,
      53
     ],
     "kind": "jasmine",
-    "density": 1.5
+    "density": 2.1,
+    "curve": "x0"
    },
    {
     "rect": [
@@ -3396,17 +3365,8 @@
      -9.2
     ],
     "kind": "jasmine",
-    "density": 1.8
-   },
-   {
-    "rect": [
-     -41,
-     -15,
-     -36.5,
-     -11
-    ],
-    "kind": "alocasia",
-    "density": 0.5
+    "density": 2.2,
+    "curve": "x0y0"
    },
    {
     "rect": [
@@ -3415,7 +3375,8 @@
      121,
      19.2
     ],
-    "kind": "mondo"
+    "kind": "mondo",
+    "density": 0.8
    },
    {
     "rect": [
@@ -3424,7 +3385,8 @@
      121,
      28.4
     ],
-    "kind": "mondo"
+    "kind": "mondo",
+    "density": 0.6
    },
    {
     "rect": [
@@ -3433,7 +3395,8 @@
      99.6,
      19
     ],
-    "kind": "ti"
+    "kind": "ti",
+    "edge": false
    },
    {
     "rect": [
@@ -3442,7 +3405,8 @@
      111,
      19
     ],
-    "kind": "ti"
+    "kind": "ti",
+    "edge": false
    },
    {
     "rect": [
@@ -3451,7 +3415,9 @@
      105.2,
      28.2
     ],
-    "kind": "ti"
+    "kind": "ti",
+    "density": 0.7,
+    "edge": false
    },
    {
     "rect": [
@@ -3460,7 +3426,9 @@
      116.8,
      28.2
     ],
-    "kind": "ti"
+    "kind": "ti",
+    "density": 0.6,
+    "edge": false
    },
    {
     "rect": [
@@ -3474,42 +3442,24 @@
    {
     "rect": [
      123,
-     15.5,
+     13.6,
      150,
-     17.4
+     19.3
     ],
     "kind": "mondo",
-    "density": 0.9
+    "density": 0.75,
+    "curve": "y0"
    },
    {
     "rect": [
      123,
-     27.4,
+     25.3,
      150,
-     29.5
+     31.4
     ],
     "kind": "mondo",
-    "density": 0.9
-   },
-   {
-    "rect": [
-     123,
-     17.4,
-     131,
-     19.2
-    ],
-    "kind": "mondo",
-    "density": 0.9
-   },
-   {
-    "rect": [
-     123,
-     25.4,
-     132,
-     27.4
-    ],
-    "kind": "mondo",
-    "density": 0.9
+    "density": 0.75,
+    "curve": "y1"
    },
    {
     "rect": [
@@ -3519,7 +3469,8 @@
      18.4
     ],
     "kind": "gardenia",
-    "density": 0.8
+    "density": 0.7,
+    "edge": false
    },
    {
     "rect": [
@@ -3529,7 +3480,8 @@
      29.4
     ],
     "kind": "gardenia",
-    "density": 0.8
+    "density": 0.7,
+    "edge": false
    },
    {
     "rect": [
@@ -3538,7 +3490,8 @@
      150,
      19.2
     ],
-    "kind": "dichondra"
+    "kind": "dichondra",
+    "edge": false
    },
    {
     "rect": [
@@ -3547,7 +3500,8 @@
      150,
      27.4
     ],
-    "kind": "dichondra"
+    "kind": "dichondra",
+    "edge": false
    },
    {
     "rect": [
@@ -3615,7 +3569,7 @@
    },
    {
     "rect": [
-     -30,
+     -1,
      51.6,
      30,
      53.4
@@ -3625,13 +3579,22 @@
    },
    {
     "rect": [
+     -33.4,
+     51.7,
+     -1,
+     53.4
+    ],
+    "kind": "screen"
+   },
+   {
+    "rect": [
      96,
      51.6,
      150,
      53.4
     ],
     "kind": "monstera",
-    "density": 0.7
+    "density": 0.45
    },
    {
     "rect": [
@@ -3641,16 +3604,18 @@
      -1
     ],
     "kind": "ti",
-    "density": 0.9
+    "density": 0.9,
+    "edge": false
    },
    {
     "rect": [
      -2,
-     -3.5,
+     -3.8,
      16,
      -1
     ],
-    "kind": "mondo"
+    "kind": "mondo",
+    "curve": "y0"
    },
    {
     "rect": [
@@ -3659,7 +3624,8 @@
      18,
      -1
     ],
-    "kind": "monstera"
+    "kind": "monstera",
+    "edge": false
    },
    {
     "rect": [
@@ -3669,7 +3635,8 @@
      44.2
     ],
     "kind": "ti",
-    "density": 0.8
+    "density": 0.8,
+    "edge": false
    },
    {
     "rect": [
@@ -3696,7 +3663,8 @@
      5.5,
      46.4
     ],
-    "kind": "ti"
+    "kind": "ti",
+    "edge": false
    },
    {
     "rect": [
@@ -3705,8 +3673,8 @@
      -16,
      51.4
     ],
-    "kind": "heliconia",
-    "density": 0.7
+    "kind": "bougainvillea",
+    "density": 0.8
    },
    {
     "rect": [

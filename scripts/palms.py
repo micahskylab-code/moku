@@ -433,8 +433,11 @@ def _frond_axis(L, elev, droop, n=24, twist=0.0, rng=None, power=1.6):
 #   r0: frond attachment radius; drop: oldest frond attaches this far down; shaft: crownshaft length (m) or 0;
 #   dead: hanging dead fronds (choices); fruit: panicles (choices); rad: trunk radius (m); ring: scar spacing (m)
 KIND = {
-    'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(3.0, 5.2), limp=0.7,
-                  elev=(60, -50), epow=0.8, rd=(1.25, 0.9), rpow=2.0, r0=0.1, drop=0.55, shaft=0, dead=(2, 2, 3, 3, 4), fruit=(1, 2, 2, 3),
+    # queen (critic r2 back #1/#6): fronds arch out from the crown and bend down only in their outer third, tips
+    # ~20-45 deg below horizontal (newest ~68 deg up, oldest level at the base) - no plumb 'weeping' curtain; a
+    # clean, trimmed crown (no hanging dead tier: only the oldest one or two fronds slightly yellow)
+    'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(2.5, 4.0), limp=0.85,
+                  elev=(68, 0), epow=1.0, rd=(1.55, -0.75), rpow=2.8, r0=0.1, drop=0.45, shaft=0, dead=(0,), fruit=(1, 1, 2),
                   rad=0.16, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.11),
     'foxtail': dict(fronds=(8, 11), L=(2.5, 3.1), pet=0.1, ns=95, ll=0.48, lw=0.028, arr='brush', ld=(0.6, 1.6), limp=1.4,
                     elev=(72, -12), epow=1.0, rd=(0.8, 0.9), rpow=1.8, r0=0.06, drop=0.2, shaft=1.0, dead=(0, 0, 1), fruit=(0, 0, 1),
@@ -616,8 +619,8 @@ def crown_mesh(kind, seed, mats):
         # one to three panicles of orange/green drupes hanging below the crown on arching stalks, with spathes
         for _ in range(rng.choice(K['fruit'])):
             a = rng.uniform(0, 6.28); hd = np.array([math.cos(a), math.sin(a), 0.0])
-            _panicle(stem, fruit, spathe, rng, nr, hd * 0.16 + np.array([0, 0, -0.42]), hd, 0.38, 0.4, rng.randint(26, 40), (9, 15), (0.011, 0.015),
-                     spathe_len=rng.uniform(0.7, 1.0))
+            _panicle(stem, fruit, spathe, rng, nr, hd * 0.16 + np.array([0, 0, -0.42]), hd, 0.28, 0.26, rng.randint(15, 24), (5, 9), (0.009, 0.012),
+                     spathe_len=rng.uniform(0.45, 0.65))
     elif kind in ('foxtail', 'christmas'):
         for _ in range(rng.choice(K['fruit'])):
             a = rng.uniform(0, 6.28); hd = np.array([math.cos(a), math.sin(a), 0.0])
@@ -701,8 +704,9 @@ def materials():
     photo = photo if os.path.exists(os.path.join(photo, 'color.jpg')) else None
     return {
         # queen: grey-green to yellow-green leaflets, a good share with brown dry ends, the oldest fronds olive-yellow
-        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#2e4628'), _lin('#3a562c'), _lin('#486632'), _lin('#587438'), _lin('#6a7e40')], 0.1,
-                                     age_col=_lin('#74763a'), burn_col=_lin('#8a7440'), burn_from=0.86, transl=0.3, under=(1.25, 1.28, 1.22), age_amt=0.5),
+        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#2e4628'), _lin('#3a562c'), _lin('#486632'), _lin('#587438'), _lin('#6a7e40')], 0.05,
+                                     age_col=_lin('#7a7c40'), burn_col=_lin('#8a7a48'), burn_from=0.9, transl=0.3, under=(1.25, 1.28, 1.22),
+                                     age_from=0.86, age_amt=0.4),
         'leaf_foxtail': _leaf_material('palm leaf foxtail', [_lin('#33521f'), _lin('#44672a'), _lin('#55782f'), _lin('#6a8836')], 0.15,
                                        age_col=_lin('#8a8034'), burn_from=0.85, transl=0.36),
         'leaf_christmas': _leaf_material('palm leaf christmas', [_lin('#3a5e22'), _lin('#4c7228'), _lin('#5f8430'), _lin('#76963a')], 0.12,
@@ -725,7 +729,7 @@ def materials():
         'dead': _plain('palm dead frond', _lin('#6a5032'), 0.85, var=0.25),
         'deadleaf': _leaf_material('palm dead leaflets', [_lin('#5a4024'), _lin('#7a5a32'), _lin('#9a7a48'), _lin('#b09a68')], 0.0, transl=0.25, rough=0.8, spec=0.2,
                                    age_from=2.0, grade=None),
-        'fruit': _fruit_material('palm fruit', [_lin('#5a6a1a'), _lin('#8a7a20'), _lin('#c47a1c'), _lin('#d8661a')]),
+        'fruit': _fruit_material('palm fruit', [_lin('#4e6420'), _lin('#61742a'), _lin('#7d8a34'), _lin('#a8a452')]),   # green / pale yellow (p5)
         'fruit_red': _fruit_material('palm fruit red', [_lin('#7a8a20'), _lin('#c8501a'), _lin('#b8281a'), _lin('#a01c16')]),
         'spathe': _plain('palm spathe', _lin('#6a5038'), 0.75, var=0.2, bump_scale=0.4, noise_scale=80, stretch=(1, 1, 8)),
         'boot': _boot_material('palm leaf base'),
@@ -739,7 +743,7 @@ def materials():
                                          photo=photo, tint=(0.62, 0.62, 0.6), tile=(0.5, 1.2), ring_bump=0.3),
         'trunk_christmas': _trunk_material('palm trunk christmas', _lin('#8a8478'), _lin('#4a463e'), _lin('#a8a698'), 0.09, ring_bump=0.8),
         'trunk_lipstick': _trunk_material('palm stem lipstick', _lin('#7a6a3a'), _lin('#3a3018'), _lin('#8a7a40'), 0.11, ring_bump=0.9, rough=0.5, coat=0.2),
-        'trunk_areca': _trunk_material('areca stem', _lin('#7a7c5e'), _lin('#64644c'), _lin('#8e8e76'), 0.1, ring_bump=0.3, rough=0.6),   # olive-grey, faint rings
+        'trunk_areca': _trunk_material('areca stem', _lin('#5e624a'), _lin('#34362a'), _lin('#767a62'), 0.085, ring_bump=1.0, rough=0.75),   # olive-grey, dark leaf-scar rings
         'trunk_roebelenii': _trunk_material('palm trunk roebelenii', _lin('#4a4034'), _lin('#2a241c'), _lin('#6a6252'), 0.05, ring_bump=1.0, knobs=0.8, rough=0.95),
         'trunk_cycad': _trunk_material('palm trunk cycad', _lin('#4a3e30'), _lin('#2a221a'), _lin('#5a5040'), 0.035, ring_bump=1.0, knobs=1.0, rough=0.95),
         'trunk_coconut': _trunk_material('coconut trunk', (0.075, 0.066, 0.055, 1), (0.035, 0.03, 0.025, 1), (0.13, 0.125, 0.11, 1), 0.09,
@@ -807,7 +811,8 @@ def build(palms, b, variants=None, collection_name='palms'):
         kind = _kind(p); K = KIND[kind]
         base = b(p['base'])
         h = max(p['height'], K['shaft'] + 0.2)
-        r0 = K['rad'] * rng.uniform(0.9, 1.1) * (min(1.25, max(0.8, (h / K['href']) ** 0.3)))
+        dv = 0.2 if kind in CLUMPING else 0.1            # clumping canes vary +-20% in diameter
+        r0 = K['rad'] * rng.uniform(1 - dv, 1 + dv) * (min(1.25, max(0.8, (h / K['href']) ** 0.3)))
         bend = (0.03 + rng.random() * 0.05) * min(p.get('lean', 1), 2.5) * {'queen': 0.5, 'coconut': 1.6, 'foxtail': 0.35, 'christmas': 0.8}.get(kind, 1.0)
         ldir = rng.uniform(0, 6.283)
         if kind == 'queen':

@@ -25,11 +25,16 @@ DEFAULT_HDRI = 'autumn_field_puresky'   # clear deep-blue sky, faint cirrus near
 # where they are brighter than the clear sky and kept below CLOUD_TOP deg, over the clear sky (both normalised to one sun)
 DEFAULT_CLOUDS = 'kloofendal_48d_partly_cloudy_puresky'
 CLOUD_TOP = 11.0
+CUMULUS_TOP = 35.0              # trade-wind cumulus band ~10-35 deg (critique-preview2-back #15), matted by colour
+CLOUD_SAT = (0.5, 0.28)         # cloud matte: saturation of the cloud photo (clear sky ~0.6-0.7, cumulus < 0.3)
+CIRRUS = 0.3                    # light cirrus above ~15 deg (peak opacity)
 CLOUD_RES = 4096                # the cloud layer's width (memory: a second 8K sky is ~1 GB in Blender + Cycles)
 HAZE_RES = 64                   # aerial-perspective airlight: the sky blurred to ~6 deg so single clouds never streak the far land
 # interiors lit for the exterior stills, as a photographer switches every light on (critique-preview-front #4): room id ->
 # (irradiance on the floor in Sun-lamp units, ~0.3 = a few % of full sun: reads warm through shaded glass, not lit up; colour K)
-DAY_ROOM_LIGHTS = {'great': (0.32, 2900.0), 'entry': (0.18, 2900.0), 'hall': (0.2, 2900.0), 'vest2': (0.2, 2900.0),
+# W/m2 of floor, K: low, 3000 K (critique-preview2-back #7: at 0.32 / 2900 K plus 15 W lamps and the 2.5 shade glow,
+# the great-room coral wall read as an amber panel lit from inside)
+DAY_ROOM_LIGHTS = {'great': (0.16, 3000.0), 'entry': (0.12, 3000.0), 'hall': (0.14, 3000.0), 'vest2': (0.14, 3000.0),
                    'garage': (0.22, 4000.0)}
 PROC_STRENGTH = 0.28            # blender_render.py sets the world strength to this (Nishita-sky calibration)
 REF_SUN = 4.615                 # every HDRI is scaled so its measured sun irradiance is this (the exposure calibration)
@@ -367,7 +372,7 @@ def aerial(g, beta=6e-5, lift=0.06):
     if not out.inputs['Surface'].links: return
     surf = out.inputs['Surface'].links[0].from_socket
     lp = g.node('ShaderNodeLightPath')
-    T = g.math('EXPONENT', g.mul(lp.outputs['Ray Length'], -beta))
+    T = g.math('EXPONENT', g.mul(lp.outputs['Ray Length'], -beta if isinstance(beta, (int, float)) else g.mul(beta, -1.0)))
     fac = g.mul(g.sub(1.0, T), lp.outputs['Is Camera Ray'])
     vx, vy, _ = g.sep(g.vmath('SCALE', g.geo().outputs['Incoming'], scale=-1.0))
     d = g.vmath('NORMALIZE', g.comb(vx, vy, lift))
@@ -473,18 +478,28 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42, aniso=0.0
     e = g.mul(g.math('ABSOLUTE', g.sub(f, 0.5)), W)                                  # 0 at panel centre
     d = g.sub(W / 2, e)                                                              # metres to the seam
     rib = g.maprange(d, 0.022, 0.006, 0.0, 0.032, smooth=True)                       # 1 1/4" rib, 1/2" cap
+    # band limit (critique-preview2-front #3): past ~12 m a pixel spans most of a 16" pan, and the sub-pixel
+    # bump ribs / pencil ribs (plus the real rib geometry of src/roof.js) alias into a tile-like grid. Fade the
+    # painted ribs out with camera distance - the modelled ribs carry the seams there - and keep every remaining
+    # detail one-directional (constant down the fall line) or low-frequency.
+    lp = g.node('ShaderNodeLightPath')
+    near = g.maprange(lp.outputs['Ray Length'], 9.0, 18.0, 1.0, 0.0, smooth=True)
+    rib = g.mul(rib, near)
     panel = g.math('FLOOR', g.math('DIVIDE', t, W))
     prnd = g.white(g.comb(panel, g.math('FLOOR', g.math('DIVIDE', s, 7.0)), 1.7))
     # oil canning: slow waves across each flat pan, stronger mid-pan
     oc = g.noise(g.comb(g.math('DIVIDE', t, 0.35), g.math('DIVIDE', s, 2.2), g.mul(prnd, 9.0)), 1.0, 1.0, 0.4)
     oc = g.mul(g.sub(oc, 0.5), g.mul(g.maprange(e, 0.0, W / 2 - 0.02, 0.003, 0.0), 1.0))
     pencil = g.maprange(g.math('ABSOLUTE', g.sub(e, W * 0.17)), 0.004, 0.0, 0.0, 0.0012)   # two pencil ribs
+    pencil = g.mul(pencil, near)
     h = g.add(g.add(rib, oc), pencil)
     nrm = g.bump(h, 1.0, 1.0)
-    # galvanized sheet scan: spangle, rolling marks (sheen + tone)
-    uv = g.comb(g.math('DIVIDE', t, 1.12), g.math('DIVIDE', s, 1.12), 0.0)
+    # galvanized sheet scan: spangle (tone only, stretched down the fall line so it never forms cross-lines);
+    # its roughness map is corrugation-like 8 cm stripes (sub-pixel noise at roof distance): the sheen varies
+    # instead with a slow noise, panel by panel
+    uv = g.comb(g.math('DIVIDE', t, 1.12), g.math('DIVIDE', s, 4.5), 0.0)
     gal = g.tex(image('galvanized_steel', 'color'), uv).outputs['Color']
-    galr = g.bw(g.tex(image('galvanized_steel', 'roughness'), uv).outputs['Color'])
+    galr = g.noise(g.comb(g.math('DIVIDE', t, 0.9), g.math('DIVIDE', s, 6.0), 0.0), 1.0, 2.0, 0.5)
     base = lin(color)
     lum = g.bw(gal)
     tone = g.maprange(lum, 0.25, 0.65, 0.93, 1.05)
@@ -498,7 +513,10 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42, aniso=0.0
     c = grime(g, c, 0.5, 0.18, '#6f6a62')
     r = g.add(rough, g.mul(g.sub(galr, 0.5), 0.25 if not metallic else 0.12))
     r = g.add(r, g.maprange(prnd, 0.0, 1.0, -0.04, 0.04))
-    finish(g, p, color=c, rough=r, normal=nrm, metallic=metallic, spec=0.5, aniso=aniso or None)
+    finish(g, p, color=c, rough=r, normal=nrm, metallic=metallic, spec=0.4, aniso=aniso or None)
+    # painted / aged sheet: lower edge (F82) reflectance than bare metal - the planes seen at grazing angles
+    # (hips and the great-room slope, critique-preview2-front #4) otherwise mirror the bright sky almost white
+    if metallic: g.put(p.inputs['Specular Tint'], ROOF_EDGE)
     if aniso: g.put(p.inputs['Tangent'], seam_tangent(g))     # rolled along the seams: sheen stretched down the fall line
 
 def seam_tangent(g, fallback=(1.0, 0.0, 0.0)):
@@ -511,8 +529,12 @@ def seam_tangent(g, fallback=(1.0, 0.0, 0.0)):
     mx = g.node('ShaderNodeMix', data_type='VECTOR'); g.put(mx.inputs[0], flat); g.put(mx.inputs[4], t); g.put(mx.inputs[5], fallback)
     return g.vmath('NORMALIZE', mx.outputs[1])
 
+OCEAN_BODY = 0.85                # camera rays: share of the sea's sky glare replaced by the water body (polariser look)
+ROOF_EDGE = (0.52, 0.53, 0.55)   # F82 edge tint of the roof metal (1 = bare metal brightening to white at grazing)
 ROOF_GREY = '#8e8e92'      # galvalume: F0 ~0.27 linear as a metal (critique-preview-front #5: p4 roofs ~110/255 with a sky sheen)
-ROOF_METAL, ROOF_ROUGH, ROOF_ANISO = 0.85, 0.34, 0.3     # metallic sheet: each plane carries a sky-reflection gradient
+ROOF_METAL, ROOF_ROUGH, ROOF_ANISO = 0.8, 0.39, 0.3     # metallic sheet: each plane carries a sky-reflection gradient
+# (rough 0.39, critique-preview2-front #4: at 0.34 the great-room plane facing the camera mirrored the bright sky
+# near the sun almost white; broader lobe = a gradient, peak ~200 sRGB, seams still read)
 
 def r_roof_trim(m, ctx, color=ROOF_GREY, rough=0.36, metallic=0.75):
     """Roof-colour metal: seam ribs, hip / ridge caps, fascia, gable vents - one folded skin with the roof
@@ -521,7 +543,8 @@ def r_roof_trim(m, ctx, color=ROOF_GREY, rough=0.36, metallic=0.75):
     c = mottle(g, lin(color), 6.0, 0.03)
     c = grime(g, c, 0.25, 0.12, '#5a554e')
     r = g.add(rough, g.mul(g.sub(g.noise(g.vmath('SCALE', g.P(), scale=1.5), 1.0, 3.0, 0.5), 0.5), 0.08))
-    finish(g, p, color=c, rough=r, metallic=metallic, spec=0.5)
+    finish(g, p, color=c, rough=r, metallic=metallic, spec=0.4)
+    g.put(p.inputs['Specular Tint'], ROOF_EDGE)
 
 def r_fascia(m, ctx):
     """Painted metal fascia (and gable-vent trim): the roof's own grey (as in the references); vertical, so
@@ -894,11 +917,61 @@ def r_realsite(m, ctx):
     if not p: return
     p.inputs['Specular IOR Level'].default_value = 0.35
     name = base_name(m.name)
-    if name == 'realsite roofs': p.inputs['Metallic'].default_value = 0.15
+    if name in ('realsite walls', 'realsite roofs'):
+        _massing(G(m.node_tree), p, name, ctx)
+        if not ctx.get('night'): aerial(G(m.node_tree), beta=6e-4, lift=0.08)     # ~20% airlight at 400 m: soft, recessive
+        return
     if name in ('realsite near', 'realsite far') and p.inputs['Base Color'].links: _landscape(G(m.node_tree), p)
-    if not ctx.get('night'): aerial(G(m.node_tree), beta=9e-5)
+    g = G(m.node_tree)
+    water = _sea(g, p, ctx) if name in ('realsite near', 'realsite far') else None
+    if not ctx.get('night'): aerial(g, beta=7e-5 if water is None else g.mixf(water, 7e-5, 1.2e-5))
 
-def _landscape(g, p, crown_m=7.0):
+def _sea(g, p, ctx, body=OCEAN_BODY):
+    """The sea the front view sees 2-10 km off is terrain at sea level (the far rings drape Sentinel's water
+    there), not the ocean plane: give it the ocean's look (critique-preview2-front #8) - deep blue, smooth, the
+    camera-ray polariser share of the water body, and the light haze of the sea."""
+    sz = ctx.get('sea_z')
+    if sz is None: return None
+    _, _, pz = g.sep(g.P())
+    water = g.maprange(pz, sz + 0.8, sz + 0.3, 0.0, 1.0, smooth=True)
+    bc = p.inputs['Base Color']
+    src = bc.links[0].from_socket if bc.links else tuple(bc.default_value)[:3]
+    deep = lin('#0b3159')
+    g.put(bc, g.mix(water, src, deep))
+    rr = p.inputs['Roughness']
+    rsrc = rr.links[0].from_socket if rr.links else rr.default_value
+    g.put(rr, g.mixf(water, rsrc, 0.2))
+    if not ctx.get('night'):
+        out = next(n for n in g.N if n.type == 'OUTPUT_MATERIAL')
+        surf = out.inputs['Surface'].links[0].from_socket
+        cam = g.node('ShaderNodeLightPath').outputs['Is Camera Ray']
+        bd = g.node('ShaderNodeBsdfDiffuse'); g.put(bd.inputs['Color'], g.mix(1.0, deep, (0.6, 0.6, 0.6), 'MULTIPLY'))
+        mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], g.mul(g.mul(cam, water), body))
+        g.L.new(surf, mx.inputs[1]); g.L.new(bd.outputs[0], mx.inputs[2]); g.L.new(mx.outputs[0], out.inputs['Surface'])
+    return water
+
+def _massing(g, p, name, ctx):
+    """Background buildings from public footprints (heights / facades not sourced): soft, low-contrast massing
+    - no window grid (critique-preview2-front #7), plaster walls pulled toward one warm grey, roofs darkened and
+    desaturated toward weathered metal / tile (the footprint data's bright green roof was the strongest point on
+    the horizon), matte, a slow tone drift so planes don't read as flat CG."""
+    vc = next((n for n in g.N if n.type in ('VERTEX_COLOR', 'ATTRIBUTE')), None)
+    col = vc.outputs['Color'] if vc else g.attr('Color')
+    for l in list(p.inputs['Base Color'].links): g.L.remove(l)
+    if not ctx.get('night'):
+        for k in ('Emission Color', 'Emission Strength'):
+            for l in list(p.inputs[k].links): g.L.remove(l)
+        p.inputs['Emission Strength'].default_value = 0.0
+    if name == 'realsite walls':
+        c = g.mix(0.6, g.hsv(col, s=0.6, v=0.85), lin('#a59e92'))
+        rough, metal = 0.9, 0.0
+    else:
+        c = g.mix(0.55, g.hsv(col, s=0.35, v=0.7), lin('#5f5c58'))
+        rough, metal = 0.7, 0.05
+    c = mottle(g, c, 8.0, 0.05)
+    finish(g, p, color=c, rough=rough, metallic=metal, spec=0.3)
+
+def _landscape(g, p, crown_m=6.0):
     """Sentinel-2 land seen at grazing angles from eye height: each 1.8-8 m texel is many pixels wide and
     under one pixel tall, so the raw image smears into flat khaki bands (critique-preview-front #9). On the
     vegetated pixels (greener than blue, not bright): the dry-season khaki eased toward the green of the
@@ -913,11 +986,25 @@ def _landscape(g, p, crown_m=7.0):
     veg = g.mul(g.maprange(g.sub(gg, b), 0.01, 0.04), g.maprange(lum, 0.3, 0.18))
     col = g.mix(veg, src, g.hsv(src, h=0.53, s=1.12, v=0.97))
     px, py, _ = g.sep(P)
+    # manicured turf, not pasture (critique-preview2-front #8): on the open green the smeared Sentinel bands give
+    # way to an even fairway green (keeping ~40% of the image's tone) with ~12 m mowing stripes whose direction
+    # changes per ~150 m hole
+    hole = g.node('ShaderNodeTexVoronoi', feature='F1', voronoi_dimensions='2D')
+    g.put(hole.inputs['Vector'], g.comb(px, py, 0.0)); g.put(hole.inputs['Scale'], 1.0 / 150.0)
+    ang = g.mul(g.sep(hole.outputs['Color'])[0], math.pi)
+    along = g.add(g.mul(px, g.math('COSINE', ang)), g.mul(py, g.math('SINE', ang)))
+    stripe = g.maprange(g.math('SINE', g.mul(along, math.pi / 12.0)), -0.25, 0.25, 0.93, 1.07, smooth=True)
+    turf = g.mix(0.6, col, lin('#62813a'))
+    turf = g.mix(1.0, turf, g.comb(stripe, stripe, stripe), 'MULTIPLY')
+    col = g.mix(g.mul(veg, 0.85), col, turf)
     vn = g.node('ShaderNodeTexVoronoi', feature='F1', voronoi_dimensions='2D')
     g.put(vn.inputs['Vector'], g.comb(px, py, 0.0)); g.put(vn.inputs['Scale'], 1.0 / crown_m)
     d, rc = vn.outputs['Distance'], vn.outputs['Color']
     rr, rg, _ = g.sep(rc)
-    dens = g.mul(veg, g.maprange(g.noise(g.vmath('SCALE', P, scale=1.0 / 90.0), 1.0, 2.0, 0.5), 0.35, 0.65, 0.15, 0.8))
+    # denser canopy where the land is wooded (darker green in the image = taller canopy), sparse rows on the open turf
+    wood = g.maprange(lum, 0.2, 0.1, 0.0, 1.0)
+    dens = g.mul(veg, g.maprange(g.noise(g.vmath('SCALE', P, scale=1.0 / 90.0), 1.0, 2.0, 0.5), 0.35, 0.65, 0.3, 0.95))
+    dens = g.math('MAXIMUM', dens, g.mul(veg, wood))
     crown = g.mul(g.maprange(g.math('DIVIDE', d, crown_m), 0.48, 0.28, 0.0, 1.0, smooth=True), g.math('LESS_THAN', rr, dens))
     cc = g.hsv(col, h=0.51, s=1.1, v=g.maprange(rg, 0.0, 1.0, 0.5, 0.75))
     col = g.mix(crown, g.mix(g.mul(veg, 0.6), col, g.mix(1.0, col, (1.06, 1.08, 1.0), 'MULTIPLY')), cc)
@@ -936,11 +1023,22 @@ def r_ocean(m, ctx):
     ch = g.noise(g.vmath('SCALE', P, scale=1 / 3.0), 1.0, 6.0, 0.6, distortion=0.3)
     h = g.add(g.mul(sw, 0.9), g.mul(ch, 0.25))
     nrm = g.bump(h, 1.0, 1.0)
-    deep = lin('#0a2a52')
+    deep = lin('#0b3159')
     c = mottle(g, deep, 900.0, 0.12, P=P)
-    finish(g, p, color=c, rough=ctx.get('ocean_rough', 0.3), normal=nrm, spec=0.5, ior=1.333)
+    # critique-preview2-front #8: the sliver read as horizon haze (~sRGB 135). Smoother water (rough 0.2), and
+    # the lens polariser the sky already gets (World._polarizer) also cuts the sea glare for camera rays, so
+    # the sea shows its own deep blue (~sRGB 40,80,115 near the horizon); lighter haze over the water
+    finish(g, p, color=c, rough=ctx.get('ocean_rough', 0.2), normal=nrm, spec=0.5, ior=1.333)
+    # a bump-mapped flat sea at grazing incidence keeps Fresnel ~0.6 everywhere (real wave facets tilt toward
+    # the eye and mirror the deeper sky ~10-20 deg up), so camera rays see 85% of the reflection replaced by
+    # the water body - the polariser look - and lighting / reflections elsewhere stay physical
+    cam = g.node('ShaderNodeLightPath').outputs['Is Camera Ray']
+    out = next(n for n in g.N if n.type == 'OUTPUT_MATERIAL')
+    body = g.node('ShaderNodeBsdfDiffuse'); g.put(body.inputs['Color'], g.mix(1.0, c, (0.6, 0.6, 0.6), 'MULTIPLY'))
+    mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], g.mul(cam, OCEAN_BODY))
+    g.L.new(p.outputs['BSDF'], mx.inputs[1]); g.L.new(body.outputs[0], mx.inputs[2]); g.L.new(mx.outputs[0], out.inputs['Surface'])
     m['nh_kind'] = 'ocean'
-    if not ctx.get('night'): aerial(g, beta=2e-5)
+    if not ctx.get('night'): aerial(g, beta=1.2e-5, lift=0.1)
 
 def r_pool_water(m, ctx):
     """Pool water: clear, refracting; tint = absorption over the ~3 m light path (red lost first)."""
@@ -1024,7 +1122,7 @@ def r_quartz(m, ctx):
 
 def r_coral_panel(m, ctx):
     """Interior coral-stone feature wall: pale porous coral stone (design board)."""
-    r_coral_wall(m, ctx, target='#d4ccbf', contrast=0.85, sat=0.4, tile=1.6, grime_amt=0.1)
+    r_coral_wall(m, ctx, target='#d6d0c6', contrast=0.7, sat=0.3, tile=1.6, grime_amt=0.08)   # calm, pale, not mottled amber
 
 def r_rattan(m, ctx):
     r_fabric(m, ctx, '#b48a58', asset='rattan_weave', tile=0.3, sat=0.85, sheen=0.1, rough=(0.5, 0.75))
@@ -1069,7 +1167,7 @@ def r_foliage(m, ctx):
     l = p.inputs['Base Color'].links
     if l: nt.links.new(l[0].from_socket, tr.inputs['Color'])
     else: tr.inputs['Color'].default_value = p.inputs['Base Color'].default_value
-    mix = nt.nodes.new('ShaderNodeMixShader'); mix.inputs['Fac'].default_value = 0.32
+    mix = nt.nodes.new('ShaderNodeMixShader'); mix.inputs['Fac'].default_value = 0.4    # more light through the canopy (critique-preview2-front #6)
     nt.links.new(p.outputs['BSDF'], mix.inputs[1]); nt.links.new(tr.outputs['BSDF'], mix.inputs[2])
     alpha_src = p.inputs['Alpha'].links[0].from_socket if p.inputs['Alpha'].links else None
     if alpha_src:
@@ -1103,7 +1201,8 @@ RECIPES = {
     'terrain': r_terrain, 'ocean': r_ocean, 'water': r_pool_water, 'glass': r_glass,
     'mirror': lambda m, c: r_simple(m, c, rough=0.0, metallic=1.0),
     'roof': lambda m, c: r_standing_seam(m, c, ROOF_GREY, metallic=ROOF_METAL, rough=ROOF_ROUGH, aniso=ROOF_ANISO),
-    'roofSeam': lambda m, c: r_roof_trim(m, c), 'gableLouver': lambda m, c: r_roof_trim(m, c, rough=0.5, metallic=0.5),
+    'roofSeam': lambda m, c: r_roof_trim(m, c, rough=0.45, metallic=0.3),   # rib sides / caps: painted, no sun glint (front #4)
+    'gableLouver': lambda m, c: r_roof_trim(m, c, rough=0.5, metallic=0.5),
     'gutter': lambda m, c: r_roof_trim(m, c, color='#7a7c80', rough=0.38, metallic=0.5),
     'gableCavity': lambda m, c: r_simple(m, c, color='#0e0f10', rough=0.95),
     'realsite ocean': r_ocean, 'realsite near': r_realsite, 'realsite far': r_realsite,
@@ -1124,6 +1223,11 @@ RECIPES = {
     'linen': lambda m, c: r_fabric(m, c, '#e9e2d4'), 'linenWhite': lambda m, c: r_fabric(m, c, '#e2ded5', asset='canvas_white', rough=(0.5, 0.7), sheen=0.3,
                                          contrast=1.0, bump=1.2, pucker=0.25),      # outdoor canvas: albedo ~0.75, rough ~0.6
     'linenSand': lambda m, c: r_fabric(m, c, '#d3c4aa'), 'linenSea': lambda m, c: r_fabric(m, c, '#9db1ae'),
+    # fix round r2 furniture (src/furniture.js): welt piping, rolled towels, striped pillows, roof-well lining
+    'cushionPiping': lambda m, c: r_fabric(m, c, '#d4cbbb', asset='canvas_white', rough=(0.55, 0.75), sheen=0.3),
+    'towel': lambda m, c: r_fabric(m, c, '#efede7', rough=(0.88, 0.98), sheen=0.6, bump=2.0, pucker=0.15),   # terry loops
+    'pillowStripe': lambda m, c: r_keep_tex(m, c, rough=0.75, sheen=0.4),
+    'wellLining': lambda m, c: r_simple(m, c, color='#2b2520', rough=0.7),        # dark-stained cedar (concept)
     'jute': r_jute, 'rattan': r_rattan, 'quartz': r_quartz,
     'cane': lambda m, c: r_keep_tex(m, c, tint=(1.0, 0.9, 0.76), rough=0.55, sheen=0.2),
     'slats': lambda m, c: r_keep_tex(m, c, rough=0.6),
@@ -1257,7 +1361,7 @@ def _lot_mask(meta, log):
         return None
 
 
-def apply(meta=None, night=False, log=print, only=None, ocean_rough=0.3):
+def apply(meta=None, night=False, log=print, only=None, ocean_rough=0.2):
     """Rebuild every material of the imported scene by name. Materials made by palms.py / plants_bpy.py
     (vegetation) are left alone. Returns {recipe: [material names]}."""
     _set_object_props(log)
@@ -1267,8 +1371,12 @@ def apply(meta=None, night=False, log=print, only=None, ocean_rough=0.3):
             ca = o.data.color_attributes
             if len(ca): terrain_attr = ca[0].name
             break
+    sea_z = None
+    for o in bpy.data.objects:
+        if o.type == 'MESH' and any(m and base_name(m.name) == 'realsite ocean' for m in o.data.materials):
+            sea_z = min((o.matrix_world @ Vector(c)).z for c in o.bound_box); break
     ctx = {'night': night, 'meta': meta, 'land': _land_from_meta(meta, log), 'terrain_color_attr': terrain_attr,
-           'ocean_rough': ocean_rough, 'lots': _lot_mask(meta, log)}
+           'ocean_rough': ocean_rough, 'lots': _lot_mask(meta, log), 'sea_z': sea_z}
     used = {}
     for m in list(bpy.data.materials):
         if not m.node_tree or m.get('nh_done'): continue
@@ -1365,8 +1473,9 @@ class World:
 
     def __init__(self, scene, mode='hdri', hdri=DEFAULT_HDRI, strength=1.0, yaw=0.0, max_res=0,
                  cam_saturation=1.05, cam_value=1.2, polarizer=0.5, log=print, clouds=DEFAULT_CLOUDS, cloud_top=CLOUD_TOP,
-                 cloud_yaw=0.0):
+                 cloud_yaw=0.0, cumulus_top=CUMULUS_TOP, cirrus=CIRRUS):
         self.polarizer = polarizer; self.sun_vec = None
+        self.cumulus_top, self.cirrus, self._calpha = cumulus_top, cirrus, None
         self.clouds, self.cloud_top, self.cloud_yaw = clouds, cloud_top, math.radians(cloud_yaw)
         self.cloud_mapping = None; self.cloud_sun_az = 0.0
         self.scene, self.mode, self.yaw, self.log = scene, mode, math.radians(yaw), log
@@ -1457,9 +1566,83 @@ class World:
         top = math.sin(math.radians(self.cloud_top))
         a = g.mul(g.maprange(ratio, 1.1, 1.7, 0.0, 1.0, smooth=True), g.maprange(z, top, top * 0.45, 0.0, 1.0, smooth=True))
         a = g.mul(a, g.maprange(z, -0.005, 0.01))
+        if self.cumulus_top > self.cloud_top:
+            # the trade-wind cumulus band higher up, ~9 deg .. cumulus_top: the two photos' clear skies differ in
+            # brightness above ~12 deg (x1.3-1.7), so there the photo's cumulus is matted by colour (white / grey
+            # cloud vs saturated blue), not by the brightness ratio
+            r, gg, b = g.sep(cenv.outputs['Color'])
+            mx = g.math('MAXIMUM', g.math('MAXIMUM', r, gg), b); mn = g.math('MINIMUM', g.math('MINIMUM', r, gg), b)
+            sat = g.math('DIVIDE', g.sub(mx, mn), g.math('MAXIMUM', mx, 1e-4))
+            hi = math.sin(math.radians(self.cumulus_top)); hi0 = math.sin(math.radians(self.cumulus_top - 8.0))
+            ah = g.mul(g.maprange(sat, CLOUD_SAT[0], CLOUD_SAT[1], 0.0, 1.0, smooth=True),
+                       g.mul(g.maprange(z, math.sin(math.radians(8.0)), math.sin(math.radians(12.0)), 0.0, 1.0, smooth=True),
+                             g.maprange(z, hi, hi0, 0.0, 1.0, smooth=True)))
+            a = g.math('MAXIMUM', a, ah)
         self.cloud_sun_az = hdri_sun_azimuth(cm)
-        self.log(f'sky: cumulus from {self.clouds} below {self.cloud_top:.0f} deg ({os.path.basename(cimg.filepath)})')
-        return g.mix(a, clear, kc)
+        self.log(f'sky: cumulus from {self.clouds} below {max(self.cloud_top, self.cumulus_top):.0f} deg ({os.path.basename(cimg.filepath)})')
+        col = g.mix(a, clear, kc)
+        if self.cirrus:
+            col = self._cirrus(col, clear, view)
+        return col
+
+    def _cirrus(self, col, clear, view):
+        """Light cirrus higher up: streaks on a flat layer (direction / elevation, so they converge toward the
+        horizon), patchy, fading in from ~14 deg; a pale veil over the blue, never a white sheet."""
+        g = self.g
+        x, y, z = g.sep(g.vmath('NORMALIZE', view))
+        zz = g.math('MAXIMUM', z, 0.05)
+        u = g.math('DIVIDE', x, zz); v = g.math('DIVIDE', y, zz)
+        c, s = math.cos(0.45), math.sin(0.45)
+        su = g.add(g.mul(u, c), g.mul(v, s)); sv = g.sub(g.mul(v, c), g.mul(u, s))
+        streak = g.noise(g.comb(g.mul(su, 0.5), g.mul(sv, 4.0), 0.0), 1.0, 5.0, 0.55)
+        patch = g.noise(g.comb(g.mul(su, 0.25), g.mul(sv, 0.6), 7.3), 1.0, 2.0, 0.5)
+        ac = g.mul(g.maprange(streak, 0.5, 0.72, 0.0, 1.0, smooth=True), g.maprange(patch, 0.45, 0.68, 0.0, 1.0, smooth=True))
+        ac = g.mul(ac, g.maprange(z, math.sin(math.radians(14.0)), math.sin(math.radians(30.0)), 0.0, self.cirrus, smooth=True))
+        veil = g.hsv(clear, s=0.3, v=1.7)
+        return g.mix(ac, col, veil)
+
+    def _cloud_alpha(self):
+        """The cumulus matte of the cloud photo (as the shader computes it, rows top -> bottom), 1024 px."""
+        if self._calpha is None:
+            import numpy as np
+            img = bpy.data.images.load(_hdri_file(self.clouds, True, 1024, self.log), check_existing=False)
+            w, h = img.size
+            px = np.empty(w * h * 4, np.float32); img.pixels.foreach_get(px)
+            bpy.data.images.remove(img)
+            px = px.reshape(h, w, 4)[::-1, :, :3]
+            mx, mn = px.max(2), px.min(2)
+            t = np.clip((px.max(2) - mn) / np.maximum(mx, 1e-4), 0, 1)
+            t = np.clip((CLOUD_SAT[0] - t) / (CLOUD_SAT[0] - CLOUD_SAT[1]), 0, 1)
+            self._calpha = t * t * (3 - 2 * t)
+        return self._calpha
+
+    def aim_clouds(self, pos, target, fov, aspect, cover=0.3, max_turn=36):
+        """Per view, after set_sun: turn the cumulus (from its sun-matched angle, by the least amount) so the
+        sky the frame shows between ~9 deg and its top edge holds about `cover` cloud along the camera's
+        azimuth - the band sits behind the roof instead of wherever the photo happened to have it."""
+        if self.cloud_mapping is None or self.cumulus_top <= self.cloud_top: return
+        try:
+            import numpy as np
+            f = Vector((target[0] - pos[0], -(target[2] - pos[2]), target[1] - pos[1]))
+            az = math.atan2(f.y, f.x); pitch = math.degrees(math.atan2(f.z, math.hypot(f.x, f.y)))
+            top = min(pitch + fov / 2.0, self.cumulus_top)
+            if top < 12.0: return                         # the frame only reaches the low cumulus
+            A = self._cloud_alpha(); H, Wd = A.shape
+            el = 90.0 - 180.0 * (np.arange(H) + 0.5) / H
+            band = A[(el >= 9.0) & (el <= top)].mean(0)
+            hf = math.degrees(math.atan(math.tan(math.radians(fov / 2.0)) * aspect))
+            rot0 = self.cloud_mapping.inputs['Rotation'].default_value[2]
+            best = None
+            for off in range(-max_turn, max_turn + 1, 2):
+                psi = math.degrees(az + rot0) + off
+                cols = (((0.5 - np.arange(psi - hf, psi + hf, 0.5) / 360.0) * Wd).astype(int)) % Wd
+                cv = float(band[cols].mean())
+                sc = abs(cv - cover) + 0.002 * abs(off)
+                if best is None or sc < best[0]: best = (sc, off, cv)
+            self.cloud_mapping.inputs['Rotation'].default_value = (0.0, 0.0, rot0 + math.radians(best[1]))
+            self.log(f'sky: cumulus turned {best[1]:+d} deg for this view ({best[2]:.0%} cover, 9-{top:.0f} deg)')
+        except Exception as e:
+            self.log(f'sky: aim_clouds failed ({e})')
 
     def _polarizer(self, col, view):
         """Circular polariser on the lens, as real-estate photographers use in Hawaii: skylight is linearly
@@ -1533,7 +1716,7 @@ class World:
         return max(0.0, min(max_ev, -math.log2(L) * compensation))
 
     def auto_exposure(self, meta, base_ev=0.0, interior_ev=2.3, interior_wb=INTERIOR_WB, meter=True, only=None,
-                      lamps_w=15.0, day_ev=DAY_EV):
+                      lamps_w=8.0, day_ev=DAY_EV):
         """Interiors shot the way a real-estate photographer would: metered exposure (about +2 to +4.6 EV
         over the exterior; windows roll off in AgX), white balance on the walls (the light indoors is
         mostly sunlit-lawn and oak-floor bounce, yellow-green, which the camera neutralises), and the
@@ -1541,7 +1724,7 @@ class World:
         render_pre handler matches the camera to the meta view it stands at."""
         lamp_objs = []
         if lamps_w and (meta or {}).get('lamps'):
-            col = blackbody_rgb(2700.0); k = max(col); col = [c / k for c in col]
+            col = blackbody_rgb(2900.0); k = max(col); col = [c / k for c in col]
             for l in meta['lamps']:
                 L = bpy.data.lights.new('day lamp', 'POINT'); L.energy = lamps_w; L.color = col; L.shadow_soft_size = 0.06
                 o = bpy.data.objects.new('day lamp', L); self.scene.collection.objects.link(o)
@@ -1586,8 +1769,8 @@ class World:
             for o in room_objs: o.hide_render = inside     # exteriors: ceiling lights on behind the glass (interiors keep their metering)
             for m in pulls: m.node_tree.nodes['nh_pull'].outputs[0].default_value = WINDOW_PULL if inside else 1.0
             for m in glows:
-                p = principled(m); p.inputs['Emission Color'].default_value = (1.0, 0.78, 0.52, 1)
-                p.inputs['Emission Strength'].default_value = 4.0 if inside else 2.5   # sconces / pendants: a soft 2700 K glow by day
+                p = principled(m); p.inputs['Emission Color'].default_value = (1.0, 0.82, 0.62, 1)   # ~3000 K
+                p.inputs['Emission Strength'].default_value = 2.5 if inside else 0.8   # sconces / pendants: a soft warm glow by day, never a light box
         for h in [h for h in bpy.app.handlers.render_pre if getattr(h, '__name__', '') == 'nh_exposure']:
             bpy.app.handlers.render_pre.remove(h)
         pre.__name__ = 'nh_exposure'

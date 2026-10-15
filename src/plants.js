@@ -16,6 +16,7 @@ const KINDS = {
   bougainvillea: { leaf: ['#2f5a22', '#3d6b2a', '#4a7a30'], bloom: ['#b0388f', '#9c3486', '#c24a98', '#8f3a8c'], bloomShare: 0.45, size: [2.6, 4.2], cards: 22 },
   gardenia: { leaf: ['#244d1c', '#2f5d22', '#3a6a29'], bloom: ['#fbf8ef', '#f4efe0'], bloomShare: 0.16, bloomShape: 'star', size: [2.0, 3.0], cards: 18 },
   hedge: { leaf: ['#2a5420', '#356326', '#3f6e2c'], bloom: [], bloomShare: 0, size: [3.0, 4.5], cards: 22 },
+  screen: { leaf: ['#284f1e', '#325e24', '#3c6a2a'], bloom: [], bloomShare: 0, size: [6.5, 7.5], cards: 34 },   // 7 ft lot-line screen hedge
   groundcover: { leaf: ['#3e6e2c', '#4b7d33'], bloom: ['#f3ecda'], bloomShare: 0.08, size: [1.0, 1.4], cards: 8 },
   monstera: { leaf: ['#1f4a1d', '#2a5a24'], bloom: [], bloomShare: 0, big: true, size: [2.6, 3.6], cards: 12 },
   plumeria: { leaf: ['#3a6a2a', '#4a7a31', '#2f5a24'], bloom: ['#fffaf0', '#fff4d6'], bloomShare: 0.35, bloomShape: 'star', size: [2.4, 3.2], cards: 14 },
@@ -82,7 +83,9 @@ export function plantBed(B, H) {
   const K = KINDS[B.kind];
   const g = new THREE.Group();
   const [x0, y0, x1, y1] = B.rect, r = rnd(Math.round(x0 * 31 + y0 * 11 + 7));
-  if (recording()) { recordPlant({ type: 'bed', kind: B.kind, rect: B.rect, density: B.density ?? 1.1, ground: H((x0 + x1) / 2, (y0 + y1) / 2), seed: Math.round(x0 * 31 + y0 * 11 + 7), shell: true }); return g; }
+  // curved sides / no edging travel to Blender in the kind ('mondo@y0', 'ti@!'; parsed by scripts/plants_bpy.py)
+  const spec = (B.curve ?? '') + (B.edge === false ? '!' : '');
+  if (recording()) { recordPlant({ type: 'bed', kind: spec ? `${B.kind}@${spec}` : B.kind, rect: B.rect, density: B.density ?? 1.1, ground: H((x0 + x1) / 2, (y0 + y1) / 2), seed: Math.round(x0 * 31 + y0 * 11 + 7), shell: true }); return g; }
   if (B.kind === 'ti') return tiBed(B, H, r);
   if (!K) return g;
   const area = (x1 - x0) * (y1 - y0), n = Math.max(1, Math.round(area / (K.size[0] * K.size[0]) * (B.density ?? 1.1)));

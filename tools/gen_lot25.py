@@ -238,7 +238,9 @@ furniture = [
     dict(type='outdoor-chair', x=X(290), y=Y(1050), w=ft(70), d=ft(70), rot=0),
     dict(type='outdoor-chair', x=X(500), y=Y(1050), w=ft(70), d=ft(70), rot=0),
     dict(type='fan', x=X(400), y=Y(790)), dict(type='fan', x=X(400), y=Y(1080)),
-    dict(type='tv', x=X(400), y=Y(1211), w=5.5, rot=180, elevation=5.0, outdoor=True),
+    # p5 lanai TV on the batten wall above the sofa; its back on the wall's lanai face (Y(1207) - 0.25) - at
+    # Y(1211) it sat inside the 6" wall and never rendered (critique r2 back #13)
+    dict(type='tv', x=X(400), y=Y(1207) - 0.36, w=5.5, rot=180, elevation=5.0, outdoor=True),
     # garden showers
     dict(type='outdoor-shower', x=X(2060), y=Y(640)), dict(type='outdoor-shower', x=X(2060), y=Y(1490)), dict(type='outdoor-shower', x=X(980), y=Y(1340)),
 ]
@@ -336,62 +338,77 @@ plan['site'] = dict(
     # (Syagrus, 25-30 ft) - two in the left planter in front of the lanai, one at the right lawn corner - and the
     # two palms on the far verge that frame the front view (fronds hanging into its top corners); no tall
     # 'telephone pole' palms in the mid-ground
-    # (height = trunk to the crown; the crown adds ~8-10 ft: the back pair stand ~22-26 ft overall, their crowns in the
-    # back view; the near one sits left of the lanai post so the dining table shows between the trunks, critic r2)
+    # (height = clear trunk to the crown; the crown adds ~8-10 ft. Back pair (critic r2 back #1): trunks 19.5-21 ft so
+    # that from the level r3 back eye (5 ft) the crowns sit ~1.5-2 m above the ridge line - the frame top is only
+    # ~24 ft up at their distance, so taller trunks would push the crowns out of frame; both stand left of the lanai
+    # post in a mondo planter at the chaises' foot, so the lanai opening reads clear to their right, as in p5 - the
+    # left one is on the side lot line, it cannot move further left. The third stands in the bougainvillea at the
+    # right end of the pool wall, as in p5.)
     # the front framing pair stand at the lot's street corners, trunks just outside the front view: only frond tips
     # reach into its top corners (~8-10% of the frame)
-    palms=[[-19.8, -6.9, 14.5, 1, 'queen'], [-26, -1.2, 16.5, 1.2, 'queen'], [-8, 47, 28, 1.4, 'queen'],
+    palms=[[-19.9, -6.7, 21, 1, 'queen'], [-18.6, -3.3, 19.5, 1.2, 'queen'], [-31, 39, 24, 1.2, 'queen'],
            [149, 51.2, 37, 1, 'queen'], [149, -6.6, 34, 1, 'queen']],
     # understorey palms [x, y, height ft, kind, stems]: areca / lipstick clumps, foxtail / christmas / pygmy date
-    # singles, cycads - dense and layered in every courtyard and gap, as in the renderings
-    arecas=[[60, 16.8, 9], [66, 28.2, 10], [89, 13, 11], [90, 32, 12], [30, -5, 15], [72, -5, 12], [36, 50.5, 14],
-            [-40, 40, 15], [140, -5, 13], [-2, 50, 12], [118, 51, 12], [46, -5.5, 12],
+    # singles, cycads - layered in the courtyards and gaps, as in the renderings (thinned r3: the back view's
+    # roofline reads against the sky, critic r2 back #3)
+    arecas=[[60, 16.8, 9], [66, 28.2, 10], [89, 13, 11], [90, 32, 12], [36, 50.5, 14],
+            [140, -5, 13], [118, 51, 12], [46, -5.5, 12],
             # entry courtyard: lipstick palms (scarlet crownshafts) and christmas palms either side of the walk
-            # (kept off the walk axis so the glass entry reads between them; the entry pair flank the door past the wing ends)
+            # (kept off the walk axis so the glass entry reads between them; the walk pair stand back by the wing
+            # walls, clear of their eaves, so they flank the entry as in p4 - critic r2 front #9)
             [99, 16.6, 13, 'lipstick'], [113.5, 28.0, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
-            [106, 16.8, 16, 'christmas'], [101.5, 28.2, 17, 'christmas'], [118, 28.0, 15, 'christmas'],
+            [96.8, 14.4, 16, 'christmas'], [94.4, 30.5, 17, 'christmas'],
             [87.2, 15.2, 16, 'christmas'], [86.8, 29.4, 15, 'christmas'],
             # mid-ground fill between and behind the roofs
             [93, 5, 14], [92, 40, 13], [95, 45, 6, 'roebelenii', 2], [62.5, 17.6, 6, 'roebelenii'], [63, 27, 7, 'roebelenii'],
             [95, -6, 22, 'foxtail'], [138, 47.5, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
             [110, -6.2, 18, 'foxtail'], [99, -5.6, 13], [76, 50.5, 13], [56, 50.8, 16, 'foxtail'],
-            # back: a layered palm screen right of the bedroom wing, hiding the neighbour
-            [-20, 50, 16], [5, 50.6, 22, 'foxtail'], [14, 50.2, 14], [24, 50.8, 20, 'foxtail'], [-14, 48.6, 13], [-29, 50.5, 12],
+            # back: a few palms right of the bedroom wing (half the r2 count; the tall hedge behind does the screening)
+            [-20, 50, 16], [14, 50.2, 14], [-14, 48.6, 13],
             # front corners of the view: pygmy date and sago fronds in the bottom corners
             [147.4, 48.4, 6, 'roebelenii', 2], [147.4, -4.4, 3.5, 'cycad', 2], [130, 49, 3, 'cycad']],
     plumeria=[[-4, 50, 1.2], [44, 50], [139, 30.5, 0.9], [137, 14.5, 0.85]],
     specimens=[[12, -11.5, 0.75, 'shower']],      # a pink shower tree at the far left of the back view
     # beds stay clear of the coral retaining wall on the lot line (x -35.3 .. -33.5, cap to -35.4 / -33.4)
-    beds=[dict(rect=[-33.2, 36, -20, 40], kind='bougainvillea'), dict(rect=[-33.2, -7, -31.5, 0.5], kind='bougainvillea'),
-          # the bank below the pool wall: glossy Asiatic jasmine right up to the wall, elephant ears at the corner
-          # (jasmine runs right to the wall foot, dense: no raw soil or bare patches on the bank)
-          dict(rect=[-42, -8, -35.5, 53], kind='jasmine', density=1.5), dict(rect=[-47, -22, -35, -9.2], kind='jasmine', density=1.8),
-          dict(rect=[-41, -15, -36.5, -11], kind='alocasia', density=0.5),
+    # curve: the bed's sides (plan x0 / x1 / y0 / y1) that sweep in soft curves with a tan stone edging (scripts/plants_bpy.py);
+    # edge=False: a planting inside another bed (no edging of its own)
+    beds=[dict(rect=[-33.2, 36, -20, 40], kind='bougainvillea', curve='x1y0y1'), dict(rect=[-33.2, -7, -31.5, 0.5], kind='bougainvillea'),
+          # the chaise planter: the two queen palms rise from a mondo island at the chaises' foot (p5)
+          dict(rect=[-21.3, -8.0, -15.6, -2.2], kind='mondo', curve='x0x1y0y1'),
+          # the bank below the pool wall: glossy Asiatic jasmine right up to the wall, full cover (no raw soil), its lawn
+          # edge a soft curve with stone edging (critic r2 back #12); no elephant ears (back #4)
+          dict(rect=[-42, -8, -35.5, 53], kind='jasmine', density=2.1, curve='x0'),
+          dict(rect=[-47, -22, -35, -9.2], kind='jasmine', density=2.2, curve='x0y0'),
           # entry courtyard: mondo grass under everything, ti in loose clumps (not rows), tradescantia at the garage
-          dict(rect=[96, 16.2, 121, 19.2], kind='mondo'), dict(rect=[96, 25.4, 121, 28.4], kind='mondo'),
-          dict(rect=[96.8, 16.4, 99.6, 19], kind='ti'), dict(rect=[108.4, 16.4, 111, 19], kind='ti'),
-          dict(rect=[102.6, 25.6, 105.2, 28.2], kind='ti'), dict(rect=[114.6, 25.6, 116.8, 28.2], kind='ti'),
+          # (thinner on the walk side so the leaf shapes read in the shade, critic r2 front #6)
+          dict(rect=[96, 16.2, 121, 19.2], kind='mondo', density=0.8), dict(rect=[96, 25.4, 121, 28.4], kind='mondo', density=0.6),
+          dict(rect=[96.8, 16.4, 99.6, 19], kind='ti', edge=False), dict(rect=[108.4, 16.4, 111, 19], kind='ti', edge=False),
+          dict(rect=[102.6, 25.6, 105.2, 28.2], kind='ti', density=0.7, edge=False), dict(rect=[114.6, 25.6, 116.8, 28.2], kind='ti', density=0.6, edge=False),
           dict(rect=[117, -7.8, 123, -4.4], kind='tradescantia'),
-          # beds along the walk on the front lawn: mondo, gardenia at the pavilion ends, a silver dichondra ribbon
-          # (the street end is a silver dichondra ribbon along the walk, mondo only behind it: lighter, as in p4)
-          dict(rect=[123, 15.5, 150, 17.4], kind='mondo', density=0.9), dict(rect=[123, 27.4, 150, 29.5], kind='mondo', density=0.9),
-          dict(rect=[123, 17.4, 131, 19.2], kind='mondo', density=0.9), dict(rect=[123, 25.4, 132, 27.4], kind='mondo', density=0.9),
-          dict(rect=[123, 15.6, 130, 18.4], kind='gardenia', density=0.8), dict(rect=[123, 26.4, 131, 29.4], kind='gardenia', density=0.8),
-          dict(rect=[131, 17.4, 150, 19.2], kind='dichondra'), dict(rect=[132, 25.4, 150, 27.4], kind='dichondra'),
+          # beds along the walk on the front lawn (p4): one mondo bed each side, its lawn edge sweeping in soft curves
+          # with stone edging (critic r2 front #13; layout assumed, I-13), gardenia at the pavilion ends and a silver
+          # dichondra ribbon along the walk inside it
+          dict(rect=[123, 13.6, 150, 19.3], kind='mondo', density=0.75, curve='y0'), dict(rect=[123, 25.3, 150, 31.4], kind='mondo', density=0.75, curve='y1'),
+          dict(rect=[123, 15.6, 130, 18.4], kind='gardenia', density=0.7, edge=False), dict(rect=[123, 26.4, 131, 29.4], kind='gardenia', density=0.7, edge=False),
+          dict(rect=[131, 17.4, 150, 19.2], kind='dichondra', edge=False), dict(rect=[132, 25.4, 150, 27.4], kind='dichondra', edge=False),
           dict(rect=[86, -4, 99, 15.8], kind='monstera'), dict(rect=[86, 28.8, 97, 47], kind='monstera'),
           dict(rect=[57, 16.3, 67.5, 19.3], kind='groundcover'), dict(rect=[57, 25.3, 67.5, 28.2], kind='groundcover'),
-          # lot lines: a clipped hedge only where it is out of the hero views; loose monstera understorey elsewhere
+          # lot lines: a clipped hedge only where it is out of the hero views; loose monstera understorey elsewhere;
+          # behind the back lawn a 7 ft screen hedge on the side lot line hides the neighbour's pool (critic r2 back #11)
           dict(rect=[22, -8, 95, -6], kind='hedge'), dict(rect=[96, -8, 150, -6.2], kind='monstera', density=0.7),
-          dict(rect=[30, 51.5, 95, 53.5], kind='hedge'), dict(rect=[-30, 51.6, 30, 53.4], kind='monstera', density=0.6),
-          dict(rect=[96, 51.6, 150, 53.4], kind='monstera', density=0.7),
+          dict(rect=[30, 51.5, 95, 53.5], kind='hedge'), dict(rect=[-1, 51.6, 30, 53.4], kind='monstera', density=0.6),
+          dict(rect=[-33.4, 51.7, -1, 53.4], kind='screen'),
+          dict(rect=[96, 51.6, 150, 53.4], kind='monstera', density=0.45),
           # back: a ti bed along the left-wing foundation (red ti over mondo), monstera at its end; ti and mondo at the
           # primary bedroom's corner so its windows look out on planting
-          dict(rect=[-2, -3.5, 14, -1], kind='ti', density=0.9), dict(rect=[-2, -3.5, 16, -1], kind='mondo'),
-          dict(rect=[14, -3.5, 18, -1], kind='monstera'),
-          dict(rect=[-3, 40, -0.4, 44.2], kind='ti', density=0.8), dict(rect=[-3, 39, -0.4, 44.6], kind='mondo'),
-          dict(rect=[0, 44.8, 8, 46.6], kind='mondo'), dict(rect=[1.5, 45, 5.5, 46.4], kind='ti'),
-          # the layered screen right of the bedroom wing: red heliconia, a red hibiscus at the wing corner, bougainvillea
-          dict(rect=[-30, 48.8, -16, 51.4], kind='heliconia', density=0.7), dict(rect=[9, 48.6, 21, 51], kind='heliconia', density=0.7),
+          dict(rect=[-2, -3.5, 14, -1], kind='ti', density=0.9, edge=False), dict(rect=[-2, -3.8, 16, -1], kind='mondo', curve='y0'),
+          dict(rect=[14, -3.5, 18, -1], kind='monstera', edge=False),
+          dict(rect=[-3, 40, -0.4, 44.2], kind='ti', density=0.8, edge=False), dict(rect=[-3, 39, -0.4, 44.6], kind='mondo'),
+          dict(rect=[0, 44.8, 8, 46.6], kind='mondo'), dict(rect=[1.5, 45, 5.5, 46.4], kind='ti', edge=False),
+          # the layered screen right of the bedroom wing: magenta bougainvillea in front of the screen hedge (p5; its copy on
+          # the next lot no longer puts big heliconia leaves in the back view's left edge, critic r2 back #3), red heliconia
+          # further along, a red hibiscus at the wing corner
+          dict(rect=[-30, 48.8, -16, 51.4], kind='bougainvillea', density=0.8), dict(rect=[9, 48.6, 21, 51], kind='heliconia', density=0.7),
           dict(rect=[-3.6, 45, -0.6, 47.6], kind='hibiscus'), dict(rect=[-12, 49.4, -4.5, 51.4], kind='bougainvillea'),
           dict(rect=[50, -7.6, 56, -4.6], kind='hibiscus'),
           dict(rect=[36, 46, 58, 49], kind='bougainvillea'),

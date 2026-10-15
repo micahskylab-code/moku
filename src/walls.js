@@ -360,15 +360,19 @@ function dress(P, g, o, x0, x1, yb, head, T, plusIn, minusIn, colliders, at) {
     case 'pivot': {
       // oversized black steel-look glass pivot door standing ~40 deg open, fixed glass sidelights either side,
       // 3-row divided lites like the other glass walls
-      const dw = Math.min(4.5, w * 0.45), da = cx - dw / 2, db = cx + dw / 2, rows = o.rows ?? 0;
+      // p4: 4" black mullion posts between door and sidelights, a low rail ~2' 4" up across the sidelights
+      // and the leaf, and the leaf split into two tall lites by a centre bar
+      const dw = Math.min(4.5, w * 0.45), da = cx - dw / 2, db = cx + dw / 2, rows = o.rows ?? 0, mw = 0.33, rail = yb + 2.35;
       frame(x0, x1, yb, head);
-      P.box(M.frame(), 0.25, h, 0.36, da - 0.125, cy, zf);
-      P.box(M.frame(), 0.25, h, 0.36, db + 0.125, cy, zf);
-      sash(P, x0 + 0.25, da - 0.25, yb + 0.08, head - 0.25, zf, { f: 0.08, d: 0.1, grid: rows ? [1, rows] : null });
-      sash(P, db + 0.25, x1 - 0.25, yb + 0.08, head - 0.25, zf, { f: 0.08, d: 0.1, grid: rows ? [1, rows] : null });
+      P.box(M.frame(), mw, h, 0.36, da - mw / 2, cy, zf);
+      P.box(M.frame(), mw, h, 0.36, db + mw / 2, cy, zf);
+      sash(P, x0 + 0.25, da - mw, yb + 0.08, head - 0.25, zf, { f: 0.08, d: 0.1, grid: rows ? [1, rows] : null });
+      sash(P, db + mw, x1 - 0.25, yb + 0.08, head - 0.25, zf, { f: 0.08, d: 0.1, grid: rows ? [1, rows] : null });
+      for (const [xa, xb] of [[x0 + 0.25, da - mw], [db + mw, x1 - 0.25]]) P.box(M.frame(), xb - xa, 0.17, 0.12, (xa + xb) / 2, rail, zf);
       colliders.push({ a: at(x0), b: at(da) }, { a: at(db), b: at(x1) });
       const leaf = new THREE.Group(), L = new Parts(), pv = 0.9;      // pivot 11" in from the hinge-side edge
-      sash(L, -pv, dw - pv, yb + 0.06, head - 0.06, 0, { f: 0.21, d: 0.2, bottom: 0.33, grid: rows ? [1, rows] : null });
+      sash(L, -pv, dw - pv, yb + 0.06, head - 0.06, 0, { f: 0.21, d: 0.2, bottom: 0.33, grid: rows ? [1, rows] : [2, 1] });
+      L.box(M.frame(), dw - 0.42, 0.17, 0.2, dw / 2 - pv, rail, 0);
       for (const q of [1, -1]) {
         L.cyl(M.iron(), 0.06, 4.2, dw - pv - 0.6, 4.1, q * 0.3, 'y', 10);                      // ladder pulls
         for (const y of [2.3, 5.9]) L.box(M.iron(), 0.05, 0.05, 0.2, dw - pv - 0.6, y, q * 0.16);

@@ -30,6 +30,7 @@ const GUTTER_M = () => finish('gutter', '#36393d', 0.4, 0.3);             // K-s
 const LOUVER_M = () => finish('gableLouver', '#7b8086', 0.5, 0.15);       // gable vent blades: roof colour
 const CAVITY_M = () => finish('gableCavity', '#121314', 0.95);            // the dark attic behind the vent
 const FLASH_M = () => finish('flashing', '#6f7378', 0.4, 0.3);            // valley pans, curbs
+const WELL_M = () => finish('wellLining', '#2b2520', 0.9);                // roof-well lining: dark-stained cedar
 
 // ---------------------------------------------------------------------------------- 2D polygon helpers
 const area = P => { let a = 0; for (let i = 0; i < P.length; i++) { const A = P[i], B = P[(i + 1) % P.length]; a += A[0] * B[1] - B[0] * A[1]; } return a / 2; };
@@ -403,10 +404,12 @@ export class Roofs {
         const ei = inPlane(oi, Li), ej = inPlane(oj, Lj);
         const ni = nrm([-Li[0], 1, -Li[1]]), nj = nrm([-Lj[0], 1, -Lj[1]]);
         const up = nrm(add(ni, nj));
-        // formed cap: flanges 4" over each plane, a rounded roll on the line
+        // formed cap: one folded sheet lying flush on both planes (4" flanges, a 1/4" hem, the crease just
+        // proud of the hip line), so every face is within a few degrees of a roof plane and takes the roof's
+        // light; the old raised roll's steep facets caught the sun as two clipped white bars (critique r2 front #12)
         const pt = (e, n, w, h) => add(add([0, 0, 0], e, w), n, h);
-        const ring = [pt(ei, ni, 0.36, 0.0), pt(ei, ni, 0.3, 0.035), pt(ei, ni, 0.12, 0.05), add(pt(ei, ni, 0.05, 0.05), up, 0.07), add([0, 0, 0], up, 0.15),
-          add(pt(ej, nj, 0.05, 0.05), up, 0.07), pt(ej, nj, 0.12, 0.05), pt(ej, nj, 0.3, 0.035), pt(ej, nj, 0.36, 0.0), pt(ej, nj, 0.33, -0.01), add([0, 0, 0], up, 0.02), pt(ei, ni, 0.33, -0.01)];
+        const ring = [pt(ei, ni, 0.34, 0.004), pt(ei, ni, 0.325, 0.022), pt(ei, ni, 0.04, 0.022), add([0, 0, 0], up, 0.034),
+          pt(ej, nj, 0.04, 0.022), pt(ej, nj, 0.325, 0.022), pt(ej, nj, 0.34, 0.004), pt(ej, nj, 0.33, -0.012), add([0, 0, 0], up, -0.012), pt(ei, ni, 0.33, -0.012)];
         // express the ring in a 2D frame (s1, s2) perpendicular to the line so sweep() can cap it
         const s1 = nrm(cross(up, ax)), s2 = up;
         acc.sweep(ring.map(p => [dot(p, s1), dot(p, s2)]), A, B, s1, s2);
@@ -572,15 +575,20 @@ export class Roofs {
     const ux = -f.dir[1], uy = f.dir[0], dx = f.dir[0], dy = f.dir[1];
     const ts = C.map(([x, y]) => x * ux + y * uy), ss = C.map(([x, y]) => x * dx + y * dy);
     const t0 = Math.min(...ts), t1 = Math.max(...ts), s0 = Math.min(...ss), s1 = Math.max(...ss);
-    const n3 = nrm([-f.L[0], 1, -f.L[1]]), u3 = [ux, 0, uy];
-    const nb = Math.max(2, Math.round((t1 - t0) / 0.333)), bay = (t1 - t0) / nb;
+    const n3 = nrm([-f.L[0], 1, -f.L[1]]), d3 = nrm([dx, f.L[0] * dx + f.L[1] * dy, dy]);
+    // open cedar slats 2" wide x 4" deep, 6" on centre up the slope (4" clear), running parallel to the eave.
+    // Both wells' planes fall toward the walk, so from the street the eye looks along the slats and down into
+    // the gaps (r2 ran them down the slope: seen across, their 5 1/2" sides closed into one tan board, front #10)
+    const sp = 0.5 / Math.hypot(1, f.L[0] * dx + f.L[1] * dy);                 // 6" along the slope, in plan
+    const nb = Math.max(2, Math.round((s1 - s0) / sp)), bay = (s1 - s0) / nb;
     for (let k = 0; k < nb; k++) {
-      const t = t0 + (k + 0.5) * bay;
-      // runs 2" past each edge onto the curb (ends never lie in the lining's plane)
-      const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T + 0.16, y]; };
-      slats.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.46], [-0.0625, -0.46]], P(s0 - 0.07), P(s1 + 0.07), u3, n3);
+      const s = s0 + (k + 0.5) * bay;
+      // runs 1" past each edge onto the curb (ends never lie in the lining's plane)
+      const P = t => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T + 0.16, y]; };
+      slats.sweep([[-0.083, 0], [0.083, 0], [0.083, -0.33], [-0.083, -0.33]], P(t0 - 0.07), P(t1 + 0.07), d3, n3);
     }
-    for (const [acc, m] of [[well, mat('woodBeam')], [slats, mat('woodBeam')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
+    // the lining in a dark stain (concept: reads as a dark gap between the slats, striped by their shadows)
+    for (const [acc, m] of [[well, WELL_M()], [slats, mat('woodBeam')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
   }
 
   // ------------------------------------------------------------------------------ downspouts

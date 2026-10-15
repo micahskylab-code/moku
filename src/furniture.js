@@ -85,22 +85,14 @@ const B = {
     for (let k = 0; k < n; k++) box(g, cw - 0.05, 0.42, d - 0.95, -w / 2 + 0.75 + cw * (k + 0.5), 1.2, 0.4, f, 0.17);
   },
 
+  // lanai sofa and club chairs (p5 back rendering, p7 board): open teak frames, off-white canvas cushions
+  // with welt piping, throw pillows
   'outdoor-sofa'(g, { w, d }) {
-    teakFrame(g, w, d, 2.1);
-    const n = 3, cw = (w - 0.7) / n;
-    for (let k = 0; k < n; k++) {
-      const x = -w / 2 + 0.35 + cw * (k + 0.5);
-      box(g, cw - 0.05, 0.5, d - 0.9, x, 1.25, 0.25, 'linenWhite', 0.17);
-      box(g, cw - 0.1, 1.5, 0.5, x, 2.0, -d / 2 + 0.6, 'linenWhite', 0.22).rotation.x = -0.15;
-    }
-    box(g, 1.4, 1.3, 0.4, -w / 2 + 1.3, 2.0, -d / 2 + 1.0, 'linenSand', 0.2).rotation.set(-0.2, 0.3, 0);
-    box(g, 1.4, 1.3, 0.4, w / 2 - 1.3, 2.0, -d / 2 + 1.0, 'linenSand', 0.2).rotation.set(-0.2, -0.3, 0);
+    teakLounge(g, w, d, { seats: 3, pillows: ['pillowStripe', 'linenSand', 'pillowStripe', 'linenSand', 'pillowStripe'] });
   },
 
   'outdoor-chair'(g, { w = 2.8, d = 2.8 }) {
-    teakFrame(g, w, d, 2.1);
-    box(g, w - 0.7, 0.5, d - 0.9, 0, 1.25, 0.25, 'linenWhite', 0.17);
-    box(g, w - 0.8, 1.4, 0.5, 0, 2.0, -d / 2 + 0.6, 'linenWhite', 0.22).rotation.x = -0.15;
+    teakLounge(g, w, d, { seats: 1, pillows: ['linenSand'] });
   },
 
   armchair(g, { w = 2.9, d = 2.9, material, frame = 'oak' }) {
@@ -381,13 +373,7 @@ const B = {
     box(g, 2.6, 2.0, 0.04, 0, 1.45, d / 2 + 0.02, 'steel');
   },
 
-  lounger(g, { w = 2.4, d = 6.4 }) {
-    box(g, w, 0.2, d, 0, 0.95, 0, 'teak', 0.03);
-    for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) box(g, 0.2, 0.95, 0.2, sx * (w / 2 - 0.12), 0.47, sz * (d / 2 - 0.2), 'teak');
-    box(g, w - 0.1, 0.3, d * 0.62, 0, 1.2, d * 0.18, 'linenWhite', 0.12);
-    const back = box(g, w - 0.1, 0.3, d * 0.38, 0, 1.75, -d * 0.27, 'linenWhite', 0.12); back.rotation.x = 0.55;
-    const towel = box(g, w * 0.7, 0.12, 0.8, 0, 1.42, d * 0.3, '#f7f7f4', 0.05); towel.rotation.y = 0.1;
-  },
+  lounger(g, { w = 2.3, d = 6.3 }) { chaiseInto(g, w, d); },
 
   // Framed art: an abstract ocean horizon or a kapa-pattern print, oak frame, linen mat.
   art(g, { w = 4, h = 3, style = 'ocean', elevation = 5.4 }) {
@@ -427,13 +413,114 @@ const B = {
 };
 
 // ---------- shared parts ----------
-function teakFrame(g, w, d, armH) {
-  box(g, w, 0.2, d, 0, 0.75, 0, 'teak', 0.03);
+// ---------- outdoor upholstery (p5 back rendering, p7 board) ----------
+// Own named finishes the Blender pass can target (scripts/materials_bpy.py): 'cushionPiping' (welt cord,
+// a shade under the canvas), 'towel' (white terry), 'pillowStripe' (striped outdoor canvas). Cushions stay on
+// 'linenWhite' (outdoor canvas recipe: albedo ~0.75, weave normal, pucker); frames 'teak'; woven seats 'rattan'.
+const ownMats = new Map();
+function ownMat(name, make) { if (!ownMats.has(name)) { const m = make(); m.name = name; ownMats.set(name, m); } return ownMats.get(name); }
+const PIPING = () => ownMat('cushionPiping', () => new THREE.MeshStandardMaterial({ color: '#d4cbbb', roughness: 0.85 }));
+const TOWEL = () => ownMat('towel', () => new THREE.MeshStandardMaterial({ color: '#efede7', roughness: 0.97 }));
+const STRIPE = () => ownMat('pillowStripe', () => {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 64;
+  const x = c.getContext('2d'); x.fillStyle = '#ece7dd'; x.fillRect(0, 0, 64, 64);
+  x.fillStyle = '#8d8a84'; for (let k = 0; k < 64; k += 16) x.fillRect(0, k + 5, 64, 5);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 });
+});
+
+// welt piping: a closed cord round a rounded rectangle (w along x, d along z) in the y = 0 plane
+const pipeCache = new Map();
+function pipeLoop(w, d, rc, rad = 0.022) {
+  const k = `${w.toFixed(2)}|${d.toFixed(2)}|${rc.toFixed(3)}|${rad}`;
+  if (pipeCache.has(k)) return pipeCache.get(k);
+  const pts = [], cx = w / 2 - rc, cz = d / 2 - rc;
+  for (const [sx, sz, a0] of [[1, 1, 0], [-1, 1, 90], [-1, -1, 180], [1, -1, 270]])
+    for (let i = 0; i <= 3; i++) { const a = (a0 + i * 30) * Math.PI / 180; pts.push(new THREE.Vector3(sx * cx + rc * Math.cos(a), 0, sz * cz + rc * Math.sin(a))); }
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true, 'centripetal'), 96, rad, 6, true);
+  pipeCache.set(k, geo); return geo;
+}
+// A filled cushion lying flat (w x, t thick in y, d z) with 1-2 cm rounded edges and a welt at both seams.
+function cushion(g, w, t, d, x, y, z, m = 'linenWhite', r = 0.05) {
+  const c = new THREE.Group(); c.position.set(x, y, z); g.add(c);
+  box(c, w, t, d, 0, 0, 0, m, r);
+  const e = r * 0.293;                                     // the seam: halfway round the edge radius
   for (const s of [-1, 1]) {
-    box(g, 0.3, armH, d, s * (w / 2 - 0.15), armH / 2, 0, 'teak', 0.04);
-    for (let k = 0; k < 4; k++) box(g, 0.32, 0.06, d - 0.3, s * (w / 2 - 0.15), 0.4 + k * 0.42, 0, '#7f5636');
+    const p = new THREE.Mesh(pipeLoop(w - 2 * e, d - 2 * e, Math.max(0.02, r * 0.707)), PIPING());
+    p.position.y = s * (t / 2 - e); c.add(p);
   }
-  box(g, w, 2.2, 0.25, 0, 1.6, -d / 2 + 0.12, 'teak', 0.03);
+  return c;
+}
+// A back cushion: a cushion stood up against the back (its face toward local +z), raked back by `lean`.
+function backCushion(g, w, t, h, x, y, z, lean = 0.18, m = 'linenWhite') {
+  const c = cushion(g, w, t, h, x, y, z, m, 0.07); c.rotation.x = -Math.PI / 2 - lean; return c;
+}
+// Throw pillow: a soft square leaned on the back cushions.
+function pillow(g, x, y, z, ry, m, s = 1.45) {
+  const p = box(g, s, s, 0.38, x, y, z, m === 'pillowStripe' ? STRIPE() : m, 0.17); p.rotation.set(-0.28, ry, 0); return p;
+}
+
+// Open teak frame (2 1/2" legs, flat 5" arm planks, open sides, slatted back) with seat and back cushions.
+// Local -z is the back; seats across w.
+function teakLounge(g, w, d, { seats = 3, pillows = [], backH = 2.45, armH = 1.95 } = {}) {
+  const T = 'teak', leg = 0.2, armW = 0.42, inW = w - 2 * leg, inD = d - 2 * leg;
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+    const h = sz < 0 ? backH : armH;
+    box(g, leg, h, leg, sx * (w / 2 - leg / 2), h / 2, sz * (d / 2 - leg / 2), T, 0.02);
+  }
+  for (const sx of [-1, 1]) {
+    box(g, armW, 0.1, d + 0.06, sx * (w / 2 - armW / 2 + 0.04), armH + 0.05, 0.03, T, 0.03);     // flat arm plank
+    box(g, 0.14, 0.24, inD, sx * (w / 2 - leg / 2), 0.9, 0, T, 0.02);                            // seat rail
+    box(g, 0.1, 0.1, inD, sx * (w / 2 - leg / 2), 0.3, 0, T, 0.02);                              // low stretcher
+  }
+  for (const sz of [-1, 1]) box(g, inW, 0.24, 0.14, 0, 0.9, sz * (d / 2 - leg / 2), T, 0.02);
+  box(g, inW, 0.06, inD, 0, 0.99, 0, T);                                                         // slatted deck
+  box(g, w, 0.15, 0.17, 0, backH - 0.075, -d / 2 + leg / 2, T, 0.03);                            // back top rail
+  const ns = Math.max(3, Math.round(inW / 0.42)), sh = backH - 0.15 - 1.02;
+  for (let k = 0; k < ns; k++) box(g, 0.22, sh, 0.06, -inW / 2 + (k + 0.5) * inW / ns, 1.02 + sh / 2, -d / 2 + leg / 2, T);
+  // cushions: 6" seats on the deck, 5" backs on the seats leaning on the frame
+  const cw = inW / seats, seatT = 0.5, seatTop = 1.02 + seatT;
+  for (let k = 0; k < seats; k++) {
+    const x = -inW / 2 + cw * (k + 0.5);
+    cushion(g, cw - 0.03, seatT, inD - 0.02, x, 1.02 + seatT / 2, 0, 'linenWhite', 0.06);
+    backCushion(g, cw - 0.05, 0.45, 1.45, x, seatTop + 0.68, -inD / 2 + 0.36, 0.2);
+  }
+  pillows.forEach((m, k) => {
+    const n = pillows.length, x = n === 1 ? 0 : -inW / 2 + 0.85 + k * (inW - 1.7) / (n - 1);
+    pillow(g, x, seatTop + 0.66, -inD / 2 + 0.78, n === 1 ? 0 : (x < 0 ? 0.18 : -0.18) * (k % 2 ? 0.5 : 1), m, n > 3 ? 1.3 : 1.45);
+  });
+}
+
+// Chaise lounge (p5): low teak frame with side rails, a thin canvas pad on the seat and on a raised back,
+// welted, and rolled white towels. Local -z is the raised back. Also used by site.js for the pool deck.
+export function chaiseInto(g, w = 2.3, d = 6.3) {
+  const T = 'teak', leg = 0.22, railH = 0.32, top = 1.0;
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(g, leg, top, leg, sx * (w / 2 - leg / 2), top / 2, sz * (d / 2 - leg / 2), T, 0.02);
+  for (const sx of [-1, 1]) box(g, 0.13, railH, d, sx * (w / 2 - 0.065), top - railH / 2, 0, T, 0.02);
+  for (const sz of [-1, 1]) box(g, w - 0.26, railH, 0.13, 0, top - railH / 2, sz * (d / 2 - 0.065), T, 0.02);
+  const hinge = -0.55, inW = w - 0.3, padT = 0.2;
+  box(g, inW, 0.05, d / 2 - hinge - 0.15, 0, top - 0.06, (hinge + d / 2 - 0.15) / 2, T);                  // seat slats
+  cushion(g, inW, padT, d / 2 - 0.12 - hinge, 0, top - 0.035 + padT / 2, (hinge + d / 2 - 0.12) / 2, 'linenWhite', 0.05);
+  // raised back: slatted panel hinged at the seat, propped at ~35 deg, its own pad
+  const bl = hinge + d / 2 - 0.15, back = new THREE.Group(); back.position.set(0, top - 0.035, hinge); back.rotation.x = 0.6; g.add(back);
+  box(back, inW, 0.05, bl, 0, -0.025, -bl / 2, T);
+  for (const sx of [-1, 1]) box(back, 0.1, 0.14, bl, sx * (inW / 2 - 0.05), -0.1, -bl / 2, T, 0.02);
+  cushion(back, inW, padT, bl - 0.05, 0, padT / 2, -bl / 2, 'linenWhite', 0.05);
+  box(g, inW - 0.2, 0.08, 0.1, 0, top + 0.52, hinge - 1.0, T);                                            // prop bar under the back
+  for (const sx of [-1, 1]) box(g, 0.08, 0.52, 0.08, sx * (inW / 2 - 0.15), top + 0.26, hinge - 1.0, T);
+  // rolled towels: two side by side and one on top, on the seat just below the back
+  const seatTop = top - 0.035 + padT, rr = 0.17, tl = 1.25, tz = hinge + 0.75;
+  for (const [x, y] of [[0, rr], [0, 3 * rr]]) {
+    const n = y > rr ? 1 : 2;
+    for (let i = 0; i < n; i++) {
+      const tw = new THREE.Mesh(new THREE.CylinderGeometry(rr, rr, tl, 18), TOWEL());
+      tw.rotation.z = Math.PI / 2; tw.position.set(x + 0.04 * (i ? 1 : -1) * (n - 1), seatTop + y - 0.02 - (y > rr ? 0.05 : 0), tz + (n > 1 ? (i - 0.5) * 2 * rr : 0)); g.add(tw);
+      for (const s of [-1, 1]) {                                                                       // rolled ends
+        const end = new THREE.Mesh(new THREE.TorusGeometry(rr * 0.55, 0.02, 4, 18), PIPING());
+        end.rotation.y = Math.PI / 2; end.position.set(tw.position.x + s * (tl / 2 + 0.003), tw.position.y, tw.position.z); g.add(end);
+      }
+    }
+  }
 }
 
 function caneChair(g) {
@@ -447,11 +534,19 @@ function caneChair(g) {
 }
 
 function teakDiningChair(g) {
-  for (const [sx, sz] of [[-1, 1], [1, 1]]) box(g, 0.14, 1.55, 0.14, sx * 0.72, 0.78, sz * 0.7, 'teak');
-  for (const sx of [-1, 1]) box(g, 0.14, 3.0, 0.14, sx * 0.72, 1.5, -0.72, 'teak');
-  box(g, 1.55, 0.12, 1.55, 0, 1.55, 0, 'teak');
-  for (let k = 0; k < 4; k++) box(g, 1.3, 0.2, 0.06, 0, 2.0 + k * 0.28, -0.74, 'teak');
-  box(g, 1.4, 0.2, 1.35, 0, 1.7, 0.02, 'linenWhite', 0.08);
+  // p5 lanai dining chair: teak frame, woven seat and a woven back panel in a raked teak frame
+  for (const sx of [-1, 1]) {
+    box(g, 0.14, 1.5, 0.14, sx * 0.7, 0.75, 0.66, 'teak', 0.02);                                 // front legs
+    box(g, 0.14, 2.95, 0.14, sx * 0.7, 1.47, -0.68, 'teak', 0.02).rotation.x = -0.05;              // back legs / stiles
+    box(g, 0.1, 0.16, 1.2, sx * 0.7, 1.42, -0.01, 'teak', 0.02);                                  // side rails
+    box(g, 0.07, 0.07, 1.2, sx * 0.7, 0.45, -0.01, 'teak');                                       // stretchers
+  }
+  for (const z of [0.66, -0.68]) box(g, 1.26, 0.16, 0.1, 0, 1.42, z, 'teak', 0.02);
+  box(g, 1.28, 0.08, 1.26, 0, 1.53, -0.01, 'rattan', 0.03);                                       // woven seat
+  const back = new THREE.Group(); back.position.set(0, 2.35, -0.73); back.rotation.x = -0.1; g.add(back);
+  box(back, 1.28, 0.95, 0.05, 0, 0, 0, 'rattan', 0.02);                                             // woven back
+  box(back, 1.54, 0.14, 0.12, 0, 0.53, 0, 'teak', 0.03);                                            // top rail
+  box(back, 1.28, 0.08, 0.08, 0, -0.5, 0, 'teak', 0.02);
 }
 
 function shakerFronts(g, w, h, x, z, ry, yc = h / 2) {

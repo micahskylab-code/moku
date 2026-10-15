@@ -444,7 +444,7 @@ def mulch_material():
     else dark brown chips (voronoi cells) with lighter dry tops and soil between."""
     f = _asset('ground', 'bark_mulch')
     if f and os.path.exists(os.path.join(f, 'color.jpg')):
-        return photo_ground_material('plant mulch', f, 1.5, tint=(0.85, 0.82, 0.8), bump=1.2)
+        return photo_ground_material('plant mulch', f, 1.5, tint=(0.66, 0.56, 0.48), bump=1.2)    # one dark-brown bark mulch
     m = bpy.data.materials.new('plant mulch'); nt, N, L = _nodes(m)
     out = N.new('ShaderNodeOutputMaterial'); p = N.new('ShaderNodeBsdfPrincipled'); p.inputs['Roughness'].default_value = 0.92
     L.new(p.outputs['BSDF'], out.inputs['Surface'])
@@ -550,6 +550,9 @@ SHRUBS = {
                      shape='elliptic', stems=6, stem_r=0.015, bloom=0.26, phyllo='opp', lump=0.16),
     'hedge': dict(R=0.5, H=1.25, twigs=420, leaves=(8, 12), leaf_len=0.045, twig_len=0.12, leaf_angle=55, droop=0.1, up=0.3,
                   shape='small', stems=6, stem_r=0.014, bloom=0.04, phyllo='alt', lump=0.1),
+    # a 7 ft clipped screen hedge on the side lot line (critic r2 back #11): dense small leaves, a narrow column
+    'screen': dict(R=0.55, H=2.25, twigs=820, leaves=(8, 12), leaf_len=0.05, twig_len=0.13, leaf_angle=55, droop=0.08, up=0.3,
+                   shape='small', stems=7, stem_r=0.016, bloom=0.0, phyllo='alt', lump=0.07),
     'jasmine': dict(R=0.48, H=0.26, twigs=240, leaves=(6, 10), leaf_len=0.035, twig_len=0.12, leaf_angle=62, droop=0.05, up=0.5,
                     shape='elliptic', stems=5, stem_r=0.005, bloom=0.0, phyllo='opp', lump=0.12, flat=True),
     'dichondra': dict(R=0.4, H=0.12, twigs=200, leaves=(5, 8), leaf_len=0.022, twig_len=0.08, leaf_angle=70, droop=0.05, up=0.7,
@@ -1128,7 +1131,8 @@ def grass_tile(seed, size=0.5, density=22000, wh=None, keep=None, hscale=1.0):
     return buf
 
 
-PAVER_PITCH = 0.34          # m, flat to flat: the honeycomb of materials_bpy.r_grass_pavers (world xy)
+PAVER_PITCH = 0.24          # m, flat to flat (r3: ~30% smaller cells than the slab material's 0.34 m lattice, which the
+                            # opaque turf base of every tile now hides - critic r2 front #11)
 R3 = math.sqrt(3.0)
 
 
@@ -1143,10 +1147,15 @@ def _hex_edge(xy, s=PAVER_PITCH):
     return (0.5 - hexd) * s
 
 
-def paver_tile(seed, s=PAVER_PITCH, margin=0.04, rib_w=0.03, rib_h=0.012):
-    """One period (s x s*sqrt3) of the grass-paver drive: short turf only inside the hex cells and
-    raised light concrete ribs, so the honeycomb reads from the street (front rendering p4)."""
-    buf = grass_tile(seed, wh=(s, s * R3), density=26000, keep=lambda xy: _hex_edge(xy, s) > margin, hscale=0.3)
+def paver_tile(seed, s=PAVER_PITCH, margin=0.022, rib_w=0.024, rib_h=0.012, hscale=0.3, over=0.1):
+    """One period (s x s*sqrt3) of the grass-paver drive: turf inside the hex cells (a share of the blades
+    leaning over the ribs), raised grey concrete ribs, and an opaque thatch base under the blades so the slab
+    material never shows through (front rendering p4)."""
+    kr = np.random.default_rng(seed + 17)
+    keep = lambda xy: (_hex_edge(xy, s) > margin) | (kr.random(len(xy)) < over)
+    buf = grass_tile(seed, wh=(s, s * R3), density=30000, keep=keep, hscale=hscale)
+    base = Buf(); base.add([(0, 0, 0.004), (s, 0, 0.004), (s, s * R3, 0.004), (0, s * R3, 0.004)], [[0, 1, 2, 3]], [(0, 0), (1, 0), (1, 1), (0, 1)], mat=2)
+    buf.extend(base)
     rib = Buf()
     hw = rib_w / 2
     for c in ((0.0, 0.0), (0.5, R3 / 2)):
@@ -1164,8 +1173,8 @@ def paver_tile(seed, s=PAVER_PITCH, margin=0.04, rib_w=0.03, rib_h=0.012):
     return buf
 
 
-def grass_material():
-    m = bpy.data.materials.new('plant lawn'); nt, N, L = _nodes(m)
+def grass_material(per_instance=False):
+    m = bpy.data.materials.new('plant paver turf' if per_instance else 'plant lawn'); nt, N, L = _nodes(m)
     out = N.new('ShaderNodeOutputMaterial')
     geo = N.new('ShaderNodeNewGeometry'); uvn = N.new('ShaderNodeUVMap'); sep = N.new('ShaderNodeSeparateXYZ')
     L.new(uvn.outputs['UV'], sep.inputs[0])
@@ -1182,6 +1191,18 @@ def grass_material():
     nm.inputs['To Min'].default_value = 0.78; nm.inputs['To Max'].default_value = 1.15
     L.new(no.outputs['Fac'], nm.inputs['Value'])
     hsv = N.new('ShaderNodeHueSaturation'); L.new(ramp.outputs['Color'], hsv.inputs['Color']); L.new(nm.outputs['Result'], hsv.inputs['Value'])
+    if per_instance:
+        # grass pavers: every cell grows a little differently (hue, vigour), greener than lime (critic r2 front #11)
+        oi = N.new('ShaderNodeObjectInfo')
+        hu = N.new('ShaderNodeMapRange'); hu.inputs['To Min'].default_value = 0.505; hu.inputs['To Max'].default_value = 0.54
+        va = N.new('ShaderNodeMapRange'); va.inputs['To Min'].default_value = 0.72; va.inputs['To Max'].default_value = 1.08
+        sa = N.new('ShaderNodeMapRange'); sa.inputs['To Min'].default_value = 0.78; sa.inputs['To Max'].default_value = 0.98
+        fr = N.new('ShaderNodeMath'); fr.operation = 'FRACT'; mu = N.new('ShaderNodeMath'); mu.operation = 'MULTIPLY'; mu.inputs[1].default_value = 7.13
+        L.new(oi.outputs['Random'], mu.inputs[0]); L.new(mu.outputs[0], fr.inputs[0])
+        L.new(oi.outputs['Random'], hu.inputs['Value']); L.new(fr.outputs[0], va.inputs['Value']); L.new(oi.outputs['Random'], sa.inputs['Value'])
+        h2 = N.new('ShaderNodeHueSaturation'); L.new(hsv.outputs['Color'], h2.inputs['Color'])
+        L.new(hu.outputs['Result'], h2.inputs['Hue']); L.new(va.outputs['Result'], h2.inputs['Value']); L.new(sa.outputs['Result'], h2.inputs['Saturation'])
+        hsv = h2
     # darker, yellower at the base (thatch), straw on cut tips
     base = N.new('ShaderNodeMapRange'); base.inputs['From Min'].default_value = 0.0; base.inputs['From Max'].default_value = 0.45
     base.inputs['To Min'].default_value = 0.35; base.inputs['To Max'].default_value = 1.0
@@ -1254,7 +1275,10 @@ def materials():
     M['lawn'] = grass_material()
     M['mulch'] = mulch_material()
     M['edging'] = plain_material('plant bed edging', _lin('#3c3a35'), 0.55)
-    M['paver-rib'] = plain_material('plant paver rib', _lin('#bdb6a4'), 0.85)
+    M['paver-rib'] = plain_material('plant paver rib', _lin('#85837b'), 0.9)          # concrete grey (~150-160 sRGB lit), not white
+    M['paver-base'] = plain_material('plant paver turf base', _lin('#3e4c22'), 0.95)   # turf thatch filling each cell
+    M['paver-lawn'] = grass_material(per_instance=True)
+    M['stone-edging'] = plain_material('plant bed stone edging', _lin('#a69b86'), 0.85)   # tan coral stone edging (p4)
     return M
 
 
@@ -1323,7 +1347,8 @@ def lawn_cells(ground, cover, box, beds, cell=0.5, sub=4):
     offs = (np.arange(sub) + 0.5) * sc - cell / 2
     down, up = Vector((0, 0, -1)), Vector((0, 0, 1))
     def ok(x, y):
-        if any(bx0 < x < bx1 and by0 < y < by1 for bx0, by0, bx1, by1 in beds): return None
+        # beds: (rect, outline or None); a curved bed keeps the lawn out only inside its outline
+        if any(bx0 < x < bx1 and by0 < y < by1 and (pl is None or _inside(pl, ((x, y),))[0]) for (bx0, by0, bx1, by1), pl in beds): return None
         z, n = ground.zn(x, y)
         if z is None or n.z < 0.5: return None
         if cover is not None:
@@ -1355,7 +1380,7 @@ def _tilt_euler(normals, rz):
     return out
 
 
-def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9, edge_mat=None):
+def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9, edge_mat=None, slope=False):
     """A bed of bark mulch over rect (Blender xy), following the ground, edges slightly ragged.
     Robust to steps: grid points whose ground is missing, steep, or more than `tol` from the bed's
     level (zref, else the median) are dropped, and so is every quad spanning a height jump, so the
@@ -1371,7 +1396,7 @@ def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9, edge_mat=None):
     for i in range(nx):
         for j in range(ny):
             z, n = ground.zn(X[i, j], Y[i, j])
-            if z is not None and n.z > 0.55: Z[i, j] = z
+            if z is not None and n.z > (0.12 if slope else 0.55): Z[i, j] = z
     ok = ~np.isnan(Z)
     if not ok.any(): return None
     ref = zref if zref is not None else float(np.median(Z[ok]))
@@ -1379,7 +1404,7 @@ def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9, edge_mat=None):
     Z = np.where(ok, Z, ref) + 0.012 + np.where(edge > 0.2, 0.02, 0.0)
     q = ok[:-1, :-1] & ok[1:, :-1] & ok[1:, 1:] & ok[:-1, 1:]
     Zq = np.stack([Z[:-1, :-1], Z[1:, :-1], Z[1:, 1:], Z[:-1, 1:]], -1)
-    q &= (Zq.max(-1) - Zq.min(-1)) < 0.14
+    q &= (Zq.max(-1) - Zq.min(-1)) < (0.9 if slope else 0.14)
     ii, jj = np.nonzero(q)
     if not len(ii): return None
     a = ii * ny + jj
@@ -1405,11 +1430,174 @@ def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9, edge_mat=None):
     return ob
 
 
+# ---------------------------------------------------------------- curved beds (critic r2 back #12, front #13)
+def bed_spec(kind):
+    """A bed's kind as exported by src/plants.js: 'mondo', 'mondo@y0' (curved plan sides), 'ti@!' (no edging)."""
+    if '@' not in kind: return kind, '', True
+    k, spec = kind.split('@', 1)
+    return k, spec.replace('!', ''), '!' not in spec
+
+
+def _smooth(t):
+    t = np.clip(t, 0.0, 1.0); return t * t * (3 - 2 * t)
+
+
+def bed_outline(rect, sides, seed, step=0.1):
+    """Counter-clockwise outline (n,2) of a bed in Blender xy whose curved sides sweep inward in soft waves
+    (rounded corners between two curved sides, straight sides stay on the rect). sides: plan sides
+    'x0 x1 y0 y1' (plan y0 is Blender's top edge: three z -> Blender -y)."""
+    x0, y0, x1, y1 = rect
+    w, h = x1 - x0, y1 - y0
+    c = {'b': 'y1' in sides, 'r': 'x1' in sides, 't': 'y0' in sides, 'l': 'x0' in sides}
+    rng = np.random.default_rng(seed & 0xffffffff)
+    opp = (c['b'] and c['t']) or (c['l'] and c['r'])
+    amp = min(0.9, (0.22 if opp else 0.42) * min(w, h))
+    Rc = min(0.48 * min(w, h), max(1.6 * amp, 0.6))
+    rad = {k: (Rc if c[a] and c[b] else 0.0) for k, (a, b) in {'br': ('b', 'r'), 'tr': ('t', 'r'), 'tl': ('t', 'l'), 'bl': ('b', 'l')}.items()}
+    # sides in traversal order: (name, start, direction, length, corner at start, corner at end, side before, side after)
+    S = [('b', (x0 + rad['bl'], y0), (1, 0), w - rad['bl'] - rad['br'], 'l', 'r'),
+         ('r', (x1, y0 + rad['br']), (0, 1), h - rad['br'] - rad['tr'], 'b', 't'),
+         ('t', (x1 - rad['tr'], y1), (-1, 0), w - rad['tr'] - rad['tl'], 'r', 'l'),
+         ('l', (x0, y1 - rad['tl']), (0, -1), h - rad['tl'] - rad['bl'], 't', 'b')]
+    arcs = {'b': ('br', (x1 - rad['br'], y0 + rad['br']), -math.pi / 2), 'r': ('tr', (x1 - rad['tr'], y1 - rad['tr']), 0.0),
+            't': ('tl', (x0 + rad['tl'], y1 - rad['tl']), math.pi / 2), 'l': ('bl', (x0 + rad['bl'], y0 + rad['bl']), math.pi)}
+    wave = {}
+    for name, _, _, L, _, _ in S:
+        nw = max(1, int(round(L / 9.0))) if L > 3.0 else 0; ph = rng.uniform(0, 6.283); a2 = rng.uniform(0.0, 0.15)   # long, slow sweeps
+        wave[name] = (nw, ph, a2)
+    def inset(name, t, L, before, after):
+        if not c[name]: return np.zeros_like(t)
+        nw, ph, a2 = wave[name]
+        u = t / max(L, 1e-6)
+        wv = 0.5 + 0.5 * np.sin(2 * math.pi * nw * u + ph) * (1 - a2) + a2 * 0.5 * np.sin(2 * math.pi * (2 * nw + 1) * u + ph * 1.7) if nw else 0.5 + 0 * u
+        d = amp * (0.3 + 0.7 * np.clip(wv, 0, 1))
+        tl = min(2.2, L / 3)
+        if not c[before]: d = d * _smooth(t / tl)
+        if not c[after]: d = d * _smooth((L - t) / tl)
+        return d
+    pts, prev_end = [], {}
+    for name, (sx, sy), (dx, dy), L, before, after in S:
+        L = max(L, 0.0)
+        n = max(2, int(L / step) + 1)
+        t = np.linspace(0, L, n)
+        d = inset(name, t, L, before, after)
+        nx, ny = -dy, dx                                   # inward (left of a counter-clockwise walk)
+        pts += [(sx + dx * ti + nx * di, sy + dy * ti + ny * di) for ti, di in zip(t[:-1], d[:-1])]
+        prev_end[name] = d[-1]
+        corner, (cx, cy), a0 = arcs[name]
+        if rad[corner] > 0:
+            nxt = {'b': 'r', 'r': 't', 't': 'l', 'l': 'b'}[name]
+            nn = {'b': 'r', 'r': 't', 't': 'l', 'l': 'b'}[nxt]
+            Ln = [q for q in S if q[0] == nxt][0][3]
+            d1 = float(inset(nxt, np.array([0.0]), Ln, name, nn)[0])
+            for k in range(9):
+                f = k / 9; a = a0 + f * math.pi / 2
+                r = rad[corner] - (d[-1] * (1 - f) + d1 * f)
+                pts.append((cx + math.cos(a) * r, cy + math.sin(a) * r))
+        else:
+            pts.append((sx + dx * L + nx * d[-1], sy + dy * L + ny * d[-1]))
+    P = np.array(pts)
+    keep = np.r_[True, np.linalg.norm(np.diff(P, axis=0), axis=1) > 1e-4]
+    return P[keep]
+
+
+def _inside(poly, P):
+    """Even-odd point-in-polygon for points P (n,2)."""
+    P = np.asarray(P, float).reshape(-1, 2)
+    xi, yi = poly[:, 0][None], poly[:, 1][None]
+    xj, yj = np.roll(poly[:, 0], 1)[None], np.roll(poly[:, 1], 1)[None]
+    out = np.zeros(len(P), bool)
+    for k in range(0, len(P), 4000):
+        x, y = P[k:k + 4000, 0:1], P[k:k + 4000, 1:2]
+        cr = ((yi > y) != (yj > y)) & (x < (xj - xi) * (y - yi) / np.where(yj == yi, 1e-12, yj - yi) + xi)
+        out[k:k + 4000] = cr.sum(1) % 2 == 1
+    return out
+
+
+def _poly_dist(poly, P):
+    """Distance from points P (n,2) to the outline."""
+    A = poly; B = np.roll(poly, -1, 0); AB = B - A; l2 = np.maximum((AB ** 2).sum(1), 1e-12)
+    out = np.empty(len(P))
+    for k in range(0, len(P), 2000):
+        Q = P[k:k + 2000][:, None, :]
+        t = np.clip(((Q - A[None]) * AB[None]).sum(-1) / l2[None], 0, 1)
+        out[k:k + 2000] = np.sqrt((((A[None] + t[..., None] * AB[None]) - Q) ** 2).sum(-1)).min(1)
+    return out
+
+
+def mulch_curved(ground, rect, poly, mat, col, name, edge_mat=None, slope=False):
+    """Bark mulch inside a curved outline: a ground-following grid well inside it, plus a skirt strip whose
+    outer edge is the smooth outline, and (edge_mat) a low tan stone edging band along the outline."""
+    nzmin, jump = (0.12, 0.9) if slope else (0.55, 0.14)
+    x0, y0, x1, y1 = rect
+    nx = max(2, int((x1 - x0) / 0.25) + 1); ny = max(2, int((y1 - y0) / 0.25) + 1)
+    xs = np.linspace(x0, x1, nx); ys = np.linspace(y0, y1, ny)
+    X, Y = np.meshgrid(xs, ys, indexing='ij')
+    XY = np.stack([X.ravel(), Y.ravel()], 1)
+    ins = _inside(poly, XY); dist = np.zeros(len(XY)); dist[ins] = _poly_dist(poly, XY[ins])
+    sw = min(0.35, 0.3 * min(x1 - x0, y1 - y0))
+    Z = np.full(len(XY), np.nan)
+    for i in np.nonzero(ins & (dist > sw * 0.45))[0]:
+        z, n = ground.zn(XY[i, 0], XY[i, 1])
+        if z is not None and n.z > nzmin: Z[i] = z
+    ok = ~np.isnan(Z)
+    Z = np.where(ok, Z, 0.0) + 0.018 + np.where(dist > 0.35, 0.008, 0.0)
+    ok = ok.reshape(nx, ny); Zg = Z.reshape(nx, ny)
+    q = ok[:-1, :-1] & ok[1:, :-1] & ok[1:, 1:] & ok[:-1, 1:]
+    Zq = np.stack([Zg[:-1, :-1], Zg[1:, :-1], Zg[1:, 1:], Zg[:-1, 1:]], -1)
+    q &= (Zq.max(-1) - Zq.min(-1)) < jump
+    buf = Buf()
+    ii, jj = np.nonzero(q)
+    if len(ii):
+        a = ii * ny + jj
+        buf.add(np.stack([X, Y, Zg], -1).reshape(-1, 3), np.stack([a, a + ny, a + ny + 1, a + 1], -1), XY)
+    # skirt: outline -> inward by sw (inward normals of the counter-clockwise outline)
+    T = np.roll(poly, -1, 0) - np.roll(poly, 1, 0); T /= np.maximum(np.linalg.norm(T, axis=1, keepdims=True), 1e-9)
+    Nn = np.stack([-T[:, 1], T[:, 0]], 1)
+    inner = poly + Nn * sw
+    zo = [ground.zn(*p) for p in poly]; zi = [ground.zn(*p) for p in inner]
+    good = lambda r: r[0] is not None and r[1].z > nzmin
+    m = len(poly)
+    V, F, UV = [], [], []
+    for k in range(m):
+        k2 = (k + 1) % m
+        if not (good(zo[k]) and good(zo[k2]) and good(zi[k]) and good(zi[k2])): continue
+        zz = [zo[k][0], zo[k2][0], zi[k2][0], zi[k][0]]
+        if max(zz) - min(zz) > jump: continue
+        b = len(V)
+        for p, z in zip((poly[k], poly[k2], inner[k2], inner[k]), zz): V.append((p[0], p[1], z + 0.012)); UV.append((p[0], p[1]))
+        F.append([b, b + 1, b + 2, b + 3])
+    if F: buf.add(V, F, UV)
+    if edge_mat is not None:
+        o = poly - Nn * 0.03; e = poly + Nn * 0.09
+        V, F, UV = [], [], []
+        for k in range(m):
+            k2 = (k + 1) % m
+            if zo[k][0] is None or zo[k2][0] is None or abs(zo[k][0] - zo[k2][0]) > jump: continue
+            g0, g1 = zo[k][0], zo[k2][0]
+            b = len(V)
+            V += [(o[k][0], o[k][1], g0 - 0.03), (o[k2][0], o[k2][1], g1 - 0.03), (o[k2][0], o[k2][1], g1 + 0.035), (o[k][0], o[k][1], g0 + 0.035),
+                  (e[k][0], e[k][1], g0 + 0.035), (e[k2][0], e[k2][1], g1 + 0.035), (e[k2][0], e[k2][1], g1 - 0.03), (e[k][0], e[k][1], g0 - 0.03)]
+            UV += [(0, 0), (1, 0), (1, 1), (0, 1), (0, 1), (1, 1), (1, 0), (0, 0)]
+            F += [[b, b + 1, b + 2, b + 3], [b + 3, b + 2, b + 5, b + 4], [b + 4, b + 5, b + 6, b + 7]]
+        if F: buf.add(V, F, UV, mat=1)
+    if not buf.v: return None
+    me = buf.mesh(name, [mat] + ([edge_mat] if edge_mat is not None else []))
+    try:
+        import bmesh
+        bm = bmesh.new(); bm.from_mesh(me)
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS'); bm.to_mesh(me); bm.free()
+    except Exception: pass
+    ob = bpy.data.objects.new(name, me); col.objects.link(ob)
+    return ob
+
+
 # ---------------------------------------------------------------- the planting plan
 BEDS = {   # spacing (m) of plants in a bed, number of variants built
     'bougainvillea': dict(spacing=0.95, variants=5),
     'gardenia': dict(spacing=0.8, variants=4),
     'hedge': dict(spacing=0.62, variants=4),
+    'screen': dict(spacing=0.6, variants=3),
     'groundcover': dict(spacing=0.5, variants=4),
     'monstera': dict(spacing=1.3, variants=4),
     'ti': dict(spacing=0.48, variants=6),
@@ -1449,12 +1637,24 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         x0, z0, x1, z1 = r
         return (min(x0, x1), min(-z0, -z1), max(x0, x1), max(-z0, -z1))
     beds = [p for p in plants if p['type'] == 'bed']
+    for p in beds:
+        p['kind'], p['curve'], p['edge'] = bed_spec(p['kind'])
     bed_rects = [brect(p['rect']) for p in beds]
+    # curved outlines; a bed planted inside another (edge False) takes the outer bed's outline and its mulch
+    polys = [bed_outline(r, p['curve'], p['seed']) if p['curve'] else None for p, r in zip(beds, bed_rects)]
+    outer = [None] * len(beds)
+    for i, (p, r) in enumerate(zip(beds, bed_rects)):
+        if p['edge']: continue
+        cx, cy = (r[0] + r[2]) / 2, (r[1] + r[3]) / 2
+        for j, (q, r2) in enumerate(zip(beds, bed_rects)):
+            if j != i and q['edge'] and q.get('house') == p.get('house') and r2[0] <= cx <= r2[2] and r2[1] <= cy <= r2[3]:
+                outer[i] = j; polys[i] = polys[j] if polys[i] is None else polys[i]; break
+    lawn_beds = list(zip(bed_rects, polys))
 
     # ---- shrubs, ti and monstera in the beds
     flowers = {'bougainvillea': _bougainvillea_flowers, 'gardenia': _gardenia_flowers, 'groundcover': _small_white_flowers, 'hedge': _small_white_flowers,
                'hibiscus': _hibiscus_flowers}
-    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'groundcover': 'groundcover', 'jasmine': 'jasmine', 'dichondra': 'dichondra', 'hibiscus': 'gardenia'}
+    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'screen': 'hedge', 'groundcover': 'groundcover', 'jasmine': 'jasmine', 'dichondra': 'dichondra', 'hibiscus': 'gardenia'}
     protos = {}
     for kind, cfg in BEDS.items():
         if not any(p.get('kind') == kind for p in beds): continue
@@ -1485,16 +1685,18 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
     for kind, pc in protos.items():
         P, R, S, I = [], [], [], []
         nv = BEDS[kind]['variants']
-        for p, rect in zip(beds, bed_rects):
+        for bi, (p, rect) in enumerate(zip(beds, bed_rects)):
             if p['kind'] != kind: continue
             r = np.random.default_rng(p['seed'] & 0xffffffff)
             pts = _bed_points(r, rect, BEDS[kind]['spacing'], p.get('density', 1.1))
+            pl = polys[bi]
+            if pl is not None and len(pts): pts = pts[_inside(pl, pts)]
             zref = b([0, p['ground'], 0]).z
             for x, y in pts:
                 z = ground.z(x, y)
                 if z is None: z = zref
                 nb = [ground.z(x + dx, y + dy) for dx, dy in ((0.12, 0), (-0.12, 0), (0, 0.12), (0, -0.12))]
-                tol = 0.32 if kind in ('jasmine', 'mondo', 'alocasia', 'dichondra', 'tradescantia') else 0.15   # groundcovers climb banks
+                tol = 0.32 if kind in ('mondo', 'alocasia', 'dichondra', 'tradescantia') else 0.7 if kind == 'jasmine' else 0.15   # groundcovers climb banks (jasmine: all of it, no bare soil)
                 if any(q is not None and abs(q - z) > tol for q in nb): continue    # right on a wall's step or a drop: skip
                 P.append((x, y, z - 0.015)); R.append((r.normal(0, 0.04), r.normal(0, 0.04), r.uniform(0, 6.283)))
                 S.append(r.uniform(0.82, 1.18)); I.append(r.integers(0, nv))
@@ -1502,7 +1704,12 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         log(f'plants: {kind} x{len(P)}')
     # mulch under every bed
     for i, (p, rect) in enumerate(zip(beds, bed_rects)):
-        mulch(ground, rect, mats['mulch'], col, f'mulch{i}', rng, edge_mat=mats['edging'])
+        if outer[i] is not None: continue                      # the outer bed's mulch covers it
+        slope = p['kind'] == 'jasmine'                         # groundcover on the bank: mulch follows the slope
+        if polys[i] is not None:
+            mulch_curved(ground, rect, polys[i], mats['mulch'], col, f'mulch{i}', edge_mat=mats['stone-edging'] if p['edge'] else None, slope=slope)
+        else:
+            mulch(ground, rect, mats['mulch'], col, f'mulch{i}', rng, edge_mat=mats['edging'] if p['edge'] else None, slope=slope)
 
     # ---- plumeria trees
     plu = [p for p in plants if p['type'] == 'plumeria']
@@ -1579,7 +1786,7 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         full, part = [], []
         seen = set()
         for bx in boxes:
-            f_, p_ = lawn_cells(ground, cover, bx, bed_rects)
+            f_, p_ = lawn_cells(ground, cover, bx, lawn_beds)
             for c in f_:
                 k = (round(c[0], 2), round(c[1], 2))
                 if k not in seen: seen.add(k); full.append(c)
@@ -1606,9 +1813,11 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                         seen.add(('pv', i, j)); paver.append((x, y, max(zs)))
             log(f'plants: grass-paver tiles {len(paver)}')
         if paver:
-            pv = proto_collection('v-paver', [bpy.data.objects.new(f'p{i}', paver_tile(6200 + i).mesh(f'paver{i}', [mats['lawn'], mats['paver-rib']])) for i in range(4)])
+            hs = (0.26, 0.42, 0.3, 0.5, 0.34, 0.24, 0.46, 0.38)          # cell-to-cell vigour (mown height)
+            pv = proto_collection('v-paver', [bpy.data.objects.new(f'p{i}', paver_tile(6200 + i, hscale=hs[i], over=0.06 + 0.02 * (i % 4)).mesh(
+                f'paver{i}', [mats['paver-lawn'], mats['paver-rib'], mats['paver-base']])) for i in range(len(hs))])
             P = np.array([(x, y, z - 0.002) for x, y, z in paver])
-            instancer('plants-lawn-pavers', pv, P, np.zeros((len(P), 3)), np.ones((len(P), 3)), rng.integers(0, 4, len(P)), col)
+            instancer('plants-lawn-pavers', pv, P, np.zeros((len(P), 3)), np.ones((len(P), 3)), rng.integers(0, len(hs), len(P)), col)
         nv = 6
         big = proto_collection('v-turf', [bpy.data.objects.new(f't{i}', grass_tile(6000 + i, 0.5).mesh(f'turf{i}', [mats['lawn']])) for i in range(nv)])
         small = proto_collection('v-turf-s', [bpy.data.objects.new(f's{i}', grass_tile(6100 + i, 0.125).mesh(f'turfs{i}', [mats['lawn']])) for i in range(nv)])
