@@ -4,6 +4,7 @@ import { mat } from './materials.js';
 import { Roofs } from './roof.js';
 import { buildWalls } from './walls.js';
 import { buildFurniture } from './furniture.js';
+import { buildDetails } from './details.js';
 import { inside } from './geom.js';
 
 export function buildHouse(plan, scene) {
@@ -73,6 +74,8 @@ export function buildHouse(plan, scene) {
     group.add(mesh);
     if (blocks) colliders.push(...footprint(item));
   }
+
+  group.add(buildDetails(plan, { ceilingAt, grade, plan }));
 
   group.traverse(o => { if (o.isMesh) { o.castShadow = !o.userData.noShadow && !o.material.transparent; o.receiveShadow = true; } });
   scene.add(group);

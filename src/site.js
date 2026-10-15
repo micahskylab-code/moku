@@ -41,7 +41,7 @@ export function buildSite(plan, scene, colliders) {
   if (S.pool) {
     const [x0, y0, x1, y1] = S.pool.rect, lc = [(S.lot[0] + S.lot[2]) / 2, (S.lot[1] + S.lot[3]) / 2];
     const offs = [[0, 0], ...L.nahiku.map(([x, y]) => [x - lc[0], y - lc[1]])];
-    const ex = S.pool.edge === 'x0' ? 4.0 : 0;      // vanishing edge: the catch basin and its wall sit below the lawn
+    const ex = S.pool.edge === 'x0' ? 3.6 : 0;      // vanishing edge: the catch basin and its wall sit below the lawn
     S.holes = offs.slice(0, 16).map(([dx, dy]) => [x0 - ex + dx + 0.1, y0 + dy + 0.1, x1 + dx - 0.1, y1 + dy - 0.1]);
   }
   g.add(terrainMesh(terrainH, S));
@@ -108,7 +108,7 @@ function makeTerrain(S, grade) {
     const toward = (x - cx) * ox + (y - cy) * oy;
     // behind our lot the pad is held by a coral retaining wall on the lot line: the ground drops
     // inside the wall's thickness, so its face shows (as in the rendering); elsewhere a soft bank
-    const walled = ss(lot[1] - 12, lot[1] - 2, y) * (1 - ss(lot[3] + 2, lot[3] + 12, y));
+    const walled = ss(lot[1] - 1.2, lot[1] - 0.2, y) * (1 - ss(lot[3] + 0.2, lot[3] + 1.2, y));   // inside the return walls
     const gentle = ss(0.6, 5, lot[0] - x), steep = ss(0, 0.8, lot[0] - x);
     const bank = -(S.bank ?? 7.5) * (gentle + (steep - gentle) * walled);
     const far = ss(60, 600, out);
@@ -318,7 +318,9 @@ function pool(P, grade, colliders) {
     sheet.position.set(x0 - 0.2, water - drop / 2, (y0 + y1) / 2); sheet.rotation.y = -Math.PI / 2; g.add(sheet);
     const face = sbox(0.3, drop, d, 'poolTile'); face.position.set(x0 - 0.05, water - drop / 2, (y0 + y1) / 2); g.add(face);
     const basin = new THREE.Mesh(new THREE.PlaneGeometry(2.6, d), mat('water')); basin.rotation.x = -Math.PI / 2; basin.position.set(x0 - 1.6, water - drop, (y0 + y1) / 2); g.add(basin);
-    const rw = sbox(1.8, drop + 6, d + 6, 'ashlar'); rw.position.set(x0 - 3.4, water - drop - 3 + 0.4, (y0 + y1) / 2); g.add(rw);
+    // the basin's outer wall: its lip sits just above the basin water (the sheet falls into a full trough)
+    const lip = water - drop + 0.25, foot = grade - 9;
+    const rw = sbox(1.8, lip - foot, d + 6, 'ashlar'); rw.position.set(x0 - 3.4, (lip + foot) / 2, (y0 + y1) / 2); g.add(rw);
     const bf = sbox(3, 1.0, d + 6, 'ashlar'); bf.position.set(x0 - 1.6, water - drop - 0.4, (y0 + y1) / 2); g.add(bf);
     // stone ends close the catch basin where the lawn is cut away for it
     const eTop = grade + 0.25, eBot = water - drop - 0.6;

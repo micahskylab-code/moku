@@ -303,7 +303,10 @@ plan['site'] = dict(
     lot=[-34.4, -8, 150, 53.5], oceanDir=[-0.91, 0.42], seaLevel=-230, bank=5.0,
     pool=dict(rect=[-31, 1, -17, 31], spa=[-23.5, 1, -17, 7.5], edge='x0', drop=3.0, deck=3),
     paths=[dict(rect=[X(1753), 19.8, 152, 24.8], material='stepping'), dict(rect=[GX1, GY0, 152, GY1], material='grassPavers')],
-    walls=[dict(pts=[[-34.4, -8], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, 31], [-34.4, 53.5]], height=0.35)],
+    # coral retaining wall on the back lot line, returning down the bank at both side lines
+    # (a wall's top follows the ground at its first point, so each run starts on the lot line)
+    walls=[dict(pts=[[-34.4, -8.6], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, -8.6], [-41, -8.6]], height=0.35),
+           dict(pts=[[-34.4, 31], [-34.4, 54.1]], height=0.35), dict(pts=[[-34.4, 54.1], [-41, 54.1]], height=0.35)],
     loungers=[[-28.5, -5, 90], [-24.5, -5, 90]],
     # only a few tall palms (as in both renderings); the rest of the green is understorey
     palms=[[-29.5, -5.5, 34], [-26, -1.2, 38], [-8, 47, 36], [95, -6, 30], [140, 50, 31]],
@@ -322,8 +325,11 @@ plan['site'] = dict(
           dict(rect=[8, 46, 30, 49], kind='gardenia'), dict(rect=[40, -3.5, 47, -1], kind='ti')],
 )
 plan['viewpoints'] = [
-    dict(id='front', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320], photo='ref/front.png'),
-    dict(id='back', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215], photo='ref/back.png'),
+    # hero views framed like the brochure renderings (2200x1161, 1.9:1; fov is vertical, ~24-26 mm lens)
+    dict(id='front', pos=[196, 22.3], eye=19, absolute=True, look=[60, 22.3], lookH=7, fov=38, sun=[58, 320], aspect=1.895, photo='ref/front.png'),
+    dict(id='back', pos=[-50, -15], eye=2.4, absolute=True, look=[-4, 23], lookH=3.6, fov=40, sun=[44, 215], aspect=1.895, photo='ref/back.png'),
+    dict(id='front-wide', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320]),
+    dict(id='back-wide', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215]),
     dict(id='great-room', pos=[X(1240), Y(1150)], look=[X(620), Y(800)], fov=72),
     dict(id='kitchen', pos=[X(760), Y(1000)], look=[X(1280), Y(620)], fov=72),
     dict(id='lanai', pos=[X(560), Y(1150)], look=[X(230), Y(700)], fov=72),
@@ -332,5 +338,9 @@ plan['viewpoints'] = [
     dict(id='bedroom-3', pos=[X(1720), Y(890)], look=[X(1500), Y(600)], fov=72),
     dict(id='courtyard', pos=[X(1900), Y(1063)], eye=5.4, look=[X(1284), Y(1063)], fov=65),
 ]
+# real-life details (fixtures, hardware, utilities, styling): tools/details_ext.py + tools/details_int.py
+sys.path.insert(0, str(Path(__file__).parent))
+import details_ext, details_int
+plan['details'] = details_ext.DETAILS + details_int.DETAILS
 out.write_text(json.dumps(plan, indent=1))
-print('with site + viewpoints ->', out)
+print('with site + viewpoints ->', out, f"({len(plan['details'])} details)")

@@ -13,7 +13,7 @@
   #hud { position: fixed; top: 12px; left: 16px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); pointer-events: none; }
   #plan-name { font-size: 12px; opacity: .85; letter-spacing: .02em; }
   #room { font-size: 20px; font-weight: 600; }
-  #buttons { position: fixed; top: 12px; right: 16px; display: flex; gap: 8px; }
+  #buttons { position: fixed; top: 12px; right: 16px; display: flex; gap: 8px; z-index: 4; }
   #buttons button, #buttons a { text-decoration: none; font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgba(255,255,255,.85); color: #18202c; cursor: pointer; backdrop-filter: blur(6px); }
   #minimap { position: fixed; right: 16px; bottom: 16px; width: 170px; background: rgba(255,255,255,.35); border-radius: 10px; backdrop-filter: blur(4px); cursor: crosshair; }
   #overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); color: #fff; text-align: center; cursor: pointer; }
@@ -22,8 +22,39 @@
   #overlay b { font-size: 22px; display: block; margin-bottom: 8px; }
   #caption { position: fixed; left: 0; right: 0; bottom: 9%; text-align: center; color: #f4efe6; font-size: 42px; letter-spacing: .32em; font-weight: 300; text-shadow: 0 2px 18px rgba(0,0,0,.7); opacity: 0; pointer-events: none; }
   #caption small { display: block; font-size: 17px; letter-spacing: .3em; margin-top: 10px; opacity: .85; }
-  .shot #hud, .shot #minimap, .shot #overlay, .shot #buttons { display: none !important; }
+  .shot #hud, .shot #minimap, .shot #overlay, .shot #buttons, .shot #skypanel { display: none !important; }
   @media (max-width: 600px) { #minimap { width: 120px; } #caption { font-size: 26px; } }
+  /* sun & sky panel: bottom-left, clear of the minimap */
+  #skypanel { position: fixed; left: 16px; bottom: 16px; z-index: 5; width: 330px; max-width: calc(100vw - 218px); color: #18202c; font-size: 12.5px;
+    background: rgba(255,255,255,.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 18px; box-shadow: 0 2px 14px rgba(0,0,0,.18); overflow: hidden; touch-action: manipulation; }
+  #skypanel button { font: inherit; color: inherit; cursor: pointer; }
+  #skypanel .sp-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; border: 0; background: none; text-align: left; font-size: 13px; }
+  #skypanel .sp-when { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  #skypanel .sp-live { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: #fff; background: #d0452f; border-radius: 999px; padding: 2px 6px; }
+  #skypanel .sp-temp { opacity: .75; }
+  #skypanel .sp-chev { opacity: .6; transition: transform .2s; }
+  #skypanel:not(.open) .sp-chev { transform: rotate(180deg); }
+  #skypanel:not(.open) .sp-body { display: none; }
+  #skypanel .sp-body { padding: 0 12px 10px; max-height: calc(100vh - 140px); overflow-y: auto; }
+  #skypanel .sp-row { display: flex; align-items: center; gap: 8px; }
+  #skypanel .sp-k { flex: none; width: 34px; font-size: 11px; opacity: .65; }
+  #skypanel input[type=range] { flex: 1; min-width: 0; height: 22px; margin: 0; accent-color: #18202c; -webkit-appearance: none; appearance: none; background: transparent; }
+  #skypanel input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: var(--track, linear-gradient(90deg, #dfe6ee, #dfe6ee)); }
+  #skypanel input[type=range]::-moz-range-track { height: 8px; border-radius: 4px; background: var(--track, #dfe6ee); }
+  #skypanel input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -5px; border-radius: 50%; background: #fff; border: 2px solid #18202c; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  #skypanel input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #18202c; }
+  #skypanel .sp-date { --track: linear-gradient(90deg, #cfdcea, #f2d9a6 47%, #cfdcea); }
+  #skypanel .sp-months, #skypanel .sp-hours { display: flex; justify-content: space-between; margin: -2px 0 4px 42px; font-size: 9.5px; opacity: .55; }
+  #skypanel .sp-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; align-items: center; }
+  #skypanel .sp-chip, #skypanel .sp-toggle { border: 0; border-radius: 999px; padding: 4px 8px; background: rgba(24,32,44,.08); font-size: 11.5px; }
+  #skypanel .sp-toggle { box-shadow: inset 0 0 0 1px rgba(24,32,44,.25); background: none; }
+  #skypanel .sp-chip.on, #skypanel .sp-toggle.on { background: #18202c; color: #fff; }
+  #skypanel .sp-wx .sp-k { width: auto; margin-right: 2px; }
+  #skypanel .sp-info { margin-top: 7px; line-height: 1.4; font-size: 11px; }
+  #skypanel .sp-info div { margin-top: 2px; }
+  #skypanel .sp-info b { font-weight: 600; }
+  #skypanel .sp-info i { opacity: .6; font-style: normal; }
+  @media (max-width: 600px) { #skypanel { left: 10px; bottom: 10px; max-width: calc(100vw - 156px); font-size: 12px; } #skypanel .sp-chip, #skypanel .sp-toggle { padding: 6px 9px; } }
 </style>
 </head>
 <body>

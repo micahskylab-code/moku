@@ -22,6 +22,11 @@ const planId = params.get('plan') ?? 'lot25';
 const viewId = params.get('view');
 const shot = !!viewId || params.has('cam');
 const night = params.get('time') === 'night';
+// The live sky (src/daylight.js: real sun, moon, stars, weather, wind for any date and time) drives the
+// interactive walkthrough, and any still that asks for it (?preset ?hst ?doy ?wx ?weather ?sunpath ?live).
+// Fixed stills (?view, ?cam), the films (?video, ?starpass) and the Blender export keep the plan's fixed sun.
+const dynamicSky = !params.has('export') && !params.has('starpass') && !params.get('video') &&
+  (!shot || ['preset', 'hst', 'doy', 'wx', 'weather', 'sunpath', 'live', 'dyn'].some(k => params.has(k)));
 const quality = params.get('q') ?? (shot ? 'high' : matchMedia('(pointer: coarse)').matches ? 'low' : 'high');
 
 const plan = await (await fetch(`plans/${planId}.json`)).json();
@@ -67,8 +72,12 @@ if (params.has('export')) {
 }
 
 // ---------- light ----------
-let nightSky = null, sun = null;
-if (!night) {
+let nightSky = null, sun = null, daylight = null;
+if (dynamicSky) {
+  const { createDaylight } = await import('./daylight.js');
+  daylight = await createDaylight({ scene, renderer, camera, plan, quality, north: siteLayout(plan).north, center: [cx, cz], terrainH, ceilingAt, lamps, glow, mat, params, shot });
+  mark('daylight');
+} else if (!night) {
   const [alt, az] = view?.sun ?? plan.sun ?? [50, 230];
   const { sunDir } = makeDaySky(scene, renderer, { sunAlt: alt, sunAz: az });
   sun = new THREE.DirectionalLight('#ffe9cf', 4.8);
@@ -137,10 +146,12 @@ if (quality !== 'low' && !(night && (params.get('video') || params.has('starpass
   composer.addPass(ao);
 }
 if (night) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.5, 0.82));
+else if (daylight) { const b = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0, 0.5, 0.82); composer.addPass(b); daylight.bloom = b; }
 composer.addPass(new OutputPass());
 composer.addPass(new SMAAPass(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio()));
 
 function render() {
+  daylight?.beforeRender(camera);
   if (nightSky) { nightSky.group.position.copy(camera.position); nightSky.starMat.uniforms.uScale.value = renderer.getPixelRatio() * innerHeight / 1000; }
   composer.render();
 }
@@ -156,7 +167,7 @@ function groundAt(x, y) {
   return plan.rooms.some(r => !r.label_only && inside([x, y], r.polygon)) ? 0 : terrainH(x, y);
 }
 
-window.__scene = { scene, camera, renderer, plan, render, nightSky, roofs };
+window.__scene = { scene, camera, renderer, plan, render, nightSky, roofs, daylight };
 
 if (shot) {
   document.body.classList.add('shot');
@@ -172,6 +183,7 @@ if (shot) {
     camera.fov = Number(params.get('fov') ?? 65); camera.updateProjectionMatrix();
     player.set(x, h, y); camera.lookAt(lx, lh, ly);
   }
+  if (daylight) { daylight.sunPath.visible = params.has('sunpath') && params.get('sunpath') !== '0'; await daylight.ready(); }
   if (window.__beforeShot) window.__beforeShot();
   mark('pre-render'); render(); mark('render1'); render(); mark('render2');
   document.body.dataset.ready = '1';
@@ -216,10 +228,18 @@ function startInteractive() {
     orbit.enabled = m === 'fly'; overlay.hidden = m === 'fly';
     if (m === 'fly') { look.unlock(); orbit.target.set(cx, 0, cz); camera.position.set(cx - 160, 140, cz + 120); }
     else { place(plan.start.pos, plan.start.look); }
+    daylight?.autoSunPath(m === 'fly');
   };
   btn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'walk' ? 'fly' : 'walk'); });
-  document.getElementById('time').addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('time', night ? 'day' : 'night'); location.search = p; });
-  document.getElementById('time').textContent = night ? 'Day' : 'Night sky';
+  const timeBtn = document.getElementById('time');
+  if (daylight) {
+    // in-page: to the next great night for Na Hiku and back to daylight, no reload
+    timeBtn.addEventListener('click', e => { e.stopPropagation(); if (daylight.isNight) daylight.toDay(); else daylight.preset('stars'); });
+    daylight.onPreset = id => { if (mode === 'walk') turnTo(id); };
+  } else {
+    timeBtn.addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('time', night ? 'day' : 'night'); location.search = p; });
+    timeBtn.textContent = night ? 'Day' : 'Night sky';
+  }
   const qb = document.getElementById('quality'); qb.textContent = ultra ? 'Standard' : 'Ultra';
   qb.addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('q', ultra ? 'high' : 'ultra'); location.search = p; });
   overlay.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) look.lock(); else overlay.hidden = true; });
@@ -246,9 +266,30 @@ function startInteractive() {
   const minimap = setupMinimap();
   const label = document.getElementById('room');
   const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
+  // after a sky preset, outdoors, turn smoothly toward the sun, the moon or Na Hiku
+  let turn = null;
+  function turnTo(id) {
+    const room = plan.rooms.find(rm => inside([player.x, player.z], rm.polygon));
+    if (room && !room.outdoor) return;
+    const L = daylight.target(id);
+    if (!L) return;
+    const eu = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+    const yaw = Math.atan2(-L[0], -L[2]), pitch = Math.max(-0.1, Math.min(0.75, Math.asin(L[1]) * 0.7));
+    let dy = yaw - eu.y; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    turn = { y0: eu.y, dy, p0: eu.x, p1: pitch, t: 0 };
+  }
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.05);
     if (nightSky) nightSky.starMat.uniforms.uTwinkle.value += dt;
+    if (daylight) {
+      daylight.update(dt);
+      timeBtn.textContent = daylight.isNight ? 'Day' : 'Night sky';
+      if (turn && mode === 'walk') {
+        turn.t = Math.min(1, turn.t + dt / 1.6); const k = turn.t * turn.t * (3 - 2 * turn.t);
+        camera.quaternion.setFromEuler(new THREE.Euler(turn.p0 + (turn.p1 - turn.p0) * k, turn.y0 + turn.dy * k, 0, 'YXZ'));
+        if (turn.t >= 1) turn = null;
+      }
+    }
     if (mode === 'fly') { orbit.update(); label.textContent = 'Nā Hiku · Kukuiʻula'; render(); return; }
     let f = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
     let r = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);

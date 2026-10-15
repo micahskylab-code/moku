@@ -67,7 +67,7 @@ export function makeDaySky(scene, renderer, { sunAlt = 48, sunAz = 235 } = {}) {
 }
 
 // ---------- night ----------
-function gmstDeg(date) {
+export function gmstDeg(date) {
   const jd = date.getTime() / 86400000 + 2440587.5;
   return ((280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360 + 360) % 360;
 }
@@ -93,10 +93,15 @@ function bvToColor(bv) {
   return c;
 }
 
-export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0] } = {}) {
+// dynamic: for the live sky (src/daylight.js). Every star is kept and the whole sphere turns with
+// sidereal time (setTime); extinction, the naked-eye limit set by the sky's brightness (setLimit) and
+// the clouds in front (cloud: { glsl, uniforms } from skydome.js) are applied per star on the GPU.
+export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0], dynamic = false, cloud = null } = {}) {
   const [stars, mw] = await Promise.all([fetch('data/stars.6.json').then(r => r.json()), fetch('data/mw.json').then(r => r.json())]);
   const group = new THREE.Group();
   group.renderOrder = -10;
+  const sphere = dynamic ? new THREE.Group() : group;     // the part that turns with the sky
+  if (dynamic) group.add(sphere);
 
   // sky dome: deep blue zenith, faint airglow at the horizon
   const dome = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.05, 48, 24), new THREE.ShaderMaterial({
@@ -107,7 +112,7 @@ export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0]
       vec3 zen = vec3(0.002,0.004,0.012), hor = vec3(0.02,0.03,0.055);
       vec3 c = mix(hor, zen, pow(max(h,0.0), 0.45)); if (h < 0.0) c = hor * 0.6; gl_FragColor = vec4(c,1.0); }`,
   }));
-  group.add(dome);
+  if (!dynamic) group.add(dome);
 
   // Milky Way: d3-celestial brightness contours painted onto an equatorial canvas, blurred.
   const cv = document.createElement('canvas'); cv.width = 2048; cv.height = 1024;
@@ -143,17 +148,29 @@ export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0]
     p.setXYZ(i, w.x, w.y, w.z);
     uv.setXY(i, uv.getX(i), uv.getY(i));
   }
-  const mwMesh = new THREE.Mesh(mwGeo, new THREE.MeshBasicMaterial({ map: mwTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, opacity: 0.32 }));
-  group.add(mwMesh);
+  const mwMat = dynamic
+    ? new THREE.ShaderMaterial({
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      uniforms: { map: { value: mwTex }, uOpacity: { value: 0 }, ...(cloud?.uniforms ?? {}) },
+      vertexShader: 'varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vW = mat3(modelMatrix) * position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: `varying vec2 vUv; varying vec3 vW; uniform sampler2D map; uniform float uOpacity;
+        ${cloud ? cloud.glsl : 'float cloudCover(vec3 d) { return 0.0; }'}
+        void main(){ vec3 d = normalize(vW); vec4 t = texture2D(map, vUv);
+          float k = uOpacity * (1.0 - cloudCover(d)) * smoothstep(-0.02, 0.25, d.y);
+          gl_FragColor = vec4(t.rgb * t.a * k, 1.0); }`,
+    })
+    : new THREE.MeshBasicMaterial({ map: mwTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, opacity: 0.32 });
+  const mwMesh = new THREE.Mesh(mwGeo, mwMat);
+  sphere.add(mwMesh);
 
   // Stars as sized, coloured points.
-  const pos = [], col = [], size = [], naHiku = [];
+  const pos = [], col = [], size = [], mags = [], naHiku = [];
   for (const f of stars.features) {
     const [lon, lat] = f.geometry.coordinates, mag = f.properties.mag;
     const w = equatorialToWorld(((lon % 360) + 360) % 360, lat, date, { north });
-    if (w.y < -0.05) continue;
-    // atmospheric extinction near the horizon
-    const ext = 0.25 / Math.max(0.08, w.y);
+    if (!dynamic && w.y < -0.05) continue;
+    // atmospheric extinction near the horizon (on the GPU when the sky turns)
+    const ext = dynamic ? 0 : 0.25 / Math.max(0.08, w.y);
     const m = mag + ext * 0.6;
     if (m > 6.2) continue;
     w.multiplyScalar(radius * 0.98);
@@ -161,6 +178,7 @@ export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0]
     const c = bvToColor(f.properties.bv);
     col.push(c.r, c.g, c.b);
     size.push(Math.pow(10, -0.4 * (m - 6.3)));
+    mags.push(m);
     const k = NA_HIKU.indexOf(Number(f.id));
     if (k >= 0) naHiku[k] = w.clone();
   }
@@ -168,7 +186,8 @@ export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0]
   sg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   sg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   sg.setAttribute('flux', new THREE.Float32BufferAttribute(size, 1));
-  const starMat = new THREE.ShaderMaterial({
+  sg.setAttribute('mag', new THREE.Float32BufferAttribute(mags, 1));
+  const starMat = dynamic ? dynamicStarMaterial(cloud) : new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
     uniforms: { uScale: { value: 1 }, uTwinkle: { value: 0 } },
     vertexShader: `attribute float flux; attribute vec3 color; varying vec3 vC; varying float vF; uniform float uScale; uniform float uTwinkle;
@@ -182,17 +201,54 @@ export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0]
         gl_FragColor = vec4(vC * (core + halo) * (0.55 + vF) * 1.4, 1.0); }`,
   });
   const points = new THREE.Points(sg, starMat);
-  group.add(points);
+  sphere.add(points);
 
   // Na Hiku: faint guide lines for the reveal (opacity animated by the video).
   const lp = [];
   for (const [a, b] of NA_HIKU_LINES) if (naHiku[a] && naHiku[b]) lp.push(naHiku[a].x, naHiku[a].y, naHiku[a].z, naHiku[b].x, naHiku[b].y, naHiku[b].z);
   const lineGeo = new THREE.BufferGeometry(); lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
   const lines = new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({ color: '#cfe0ff', transparent: true, opacity: 0, depthWrite: false, fog: false }));
-  group.add(lines);
+  sphere.add(lines);
 
   group.traverse(o => { o.frustumCulled = false; });
   scene.add(group);
   const center = naHiku.filter(Boolean).reduce((s, v) => s.add(v), new THREE.Vector3()).normalize();
-  return { group, starMat, lines, naHiku, center };
+  if (!dynamic) return { group, starMat, lines, naHiku, center };
+
+  // the celestial pole, about which the sphere turns one sidereal day per 23 h 56 m
+  const pole = equatorialToWorld(0, 90, date, { north }).normalize(), ref = gmstDeg(date);
+  return {
+    group, starMat, lines, naHiku, center, mw: mwMesh,
+    setTime(d) { sphere.quaternion.setFromAxisAngle(pole, -(gmstDeg(d) - ref) * D); },
+    // lim: naked-eye limiting magnitude; gain: undoes the scene exposure so stars keep their calibrated look
+    setLimit(lim, gain = 1) {
+      starMat.uniforms.uLim.value = lim; starMat.uniforms.uGain.value = gain;
+      mwMat.uniforms.uOpacity.value = 0.32 * THREE.MathUtils.smoothstep(lim, 4.6, 6.3) * gain;
+    },
+  };
+}
+
+function dynamicStarMaterial(cloud) {
+  return new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+    uniforms: { uScale: { value: 1 }, uTwinkle: { value: 0 }, uLim: { value: 6.5 }, uGain: { value: 1 }, ...(cloud?.uniforms ?? {}) },
+    vertexShader: `attribute float flux; attribute float mag; attribute vec3 color; varying vec3 vC; varying float vF; varying float vV;
+      uniform float uScale, uTwinkle, uLim, uGain;
+      ${cloud ? cloud.glsl : 'float cloudCover(vec3 d) { return 0.0; }'}
+      void main(){
+        vec3 wd = normalize(mat3(modelMatrix) * position);
+        float m = mag + 0.25 / max(0.08, wd.y) * 0.6;                   // extinction toward the horizon
+        float fl = pow(10.0, -0.4 * (m - 6.3));
+        float vis = smoothstep(uLim + 0.3, uLim - 0.7, m) * smoothstep(-0.03, 0.01, wd.y);
+        vis *= 1.0 - cloudCover(wd);
+        vC = color; vV = vis * uGain;
+        float tw = 1.0 + 0.18 * sin(uTwinkle * 3.0 + position.x * 0.01 + position.z * 0.013);
+        vF = clamp(fl * 0.22 * tw, 0.0, 2.2);
+        gl_PointSize = vis > 0.002 ? clamp((2.2 + sqrt(fl) * 1.9) * uScale, 1.5, 18.0 * uScale) : 0.0;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `varying vec3 vC; varying float vF; varying float vV;
+      void main(){ vec2 d = gl_PointCoord - 0.5; float r = length(d) * 2.0; if (r > 1.0 || vV <= 0.0) discard;
+        float core = exp(-r * r * 9.0), halo = exp(-r * 3.5) * 0.25;
+        gl_FragColor = vec4(vC * (core + halo) * (0.55 + vF) * 1.4 * vV, 1.0); }`,
+  });
 }

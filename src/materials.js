@@ -78,9 +78,12 @@ const LIB = {
 // Furnishings and fixtures reflect the room around them, not the open sky.
 const INDOOR = new Set(['jute', 'linen', 'linenWhite', 'linenSand', 'linenSea', 'cane', 'rattan', 'woodOak', 'quartz', 'porcelain', 'steel', 'brass', 'black', 'blackMatte', 'mirror', 'screen', 'trim']);
 
+// Plain colours that are really a finish: same look, a name the Blender pass (scripts/materials_bpy.py) can target.
+const HEX_NAMES = { '#efeee9': 'doorPanel', '#6b4a2e': 'cedarBatten', '#f2efe9': 'canLight' };
+
 export function mat(name) {
   if (!name) return LIB.paint();
-  if (name.startsWith('#')) { const m = solid(name); m.userData.interior = true; return m; }
+  if (name.startsWith('#')) { const m = solid(name); m.userData.interior = true; if (HEX_NAMES[name]) m.name = HEX_NAMES[name]; return m; }
   const f = LIB[name];
   if (!f) { console.warn('unknown material', name); return LIB.paint(); }
   const m = f();

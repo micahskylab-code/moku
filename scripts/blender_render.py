@@ -24,6 +24,14 @@ ap.add_argument('--exposure', type=float, default=0.0)
 ap.add_argument('--threads', type=int, default=0)
 ap.add_argument('--plate', default='')          # timeline.json: render the 360 night plate for the film
 ap.add_argument('--panos', default='')          # tour/panos.json: path-traced 360 panoramas for the tour
+# sky and light (scripts/materials_bpy.py): a photographed HDRI sky + Sun lamp, or the procedural Nishita sky
+ap.add_argument('--sky', default='hdri', choices=['hdri', 'procedural'])
+ap.add_argument('--hdri', default='kloofendal_48d_partly_cloudy_puresky')   # any day sky in assets/manifest.json
+ap.add_argument('--sky-strength', type=float, default=1.0)                  # x the HDRI's measured sky + sun
+ap.add_argument('--sky-yaw', type=float, default=0.0)                       # turn the clouds (deg) away from the sun-matched angle
+ap.add_argument('--hdri-res', type=int, default=0)                          # cap the HDRI width (e.g. 4096 for tests; 0 = full 8K)
+ap.add_argument('--polarizer', type=float, default=0.35)                    # lens polariser on the visible sky, 0..1
+ap.add_argument('--interior-ev', type=float, default=2.3)                   # interiors exposed +EV over the exteriors
 args = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 meta = json.load(open(args.meta))
 os.makedirs(args.out, exist_ok=True)
@@ -47,146 +55,22 @@ except Exception:
     import traceback; traceback.print_exc()
 
 # ---------------------------------------------------------------- materials
-def principled(m):
-    if not m.node_tree: return None
-    return next((n for n in m.node_tree.nodes if n.type == 'BSDF_PRINCIPLED'), None)
-
-def base_link(m, p):
-    l = p.inputs['Base Color'].links
-    return l[0].from_socket if l else None
-
-for m in bpy.data.materials:
-    p = principled(m)
-    if not p: continue
-    name = m.name.lower()
-    if name.startswith('glass'):
-        p.inputs['Transmission Weight'].default_value = 1.0
-        p.inputs['Roughness'].default_value = 0.0
-        p.inputs['IOR'].default_value = 1.5
-        p.inputs['Alpha'].default_value = 1.0
-        for l in list(p.inputs['Alpha'].links): m.node_tree.links.remove(l)
-        p.inputs['Thin Wall'].default_value = True
-        p.inputs['Base Color'].default_value = (0.92, 0.96, 0.96, 1)
-    elif name.startswith('water'):
-        p.inputs['Transmission Weight'].default_value = 1.0
-        p.inputs['Roughness'].default_value = 0.02
-        p.inputs['IOR'].default_value = 1.33
-        p.inputs['Alpha'].default_value = 1.0
-        for l in list(p.inputs['Alpha'].links): m.node_tree.links.remove(l)
-        p.inputs['Base Color'].default_value = (0.62, 0.9, 0.93, 1)
-    elif name.startswith('mirror'):
-        p.inputs['Metallic'].default_value = 1.0; p.inputs['Roughness'].default_value = 0.0
-    elif name.startswith('roof') or name.startswith('fascia'):
-        src = base_link(m, p)
-        if src:   # darken the standing-seam grey toward the renderings' charcoal
-            mul = m.node_tree.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs['Factor'].default_value = 1.0
-            mul.inputs[7].default_value = (0.62, 0.64, 0.66, 1)
-            m.node_tree.links.new(src, mul.inputs[6]); m.node_tree.links.new(mul.outputs[2], p.inputs['Base Color'])
-        else:
-            col = p.inputs['Base Color'].default_value; p.inputs['Base Color'].default_value = (col[0] * 0.62, col[1] * 0.64, col[2] * 0.66, 1)
-        p.inputs['Metallic'].default_value = 0.12; p.inputs['Roughness'].default_value = 0.5
-    elif name.startswith('trunk'):
-        src = base_link(m, p)
-        if src:
-            mul = m.node_tree.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs['Factor'].default_value = 1.0
-            mul.inputs[7].default_value = (0.55, 0.53, 0.5, 1)
-            m.node_tree.links.new(src, mul.inputs[6]); m.node_tree.links.new(mul.outputs[2], p.inputs['Base Color'])
-    elif name.startswith('ocean'):
-        # deep Pacific blue; wind chop tilts the facets so they mirror the bluer sky above the haze
-        nt_ = m.node_tree
-        for l in list(p.inputs['Base Color'].links): nt_.links.remove(l)
-        p.inputs['Base Color'].default_value = (0.006, 0.035, 0.09, 1)
-        p.inputs['Roughness'].default_value = 0.14; p.inputs['Metallic'].default_value = 0.0
-        geo_ = nt_.nodes.new('ShaderNodeNewGeometry')
-        chop = nt_.nodes.new('ShaderNodeTexNoise'); chop.inputs['Scale'].default_value = 0.35; chop.inputs['Detail'].default_value = 6
-        nt_.links.new(geo_.outputs['Position'], chop.inputs['Vector'])
-        bump_ = nt_.nodes.new('ShaderNodeBump'); bump_.inputs['Strength'].default_value = 0.35; bump_.inputs['Distance'].default_value = 0.4
-        nt_.links.new(chop.outputs['Fac'], bump_.inputs['Height']); nt_.links.new(bump_.outputs['Normal'], p.inputs['Normal'])
-    elif name.startswith('glow'):
-        p.inputs['Emission Color'].default_value = (1.0, 0.78, 0.52, 1)
-        p.inputs['Emission Strength'].default_value = 25.0 if args.night else 0.0
-    # leaves and fronds: let light through (thin-leaf translucency), as real foliage does
-    if name.startswith('foliage') or name in ('solid #3d5f2c', 'solid #2f5a2a', 'solid #3d6a2c', 'solid #2c5527'):
-        nt = m.node_tree
-        out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
-        tr = nt.nodes.new('ShaderNodeBsdfTranslucent')
-        src = base_link(m, p)
-        if src: nt.links.new(src, tr.inputs['Color'])
-        else: tr.inputs['Color'].default_value = p.inputs['Base Color'].default_value
-        mix = nt.nodes.new('ShaderNodeMixShader'); mix.inputs['Fac'].default_value = 0.32
-        # keep the alpha cut-out: the importer drives Principled alpha; wrap translucency with it
-        nt.links.new(p.outputs['BSDF'], mix.inputs[1]); nt.links.new(tr.outputs['BSDF'], mix.inputs[2])
-        alpha_src = p.inputs['Alpha'].links[0].from_socket if p.inputs['Alpha'].links else None
-        if alpha_src:
-            tp = nt.nodes.new('ShaderNodeBsdfTransparent'); mix2 = nt.nodes.new('ShaderNodeMixShader')
-            nt.links.new(alpha_src, mix2.inputs['Fac']); nt.links.new(tp.outputs['BSDF'], mix2.inputs[1]); nt.links.new(mix.outputs['Shader'], mix2.inputs[2])
-            nt.links.new(mix2.outputs['Shader'], out.inputs['Surface'])
-        else:
-            nt.links.new(mix.outputs['Shader'], out.inputs['Surface'])
-        p.inputs['Roughness'].default_value = 0.55
-        p.inputs['Specular IOR Level'].default_value = 0.35
-
-for o in bpy.data.objects:
-    if o.type != 'MESH' or not o.data.materials: continue
-    names = [m.name.lower() for m in o.data.materials if m]
-    if names and all(n.startswith(('glass', 'water')) for n in names):
-        o.visible_shadow = False
+# every finish rebuilt from the photo-scanned library in assets/ at real-world scale: siding, standing-seam
+# roofs, coral stone, travertine, cedar, teak, white oak, linen, ...; glass and water refract, leaves
+# transmit light, the ocean is a wind-roughened sea (scripts/materials_bpy.py)
+import materials_bpy
+materials_bpy.apply(meta=meta, night=args.night, log=lambda s: print(s, flush=True))
 
 # ---------------------------------------------------------------- world and light
-world = bpy.data.worlds.new('sky'); scene.world = world
-nt = world.node_tree if world.node_tree else None
-if nt is None:
-    world.use_nodes = True; nt = world.node_tree
-for n in list(nt.nodes):
-    if n.type not in ('OUTPUT_WORLD',): nt.nodes.remove(n)
-bg = nt.nodes.new('ShaderNodeBackground')
-nt.links.new(bg.outputs['Background'], next(n for n in nt.nodes if n.type == 'OUTPUT_WORLD').inputs['Surface'])
-sky = nt.nodes.new('ShaderNodeTexSky')
-sky.sky_type = 'MULTIPLE_SCATTERING'
-sky.sun_disc = False
-sky.altitude = 60.0
-sky.air_density = 1.0; sky.aerosol_density = 0.35; sky.ozone_density = 1.2
-nt.links.new(sky.outputs['Color'], bg.inputs['Color'])
-def camera_sky():
-    tc = nt.nodes.new('ShaderNodeTexCoord')
-    sep = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Generated'], sep.inputs[0])
-    zc = nt.nodes.new('ShaderNodeMath'); zc.operation = 'MAXIMUM'; zc.inputs[1].default_value = 0.02; nt.links.new(sep.outputs['Z'], zc.inputs[0])
-    den = nt.nodes.new('ShaderNodeMath'); den.operation = 'ADD'; den.inputs[1].default_value = 0.12; nt.links.new(zc.outputs[0], den.inputs[0])
-    px = nt.nodes.new('ShaderNodeMath'); px.operation = 'DIVIDE'; nt.links.new(sep.outputs['X'], px.inputs[0]); nt.links.new(den.outputs[0], px.inputs[1])
-    py = nt.nodes.new('ShaderNodeMath'); py.operation = 'DIVIDE'; nt.links.new(sep.outputs['Y'], py.inputs[0]); nt.links.new(den.outputs[0], py.inputs[1])
-    comb = nt.nodes.new('ShaderNodeCombineXYZ'); nt.links.new(px.outputs[0], comb.inputs['X']); nt.links.new(py.outputs[0], comb.inputs['Y'])
-    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 1.1; noise.inputs['Detail'].default_value = 10; noise.inputs['Roughness'].default_value = 0.62
-    nt.links.new(comb.outputs[0], noise.inputs['Vector'])
-    ramp = nt.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].position = 0.56; ramp.color_ramp.elements[1].position = 0.74
-    nt.links.new(noise.outputs['Fac'], ramp.inputs['Fac'])
-    band = nt.nodes.new('ShaderNodeMapRange'); band.inputs['From Min'].default_value = 0.42; band.inputs['From Max'].default_value = 0.08
-    nt.links.new(sep.outputs['Z'], band.inputs['Value'])
-    lowcut = nt.nodes.new('ShaderNodeMapRange'); lowcut.inputs['From Min'].default_value = 0.0; lowcut.inputs['From Max'].default_value = 0.035
-    nt.links.new(sep.outputs['Z'], lowcut.inputs['Value'])
-    m1 = nt.nodes.new('ShaderNodeMath'); m1.operation = 'MULTIPLY'; nt.links.new(ramp.outputs['Color'], m1.inputs[0]); nt.links.new(band.outputs['Result'], m1.inputs[1])
-    m2 = nt.nodes.new('ShaderNodeMath'); m2.operation = 'MULTIPLY'; nt.links.new(m1.outputs[0], m2.inputs[0]); nt.links.new(lowcut.outputs['Result'], m2.inputs[1])
-    hs = nt.nodes.new('ShaderNodeHueSaturation'); hs.inputs['Saturation'].default_value = 1.55; hs.inputs['Value'].default_value = 0.92
-    nt.links.new(sky.outputs['Color'], hs.inputs['Color'])
-    white = nt.nodes.new('ShaderNodeMix'); white.data_type = 'RGBA'; white.inputs[7].default_value = (2.4, 2.45, 2.5, 1)
-    nt.links.new(m2.outputs[0], white.inputs['Factor']); nt.links.new(hs.outputs['Color'], white.inputs[6])
-    camsky = nt.nodes.new('ShaderNodeBackground'); nt.links.new(white.outputs[2], camsky.inputs['Color'])
-    lp = nt.nodes.new('ShaderNodeLightPath')
-    mix = nt.nodes.new('ShaderNodeMixShader'); nt.links.new(lp.outputs['Is Camera Ray'], mix.inputs['Fac'])
-    nt.links.new(bg.outputs['Background'], mix.inputs[1]); nt.links.new(camsky.outputs['Background'], mix.inputs[2])
-    nt.links.new(mix.outputs['Shader'], next(n for n in nt.nodes if n.type == 'OUTPUT_WORLD').inputs['Surface'])
-    return camsky
-camsky = camera_sky()
-
-sun_data = bpy.data.lights.new('sun', 'SUN'); sun_data.energy = 4.2; sun_data.angle = math.radians(0.6)
-sun_data.color = (1.0, 0.93, 0.84)
-sun = bpy.data.objects.new('sun', sun_data); scene.collection.objects.link(sun)
-
-def set_sun(d3):
-    d = b(d3).normalized()
-    sun.rotation_mode = 'QUATERNION'
-    sun.rotation_quaternion = (-d).to_track_quat('-Z', 'Y')
-    sky.sun_elevation = math.asin(max(-1, min(1, d.z)))
-    sky.sun_rotation = math.atan2(d.x, -d.y)
+# day: a photographed sky (assets/hdri, its sun painted out) lights the scene and is the background, turned
+# so its sun sits where each view's Sun lamp is; the lamp carries the measured direct irradiance with the
+# colour of sunlight at that elevation. Night / plate build on the procedural sky (its strength is set to 0).
+S = materials_bpy.World(scene, mode='procedural' if (args.night or args.plate) else args.sky, hdri=args.hdri,
+                        strength=args.sky_strength, yaw=args.sky_yaw, max_res=args.hdri_res,
+                        polarizer=args.polarizer, log=lambda s: print(s, flush=True))
+nt, bg, camsky, sky, sun, sun_data = S.nt, S.bg, S.camsky, S.sky, S.sun, S.sun_data
+set_sun = S.set_sun
+if not args.night: S.auto_exposure(meta, args.exposure, args.interior_ev, only=args.views)   # interiors metered +EV, white-balanced
 
 # ---------------------------------------------------------------- render settings
 r = scene.render

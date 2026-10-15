@@ -4,11 +4,16 @@ In export mode three.js only records where the planting goes (src/plants.js, src
 nahiku-meta.json 'plants' and 'lawn'); here every plant is built from real geometry:
 
   - lawn: a manicured turf of individual grass blades (instanced 0.5 m tiles, edge tiles of 12.5 cm)
-    on every bit of open ground of our lot and the nearest neighbours; beds get bark mulch
+    on every bit of open ground of our lot and the nearest neighbours; beds get bark mulch (the real
+    photo scan in assets/textures/ground/bark_mulch), draped on the ground but never up a wall
   - shrubs (bougainvillea, gardenia, hedge, groundcover): twigs carrying hundreds of leaves, with
-    bracts and flowers; ti plants on bare canes; monstera with split leaves on long petioles
-  - plumeria trees (candelabra branches, leaf rosettes, white and yellow flowers)
-  - the background canopy trees (branching trunks, leaves)
+    bracts and flowers (bougainvillea also throws long arching canes); ti plants on bare canes;
+    monstera with split, fenestrated leaves on long petioles
+  - plumeria trees (a short trunk forking low into thick candelabra limbs, leaf rosettes, white and
+    yellow flowers)
+  - the background trees: dome (mango, kamani), umbrella (monkeypod) and tall (java plum) forms,
+    grown inside lumpy crown envelopes (trunk, scaffold limbs, branches, twigs, leaf clumps), set in
+    groves of two to four
 
 Each kind is built as a handful of variants and instanced with geometry nodes, so a neighbourhood
 of planting costs little memory. Leaves carry procedural vein textures, per-leaf colour variation,
@@ -16,12 +21,13 @@ gloss and translucency.
 
     import plants_bpy; plants_bpy.build(meta, b)        # b: three.js world (metres) -> Blender
 """
-import math, time
+import math, os, time
 import numpy as np
 import bpy
 from mathutils import Vector, Matrix
 
 UP = np.array([0.0, 0.0, 1.0])
+ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'textures')
 GOLDEN = math.radians(137.508)
 
 
@@ -382,8 +388,63 @@ def plain_material(name, color, rough=0.6, transl=0.0):
     return m
 
 
+def _asset(*parts):
+    p = os.path.join(ASSETS, *parts)
+    return p if os.path.exists(p) else None
+
+
+def _load(path, colorspace):
+    im = bpy.data.images.load(path, check_existing=True)
+    try: im.colorspace_settings.name = colorspace
+    except Exception: pass
+    return im
+
+
+def photo_ground_material(name, folder, tile_m, *, tint=(1, 1, 1), rot=0.0, bump=1.0, var=0.12):
+    """A real photo-scanned ground texture (assets/textures/<folder>/color, normal, roughness) laid in
+    world space (tile_m metres a tile), two scales mixed to hide the repeat, slight value variation."""
+    m = bpy.data.materials.new(name); nt, N, L = _nodes(m)
+    out = N.new('ShaderNodeOutputMaterial'); p = N.new('ShaderNodeBsdfPrincipled')
+    L.new(p.outputs['BSDF'], out.inputs['Surface'])
+    geo = N.new('ShaderNodeNewGeometry')
+    def mapped(scale, angle):
+        mp = N.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (1 / scale, 1 / scale, 1); mp.inputs['Rotation'].default_value = (0, 0, angle)
+        L.new(geo.outputs['Position'], mp.inputs['Vector']); return mp.outputs['Vector']
+    v1, v2 = mapped(tile_m, rot), mapped(tile_m * 1.37, rot + 0.9)
+    blend = N.new('ShaderNodeTexNoise'); blend.inputs['Scale'].default_value = 0.6; blend.inputs['Detail'].default_value = 2
+    L.new(geo.outputs['Position'], blend.inputs['Vector'])
+    bm = N.new('ShaderNodeMapRange'); bm.inputs['From Min'].default_value = 0.42; bm.inputs['From Max'].default_value = 0.58
+    L.new(blend.outputs['Fac'], bm.inputs['Value'])
+    def tex(fname, cs):
+        a = N.new('ShaderNodeTexImage'); a.image = _load(os.path.join(folder, fname), cs); L.new(v1, a.inputs['Vector'])
+        b_ = N.new('ShaderNodeTexImage'); b_.image = a.image; L.new(v2, b_.inputs['Vector'])
+        mx = N.new('ShaderNodeMix'); mx.data_type = 'RGBA'; L.new(bm.outputs['Result'], mx.inputs['Factor'])
+        L.new(a.outputs['Color'], mx.inputs[6]); L.new(b_.outputs['Color'], mx.inputs[7])
+        return mx.outputs[2]
+    col = tex('color.jpg', 'sRGB')
+    vn = N.new('ShaderNodeTexNoise'); vn.inputs['Scale'].default_value = 0.25; L.new(geo.outputs['Position'], vn.inputs['Vector'])
+    vm = N.new('ShaderNodeMapRange'); vm.inputs['To Min'].default_value = 1 - var; vm.inputs['To Max'].default_value = 1 + var
+    vm.inputs['From Min'].default_value = 0.3; vm.inputs['From Max'].default_value = 0.7
+    L.new(vn.outputs['Fac'], vm.inputs['Value'])
+    hs = N.new('ShaderNodeHueSaturation'); L.new(col, hs.inputs['Color']); L.new(vm.outputs['Result'], hs.inputs['Value'])
+    tn = N.new('ShaderNodeMix'); tn.data_type = 'RGBA'; tn.blend_type = 'MULTIPLY'; tn.inputs['Factor'].default_value = 1.0; tn.inputs[7].default_value = (*tint, 1)
+    L.new(hs.outputs['Color'], tn.inputs[6]); L.new(tn.outputs[2], p.inputs['Base Color'])
+    if os.path.exists(os.path.join(folder, 'roughness.jpg')):
+        L.new(tex('roughness.jpg', 'Non-Color'), p.inputs['Roughness'])
+    else:
+        p.inputs['Roughness'].default_value = 0.9
+    if os.path.exists(os.path.join(folder, 'normal.jpg')):
+        nm = N.new('ShaderNodeNormalMap'); nm.inputs['Strength'].default_value = bump
+        L.new(tex('normal.jpg', 'Non-Color'), nm.inputs['Color']); L.new(nm.outputs['Normal'], p.inputs['Normal'])
+    return m
+
+
 def mulch_material():
-    """Shredded bark mulch: dark brown chips (voronoi cells) with lighter dry tops and soil between."""
+    """Shredded bark mulch: the real photo scan (assets/textures/ground/bark_mulch) when present,
+    else dark brown chips (voronoi cells) with lighter dry tops and soil between."""
+    f = _asset('ground', 'bark_mulch')
+    if f and os.path.exists(os.path.join(f, 'color.jpg')):
+        return photo_ground_material('plant mulch', f, 1.5, tint=(0.85, 0.82, 0.8), bump=1.2)
     m = bpy.data.materials.new('plant mulch'); nt, N, L = _nodes(m)
     out = N.new('ShaderNodeOutputMaterial'); p = N.new('ShaderNodeBsdfPrincipled'); p.inputs['Roughness'].default_value = 0.92
     L.new(p.outputs['BSDF'], out.inputs['Surface'])
@@ -483,10 +544,10 @@ def _prof(kind):
 # ---------------------------------------------------------------- shrubs
 SHRUBS = {
     # R, H: radius and height (m); twigs per plant; leaves per twig; leaf length (m)
-    'bougainvillea': dict(R=0.62, H=1.0, twigs=420, leaves=(7, 12), leaf_len=0.055, twig_len=0.2, leaf_angle=58, droop=0.35, up=0.15,
-                          shape='ovate', stems=6, stem_r=0.016, bloom=0.62, phyllo='alt', lump=0.22),
-    'gardenia': dict(R=0.48, H=0.95, twigs=300, leaves=(6, 10), leaf_len=0.085, twig_len=0.14, leaf_angle=50, droop=0.15, up=0.45,
-                     shape='elliptic', stems=5, stem_r=0.014, bloom=0.16, phyllo='opp', lump=0.14),
+    'bougainvillea': dict(R=0.62, H=1.0, twigs=400, leaves=(7, 12), leaf_len=0.055, twig_len=0.2, leaf_angle=58, droop=0.35, up=0.15,
+                          shape='ovate', stems=6, stem_r=0.016, bloom=0.62, phyllo='alt', lump=0.3, canes=(3, 7), cane_len=0.75),
+    'gardenia': dict(R=0.58, H=1.15, twigs=420, leaves=(6, 10), leaf_len=0.09, twig_len=0.15, leaf_angle=50, droop=0.15, up=0.45,
+                     shape='elliptic', stems=6, stem_r=0.015, bloom=0.26, phyllo='opp', lump=0.16),
     'hedge': dict(R=0.5, H=1.25, twigs=420, leaves=(8, 12), leaf_len=0.045, twig_len=0.12, leaf_angle=55, droop=0.1, up=0.3,
                   shape='small', stems=6, stem_r=0.014, bloom=0.04, phyllo='alt', lump=0.1),
     'groundcover': dict(R=0.42, H=0.3, twigs=150, leaves=(6, 9), leaf_len=0.04, twig_len=0.1, leaf_angle=60, droop=0.05, up=0.6,
@@ -526,6 +587,25 @@ def shrub(seed, S, flower_fn=None):
     tubes(out['stem'], curve(src, tbase, rng.normal(0, 0.03, (n, 3)) + np.array([0, 0, 0.03]), 4),
           np.linspace(S['stem_r'] * 0.4, S['stem_r'] * 0.22, 4)[None].repeat(n, 0), sides=4)
     tubes(out['stem'], curve(tbase, tip, rng.normal(0, 0.01, (n, 3)), 3), np.linspace(S['stem_r'] * 0.22, S['stem_r'] * 0.12, 3)[None].repeat(n, 0), sides=4)
+    # long arching canes breaking out of the dome (bougainvillea): twigs all along them
+    nc = rng.integers(*S['canes']) if S.get('canes') else 0
+    if nc:
+        az = rng.uniform(0, 6.28, nc); hd = np.stack([np.cos(az), np.sin(az), np.zeros(nc)], 1)
+        c0 = hd * R * rng.uniform(0.3, 0.6, (nc, 1)) + np.array([0, 0, 1.0]) * (zc + rz * rng.uniform(0.2, 0.6, (nc, 1)))
+        cl = S['cane_len'] * rng.uniform(0.6, 1.2, nc)
+        c1 = c0 + hd * (cl * 0.85)[:, None] + UP * (rng.uniform(-0.25, 0.25, nc) * cl)[:, None]
+        cp = curve(c0, c1, (UP * 0.35 * cl[:, None]) + rng.normal(0, 0.05, (nc, 3)), 7)
+        tubes(out['stem'], cp, np.linspace(S['stem_r'] * 0.5, S['stem_r'] * 0.18, 7)[None].repeat(nc, 0), sides=4)
+        k = 9
+        ct = cp[:, 2:, :].reshape(-1, 3)                        # points along the outer part of every cane
+        idx = rng.integers(0, len(ct), nc * k)
+        tb2 = ct[idx] + rng.normal(0, 0.03, (nc * k, 3))
+        dirs = _norm(hd[idx // 5] * 0.6 + rng.normal(0, 0.45, (nc * k, 3)) + UP * 0.3)
+        tl2 = S['twig_len'] * rng.uniform(0.6, 1.2, nc * k)
+        tp2 = tb2 + dirs * tl2[:, None]
+        tubes(out['stem'], curve(tb2, tp2, rng.normal(0, 0.01, (nc * k, 3)), 3), np.linspace(S['stem_r'] * 0.18, S['stem_r'] * 0.1, 3)[None].repeat(nc * k, 0), sides=4)
+        tip = np.concatenate([tip, tp2]); tdir = np.concatenate([tdir, dirs]); tl = np.concatenate([tl, tl2]); tbase = np.concatenate([tbase, tb2])
+        d = np.concatenate([d, _norm(tp2 - np.array([0, 0, zc]))]); n = len(tip)
     # leaves along every twig
     lo, hi = S['leaves']
     k = rng.integers(lo, hi + 1, n)
@@ -543,7 +623,7 @@ def shrub(seed, S, flower_fn=None):
     Nn = _norm(UP * 1.0 + o * 0.6 + rng.normal(0, 0.35, (len(ti), 3)))
     young = np.clip((1 - sk) * 3.5, 0, 1)
     Lf = S['leaf_len'] * rng.uniform(0.75, 1.2, len(ti)) * (0.45 + 0.55 * young)
-    tpls = [leaf_tpl(_prof(S['shape']), fold=fo, arch=ar, twist=tw, stations=(0, 0.1, 0.3, 0.55, 0.8, 1.0))
+    tpls = [leaf_tpl(_prof(S['shape']), fold=fo, arch=ar, twist=tw, cols=1, stations=(0, 0.2, 0.45, 0.72, 1.0))
             for fo, ar, tw in ((0.12, 0.08, 0.0), (0.22, 0.18, 0.25), (0.06, 0.03, -0.2))]
     pick = rng.integers(0, len(tpls), len(ti))
     for j, tp in enumerate(tpls):
@@ -559,8 +639,8 @@ def _bougainvillea_flowers(rng, out, tip, tdir, d, S):
     br, fl = out.setdefault('bract', Buf()), out.setdefault('floret', Buf())
     sun = np.clip(0.45 + 0.6 * d[:, 2], 0.1, 1)
     pick = rng.random(len(tip)) < S['bloom'] * sun
-    tpb = [leaf_tpl(_prof('bract'), fold=0.05, cup=0.25, arch=-0.05, stations=(0, 0.15, 0.4, 0.7, 1.0), cols=2),
-           leaf_tpl(_prof('bract'), fold=0.1, cup=0.4, arch=0.05, twist=0.3, stations=(0, 0.15, 0.4, 0.7, 1.0), cols=2)]
+    tpb = [leaf_tpl(_prof('bract'), fold=0.05, cup=0.25, arch=-0.05, stations=(0, 0.15, 0.4, 0.7, 1.0), cols=1),
+           leaf_tpl(_prof('bract'), fold=0.1, cup=0.4, arch=0.05, twist=0.3, stations=(0, 0.15, 0.4, 0.7, 1.0), cols=1)]
     Ps, Ds, Ns, Ls = [], [], [], []
     for i in np.nonzero(pick)[0]:
         nf = rng.integers(7, 20)
@@ -586,8 +666,8 @@ def _bougainvillea_flowers(rng, out, tip, tdir, d, S):
 def _gardenia_flowers(rng, out, tip, tdir, d, S):
     pe = out.setdefault('petal', Buf()); bud = out.setdefault('bud', Buf())
     pick = rng.random(len(tip)) < S['bloom']
-    tp_in = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.35, arch=-0.12, stations=(0, 0.2, 0.5, 0.8, 1.0), cols=2)
-    tp_out = leaf_tpl(_prof('obovate'), fold=0.04, cup=0.2, arch=0.08, twist=0.25, stations=(0, 0.2, 0.5, 0.8, 1.0), cols=2)
+    tp_in = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.35, arch=-0.12, stations=(0, 0.2, 0.5, 0.8, 1.0), cols=1)
+    tp_out = leaf_tpl(_prof('obovate'), fold=0.04, cup=0.2, arch=0.08, twist=0.25, stations=(0, 0.2, 0.5, 0.8, 1.0), cols=1)
     for i in np.nonzero(pick)[0]:
         c = tip[i] + tdir[i] * 0.015
         ax = _norm(tdir[i] * 0.5 + UP + rng.normal(0, 0.3, 3))[None]
@@ -622,8 +702,8 @@ def ti_plant(seed):
     rng = np.random.default_rng(seed)
     out = {'leaf': Buf(), 'cane': Buf(), 'dry': Buf()}
     nc = rng.choice([2, 3, 3, 4, 5])
-    tpls = [leaf_tpl(_prof('lance'), fold=0.06, arch=a, twist=tw, cols=2, stations=(0, 0.08, 0.16, 0.3, 0.45, 0.6, 0.75, 0.88, 1.0))
-            for a, tw in ((0.1, 0.1), (0.3, -0.25), (0.55, 0.3), (0.8, -0.15))]
+    tpls = [leaf_tpl(_prof('lance'), fold=0.035, cup=0.04, arch=a, twist=tw, cols=2, stations=(0, 0.08, 0.16, 0.3, 0.45, 0.6, 0.75, 0.88, 1.0))
+            for a, tw in ((0.14, 0.12), (0.34, -0.22), (0.6, 0.28), (0.9, -0.15))]
     for c in range(nc):
         h = rng.uniform(0.15, 0.75) * (1.0 if c == 0 else rng.uniform(0.25, 0.9))
         lean = rng.uniform(0, 6.28); lv = np.array([math.cos(lean), math.sin(lean), 0]) * rng.uniform(0.03, 0.12)
@@ -633,18 +713,18 @@ def ti_plant(seed):
         r = rng.uniform(0.011, 0.017)
         tubes(out['cane'], path[None], np.linspace(r * 1.15, r * 0.9, 7)[None], sides=7)
         top = path[-1]; ax = _norm(path[-1] - path[-2])
-        n = rng.integers(20, 32)
+        n = rng.integers(16, 27)
         i = np.arange(n); age = i / (n - 1)                     # 0 = youngest (top centre) .. 1 = oldest
         ph = rng.uniform(0, 6.28) + i * GOLDEN
-        el = np.radians(82 - 100 * age ** 0.85 + rng.normal(0, 7, n))
+        el = np.radians(80 - 78 * age ** 0.9 + rng.normal(0, 8, n))   # a vase of leaves, the oldest near level
         hd = np.stack([np.cos(ph), np.sin(ph), np.zeros(n)], 1)
         D = _norm(np.cos(el)[:, None] * hd + np.sin(el)[:, None] * UP)
         Nn = _norm(UP - D * (D @ UP)[:, None] + hd * 0.15 + rng.normal(0, 0.2, (n, 3)))
         P = top - ax * (age * 0.09)[:, None] + hd * 0.008
-        L = rng.uniform(0.42, 0.62) * rng.uniform(0.85, 1.15, n) * (0.6 + 0.4 * np.clip(age * 3, 0, 1))
+        L = rng.uniform(0.4, 0.58) * rng.uniform(0.85, 1.15, n) * (0.6 + 0.4 * np.clip(age * 3, 0, 1))
         pk = np.clip((age * 3.99).astype(int) + rng.integers(-1, 1, n), 0, 3)
         for j, tp in enumerate(tpls):
-            s = pk == j; place(out['leaf'], tp, P[s], D[s], Nn[s], L[s], rng.uniform(0.85, 1.2, s.sum()))
+            s = pk == j; place(out['leaf'], tp, P[s], D[s], Nn[s], L[s], rng.uniform(1.0, 1.35, s.sum()))
         # a dead leaf or two hanging against the cane
         nd = rng.integers(0, 3)
         if nd and h > 0.35:
@@ -660,8 +740,8 @@ def monstera_blade(rng, splits=7, holes=True):
     Vs, Fs, UVs = [], [], []
     for side in (-1, 1):
         sk = np.sort(np.linspace(0.2, 0.9, splits) + rng.normal(0, 0.02, splits))
-        g = 0.008 + rng.random(splits) * 0.006
-        rs = rng.uniform(0.38, 0.62, splits)
+        g = 0.012 + rng.random(splits) * 0.008
+        rs = rng.uniform(0.2, 0.4, splits)
         cuts_s = list(np.concatenate([sk - g, sk + g])); cuts_r = list(rs)
         hole_s = []
         if holes:
@@ -683,7 +763,7 @@ def monstera_blade(rng, splits=7, holes=True):
         UV = np.stack([np.broadcast_to(0.5 + side * 0.5 * R_[None, :], (ns, nr)), np.broadcast_to(S_[:, None], (ns, nr))], -1).reshape(-1, 2)
         sc = (S_[:-1] + S_[1:]) / 2; rc = (R_[:-1] + R_[1:]) / 2
         keep = np.ones((ns - 1, nr - 1), bool)
-        for a, gg, r_ in zip(sk, g, rs):
+        for a, gg, r_ in zip(sk, g, rs):          # radial splits: an angular gap, so they widen toward the margin
             keep &= ~((np.abs(sc - a) < gg)[:, None] & (rc > r_)[None, :])
         for s0, s1, r0, r1 in hole_s:
             keep &= ~(((sc > s0) & (sc < s1))[:, None] & ((rc > r0) & (rc < r1))[None, :])
@@ -711,9 +791,9 @@ def monstera(seed):
         path = curve(b0[None], tip[None], sag[None], 8)
         tubes(out['stem'], path, np.linspace(0.016, 0.009, 8)[None], sides=7)
         size = rng.uniform(0.4, 0.75) * (0.7 + 0.3 * pl / 1.1)
-        dn = math.radians(rng.uniform(-45, -10))
-        D = _norm(hd * math.cos(dn) + UP * math.sin(dn) + np.cross(UP, hd) * rng.normal(0, 0.2))
-        Nn = _norm(UP + hd * 0.4 + rng.normal(0, 0.15, 3))
+        dn = math.radians(rng.uniform(-68, -30))           # blades hang from the petiole tip, facing out and up
+        D = _norm(hd * math.cos(dn) + UP * math.sin(dn) + np.cross(UP, hd) * rng.normal(0, 0.25))
+        Nn = _norm(UP * 0.7 + hd * 0.75 + rng.normal(0, 0.2, 3))
         bl = blades[0 if size > 0.6 else 1 if size > 0.48 else 2 + rng.integers(0, 2)]
         place(out['leaf'], bl, tip[None] - D[None] * 0.01, D[None], Nn[None], np.array([size]))
     return out
@@ -728,37 +808,37 @@ def plumeria_tree(seed, scale=1.0):
     def grow(p, d, L, r, depth, first=False):
         end = p + d * L
         side = _norm(np.cross(d, UP) + 1e-6)
-        mid = (p + end) / 2 + side * rng.normal(0, 0.06) * L + UP * 0.08 * L
+        # plumeria limbs leave the fork outward, then turn up (the candelabra)
+        mid = p + d * L * 0.45 + side * rng.normal(0, 0.05) * L - UP * 0.06 * L * (1 - d[2])
         t = np.linspace(0, 1, 6)[:, None]
         path = (1 - t) ** 2 * p + 2 * (1 - t) * t * mid + t * t * end
-        segs.append((path, r, r * 0.88))
-        if depth == 0:
+        segs.append((path, r, r * 0.9))
+        if depth == 0 or (depth == 1 and rng.random() < 0.25):
             tips.append((end, _norm(path[-1] - path[-2]))); return
-        k = rng.integers(3, 5) if first else (2 if rng.random() < 0.5 else 3)
+        k = rng.integers(3, 6) if first else (2 if rng.random() < 0.55 else 3)
         az0 = rng.uniform(0, 6.28)
-        hd0 = _norm(d * np.array([1, 1, 0]) + 1e-6)
         for j in range(k):
             az = az0 + j * 2 * math.pi / k + rng.normal(0, 0.35)
             hd = np.array([math.cos(az), math.sin(az), 0])
-            spread = math.radians(rng.uniform(45, 62) if first else rng.uniform(22, 42))
-            nd = _norm(d * math.cos(spread) + _norm(hd - d * (hd @ d) + 1e-6) * math.sin(spread) + UP * 0.12)
-            grow(end, nd, L * rng.uniform(0.78, 0.95), r * 0.86, depth - 1)
-    h0 = rng.uniform(0.7, 1.0)
-    grow(np.zeros(3), _norm(UP + rng.normal(0, 0.1, 3) * np.array([1, 1, 0])), h0, 0.14, 4, first=True)
+            spread = math.radians(rng.uniform(38, 55) if first else rng.uniform(20, 38))
+            nd = _norm(d * math.cos(spread) + _norm(hd - d * (hd @ d) + 1e-6) * math.sin(spread) + UP * 0.22)
+            grow(end, nd, rng.uniform(0.62, 0.8) if first else L * rng.uniform(0.8, 0.95), r * 0.84, depth - 1)
+    h0 = rng.uniform(0.35, 0.6)                 # a short trunk forking low into a broad, rounded crown
+    grow(np.zeros(3), _norm(UP + rng.normal(0, 0.1, 3) * np.array([1, 1, 0])), h0, 0.13, 4, first=True)
     k = 6
     for path, r0, r1 in segs:
         tubes(out['bark'], path[None], np.linspace(r0, r1, len(path))[None], sides=9)
-    tpl = [leaf_tpl(_prof('plumeria'), fold=0.14, arch=a, twist=tw, cols=2, stations=(0, 0.1, 0.25, 0.42, 0.6, 0.78, 0.92, 1.0)) for a, tw in ((0.05, 0.1), (0.15, -0.2), (0.28, 0.25))]
-    petal = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.15, arch=-0.05, twist=0.5, stations=(0, 0.2, 0.45, 0.7, 0.9, 1.0), cols=2)
+    tpl = [leaf_tpl(_prof('plumeria'), fold=0.14, arch=a, twist=tw, cols=1, stations=(0, 0.1, 0.3, 0.55, 0.8, 1.0)) for a, tw in ((0.05, 0.1), (0.18, -0.2), (0.34, 0.25))]
+    petal = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.15, arch=-0.05, twist=0.5, stations=(0, 0.25, 0.55, 0.8, 1.0), cols=1)
     for pos, d in tips:
-        n = rng.integers(18, 28)
+        n = rng.integers(22, 34)
         i = np.arange(n); age = i / (n - 1)
         ph = rng.uniform(0, 6.28) + i * GOLDEN
         hd = np.stack([np.cos(ph), np.sin(ph), np.zeros(n)], 1)
-        el = np.radians(72 - 85 * age + rng.normal(0, 8, n))
+        el = np.radians(70 - 95 * age ** 0.9 + rng.normal(0, 8, n))
         D = _norm(np.cos(el)[:, None] * hd + np.sin(el)[:, None] * UP + d * 0.2)
         Nn = _norm(UP - D * (D @ UP)[:, None] + rng.normal(0, 0.15, (n, 3)))
-        L = rng.uniform(0.26, 0.38, n) * (0.55 + 0.45 * np.clip(age * 2.5, 0, 1))
+        L = rng.uniform(0.28, 0.42, n) * (0.55 + 0.45 * np.clip(age * 2.5, 0, 1))
         P = pos - d * (age * 0.05)[:, None]
         pk = np.clip((age * 2.99).astype(int), 0, 2)
         for j, tp in enumerate(tpl):
@@ -779,7 +859,87 @@ def plumeria_tree(seed, scale=1.0):
 
 
 # ---------------------------------------------------------------- background canopy trees
-def canopy_tree(seed):
+TREE_FORMS = {
+    # trunk height, crown centre height, crown radii (x, z), envelope lumpiness, leaf clumps, leaves per clump, leaf length
+    'dome': dict(trunk=(1.3, 2.0), cz=4.4, R=(3.7, 3.0), lump=0.32, clumps=230, leaves=(55, 80), leaf=(0.16, 0.25), girth=0.26),       # mango, kamani
+    'umbrella': dict(trunk=(1.8, 2.6), cz=5.3, R=(5.2, 2.4), lump=0.28, clumps=300, leaves=(55, 75), leaf=(0.15, 0.24), girth=0.3),    # monkeypod
+    'tall': dict(trunk=(1.6, 2.4), cz=5.6, R=(2.9, 4.0), lump=0.36, clumps=240, leaves=(55, 80), leaf=(0.18, 0.27), girth=0.22),      # java plum, be-still
+}
+
+
+def canopy_tree(seed, form='dome'):
+    """A tropical shade tree grown inside a lumpy crown envelope: a buttressed trunk forking into
+    scaffold limbs, limbs into branches, branches into twigs ending in clumps of leaves that fill
+    the outer shell of the crown (so it reads as a dense, rounded, cumulus-like canopy with gaps,
+    the way kamani, mango and monkeypod trees look across a golf course)."""
+    rng = np.random.default_rng(seed)
+    F = TREE_FORMS[form]
+    out = {'leaf': Buf(), 'bark': Buf()}
+    Rx, Rz = F['R'][0] * rng.uniform(0.85, 1.15), F['R'][1] * rng.uniform(0.85, 1.15)
+    th = rng.uniform(*F['trunk']); cz = F['cz'] * rng.uniform(0.92, 1.08)
+    lean = np.array([rng.normal(0, 0.12), rng.normal(0, 0.12), 0])
+    C = np.array([0, 0, cz]) + lean * cz
+    # crown envelope with lumps (sub-crowns)
+    nl = 11; Ld = _rand_dirs(rng, nl); Ld[:, 2] = np.abs(Ld[:, 2]) * 0.8 + 0.1; Ld = _norm(Ld)
+    amp = rng.uniform(0.4, 1.0, nl) * F['lump']
+    env = lambda d: 1 + (amp * np.exp((d @ Ld.T - 1) / 0.15)).sum(-1) - amp.sum() * 0.08
+    rad = lambda d: env(d)[:, None] * np.array([Rx, Rx, Rz])
+    # trunk with a flared, buttressed foot
+    r0 = F['girth'] * rng.uniform(0.85, 1.15)
+    t = np.linspace(0, 1, 7)[:, None]
+    top = lean * th + np.array([0, 0, th])
+    trunk = t * top + np.array([0, 0, 0]) * (1 - t) + (t * (1 - t)) * rng.normal(0, 0.15, 3) * np.array([1, 1, 0])
+    tubes(out['bark'], trunk[None], (r0 * (1 + 0.45 * np.exp(-t[:, 0] * 9)) * (1 - 0.18 * t[:, 0]))[None], sides=10, v_scale=1.0)
+    for a in rng.uniform(0, 6.28, rng.integers(3, 6)):            # root flares
+        h = np.array([math.cos(a), math.sin(a), 0])
+        p0 = h * r0 * 0.6 + np.array([0, 0, 0.45]); p1 = h * r0 * 2.3 + np.array([0, 0, -0.05])
+        tubes(out['bark'], curve(p0[None], p1[None], (h * 0.08 + np.array([0, 0, -0.08]))[None], 4), np.array([[r0 * 0.4, r0 * 0.3, r0 * 0.2, r0 * 0.08]]), sides=6)
+    # scaffold limbs from the top of the trunk toward the inner crown
+    m = rng.integers(3, 6)
+    az = rng.uniform(0, 6.28) + np.arange(m) * 2 * math.pi / m + rng.normal(0, 0.3, m)
+    el = np.radians(rng.uniform(25, 60, m) if form != 'tall' else rng.uniform(45, 75, m))
+    dl = np.stack([np.cos(az) * np.cos(el), np.sin(az) * np.cos(el), np.sin(el)], 1)
+    L0 = top + rng.normal(0, 0.1, (m, 3)) * np.array([1, 1, 0]) - np.array([0, 0, 1]) * rng.uniform(0, 0.4, (m, 1))
+    L1 = C + dl * rad(dl) * rng.uniform(0.35, 0.55, (m, 1))
+    L1[:, 2] = np.maximum(L1[:, 2], top[2] + 0.6)
+    tubes(out['bark'], curve(L0, L1, rng.normal(0, 0.25, (m, 3)) + np.array([0, 0, 0.25]), 6), np.linspace(r0 * 0.65, r0 * 0.38, 6)[None].repeat(m, 0), sides=8)
+    # branches from every limb end toward the crown shell
+    B0, B1 = [], []
+    for i in range(m):
+        k = rng.integers(3, 6)
+        dd = _norm(dl[i] * 0.9 + rng.normal(0, 0.55, (k, 3)) + np.array([0, 0, 0.25]))
+        B0.append(np.repeat(L1[i][None], k, 0) + rng.normal(0, 0.05, (k, 3)))
+        B1.append(C + dd * rad(dd) * rng.uniform(0.6, 0.8, (k, 1)))
+    B0, B1 = np.concatenate(B0), np.concatenate(B1); nb = len(B0)
+    tubes(out['bark'], curve(B0, B1, rng.normal(0, 0.15, (nb, 3)) + np.array([0, 0, 0.12]), 5), np.linspace(r0 * 0.34, r0 * 0.12, 5)[None].repeat(nb, 0), sides=6)
+    # leaf clumps in the outer shell, each on a twig from the nearest branch end
+    n = F['clumps']
+    d = _rand_dirs(rng, n * 3); d = d[d[:, 2] > -0.55][:n]; n = len(d)
+    f = 0.74 + 0.3 * rng.random(n) ** 0.6
+    cp = C + d * rad(d) * f[:, None]
+    cp[:, 2] = np.maximum(cp[:, 2], top[2] + 0.4)
+    near = np.argmin(((cp[:, None, :] - B1[None, :, :]) ** 2).sum(-1), axis=1)
+    src = B1[near]
+    tw = cp - _norm(cp - C) * 0.25
+    tubes(out['bark'], curve(src, tw, rng.normal(0, 0.1, (n, 3)) + np.array([0, 0, 0.1]), 4), np.linspace(r0 * 0.1, r0 * 0.035, 4)[None].repeat(n, 0), sides=4)
+    lo, hi = F['leaves']
+    k = rng.integers(lo, hi + 1, n)
+    ci = np.repeat(np.arange(n), k)
+    o = _norm(cp - C)[ci]                                   # outward at the clump
+    e1, e2 = _frame(o)
+    rr = 0.48 * np.sqrt(rng.random(len(ci))); ph = rng.uniform(0, 6.28, len(ci))
+    P = cp[ci] + (np.cos(ph) * rr)[:, None] * e1 + (np.sin(ph) * rr)[:, None] * e2 + o * rng.normal(0, 0.12, (len(ci), 1))
+    D = _norm(o * 0.55 + (np.cos(ph))[:, None] * e1 + (np.sin(ph))[:, None] * e2 + rng.normal(0, 0.35, (len(ci), 3)) - UP * 0.2)
+    Nn = _norm(UP * 1.0 + o * 0.7 + rng.normal(0, 0.4, (len(ci), 3)))
+    Lf = rng.uniform(*F['leaf'], len(ci))
+    tpls = [leaf_tpl(_prof('tree'), fold=0.15, arch=a, cols=1, stations=(0, 0.3, 0.65, 1.0)) for a in (0.05, 0.18)]
+    pk = rng.integers(0, 2, len(ci))
+    for j, tp in enumerate(tpls):
+        s = pk == j; place(out['leaf'], tp, P[s], D[s], Nn[s], Lf[s], rng.uniform(0.8, 1.2, s.sum()))
+    return out
+
+
+def canopy_tree_old(seed):
     """A broad tropical shade tree (kamani / mango / monkeypod-like) about 8 m tall and wide."""
     rng = np.random.default_rng(seed)
     out = {'leaf': Buf(), 'bark': Buf()}
@@ -909,19 +1069,19 @@ def materials():
     leaf('gardenia', 2, '#1f4317', '#4f7a2e', n_veins=9, angle=58, vein=0.45, rough=0.22, spec=0.65, transl=0.2, bump=0.5, coat=0.25, val_var=0.15)
     leaf('hedge', 3, '#2b5520', '#5a8236', n_veins=7, angle=55, vein=0.25, rough=0.3, spec=0.6, transl=0.25, val_var=0.18)
     leaf('groundcover', 4, '#6f8a68', '#9aae90', n_veins=5, angle=50, vein=0.2, rough=0.55, transl=0.2, sheen=0.6, val_var=0.12, sat_var=0.15)
-    leaf('monstera', 5, '#1d4a17', '#3f6a28', n_veins=14, angle=89, vein=0.35, vein_w=0.006, aspect=0.5, rough=0.32, spec=0.5, transl=0.2, bump=0.3, val_var=0.12, back=(1.1, 1.12, 1.0))
-    leaf('plumeria', 6, '#3d6b24', '#9ab055', n_veins=22, angle=75, vein=0.6, vein_w=0.007, rough=0.38, transl=0.3, bump=0.45, val_var=0.15, dry=(1.6, 1.1, 0.25, 1), dry_share=0.05)
-    leaf('ti-red', 7, '#7a1224', '#93283a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.26, spec=0.6, transl=0.35, trans_tint=(1.6, 0.6, 0.7),
+    leaf('monstera', 5, '#25501a', '#3f6a28', n_veins=14, angle=89, vein=0.35, vein_w=0.006, aspect=0.5, rough=0.42, spec=0.36, transl=0.2, bump=0.3, val_var=0.12, back=(1.1, 1.12, 1.0))
+    leaf('plumeria', 6, '#335d1e', '#86a04a', n_veins=22, angle=75, vein=0.42, vein_w=0.007, rough=0.36, transl=0.3, bump=0.45, val_var=0.15, dry=(1.6, 1.1, 0.25, 1), dry_share=0.05)
+    leaf('ti-red', 7, '#7a1224', '#93283a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.36, spec=0.42, transl=0.35, trans_tint=(1.6, 0.6, 0.7),
          variegate=(_lin('#b3203f'), 0.3), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
-    leaf('ti-burgundy', 8, '#43101a', '#5a1a28', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.24, spec=0.6, transl=0.3, trans_tint=(1.8, 0.7, 0.8),
+    leaf('ti-burgundy', 8, '#43101a', '#5a1a28', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.34, spec=0.42, transl=0.3, trans_tint=(1.8, 0.7, 0.8),
          edge=_lin('#9a1c34'), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
-    leaf('ti-green', 9, '#3e4a1c', '#5a6a2a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.28, spec=0.55, transl=0.32,
+    leaf('ti-green', 9, '#3e4a1c', '#5a6a2a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.38, spec=0.4, transl=0.32,
          variegate=(_lin('#6e1a30'), 0.35), val_var=0.2, hue_var=0.03, back=(1.0, 1.0, 1.0))
     leaf('tree', 10, '#2f5a22', '#5f8a3a', n_veins=8, angle=55, vein=0.25, rough=0.4, transl=0.3, val_var=0.22, hue_var=0.04, dry=(1.5, 1.2, 0.3, 1), dry_share=0.04)
     leaf('tree-dark', 11, '#22451a', '#4a6e2c', n_veins=10, angle=60, vein=0.25, rough=0.3, spec=0.6, transl=0.25, val_var=0.2, hue_var=0.03)
     leaf('tree-light', 12, '#4a7a2c', '#7a9a45', n_veins=7, angle=50, vein=0.25, rough=0.45, transl=0.32, val_var=0.22, hue_var=0.05)
-    bimg, bh = leaf_image('bract', 13, _lin('#c41f7c'), _lin('#e05aa0'), n_veins=7, angle=40, vein=0.35, vein_w=0.012, margin=0.1, mott=0.08, sunken=False)
-    M['bract'] = petal_material('plant bract', _lin('#c41f7c'), vein_img=bimg, transl=0.5, rough=0.5, sheen=0.2)
+    bimg, bh = leaf_image('bract', 13, _lin('#b8268f'), _lin('#d65cb2'), n_veins=7, angle=40, vein=0.35, vein_w=0.012, margin=0.1, mott=0.08, sunken=False)
+    M['bract'] = petal_material('plant bract', _lin('#b8268f'), vein_img=bimg, transl=0.5, rough=0.5, sheen=0.2)
     M['floret'] = petal_material('plant floret', _lin('#f2ead2'), transl=0.4)
     M['petal'] = petal_material('plant petal', _lin('#f6f2e4'), transl=0.42, rough=0.5, sheen=0.35)
     M['plumeria-petal'] = petal_material('plant plumeria petal', _lin('#f7f4ea'), _lin('#f2b818'), center_len=0.42, transl=0.42, rough=0.45, sheen=0.35)
@@ -1034,22 +1194,43 @@ def _tilt_euler(normals, rz):
     return out
 
 
-def mulch(ground, rect, mat, col, name, rng):
-    """A bed of bark mulch over rect (Blender xy), following the ground, edges slightly ragged."""
+def mulch(ground, rect, mat, col, name, rng, zref=None, tol=1e9):
+    """A bed of bark mulch over rect (Blender xy), following the ground, edges slightly ragged.
+    Robust to steps: grid points whose ground is missing, steep, or more than `tol` from the bed's
+    level (zref, else the median) are dropped, and so is every quad spanning a height jump, so the
+    mulch never climbs a retaining wall or hangs over a drop."""
     x0, y0, x1, y1 = rect
     nx = max(2, int((x1 - x0) / 0.25) + 1); ny = max(2, int((y1 - y0) / 0.25) + 1)
     xs = np.linspace(x0 - 0.12, x1 + 0.12, nx); ys = np.linspace(y0 - 0.12, y1 + 0.12, ny)
     X, Y = np.meshgrid(xs, ys, indexing='ij')
     edge = np.minimum(np.minimum(X - xs[0], xs[-1] - X), np.minimum(Y - ys[0], ys[-1] - Y))
     X = X + (edge < 0.01) * rng.normal(0, 0.04, X.shape); Y = Y + (edge < 0.01) * rng.normal(0, 0.04, Y.shape)
-    Z = np.zeros_like(X)
+    Z = np.full_like(X, np.nan)
     for i in range(nx):
         for j in range(ny):
-            z = ground.z(X[i, j], Y[i, j]); Z[i, j] = (z if z is not None else 0.0) + 0.012 + (0.02 if edge[i, j] > 0.2 else 0.0)
-    a = (np.arange(nx - 1)[:, None] * ny + np.arange(ny - 1)[None, :]).ravel()
+            z, n = ground.zn(X[i, j], Y[i, j])
+            if z is not None and n.z > 0.55: Z[i, j] = z
+    ok = ~np.isnan(Z)
+    if not ok.any(): return None
+    ref = zref if zref is not None else float(np.median(Z[ok]))
+    ok &= np.abs(np.where(ok, Z, ref) - ref) < tol
+    Z = np.where(ok, Z, ref) + 0.012 + np.where(edge > 0.2, 0.02, 0.0)
+    q = ok[:-1, :-1] & ok[1:, :-1] & ok[1:, 1:] & ok[:-1, 1:]
+    Zq = np.stack([Z[:-1, :-1], Z[1:, :-1], Z[1:, 1:], Z[:-1, 1:]], -1)
+    q &= (Zq.max(-1) - Zq.min(-1)) < 0.14
+    ii, jj = np.nonzero(q)
+    if not len(ii): return None
+    a = ii * ny + jj
     F = np.stack([a, a + ny, a + ny + 1, a + 1], -1)
     buf = Buf(); buf.add(np.stack([X, Y, Z], -1).reshape(-1, 3), F, np.stack([X, Y], -1).reshape(-1, 2))
-    ob = bpy.data.objects.new(name, buf.mesh(name, [mat])); col.objects.link(ob)
+    me = buf.mesh(name, [mat])
+    # drop the unused grid points
+    try:
+        import bmesh
+        bm = bmesh.new(); bm.from_mesh(me)
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS'); bm.to_mesh(me); bm.free()
+    except Exception: pass
+    ob = bpy.data.objects.new(name, me); col.objects.link(ob)
     return ob
 
 
@@ -1117,15 +1298,18 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
             if p['kind'] != kind: continue
             r = np.random.default_rng(p['seed'] & 0xffffffff)
             pts = _bed_points(r, rect, BEDS[kind]['spacing'], p.get('density', 1.1))
+            zref = b([0, p['ground'], 0]).z
             for x, y in pts:
                 z = ground.z(x, y)
-                if z is None: z = b([0, p['ground'], 0]).z
+                if z is None: z = zref
+                nb = [ground.z(x + dx, y + dy) for dx, dy in ((0.12, 0), (-0.12, 0), (0, 0.12), (0, -0.12))]
+                if any(q is not None and abs(q - z) > 0.15 for q in nb): continue    # right on a wall's step or a drop: skip
                 P.append((x, y, z - 0.015)); R.append((r.normal(0, 0.04), r.normal(0, 0.04), r.uniform(0, 6.283)))
                 S.append(r.uniform(0.82, 1.18)); I.append(r.integers(0, nv))
         instancer('plants-' + kind, pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
         log(f'plants: {kind} x{len(P)}')
     # mulch under every bed
-    for i, rect in enumerate(bed_rects):
+    for i, (p, rect) in enumerate(zip(beds, bed_rects)):
         mulch(ground, rect, mats['mulch'], col, f'mulch{i}', rng)
 
     # ---- plumeria trees
@@ -1143,14 +1327,29 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
     # ---- background canopy trees
     tr = [p for p in plants if p['type'] == 'tree']
     if tr and trees:
-        tk = lambda i: ('tree', 'tree-dark', 'tree-light')[i % 3]
-        pc = _variants('v-tree', 6, lambda i: canopy_tree(5000 + i), mats, {'leaf': tk, 'bark': 'tree-bark'})
+        forms = ('dome', 'umbrella', 'tall', 'dome', 'umbrella', 'dome')
+        tk = lambda i: ('tree', 'tree-dark', 'tree-light', 'tree-dark', 'tree', 'tree-light')[i]
+        nv = len(forms)
+        pc = _variants('v-tree', nv, lambda i: canopy_tree(5000 + i, forms[i]), mats, {'leaf': tk, 'bark': 'tree-bark'})
         P, R, S, I = [], [], [], []
+        lot_c = None
+        if meta.get('lawn', {}).get('lot'):
+            lx0, lz0, lx1, lz1 = meta['lawn']['lot']; lot_c = b([(lx0 + lx1) / 2, 0, (lz0 + lz1) / 2])
         for p in tr:
             r = np.random.default_rng(p['seed'])
             v = b(p['pos']); s = p['size'] / 4.0
             P.append((v.x, v.y, v.z - 0.25)); R.append((r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283)))
-            S.append((s, s, s * p.get('sy', 1.0))); I.append(r.integers(0, 6))
+            S.append((s, s, s * p.get('sy', 1.0))); I.append(r.integers(0, nv))
+            # trees grow in groves: a companion or two beside the far ones (not near our lot, where the plan is exact)
+            far = lot_c is None or math.hypot(v.x - lot_c.x, v.y - lot_c.y) > 140
+            for _ in range(r.integers(1, 4) if far else 0):
+                a = r.uniform(0, 6.283); dd = s * r.uniform(3.8, 6.5)
+                x, y = v.x + math.cos(a) * dd, v.y + math.sin(a) * dd
+                z = ground.z(x, y)
+                if z is None or abs(z - v.z) > 3: continue
+                s2 = s * r.uniform(0.6, 1.0)
+                P.append((x, y, z - 0.25)); R.append((r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283)))
+                S.append((s2, s2, s2 * r.uniform(0.85, 1.15))); I.append(r.integers(0, nv))
         instancer('plants-trees', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
         log(f'plants: trees x{len(P)} {time.time() - t0:.1f}s')
 
