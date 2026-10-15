@@ -2,22 +2,22 @@
  "about": "Real terrain and satellite colour of south Kaua'i around Na Hiku, Kukui'ula, in the walkthrough's world frame (feet).",
  "anchor": {
   "lotUTM": [
-   450097.0,
-   2420801.0
+   450089.0,
+   2420822.0
   ],
   "crs": "EPSG:32604",
-  "lat": 21.89064129578386,
-  "lon": -159.48308487888013,
+  "lat": 21.890830790226648,
+  "lon": -159.48316295975604,
   "xBearing": 46.3,
   "convergence": -0.18,
-  "lotGround_m": 16.8,
+  "lotGround_m": 17.6,
   "regErr_m": 25.0
  },
  "north": [
   0.6931502662499115,
   -0.7207931106757866
  ],
- "seaLevel": -55.718110236220475,
+ "seaLevel": -58.342782152230974,
  "grade": -0.6,
  "far": {
   "box": [
@@ -27,8 +27,8 @@
    55022.75
   ],
   "hsize": 1024,
-  "hmin": -64.32299041748047,
-  "hmax": 5172.43701171875,
+  "hmin": -69.06446075439453,
+  "hmax": 5174.15283203125,
   "height": "far_h.bin",
   "water": "far_w.png",
   "tex": "far.jpg",
@@ -43,8 +43,8 @@
    6022.75
   ],
   "hsize": 1024,
-  "hmin": -72.683837890625,
-  "hmax": 446.845458984375,
+  "hmin": -74.48834991455078,
+  "hmax": 444.2298889160156,
   "height": "near_h.bin",
   "water": "near_w.png",
   "tex": "near.jpg",

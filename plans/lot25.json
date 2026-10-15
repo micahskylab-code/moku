@@ -3243,8 +3243,8 @@
    "lookH": 7,
    "fov": 38,
    "sun": [
-    58,
-    320
+    53,
+    55
    ],
    "aspect": 1.895,
    "photo": "ref/front.png"

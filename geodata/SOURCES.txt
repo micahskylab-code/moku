@@ -1,0 +1,38 @@
+geodata/ - the real place around Na Hiku, Kukui'ula, south Kaua'i, in the walkthrough's world frame
+(feet, y up, our floor = 0; see realsite.json for the anchor, true north and sea level).
+
+Files
+  realsite.json        grids, anchor (UTM 4N / lat-lon of our lot), true north, sea level, attribution
+  far_h.bin near_h.bin Uint16 height grids (1024 x 1024; far +-55,000 ft, near +-6,000 ft around our lot)
+  far.jpg far_2k.jpg   true-colour albedo, far square (4096 / 2048 px, ~8 m per texel)
+  near.jpg             true-colour albedo, near square (2048 px, 1.8 m per texel)
+  far_w.png near_w.png water masks (roughness / ripples in src/realsite.js)
+  features.json        roads (near square), building footprints, trees (world feet)
+
+Sources and licences
+  Elevation   U.S. Geological Survey 3DEP: 1 m DEM, project HI_FEMAR9Kauai_2019_D19 (lidar 2019-21),
+              and 1/3 arc-second seamless DEM tiles n22w160, n23w160. Public domain.
+  Imagery     Copernicus Sentinel-2 L2A (ESA), tile 04QDK, 14 scenes Jul 2025 - Oct 2026 and 8 older
+              clear scenes (2023-25) for the ground under the modelled lots, via AWS Open Data
+              (s3://sentinel-cogs, Element 84). "Contains modified Copernicus Sentinel data 2023-2026."
+              Free, full and open (Copernicus data policy), attribution as above.
+  Map data    OpenStreetMap contributors (ODbL 1.0) and Microsoft ML Building Footprints (ODbL 1.0),
+              via Overture Maps Foundation release 2026-09-23.0: roads, ponds and golf water hazards,
+              building footprints. features.json and the water masks are derived databases of these
+              and are themselves under ODbL 1.0 (attribution: "(c) OpenStreetMap contributors,
+              Microsoft").
+  Trees       Meta and World Resources Institute, High Resolution Canopy Height Maps (2024), tile
+              022211101, CC BY 4.0 (Tolan et al. 2024): tree tops and heights.
+
+Rebuild (python3, numpy scipy pillow rasterio pyproj shapely pyarrow; network to AWS S3)
+  python3 scripts/geo_s2_list.py <cache>           # Sentinel-2 scenes over 04QDK
+  python3 scripts/geo_s2_score.py <cache>          # cloud over the area from the scene classification
+  python3 scripts/geo_s2_mosaic.py                 # cloud-free median mosaic -> <cache>/s2_aoi.npz
+  python3 scripts/geo_s2_mosaic.py --before        # older scenes around the strip -> s2_before.npz
+  python3 scripts/geo_dem.py                       # lidar + 1/3" DEM -> dem_aoi_10m, dem_near_2m
+  python3 scripts/geo_overture.py <cache> transportation/segment   (also base/water base/land_use buildings/building)
+  curl -o <dir>/022211101.tif https://dataforgood-fb-data.s3.amazonaws.com/forests/v1/alsgedi_global_v6_float/chm/022211101.tif
+  python3 scripts/geo_features.py <dir>/022211101.tif
+  GEO_CHM=<dir>/022211101.tif python3 scripts/geo_build.py
+  python3 scripts/geo_register.py <overlay.png> 1.66   # registration evidence
+  (<cache> defaults to ../geo-test/cache next to the repo; set GEO_CACHE to move it)

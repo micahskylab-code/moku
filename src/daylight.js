@@ -74,7 +74,8 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
   const hoodWin = [], hoodPool = [];
   scene.traverse(o => { if (!o.isMesh) return; const m = o.material; if (!m?.emissive) return; const h = m.emissive.getHexString(); if (h === 'ffc77a' && !hoodWin.includes(m)) hoodWin.push(m); if (h === '0b7fa3' && !hoodPool.includes(m)) hoodPool.push(m); });
 
-  // house, pool and garden lights, built the first time it gets dark (adding lights recompiles shaders once)
+  // house, pool and garden lights. Hidden by day (so daylight frames don't pay for 18 lights); their
+  // shader variants are compiled in the background soon after load, so dusk doesn't stall.
   let nightLights = null;
   function buildNightLights() {
     const list = [];
@@ -99,7 +100,18 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
       s.target.position.set(p[0], terrainH(p[0], p[1]) + (p[2] ?? 30), p[1]);
       s.userData.on = 90; scene.add(s, s.target); list.push(s);
     }
+    for (const l of list) l.visible = false;
     return list;
+  }
+  let prewarmed = false;
+  function prewarm() {
+    if (prewarmed || shot) return;
+    prewarmed = true;
+    nightLights ??= buildNightLights();
+    const vis = nightLights.map(l => l.visible);
+    for (const l of nightLights) l.visible = true;
+    try { renderer.compileAsync?.(scene, camera)?.catch(() => {}); } catch (e) { console.warn('prewarm', e); }
+    nightLights.forEach((l, i) => (l.visible = vis[i]));
   }
 
   // ---------- stars (loaded when first needed) ----------
@@ -273,13 +285,14 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     // house lights from dusk
     const on = Math.max(smooth(3, -4, sun.alt), smooth(0.9, 1.0, w.cloud) * smooth(14, 4, sun.alt) * 0.6);
     if (on > 0.001 && !nightLights) nightLights = buildNightLights();
-    for (const l of nightLights ?? []) l.intensity = l.userData.on * on;
+    for (const l of nightLights ?? []) { l.intensity = l.userData.on * on; l.visible = on > 0.001; }
     for (const l of lamps) l.intensity = l.userData.nightIntensity * on;
     glow.emissiveIntensity = 0.4 + 1.8 * on;
     water.emissiveIntensity = 1.1 * on; water.opacity = lerp(waterBase.opacity, 0.85, on);
     tile.emissiveIntensity = 0.5 * on;
     for (const m of hoodWin) m.emissiveIntensity = 0.9 * on;
     for (const m of hoodPool) m.emissiveIntensity = 0.8 * on;
+    const rs = window.__realsite; if (rs?.windowMaterial) rs.windowMaterial.emissiveIntensity = 0.8 * on;   // the real neighbourhood's houses
     if (bloom) { bloom.strength = 0.55 * Math.sqrt(on) + 0.25 * smooth(-4, -10, sun.alt) * moon.illum * (moon.alt > 0 ? 1 : 0); bloom.enabled = bloom.strength > 0.02; }
     renderer.toneMappingExposure = L.e;
 
@@ -355,9 +368,10 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
   }
 
   // ---------- per frame ----------
-  let liveTick = 0, occTick = 0;
+  let liveTick = 0, occTick = 0, age = 0;
   const windDir = [0, 0];
   function update(dt) {
+    if (!prewarmed && (age += dt) > 2.5) prewarm();
     if (S.tween) {
       const T = S.tween; T.t = Math.min(1, T.t + dt / T.dur);
       const k = T.t < 0.5 ? 4 * T.t ** 3 : 1 - Math.pow(-2 * T.t + 2, 3) / 2;

@@ -13,15 +13,16 @@ Prints JSON. Directions are unit vectors toward the body:
   dir_three    three.js world (y up; the frame of nahiku-meta.json 'views[*].sunDir'), so
                blender_render.set_sun(result['sun']['dir_three']) lights the scene for that moment
   dir_blender  the same in Blender's frame (x, -z, y), as blender_render.b() converts
-True north comes from nahiku-meta.json night.north (the site plan's north on our plan), default
-[0.9080, -0.4191]. Uses astronomy-engine (pip install astronomy-engine, MIT) when available, else
+True north on the plan: --meta nahiku-meta.json (night.north, written by the exporter), else
+geodata/realsite.json 'north' (the lot registered on the real site), else [0.6932, -0.7208]. Uses astronomy-engine (pip install astronomy-engine, MIT) when available, else
 the NOAA solar equations and a truncated Meeus lunar theory (sun ~0.01 deg, moon ~0.3 deg).
 """
 import argparse, datetime as dt, json, math, os, sys
 
 LAT, LON, ELEV_M = 21.886, -159.474, 40.0
 HST = dt.timezone(dt.timedelta(hours=-10), 'HST')
-NORTH = [0.9079593845004517, -0.4190581774617469]
+NORTH = [0.6931502662499115, -0.7207931106757866]   # src/neighborhood.js TRUE_NORTH (lot axis bearing 46.3 deg, grid convergence -0.18)
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = math.pi / 180
 
 try:
@@ -273,8 +274,11 @@ if __name__ == '__main__':
     if a.table:
         table(a.table); sys.exit(0)
     north = NORTH
+    geo = os.path.join(ROOT, 'geodata', 'realsite.json')
     if a.meta and os.path.exists(a.meta):
         north = json.load(open(a.meta)).get('night', {}).get('north', NORTH)
+    elif os.path.exists(geo):
+        north = json.load(open(geo)).get('north', NORTH)
     try:
         print(json.dumps(compute(a.when, north, a.aod), indent=2, ensure_ascii=False))
     except BrokenPipeError:

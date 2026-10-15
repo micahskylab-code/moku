@@ -9,8 +9,8 @@ Our lot (7th of 14 from the north-west end) is placed on it, lot axis perpendicu
 The script reports how far the painted roads and ponds land from the real ones (OpenStreetMap via
 Overture, Kukui'ula golf water hazards) for the plan scale K, and draws the overlay image.
     python3 scripts/geo_register.py <out.png> [K ...]
-Needs in the cache: ov_segment.json, ov_land_use.json, ov_water.json (geo_overture.py), a Sentinel
-TCI window tci_<scene>.png (444000..460000 E, 2414000..2428000 N) and dem1m.npy (lidar 1 m window).
+Needs in the cache: ov_segment.json, ov_land_use.json, ov_water.json (geo_overture.py) and
+dem_near_2m.npy (geo_dem.py); the background is the Sentinel-2 scene of 14 Sep 2026 (read from S3).
 """
 import json, math, sys, os
 import numpy as np, pyproj
@@ -82,14 +82,21 @@ def overlay(out, Ks, box=(449300, 2420350, 450900, 2421400), px=0.8, scene='S2B_
     W, H = int((E1 - E0) / px), int((N1 - N0) / px)
     e = E0 + (np.arange(W) + 0.5) * px; n = N1 - (np.arange(H) + 0.5) * px
     EE, NN = np.meshgrid(e, n)
-    tci = np.asarray(Image.open(f'{C}/../tci_{scene}.png')).astype(np.float32) / 255
-    col = np.stack([map_coordinates(tci[..., k], [(2428000 - NN) / 10 - 0.5, (EE - 444000) / 10 - 0.5], order=3) for k in range(3)], -1)
+    # one clear scene of the 2026 grading (true-colour TCI window read from s3://sentinel-cogs)
+    os.environ.setdefault('CURL_CA_BUNDLE', '/root/.ccr/ca-bundle.crt'); os.environ['GDAL_DISABLE_READDIR_ON_OPEN'] = 'EMPTY_DIR'
+    import rasterio
+    from rasterio.windows import from_bounds
+    y, m = scene.split('_')[2][:4], int(scene.split('_')[2][4:6])
+    with rasterio.open(f'https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/4/Q/DK/{y}/{m}/{scene}/TCI.tif') as ds:
+        w = from_bounds(E0 - 100, N0 - 100, E1 + 100, N1 + 100, ds.transform).round_offsets().round_lengths()
+        tci = np.moveaxis(ds.read(window=w), 0, -1).astype(np.float32) / 255; tr = ds.window_transform(w)
+    col = np.stack([map_coordinates(tci[..., k], [(tr.f - NN) / 10 - 0.5, (EE - tr.c) / 10 - 0.5], order=3) for k in range(3)], -1)
     col = np.clip(col * 1.9, 0, 1) ** 0.85
-    z = np.load(f'{C}/../dem1m.npy')
-    gy, gx = np.gradient(np.nan_to_num(z, nan=0), 1.0)
+    z = np.load(f'{C}/dem_near_2m.npy'); zb = json.load(open(f'{C}/dem_near_2m.json'))['box']
+    gy, gx = np.gradient(np.nan_to_num(z, nan=0), 2.0)
     sl = np.arctan(np.hypot(gx, gy) * 1.5); asp = np.arctan2(-gx, gy)
     hs = np.sin(np.radians(45)) * np.cos(sl) + np.cos(np.radians(45)) * np.sin(sl) * np.cos(np.radians(315) - asp)
-    hsr = map_coordinates(hs, [(2423500 - NN) - 0.5, (EE - 448500) - 0.5], order=1, cval=0.7)
+    hsr = map_coordinates(hs, [(zb[3] - NN) / 2 - 0.5, (EE - zb[0]) / 2 - 0.5], order=1, cval=0.7)
     im = Image.fromarray((np.clip(col * (0.45 + 0.75 * hsr[..., None]), 0, 1) * 255).astype(np.uint8))
     d = ImageDraw.Draw(im)
     T = lambda pts: [((x - E0) / px, (N1 - y) / px) for x, y in pts]

@@ -14,10 +14,14 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 FT = 0.3048
 
 # ---- registration (see geo_register.py for how these were measured) ----
-LOT_UTM = (450097.0, 2420801.0)       # centre of our lot, metres E, N (WGS84 UTM 4N)
-X_BEARING = 46.3                      # grid bearing of world +x (deg clockwise from grid north)
+# The Na Hiku strip graded in 2025-26 is bare soil in the Jun-Sep 2026 Sentinel-2 scenes: centre
+# 450108 E 2420810 N, long axis at grid bearing 136.3 (135-138 in three scenes), ~340 m long. The row of
+# fourteen lots (70 ft = 21.3 m apart, 298 m) is placed from 10 m inside the strip's north-west end, its
+# lots-plus-road block centred across the strip; the lots stand back from the golf pond on the south-west.
+LOT_UTM = (450089.0, 2420822.0)       # centre of our lot (7th from the north-west), metres E, N (WGS84 UTM 4N)
+X_BEARING = 46.3                      # grid bearing of world +x (lot axis, fairway -> street), deg from grid north
 CONVERGENCE = -0.180                  # pyproj meridian convergence at the lot (deg)
-LOT_GROUND_M = 16.8                   # ground elevation at the lot (m above local mean sea level), 2019 USGS lidar
+LOT_GROUND_M = 17.6                   # ground over our lot (m above local mean sea level), 2019 USGS lidar mean
 REG_ERR_M = 25.0                      # 1-sigma position error of the anchor (m)
 
 # Area of interest for the far field (UTM metres): Hanapepe to Lihu'e, 20 km of ocean to the Wai'ale'ale

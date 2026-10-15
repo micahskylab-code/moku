@@ -326,7 +326,9 @@ plan['site'] = dict(
 )
 plan['viewpoints'] = [
     # hero views framed like the brochure renderings (2200x1161, 1.9:1; fov is vertical, ~24-26 mm lens)
-    dict(id='front', pos=[196, 22.3], eye=19, absolute=True, look=[60, 22.3], lookH=7, fov=38, sun=[58, 320], aspect=1.895, photo='ref/front.png'),
+    # suns are real moments at Kukui'ula (alt, world azimuth from +x toward +z; true north = world az 335.2):
+    #   front: 21 Jun 10:00 HST (alt 53, compass 80)   back: alt 44, compass 240 (e.g. late Sep ~3:20 pm)
+    dict(id='front', pos=[196, 22.3], eye=19, absolute=True, look=[60, 22.3], lookH=7, fov=38, sun=[53, 55], aspect=1.895, photo='ref/front.png'),
     dict(id='back', pos=[-50, -15], eye=2.4, absolute=True, look=[-4, 23], lookH=3.6, fov=40, sun=[44, 215], aspect=1.895, photo='ref/back.png'),
     dict(id='front-wide', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320]),
     dict(id='back-wide', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215]),

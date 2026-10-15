@@ -2,11 +2,15 @@
 // baked into geodata/ by scripts/geo_build.py in this model's world frame (feet, y up, our floor = 0).
 //
 // Terrain is a set of nested square rings around our lot, each twice the size and twice the grid
-// spacing of the one inside (a static clipmap): ~11 ft spacing next to the neighbourhood, ~1/4 mile at
-// the far edge 10 miles out. The rings inside the near square use the near texture (1.8 ft/texel...
-// 1.8 m), the rest the far texture. Odd vertices on a ring's outer edge are snapped onto the coarser
-// ring's edge so there are no cracks. Where the modelled neighbourhood is (keep), the rings have a
-// hole and the heights ease from the modelled ground to the real ground.
+// spacing of the one inside (a static clipmap): ~12 ft spacing next to the neighbourhood, ~1500 ft at
+// the far edge ten miles out. Rings inside the near square (+-6000 ft) use the near texture (1.8 m per
+// texel, Sentinel-2 sharpened with lidar-era canopy, OSM roads and building footprints), the rest the
+// far texture (8 m per texel). Odd vertices on a ring's outer edge are snapped onto the coarser ring's
+// edge so there are no cracks. Where the modelled neighbourhood is (keep), the rings have a hole and
+// the heights ease from the modelled ground to the real ground.
+//
+// Also here: real buildings (OSM + Microsoft footprints) and trees (Meta/WRI canopy height), and the
+// colour hand-over of the modelled ground. Sources and licences: geodata/realsite.json, scripts/geo_*.py.
 import * as THREE from 'three';
 
 const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -165,8 +169,8 @@ class RealSite {
   oceanSkirt(half) {
     const g = new THREE.RingGeometry(half * 0.98, 400000, 64, 1);
     g.rotateX(-Math.PI / 2);
-    const m = new THREE.MeshStandardMaterial({ name: 'realsite ocean', color: new THREE.Color().setRGB(0.02, 0.05, 0.10, THREE.SRGBColorSpace).convertSRGBToLinear(), roughness: 0.07, metalness: 0 });
-    m.color.setRGB(0.021, 0.042, 0.075);                       // linear albedo of deep water off Po'ipū in the mosaic
+    // linear albedo of the deep water off Po'ipū in the mosaic
+    const m = new THREE.MeshStandardMaterial({ name: 'realsite ocean', color: new THREE.Color().setRGB(0.021, 0.042, 0.075), roughness: 0.07, metalness: 0 });
     rippleShader(m, true);
     const mesh = new THREE.Mesh(g, m);
     const c = [(this.far.box[0] + this.far.box[2]) / 2, (this.far.box[1] + this.far.box[3]) / 2];

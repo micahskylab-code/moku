@@ -24,7 +24,8 @@ const K = 1.66;                                         // ft per site-plan px (
 export const NA_HIKU_LOTS = Array.from({ length: 14 }, (_, i) => [974 + (1419 - 974) * i / 13, 534 + (719 - 534) * i / 13]);
 const OUR_LOT = 6;                                      // which of the fourteen (0 = north-west end)
 const BACK = [-0.42, 0.91];                             // lot axis on the site plan, street -> fairway
-// Real lot pitch along the row: the 2026 grading is ~350 m long for fourteen lots (scripts/geo_register.py).
+// Real lot pitch along the row: the 2026 grading is ~340 m long for fourteen lots plus the road's turn
+// down to the main road (scripts/geo_register.py).
 // The painted plan gives 61.5 ft, exactly the lot width, i.e. no side yards at all.
 export const LOT_PITCH = 70;
 // Registration: grid bearing of world +x (the lot axis, fairway -> street) and UTM grid convergence.
@@ -201,8 +202,9 @@ function handOver(scene, keep, real, lotsRect) {
     } else if (o.isInstancedMesh && !o.userData.realsite) {
       // site.js scatter trees and palms (instances far outside the lots)
       let changed = false;
+      o.updateWorldMatrix(true, false);
       for (let i = 0; i < o.count; i++) {
-        o.getMatrixAt(i, mm); v.setFromMatrixPosition(mm);
+        o.getMatrixAt(i, mm); v.setFromMatrixPosition(mm).applyMatrix4(o.matrixWorld);
         if (!inside(v.x, v.z, 0)) { o.setMatrixAt(i, zero); changed = true; }
       }
       if (changed) { o.instanceMatrix.needsUpdate = true; o.computeBoundingSphere?.(); }

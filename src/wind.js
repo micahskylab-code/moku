@@ -45,7 +45,7 @@ function classify(m, mesh) {
   const n = (m.name || '').toLowerCase();
   if (!m.isMeshStandardMaterial) return null;
   if (n === 'foliage-frond' || /frond|leaflet|palm-leaf/.test(n)) return { mode: 1, scale: 1 };
-  if (n.startsWith('foliage-') || /leaf|leaves|foliage|shrub|hedge|canopy/.test(n)) return { mode: 0, scale: n.includes('hedge') && mesh.isInstancedMesh ? 2.5 : 1 };
+  if (n.startsWith('foliage-') || /leaf|leaves|foliage|shrub|hedge|canopy|crown/.test(n)) return { mode: 0, scale: (n.includes('hedge') || n.includes('crown')) && mesh.isInstancedMesh ? 2.5 : 1 };
   // the far palms' crowns in site.js scatterTrees: an unnamed double-sided cone
   if (!n && m.side === THREE.DoubleSide && mesh.isInstancedMesh && mesh.geometry.type === 'ConeGeometry') return { mode: 2, scale: 2.2 };
   return null;

@@ -44,7 +44,8 @@ export function createRain(scene, { count = 9000 } = {}) {
   scene.traverse(o => {
     if (!o.isMesh) return;
     for (const m of [].concat(o.material)) {
-      const w = WET.find(([n]) => n === m.name);
+      // the real site's lidar terrain (src/realsite.js): darker when wet, no puddle sheen from that far
+      const w = WET.find(([n]) => n === m.name) ?? (/^realsite (near|far|ground|terrain)/.test(m.name ?? '') ? [m.name, 0.15, 0.15] : null);
       if (!w || mats.some(x => x.m === m) || m.userData.interior) continue;
       mats.push({ m, color: m.color.clone(), rough: m.roughness, env: m.envMapIntensity ?? 1, por: w[1], gloss: w[2] });
     }
