@@ -4,7 +4,7 @@
 // a paver walk with grass joints up the middle of the front courtyard.
 import * as THREE from 'three';
 import { mat } from './materials.js';
-import { fbm } from './textures.js';
+import { fbm, texture } from './textures.js';
 import { footprint } from './house.js';
 import { plantBed, plumeria, frondMaterial, foliageTexture } from './plants.js';
 import { distToSeg } from './geom.js';
@@ -62,6 +62,14 @@ export function buildSite(plan, scene, colliders) {
   // ---- planting ----
   const plants = new THREE.Group();
   for (const p of S.palms ?? []) plants.add(palm(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 30, p[3] ?? 1));
+  // areca / foxtail clumps: the 8-16 ft understorey palms that fill the renderings
+  for (const [x, y, h = 13] of S.arecas ?? []) {
+    const r = rnd(Math.round(x * 31 + y * 17));
+    for (let k = 0; k < 6; k++) {
+      const a = r() * Math.PI * 2, d = 0.4 + r() * 1.4;
+      plants.add(palm(x + Math.cos(a) * d, y + Math.sin(a) * d, terrainH(x, y), h * (0.55 + r() * 0.45), 4, k, { trunkR: 0.14, frondLen: 0.5, fronds: 0.55, shaft: false }));
+    }
+  }
   for (const p of S.plumeria ?? []) plants.add(plumeria(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 1));
   for (const b of S.beds ?? []) plants.add(plantBed(b, terrainH));
   for (const l of S.loungers ?? []) {
@@ -73,7 +81,7 @@ export function buildSite(plan, scene, colliders) {
   g.add(scatterTrees(terrainH, S));
 
   // ---- ocean on the horizon ----
-  const ocean = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), new THREE.MeshStandardMaterial({ color: '#2a5f86', roughness: 0.25, metalness: 0.1 }));
+  const ocean = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), new THREE.MeshStandardMaterial({ name: 'ocean', color: '#2a5f86', roughness: 0.25, metalness: 0.1 }));
   ocean.rotation.x = -Math.PI / 2; ocean.position.set(0, S.seaLevel ?? -230, 0);
   ocean.receiveShadow = false;
   g.add(ocean);
@@ -97,7 +105,7 @@ function makeTerrain(S, grade) {
     const out = Math.hypot(dx, dy);
     if (out <= 0) return grade;
     const toward = (x - cx) * ox + (y - cy) * oy;
-    const bank = -(S.bank ?? 7.5) * ss(0, 1.2, lot[0] - x);
+    const bank = -(S.bank ?? 7.5) * ss(0.6, 5, lot[0] - x);
     const far = ss(60, 600, out);
     const fall = -Math.max(0, toward) * 0.05 * far;
     const rise = Math.max(0, -toward - 900) * 0.11 * far;
@@ -115,7 +123,7 @@ function scatterTrees(H, S) {
   const ok = (x, y) => {
     if (x > lot[0] - 90 && x < lot[2] + 40 && y > lot[1] - 40 && y < lot[3] + 30) return false;
     const [ox, oy] = S.oceanDir ?? [-0.87, -0.5], d = Math.hypot(x - 40, y - 20);
-    if (((x - 40) * ox + (y - 20) * oy) / d > 0.55 && d < 2500) return false;          // keep the ocean view open
+    if (((x - 40) * ox + (y - 20) * oy) / d > 0.85 && d < 700) return false;           // keep the ocean view open
     if (S.landuse && S.landuse(x, y) > 0) return false;              // fairways, greens, field stay open
     if ((S.homes ?? []).some(([hx, hy]) => Math.hypot(x - hx, y - hy) < 42)) return false;
     for (const line of S.streets ?? []) for (let i = 0; i < line.length - 1; i++) if (distToSeg(x, y, line[i], line[i + 1]) < 26) return false;
@@ -189,7 +197,7 @@ function terrainMesh(H, S) {
   geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
   geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   geo.setIndex(idx); geo.computeVertexNormals();
-  const m = mat('grass').clone(); m.vertexColors = true;
+  const m = mat('grass').clone(); m.vertexColors = true; m.name = 'terrain';
   const landMap = landTexture(S);
   m.onBeforeCompile = sh => {
     sh.uniforms.uLand = { value: landMap.tex }; sh.uniforms.uLandBox = { value: new THREE.Vector4(...landMap.box) };
@@ -297,7 +305,7 @@ function pool(P, grade, colliders) {
   // all held up by a coral-stone retaining wall
   if (P.edge === 'x0') {
     const drop = P.drop ?? 4;
-    const sheet = new THREE.Mesh(new THREE.PlaneGeometry(d, drop), new THREE.MeshPhysicalMaterial({ color: '#cfeff3', transparent: true, opacity: 0.55, roughness: 0.15, envMapIntensity: 1.5 }));
+    const sheet = new THREE.Mesh(new THREE.PlaneGeometry(d, drop), new THREE.MeshPhysicalMaterial({ color: '#8fd3df', transparent: true, opacity: 0.5, roughness: 0.05, envMapIntensity: 1.6, normalMap: texture('ripple').normalMap, normalScale: new THREE.Vector2(0.15, 1.2) }));
     sheet.position.set(x0 - 0.2, water - drop / 2, (y0 + y1) / 2); sheet.rotation.y = -Math.PI / 2; g.add(sheet);
     const face = sbox(0.3, drop, d, 'poolTile'); face.position.set(x0 - 0.05, water - drop / 2, (y0 + y1) / 2); g.add(face);
     const basin = new THREE.Mesh(new THREE.PlaneGeometry(2.6, d), mat('water')); basin.rotation.x = -Math.PI / 2; basin.position.set(x0 - 1.6, water - drop, (y0 + y1) / 2); g.add(basin);
@@ -314,8 +322,8 @@ function stoneWall(W, H, colliders) {
   for (let i = 0; i < W.pts.length - 1; i++) {
     const [ax, ay] = W.pts[i], [bx, by] = W.pts[i + 1], len = Math.hypot(bx - ax, by - ay);
     const nx = -(by - ay) / len, ny = (bx - ax) / len, probe = [];
-    for (const t of [0, 0.5, 1]) for (const s of [-2.5, 2.5]) probe.push(H(ax + (bx - ax) * t + nx * s, ay + (by - ay) * t + ny * s));
-    const base = Math.min(...probe) - (W.footing ?? 1);
+    for (const t of [0, 0.5, 1]) for (const s of [-6, -2.5, 2.5, 6]) probe.push(H(ax + (bx - ax) * t + nx * s, ay + (by - ay) * t + ny * s));
+    const base = Math.min(...probe) - (W.footing ?? 2.5);
     const top = (W.top ?? (H(ax, ay) + (W.height ?? 2)));
     const m = sbox(len + 1.2, top - base, 1.2, 'ashlar');
     m.position.set((ax + bx) / 2, (top + base) / 2, (ay + by) / 2); m.rotation.y = -Math.atan2(by - ay, bx - ax); g.add(m);
@@ -331,26 +339,27 @@ const frondShape = (() => {
 })();
 
 // Tall palm: curved ringed trunk, ~16 arching fronds.
-export function palm(x, y, ground, height = 30, lean = 1, seed = 0) {
+export function palm(x, y, ground, height = 30, lean = 1, seed = 0, { trunkR = 0.55, frondLen = 1, fronds = 1, shaft = true } = {}) {
   const r = rnd(Math.round(x * 13 + y * 7 + seed));
   const g = new THREE.Group(); g.position.set(x, ground, y);
+  if (globalThis.__palmProxies) { globalThis.__palmProxies.push({ x, y, ground, height, lean, seed, trunkR, frondLen, kind: shaft ? 'foxtail' : 'areca' }); return g; }
   const leanDir = r() * Math.PI * 2, bend = (0.03 + r() * 0.05) * lean;
   const pts = [];
   for (let k = 0; k <= 12; k++) { const t = k / 12; pts.push(new THREE.Vector3(Math.cos(leanDir) * bend * height * t * t, height * t, Math.sin(leanDir) * bend * height * t * t)); }
   const curve = new THREE.CatmullRomCurve3(pts);
-  const trunk = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.55, 10), trunkMat());
+  const trunk = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, trunkR, 10), trunkMat());
   const pos = trunk.geometry.attributes.position;
   for (let i = 0; i < pos.count; i++) { const t = pos.getY(i) / height; const s = 1.15 - t * 0.35; pos.setX(i, pos.getX(i) * s + (1 - s) * pts[Math.min(12, Math.round(t * 12))].x); pos.setZ(i, pos.getZ(i) * s + (1 - s) * pts[Math.min(12, Math.round(t * 12))].z); }
   trunk.geometry.computeVertexNormals();
   g.add(trunk);
   const top = pts[12];
   // smooth green crownshaft under the fronds (foxtail / royal palm)
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 4.0, 14), mat('#56653a')); shaft.position.copy(top).add(new THREE.Vector3(0, -2.2, 0)); g.add(shaft);
-  const crown = new THREE.Mesh(new THREE.SphereGeometry(0.9, 10, 8), mat('#556b2c')); crown.position.copy(top); g.add(crown);
+  if (shaft) { const sh = new THREE.Mesh(new THREE.CylinderGeometry(trunkR * 1.1, trunkR * 1.25, 4.0, 14), mat('#5d6e38')); sh.position.copy(top).add(new THREE.Vector3(0, -2.2, 0)); g.add(sh); }
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(trunkR * 1.6, 10, 8), mat('#556b2c')); crown.position.copy(top); g.add(crown);
   const fm = frondMaterial();
-  const n = 16 + Math.floor(r() * 5);
+  const n = Math.round((16 + Math.floor(r() * 5)) * fronds);
   for (let k = 0; k < n; k++) {
-    const len = 10 + r() * 4, a = k / n * Math.PI * 2 + r() * 0.3, droop = 0.35 + r() * 0.65;
+    const len = (10 + r() * 4) * frondLen, a = k / n * Math.PI * 2 + r() * 0.3, droop = 0.35 + r() * 0.65;
     const geo = new THREE.PlaneGeometry(len, len * 0.32, 12, 1);
     geo.rotateX(-Math.PI / 2); geo.translate(len / 2, 0, 0);
     const p = geo.attributes.position;
@@ -371,10 +380,10 @@ let tMat = null;
 function trunkMat() {
   if (tMat) return tMat;
   const c = document.createElement('canvas'); c.width = 64; c.height = 256;
-  const x = c.getContext('2d'); x.fillStyle = '#7f786c'; x.fillRect(0, 0, 64, 256);
+  const x = c.getContext('2d'); x.fillStyle = '#6f675c'; x.fillRect(0, 0, 64, 256);
   for (let k = 0; k < 256; k += 8) { x.fillStyle = 'rgba(60,45,30,.45)'; x.fillRect(0, k, 64, 2); x.fillStyle = 'rgba(200,185,160,.25)'; x.fillRect(0, k + 3, 64, 2); }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 10); t.colorSpace = THREE.SRGBColorSpace;
-  tMat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.95 });
+  tMat = new THREE.MeshStandardMaterial({ name: 'trunk', map: t, roughness: 0.95 });
   return tMat;
 }
 

@@ -219,19 +219,19 @@ function dress(g, o, x0, x1, yb, head, T, plusIn, minusIn, colliders, at) {
       const piv = new THREE.Group();
       const leaf = new THREE.Mesh(new THREE.BoxGeometry(w - 0.05, h - 0.1, 0.12), mat('slats'));
       leaf.position.set(w / 2, cy, 0); piv.add(leaf);
-      piv.position.set(x0, 0, 0.3); piv.rotation.y = -1.3; g.add(piv);
+      piv.position.set(x0, 0, 0); g.add(piv);
       break;
     }
     case 'carriage': {
       // wood carriage door: vertical boards below, black-framed glass lites above
       const split = yb + h * 0.62;
-      const wood = new THREE.Mesh(new THREE.BoxGeometry(w, split - yb, 0.25), mat('teak'));
+      const wood = new THREE.Mesh(new THREE.BoxGeometry(w, split - yb, 0.25), mat('cedar'));
       wood.position.set(cx, (yb + split) / 2, 0); g.add(wood);
       for (let k = 1; k < Math.round(w / 0.6); k++) box(g, 0.04, split - yb - 0.1, 0.3, x0 + k * w / Math.round(w / 0.6), (yb + split) / 2, 0, mat('#6b4a2e'));
-      box(g, w, 0.35, 0.3, cx, split, 0, mat('teak'));
+      box(g, w, 0.35, 0.3, cx, split, 0, mat('cedar'));
       const n = 4, lw = w / n;
       for (let k = 0; k < n; k++) { frameRect(g, x0 + k * lw, x0 + (k + 1) * lw, split + 0.17, head, 0.2); pane(g, x0 + k * lw, x0 + (k + 1) * lw, split + 0.17, head); }
-      box(g, w, 0.3, 0.3, cx, head - 0.15, 0, mat('teak'));
+      box(g, w, 0.3, 0.3, cx, head - 0.15, 0, mat('cedar'));
       casing();
       if (o.sconces && outSide) for (const sx of [x0 - 1.1, x1 + 1.1]) {
         // black cylinder wall sconces either side of the door (front rendering)

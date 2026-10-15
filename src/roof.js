@@ -215,11 +215,11 @@ export class Roofs {
       // a gablet buried inside another roof (e.g. a wing's inner end) is not built
       if (this.#hidden(C, ...at(e, mid), apex - 0.05, 0) || this.#hidden(P, ...at(e, mid), base + 0.05, 0)) continue;
       const shape = new THREE.Shape([new THREE.Vector2(-half, 0), new THREE.Vector2(half, 0), new THREE.Vector2(0, apex - base)]);
-      const tri = new THREE.Mesh(new THREE.ShapeGeometry(shape), mat('louverWhite'));
+      const tri = new THREE.Mesh(new THREE.ShapeGeometry(shape), mat('louverGrey'));
       const [px, py] = at(e, mid);
       tri.position.set(px, base, py);
       tri.rotation.y = alongX ? Math.PI / 2 : 0;
-      tri.material = mat('louverWhite');
+      tri.material = mat('louverGrey');
       g.add(tri);
       // thin trim around the vent
       for (const s of [-1, 1]) {

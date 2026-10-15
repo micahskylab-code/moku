@@ -44,6 +44,27 @@ Walk: WASD / arrows + mouse (desktop), drag left/right halves (phone). The map j
    the biggest gap; fix, re-shoot, repeat.
 4. `node scripts/video.mjs lot25 night` renders the night film to `shots/lot25-night.mp4`.
 
+## Photoreal renders (Blender Cycles)
+
+The browser model is real-time; for photographs the same scene is path traced in Blender
+(`pip install bpy`, CPU, OpenImageDenoise, AgX):
+
+```
+node scripts/export.mjs lot25                       # scene -> blender/nahiku.glb + nahiku-meta.json
+python3 scripts/blender_render.py blender/nahiku.glb blender/nahiku-meta.json shots/cycles \
+    --views front back great-room kitchen --samples 256 --res 1920x1200
+```
+
+* `scripts/blender_render.py` gives the scene physical sky and sun, refracting glass and water,
+  translucent leaves and filmic tone mapping.
+* `scripts/palms.py` regrows every palm (ours and the other thirteen lots) leaf by leaf: ringed
+  trunks, crownshafts, foxtail and areca fronds of individual leaflets, fruit, dead fronds.
+* **Night film:** `scripts/night_film.py` (timeline), `--night --plate` (one path-traced 360° night
+  plate), `scripts/starpass.mjs` (real star field per frame), then `scripts/night_composite.py` →
+  `shots/lot25-night.mp4`.
+* **360° tour:** `--panos tour/panos.json` renders equirectangular panoramas to `tour/`;
+  `tour.html` shows them with hotspots between rooms.
+
 The brochure's images, plans and the site plan are the developer's copyright ("no content may be
 copied, republished, posted or distributed without prior permission"). They are used here only as
 reference and are not in this repository. Get the developer's permission before publishing this

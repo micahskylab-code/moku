@@ -29,7 +29,9 @@ document.title = plan.name;
 document.getElementById('plan-name').textContent = plan.name;
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: shot, powerPreference: 'high-performance' });
-renderer.setPixelRatio(shot ? 1 : Math.min(devicePixelRatio, quality === 'low' ? 1.25 : 2));
+// ultra: supersampled, 8k shadows, denser AO — for a desktop GPU, and for stills (?q=ultra&ss=2)
+const ultra = quality === 'ultra';
+renderer.setPixelRatio(shot ? Number(params.get('ss') ?? 1) : Math.min(devicePixelRatio * (ultra ? 1.5 : 1), quality === 'low' ? 1.25 : ultra ? 3 : 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -44,6 +46,8 @@ const view = viewId ? plan.viewpoints.find(v => v.id === viewId) : null;
 if (viewId && !view) throw new Error(`no viewpoint ${viewId}`);
 
 // ---------- build ----------
+// for the path tracer, palms are only recorded (position, size); Blender grows them leaf by leaf
+if (params.has('export')) globalThis.__palmProxies = [];
 const T0 = performance.now(), mark = s => params.has('timing') && console.warn(`[timing] ${s} ${(performance.now() - T0).toFixed(0)} ms`);
 const { colliders, roofs, ceilingAt } = buildHouse(plan, scene);
 mark('house');
@@ -54,20 +58,29 @@ if (params.get('hood') !== '0') { shellParts = bakeShell(scene); mark('shell'); 
 const B = bounds(plan.rooms.map(r => r.polygon));
 const cx = (B.minX + B.maxX) / 2, cz = (B.minY + B.maxY) / 2;
 
+// ---------- export for the path tracer ----------
+if (params.has('export')) {
+  const { exportForBlender } = await import('./export.js');
+  await exportForBlender({ scene, plan, terrainH, lamps, siteLayout, groundAt: (x, y) => plan.rooms.some(r => !r.label_only && inside([x, y], r.polygon)) ? 0 : terrainH(x, y) });
+  document.body.dataset.ready = '1';
+  throw new Error('exported');   // stop here; the page is only a converter in this mode
+}
+
 // ---------- light ----------
 let nightSky = null, sun = null;
 if (!night) {
   const [alt, az] = view?.sun ?? plan.sun ?? [50, 230];
   const { sunDir } = makeDaySky(scene, renderer, { sunAlt: alt, sunAz: az });
-  sun = new THREE.DirectionalLight('#fff1dc', 4.0);
+  sun = new THREE.DirectionalLight('#ffe9cf', 4.8);
   sun.position.set(cx + sunDir.x * 400, sunDir.y * 400, cz + sunDir.z * 400);
   sun.target.position.set(cx, 0, cz);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(quality === 'low' ? 2048 : 4096, quality === 'low' ? 2048 : 4096);
+  const sm = quality === 'low' ? 2048 : ultra ? 8192 : 4096;
+  sun.shadow.mapSize.set(sm, sm);
   Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 110, bottom: -110, near: 50, far: 900 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04; sun.shadow.radius = 3;
   scene.add(sun, sun.target);
-  scene.add(new THREE.HemisphereLight('#e8eef5', '#a99b83', 0.2));
+  scene.add(new THREE.HemisphereLight('#e8eef5', '#a99b83', 0.12));
   const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
   const roomEnv = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
   // Materials authored as interior (reflection < 1) see a neutral room, not the sky.
@@ -116,11 +129,11 @@ if (!night) {
 // ---------- post ----------
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-if (quality !== 'low' && !(night && params.get('video'))) {
+if (quality !== 'low' && !(night && (params.get('video') || params.has('starpass')))) {
   const ao = new GTAOPass(scene, camera, innerWidth, innerHeight);
-  ao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.5, thickness: 3, scale: 1.2, samples: 16 });
+  ao.updateGtaoMaterial({ radius: 2.2, distanceExponent: 1.5, thickness: 3, scale: 1.2, samples: ultra ? 24 : 16 });
   ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
-  ao.blendIntensity = 0.85;
+  ao.blendIntensity = 1.0;
   composer.addPass(ao);
 }
 if (night) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.5, 0.82));
@@ -162,6 +175,23 @@ if (shot) {
   if (window.__beforeShot) window.__beforeShot();
   mark('pre-render'); render(); mark('render1'); render(); mark('render2');
   document.body.dataset.ready = '1';
+} else if (params.has('starpass')) {
+  // Star layer for the path-traced night film: only the sky, camera driven by blender/timeline.json
+  document.body.classList.add('shot');
+  const tl = await (await fetch('blender/timeline.json')).json();
+  for (const c of scene.children) c.visible = c === nightSky.group;
+  window.__frames = tl.frames.length;
+  window.renderFrame = i => {
+    const f = tl.frames[i];
+    const dir = new THREE.Vector3(Math.cos(f.pitch) * Math.cos(f.yaw), Math.sin(f.pitch), Math.cos(f.pitch) * Math.sin(f.yaw));
+    camera.position.set(0, 0, 0); camera.lookAt(dir);
+    camera.fov = f.fov; camera.updateProjectionMatrix();
+    nightSky.lines.material.opacity = f.lines;
+    nightSky.starMat.uniforms.uTwinkle.value = f.twinkle;
+    render(); return true;
+  };
+  window.renderFrame(0);
+  document.body.dataset.ready = '1';
 } else if (params.get('video')) {
   const { runVideo } = await import('./video.js');
   document.body.classList.add('shot');
@@ -190,6 +220,8 @@ function startInteractive() {
   btn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'walk' ? 'fly' : 'walk'); });
   document.getElementById('time').addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('time', night ? 'day' : 'night'); location.search = p; });
   document.getElementById('time').textContent = night ? 'Day' : 'Night sky';
+  const qb = document.getElementById('quality'); qb.textContent = ultra ? 'Standard' : 'Ultra';
+  qb.addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('q', ultra ? 'high' : 'ultra'); location.search = p; });
   overlay.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) look.lock(); else overlay.hidden = true; });
   look.addEventListener('lock', () => (overlay.hidden = true));
   look.addEventListener('unlock', () => (overlay.hidden = mode === 'fly'));

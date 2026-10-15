@@ -42,7 +42,7 @@ export function makeDaySky(scene, renderer, { sunAlt = 48, sunAz = 235 } = {}) {
         // trade-wind cumulus low on the horizon, wisps higher up
         vec2 q = vD.xz / (vD.y + 0.12);
         float cu = smoothstep(0.52, 0.75, fbm(q * 1.6 + vec2(3.0, 1.0))) * (1.0 - smoothstep(0.05, 0.35, h)) * smoothstep(0.0, 0.03, h);
-        float ci = smoothstep(0.55, 0.85, fbm(q * vec2(0.6, 3.0) + 7.0)) * smoothstep(0.15, 0.4, h) * 0.45;
+        float ci = smoothstep(0.62, 0.9, fbm(q * vec2(0.9, 1.6) + 7.0)) * smoothstep(0.15, 0.35, h) * (1.0 - smoothstep(0.5, 0.8, h)) * 0.35;
         vec3 cloud = mix(vec3(0.78, 0.82, 0.88), vec3(1.0), smoothstep(0.5, 0.9, fbm(q * 3.0)));
         c = mix(c, cloud, clamp(cu + ci, 0.0, 0.9));
         gl_FragColor = vec4(c * 1.55, 1.0); }`,

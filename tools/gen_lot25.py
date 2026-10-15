@@ -42,7 +42,7 @@ hwall(555, 588, 1986, EXT, [
     ('window', 1457, 1505, BED), ('window', 1668, 1716, BED),
     ('window', 1817, 1864, BATH), ('window', 1908, 1954, BATH)])
 # Lanai back wall (outdoor kitchen side) with two unglazed openings
-hwall(627, 217, 596, EXT, [('opening', 241, 286, dict(sill=3.5, head=7.5)), ('opening', 496, 540, dict(sill=3.5, head=7.5))])
+hwall(627, 217, 596, EXT, [('window', 241, 286, dict(sill=3.5, head=7.5)), ('window', 496, 540, dict(sill=3.5, head=7.5))])
 # Great room west wall: thick pocket wall, 18 ft of stacking glass that disappears into the pocket
 vwall(604, 551, 1211, 1.39, [('pocket', 672, 1090, dict(head=9.5))])
 # Great room east wall: kitchen side openings, hall, glass pivot front door with sidelights
@@ -231,7 +231,7 @@ posts = [[X(217), Y(627)], [X(217), Y(1207)], [X(1465), Y(921)], [X(1465), Y(120
 beams = [dict(a=[X(217), Y(627)], b=[X(217), Y(1207)]), dict(a=[X(1465), Y(921)], b=[X(1465), Y(1207)])]
 
 plan = dict(
-    name='Na Hiku · Aepo Nei Lot 25',
+    name='Nā Hiku spec home · Lot 25 design · Kukuiʻula',
     note='Traced from the Na Hiku Buyer Preview Package, Lot 25 floor plan, at 23 px/ft (300 dpi). Renderings and plan are the developer\'s; this model is an interpretation.',
     units='ft', plate=10.0, grade=-0.6,
     start=dict(pos=[X(1600), Y(1063)], look=[X(1284), Y(1063)]),
@@ -303,10 +303,12 @@ plan['site'] = dict(
     lot=[-34.4, -8, 150, 53.5], oceanDir=[-0.91, 0.42], seaLevel=-230, bank=5.0,
     pool=dict(rect=[-31, 1, -17, 31], spa=[-23.5, 1, -17, 7.5], edge='x0', drop=3.0, deck=3),
     paths=[dict(rect=[X(1753), 19.8, 152, 24.8], material='stepping'), dict(rect=[GX1, GY0, 152, GY1], material='grassPavers')],
-    walls=[dict(pts=[[-34.4, -8], [-34.4, -2]], height=1.8), dict(pts=[[-34.4, 34], [-34.4, 53.5]], height=1.8)],
+    walls=[dict(pts=[[-34.4, -8], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, 31], [-34.4, 53.5]], height=0.35)],
     loungers=[[-28.5, -5, 90], [-24.5, -5, 90]],
-    palms=[[-29.5, -5.5, 34], [-26, -1.2, 38], [-8, 47, 36], [-40, -4, 30], [95, -6, 30], [92, 51, 34], [30, -5.5, 36], [36, 51, 31],
-           [72, -5, 27], [89, 13.5, 29], [90, 31.5, 31], [61, 17.0, 23], [65, 27.8, 25], [-42, 40, 32], [140, -5, 28], [140, 50, 31]],
+    # only a few tall palms (as in both renderings); the rest of the green is understorey
+    palms=[[-29.5, -5.5, 34], [-26, -1.2, 38], [-8, 47, 36], [95, -6, 30], [140, 50, 31]],
+    arecas=[[60, 16.8, 9], [66, 28.2, 10], [89, 13, 11], [90, 32, 12], [30, -5, 15], [72, -5, 12], [36, 50.5, 14],
+            [-40, 40, 15], [140, -5, 13], [-2, 50, 12], [118, 51, 12], [46, -5.5, 12]],
     plumeria=[[102, 15.2, 0.9], [104, 29.4, 0.9], [-4, 50, 1.2], [44, 50], [139, 30.5, 0.8], [137, 14.5, 0.8]],
     beds=[dict(rect=[-34, 36, -20, 40], kind='bougainvillea'), dict(rect=[-34.2, -7, -31.5, 0.5], kind='bougainvillea'),
           dict(rect=[-42, -8, -35.5, 53], kind='bougainvillea', density=0.6),

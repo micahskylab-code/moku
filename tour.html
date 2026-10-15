@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Nā Hiku 360 Tour</title>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0f14; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: #f4efe6; touch-action: none; }
+  canvas { display: block; cursor: grab; }
+  #title { position: fixed; top: 14px; left: 16px; text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; }
+  #title small { display: block; font-size: 12px; opacity: .8; letter-spacing: .04em; }
+  #title b { font-size: 20px; font-weight: 600; }
+  #rooms { position: fixed; left: 0; right: 0; bottom: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 0 16px; }
+  #rooms button { font: inherit; font-size: 13px; padding: 8px 14px; border-radius: 999px; border: 0; background: rgba(255,255,255,.82); color: #18202c; cursor: pointer; }
+  #rooms button.on { background: #18202c; color: #fff; }
+  .spot { position: fixed; transform: translate(-50%, -50%); width: 34px; height: 34px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,.25); backdrop-filter: blur(3px); cursor: pointer; display: grid; place-items: center; }
+  .spot span { position: absolute; top: 38px; white-space: nowrap; font-size: 12px; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+  #walk { position: fixed; top: 14px; right: 16px; font: inherit; font-size: 13px; padding: 8px 14px; border-radius: 999px; border: 0; background: rgba(255,255,255,.82); color: #18202c; text-decoration: none; }
+  #fade { position: fixed; inset: 0; background: #0b0f14; opacity: 1; transition: opacity .45s; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="title"><small>Nā Hiku spec home · Lot 25 design · path-traced 360°</small><b id="room"></b></div>
+<a id="walk" href="index.html">Walk the 3D model</a>
+<div id="rooms"></div>
+<div id="fade"></div>
+<script type="module" src="src/tour.js"></script>
+</body>
+</html>

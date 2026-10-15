@@ -115,14 +115,15 @@ export async function buildNeighborhood(plan, scene, H, shell) {
   const add = (parts, m) => { if (!parts.length) return null; const mesh = new THREE.Mesh(mergeGeometries(parts), m); mesh.castShadow = mesh.receiveShadow = true; g.add(mesh); return mesh; };
   add(walls, mat('siding'));
   add(roofs, mat('roof'));
-  add(redRoofs, new THREE.MeshStandardMaterial({ color: '#8c3b2a', roughness: 0.7 }));
-  add(blueRoofs, new THREE.MeshStandardMaterial({ color: '#3d5a78', roughness: 0.6 }));
+  // muted bronze and slate metal, as on the built Kukui'ula homes (not toy red and blue)
+  add(redRoofs, new THREE.MeshStandardMaterial({ name: 'roof bronze', color: '#5e5249', roughness: 0.55, metalness: 0.2 }));
+  add(blueRoofs, new THREE.MeshStandardMaterial({ name: 'roof slate', color: '#5d666d', roughness: 0.5, metalness: 0.2 }));
   const win = new THREE.MeshStandardMaterial({ color: '#6f8796', roughness: 0.08, metalness: 0.2, emissive: '#ffc77a', emissiveIntensity: 0 });
   add(glass, win);
   const poolMat = new THREE.MeshStandardMaterial({ color: '#2aa0bf', roughness: 0.1, emissive: '#0b7fa3', emissiveIntensity: 0 });
   add(pools, poolMat);
   scene.add(g);
-  window.__neighborhood = { layout: L, night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
+  window.__neighborhood = { layout: L, offsets: shell ? L.nahiku.map(([x, y]) => [x - (L.lot[0] + L.lot[2]) / 2, H(x, y) - H((L.lot[0] + L.lot[2]) / 2, (L.lot[1] + L.lot[3]) / 2), y - (L.lot[1] + L.lot[3]) / 2]) : [], night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
   return g;
 }
 

@@ -14,7 +14,7 @@
   #plan-name { font-size: 12px; opacity: .85; letter-spacing: .02em; }
   #room { font-size: 20px; font-weight: 600; }
   #buttons { position: fixed; top: 12px; right: 16px; display: flex; gap: 8px; }
-  #buttons button { font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgba(255,255,255,.85); color: #18202c; cursor: pointer; backdrop-filter: blur(6px); }
+  #buttons button, #buttons a { text-decoration: none; font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgba(255,255,255,.85); color: #18202c; cursor: pointer; backdrop-filter: blur(6px); }
   #minimap { position: fixed; right: 16px; bottom: 16px; width: 170px; background: rgba(255,255,255,.35); border-radius: 10px; backdrop-filter: blur(4px); cursor: crosshair; }
   #overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); color: #fff; text-align: center; cursor: pointer; }
   #overlay[hidden] { display: none; }
@@ -28,7 +28,7 @@
 </head>
 <body>
 <div id="hud"><div id="plan-name"></div><div id="room"></div></div>
-<div id="buttons"><button id="time">Night sky</button><button id="mode">Fly over</button></div>
+<div id="buttons"><button id="quality">Ultra</button><button id="time">Night sky</button><button id="mode">Fly over</button><a href="tour.html">360° tour</a></div>
 <canvas id="minimap" width="340" height="300"></canvas>
 <div id="caption"></div>
 <div id="overlay"><div>

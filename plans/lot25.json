@@ -1,5 +1,5 @@
 {
- "name": "Na Hiku \u00b7 Aepo Nei Lot 25",
+ "name": "N\u0101 Hiku spec home \u00b7 Lot 25 design \u00b7 Kukui\u02bbula",
  "note": "Traced from the Na Hiku Buyer Preview Package, Lot 25 floor plan, at 23 px/ft (300 dpi). Renderings and plan are the developer's; this model is an interpretation.",
  "units": "ft",
  "plate": 10.0,
@@ -774,14 +774,14 @@
    "t": 0.5,
    "openings": [
     {
-     "type": "opening",
+     "type": "window",
      "at": 1.04,
      "width": 1.96,
      "sill": 3.5,
      "head": 7.5
     },
     {
-     "type": "opening",
+     "type": "window",
      "at": 12.13,
      "width": 1.91,
      "sill": 3.5,
@@ -2893,23 +2893,23 @@
      ],
      [
       -34.4,
-      -2
+      1
      ]
     ],
-    "height": 1.8
+    "height": 0.35
    },
    {
     "pts": [
      [
       -34.4,
-      34
+      31
      ],
      [
       -34.4,
       53.5
      ]
     ],
-    "height": 1.8
+    "height": 0.35
    }
   ],
   "loungers": [
@@ -2941,69 +2941,76 @@
     36
    ],
    [
-    -40,
-    -4,
-    30
-   ],
-   [
     95,
     -6,
     30
    ],
    [
-    92,
-    51,
-    34
+    140,
+    50,
+    31
+   ]
+  ],
+  "arecas": [
+   [
+    60,
+    16.8,
+    9
+   ],
+   [
+    66,
+    28.2,
+    10
+   ],
+   [
+    89,
+    13,
+    11
+   ],
+   [
+    90,
+    32,
+    12
    ],
    [
     30,
-    -5.5,
-    36
-   ],
-   [
-    36,
-    51,
-    31
+    -5,
+    15
    ],
    [
     72,
     -5,
-    27
+    12
    ],
    [
-    89,
-    13.5,
-    29
+    36,
+    50.5,
+    14
    ],
    [
-    90,
-    31.5,
-    31
-   ],
-   [
-    61,
-    17.0,
-    23
-   ],
-   [
-    65,
-    27.8,
-    25
-   ],
-   [
-    -42,
+    -40,
     40,
-    32
+    15
    ],
    [
     140,
     -5,
-    28
+    13
    ],
    [
-    140,
+    -2,
     50,
-    31
+    12
+   ],
+   [
+    118,
+    51,
+    12
+   ],
+   [
+    46,
+    -5.5,
+    12
    ]
   ],
   "plumeria": [

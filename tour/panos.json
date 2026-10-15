@@ -1,0 +1,65 @@
+{
+ "sunDir": [
+  -0.413,
+  0.766,
+  -0.492
+ ],
+ "panos": [
+  {
+   "id": "entry",
+   "name": "Entry courtyard",
+   "pos": [
+    61.96,
+    5.4,
+    22.26
+   ],
+   "interior": false
+  },
+  {
+   "id": "great-room",
+   "name": "Great room",
+   "pos": [
+    35.87,
+    5.4,
+    18.65
+   ]
+  },
+  {
+   "id": "kitchen",
+   "name": "Kitchen",
+   "pos": [
+    36.3,
+    5.4,
+    9.09
+   ]
+  },
+  {
+   "id": "lanai",
+   "name": "L\u0101nai",
+   "pos": [
+    9.78,
+    5.4,
+    19.09
+   ]
+  },
+  {
+   "id": "primary",
+   "name": "Primary suite",
+   "pos": [
+    8.04,
+    5.4,
+    32.57
+   ]
+  },
+  {
+   "id": "pool",
+   "name": "Pool deck",
+   "pos": [
+    -12,
+    5.0,
+    16
+   ],
+   "interior": false
+  }
+ ]
+}

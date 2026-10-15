@@ -72,7 +72,7 @@ function lin2srgb(v) { v = Math.max(0, Math.min(1, v)); return v <= 0.0031308 ? 
 // ---------- generators ----------
 const GEN = {
   // White oak, 7.5" wide planks, random lengths, fine straight grain. 8 ft tile.
-  oak: (o = {}) => wood({ tile: 8, boardFt: o.board ?? 0.625, base: o.base ?? '#c8a77e', light: o.light ?? '#dcc29c', dark: o.dark ?? '#a7845c', seed: o.seed ?? 3, ...o }),
+  oak: (o = {}) => wood({ tile: 12, boardFt: o.board ?? 0.625, base: o.base ?? '#d3bb95', light: o.light ?? '#ddc8a5', dark: o.dark ?? '#c0a37c', seed: o.seed ?? 3, lengths: [5, 10], ...o }),
   teak: (o = {}) => wood({ tile: 6, boardFt: 0.4, base: '#a07c58', light: '#b8936c', dark: '#7a5b3f', seed: 9, gap: 0, ...o }),
   oakVeneer: (o = {}) => wood({ tile: 4, boardFt: 4, base: '#cdb08a', light: '#dcc4a0', dark: '#b08f66', seed: 5, gap: 0, lengths: [4, 4], ...o }),
   deckBoards: (o = {}) => wood({ tile: 8, boardFt: 0.5, base: '#a07650', light: '#b88d63', dark: '#7c5a3c', seed: 13, ...o }),
@@ -118,7 +118,7 @@ const GEN = {
   roofMetal: () => {
     const g = grid(), { n } = g, panels = 6, pw = n / panels;
     const streak = fbm(4, 3, 41);
-    const base = hex('#6c7176');
+    const base = hex('#7d8288');
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
       const i = y * n + x, t = (x % pw) / pw, d = Math.min(t, 1 - t) * pw;
       const seam = d < 3 ? 1 - d / 3 : 0;
@@ -205,7 +205,7 @@ const GEN = {
   // Hexagonal grass pavers for the drive.
   grassPavers: () => {
     const g = grid(512), { n } = g, cells = 8, R = n / cells / 2, gr = fbm(32, 2, 191), nz = fbm(16, 2, 192);
-    const conc = hex('#c9c2b4'), grass = hex('#4e7a2c'), grass2 = hex('#6b9442');
+    const conc = hex('#cdc6b6'), grass = hex('#56792e'), grass2 = hex('#6f8f43');
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
       const i = y * n + x;
       // distance to the nearest hex centre on a staggered grid (tiles at the period)
@@ -216,7 +216,7 @@ const GEN = {
         const d = Math.max(dx * 0.866 + dy * 0.5, dy);
         if (d < best) best = d;
       }
-      const ring = best > R * 0.52 && best < R * 0.86;
+      const ring = best > R * 0.8;
       const col = ring ? mix(conc, hex('#b8b0a1'), nz(x / n, y / n)) : mix(grass, grass2, gr(x / n, y / n));
       g.c.set(col, i * 3); g.h[i] = ring ? 0.5 : 0; g.r[i] = ring ? 0.85 : 1;
     }
@@ -243,7 +243,7 @@ const GEN = {
   poolTile: () => {
     const g = grid(512), { n } = g, tiles = 24, tp = n / tiles, r = rng(91);
     const shades = Array.from({ length: tiles * tiles }, () => r());
-    const a = hex('#3aa0bb'), b = hex('#1f7896'), c = hex('#7cc8d6');
+    const a = hex('#7cc9da'), b = hex('#5fb6cc'), c = hex('#2f86a3');
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
       const i = y * n + x, tx = (x / tp) | 0, ty = (y / tp) | 0, s = shades[ty * tiles + tx];
       const gx = x % tp, gy = y % tp, j = Math.min(gx, tp - gx, gy, tp - gy) < 1.2;
@@ -277,6 +277,27 @@ const GEN = {
     return toTextures(g, { normalStrength: 3, repeatFt: 5 });
   },
 
+  // Random coral / flagstone cladding for the retaining walls.
+  flagstone: () => {
+    const g = grid(), { n } = g, r = rng(221), nz = fbm(8, 4, 222), pores = fbm(96, 2, 223);
+    const seeds = Array.from({ length: 70 }, () => [r() * n, r() * n, r()]);
+    const base = hex('#d6c3a0'), alt = hex('#c4ad86'), pale = hex('#e2d3b6'), mortar = hex('#b8a786');
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      let d1 = 1e9, d2 = 1e9, k = 0;
+      for (let s = 0; s < seeds.length; s++) {
+        const dx = Math.abs(x - seeds[s][0]), dy = Math.abs(y - seeds[s][1]);
+        const d = Math.hypot(Math.min(dx, n - dx), Math.min(dy, n - dy));
+        if (d < d1) { d2 = d1; d1 = d; k = s; } else if (d < d2) d2 = d;
+      }
+      const i = y * n + x, u = x / n, v = y / n, edge = d2 - d1 < 5;
+      let col = mix(base, seeds[k][2] > 0.6 ? alt : pale, 0.4 + (nz(u, v) - 0.5) * 0.8);
+      const p = Math.max(0, pores(u, v) - 0.64) * 2.5;
+      col = mix(col, [col[0] * 0.72, col[1] * 0.7, col[2] * 0.64], p);
+      g.c.set(edge ? mortar : col, i * 3); g.h[i] = edge ? -1.2 : (nz(u, v) - 0.5) * 0.8 - p * 0.5; g.r[i] = 0.9;
+    }
+    return toTextures(g, { normalStrength: 3, repeatFt: 9 });
+  },
+
   // Woven linen, neutral; tinted by material colour.
   linen: () => {
     const g = grid(512), { n } = g, nz = fbm(64, 2, 111), slub = fbm(8, 3, 112);
@@ -298,7 +319,7 @@ const GEN = {
       const h = Math.sin(over * Math.PI);
       g.c.set(mix(a, b, h * 0.5 + (nz(x / n, y / n) - 0.5) * 0.4), i * 3); g.h[i] = h * 0.6; g.r[i] = 1;
     }
-    return toTextures(g, { normalStrength: 1.6, repeatFt: 0.9 });
+    return toTextures(g, { normalStrength: 1.4, repeatFt: 0.6 });
   },
 
   // Cane webbing (the mood-board octagon weave); alpha holes.
@@ -366,10 +387,10 @@ const GEN = {
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
       const i = y * n + x, t = x % bw, d = Math.min(t, bat - t);
       const onBat = t < bat, edge = onBat && d < 1.5;
-      const w = (onBat ? 0.955 : 0.94) - (edge ? 0.05 : 0) + (nz(x / n, y / n) - 0.5) * 0.012;
-      g.c.set([w, w * 0.99, w * 0.965], i * 3); g.h[i] = onBat ? 1 : 0; g.r[i] = 0.85;
+      const w = (onBat ? 0.958 : 0.948) - (edge ? 0.07 : 0) + (nz(x / n, y / n) - 0.5) * 0.012;
+      g.c.set([w, w * 0.99, w * 0.962], i * 3); g.h[i] = onBat ? 1.6 : 0; g.r[i] = 0.85;
     }
-    return toTextures(g, { normalStrength: 5, repeatFt: bays * 16 / 12 });
+    return toTextures(g, { normalStrength: 9, repeatFt: bays * 16 / 12 });
   },
 
   // Vertical slat screen with gaps (garden shower walls).

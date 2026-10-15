@@ -106,8 +106,10 @@ const B = {
   armchair(g, { w = 2.9, d = 2.9, material, frame = 'oak' }) {
     const wood = frame === 'oak' ? 'woodOak' : 'teak', f = fabric(material ?? 'white');
     for (const s of [-1, 1]) {
-      box(g, 0.22, 2.0, d, s * (w / 2 - 0.11), 1.0, 0, wood, 0.05);
-      box(g, 0.3, 0.12, d, s * (w / 2 - 0.15), 2.05, 0, wood, 0.04);
+      // open side frame: two legs, a wide flat arm and a low rail
+      for (const z of [d / 2 - 0.12, -d / 2 + 0.12]) box(g, 0.2, 2.0, 0.2, s * (w / 2 - 0.12), 1.0, z, wood, 0.04);
+      box(g, 0.42, 0.12, d + 0.05, s * (w / 2 - 0.16), 2.05, 0, wood, 0.04);
+      box(g, 0.14, 0.14, d - 0.2, s * (w / 2 - 0.12), 0.55, 0, wood, 0.03);
     }
     box(g, w - 0.44, 0.15, d - 0.2, 0, 0.9, 0, wood, 0.03);
     box(g, w - 0.5, 0.45, d - 0.6, 0, 1.2, 0.2, f, 0.17);
@@ -217,7 +219,8 @@ const B = {
     lathe(g, [[0, 0], [0.42, 0.04], [0.45, 0.28], [0.2, 0.42], [0, 0.42]], 0, y - 0.3, 0, 'black');
     const hub = new THREE.Group(); hub.position.y = y - 0.15; g.add(hub);
     for (let k = 0; k < 3; k++) {
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.04, 0.55), mat('black'));
+      const blade = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 8), mat('blackMatte'));
+      blade.scale.set(1.25, 0.035, 0.3);
       blade.position.set(Math.cos(k * 2.094) * 1.45, 0, Math.sin(k * 2.094) * 1.45);
       blade.rotation.set(0.12, -k * 2.094, 0);
       blade.scale.z = 1; hub.add(blade);
@@ -290,10 +293,11 @@ const B = {
   },
 
   bed(g, { w, d, material }) {
-    const f = 'linenSand';
+    const f = 'woodOak';
     box(g, w, 1.05, d, 0, 0.62, 0, f, 0.12);
     box(g, w + 0.2, 4.4, 0.5, 0, 2.2, -d / 2 + 0.25, f, 0.2);
-    for (let k = 0; k < 6; k++) box(g, 0.06, 3.7, 0.05, -w / 2 + 0.6 + k * (w - 1.2) / 5, 2.45, -d / 2 + 0.51, '#cbbca3');
+    const cane = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.8, 2.3), mat('cane')); cane.position.set(0, 3.15, -d / 2 + 0.52); g.add(cane);
+    box(g, w - 0.6, 0.1, 0.06, 0, 4.35, -d / 2 + 0.52, 'woodOak'); box(g, w - 0.6, 0.1, 0.06, 0, 1.95, -d / 2 + 0.52, 'woodOak');
     box(g, w - 0.3, 0.85, d - 0.55, 0, 1.55, 0.18, 'linenWhite', 0.2);                      // mattress + duvet
     box(g, w - 0.1, 0.3, d * 0.6, 0, 1.95, d * 0.18, 'linenWhite', 0.15);                  // duvet fold
     box(g, w + 0.05, 0.12, 1.4, 0, 2.06, d / 2 - 1.0, 'linenSea', 0.06);                  // throw at the foot
@@ -362,10 +366,19 @@ const B = {
 
   grill(g, { w, d }) {
     // outdoor kitchen: coral stone base, quartz top, built-in stainless grill
-    box(g, w, 3.0, d, 0, 1.5, 0, 'ashlar', 0.02);
-    box(g, w + 0.1, 0.15, d + 0.1, 0, 3.07, 0, 'quartz', 0.02);
-    box(g, 3.0, 0.9, d * 0.85, 0, 3.55, 0, 'steel', 0.06);
-    box(g, 2.6, 2.0, 0.04, 0, 1.6, d / 2 + 0.02, 'steel');
+    box(g, w, 3.0, d, 0, 1.5, 0, 'coral', 0.02);
+    box(g, w + 0.15, 0.15, d + 0.15, 0, 3.07, 0.02, 'quartz', 0.02);
+    // stainless grill with a domed lid, teak doors either side
+    box(g, 3.0, 0.5, d * 0.8, 0, 3.4, 0, 'steel', 0.05);
+    const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 3.0, 24, 1, false, 0, Math.PI), mat('steel')); lid.rotation.z = Math.PI / 2; lid.position.set(0, 3.65, 0); g.add(lid);
+    box(g, 2.8, 0.06, 0.06, 0, 3.4, d * 0.4 + 0.1, 'steel');
+    for (const sx of [-1, 1]) for (let k = 0; k < 2; k++) {
+      const x = sx * (2.0 + k * 1.8);
+      if (Math.abs(x) + 0.85 > w / 2) continue;
+      box(g, 1.6, 2.3, 0.06, x, 1.45, d / 2 + 0.03, 'teak', 0.02);
+      box(g, 0.05, 0.6, 0.05, x - sx * 0.6, 1.9, d / 2 + 0.1, 'black');
+    }
+    box(g, 2.6, 2.0, 0.04, 0, 1.45, d / 2 + 0.02, 'steel');
   },
 
   lounger(g, { w = 2.4, d = 6.4 }) {
@@ -380,7 +393,7 @@ const B = {
   art(g, { w = 4, h = 3, style = 'ocean', elevation = 5.4 }) {
     box(g, w + 0.3, h + 0.3, 0.12, 0, elevation, 0.06, 'woodOak');
     const pic = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.3, h - 0.3), new THREE.MeshStandardMaterial({ map: artTexture(style), roughness: 0.85 }));
-    pic.position.set(0, elevation, 0.13); g.add(pic);
+    pic.position.set(0, elevation, 0.16); g.add(pic);
     box(g, w - 0.05, h - 0.05, 0.02, 0, elevation, 0.12, 'linenWhite');
   },
 

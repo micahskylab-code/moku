@@ -7,7 +7,7 @@ const rnd = seed => () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822519) ^
 const texCache = new Map();
 
 const KINDS = {
-  bougainvillea: { leaf: ['#2f5a22', '#3d6b2a', '#4a7a30'], bloom: ['#c8187f', '#b01f8f', '#de3a96', '#a0229a'], bloomShare: 0.55, size: [2.6, 4.2], cards: 22 },
+  bougainvillea: { leaf: ['#2f5a22', '#3d6b2a', '#4a7a30'], bloom: ['#b0388f', '#9c3486', '#c24a98', '#8f3a8c'], bloomShare: 0.45, size: [2.6, 4.2], cards: 22 },
   gardenia: { leaf: ['#244d1c', '#2f5d22', '#3a6a29'], bloom: ['#fbf8ef', '#f4efe0'], bloomShare: 0.16, bloomShape: 'star', size: [2.0, 3.0], cards: 18 },
   hedge: { leaf: ['#2a5420', '#356326', '#3f6e2c'], bloom: [], bloomShare: 0, size: [3.0, 4.5], cards: 22 },
   groundcover: { leaf: ['#3e6e2c', '#4b7d33'], bloom: ['#f3ecda'], bloomShare: 0.08, size: [1.0, 1.4], cards: 8 },
@@ -44,7 +44,7 @@ export function foliageTexture(kind) {
     }
   }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  const m = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8 });
+  const m = new THREE.MeshStandardMaterial({ name: `foliage-${kind}`, map: t, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8 });
   texCache.set(kind, m);
   return m;
 }
@@ -87,10 +87,10 @@ const tiLeaf = (() => { const s = new THREE.Shape(); s.moveTo(-0.12, 0); s.quadr
 function tiBed(B, H, r) {
   const [x0, y0, x1, y1] = B.rect;
   const n = Math.max(1, Math.round((x1 - x0) * (y1 - y0) / 3.2));
-  const cols = [new THREE.Color('#8e1730'), new THREE.Color('#b0263f'), new THREE.Color('#5c1427'), new THREE.Color('#c63a55')];
+  const cols = [new THREE.Color('#9a1e2e'), new THREE.Color('#c8304a'), new THREE.Color('#6a1a2a'), new THREE.Color('#7d2a3a'), new THREE.Color('#4f6a2e')];
   const parts = [], colors = [];
   for (let k = 0; k < n; k++) {
-    const x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0), base = H(x, y), s = 0.8 + r() * 0.6, stem = 0.8 + r() * 1.4;
+    const x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0), base = H(x, y), s = 0.6 + r() * 0.8, stem = 0.6 + r() * 2.2;
     for (let j = 0; j < 14; j++) {
       const g = tiLeaf.clone();
       g.scale(s, s * (0.8 + r() * 0.4), s);
@@ -108,7 +108,7 @@ function tiBed(B, H, r) {
     parts.push(st.toNonIndexed ? st : st);
   }
   const geo = mergeGeometries(parts.map(p => p.index ? p.toNonIndexed() : p));
-  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.45 }));
+  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ name: 'foliage-ti', vertexColors: true, side: THREE.DoubleSide, roughness: 0.45 }));
   mesh.castShadow = true; mesh.receiveShadow = true;
   const g = new THREE.Group(); g.add(mesh); return g;
 }
@@ -117,7 +117,7 @@ function tiBed(B, H, r) {
 export function plumeria(x, y, ground, s = 1) {
   const r = rnd(Math.round(x * 17 + y * 3 + 11));
   const g = new THREE.Group(); g.position.set(x, ground, y); g.scale.setScalar(s);
-  const bark = new THREE.MeshStandardMaterial({ color: '#8f877a', roughness: 0.9 });
+  const bark = new THREE.MeshStandardMaterial({ color: '#6e665c', roughness: 0.9 });
   const tips = [];
   const branch = (from, dir, len, depth) => {
     const to = from.clone().addScaledVector(dir, len);
@@ -152,6 +152,6 @@ export function frondMaterial() {
     }
   }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  frondMat = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 0.7 });
+  frondMat = new THREE.MeshStandardMaterial({ name: 'foliage-frond', map: t, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 0.7 });
   return frondMat;
 }
