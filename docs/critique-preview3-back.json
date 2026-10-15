@@ -1,0 +1,133 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "This is a usable internal concept draft and clearly better than preview 1, but it is not buyer-ready. Fixed since preview 1: the CG alocasia (#3), the concrete-column palm trunks (#2), the black geometry voids (#4, no wall pixels below RGB 14 remain), the high-contrast stone (#6), the cloudless sky (#7), the chartreuse palm fronds (#8), the oversized gablet (#11), the l\u0101nai TV and furniture (part of #12), the dim l\u0101nai (#13) and the generic caption (#15). Still open: the camera (#1). It is pulled back but still level at about 1.5 m above the deck, so the house fills about 11% of the frame and the pool is a 40-50 px sliver. Also still open: the icicle-like falls and invisible catch basin (#5), the slab chaises (#9), the raw soil (#10, now a whole exposed bank at bottom left), the missing cedar header and shutters (#12), and the identical neighbour whose chaise reads as part of this yard (#14). The new regressions are a saturated chartreuse lawn over about 25% of the frame, flat front light from a real-date sun exactly behind the camera, a faceted low-poly hill behind the left hip roof, and a dense left planting mass that hides the house's left end.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 6,
+  "clean_terrain_water": 6,
+  "polished_buyer_camera": 5
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "camera",
+   "where": "Whole frame. The back camera is at pos (-24.08, 1.52, -7.04) with target (-1.22, 1.52, 7.01), fov 37\u00b0, level, about 26.8 m from the l\u0101nai.",
+   "issue": "Partly fixed from earlier #1: the camera is no longer jammed against the wall, and preview 2's drone overshoot is gone. But the eye sits level at about 1.5 m above the deck and far back. The house fills only about 11% of the frame (x\u2248380-1050, y\u2248262-505), against about 28-30% in the reference. The pool water is a grazing 40-50 px sliver (y\u2248525-578, about 2% of the frame) and the catch-basin water is hidden behind its front wall. The bottom third (y\u2248580-871) is retaining walls, a soil bank and the lower lawn. The frame reads as stacked horizontal stripes: palms and sky, house, pool sliver, wall band, lawn.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move in and up to about pos (-18.1, 3.0, -3.4): about 19.5 m from the l\u0101nai, eye about 3 m above the deck and about 4.5 m above the lower lawn. Stay below preview 2's height of about 6 m, where the queen crowns curtained the fa\u00e7ade. Use fov 42-44\u00b0. Keep the camera level and use lens shift_y of about -0.12 to -0.15 instead of tilting, so verticals stay plumb. Frame from about 20% sky above the ridge down to the catch-basin coping at the bottom edge. The pool, spa, falls and basin water should then read (about 6% of the frame), and the left soil bank and most of the lower lawn drop out."
+  },
+  {
+   "rank": 2,
+   "criterion": "terrain-water",
+   "where": "Bottom-left soil bank, x\u22480-480, y\u2248600-850 (about 8% of the frame). This includes the return-wall coping at x\u22480-270, y\u2248590-625, the free-standing pier at x\u2248262-372, y\u2248598-805, and the gap at x\u2248372-480, y\u2248620-800.",
+   "issue": "Remains from earlier #10 and has grown. Exposed brown mulch runs down a steep bank with star jasmine planted in horizontal contour stripes. The return wall is perched on top of the bank instead of retaining it. A lone stone pier stands mid-slope, with a shadowed soil gap between it and the pool's left pier. Pale slabs poke through at x\u22480-80, y\u2248637-647; x\u2248107-147, y\u2248660-710; and x\u2248160-195, y\u2248845-867. It reads as an unfinished construction site in a corner the eye reaches first.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Carry the return wall down to the lower grade: a full-height wall stepping with the slope, or run the ~5 ft wall straight into the pool pier and backfill behind it, so no bank shows. Otherwise make it a terraced planter. Give the groundcover 100% coverage in a stone-edged bed and delete the stray slabs. The grading itself is assumed (I-11), but this rendering mess can be fixed now."
+  },
+  {
+   "rank": 3,
+   "criterion": "materials-lighting",
+   "where": "The lower lawn at x\u2248620-1650, y\u2248640-871 (about 20% of the frame), and the upper lawn around the pool and l\u0101nai (y\u2248500-530).",
+   "issue": "New regression. The lawn is saturated chartreuse: mean RGB about (109,128,39), hue about 72\u00b0, saturation about 0.65. The reference lawn is about (160,156,96), hue about 56\u00b0, saturation about 0.40. It is a uniform carpet with no clump, colour or mowing variation, and it is the largest single CG tell now that the sky is fixed.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Shift the lawn albedo toward hue 55-60\u00b0, cut saturation by about 35% and raise value by about 15%. Add a low-frequency colour and height variation map, faint mowing stripes, and slight yellowing and thinning at the wall bases. The camera move in defect 1 also shrinks the lower-lawn area."
+  },
+  {
+   "rank": 4,
+   "criterion": "terrain-water",
+   "where": "The vanishing-edge falls at x\u2248785-1215, y\u2248585-640, and the catch basin behind its front wall at y\u2248600-690.",
+   "issue": "Partly remains from earlier #5. The falls are now a glassy sheet that ends in rows of white spikes at y\u2248600-640, which look like icicles rather than aerated water. There is no foam or splash line, and the stone behind is not wet-darkened. The basin water is not visible at all from this eye height, so the brochure's hero feature is lost.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Keep one continuous thin sheet (IOR 1.33, roughness 0.03-0.05) with a small ripple displacement. Replace the spike streamers with thin translucent strands that break up only in the lower 30%. Add a soft white foam band at the impact line, darken and gloss the stone behind the sheet (albedo \u00d70.6, roughness about 0.15), and give the basin surface ripples. The raised camera in defect 1 will then show it."
+  },
+  {
+   "rank": 5,
+   "criterion": "architecture",
+   "where": "The neighbouring house at right, x\u22481250-1550, y\u2248340-480, and its white chaise and pool coping at x\u22481495-1575, y\u2248480-515.",
+   "issue": "Remains from earlier #14. An identical copy, with the same gablet, wing roof, black door, chaise and towel, fills the right third at almost the same scale. Its chaise and pool edge sit directly above this lot's right retaining-wall coping, so they read as part of this yard. Both the copy and the lot width or spacing are assumptions (I-6, I-14).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Resolving it needs the subdivision plat or boundary survey (lot width, I-6) and the developer's site and architectural plans for Fairway 7 homes 1-14 (I-14). Until then: plant a side-line screen hedge or plumeria at least 2.5 m tall, remove the neighbour's pool furniture, and vary the neighbour's massing (mirror it, or change its roof tone). The camera move in defect 1 also narrows the right side."
+  },
+  {
+   "rank": 6,
+   "criterion": "camera",
+   "where": "The left third: the areca clump at x\u22480-300, y\u2248100-520 (pale stems at x\u224860-150, y\u2248290-500) and the broadleaf tree and shrub mass at x\u2248130-380, y\u2248220-590.",
+   "issue": "A dense, dark planting mass hides the house's left end, so the house reads truncated at x\u2248380. The reference shows the left wing with two shuttered windows. The areca stems are still smooth, pale, evenly ringed tubes that read like PVC pipe (remains from preview 2 #3).",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the broadleaf tree 3-4 m toward the lot line, out of the sight line to the left fa\u00e7ade, and thin the areca clump to 5-7 stems of varied diameter with slight curvature. Use olive-grey stem albedo with darker, irregular leaf scars. Keep the left planting under about 15% of the frame so the full house length reads."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "Whole frame, most visibly the stone walls and piers (x\u2248480-1650, y\u2248520-690), the palm trunks and the white fa\u00e7ade.",
+   "issue": "The horizontal sun direction (-0.82, -0.57) is about 180\u00b0 from the view direction (0.85, 0.52): sun az 261\u00b0, view az about 81\u00b0. The sun therefore sits exactly behind the camera. The result is flat front light. The coping casts no visible shadow line, the stone shows no relief, the palm trunks have no terminator and the fa\u00e7ade is evenly white, so the image looks flat and synthetic. The brochure lights the scene from front-right. Earlier #13 (dim l\u0101nai) is effectively fixed, since the l\u0101nai is now lit.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep a real-site sun, but pick a real date and time that puts it about 30-40\u00b0 to the right of the camera's back. Options: 22 Sep about 14:00 HST (alt about 59\u00b0, az about 227\u00b0), or 21 Dec about 15:25 HST (alt about 29\u00b0, az about 225\u00b0, warmer light). Update the caption's Sun line to match."
+  },
+  {
+   "rank": 8,
+   "criterion": "architecture",
+   "where": "The l\u0101nai frontage: the eave line y\u2248372-380 across x\u2248540-845, the right cedar post x\u2248838-846, the narrow window left of the TV at x\u2248759-770, y\u2248398-465, and the dark strip at x\u2248834-840. The left wing is hidden at x\u2248270-380.",
+   "issue": "Partly fixed from earlier #12: the TV, cushioned lounge set and dining set now read. Still missing: the exposed cedar header beam across the l\u0101nai opening and the heavy cedar posts from p5, and the left-wing louvred shutters. The double-hung window is on the left of the TV, where p5 shows it on the right, and both openings read as dark slots without sash bars.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Exterior elevations and the window/door schedule are needed (I-2, I-12). Until then, match p5: 10-12 in cedar posts, a cedar header beam of about 10\u00d714 in under the soffit, a black-framed double-hung window right of the TV with a white meeting rail, and cedar louvred shutters on the left-wing windows."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "The two chaise lounges at x\u2248470-545, y\u2248505-560.",
+   "issue": "Remains from earlier #9. The cushions are square-edged white slabs near clipping, with no fabric weave, piping or crowning, on a plain timber frame. They read as placeholder blocks next to the now well-furnished l\u0101nai.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Reuse the l\u0101nai cushion treatment: rounded 3-4 cm bevels, welt piping, an off-white fabric at albedo about 0.75 with a weave normal map, and the rolled towel. Check they read from the new camera."
+  },
+  {
+   "rank": 10,
+   "criterion": "materials-lighting",
+   "where": "Inside the great room, the amber mottled panel at x\u2248652-682, y\u2248383-463, with a black rectangle at x\u2248666-680, y\u2248419-454.",
+   "issue": "Remains from preview 2 #7. Seen through the glass, the panel reads as glowing cork board or an orange stone texture, and it is the warmest, busiest patch on the fa\u00e7ade.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Give this wall the p7 white-oak or painted finish with low-contrast grain, check that it has no emission and no excess interior lamp hotspot, and give the black rectangle a proper frame or bezel if it is a TV or oven."
+  },
+  {
+   "rank": 11,
+   "criterion": "terrain-water",
+   "where": "The background hill behind the left hip roof, x\u2248375-425, y\u2248298-332.",
+   "issue": "New. The far terrain shows as flat-shaded, low-poly triangles in bright lawn green, with a hard edge against the sky, so it reads as a CG mound rising behind the roof.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Smooth the normals and subdivide the far real-site mesh. Apply aerial-perspective haze: desaturate about 40% and lift toward the horizon sky colour. Otherwise occlude it with background canopy."
+  },
+  {
+   "rank": 12,
+   "criterion": "terrain-water",
+   "where": "The right weir-end pier at x\u22481225-1250, y\u2248540-600, and the long right retaining wall at x\u22481245-1650, y\u2248525-640.",
+   "issue": "A residual of earlier #4. The voids are gone, but a recessed vertical slot remains between two pier blocks, and the falls stop abruptly against it. The right retaining wall is a long, blank, unplanted face, where p5 has a raised planter with bougainvillea spilling over.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Merge the pier blocks into one solid with continuous coping and a clean return. Add the p5 raised planter at the right end, with bougainvillea and groundcover trailing 0.3-0.6 m over the coping, to break up the wall."
+  },
+  {
+   "rank": 13,
+   "criterion": "materials-lighting",
+   "where": "All coral-stone walls and coping: the pool piers at x\u2248480-780, y\u2248570-780; the basin wall at x\u2248620-1280, y\u2248600-690; the right wall.",
+   "issue": "Earlier #6 is fixed (the contrast is now low). The stone is now uniformly pale and cool, mean about (202,193,181), against the reference's warm tan coral. There is no base staining, no efflorescence and no coping drip line, and the texture smears into a flat cream at the right wall's distance.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Warm the albedo toward about (205,185,155) with \u00b18% per-stone hue and value variation. Add soft grime at the wall base and a darker band under the coping drip. Keep a sharp texture mip or add procedural detail for distant walls."
+  },
+  {
+   "rank": 14,
+   "criterion": "materials-lighting",
+   "where": "The four queen palms: the hero pair crowns at x\u2248280-800, y\u22480-230, and the right pair at x\u22481080-1650, y\u22480-260.",
+   "issue": "All four crowns are the same asset with similar silhouettes. The fronds are stiff and radiate upward like a shuttlecock, while the reference queen palms have drooping, plumose fronds and seed clusters. The repetition is noticeable in the symmetrical palm framing.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make 2-3 crown variants with different frond counts and rotations. Droop the outer 40-50% of each frond, use plumose (multi-plane) leaflets, and add a green seed cluster on one or two palms. Vary trunk height by \u00b11 m."
+  },
+  {
+   "rank": 15,
+   "criterion": "labeling-honesty",
+   "where": "The caption band of back-labelled.jpg, y\u2248871-1073.",
+   "issue": "Earlier #15 is fixed: the caption is view-specific, lists site position \u00b125 m, the vanishing edge, catch basin, pool size and ~5 ft retaining wall plus grading, and drops the garage and \u02bbohana lines. The grain is now modest. Small gaps remain. The 61.5 ft lot width and ~70 ft neighbour spacing (I-6) are not listed, though they decide how much of the right third the copied neighbour fills. The retaining-wall and grading item names no resolving document.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Append 'lot 61.5 ft wide, neighbours ~70 ft apart (I-6; needs subdivision plat)' to the neighbours line. Change the wall item to '~5 ft retaining wall + grading (needs civil grading plan)'. If the sun time changes per defect 7, update the Sun line to match."
+  }
+ ]
+}
