@@ -23,6 +23,12 @@ and `<dir>/nahiku-meta.json`. The meta file holds cameras, with position, target
 interior flag; lamps, rooms and the pool; palm and plant proxies; and the night camera path.
 The glb is the hand-off format for any engine or web viewer.
 
+## Interactive model view (local only)
+`src/inspect.js` builds the one-home model view: orbit, exterior / cutaway / translucent, selectable spaces, and
+questions saved in the browser. `plans/lot25-spaces.json` holds the per-space SOURCE / ESTIMATE / ASSUMED / UNKNOWN
+wording. `scripts/inspect_qa.mjs` is the headless QA, which writes screenshots and `qa.json` to `shots/model-view/`.
+See docs/model-view.md.
+
 ## Photoreal pipeline (Blender 5.2 Cycles)
 `scripts/blender_render.py` is the entry point. It calls:
 - `scripts/materials_bpy.py`: photo materials, sky and exposure

@@ -27,12 +27,12 @@ export function buildHouse(plan, scene) {
     slab.rotateX(-Math.PI / 2);
     slab.translate(0, grade, 0);
     const floor = new THREE.Mesh(slab, [mat(room.floor ?? 'oak'), mat(room.outdoor ? 'coral' : 'trim')]);
-    floor.receiveShadow = true;
+    floor.receiveShadow = true; floor.userData.floor = true;   // model view (src/inspect.js) display classes
     group.add(floor);
     if (typeof room.ceiling === 'number') {
       const c = new THREE.Mesh(new THREE.ShapeGeometry(shape), mat('paint'));
       c.rotation.x = Math.PI / 2; c.scale.y = -1; c.position.y = room.ceiling;
-      c.material = mat('paint').clone(); c.material.side = THREE.DoubleSide;
+      c.material = mat('paint').clone(); c.material.side = THREE.DoubleSide; c.userData.ceiling = true;
       group.add(c);
       // a recessed can light per ~60 sq ft
       const xs = room.polygon.map(p => p[0]), ys = room.polygon.map(p => p[1]);
@@ -41,7 +41,7 @@ export function buildHouse(plan, scene) {
       for (let k = 0; k < n; k++) {
         const x = Math.min(...xs) + (Math.max(...xs) - Math.min(...xs)) * (k + 0.5) / n, y = (Math.min(...ys) + Math.max(...ys)) / 2;
         const can = new THREE.Mesh(new THREE.CircleGeometry(0.25, 20), mat('#f2efe9'));
-        can.rotation.x = Math.PI / 2; can.position.set(x, room.ceiling - 0.01, y); group.add(can);
+        can.rotation.x = Math.PI / 2; can.position.set(x, room.ceiling - 0.01, y); can.userData.ceiling = true; group.add(can);
       }
     }
   }

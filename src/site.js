@@ -197,6 +197,7 @@ function scatterTrees(H, S) {
   }
   trunk.count = crown.count = rec ? 0 : p;
   if (!rec) g.add(trunk, crown);
+  g.userData.tree = true;
   return g;
 }
 
@@ -390,6 +391,7 @@ export function palm(x, y, ground, height = 30, lean = 1, seed = 0, { trunkR = 0
     holder.add(fr); g.add(holder);
   }
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  g.userData.tree = true;   // the model view can hide trees (src/inspect.js)
   return g;
 }
 

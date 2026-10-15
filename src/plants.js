@@ -151,6 +151,7 @@ export function plumeria(x, y, ground, s = 1) {
   const crown = new THREE.Mesh(mergeGeometries(parts), foliageTexture('plumeria'));
   g.add(crown);
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  g.userData.tree = true;   // the model view can hide trees (src/inspect.js)
   return g;
 }
 

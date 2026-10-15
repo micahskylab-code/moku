@@ -1,0 +1,64 @@
+{
+ "note": "Model view (src/inspect.js): what each selectable space can claim, and on what basis. Room polygons come from plans/lot25.json (traced from brochure p6 by tools/gen_lot25.py); areas are computed from them at runtime. Tags: SOURCE = stated in the brochure; ESTIMATE = scale-derived from p6 (docs/assumptions-register.md E-1..E-4); ASSUMED = inferred from renderings p4/p5, the p7 board, or a default (I-1..I-15); UNKNOWN = no document supplied. Concept visualization, not construction or as-built documentation.",
+ "concept": "Concept visualization · not construction or as-built documentation · not approved architecture · views not verified",
+ "home": {
+  "name": "Nā Hiku spec home (brochure “Lot 25” design)",
+  "source": [
+   ["Main house AC", "2,300 sq ft", "p6"],
+   ["Guest ʻohana AC", "352 sq ft", "p6"],
+   ["Total AC", "2,652 sq ft", "p6"],
+   ["Covered lānai", "494 sq ft", "p6"],
+   ["Programme", "4 bedrooms · 4.5 bathrooms", "p6"],
+   ["Homesite on the Lot 25 sheet", "13,195 sq ft (Aepo Nei Lot 25, not a Nā Hiku fairway-7 lot)", "p6"]
+  ],
+  "estimate": [
+   ["Floor-plan scale", "23 px/ft at 300 dpi, fitted to the stated areas (p6 has no dimension strings or scale bar); ±3–8 % linear, roughly ±6–17 % on an area", "E-1"]
+  ],
+  "assumed": [
+   ["Garage pavilion", "22.0 × 15.9 ft, not on the floor plan (from the p4 rendering)", "I-4"],
+   ["ʻOhana placement", "faces the walk opposite the garage (p6 draws it as a separate inset)", "I-5"],
+   ["Lot", "61.5 × 184.4 ft modelled; the fairway-7 lot sizes were not supplied", "I-6"],
+   ["Heights, roof, finishes", "10 ft plate, 6.6:12 hips, finishes from the p7 concept board", "I-1, I-3, I-12"]
+  ],
+  "unknown": ["Dimensioned drawings", "Building sections and elevations", "Window and door schedule", "Finish schedule and specification", "Electrical, lighting and mechanical plans", "Site, grading and pool plans for the actual homesite"]
+ },
+ "groups": {
+  "main": { "label": "Main house", "stated": "2,300 sq ft AC for the whole main house", "tag": "SOURCE", "ref": "p6" },
+  "ohana": { "label": "Guest ʻohana", "stated": "352 sq ft AC for the whole ʻohana", "tag": "SOURCE", "ref": "p6" },
+  "lanai": { "label": "Covered lānai", "stated": "494 sq ft covered lānai (whether the entry or the ʻohana lānai count toward it is not stated)", "tag": "SOURCE", "ref": "p6" },
+  "outdoor": { "label": "Outdoor space on the plan", "stated": "no area stated", "tag": "UNKNOWN", "ref": "p6" },
+  "garage": { "label": "Garage pavilion", "stated": "not on the floor plan; sized and placed from the p4 rendering", "tag": "ASSUMED", "ref": "I-4" },
+  "site": { "label": "Site", "stated": "no site, grading or pool plan supplied", "tag": "UNKNOWN", "ref": "I-6, I-10, I-11" }
+ },
+ "spaces": {
+  "great": { "group": "main", "p6": ["GREAT ROOM", "DINING"], "notes": ["p6 draws the great room, dining and kitchen as one open room; the kitchen is a separate selectable zone inside it."] },
+  "kitchen": { "group": "main", "p6": ["KITCHEN"], "source": [["Appliance labels on p6", "“36″ REF” and “24″ SPEED OVEN”"]], "estimate": [["Refrigerator symbol", "measures 3.26 ft against its 36″ label (scale check, E-1)"]], "notes": ["A zone inside the great room; its outline is the kitchen block traced from p6, not a walled room."] },
+  "pantry": { "group": "main", "p6": ["PANTRY"] },
+  "hall": { "group": "main", "p6": [], "nameBasis": "Unlabelled circulation on p6; named “Hall” here" },
+  "vest2": { "group": "main", "p6": [], "nameBasis": "Unlabelled circulation on p6; named “Hall” here" },
+  "bed3": { "group": "main", "p6": ["BEDROOM 3"] },
+  "bath3": { "group": "main", "p6": ["BATHROOM 3"] },
+  "bed2": { "group": "main", "p6": ["BEDROOM 2"] },
+  "bath2": { "group": "main", "p6": ["BATHROOM 2"] },
+  "primary": { "group": "main", "p6": ["PRIMARY BEDROOM"] },
+  "pbath": { "group": "main", "p6": ["PRIMARY BATHROOM"] },
+  "ppass": { "group": "main", "p6": ["PRIMARY BATHROOM"], "notes": ["The passage between the two closets, inside the area p6 labels PRIMARY BATHROOM."] },
+  "pcloset1": { "group": "main", "p6": [], "nameBasis": "Unlabelled on p6; read as a closet from the hanging-rod symbols" },
+  "pcloset2": { "group": "main", "p6": [], "nameBasis": "Unlabelled on p6; read as a closet from the hanging-rod symbols" },
+  "wh": { "group": "main", "p6": ["WH"], "name": "WH closet", "nameBasis": "p6 label “WH”; read as a water-heater closet" },
+  "powder": { "group": "main", "p6": ["POWDER"], "notes": ["Read as the half bath in the stated 4.5 bathrooms."] },
+  "laundry": { "group": "main", "p6": ["LAUNDRY"] },
+  "entry": { "group": "lanai", "p6": ["ENTRY"], "notes": ["Modelled as a covered entry between the great room and the courtyard; its enclosure and glazing follow the p4 rendering (ASSUMED)."] },
+  "lanai": { "group": "lanai", "p6": ["DINING LANAI", "LIVING LANAI"], "notes": ["p6 labels a dining lānai and a living lānai; the model treats them as one covered space."] },
+  "court": { "group": "outdoor", "p6": ["COURTYARD"] },
+  "gs1": { "group": "outdoor", "p6": ["GARDEN SHOWER 1"] },
+  "gs2": { "group": "outdoor", "p6": ["GARDEN SHOWER 2"] },
+  "gs3": { "group": "outdoor", "p6": ["GARDEN SHOWER 3"] },
+  "ohana": { "group": "ohana", "p6": ["GUEST"], "notes": ["On p6 the ʻohana is a separate inset with no siting; its position on the lot is ASSUMED (I-5)."] },
+  "ohbath": { "group": "ohana", "p6": ["BATH"] },
+  "ohlanai": { "group": "ohana", "p6": ["LANAI"], "notes": ["Covered porch of the ʻohana (p6 inset label LANAI)."] },
+  "garage": { "group": "garage", "p6": [], "nameBasis": "Not on p6; the cedar carriage-door pavilion in the p4 front rendering", "assumed": [["Size", "22.0 × 15.9 ft (≈ 350 sq ft), sized to mirror the ʻohana", "I-4"], ["Door", "9 × 8 ft carriage door", "I-4"]] },
+  "pool": { "group": "site", "p6": [], "name": "Pool & spa", "nameBasis": "Not on p6; from the p5 back rendering", "assumed": [["Pool", "water about 30 × 13 ft, 4.5 ft deep, spa about 7.5 × 8 ft set into it", "I-10"], ["Vanishing edge", "3 ft drop to a 2.5 ft catch basin", "I-10"], ["Retaining wall", "about 5 ft drop behind the lot, coral stone", "I-11"]] },
+  "homesite": { "group": "site", "p6": [], "name": "Homesite (modelled)", "nameBasis": "Fairway-7 lot boundaries not supplied", "assumed": [["Lot", "61.5 × 184.4 ft modelled (11,341 sq ft)", "I-6"], ["Which homesite", "the 7th of 14 from the north-west end", "I-7"], ["Registration", "lat 21.8908, lon −159.4832, ±25 m", "I-9"]], "source": [["Terrain", "USGS 3DEP 1 m lidar DEM", "geodata/SOURCES.txt"]] }
+ }
+}

@@ -119,6 +119,7 @@ export function siteLayout(plan) {
 export async function buildNeighborhood(plan, scene, H, shell) {
   const L = siteLayout(plan);
   const g = new THREE.Group(); g.name = 'neighbourhood';
+  const homesG = new THREE.Group(); homesG.name = 'nahiku-homes'; g.add(homesG);   // the other homes (hidden in the model view)
   const params = new URLSearchParams(location.search);
   const low = (params.get('q') ?? (matchMedia('(pointer: coarse)').matches ? 'low' : 'high')) === 'low';
   const real = params.get('real') === '0' ? null : await loadRealSite('geodata/', { low });
@@ -149,14 +150,14 @@ export async function buildNeighborhood(plan, scene, H, shell) {
             const mesh = new THREE.Mesh(geo, variants.get(key));
             mesh.matrixAutoUpdate = false; mesh.matrix.copy(h.m);
             mesh.castShadow = mesh.receiveShadow = true;
-            g.add(mesh);
+            homesG.add(mesh);
           }
         } else {
           const inst = new THREE.InstancedMesh(geo, material, set.length);
           set.forEach((h, i) => inst.setMatrixAt(i, h.m));
           inst.castShadow = inst.receiveShadow = true;
           inst.frustumCulled = false;
-          g.add(inst);
+          homesG.add(inst);
         }
       }
     }
@@ -179,7 +180,7 @@ export async function buildNeighborhood(plan, scene, H, shell) {
     window.__realsite = real;
     console.info(`[realsite] terrain ${real.tris} tris ${(t1 - t0).toFixed(0)} ms (${JSON.stringify(real.timing)}), ${real.buildingCount ?? 0} buildings, ${real.treeCount ?? 0} trees, total ${(performance.now() - t0).toFixed(0)} ms; sea level ${real.seaLevel.toFixed(1)} ft`);
     scene.add(g);
-    window.__neighborhood = { ...hood, real, night: () => real.night(true) };
+    window.__neighborhood = { ...hood, real, homes: homesG, night: () => real.night(true) };
     return g;
   }
 
@@ -208,7 +209,7 @@ export async function buildNeighborhood(plan, scene, H, shell) {
   const poolMat = new THREE.MeshStandardMaterial({ color: '#2aa0bf', roughness: 0.1, emissive: '#0b7fa3', emissiveIntensity: 0 });
   add(pools, poolMat);
   scene.add(g);
-  window.__neighborhood = { ...hood, night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
+  window.__neighborhood = { ...hood, homes: homesG, night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
   return g;
 }
 

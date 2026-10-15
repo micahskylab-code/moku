@@ -54,7 +54,7 @@ if (viewId && !view) throw new Error(`no viewpoint ${viewId}`);
 // for the path tracer, palms are only recorded (position, size); Blender grows them leaf by leaf
 if (params.has('export')) globalThis.__palmProxies = [];
 const T0 = performance.now(), mark = s => params.has('timing') && console.warn(`[timing] ${s} ${(performance.now() - T0).toFixed(0)} ms`);
-const { colliders, roofs, ceilingAt } = buildHouse(plan, scene);
+const { colliders, roofs, ceilingAt, group: houseGroup } = buildHouse(plan, scene);
 mark('house');
 const { terrainH } = buildSite(plan, scene, colliders);
 mark('site');
@@ -138,8 +138,9 @@ if (dynamicSky) {
 // ---------- post ----------
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
+let aoPass = null;
 if (quality !== 'low' && !(night && (params.get('video') || params.has('starpass')))) {
-  const ao = new GTAOPass(scene, camera, innerWidth, innerHeight);
+  const ao = aoPass = new GTAOPass(scene, camera, innerWidth, innerHeight);
   ao.updateGtaoMaterial({ radius: 2.2, distanceExponent: 1.5, thickness: 3, scale: 1.2, samples: ultra ? 24 : 16 });
   ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
   ao.blendIntensity = 1.0;
@@ -210,10 +211,10 @@ if (shot) {
   await runVideo({ params, camera, render, plan, nightSky, terrainH, renderer, composer });
 } else {
   place(plan.start.pos, plan.start.look);
-  startInteractive();
+  await startInteractive();
 }
 
-function startInteractive() {
+async function startInteractive() {
   const keys = new Set();
   addEventListener('keydown', e => keys.add(e.code));
   addEventListener('keyup', e => keys.delete(e.code));
@@ -221,16 +222,23 @@ function startInteractive() {
   const look = new PointerLockControls(camera, document.body);
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enabled = false; orbit.maxPolarAngle = Math.PI * 0.49; orbit.minDistance = 20; orbit.maxDistance = 9000; orbit.enableDamping = true;
-  let mode = params.get('mode') === 'fly' ? 'fly' : 'walk';
-  const btn = document.getElementById('mode');
+  // model view (src/inspect.js): this one home to orbit, cut away or ghost, with selectable spaces and local questions
+  const { createInspector } = await import('./inspect.js');
+  const inspector = await createInspector({ planId, plan, scene, camera, renderer, orbit, house: houseGroup, ceilingAt, center: [cx, cz], aoPass, daylight }).catch(e => { console.warn('model view', e); return null; });
+  let mode = ['fly', 'model'].includes(params.get('mode')) && (params.get('mode') !== 'model' || inspector) ? params.get('mode') : 'walk';
+  const btn = document.getElementById('mode'), modelBtn = document.getElementById('model');
+  modelBtn.hidden = !inspector;
   const setMode = m => {
-    mode = m; btn.textContent = m === 'walk' ? 'Fly over' : 'Walk in';
-    orbit.enabled = m === 'fly'; overlay.hidden = m === 'fly';
+    if (mode === 'model' && m !== 'model') inspector.exit();
+    mode = m; btn.textContent = m === 'fly' ? 'Walk in' : 'Fly over'; modelBtn.textContent = m === 'model' ? 'Exit model' : 'Model';
+    orbit.enabled = m !== 'walk'; overlay.hidden = m !== 'walk';
     if (m === 'fly') { look.unlock(); orbit.target.set(cx, 0, cz); camera.position.set(cx - 160, 140, cz + 120); }
+    else if (m === 'model') { look.unlock(); inspector.enter(); }
     else { place(plan.start.pos, plan.start.look); }
     daylight?.autoSunPath(m === 'fly');
   };
-  btn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'walk' ? 'fly' : 'walk'); });
+  btn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'fly' ? 'walk' : 'fly'); });
+  modelBtn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'model' ? 'walk' : 'model'); });
   const timeBtn = document.getElementById('time');
   if (daylight) {
     // in-page: to the next great night for Na Hiku and back to daylight, no reload
@@ -244,7 +252,7 @@ function startInteractive() {
   qb.addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('q', ultra ? 'high' : 'ultra'); location.search = p; });
   overlay.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) look.lock(); else overlay.hidden = true; });
   look.addEventListener('lock', () => (overlay.hidden = true));
-  look.addEventListener('unlock', () => (overlay.hidden = mode === 'fly'));
+  look.addEventListener('unlock', () => (overlay.hidden = mode !== 'walk'));
   setMode(mode);
 
   const touch = { move: null, look: null };
@@ -263,7 +271,7 @@ function startInteractive() {
   }, { passive: true });
   addEventListener('touchend', e => { for (const t of e.changedTouches) for (const s of ['move', 'look']) if (touch[s]?.id === t.identifier) touch[s] = null; });
 
-  const minimap = setupMinimap();
+  const minimap = setupMinimap((x, y) => mode === 'model' && inspector.selectAt(x, y));
   const label = document.getElementById('room');
   const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
   // after a sky preset, outdoors, turn smoothly toward the sun, the moon or Na Hiku
@@ -291,6 +299,7 @@ function startInteractive() {
       }
     }
     if (mode === 'fly') { orbit.update(); label.textContent = 'Nā Hiku · Kukuiʻula'; render(); return; }
+    if (mode === 'model') { orbit.update(); inspector.update(dt); label.textContent = inspector.title(); minimap(null, camera, inspector.selectedPolygon()); render(); return; }
     let f = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
     let r = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
     if (touch.move) { f = Math.max(-1, Math.min(1, -(touch.move.y - touch.move.y0) / 60)); r = Math.max(-1, Math.min(1, (touch.move.x - touch.move.x0) / 60)); }
@@ -310,7 +319,7 @@ function startInteractive() {
 
 function blocked(x, z) { for (const { a, b } of colliders) if (distToSeg(x, z, a, b) < RADIUS) return true; return false; }
 
-function setupMinimap() {
+function setupMinimap(pick) {
   const c = document.getElementById('minimap'), ctx = c.getContext('2d');
   const pad = 10, W = c.width, H = c.height;
   // north (+x) up on the map
@@ -319,17 +328,23 @@ function setupMinimap() {
   c.addEventListener('click', e => {
     const rect = c.getBoundingClientRect(), mx = (e.clientX - rect.left) * W / rect.width, my = (e.clientY - rect.top) * H / rect.height;
     const y = B.minY + (mx - pad) / s, x = B.minX + (H - pad - my) / s;
+    if (pick?.(x, y)) return;
     if (!blocked(x, y)) { player.x = x; player.z = y; }
   });
-  return (p, cam) => {
+  return (p, cam, highlight) => {
     ctx.clearRect(0, 0, W, H);
     for (const r of plan.rooms) {
       if (r.label_only) continue;
       ctx.beginPath(); r.polygon.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, tx(x, y), ty(x, y))); ctx.closePath();
       ctx.fillStyle = r.outdoor ? 'rgba(160,140,110,.35)' : 'rgba(255,255,255,.6)'; ctx.fill();
     }
+    if (highlight) {
+      ctx.beginPath(); highlight.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, tx(x, y), ty(x, y))); ctx.closePath();
+      ctx.fillStyle = 'rgba(240,180,41,.75)'; ctx.fill();
+    }
     ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 1.5;
     for (const { a, b } of colliders) { ctx.beginPath(); ctx.moveTo(tx(...a), ty(...a)); ctx.lineTo(tx(...b), ty(...b)); ctx.stroke(); }
+    if (!p) return;
     const d = new THREE.Vector3(); cam.getWorldDirection(d);
     ctx.fillStyle = ctx.strokeStyle = '#d0452f';
     ctx.beginPath(); ctx.arc(tx(p.x, p.z), ty(p.x, p.z), 4, 0, 7); ctx.fill();
