@@ -142,11 +142,11 @@ export function frondMaterial() {
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256;
   const x = c.getContext('2d'), r = rnd(42);
   x.strokeStyle = '#5a5a2a'; x.lineWidth = 6; x.beginPath(); x.moveTo(0, 128); x.lineTo(1024, 128); x.stroke();
-  for (let i = 0; i < 120; i++) {
-    const t = i / 120, px = 14 + t * 1000, len = 118 * Math.sin(Math.PI * Math.min(1, t * 1.1 + 0.06)) + 10;
+  for (let i = 0; i < 150; i++) {
+    const t = i / 150, px = 14 + t * 1000, len = 118 * Math.sin(Math.PI * Math.min(1, t * 1.1 + 0.06)) + 10;
     for (const s of [-1, 1]) {
       const col = ['#2e5a1c', '#3a6a22', '#466f26', '#33601f'][Math.floor(r() * 4)];
-      x.strokeStyle = col; x.lineWidth = 5 + r() * 2.5; x.lineCap = 'round';
+      x.strokeStyle = col; x.lineWidth = 3 + r() * 1.5; x.lineCap = 'round';
       const bend = (r() - 0.5) * 0.25;
       x.beginPath(); x.moveTo(px, 128); x.quadraticCurveTo(px + len * (0.3 + bend), 128 + s * len * 0.55, px + len * (0.55 + bend), 128 + s * len); x.stroke();
     }

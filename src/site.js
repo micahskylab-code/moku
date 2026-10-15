@@ -9,6 +9,8 @@ import { footprint } from './house.js';
 import { plantBed, plumeria, frondMaterial, foliageTexture } from './plants.js';
 import { distToSeg } from './geom.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { siteLayout } from './neighborhood.js';
+import { inside } from './geom.js';
 
 const rnd = seed => () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822519) ^ (seed + 0x9e3779b9)) >>> 0) / 4294967296;
 
@@ -18,8 +20,13 @@ export function buildSite(plan, scene, colliders) {
   const grade = plan.grade ?? -0.6;
 
   // ---- golf course: fairways (1), greens (3), bunkers (4) from centre-lines in the plan ----
+  const L = siteLayout(plan);
+  S.golf = [...(S.golf ?? []), ...L.golf];
+  S.fields = [...L.fields]; S.streets = L.streets; S.homes = [...L.homes, ...L.nahiku, ...L.villas, ...L.cottages]; S.ponds = L.ponds;
   if (S.golf && !S.landuse) {
     S.landuse = (x, y) => {
+      for (const f of S.fields) if (inside([x, y], f)) return 2;
+      for (const f of S.ponds ?? []) if (inside([x, y], f)) return 5;
       for (const h of S.golf) {
         for (const b of h.bunkers ?? []) if (Math.hypot(x - b[0], y - b[1]) < b[2]) return 4;
         if (h.green && Math.hypot(x - h.green[0], y - h.green[1]) < h.green[2]) return 3;
@@ -30,14 +37,20 @@ export function buildSite(plan, scene, colliders) {
   }
   // ---- terrain: level pad around the house, falling away west toward the coast ----
   const terrainH = makeTerrain(S, grade);
+  // the pool (and its copies on the other Na Hiku lots) are cut out of the lawn
+  if (S.pool) {
+    const [x0, y0, x1, y1] = S.pool.rect, lc = [(S.lot[0] + S.lot[2]) / 2, (S.lot[1] + S.lot[3]) / 2];
+    const offs = [[0, 0], ...L.nahiku.map(([x, y]) => [x - lc[0], y - lc[1]])];
+    S.holes = offs.slice(0, 16).map(([dx, dy]) => [x0 + dx + 0.1, y0 + dy + 0.1, x1 + dx - 0.1, y1 + dy - 0.1]);
+  }
   g.add(terrainMesh(terrainH, S));
 
   // ---- pool, spa, infinity edge, deck ----
-  if (S.pool) g.add(pool(S.pool, grade, colliders));
+  if (S.pool) { const p = pool(S.pool, grade, colliders); p.userData.shell = true; g.add(p); }
 
   // ---- hardscape ----
-  for (const p of S.paths ?? []) g.add(slab(p.rect, grade + 0.02, p.material ?? 'pavers'));
-  for (const w of S.walls ?? []) g.add(stoneWall(w, terrainH, colliders));
+  for (const p of S.paths ?? []) { const m = slab(p.rect, grade + 0.02, p.material ?? 'pavers'); m.userData.shell = true; g.add(m); }
+  for (const w of S.walls ?? []) { const m = stoneWall(w, terrainH, colliders); m.userData.shell = true; g.add(m); }
 
   // ---- street ----
   if (S.street) {
@@ -55,6 +68,7 @@ export function buildSite(plan, scene, colliders) {
     const L = new THREE.Group(); loungerInto(L); L.position.set(l[0], grade + 0.02, l[1]); L.rotation.y = -(l[2] ?? 0) * Math.PI / 180; plants.add(L);
     colliders.push(...footprint({ x: l[0], y: l[1], w: 2.4, d: 6.4, rot: l[2] ?? 0 }));
   }
+  plants.userData.shell = true;
   g.add(plants);
   g.add(scatterTrees(terrainH, S));
 
@@ -99,10 +113,12 @@ function scatterTrees(H, S) {
   const lot = S.lot ?? [-60, -40, 140, 90];
   const keepOut = S.keepOut ?? [];
   const ok = (x, y) => {
-    if (x > lot[0] - 25 && x < lot[2] + 40 && y > lot[1] - 20 && y < lot[3] + 20) return false;
+    if (x > lot[0] - 90 && x < lot[2] + 40 && y > lot[1] - 40 && y < lot[3] + 30) return false;
     const [ox, oy] = S.oceanDir ?? [-0.87, -0.5], d = Math.hypot(x - 40, y - 20);
     if (((x - 40) * ox + (y - 20) * oy) / d > 0.55 && d < 2500) return false;          // keep the ocean view open
-    if (S.landuse && S.landuse(x, y) === 1) return false;            // fairways stay open
+    if (S.landuse && S.landuse(x, y) > 0) return false;              // fairways, greens, field stay open
+    if ((S.homes ?? []).some(([hx, hy]) => Math.hypot(x - hx, y - hy) < 42)) return false;
+    for (const line of S.streets ?? []) for (let i = 0; i < line.length - 1; i++) if (distToSeg(x, y, line[i], line[i + 1]) < 26) return false;
     return !keepOut.some(([a, b, c, d]) => x > a && x < c && y > b && y < d);
   };
   // canopy trees as three crossed leaf cards each
@@ -157,9 +173,11 @@ function terrainMesh(H, S) {
     const r = radius(i), a = j / segs * Math.PI * 2, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
     pos.push(x, H(x, y), y); uv.push(x, -y);
     const lu = land(x, y);
-    const c = lu === 1 ? fair : lu === 2 ? field : lu === 3 ? green : lu === 4 ? sand : r > 2000 ? far : rough;
+    const c = r > 2600 ? far : rough;
     const v = 0.88 + land2(x, y) * 0.24;
-    const k = r < 160 && lu === 0 ? new THREE.Color(v, v * 1.02, v * 0.95) : c.clone().multiplyScalar((lu === 4 ? 2.6 : 1.25) * v);
+    const lt = S.lot ?? [-60, -40, 140, 90], out = Math.hypot(Math.max(lt[0] - x, 0, x - lt[2]), Math.max(lt[1] - y, 0, y - lt[3]));
+    const lawn = new THREE.Color(v, v * 1.02, v * 0.95), wild = c.clone().multiplyScalar((lu === 4 ? 2.6 : lu ? 1.25 : 1.1) * v);
+    const k = lawn.lerp(wild, Math.min(1, out / 60));
     col.push(k.r, k.g, k.b);
   }
   for (let i = 0; i < rings; i++) for (let j = 0; j < segs; j++) {
@@ -172,9 +190,53 @@ function terrainMesh(H, S) {
   geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   geo.setIndex(idx); geo.computeVertexNormals();
   const m = mat('grass').clone(); m.vertexColors = true;
+  const landMap = landTexture(S);
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uLand = { value: landMap.tex }; sh.uniforms.uLandBox = { value: new THREE.Vector4(...landMap.box) };
+    const holes = (S.holes ?? []).slice(0, 16); while (holes.length < 16) holes.push([0, 0, 0, 0]);
+    sh.uniforms.uHoles = { value: holes.map(h => new THREE.Vector4(...h)) };
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vLandXZ;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLandXZ = (modelMatrix * vec4(transformed, 1.0)).xz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vLandXZ; uniform sampler2D uLand; uniform vec4 uLandBox; uniform vec4 uHoles[16];')
+      .replace('void main() {', 'void main() {\n  for (int i = 0; i < 16; i++) { vec4 h = uHoles[i]; if (vLandXZ.x > h.x && vLandXZ.x < h.z && vLandXZ.y > h.y && vLandXZ.y < h.w) discard; }')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+      vec2 luv = (vLandXZ - uLandBox.xy) / uLandBox.zw;
+      if (luv.x > 0.0 && luv.x < 1.0 && luv.y > 0.0 && luv.y < 1.0) { vec4 L = texture2D(uLand, luv); diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb / max(vColor, vec3(0.05)) * L.rgb * 1.9, L.a); }`);
+  };
   const mesh = new THREE.Mesh(geo, m);
   mesh.receiveShadow = true;
   return mesh;
+}
+
+// Land cover map (fairways, greens, bunkers, the ag field) painted on a canvas with soft edges.
+function landTexture(S) {
+  const size = 2048, half = 4200, cx = 40, cy = 20, k = size / (2 * half);
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const x = c.getContext('2d');
+  const P = ([px, py]) => [(px - cx + half) * k, (py - cy + half) * k];
+  x.filter = 'blur(2px)';
+  for (const f of S.fields ?? []) {
+    x.fillStyle = 'rgba(170,140,95,0.95)'; x.beginPath(); f.forEach((p, i) => (i ? x.lineTo : x.moveTo).call(x, ...P(p))); x.closePath(); x.fill();
+  }
+  // plough lines across the field
+  x.filter = 'none';
+  x.strokeStyle = 'rgba(120,95,60,0.35)'; x.lineWidth = 2;
+  for (const f of S.fields ?? []) { x.save(); x.beginPath(); f.forEach((p, i) => (i ? x.lineTo : x.moveTo).call(x, ...P(p))); x.closePath(); x.clip(); for (let i = -size; i < size * 2; i += 9) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + size * 0.4, size); x.stroke(); } x.restore(); }
+  x.filter = 'blur(2px)';
+  for (const h of S.golf ?? []) {
+    x.lineCap = x.lineJoin = 'round';
+    x.strokeStyle = 'rgba(140,196,82,0.95)'; x.lineWidth = h.width * k; x.beginPath(); h.path.forEach((p, i) => (i ? x.lineTo : x.moveTo).call(x, ...P(p))); x.stroke();
+    // mowing stripes
+    x.strokeStyle = 'rgba(160,212,96,0.5)'; x.lineWidth = h.width * k * 0.5; x.setLineDash([6, 6]); x.stroke(); x.setLineDash([]);
+    if (h.green) { x.fillStyle = 'rgba(168,222,104,1)'; x.beginPath(); x.arc(...P(h.green), h.green[2] * k, 0, 7); x.fill(); }
+    for (const b of h.bunkers ?? []) { x.fillStyle = 'rgba(240,226,190,1)'; x.beginPath(); x.ellipse(...P(b), b[2] * k * 1.3, b[2] * k * 0.8, 0.6, 0, 7); x.fill(); }
+  }
+  // mowing stripes on lawns near the house
+  if (S.lot) {
+    const [x0, y0, x1, y1] = S.lot; x.filter = 'blur(1px)';
+    for (let yy = y0 - 20; yy < y1 + 20; yy += 8) { x.fillStyle = ((yy - y0) / 8) % 2 < 1 ? 'rgba(150,170,110,0.18)' : 'rgba(110,130,80,0.12)'; const [a, b] = P([x0 - 60, yy]), [c2, d2] = P([x1, yy + 8]); x.fillRect(a, b, c2 - a, d2 - b); }
+  }
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  return { tex, box: [cx - half, cy - half, 2 * half, 2 * half] };
 }
 
 function slab([x0, y0, x1, y1], y, material, t = 0.12) {
@@ -217,7 +279,8 @@ function pool(P, grade, colliders) {
     const c = sbox(ww, 0.25, dd, 'coral'); c.position.set(cx, grade + 0.08, cz); g.add(c);
   }
   // water
-  const wat = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.3, d - 0.3), mat('water'));
+  const watGeo = new THREE.PlaneGeometry(w - 0.3, d - 0.3); { const uv = watGeo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w, uv.getY(i) * d); }
+  const wat = new THREE.Mesh(watGeo, mat('water'));
   wat.rotation.x = -Math.PI / 2; wat.position.set((x0 + x1) / 2, water, (y0 + y1) / 2); wat.renderOrder = 3; g.add(wat);
   // raised spa in the corner nearest the house, spilling into the pool
   if (P.spa) {
@@ -285,7 +348,7 @@ export function palm(x, y, ground, height = 30, lean = 1, seed = 0) {
   const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 4.0, 14), mat('#56653a')); shaft.position.copy(top).add(new THREE.Vector3(0, -2.2, 0)); g.add(shaft);
   const crown = new THREE.Mesh(new THREE.SphereGeometry(0.9, 10, 8), mat('#556b2c')); crown.position.copy(top); g.add(crown);
   const fm = frondMaterial();
-  const n = 24 + Math.floor(r() * 6);
+  const n = 16 + Math.floor(r() * 5);
   for (let k = 0; k < n; k++) {
     const len = 10 + r() * 4, a = k / n * Math.PI * 2 + r() * 0.3, droop = 0.35 + r() * 0.65;
     const geo = new THREE.PlaneGeometry(len, len * 0.32, 12, 1);
@@ -293,8 +356,9 @@ export function palm(x, y, ground, height = 30, lean = 1, seed = 0) {
     const p = geo.attributes.position;
     for (let i = 0; i < p.count; i++) { const u = Math.max(0, p.getX(i) / len); p.setY(i, p.getY(i) - Math.pow(u, 1.8) * len * (0.3 + droop * 0.35)); }
     geo.computeVertexNormals();
-    const fr = new THREE.Mesh(geo, fm);
-    fr.rotation.x = (r() - 0.5) * 0.7;
+    const fr = new THREE.Group();
+    for (const tilt of [-0.45, 0.45]) { const half = new THREE.Mesh(geo, fm); half.rotation.x = tilt; half.castShadow = true; fr.add(half); }
+    fr.rotation.x = (r() - 0.5) * 0.4;
     const holder = new THREE.Group(); holder.position.copy(top);
     holder.rotation.order = 'YZX'; holder.rotation.y = a; holder.rotation.z = 0.5 - droop * 0.55;
     holder.add(fr); g.add(holder);

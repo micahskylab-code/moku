@@ -31,10 +31,20 @@ export function makeDaySky(scene, renderer, { sunAlt = 48, sunAz = 235 } = {}) {
     uniforms: { uSun: { value: sunDir.clone() } },
     vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); vec4 p = projectionMatrix * modelViewMatrix * vec4(position,1.0); gl_Position = p.xyww; }',
     fragmentShader: `varying vec3 vD; uniform vec3 uSun;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y); }
+      float fbm(vec2 p){ float s = 0.0, a = 0.5; for (int k = 0; k < 6; k++) { s += a * noise(p); p *= 2.03; a *= 0.5; } return s; }
       void main(){ float h = max(vD.y, 0.0);
         vec3 zen = vec3(0.05, 0.19, 0.55), mid = vec3(0.19, 0.42, 0.78), hor = vec3(0.60, 0.74, 0.86);
         vec3 c = mix(hor, mid, smoothstep(0.0, 0.18, h)); c = mix(c, zen, smoothstep(0.18, 0.75, h));
         float s = max(dot(normalize(vD), normalize(uSun)), 0.0); c += vec3(1.0,0.95,0.85) * pow(s, 60.0) * 0.6;
+        // trade-wind cumulus low on the horizon, wisps higher up
+        vec2 q = vD.xz / (vD.y + 0.12);
+        float cu = smoothstep(0.52, 0.75, fbm(q * 1.6 + vec2(3.0, 1.0))) * (1.0 - smoothstep(0.05, 0.35, h)) * smoothstep(0.0, 0.03, h);
+        float ci = smoothstep(0.55, 0.85, fbm(q * vec2(0.6, 3.0) + 7.0)) * smoothstep(0.15, 0.4, h) * 0.45;
+        vec3 cloud = mix(vec3(0.78, 0.82, 0.88), vec3(1.0), smoothstep(0.5, 0.9, fbm(q * 3.0)));
+        c = mix(c, cloud, clamp(cu + ci, 0.0, 0.9));
         gl_FragColor = vec4(c * 1.55, 1.0); }`,
   }));
   dome.renderOrder = -1;
@@ -62,12 +72,14 @@ function gmstDeg(date) {
   return ((280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360 + 360) % 360;
 }
 
-export function equatorialToWorld(raDeg, decDeg, date, { lat = SITE.lat, lon = SITE.lon } = {}) {
+// north: true north as a unit vector on the plan (x, y); east is north turned clockwise.
+export function equatorialToWorld(raDeg, decDeg, date, { lat = SITE.lat, lon = SITE.lon, north = [1, 0] } = {}) {
   const H = (gmstDeg(date) + lon - raDeg) * D, d = decDeg * D, p = lat * D;
   const U = Math.sin(p) * Math.sin(d) + Math.cos(p) * Math.cos(d) * Math.cos(H);
   const N = Math.cos(p) * Math.sin(d) - Math.sin(p) * Math.cos(d) * Math.cos(H);
   const E = -Math.cos(d) * Math.sin(H);
-  return new THREE.Vector3(N, U, E);
+  const [nx, ny] = north, ex = -ny, ey = nx;
+  return new THREE.Vector3(N * nx + E * ex, U, N * ny + E * ey);
 }
 
 function bvToColor(bv) {
@@ -81,7 +93,7 @@ function bvToColor(bv) {
   return c;
 }
 
-export async function makeNightSky(scene, { date, radius = 50000 } = {}) {
+export async function makeNightSky(scene, { date, radius = 20000, north = [1, 0] } = {}) {
   const [stars, mw] = await Promise.all([fetch('data/stars.6.json').then(r => r.json()), fetch('data/mw.json').then(r => r.json())]);
   const group = new THREE.Group();
   group.renderOrder = -10;
@@ -92,7 +104,7 @@ export async function makeNightSky(scene, { date, radius = 50000 } = {}) {
     uniforms: {},
     vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: `varying vec3 vDir; void main(){ float h = clamp(vDir.y, -0.2, 1.0);
-      vec3 zen = vec3(0.004,0.008,0.022), hor = vec3(0.045,0.06,0.10);
+      vec3 zen = vec3(0.002,0.004,0.012), hor = vec3(0.02,0.03,0.055);
       vec3 c = mix(hor, zen, pow(max(h,0.0), 0.45)); if (h < 0.0) c = hor * 0.6; gl_FragColor = vec4(c,1.0); }`,
   }));
   group.add(dome);
@@ -103,7 +115,7 @@ export async function makeNightSky(scene, { date, radius = 50000 } = {}) {
   cx.filter = 'blur(10px)';
   for (const f of mw.features) {
     const level = parseInt(String(f.id).replace(/\D/g, '')) || 1;
-    cx.fillStyle = `rgba(190,200,230,${0.07 + level * 0.025})`;
+    cx.fillStyle = `rgba(200,208,235,${0.1 + level * 0.04})`;
     const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates];
     for (const poly of polys) for (const ring of poly) {
       cx.beginPath();
@@ -111,23 +123,34 @@ export async function makeNightSky(scene, { date, radius = 50000 } = {}) {
       cx.closePath(); cx.fill();
     }
   }
+  // mottle the band with dust lanes and star clouds so it doesn't read as a smooth arc
+  cx.filter = 'none';
+  const img = cx.getImageData(0, 0, cv.width, cv.height), d = img.data;
+  let s = 99; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  const blobs = Array.from({ length: 900 }, () => [r() * cv.width, r() * cv.height, 6 + r() * 40, r()]);
+  const dark = new Float32Array(cv.width * cv.height).fill(1);
+  for (const [bx, by, br, k] of blobs) for (let y = Math.max(0, by - br | 0); y < Math.min(cv.height, by + br); y++) for (let x = Math.max(0, bx - br | 0); x < Math.min(cv.width, bx + br); x++) {
+    const q = 1 - Math.hypot(x - bx, y - by) / br; if (q > 0) dark[y * cv.width + x] *= 1 - q * q * (k > 0.5 ? 0.55 : -0.35);
+  }
+  for (let i = 0; i < dark.length; i++) for (let c = 0; c < 4; c++) if (c === 3) d[i * 4 + 3] = Math.min(255, d[i * 4 + 3] * dark[i]);
+  cx.putImageData(img, 0, 0);
   const mwTex = new THREE.CanvasTexture(cv); mwTex.colorSpace = THREE.SRGBColorSpace;
   const mwGeo = new THREE.SphereGeometry(radius, 128, 64);
   const p = mwGeo.attributes.position, uv = mwGeo.attributes.uv;
   for (let i = 0; i < p.count; i++) {
     const ra = uv.getX(i) * 360, dec = 90 - (1 - uv.getY(i)) * 180;
-    const w = equatorialToWorld(ra, dec, date).multiplyScalar(radius);
+    const w = equatorialToWorld(ra, dec, date, { north }).multiplyScalar(radius);
     p.setXYZ(i, w.x, w.y, w.z);
     uv.setXY(i, uv.getX(i), uv.getY(i));
   }
-  const mwMesh = new THREE.Mesh(mwGeo, new THREE.MeshBasicMaterial({ map: mwTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, opacity: 0.55 }));
+  const mwMesh = new THREE.Mesh(mwGeo, new THREE.MeshBasicMaterial({ map: mwTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, opacity: 0.32 }));
   group.add(mwMesh);
 
   // Stars as sized, coloured points.
   const pos = [], col = [], size = [], naHiku = [];
   for (const f of stars.features) {
     const [lon, lat] = f.geometry.coordinates, mag = f.properties.mag;
-    const w = equatorialToWorld(((lon % 360) + 360) % 360, lat, date);
+    const w = equatorialToWorld(((lon % 360) + 360) % 360, lat, date, { north });
     if (w.y < -0.05) continue;
     // atmospheric extinction near the horizon
     const ext = 0.25 / Math.max(0.08, w.y);
@@ -150,13 +173,13 @@ export async function makeNightSky(scene, { date, radius = 50000 } = {}) {
     uniforms: { uScale: { value: 1 }, uTwinkle: { value: 0 } },
     vertexShader: `attribute float flux; attribute vec3 color; varying vec3 vC; varying float vF; uniform float uScale; uniform float uTwinkle;
       void main(){ vC = color; float tw = 1.0 + 0.18 * sin(uTwinkle * 3.0 + position.x * 0.01 + position.z * 0.013);
-        vF = clamp(flux * 0.16 * tw, 0.0, 1.6);
-        gl_PointSize = clamp((1.5 + sqrt(flux) * 1.5) * uScale, 1.0, 14.0 * uScale);
+        vF = clamp(flux * 0.22 * tw, 0.0, 2.2);
+        gl_PointSize = clamp((2.2 + sqrt(flux) * 1.9) * uScale, 1.5, 18.0 * uScale);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `varying vec3 vC; varying float vF;
       void main(){ vec2 d = gl_PointCoord - 0.5; float r = length(d) * 2.0; if (r > 1.0) discard;
         float core = exp(-r * r * 9.0), halo = exp(-r * 3.5) * 0.25;
-        gl_FragColor = vec4(vC * (core + halo) * (0.35 + vF), 1.0); }`,
+        gl_FragColor = vec4(vC * (core + halo) * (0.55 + vF) * 1.4, 1.0); }`,
   });
   const points = new THREE.Points(sg, starMat);
   group.add(points);

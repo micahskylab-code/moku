@@ -45,14 +45,16 @@ export function buildHouse(plan, scene) {
     }
   }
 
-  group.add(buildWalls(plan, roofs, colliders));
-  group.add(roofs.build());
+  const wallsG = buildWalls(plan, roofs, colliders), roofG = roofs.build();
+  wallsG.userData.shell = roofG.userData.shell = true;
+  group.add(wallsG, roofG);
 
   // Lanai and entry: wood posts and a wood header beam on the open edges (back rendering).
   for (const [x, y] of plan.posts ?? []) {
     const top = roofs.ceilingAt(x, y) - 0.1;
     const post = new THREE.Mesh(new THREE.BoxGeometry(0.8, top - grade, 0.8), mat('woodBeam'));
     post.position.set(x, (top + grade) / 2, y);
+    post.userData.shell = true;
     group.add(post);
     colliders.push(...square(x, y, 0.4));
   }
@@ -62,6 +64,7 @@ export function buildHouse(plan, scene) {
     const beam = new THREE.Mesh(new THREE.BoxGeometry(len + 0.8, 1.1, 0.75), mat('woodBeam'));
     beam.position.set((ax + bx) / 2, top - 0.55, (ay + by) / 2);
     beam.rotation.y = -Math.atan2(by - ay, bx - ax);
+    beam.userData.shell = true;
     group.add(beam);
   }
 

@@ -13,7 +13,8 @@ import { makeDaySky, makeNightSky, dirFromAltAz } from './sky.js';
 import { lamps } from './furniture.js';
 import { mat, glow } from './materials.js';
 import { inside, distToSeg, bounds } from './geom.js';
-import { buildNeighborhood } from './neighborhood.js';
+import { buildNeighborhood, siteLayout } from './neighborhood.js';
+import { bakeShell } from './shell.js';
 
 const EYE = 5.4, SPEED = 6, RADIUS = 0.85;
 const params = new URLSearchParams(location.search);
@@ -33,7 +34,7 @@ renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = night ? 1.4 : Number(params.get('exposure') ?? 0.58);
+renderer.toneMappingExposure = night ? 1.25 : Number(params.get('exposure') ?? 0.58);
 document.body.prepend(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -43,9 +44,13 @@ const view = viewId ? plan.viewpoints.find(v => v.id === viewId) : null;
 if (viewId && !view) throw new Error(`no viewpoint ${viewId}`);
 
 // ---------- build ----------
+const T0 = performance.now(), mark = s => params.has('timing') && console.warn(`[timing] ${s} ${(performance.now() - T0).toFixed(0)} ms`);
 const { colliders, roofs, ceilingAt } = buildHouse(plan, scene);
+mark('house');
 const { terrainH } = buildSite(plan, scene, colliders);
-if (params.get('hood') !== '0') await buildNeighborhood(plan, scene, terrainH).catch(e => console.warn('neighbourhood', e));
+mark('site');
+let shellParts = null;
+if (params.get('hood') !== '0') { shellParts = bakeShell(scene); mark('shell'); await buildNeighborhood(plan, scene, terrainH, shellParts).catch(e => console.warn('neighbourhood', e)); mark('neighbourhood'); }
 const B = bounds(plan.rooms.map(r => r.polygon));
 const cx = (B.minX + B.maxX) / 2, cz = (B.minY + B.maxY) / 2;
 
@@ -69,20 +74,23 @@ if (!night) {
   scene.traverse(o => { if (!o.isMesh) return; for (const m of [].concat(o.material)) if (m.userData.interior && !m.envMap) { m.envMap = roomEnv; m.needsUpdate = true; } });
   scene.fog = new THREE.FogExp2('#c9dbe8', 0.000045);
 } else {
-  const date = new Date(params.get('date') ?? plan.night?.date ?? '2026-03-20T07:15:00Z');
-  nightSky = await makeNightSky(scene, { date });
+  const date = new Date(params.get('date') ?? plan.night?.date ?? '2026-03-20T07:00:00Z');   // 9 pm HST, 19 March 2026, a day after new moon
+  nightSky = await makeNightSky(scene, { date, north: siteLayout(plan).north });
   scene.background = new THREE.Color('#02040a');
-  scene.add(new THREE.HemisphereLight('#2a3a5c', '#0d1208', 0.55));
+  scene.add(new THREE.HemisphereLight('#2a3a5c', '#0d1208', 0.4));
   const moon = new THREE.DirectionalLight('#9fb6e0', 0.35);
   moon.position.copy(dirFromAltAz(35, 150).multiplyScalar(400)).add(new THREE.Vector3(cx, 0, cz)); moon.target.position.set(cx, 0, cz);
   scene.add(moon, moon.target);
+  window.__neighborhood?.night();
   // Every lamp on; every indoor room glows warm through its glass.
   for (const l of lamps) l.intensity = l.userData.nightIntensity;
   glow.emissiveIntensity = 2.2;
-  for (const r of plan.rooms.filter(r => !r.label_only && (!r.outdoor || r.covered))) {
+  const lit = plan.rooms.filter(r => !r.label_only && (!r.outdoor || r.covered)).map(r => {
     const xs = r.polygon.map(p => p[0]), ys = r.polygon.map(p => p[1]);
+    return { r, area: (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys)), xs, ys };
+  }).sort((a, b) => b.area - a.area).slice(0, 8);
+  for (const { xs, ys, area } of lit) {
     const x = (Math.min(...xs) + Math.max(...xs)) / 2, y = (Math.min(...ys) + Math.max(...ys)) / 2;
-    const area = (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
     const l = new THREE.PointLight('#ffc98a', Math.min(40, 6 + area / 12), Math.sqrt(area) * 2.4, 1.6);
     l.position.set(x, Math.min(ceilingAt(x, y) - 1.5, 9), y);
     scene.add(l);
@@ -96,7 +104,7 @@ if (!night) {
     mat('poolTile').emissive = new THREE.Color('#0a6a86'); mat('poolTile').emissiveIntensity = 0.5;
   }
   // landscape uplights on every palm trunk
-  for (const p of plan.site?.palms ?? []) {
+  for (const p of (plan.site?.palms ?? []).filter(p => Math.hypot(p[0] - cx, p[1] - cz) < 70).slice(0, 8)) {
     const s = new THREE.SpotLight('#ffd7a0', 90, (p[2] ?? 30) + 12, 0.35, 0.6, 1.2);
     s.position.set(p[0] + 1.5, terrainH(p[0], p[1]) + 0.3, p[1] + 1.5);
     s.target.position.set(p[0], terrainH(p[0], p[1]) + (p[2] ?? 30), p[1]);
@@ -108,7 +116,7 @@ if (!night) {
 // ---------- post ----------
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-if (quality !== 'low') {
+if (quality !== 'low' && !(night && params.get('video'))) {
   const ao = new GTAOPass(scene, camera, innerWidth, innerHeight);
   ao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.5, thickness: 3, scale: 1.2, samples: 16 });
   ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
@@ -152,7 +160,7 @@ if (shot) {
     player.set(x, h, y); camera.lookAt(lx, lh, ly);
   }
   if (window.__beforeShot) window.__beforeShot();
-  render(); render();
+  mark('pre-render'); render(); mark('render1'); render(); mark('render2');
   document.body.dataset.ready = '1';
 } else if (params.get('video')) {
   const { runVideo } = await import('./video.js');

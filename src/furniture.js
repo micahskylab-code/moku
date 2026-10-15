@@ -39,7 +39,6 @@ function tableLamp(g, x, z, top) {
   lathe(g, [[0, 0], [0.32, 0.02], [0.42, 0.45], [0.36, 0.9], [0.12, 1.05], [0.06, 1.25], [0, 1.25]], x, top, z, '#e9e3d8');
   const shade = cyl(g, 0.42, 0.6, 0.85, x, top + 1.55, z, glow, 32);
   shade.material = glow;
-  addLamp(g, x, top + 1.5, z, 4, 12);
 }
 
 const B = {
@@ -377,6 +376,25 @@ const B = {
     const towel = box(g, w * 0.7, 0.12, 0.8, 0, 1.42, d * 0.3, '#f7f7f4', 0.05); towel.rotation.y = 0.1;
   },
 
+  // Framed art: an abstract ocean horizon or a kapa-pattern print, oak frame, linen mat.
+  art(g, { w = 4, h = 3, style = 'ocean', elevation = 5.4 }) {
+    box(g, w + 0.3, h + 0.3, 0.12, 0, elevation, 0.06, 'woodOak');
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.3, h - 0.3), new THREE.MeshStandardMaterial({ map: artTexture(style), roughness: 0.85 }));
+    pic.position.set(0, elevation, 0.13); g.add(pic);
+    box(g, w - 0.05, h - 0.05, 0.02, 0, elevation, 0.12, 'linenWhite');
+  },
+
+  basket(g, { w = 1.6, h = 1.5, plant }) {
+    lathe(g, [[0, 0], [w * 0.42, 0], [w * 0.5, h * 0.8], [w * 0.48, h], [w * 0.44, h], [w * 0.4, 0.1], [0, 0.1]], 0, 0, 0, 'jute');
+    if (plant) fiddle(g, 0, h + 3.5, 0, w * 1.2);
+  },
+
+  // Coral-stone feature wall panel (the concept board's porous coral).
+  stonepanel(g, { w, h = 10, d = 0.35 }) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat('coralWall'));
+    m.position.set(0, h / 2, 0); g.add(m);
+  },
+
   golfcart(g) {
     // two-seat golf cart, white body, black seats and roof posts
     box(g, 3.9, 1.2, 8.0, 0, 1.4, 0, '#f2f2ef', 0.3);
@@ -481,6 +499,43 @@ function monstera(g, x, y, z, s) {
   }
 }
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const artCache = new Map();
+function artTexture(style) {
+  if (artCache.has(style)) return artCache.get(style);
+  const c = document.createElement('canvas'); c.width = 768; c.height = 576; const x = c.getContext('2d');
+  let s = style.length * 97; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  if (style === 'kapa') {
+    // Hawaiian kapa: earth-brown bands of triangles and chevrons on cream bark cloth
+    x.fillStyle = '#e9dcc4'; x.fillRect(0, 0, 768, 576);
+    for (let i = 0; i < 4000; i++) { x.fillStyle = `rgba(150,120,80,${r() * 0.06})`; x.fillRect(r() * 768, r() * 576, 2 + r() * 6, 1); }
+    const bands = 6;
+    for (let b = 0; b < bands; b++) {
+      const y0 = 30 + b * 88, kind = b % 3;
+      x.fillStyle = '#4a2f1d';
+      for (let k = 0; k < 24; k++) {
+        const x0 = 20 + k * 30;
+        x.beginPath();
+        if (kind === 0) { x.moveTo(x0, y0 + 50); x.lineTo(x0 + 15, y0 + 10); x.lineTo(x0 + 30, y0 + 50); }
+        else if (kind === 1) { x.moveTo(x0, y0 + 10); x.lineTo(x0 + 15, y0 + 30); x.lineTo(x0 + 30, y0 + 10); x.lineTo(x0 + 30, y0 + 18); x.lineTo(x0 + 15, y0 + 38); x.lineTo(x0, y0 + 18); }
+        else { x.rect(x0 + 8, y0 + 18, 14, 14); }
+        x.fill();
+      }
+      x.fillRect(16, y0 + 62, 736, 5);
+    }
+  } else {
+    // abstract seascape: layered washes of sky, sea and sand, loose brush texture
+    const g = x.createLinearGradient(0, 0, 0, 576);
+    g.addColorStop(0, '#dfe7e8'); g.addColorStop(0.42, '#c9d9dc'); g.addColorStop(0.47, '#5d8c98'); g.addColorStop(0.7, '#8fb5b8'); g.addColorStop(0.8, '#d9cbb0'); g.addColorStop(1, '#efe6d6');
+    x.fillStyle = g; x.fillRect(0, 0, 768, 576);
+    for (let i = 0; i < 900; i++) {
+      const y = r() * 576, a = 0.03 + r() * 0.06;
+      x.strokeStyle = y < 250 ? `rgba(255,255,255,${a})` : y < 420 ? `rgba(40,90,105,${a})` : `rgba(180,150,110,${a})`;
+      x.lineWidth = 2 + r() * 10; x.beginPath(); x.moveTo(r() * 768, y); x.lineTo(r() * 768, y + (r() - 0.5) * 12); x.stroke();
+    }
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; artCache.set(style, t); return t;
+}
 
 export function buildFurniture(item, ctx) {
   const g = new THREE.Group();

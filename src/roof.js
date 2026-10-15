@@ -34,6 +34,39 @@ function ceilingOf(R, plate, x, y) {
   return h0 + p * (y1 - y);
 }
 
+// Clip a convex polygon to an axis-aligned square.
+function clipSquare(poly, x, y, size) {
+  let p = poly;
+  for (const [nx, ny, c] of [[1, 0, x], [-1, 0, -(x + size)], [0, 1, y], [0, -1, -(y + size)]]) {
+    const q = [];
+    for (let i = 0; i < p.length; i++) {
+      const A = p[i], B = p[(i + 1) % p.length], da = A[0] * nx + A[1] * ny - c, db = B[0] * nx + B[1] * ny - c;
+      if (da >= 0) q.push(A);
+      if ((da >= 0) !== (db >= 0)) { const t = da / (da - db); q.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); }
+    }
+    p = q; if (p.length < 3) return null;
+  }
+  return p;
+}
+
+// Adaptive version: big pieces where a roof is uniformly visible or buried, CELL-sized pieces
+// only where the visibility changes (along valleys and where wings run into the main roof).
+function adaptiveClip(poly, state) {
+  const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]);
+  const x0 = Math.min(...xs), y0 = Math.min(...ys), span = Math.max(Math.max(...xs) - x0, Math.max(...ys) - y0);
+  let size = CELL; while (size < span) size *= 2;
+  const out = [];
+  const visit = (x, y, s) => {
+    const p = clipSquare(poly, x, y, s);
+    if (!p) return;
+    if (s <= CELL || !state(x, y, s)) { out.push(p); return; }
+    const h = s / 2;
+    visit(x, y, h); visit(x + h, y, h); visit(x, y + h, h); visit(x + h, y + h, h);
+  };
+  visit(x0, y0, size);
+  return out;
+}
+
 // Cut a convex polygon into CELL-sized pieces (each still convex).
 function gridClip(poly) {
   const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]);
@@ -107,8 +140,20 @@ export class Roofs {
     const g = new THREE.Group();
     const H = (x, y) => (ceilingOf(R, this.plate, x, y) ?? this.plate) + (R.lift ?? 0);
     const top = [], under = [];
+    // a square is "mixed" (needs splitting) when buried and visible points both occur in it
+    const mixed = (x, y, s) => {
+      let a = 0, b = 0, c = 0, d = 0;
+      const n = 4;
+      for (let i = 0; i <= n; i++) for (let j = 0; j <= n; j++) {
+        const px = x + s * i / n, py = y + s * j / n, h = H(px, py);
+        if (ceilingOf(R, this.plate, px, py) === null) continue;
+        this.#hidden(R, px, py, h + ROOF_T, 0) ? a++ : b++;
+        this.#hidden(R, px, py, h, 1) ? c++ : d++;
+      }
+      return (a && b) || (c && d);
+    };
     for (const f of this.#faces(R)) {
-      for (const piece of gridClip(f.pts)) {
+      for (const piece of adaptiveClip(f.pts, mixed)) {
         const P = piece.map(([x, y]) => [x, y, H(x, y)]);
         if (P.every(([x, y, h]) => this.#hidden(R, x, y, h + ROOF_T, 0))) continue;
         top.push({ P: P.map(([x, y, h]) => [x, y, h + ROOF_T]), dir: f.dir });
@@ -285,7 +330,7 @@ export class Roofs {
     geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     geo.setIndex(idx);
     geo.computeVertexNormals();
-    const m = material.clone(); m.side = THREE.DoubleSide;
+    const m = material.clone(); m.side = THREE.DoubleSide; m.userData.base = material.userData.base;
     m.onBeforeCompile = material.onBeforeCompile; m.customProgramCacheKey = material.customProgramCacheKey;
     return new THREE.Mesh(geo, m);
   }
@@ -293,6 +338,7 @@ export class Roofs {
   // Clone `base` and add the per-pixel union test. kind 0: outer surface, 1: ceiling.
   #roofMaterial(base, self, kind) {
     const m = base.clone();
+    m.userData.base = base;
     const n = this.list.length;
     const rects = this.list.map(R => new THREE.Vector4(R.x0, R.y0, R.x1, R.y1));
     const params = this.list.map(R => new THREE.Vector4(R.t, (R.plate ?? this.plate) + (R.lift ?? 0), R.pitch, R.o));

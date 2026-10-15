@@ -232,6 +232,13 @@ const GEN = {
     return toTextures(g, { normalStrength: 1, repeatFt: 8 });
   },
 
+  // Wind ripples for water surfaces (height only matters: it becomes the normal map).
+  ripple: () => {
+    const g = grid(512), { n } = g, a = fbm(8, 4, 211), b = fbm(24, 3, 212);
+    for (let i = 0; i < n * n; i++) { const x = i % n, y = (i / n) | 0, u = x / n, v = y / n; g.h[i] = a(u, v) * 0.7 + b(u, v) * 0.3; g.c.set([1, 1, 1], i * 3); g.r[i] = 0.05; }
+    return toTextures(g, { normalStrength: 7, repeatFt: 9 });
+  },
+
   // Glass mosaic pool tile, 1" squares, aqua.
   poolTile: () => {
     const g = grid(512), { n } = g, tiles = 24, tp = n / tiles, r = rng(91);

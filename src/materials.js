@@ -29,6 +29,7 @@ function textured(name, { tex, ft, color = '#ffffff', roughness = 1, metalness =
 const LIB = {
   oak: () => textured('oak', { tex: 'oak', env: 0.7, roughness: 1.1 }),
   coral: () => textured('coral', { tex: 'coral', env: 0.5 }),
+  coralWall: () => textured('coralWall', { tex: 'ashlar', color: '#f3ead9', env: 0.8, interior: true }),
   pavers: () => textured('pavers', { tex: 'pavers' }),
   stepping: () => textured('stepping', { tex: 'stepping' }),
   grassPavers: () => textured('grassPavers', { tex: 'grassPavers' }),
@@ -66,7 +67,7 @@ const LIB = {
   rattan: () => solid('#c8a06a', 0.75),
   glass: () => once('glass', () => new THREE.MeshPhysicalMaterial({ color: '#dde9ea', metalness: 0, roughness: 0.03, transparent: true, opacity: 0.16, envMapIntensity: 1.6, side: THREE.DoubleSide, depthWrite: false })),
   mirror: () => solid('#cfd8da', 0.02, 1),
-  water: () => once('water', () => new THREE.MeshPhysicalMaterial({ color: '#1593b3', roughness: 0.03, metalness: 0, transparent: true, opacity: 0.8, envMapIntensity: 1.2, depthWrite: false })),
+  water: () => once('water', () => { const r = texture('ripple'); return new THREE.MeshPhysicalMaterial({ color: '#1593b3', roughness: 0.02, metalness: 0, transparent: true, opacity: 0.82, envMapIntensity: 1.35, depthWrite: false, normalMap: r.normalMap, normalScale: new THREE.Vector2(0.35, 0.35), clearcoat: 1, clearcoatRoughness: 0.02 }); }),
   leaf: () => solid('#3f6b2f', 0.7),
   screen: () => solid('#0c0d0f', 0.15, 0.2),
 };
