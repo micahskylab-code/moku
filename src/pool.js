@@ -37,6 +37,7 @@ function named(name) {
     'falls streamer': () => new THREE.MeshPhysicalMaterial({ color: '#e2f5f6', roughness: 0.05, transparent: true, opacity: 0.55, depthWrite: false }),
     'falls sheet': () => new THREE.MeshPhysicalMaterial({ color: '#e2f5f6', roughness: 0.04, transparent: true, opacity: 0.42, depthWrite: false }),
     'falls foam': () => S({ color: '#f4f8f8', roughness: 0.6, transparent: true, opacity: 0.55, depthWrite: false }),
+    'falls spray': () => S({ color: '#f4f8f8', roughness: 0.6, transparent: true, opacity: 0.25, depthWrite: false }),
     'spa jet': () => S({ color: '#c9ccce', roughness: 0.25, metalness: 1 }),
     'pool light lens': () => S({ color: '#f1f3f1', roughness: 0.25 }),
   }[name];
@@ -307,20 +308,28 @@ export function buildPool(P, grade, colliders) {
     // basin: plaster floor, the retaining wall (coral stone, its lip 3" above the basin water), coping.
     // Where the garden walls (site.js, 1.8 ft thick on the same line) overlap the basin wall and the stone
     // ends, these sit 1/8" (e) inside the garden walls' faces, so the visible face is always just one.
+    // At the far (y1) end the garden wall's run end stands ~0.85 ft proud of y1 (its 1.8 ft thickness overlaps
+    // the corner), which left a recessed slot between it and the stone end (critique-preview3 back #12): there
+    // the stone end is one solid pier from 0.92 ft short of y1 (just proud of the garden wall's end face, which
+    // it swallows) with one cap, and the basin, sheet and foam stop against it (yE).
     add('pool plaster', box([xb, y0, x0, y1], bFloor - 0.6, bFloor));
-    const lip = Wb + 0.25, foot = G - 9, e = 0.012;
+    const lip = Wb + 0.25, foot = G - 9, e = 0.012, yE = y1 - 0.92;
     const g = new THREE.Group();
     const rw = new THREE.Mesh(box([x0 - 4.3 + e, y0 - 3, xb - e, y1 + 3], foot, lip), mat('ashlar')); g.add(rw);
     add('pool plaster', box([xb - 2 * e, y0, xb + 0.04, y1], bFloor, Wb - 0.3));
-    copingRun(cope, 'y', y0 - 0.06, y1 + 0.06, x0 - 4.38, xb + 0.08, lip + copeH, copeH, 'hi', 3.0, R);   // ends buried in the stone ends
+    copingRun(cope, 'y', y0 - 0.06, yE + 0.04, x0 - 4.38, xb + 0.08, lip + copeH, copeH, 'hi', 3.0, R);   // ends buried in the stone ends
     add('pool coping', ...cope.splice(0));
     // stone ends close the basin where the lawn is cut away for it (as high as the garden walls); their caps
     // sit 1/8" below the garden-wall caps and inside their outer edge, so the two caps never share a face
     const eTop = G + 0.35;
-    for (const [ya, yb] of [[y0 - 0.6, y0], [y1, y1 + 0.6]]) {
+    { const [ya, yb] = [y0 - 0.6, y0];
       const ew = new THREE.Mesh(box([x0 - 4.3 + e, ya, x0, yb], bFloor - 0.6, eTop), mat('ashlar')); g.add(ew);
-      const cap = new THREE.Mesh(box([x0 - 4.4 + e, ya - 0.1, x0 + 0.02, yb + 0.1], eTop, eTop + 0.2 - e), mat('coral')); g.add(cap);
-    }
+      const cap = new THREE.Mesh(box([x0 - 4.4 + e, ya - 0.1, x0 + 0.02, yb + 0.1], eTop, eTop + 0.2 - e), mat('coral')); g.add(cap); }
+    // the y1 pier: its seaward face 1/8" proud of the garden wall's, its basin face just proud of the garden
+    // wall's run end (y1 - 0.85 .. 0.78 by the run's pull-back); its cap (bottom / top G+0.345 / +0.565) clears
+    // every garden-wall cap height (G+0.319 .. 0.35 / 0.519 .. 0.55), so no two faces coincide
+    { const pier = new THREE.Mesh(box([x0 - 4.3 - e, yE, x0 + 0.03, y1 + 0.6], bFloor - 0.6, G + 0.345), mat('ashlar')); g.add(pier);
+      const cap = new THREE.Mesh(box([x0 - 4.424, yE - 0.1, x0 + 0.05, y1 + 0.7], G + 0.345, G + 0.565), mat('coral')); g.add(cap); }
     // the falling water: one continuous sheet off the cap's rounded nose (centreline 0.014 ft over the stone,
     // leaving at ~1.15 ft/s, so it lands ~4" out from the wall), 1/4" thick at the lip thinning to 3/16"
     const prof = fallPath(x0 + 0.1, x0 - 0.02, capTop, capH / 2, Wb - 0.06, 0, 1.15, R, 0).map(([x, y]) => [x, y]);
@@ -328,10 +337,10 @@ export function buildPool(P, grade, colliders) {
     const ph = [R() * 6.28, R() * 6.28, R() * 6.28];
     const drift = z => 0.035 + 0.02 * Math.sin(z * 0.83 + ph[0]) + 0.012 * Math.sin(z * 2.3 + ph[1]) + 0.006 * Math.sin(z * 5.9 + ph[2]);
     const sheetG = [];
-    sheetSlab(prof, y0 + 0.01, y1 - 0.01, 0.2, f => 0.021 - 0.006 * f, drift, sheetG);
+    sheetSlab(prof, y0 + 0.01, yE - 0.01, 0.2, f => 0.021 - 0.006 * f, drift, sheetG);
     add('falls sheet', ...sheetG);
     add('basin water', (() => {
-      const b = body([[xb - ov, y0 - ov], [x0 + ov, y0 - ov], [x0 + ov, y1 + ov], [xb - ov, y1 + ov]], bFloor - ov, Wb);
+      const b = body([[xb - ov, y0 - ov], [x0 + ov, y0 - ov], [x0 + ov, yE + ov], [xb - ov, yE + ov]], bFloor - ov, Wb);
       const p = b.attributes.position, uv = b.attributes.uv;            // u = ft out from the impact line (< 0 behind the sheet), v = along
       for (let i = 0; i < uv.count; i++) uv.setXY(i, xImp - p.getX(i), p.getZ(i));
       return b;
@@ -340,11 +349,11 @@ export function buildPool(P, grade, colliders) {
     // line, trailing out in patches), and a fainter plume of bubbles just under the surface.
     // uv.x = ft out from the impact line; colour = the layer's opacity (water_bpy multiplies it in)
     for (const [yy, xa, xc, alpha] of [[Wb + 0.008, x0 - 0.01, xImp - 0.8, 1.0], [Wb - 0.09, x0 - 0.02, xImp - 0.35, 0.35]]) {
-      const ww = xa - xc, pg = new THREE.PlaneGeometry(ww, y1 - y0 - 0.04, 10, 300);
+      const ww = xa - xc, pg = new THREE.PlaneGeometry(ww, yE - y0 - 0.04, 10, 300);
       pg.rotateX(-Math.PI / 2);
       const p = pg.attributes.position, uv = pg.attributes.uv;
       for (let i = 0; i < p.count; i++) {
-        const x = p.getX(i) + (xa + xc) / 2, zz = p.getZ(i) + (y0 + y1) / 2, d = xImp - x;
+        const x = p.getX(i) + (xa + xc) / 2, zz = p.getZ(i) + (y0 + yE) / 2, d = xImp - x;
         const bub = yy > Wb ? 0.02 * Math.exp(-d * d / 0.03) * Math.max(0, Math.sin(zz * 9.1 + x * 13) * Math.sin(zz * 3.3 - x * 7)) : 0;
         p.setXYZ(i, x, yy + bub, zz);
         uv.setXY(i, d, zz);
@@ -352,6 +361,21 @@ export function buildPool(P, grade, colliders) {
       pg.computeVertexNormals();
       pg.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(p.count * 3).fill(alpha), 3));
       add('falls foam', pg.toNonIndexed());
+    }
+    // spray: two soft curtains of mist standing on the impact line, one just in front of the sheet's foot
+    // (~5" tall) and a lower one behind it, gently waved along the weir; uv.x = height fraction (0 at the
+    // water .. 1 at the top), uv.y = ft along the weir (water_bpy fades and breaks them up)
+    for (const [xs, hgt, ph0] of [[xImp - 0.07, 0.42, 0.0], [xImp + 0.08, 0.28, 1.7]]) {
+      const len = yE - y0 - 0.04, nz = 240, pos = [], uvs = [], idx = [];
+      for (let i = 0; i <= nz; i++) for (let j = 0; j <= 2; j++) {
+        const zz = y0 + 0.02 + len * i / nz, t = j / 2;
+        pos.push(xs - 0.04 * t + 0.025 * Math.sin(zz * 2.7 + ph0), Wb - 0.02 + hgt * t, zz); uvs.push(t, zz);
+      }
+      for (let i = 0; i < nz; i++) for (let j = 0; j < 2; j++) { const a = i * 3 + j, b = a + 3; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+      const sg = new THREE.BufferGeometry();
+      sg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); sg.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      sg.setIndex(idx); sg.computeVertexNormals();
+      add('falls spray', sg.toNonIndexed());
     }
     rw.receiveShadow = true;
     parts.__group = g;

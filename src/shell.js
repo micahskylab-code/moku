@@ -1,7 +1,15 @@
 // Bakes the exterior of our house and garden (everything tagged userData.shell) into one merged
 // geometry per material, in world space — the template the other Na Hiku homes are instanced from.
+// Loose outdoor furniture (chaises and loungers, outdoor dining and lounge pieces, cushions, towels) is left
+// out: only our lot is staged; a neighbour's chaise next to our lot line read as part of our yard
+// (critique-preview3-back #5). Staged = a userData.staged / userData.furniture flag on the object or a parent,
+// or a furniture finish (STAGED below).
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const STAGED = /^(teak|linen|cushion|towel|pillow|rattan|cane|jute|throw|umbrella|parasol)/i;
+const stagedObject = o => { for (let p = o; p; p = p.parent) if (p.userData.staged || p.userData.furniture) return true; return false; };
+const stagedMaterial = m => STAGED.test((m?.userData?.base ?? m)?.name ?? '');
 
 export function bakeShell(root) {
   root.updateMatrixWorld(true);
@@ -17,6 +25,7 @@ export function bakeShell(root) {
   for (const t of tagged) t.traverse(o => {
     if (!o.isMesh || o.isInstancedMesh || seen.has(o)) return;
     seen.add(o);
+    if (stagedObject(o) || (!Array.isArray(o.material) && stagedMaterial(o.material))) return;
     let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
     g.applyMatrix4(o.matrixWorld);
     const keep = ['position', 'normal', 'uv', ...(o.material.vertexColors ? ['color'] : [])];
@@ -25,6 +34,7 @@ export function bakeShell(root) {
     if (!g.attributes.normal) g.computeVertexNormals();
     if (Array.isArray(o.material)) {
       for (const gr of g.groups) {
+        if (stagedMaterial(o.material[gr.materialIndex])) continue;
         const part = new THREE.BufferGeometry();
         for (const k of Object.keys(g.attributes)) { const a = g.attributes[k]; part.setAttribute(k, new THREE.BufferAttribute(a.array.slice(gr.start * a.itemSize, (gr.start + gr.count) * a.itemSize), a.itemSize)); }
         put(o.material[gr.materialIndex], part);

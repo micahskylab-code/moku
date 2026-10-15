@@ -207,6 +207,38 @@ def _plain(name, color, rough, bump_scale=0.0, noise_scale=40.0, var=0.0, stretc
     return m
 
 
+def _shaft_material(name, color, bloom, streak):
+    """Crownshaft: waxy (rough, soft sheen) grey-green with a pale bloom in patches and fine vertical streaks
+    (noise stretched along the shaft), darker toward its base."""
+    m = bpy.data.materials.new(name); m.use_nodes = True
+    nt = m.node_tree; N = nt.nodes; L = nt.links
+    p = N.get('Principled BSDF'); p.inputs['Roughness'].default_value = 0.58
+    p.inputs['Sheen Weight'].default_value = 0.35; p.inputs['Sheen Roughness'].default_value = 0.4
+    tc = N.new('ShaderNodeTexCoord'); oi = N.new('ShaderNodeObjectInfo')
+    mp = N.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (14.0, 14.0, 0.9)   # streaks: long in Z (object space, up)
+    L.new(tc.outputs['Object'], mp.inputs['Vector'])
+    st = N.new('ShaderNodeTexNoise'); st.inputs['Scale'].default_value = 9.0; st.inputs['Detail'].default_value = 8.0; st.inputs['Roughness'].default_value = 0.65
+    L.new(mp.outputs['Vector'], st.inputs['Vector'])
+    bl = N.new('ShaderNodeTexNoise'); bl.inputs['Scale'].default_value = 3.0; bl.inputs['Detail'].default_value = 3.0
+    L.new(tc.outputs['Object'], bl.inputs['Vector'])
+    blm = N.new('ShaderNodeMapRange'); blm.inputs['From Min'].default_value = 0.45; blm.inputs['From Max'].default_value = 0.7
+    blm.inputs['To Max'].default_value = 0.55; L.new(bl.outputs['Fac'], blm.inputs['Value'])
+    c1 = N.new('ShaderNodeMix'); c1.data_type = 'RGBA'; c1.inputs[6].default_value = color; c1.inputs[7].default_value = bloom
+    L.new(blm.outputs['Result'], c1.inputs['Factor'])
+    stm = N.new('ShaderNodeMapRange'); stm.inputs['From Min'].default_value = 0.35; stm.inputs['From Max'].default_value = 0.65
+    stm.inputs['To Min'].default_value = 0.0; stm.inputs['To Max'].default_value = 0.6; L.new(st.outputs['Fac'], stm.inputs['Value'])
+    c2 = N.new('ShaderNodeMix'); c2.data_type = 'RGBA'; c2.inputs[7].default_value = streak
+    L.new(stm.outputs['Result'], c2.inputs['Factor']); L.new(c1.outputs[2], c2.inputs[6])
+    # per-palm jitter
+    jm = N.new('ShaderNodeMapRange'); jm.inputs['To Min'].default_value = 0.88; jm.inputs['To Max'].default_value = 1.1
+    L.new(oi.outputs['Random'], jm.inputs['Value'])
+    hs = N.new('ShaderNodeHueSaturation'); L.new(c2.outputs[2], hs.inputs['Color']); L.new(jm.outputs['Result'], hs.inputs['Value'])
+    L.new(hs.outputs['Color'], p.inputs['Base Color'])
+    bu = N.new('ShaderNodeBump'); bu.inputs['Strength'].default_value = 0.25; bu.inputs['Distance'].default_value = 0.002
+    L.new(st.outputs['Fac'], bu.inputs['Height']); L.new(bu.outputs['Normal'], p.inputs['Normal'])
+    return m
+
+
 def _trunk_material(name, bark, ring, lichen, spacing, photo=None, tint=(1, 1, 1), tile=(0.4, 0.8), ring_bump=0.55,
                     lichen_amt=(0.58, 0.7), knobs=0.0, rough=0.88, coat=0.0):
     """Palm bark. With `photo` (a folder holding color/normal/roughness of a real palm-trunk scan):
@@ -436,8 +468,10 @@ KIND = {
     # queen (critic r2 back #1/#6): fronds arch out from the crown and bend down only in their outer third, tips
     # ~20-45 deg below horizontal (newest ~68 deg up, oldest level at the base) - no plumb 'weeping' curtain; a
     # clean, trimmed crown (no hanging dead tier: only the oldest one or two fronds slightly yellow)
-    'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(2.5, 4.0), limp=0.85,
-                  elev=(68, 0), epow=1.0, rd=(1.55, -0.75), rpow=2.8, r0=0.1, drop=0.45, shaft=0, dead=(0,), fruit=(1, 1, 2),
+    # r4 (critic preview3 back #14): relaxed - the outer 40-50% of every frond arches over and down (rpow 2.0, not a
+    # stiff upward 'shuttlecock'); per-variant droop / lift / frond count come from QUEEN_STYLES
+    'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(2.7, 4.2), limp=0.8,
+                  elev=(63, -8), epow=1.0, rd=(1.65, -0.45), rpow=2.0, r0=0.1, drop=0.45, shaft=0, dead=(0,), fruit=(1, 1, 2),
                   rad=0.16, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.11),
     'foxtail': dict(fronds=(8, 11), L=(2.5, 3.1), pet=0.1, ns=95, ll=0.48, lw=0.028, arr='brush', ld=(0.6, 1.6), limp=1.4,
                     elev=(72, -12), epow=1.0, rd=(0.8, 0.9), rpow=1.8, r0=0.06, drop=0.2, shaft=1.0, dead=(0, 0, 1), fruit=(0, 0, 1),
@@ -565,18 +599,25 @@ def _panicle(stem, fruit, spathe, rng, nr, origin, hd, reach, hang, n_rach, n_fr
         _tube(spathe, pts, rr, sides=8, flat=0.55, age=0.5)
 
 
-def crown_mesh(kind, seed, mats):
-    """Fronds, spear, crownshaft, leaf bases, dead fronds and fruit; origin at the top of the trunk, Z up."""
+# queen crown variants (critic preview3 front #5 / back #14): (droop factor, lift deg, frond-count factor) - no two
+# crowns on the skyline share a silhouette
+QUEEN_STYLES = [(1.0, 0, 1.0), (1.25, -6, 0.85), (0.9, 4, 1.15), (1.15, -3, 1.0), (1.35, -8, 0.9), (0.95, 2, 1.1), (1.1, -4, 0.95)]
+
+
+def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0)):
+    """Fronds, spear, crownshaft, leaf bases, dead fronds and fruit; origin at the top of the trunk, Z up.
+    style: (droop factor, lift in degrees, frond-count factor) for per-variant silhouettes."""
     rng = random.Random(seed)
     K = KIND[kind]
-    leaf, stem, dead, fruit, base, shaft, deadleaf, spathe = (MeshBuf() for _ in range(8))
-    n = rng.randint(*K['fronds'])
+    dm, de, nf = style
+    leaf, stem, dead, fruit, base, shaft, deadleaf, spathe, band = (MeshBuf() for _ in range(9))
+    n = max(4, int(round(rng.randint(*K['fronds']) * nf)))
     az0 = rng.uniform(0, 2 * math.pi)
     e0, e1 = K['elev']
     for k in range(n):
         age = k / max(1, n - 1)                            # 0 = newest (upright) .. 1 = oldest (hanging)
-        elev = math.radians(e0 + (e1 - e0) * age ** K['epow'] + rng.uniform(-8, 8))
-        droop = (K['rd'][0] + K['rd'][1] * age) * rng.uniform(0.85, 1.2)
+        elev = math.radians(e0 + de + (e1 - e0) * age ** K['epow'] + rng.uniform(-8, 8))
+        droop = (K['rd'][0] + K['rd'][1] * age) * rng.uniform(0.85, 1.2) * dm
         drop = -K['drop'] * age
         L = rng.uniform(*K['L']) * (0.82 if age < 0.12 else 1.0) * (rng.uniform(0.75, 1.0) if rng.random() < 0.2 else 1.0)
         lb, sb = MeshBuf(), MeshBuf()
@@ -598,9 +639,16 @@ def crown_mesh(kind, seed, mats):
     # crownshaft: the smooth sheath of the leaf bases at the top of the trunk
     if K['shaft']:
         L_ = K['shaft']; r_ = K['rad'] * {'foxtail': 1.05, 'christmas': 1.15, 'lipstick': 1.25, 'areca': 1.15}.get(kind, 1.1)
-        zz = np.linspace(-L_, 0.06, 8)
-        rr = [r_ * (1.0 + 0.12 * math.sin(math.pi * min(1, (z + L_) / L_ * 1.1)) - 0.35 * max(0, (z + 0.12) / 0.18)) for z in zz]
-        _tube(shaft, [[0, 0, z] for z in zz], rr, sides=14, age=0.0)
+        # r4 (critic preview3 front #4): swollen just above the base, tapering up into the leaf bases (not a tube),
+        # and a narrow brown-grey band of old sheath where it meets the ringed trunk
+        zz = np.linspace(-L_, 0.06, 12)
+        def _rr(z):
+            t = (z + L_) / L_
+            return r_ * (1.04 + 0.16 * math.sin(math.pi * min(1.0, t * 1.35)) ** 1.5 - 0.2 * t - 0.35 * max(0, (z + 0.12) / 0.18))
+        _tube(shaft, [[0, 0, z] for z in zz], [_rr(z) for z in zz], sides=16, age=0.0)
+        if kind in ('foxtail', 'christmas', 'areca'):
+            bz = np.linspace(-L_ - 0.07, -L_ + 0.05, 4)
+            _tube(band, [[0, 0, z] for z in bz], [r_ * f for f in (0.93, 1.0, 1.07, 1.06)], sides=16, age=0.6)
     # dry fronds hanging against the trunk (queen palms keep a few until they fall)
     for _ in range(rng.choice(K['dead'])):
         lb, sb = MeshBuf(), MeshBuf()
@@ -631,7 +679,7 @@ def crown_mesh(kind, seed, mats):
     fk = {'coconut': 'coconut', 'foxtail': 'fruit_red', 'christmas': 'fruit_red'}.get(kind, 'fruit')
     for buf, m in ((leaf, mats['leaf_' + kind]), (stem, mats.get('rachis_' + kind, mats['rachis'])), (dead, mats['dead']),
                    (deadleaf, mats['deadleaf']), (fruit, mats[fk]), (base, mats['boot']), (spathe, mats['spathe']),
-                   (shaft, mats.get('shaft_' + kind, mats['rachis']))):
+                   (shaft, mats.get('shaft_' + kind, mats['rachis'])), (band, mats['shaft_band'])):
         if buf.parts: J.extend(buf, mat=len(ml)); ml.append(m)
     return [J.mesh(f'{kind}{seed}-crown', ml)]
 
@@ -733,17 +781,20 @@ def materials():
         'fruit_red': _fruit_material('palm fruit red', [_lin('#7a8a20'), _lin('#c8501a'), _lin('#b8281a'), _lin('#a01c16')]),
         'spathe': _plain('palm spathe', _lin('#6a5038'), 0.75, var=0.2, bump_scale=0.4, noise_scale=80, stretch=(1, 1, 8)),
         'boot': _boot_material('palm leaf base'),
-        'shaft_foxtail': _plain('palm crownshaft foxtail', _lin('#5c7a2e'), 0.4, var=0.08, coat=0.2, ramp_to=_lin('#7a9038')),
-        'shaft_christmas': _plain('palm crownshaft christmas', _lin('#7a9a48'), 0.4, var=0.08, coat=0.2, ramp_to=_lin('#8aa65a')),
+        # r4 (critic preview3 front #4): Wodyetia's crownshaft is a waxy grey-green (~sRGB 105,125,95) with a whitish
+        # bloom and fine vertical streaks, not lime
+        'shaft_foxtail': _shaft_material('palm crownshaft foxtail', _lin('#697d5f'), _lin('#7e8c76'), _lin('#55644a')),
+        'shaft_christmas': _shaft_material('palm crownshaft christmas', _lin('#728a5a'), _lin('#869870'), _lin('#5c6e48')),
+        'shaft_band': _plain('palm crownshaft band', _lin('#6a6152'), 0.85, bump_scale=0.5, noise_scale=60, var=0.15, stretch=(1, 1, 6)),
         'shaft_lipstick': _plain('palm crownshaft lipstick', _lin('#b0352a'), 0.3, var=0.12, coat=0.35, ramp_to=_lin('#c8402c')),
-        'shaft_areca': _plain('palm crownshaft areca', _lin('#848c64'), 0.5, var=0.1, ramp_to=_lin('#9a9c7c')),
+        'shaft_areca': _shaft_material('palm crownshaft areca', _lin('#6e7652'), _lin('#80866a'), _lin('#5a6044')),
         'trunk_queen': _trunk_material('palm trunk', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.09,
                                        photo=photo, tint=(0.3, 0.295, 0.285), tile=(0.45, 0.9)),
         'trunk_foxtail': _trunk_material('palm trunk foxtail', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.07,
                                          photo=photo, tint=(0.62, 0.62, 0.6), tile=(0.5, 1.2), ring_bump=0.3),
         'trunk_christmas': _trunk_material('palm trunk christmas', _lin('#8a8478'), _lin('#4a463e'), _lin('#a8a698'), 0.09, ring_bump=0.8),
         'trunk_lipstick': _trunk_material('palm stem lipstick', _lin('#7a6a3a'), _lin('#3a3018'), _lin('#8a7a40'), 0.11, ring_bump=0.9, rough=0.5, coat=0.2),
-        'trunk_areca': _trunk_material('areca stem', _lin('#5e624a'), _lin('#34362a'), _lin('#767a62'), 0.085, ring_bump=1.0, rough=0.75),   # olive-grey, dark leaf-scar rings
+        'trunk_areca': _trunk_material('areca stem', _lin('#585c44'), _lin('#2a2c20'), _lin('#6e705a'), 0.075, ring_bump=1.0, rough=0.8),   # olive-grey, dark leaf-scar rings
         'trunk_roebelenii': _trunk_material('palm trunk roebelenii', _lin('#4a4034'), _lin('#2a241c'), _lin('#6a6252'), 0.05, ring_bump=1.0, knobs=0.8, rough=0.95),
         'trunk_cycad': _trunk_material('palm trunk cycad', _lin('#4a3e30'), _lin('#2a221a'), _lin('#5a5040'), 0.035, ring_bump=1.0, knobs=1.0, rough=0.95),
         'trunk_coconut': _trunk_material('coconut trunk', (0.075, 0.066, 0.055, 1), (0.035, 0.03, 0.025, 1), (0.13, 0.125, 0.11, 1), 0.09,
@@ -790,6 +841,13 @@ def _kind(p):
     return 'queen' if k in ('foxtail_legacy',) else k if k in KIND else 'queen'
 
 
+def _neighbour_tree(p):
+    """The copies of our back queen palms on the other lots (critic preview3 front #5): about half become broadleaf
+    shade trees, so only one or two queen crowns stand above each neighbour's ridge and the skyline is irregular."""
+    h = ((p['seed'] * 2654435761) >> 7) & 0xffff
+    return (h % 100) < 50
+
+
 def build(palms, b, variants=None, collection_name='palms'):
     """palms: [{kind, seed, base (three.js metres), height, trunkR, lean}]; b: three.js -> Blender.
     Trunks of a kind are merged into one mesh; crowns are a few variants per kind, instanced."""
@@ -801,7 +859,8 @@ def build(palms, b, variants=None, collection_name='palms'):
     for kind in kinds:
         pc = bpy.data.collections.new('v-' + kind + '-crowns')
         for i in range(nvar[kind]):
-            pc.objects.link(bpy.data.objects.new(f'{kind}-crown-{i:02d}', crown_mesh(kind, 100 + i * 7 + len(kind), mats)[0]))
+            st = QUEEN_STYLES[i % len(QUEEN_STYLES)] if kind == 'queen' else (1.0, 0.0, 1.0)
+            pc.objects.link(bpy.data.objects.new(f'{kind}-crown-{i:02d}', crown_mesh(kind, 100 + i * 7 + len(kind), mats, st)[0]))
         protos[kind] = pc
     trunks, boots = {}, {}
     inst = {k: ([], [], [], []) for k in protos}
@@ -810,14 +869,20 @@ def build(palms, b, variants=None, collection_name='palms'):
         rng = random.Random(p['seed'])
         kind = _kind(p); K = KIND[kind]
         base = b(p['base'])
+        house = p.get('house', 0)
+        if kind == 'queen' and house > 0 and p['base'][0] < 0 and _neighbour_tree(p):
+            p['_tree'] = True                              # grown as a broadleaf tree by scripts/plants_bpy.py
+            continue
         h = max(p['height'], K['shaft'] + 0.2)
+        if house > 0:                                      # the copies on the other lots: no two gardens alike
+            h *= rng.uniform(0.8, 1.2) if kind == 'queen' else rng.uniform(0.88, 1.12)
         dv = 0.2 if kind in CLUMPING else 0.1            # clumping canes vary +-20% in diameter
         r0 = K['rad'] * rng.uniform(1 - dv, 1 + dv) * (min(1.25, max(0.8, (h / K['href']) ** 0.3)))
         bend = (0.03 + rng.random() * 0.05) * min(p.get('lean', 1), 2.5) * {'queen': 0.5, 'coconut': 1.6, 'foxtail': 0.35, 'christmas': 0.8}.get(kind, 1.0)
         ldir = rng.uniform(0, 6.283)
         if kind == 'queen':
             # queen palms lean 3-5 deg; a pair grows apart (each leans away from its neighbour, toward the light)
-            bend = math.tan(math.radians(rng.uniform(3.0, 5.0)))
+            bend = math.tan(math.radians(rng.uniform(3.0, 5.0) if house <= 0 else rng.uniform(1.5, 8.0)))
             nb = [q for q in palms if q is not p and _kind(q) == 'queen' and q.get('house', 0) == p.get('house', 0)]
             nb = [(b(q['base']) - base) for q in nb]
             nb = [v for v in nb if 0.1 < v.length < 6.0]

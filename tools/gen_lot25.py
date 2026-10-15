@@ -43,7 +43,8 @@ hwall(555, 588, 1986, EXT, [
     ('window', 1457, 1505, BED), ('window', 1668, 1716, BED),
     ('window', 1817, 1864, BATH), ('window', 1908, 1954, BATH)])
 # Lanai back wall (outdoor kitchen side) with two unglazed openings
-hwall(627, 217, 596, EXT, [('window', 241, 286, dict(sill=3.5, head=7.5)), ('window', 496, 540, dict(sill=3.5, head=7.5))])
+# r4 (critique-preview3-back #8): p5 shows both openings closed by cedar louvered shutter panels; sizes unchanged
+hwall(627, 217, 596, EXT, [('louvered', 241, 286, dict(sill=3.5, head=7.5)), ('louvered', 496, 540, dict(sill=3.5, head=7.5))])
 # Great room west wall: thick pocket wall, 18 ft of stacking glass that disappears into the pocket
 vwall(604, 551, 1211, 1.39, [('pocket', 672, 1090, dict(head=9.5, panels=6, deployed=4, rows=3))])
 # Great room east wall: kitchen side openings, hall, glass pivot front door with sidelights
@@ -60,7 +61,9 @@ vwall(1980, 551, 831, EXT, [('slider', 622, 761, SLIDE)])           # glass to g
 
 # ---------------- south side: primary suite, gallery, bedroom 2 wing ----------------
 # lanai TV wall (back rendering): double-hung windows either side of the TV, vertical board finish, no shutters
-hwall(1207, 169, 1000, EXT, [('window', 202, 250, DH), ('window', 471, 518, DH), ('door', 620, 701, DOOR)], outside='batten')
+# r4 (critique-preview3-back #8): the right-hand window moved 3.2 ft clear of the lanai corner post (it sat behind it),
+# so the TV hangs between two double-hungs as in p5; same size
+hwall(1207, 169, 1000, EXT, [('window', 275, 323, DH), ('window', 471, 518, DH), ('door', 620, 701, DOOR)], outside='batten')
 hwall(1207, 1280, 1753, EXT, [('cased', 1330, 1377, DOOR), ('slider', 1497, 1683, SLIDE)])
 # primary bedroom west, gable end (back rendering): a centred 10 ft 4-panel slider, 3 lites high, cylinder sconces
 vwall(175, 1203, 1576, EXT, [('slider', 1275, 1505, dict(head=8.0, panels=4, rows=3, sconces=True))])
@@ -135,6 +138,13 @@ rooms = [
 # `holes`: open-air slatted roof wells over the garden showers (front rendering, top left);
 # `downspouts`: [x, y, wall axis] at the drained corners.
 roofs = [
+    # r4 (critique-preview3-front #2, client: 'give it your best guess'): p4 shows the great-room pavilion's street
+    # face as a broad trapezoid with its ridge ACROSS the view over the glazed entry. Inferred from that rendering
+    # (no roof plan, register I-3): a cross hip over the great room + entry, ridge along plan y at ~18.6 ft (the main
+    # hip's ridge, 17.8 ft, dies into its back plane), street / back planes at the house pitch, the hip ends at
+    # 11.4:12 so the ridge runs ~10 ft across as in p4. Listed first so it owns the street plane it shares with the
+    # main hip. The lanai end and the back view keep the plain main hip.
+    dict(id='great', type='hip', ridge='y', rect=[X(744), Y(551), X(1465), Y(1207)], pitch=0.55, endPitch=0.95, overhang=2.5),
     dict(id='main', type='hip', rect=[X(217), Y(551), X(1465), Y(1207)], pitch=0.55, overhang=2.5),
     # its eaves kick out into a 3:12 skirt (back rendering, b30): a shallower hip whose planes cross the main's
     # 6" outside the wall lines, so it only shows as the lower-pitch band over the overhang (the union keeps
@@ -247,7 +257,9 @@ furniture = [
 
 # lanai: 10x10 rough-sawn cedar posts, 10x14 header; entry: 8" cedar posts under an 18" cedar-clad header box
 posts = [[X(217), Y(627), 0.833], [X(217), Y(1207), 0.833], [X(1465), Y(921), 0.667], [X(1465), Y(1207), 0.667]]
-beams = [dict(a=[X(217), Y(627)], b=[X(217), Y(1207)], w=0.833, h=1.167, ext=1.0),
+# r4 (critique-preview3-back #8): the lanai header dropped to a 7'-11" soffit as in p5 (at the plate it hid behind the
+# gutter from any eye near deck height), a painted frieze above it up to the soffit
+beams = [dict(a=[X(217), Y(627)], b=[X(217), Y(1207)], w=0.833, h=1.167, ext=1.0, top=9.1, frieze=True),
          dict(a=[X(1465), Y(921)], b=[X(1465), Y(1207)], w=0.667, h=1.5, ext=0.0, material='cedar', plates=False)]
 
 plan = dict(
@@ -357,19 +369,19 @@ plan['site'] = dict(
             # entry courtyard: lipstick palms (scarlet crownshafts) and christmas palms either side of the walk
             # (kept off the walk axis so the glass entry reads between them; the walk pair stand back by the wing
             # walls, clear of their eaves, so they flank the entry as in p4 - critic r2 front #9)
-            [99, 16.6, 13, 'lipstick'], [113.5, 28.0, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
-            [96.8, 14.4, 16, 'christmas'], [94.4, 30.5, 17, 'christmas'],
-            [87.2, 15.2, 16, 'christmas'], [86.8, 29.4, 15, 'christmas'],
+            [98.6, 15.0, 13, 'lipstick'], [114.0, 29.6, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
+            [96.8, 12.4, 14, 'christmas'], [94.4, 32.5, 14.5, 'christmas'],   # r4: 2 ft out toward the wing walls, 12-14 ft (front #6)
+            [87.2, 13.4, 15, 'christmas'], [86.8, 31.2, 14, 'christmas'],
             # mid-ground fill between and behind the roofs
             [93, 5, 14], [92, 40, 13], [95, 45, 6, 'roebelenii', 2], [62.5, 17.6, 6, 'roebelenii'], [63, 27, 7, 'roebelenii'],
-            [95, -6, 22, 'foxtail'], [138, 47.5, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
-            [110, -6.2, 18, 'foxtail'], [99, -5.6, 13], [76, 50.5, 13], [56, 50.8, 16, 'foxtail'],
+            [95, -6, 22, 'foxtail'], [141, 50.2, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
+            [114, -6.2, 18, 'foxtail'], [99, -5.6, 13], [76, 50.5, 13], [56, 50.8, 16, 'foxtail'],
             # back: a few palms right of the bedroom wing (half the r2 count; the tall hedge behind does the screening)
             [-20, 50, 16], [14, 50.2, 14], [-14, 48.6, 13],
             # front corners of the view: pygmy date and sago fronds in the bottom corners
             [147.4, 48.4, 6, 'roebelenii', 2], [147.4, -4.4, 3.5, 'cycad', 2], [130, 49, 3, 'cycad']],
-    plumeria=[[-4, 50, 1.2], [44, 50], [139, 30.5, 0.9], [137, 14.5, 0.85]],
-    specimens=[[12, -11.5, 0.75, 'shower']],      # a pink shower tree at the far left of the back view
+    plumeria=[[-4, 50, 1.2], [44, 50], [139, 30.5, 0.9], [138, 17.0, 0.8]],   # r4: right one beside the garage door, not in front (front #7)
+    specimens=[[16, -16.0, 0.45, 'shower']],      # a pink shower tree at the far left of the back view (r4: by the side lot line, clear of the left wing, back #6)
     # beds stay clear of the coral retaining wall on the lot line (x -35.3 .. -33.5, cap to -35.4 / -33.4)
     # curve: the bed's sides (plan x0 / x1 / y0 / y1) that sweep in soft curves with a tan stone edging (scripts/plants_bpy.py);
     # edge=False: a planting inside another bed (no edging of its own)

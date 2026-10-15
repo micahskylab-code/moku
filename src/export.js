@@ -34,26 +34,42 @@ export async function exportForBlender({ scene, plan, terrainH, lamps, siteLayou
     const xs = r.polygon.map(p => p[0]), ys = r.polygon.map(p => p[1]);
     meta.rooms.push({ id: r.id, rect: [Math.min(...xs) * FT, Math.min(...ys) * FT, Math.max(...xs) * FT, Math.max(...ys) * FT], ceiling: (typeof r.ceiling === 'number' ? r.ceiling : 10) * FT, outdoor: !!r.outdoor });
   }
-  // palms: ours (house 0) and the same planting on every other Na Hiku lot
-  const offsets = [[0, 0, 0], ...(window.__neighborhood?.offsets ?? [])];
+  // palms: ours (house 0) and the same planting on every other Na Hiku lot, placed with that lot's transform
+  // (src/neighborhood.js): every other lot is mirrored across its centreline (plan y -> 2 axis - y, then the
+  // offset), like its geometry and pool cut-out (site.js S.holes). A neighbour's copy keeps only what lies on its
+  // own lot (+-2 ft past the side lines), so nothing of theirs lands in our side yard or the next home's.
+  const hood = window.__neighborhood ?? {};
+  const offsets = [[0, 0, 0], ...(hood.offsets ?? [])], mirror = [false, ...(hood.mirror ?? [])], axis = hood.axis ?? 0;
+  const side = plan.site?.lot ? [plan.site.lot[1] - 2, plan.site.lot[3] + 2] : [-Infinity, Infinity];
+  const ly = (house, y) => mirror[house] ? 2 * axis - y : y;                 // plan y on that lot, before its offset
+  const onLot = (house, y) => house === 0 || (y >= side[0] && y <= side[1]);
   meta.palms = [];
   offsets.forEach(([dx, dy, dz], house) => {
-    for (const p of globalThis.__palmProxies ?? []) meta.palms.push({
+    for (const p of globalThis.__palmProxies ?? []) if (onLot(house, p.y)) meta.palms.push({
       house, kind: p.kind, seed: Math.round(p.x * 13 + p.y * 7 + p.seed) + house * 1000,
-      base: [(p.x + dx) * FT, (p.ground + dy) * FT, (p.y + dz) * FT], height: p.height * FT, trunkR: p.trunkR * FT, frondLen: p.frondLen, lean: p.lean,
+      base: [(p.x + dx) * FT, (p.ground + dy) * FT, (ly(house, p.y) + dz) * FT], height: p.height * FT, trunkR: p.trunkR * FT, frondLen: p.frondLen, lean: p.lean,
     });
   });
   // the rest of the planting (src/plants.js, site.js record it in export mode; scripts/plants_bpy.py grows it):
   // beds, plumeria trees on every lot, the background trees once; distant skyline palms join the palms
   const rec = globalThis.__plantProxies ?? [], r3 = v => Math.round(v * 1000) / 1000;
   meta.plants = [];
-  meta.lawn = { lot: (plan.site?.lot ?? []).map(v => v * FT), houses: offsets.map(o => o.map(v => r3(v * FT))) };
+  meta.lawn = { lot: (plan.site?.lot ?? []).map(v => v * FT), houses: offsets.map(o => o.map(v => r3(v * FT))), mirror, axis: r3(axis * FT) };
+  // a mirrored bed's curved sides swap y0 <-> y1 ('mondo@x0y1' -> 'mondo@x0y0'; scripts/plants_bpy.py bed_spec())
+  const flipKind = k => k?.includes('@') ? k.replace(/@(.*)$/, (_, s) => '@' + s.replace(/y([01])/g, (__, d) => 'y' + (1 - d))) : k;
   offsets.forEach(([dx, dy, dz], house) => {
     for (const p of rec) {
       if (!p.shell) continue;
-      const q = { type: p.type, kind: p.kind, house, seed: p.seed + house * 1000 };
-      if (p.rect) { const [x0, y0, x1, y1] = p.rect; q.rect = [x0 + dx, y0 + dz, x1 + dx, y1 + dz].map(v => r3(v * FT)); q.ground = r3((p.ground + dy) * FT); q.density = p.density; }
-      else { q.pos = [(p.x + dx) * FT, (p.ground + dy) * FT, (p.y + dz) * FT].map(r3); q.scale = p.scale ?? 1; }
+      const q = { type: p.type, kind: mirror[house] ? flipKind(p.kind) : p.kind, house, seed: p.seed + house * 1000 };
+      if (p.rect) {
+        let [x0, y0, x1, y1] = p.rect;
+        if (house) { y0 = Math.max(y0, side[0]); y1 = Math.min(y1, side[1]); if (y1 - y0 < 1) continue; }
+        if (mirror[house]) [y0, y1] = [ly(house, y1), ly(house, y0)];
+        q.rect = [x0 + dx, y0 + dz, x1 + dx, y1 + dz].map(v => r3(v * FT)); q.ground = r3((p.ground + dy) * FT); q.density = p.density;
+      } else {
+        if (!onLot(house, p.y)) continue;
+        q.pos = [(p.x + dx) * FT, (p.ground + dy) * FT, (ly(house, p.y) + dz) * FT].map(r3); q.scale = p.scale ?? 1;
+      }
       meta.plants.push(q);
     }
   });

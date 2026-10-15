@@ -42,9 +42,9 @@ export function buildSite(plan, scene, colliders) {
   // the pool (and its copies on the other Na Hiku lots) are cut out of the lawn
   if (S.pool) {
     const [x0, y0, x1, y1] = S.pool.rect, lc = [(S.lot[0] + S.lot[2]) / 2, (S.lot[1] + S.lot[3]) / 2];
-    const offs = [[0, 0], ...L.nahiku.map(([x, y]) => [x - lc[0], y - lc[1]])];
+    const offs = [[0, 0, false], ...L.nahiku.map(([x, y], i) => [x - lc[0], y - lc[1], L.nahikuMirror[i]])];   // mirrored lots: pool reflected across the lot centreline
     const ex = S.pool.edge === 'x0' ? 3.6 : 0;      // vanishing edge: the catch basin and its wall sit below the lawn
-    S.holes = offs.slice(0, 16).map(([dx, dy]) => [x0 - ex + dx + 0.1, y0 + dy + 0.1, x1 + dx - 0.1, y1 + dy - 0.1]);
+    S.holes = offs.slice(0, 16).map(([dx, dy, m]) => { const [a, b] = m ? [2 * lc[1] - y1, 2 * lc[1] - y0] : [y0, y1]; return [x0 - ex + dx + 0.1, a + dy + 0.1, x1 + dx - 0.1, b + dy - 0.1]; });
   }
   g.add(terrainMesh(terrainH, S));
 
@@ -73,11 +73,12 @@ export function buildSite(plan, scene, colliders) {
   for (const p of S.palms ?? []) plants.add(palm(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 30, p[3] ?? 1, 0, { kind: p[4] ?? 'queen', trunkR: p[4] === 'christmas' ? 0.3 : 0.55 }));
   // understorey palm clumps [x, y, height, kind, stems]: areca / lipstick clumps (many canes), foxtail / christmas /
   // pygmy date (one to three trunks), cycads: the 3-20 ft palms that fill the renderings
-  const CLUMP = { areca: [6, 0.4, 1.4, 0.55], lipstick: [5, 0.3, 1.0, 0.5], foxtail: [1, 2.5, 3.5, 0.85], christmas: [1, 2.0, 3.0, 0.8],
+  const CLUMP = { areca: [5, 0.4, 1.5, 0.5], lipstick: [5, 0.3, 1.0, 0.5], foxtail: [1, 2.5, 3.5, 0.85], christmas: [1, 2.0, 3.0, 0.8],
     roebelenii: [1, 1.5, 2.5, 0.75], cycad: [1, 1.0, 1.5, 0.7], queen: [1, 3, 4, 0.9] };
   for (const [x, y, h = 13, kind = 'areca', stems] of S.arecas ?? []) {
     const r = rnd(Math.round(x * 31 + y * 17));
-    const [n0, d0, d1, hmin] = CLUMP[kind] ?? CLUMP.areca, n = stems ?? n0;
+    // areca clumps: 5-7 canes of varied height and girth (r4 critic back #6: not a dense wall of identical tubes)
+    const [n0, d0, d1, hmin] = CLUMP[kind] ?? CLUMP.areca, n = stems ?? (kind === 'areca' ? 5 + Math.floor(r() * 3) : n0);
     for (let k = 0; k < n; k++) {
       const a = r() * Math.PI * 2, d = k === 0 && n0 === 1 ? 0 : d0 + r() * (d1 - d0);
       const clump = kind === 'areca' || kind === 'lipstick';

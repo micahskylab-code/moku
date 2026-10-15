@@ -4,6 +4,7 @@
 // rot is degrees on the plan. Local -z is the item's back (the wall it stands against).
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { mat, glow } from './materials.js';
 
 const geoCache = new Map();
@@ -451,6 +452,51 @@ function cushion(g, w, t, d, x, y, z, m = 'linenWhite', r = 0.05) {
   }
   return c;
 }
+// A filled outdoor pad (chaise, p5): a sewn box cushion, not a slab - 1" rounded seams with welt piping, the top
+// crowned by the fill, the boxing strip bulging slightly, a shallow dent where it is sat / leaned on, and faint
+// fabric ripples. dent: [z0 (local), depth ft]. Smooth-shaded (shared vertices).
+const padCache = new Map();
+function padGeo(w, t, d, { r = 0.08, crown = 0.03, dent = null, seed = 0 } = {}) {
+  const key = [w, t, d, r, crown, dent?.join(','), seed].join('|');
+  if (padCache.has(key)) return padCache.get(key);
+  const nx = Math.ceil(w / 0.1), ny = 6, nz = Math.ceil(d / 0.1);
+  let g = new THREE.BoxGeometry(w, t, d, nx, ny, nz);
+  g.deleteAttribute('normal'); g.deleteAttribute('uv');
+  g = mergeVertices(g, 1e-5);
+  const P = g.attributes.position, hx = w / 2, hy = t / 2, hz = d / 2, rr = Math.min(r, hy * 0.9, hx * 0.5, hz * 0.5);
+  const crowd = (v, h) => { const u = Math.abs(v) / h; return Math.sign(v) * h * (1 - Math.pow(1 - Math.min(1, u), 1.7)); };   // more rows near the edges
+  const cl = (v, h) => Math.max(-(h - rr), Math.min(h - rr, v));
+  for (let i = 0; i < P.count; i++) {
+    let x = crowd(P.getX(i), hx), y = crowd(P.getY(i), hy), z = crowd(P.getZ(i), hz);
+    const ix = cl(x, hx), iy = cl(y, hy), iz = cl(z, hz), dx = x - ix, dy = y - iy, dz = z - iz, L = Math.hypot(dx, dy, dz);
+    if (L > 1e-7) { x = ix + dx / L * rr; y = iy + dy / L * rr; z = iz + dz / L * rr; }
+    const u = x / hx, v = z / hz, side = 1 - Math.min(1, Math.abs(y) / hy) ** 2;
+    if (y > 0) {
+      const top = y / hy;
+      y += top * crown * (1 - u * u) * (1 - v * v);
+      if (dent) y -= top * dent[1] * Math.exp(-((x / (w * 0.32)) ** 2) - ((z - dent[0]) / 0.75) ** 2);
+      y += top * 0.004 * Math.sin(x * 9.1 + seed) * Math.sin(z * 5.3 + 1.7 * seed);           // fabric ripples
+    }
+    x += Math.sign(x) * 0.012 * side * Math.min(1, Math.abs(u) ** 8);                             // boxing strip bulge
+    z += Math.sign(z) * 0.012 * side * Math.min(1, Math.abs(v) ** 8);
+    P.setXYZ(i, x, y, z);
+  }
+  const uv = new Float32Array(P.count * 2);
+  for (let i = 0; i < P.count; i++) { uv[2 * i] = P.getX(i) / 2.0; uv[2 * i + 1] = (P.getZ(i) + Math.abs(P.getY(i))) / 2.0; }
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  g.computeVertexNormals();
+  padCache.set(key, g); return g;
+}
+function pad(g, w, t, d, x, y, z, opts = {}) {
+  const c = new THREE.Group(); c.position.set(x, y, z); g.add(c);
+  c.add(new THREE.Mesh(padGeo(w, t, d, opts), mat('linenWhite')));
+  const r = Math.min(opts.r ?? 0.08, t / 2 * 0.9), e = r * 0.293;
+  for (const s of [-1, 1]) {
+    const p = new THREE.Mesh(pipeLoop(w - 2 * e + 0.01, d - 2 * e + 0.01, Math.max(0.03, r * 0.9), 0.024), PIPING());
+    p.position.y = s * (t / 2 - e); c.add(p);
+  }
+  return c;
+}
 // A back cushion: a cushion stood up against the back (its face toward local +z), raked back by `lean`.
 function backCushion(g, w, t, h, x, y, z, lean = 0.18, m = 'linenWhite') {
   const c = cushion(g, w, t, h, x, y, z, m, 0.07); c.rotation.x = -Math.PI / 2 - lean; return c;
@@ -498,14 +544,15 @@ export function chaiseInto(g, w = 2.3, d = 6.3) {
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(g, leg, top, leg, sx * (w / 2 - leg / 2), top / 2, sz * (d / 2 - leg / 2), T, 0.02);
   for (const sx of [-1, 1]) box(g, 0.13, railH, d, sx * (w / 2 - 0.065), top - railH / 2, 0, T, 0.02);
   for (const sz of [-1, 1]) box(g, w - 0.26, railH, 0.13, 0, top - railH / 2, sz * (d / 2 - 0.065), T, 0.02);
-  const hinge = -0.55, inW = w - 0.3, padT = 0.2;
+  const hinge = -0.55, inW = w - 0.3, padT = 0.3;          // 3 1/2" filled pads (r4: were 2.4" slabs, critique-preview3-back #9)
   box(g, inW, 0.05, d / 2 - hinge - 0.15, 0, top - 0.06, (hinge + d / 2 - 0.15) / 2, T);                  // seat slats
-  cushion(g, inW, padT, d / 2 - 0.12 - hinge, 0, top - 0.035 + padT / 2, (hinge + d / 2 - 0.12) / 2, 'linenWhite', 0.05);
+  const sl = d / 2 - 0.12 - hinge;
+  pad(g, inW, padT, sl, 0, top - 0.035 + padT / 2, (hinge + d / 2 - 0.12) / 2, { dent: [-sl / 2 + 0.95, 0.04], seed: 1 });
   // raised back: slatted panel hinged at the seat, propped at ~35 deg, its own pad
   const bl = hinge + d / 2 - 0.15, back = new THREE.Group(); back.position.set(0, top - 0.035, hinge); back.rotation.x = 0.6; g.add(back);
   box(back, inW, 0.05, bl, 0, -0.025, -bl / 2, T);
   for (const sx of [-1, 1]) box(back, 0.1, 0.14, bl, sx * (inW / 2 - 0.05), -0.1, -bl / 2, T, 0.02);
-  cushion(back, inW, padT, bl - 0.05, 0, padT / 2, -bl / 2, 'linenWhite', 0.05);
+  pad(back, inW, padT, bl - 0.05, 0, padT / 2, -bl / 2, { dent: [-0.15, 0.03], crown: 0.035, seed: 2 });
   box(g, inW - 0.2, 0.08, 0.1, 0, top + 0.52, hinge - 1.0, T);                                            // prop bar under the back
   for (const sx of [-1, 1]) box(g, 0.08, 0.52, 0.08, sx * (inW / 2 - 0.15), top + 0.26, hinge - 1.0, T);
   // rolled towels: two side by side and one on top, on the seat just below the back

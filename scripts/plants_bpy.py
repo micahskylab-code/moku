@@ -550,10 +550,11 @@ SHRUBS = {
                      shape='elliptic', stems=6, stem_r=0.015, bloom=0.26, phyllo='opp', lump=0.16),
     'hedge': dict(R=0.5, H=1.25, twigs=420, leaves=(8, 12), leaf_len=0.045, twig_len=0.12, leaf_angle=55, droop=0.1, up=0.3,
                   shape='small', stems=6, stem_r=0.014, bloom=0.04, phyllo='alt', lump=0.1),
-    # a 7 ft clipped screen hedge on the side lot line (critic r2 back #11): dense small leaves, a narrow column
-    'screen': dict(R=0.55, H=2.25, twigs=820, leaves=(8, 12), leaf_len=0.05, twig_len=0.13, leaf_angle=55, droop=0.08, up=0.3,
+    # a clipped screen hedge on the side lot line (critic r2 back #11), >= 2.5 m (8.5-9 ft) so the neighbour's pool
+    # deck and chaises stay out of the back view (critic preview3 back #5): dense small leaves, a narrow column
+    'screen': dict(R=0.58, H=2.8, twigs=980, leaves=(8, 12), leaf_len=0.05, twig_len=0.13, leaf_angle=55, droop=0.08, up=0.3,
                    shape='small', stems=7, stem_r=0.016, bloom=0.0, phyllo='alt', lump=0.07),
-    'jasmine': dict(R=0.48, H=0.26, twigs=240, leaves=(6, 10), leaf_len=0.035, twig_len=0.12, leaf_angle=62, droop=0.05, up=0.5,
+    'jasmine': dict(R=0.6, H=0.28, twigs=300, leaves=(6, 10), leaf_len=0.035, twig_len=0.12, leaf_angle=62, droop=0.05, up=0.5,
                     shape='elliptic', stems=5, stem_r=0.005, bloom=0.0, phyllo='opp', lump=0.12, flat=True),
     'dichondra': dict(R=0.4, H=0.12, twigs=200, leaves=(5, 8), leaf_len=0.022, twig_len=0.08, leaf_angle=70, droop=0.05, up=0.7,
                       shape='small', stems=4, stem_r=0.003, bloom=0.0, phyllo='alt', lump=0.08, flat=True),
@@ -1173,8 +1174,9 @@ def paver_tile(seed, s=PAVER_PITCH, margin=0.022, rib_w=0.024, rib_h=0.012, hsca
     return buf
 
 
-def grass_material(per_instance=False):
-    m = bpy.data.materials.new('plant paver turf' if per_instance else 'plant lawn'); nt, N, L = _nodes(m)
+def grass_material(per_instance=False, wear=0.0):
+    """wear: share of straw yellowing (the thinner, drier turf along wall bases and bed edges)."""
+    m = bpy.data.materials.new('plant paver turf' if per_instance else 'plant lawn edge' if wear else 'plant lawn'); nt, N, L = _nodes(m)
     out = N.new('ShaderNodeOutputMaterial')
     geo = N.new('ShaderNodeNewGeometry'); uvn = N.new('ShaderNodeUVMap'); sep = N.new('ShaderNodeSeparateXYZ')
     L.new(uvn.outputs['UV'], sep.inputs[0])
@@ -1191,6 +1193,34 @@ def grass_material(per_instance=False):
     nm.inputs['To Min'].default_value = 0.78; nm.inputs['To Max'].default_value = 1.15
     L.new(no.outputs['Fac'], nm.inputs['Value'])
     hsv = N.new('ShaderNodeHueSaturation'); L.new(ramp.outputs['Color'], hsv.inputs['Color']); L.new(nm.outputs['Result'], hsv.inputs['Value'])
+    if not per_instance:
+        # r4 (critic preview3 back #3): the lawn read saturated chartreuse (hue ~72, sat ~0.65); a sunlit Hawaiian
+        # Bermuda / zoysia lawn is a soft olive-straw green (~hue 56-60, sat ~0.4): shift the hue, cut saturation
+        # ~35%, lift value ~15%; broad patches (irrigation, soil) shift hue and value over ~10-20 m; faint mowing
+        # stripes ~1.2 m wide along the lot (light / dark as the blades lie toward / away from the sun)
+        lf = N.new('ShaderNodeTexNoise'); lf.inputs['Scale'].default_value = 0.07; lf.inputs['Detail'].default_value = 2
+        L.new(geo.outputs['Position'], lf.inputs['Vector'])
+        lh = N.new('ShaderNodeMapRange'); lh.inputs['From Min'].default_value = 0.35; lh.inputs['From Max'].default_value = 0.65
+        lh.inputs['To Min'].default_value = 0.448; lh.inputs['To Max'].default_value = 0.472; L.new(lf.outputs['Fac'], lh.inputs['Value'])
+        lv = N.new('ShaderNodeMapRange'); lv.inputs['From Min'].default_value = 0.35; lv.inputs['From Max'].default_value = 0.65
+        lv.inputs['To Min'].default_value = 1.14; lv.inputs['To Max'].default_value = 1.3; L.new(lf.outputs['Fac'], lv.inputs['Value'])
+        sx = N.new('ShaderNodeSeparateXYZ'); L.new(geo.outputs['Position'], sx.inputs[0])
+        sw = N.new('ShaderNodeMath'); sw.operation = 'SINE'
+        sm = N.new('ShaderNodeMath'); sm.operation = 'MULTIPLY'; sm.inputs[1].default_value = math.pi / 1.2
+        L.new(sx.outputs['X'], sm.inputs[0]); L.new(sm.outputs[0], sw.inputs[0])
+        sq = N.new('ShaderNodeMapRange'); sq.inputs['From Min'].default_value = -0.35; sq.inputs['From Max'].default_value = 0.35
+        sq.inputs['To Min'].default_value = 0.955; sq.inputs['To Max'].default_value = 1.045; L.new(sw.outputs[0], sq.inputs['Value'])
+        vv = N.new('ShaderNodeMath'); vv.operation = 'MULTIPLY'; L.new(lv.outputs['Result'], vv.inputs[0]); L.new(sq.outputs['Result'], vv.inputs[1])
+        g2 = N.new('ShaderNodeHueSaturation'); g2.inputs['Saturation'].default_value = 0.62
+        L.new(hsv.outputs['Color'], g2.inputs['Color']); L.new(lh.outputs['Result'], g2.inputs['Hue']); L.new(vv.outputs[0], g2.inputs['Value'])
+        hsv = g2
+        if wear:
+            wn = N.new('ShaderNodeTexNoise'); wn.inputs['Scale'].default_value = 2.5; L.new(geo.outputs['Position'], wn.inputs['Vector'])
+            wm = N.new('ShaderNodeMapRange'); wm.inputs['To Min'].default_value = wear * 0.4; wm.inputs['To Max'].default_value = wear * 1.6
+            L.new(wn.outputs['Fac'], wm.inputs['Value'])
+            wy = N.new('ShaderNodeMix'); wy.data_type = 'RGBA'; wy.inputs[7].default_value = _lin('#9a9058')
+            L.new(wm.outputs['Result'], wy.inputs['Factor']); L.new(hsv.outputs['Color'], wy.inputs[6])
+            hp = N.new('ShaderNodeHueSaturation'); L.new(wy.outputs[2], hp.inputs['Color']); hsv = hp     # (keeps a 'Color' output)
     if per_instance:
         # grass pavers: every cell grows a little differently (hue, vigour), greener than lime (critic r2 front #11)
         oi = N.new('ShaderNodeObjectInfo')
@@ -1273,6 +1303,7 @@ def materials():
          dry=(1.5, 1.1, 0.3, 1), dry_share=0.08)
     leaf('alocasia', 19, '#2a5222', '#4a7634', n_veins=9, angle=62, vein=0.5, vein_w=0.01, aspect=0.75, rough=0.45, spec=0.4, transl=0.4, bump=0.6, val_var=0.12)
     M['lawn'] = grass_material()
+    M['lawn-edge'] = grass_material(wear=0.3)
     M['mulch'] = mulch_material()
     M['edging'] = plain_material('plant bed edging', _lin('#3c3a35'), 0.55)
     M['paver-rib'] = plain_material('plant paver rib', _lin('#85837b'), 0.9)          # concrete grey (~150-160 sRGB lit), not white
@@ -1696,7 +1727,7 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 z = ground.z(x, y)
                 if z is None: z = zref
                 nb = [ground.z(x + dx, y + dy) for dx, dy in ((0.12, 0), (-0.12, 0), (0, 0.12), (0, -0.12))]
-                tol = 0.32 if kind in ('mondo', 'alocasia', 'dichondra', 'tradescantia') else 0.7 if kind == 'jasmine' else 0.15   # groundcovers climb banks (jasmine: all of it, no bare soil)
+                tol = 0.32 if kind in ('mondo', 'alocasia', 'dichondra', 'tradescantia') else 1.6 if kind == 'jasmine' else 0.15   # groundcovers climb banks (jasmine: all of it, no bare soil)
                 if any(q is not None and abs(q - z) > tol for q in nb): continue    # right on a wall's step or a drop: skip
                 P.append((x, y, z - 0.015)); R.append((r.normal(0, 0.04), r.normal(0, 0.04), r.uniform(0, 6.283)))
                 S.append(r.uniform(0.82, 1.18)); I.append(r.integers(0, nv))
@@ -1738,6 +1769,10 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
 
     # ---- background canopy trees
     tr = [p for p in plants if p['type'] == 'tree']
+    # the neighbours' back queen palms that scripts/palms.py turned into broadleaf trees (critic preview3 front #5)
+    for q in meta.get('palms', []):
+        if q.get('_tree'):
+            tr.append({'type': 'tree', 'pos': q['base'], 'size': 4.0 * (0.85 + 0.25 * ((q['seed'] * 0.618) % 1)), 'sy': 0.95, 'seed': q['seed'] & 0xffffff, 'near': True})
     if tr and trees:
         forms = ('dome', 'umbrella', 'tall', 'dome', 'umbrella', 'dome')
         tk = lambda i: ('tree', 'tree-dark', 'tree-light', 'tree-dark', 'tree', 'tree-light')[i]
@@ -1747,14 +1782,22 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         lot_c = None
         if meta.get('lawn', {}).get('lot'):
             lx0, lz0, lx1, lz1 = meta['lawn']['lot']; lot_c = b([(lx0 + lx1) / 2, 0, (lz0 + lz1) / 2])
-        for p in tr:
+        # r4 (critic preview3 front #8): no lone 'lollipop' trees standing on the fairways - a tree with no other within
+        # 22 m is either dropped or becomes a grove of 3-5 with mixed forms and sizes; crowns are squashed or stretched
+        # a little so no two read as the same ball
+        bp = np.array([[b(p['pos']).x, b(p['pos']).y] for p in tr]) if tr else np.zeros((0, 2))
+        for k, p in enumerate(tr):
             r = np.random.default_rng(p['seed'])
             v = b(p['pos']); s = p['size'] / 4.0
+            d2 = ((bp - bp[k]) ** 2).sum(1); d2[k] = 1e12
+            lone = not p.get('near') and d2.min() > 22.0 ** 2
+            if lone and r.random() < 0.4: continue
+            ax = r.uniform(0.85, 1.15)
             P.append((v.x, v.y, v.z - 0.25)); R.append((r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283)))
-            S.append((s, s, s * p.get('sy', 1.0))); I.append(r.integers(0, nv))
+            S.append((s * ax, s / ax, s * p.get('sy', 1.0) * r.uniform(0.85, 1.05))); I.append(r.integers(0, nv))
             # trees grow in groves: a companion or two beside the far ones (not near our lot, where the plan is exact)
-            far = lot_c is None or math.hypot(v.x - lot_c.x, v.y - lot_c.y) > 140
-            for _ in range(r.integers(1, 4) if far else 0):
+            far = not p.get('near') and (lot_c is None or math.hypot(v.x - lot_c.x, v.y - lot_c.y) > 140)
+            for _ in range(r.integers(2, 5) if lone else r.integers(1, 4) if far else 0):
                 a = r.uniform(0, 6.283); dd = s * r.uniform(3.8, 6.5)
                 x, y = v.x + math.cos(a) * dd, v.y + math.sin(a) * dd
                 z = ground.z(x, y)
@@ -1820,7 +1863,8 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
             instancer('plants-lawn-pavers', pv, P, np.zeros((len(P), 3)), np.ones((len(P), 3)), rng.integers(0, len(hs), len(P)), col)
         nv = 6
         big = proto_collection('v-turf', [bpy.data.objects.new(f't{i}', grass_tile(6000 + i, 0.5).mesh(f'turf{i}', [mats['lawn']])) for i in range(nv)])
-        small = proto_collection('v-turf-s', [bpy.data.objects.new(f's{i}', grass_tile(6100 + i, 0.125).mesh(f'turfs{i}', [mats['lawn']])) for i in range(nv)])
+        # edge sub-cells (along walls, steps, bed edges): a little thinner and yellower (critic preview3 back #3)
+        small = proto_collection('v-turf-s', [bpy.data.objects.new(f's{i}', grass_tile(6100 + i, 0.125, density=17000, hscale=0.9).mesh(f'turfs{i}', [mats['lawn-edge']])) for i in range(nv)])
         for name, cells, pc in (('lawn', full, big), ('lawn-edge', part, small)):
             if not cells: continue
             P = np.array([(c[0], c[1], c[2] - 0.004) for c in cells])

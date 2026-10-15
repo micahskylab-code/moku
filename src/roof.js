@@ -4,8 +4,9 @@
 // the main hip and the vaulted ceilings inside meet cleanly in any renderer, the Blender export included.
 //
 // What a standing-seam roof on these pavilions is made of (front and back renderings):
-//  - panels 16" wide with 1 1/4" standing seams (real ribs, world-aligned along the eave, matching the
-//    rib grid of scripts/materials_bpy.py r_standing_seam), formed hip and ridge caps in the roof colour;
+//  - panels 16" wide with 1 1/2" bevelled standing seams (real ribs down every plane's fall line, world-aligned
+//    along the eave, matching the rib grid of scripts/materials_bpy.py r_standing_seam), their ends mitred to the
+//    hip / valley line and stopped under a raised formed hip or ridge cap in the roof colour;
 //  - a 6" metal fascia in the roof colour, a 5" K-style gutter on every eave, 3" round downspouts with
 //    a gooseneck back to the wall at chosen corners;
 //  - Dutch gables (`dutch`: the skirt's run in ft): the hip skirt runs up-slope from the eave, then a
@@ -109,9 +110,11 @@ class Acc {
     for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; this.quad(a[i], a[j], b[j], b[i]); }
   }
   // sweep a closed 2D profile (in the frame e1, e2) from point A to point B; caps the ends
-  sweep(profile, A, B, e1, e2, caps = true) {
+  // `ends` (optional): { axis, a: [], b: [] } shifts each profile vertex of the A / B end along `axis` (a mitred end)
+  sweep(profile, A, B, e1, e2, caps = true, ends = null) {
     const at = (O, [p, q]) => [O[0] + e1[0] * p + e2[0] * q, O[1] + e1[1] * p + e2[1] * q, O[2] + e1[2] * p + e2[2] * q];
-    const PA = profile.map(p => at(A, p)), PB = profile.map(p => at(B, p));
+    let PA = profile.map(p => at(A, p)), PB = profile.map(p => at(B, p));
+    if (ends) { PA = PA.map((v, i) => add(v, ends.axis, ends.a[i])); PB = PB.map((v, i) => add(v, ends.axis, ends.b[i])); }
     const L = Math.hypot(B[0] - A[0], B[1] - A[1], B[2] - A[2]);
     let s = 0;
     for (let i = 0; i < profile.length; i++) {
@@ -149,7 +152,8 @@ const add = (a, b, k = 1) => [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k]
 function norm(r, plate) {
   const [x0, y0, x1, y1] = r.rect;
   const t = r.type === 'hip' ? TYPE.hip : r.type === 'shed' ? TYPE.shed : (r.ridge === 'y' ? TYPE.gableY : TYPE.gableX);
-  return { ...r, x0: Math.min(x0, x1), y0: Math.min(y0, y1), x1: Math.max(x0, x1), y1: Math.max(y0, y1), t, o: r.overhang ?? 2, rk: r.rake ?? r.overhang ?? 2, h0: r.plate ?? plate, p: r.pitch };
+  return { ...r, x0: Math.min(x0, x1), y0: Math.min(y0, y1), x1: Math.max(x0, x1), y1: Math.max(y0, y1), t, o: r.overhang ?? 2, rk: r.rake ?? r.overhang ?? 2, h0: r.plate ?? plate, p: r.pitch,
+    pe: t === TYPE.hip ? r.endPitch : undefined, ra: r.ridge };
 }
 // Footprint (outer outline) of a roof.
 function outline(R) {
@@ -159,8 +163,11 @@ function outline(R) {
   return [x0 - rk, y0 - o, x1 + rk, y1 + o];
 }
 // The ceiling plane rising in `dir` from the wall line it starts at: h = a x + b y + c.
+// A hip with `endPitch` (pe) and `ridge` ('x' / 'y'): the planes rising from the walls across the ridge's ends
+// take pe, so a pavilion deeper than it is wide can still carry its ridge across (the great room, p4).
 function planeOf(R, dir) {
-  const { h0, p } = R;
+  const { h0 } = R;
+  const p = R.pe != null && (R.ra === 'y' ? dir[1] !== 0 : dir[0] !== 0) ? R.pe : R.p;
   if (dir[0] > 0) return [p, 0, h0 - p * R.x0];
   if (dir[0] < 0) return [-p, 0, h0 + p * R.x1];
   if (dir[1] > 0) return [0, p, h0 - p * R.y0];
@@ -233,7 +240,24 @@ export class Roofs {
     if (R._faces) return R._faces;
     const [X0, Y0, X1, Y1] = outline(R), { t } = R;
     let F;
-    if (t === TYPE.hip) {
+    if (t === TYPE.hip && R.pe != null) {
+      // each plane keeps the part of the outline where it is the lowest (exact for unequal pitches)
+      const dirs = DIRS[t], Ls = dirs.map(d => planeOf(R, d));
+      F = [];
+      dirs.forEach((d, i) => {
+        let P = [[X0, Y0], [X1, Y0], [X1, Y1], [X0, Y1]];
+        for (let j = 0; j < dirs.length && P; j++) if (j !== i) P = clip(P, Ls[j][0] - Ls[i][0], Ls[j][1] - Ls[i][1], Ls[j][2] - Ls[i][2]);
+        if (P && Math.abs(area(P)) > 1e-6) F.push({ pts: P, dir: d });
+      });
+      R._lines = [];
+      for (let i = 0; i < F.length; i++) for (let j = i + 1; j < F.length; j++) {
+        const Li = planeOf(R, F[i].dir), Lj = planeOf(R, F[j].dir), P = F[i].pts;
+        for (let k = 0; k < P.length; k++) {
+          const A = P[k], B = P[(k + 1) % P.length], on = q => Math.abs(evalP(Li, ...q) - evalP(Lj, ...q)) < 1e-6;
+          if (on(A) && on(B) && Math.hypot(B[0] - A[0], B[1] - A[1]) > 0.05) R._lines.push({ a: A, b: B, f: [i, j] });
+        }
+      }
+    } else if (t === TYPE.hip) {
       const W = X1 - X0, D = Y1 - Y0;
       if (W >= D) {
         const h = D / 2, yc = (Y0 + Y1) / 2, ra = X0 + h, rb = X1 - h;
@@ -354,29 +378,71 @@ export class Roofs {
       for (let k = k0; k <= k1; k++) {
         const t = k * SEAM;
         // clip the seam line {x ux + y uy = t} to the piece: param s = x dx + y dy
-        let lo = Infinity, hi = -Infinity;
+        let lo = Infinity, hi = -Infinity, eLo = null, eHi = null;
         for (let i = 0; i < P.length; i++) {
           const A = P[i], B = P[(i + 1) % P.length], ta = A[0] * ux + A[1] * uy, tb = B[0] * ux + B[1] * uy;
           if ((ta - t) * (tb - t) > 0 || ta === tb) continue;
           const w = (t - ta) / (tb - ta), s = (A[0] + (B[0] - A[0]) * w) * dx + (A[1] + (B[1] - A[1]) * w) * dy;
-          lo = Math.min(lo, s); hi = Math.max(hi, s);
+          if (s < lo) { lo = s; eLo = [A, B]; }
+          if (s > hi) { hi = s; eHi = [A, B]; }
         }
         if (hi - lo < 0.05) continue;
         if (!byK.has(k)) byK.set(k, []);
-        byK.get(k).push([lo, hi]);
+        byK.get(k).push([lo, hi, eLo, eHi]);
       }
     }
-    const prof = [[-0.045, -0.01], [0.045, -0.01], [0.03, 0.085], [0.016, 0.11], [-0.016, 0.11], [-0.03, 0.085]];
+    // 1 1/2" bevelled double-lock seam: 1 1/4" base, 1/2" crown (real geometry, so the seams read at any
+    // distance and angle without a normal map)
+    const prof = [[-0.052, -0.01], [0.052, -0.01], [0.036, 0.1], [0.02, 0.125], [-0.02, 0.125], [-0.036, 0.1]];
+    const D3 = [dx, a * dx + b * dy, dy];
+    // how a seam ends on a piece edge: at eaves, rakes, wells and where the same plane runs on (a coplanar
+    // neighbour, a bellcast kink) it runs to the edge; at hips, ridges and valleys it stops 1 3/4" short (under
+    // the cap / clear of the valley pan). Either way its end is mitred to the edge line.
+    const endOf = (s, e, out) => {
+      const x = (k, s2) => [k * ux + s2 * dx, k * uy + s2 * dy];
+      return t => {
+        const E = x(t, s), Q = [E[0] + dx * out * 0.15, E[1] + dy * out * 0.15];
+        const top = this.#topFace(Q[0], Q[1]);
+        const own = evalP(f.L, ...Q);
+        const runOn = !top || (dot([top.dir[0], 0, top.dir[1]], [dx, 0, dy]) > 0.99 && Math.abs(top.h - own) < 0.12);
+        const back = runOn ? 0 : 0.15;
+        const ex = e[1][0] - e[0][0], ey = e[1][1] - e[0][1], el = Math.hypot(ex, ey) || 1;
+        const ux2 = ex / el, uy2 = ey / el, dxe = dx * uy2 - dy * ux2;
+        const off = prof.map(([p, q]) => {
+          if (Math.abs(dxe) < 0.2) return -out * back;
+          const wx = p * ux + q * n3[0], wy = p * uy + q * n3[2];             // the vertex's plan offset from the seam line
+          const dl = -(wx * uy2 - wy * ux2) / dxe;
+          return -out * back + Math.max(-0.35, Math.min(0.35, dl));
+        });
+        return off;
+      };
+    };
     for (const [k, ivs] of byK) {
       ivs.sort((p, q) => p[0] - q[0]);
       const merged = [];
-      for (const iv of ivs) { const l = merged[merged.length - 1]; if (l && iv[0] <= l[1] + 0.01) l[1] = Math.max(l[1], iv[1]); else merged.push([...iv]); }
+      for (const iv of ivs) { const l = merged[merged.length - 1]; if (l && iv[0] <= l[1] + 0.01) { if (iv[1] > l[1]) { l[1] = iv[1]; l[3] = iv[3]; } } else merged.push([...iv]); }
       const t = k * SEAM;
-      for (const [s0, s1] of merged) {
+      for (const [s0, s1, e0, e1] of merged) {
         const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, a * x + b * y + c + T, y]; };
-        acc.sweep(prof, P(s0), P(s1), u3, n3);
+        const oa = endOf(s0, e0, -1)(t), ob = endOf(s1, e1, 1)(t);
+        if (s1 - s0 + Math.min(...ob) - Math.max(...oa) < 0.15) continue;
+        acc.sweep(prof, P(s0), P(s1), u3, n3, true, { axis: D3, a: oa, b: ob });
       }
     }
+  }
+
+  // The union's top surface at a plan point: its height (ceiling plane) and the up-slope direction of the face.
+  #topFace(x, y) {
+    let best = null;
+    for (const S of this.list) {
+      const [X0, Y0, X1, Y1] = outline(S);
+      if (x < X0 || x > X1 || y < Y0 || y > Y1) continue;
+      const P = planes(S); let h = Infinity, k = 0;
+      P.forEach((L, i) => { const v = evalP(L, x, y); if (v < h) { h = v; k = i; } });
+      if (!best || h > best.h) best = { h, dir: DIRS[S.t][k] };
+    }
+    if (best) for (const S of this.list) for (const hl of (S.companion ? S.parent.holes : S.holes) ?? []) if (x > hl[0] && x < hl[2] && y > hl[1] && y < hl[3]) return null;
+    return best;
   }
 
   // ------------------------------------------------------------------------------ hip and ridge caps
@@ -408,8 +474,10 @@ export class Roofs {
         // proud of the hip line), so every face is within a few degrees of a roof plane and takes the roof's
         // light; the old raised roll's steep facets caught the sun as two clipped white bars (critique r2 front #12)
         const pt = (e, n, w, h) => add(add([0, 0, 0], e, w), n, h);
-        const ring = [pt(ei, ni, 0.34, 0.004), pt(ei, ni, 0.325, 0.022), pt(ei, ni, 0.04, 0.022), add([0, 0, 0], up, 0.034),
-          pt(ej, nj, 0.04, 0.022), pt(ej, nj, 0.325, 0.022), pt(ej, nj, 0.34, 0.004), pt(ej, nj, 0.33, -0.012), add([0, 0, 0], up, -0.012), pt(ei, ni, 0.33, -0.012)];
+        // r4: the cap rides on Z-closures over the 1 1/2" seams (which stop under it): flanges parallel to the planes
+        // 1 3/4" up, hemmed down to the pans at 4 1/2" out, so the hip reads as a crisp raised line with a shadow
+        const ring = [pt(ei, ni, 0.37, 0.004), pt(ei, ni, 0.37, 0.13), pt(ei, ni, 0.34, 0.15), pt(ei, ni, 0.05, 0.16), add([0, 0, 0], up, 0.175),
+          pt(ej, nj, 0.05, 0.16), pt(ej, nj, 0.34, 0.15), pt(ej, nj, 0.37, 0.13), pt(ej, nj, 0.37, 0.004), pt(ej, nj, 0.35, -0.012), add([0, 0, 0], up, -0.012), pt(ei, ni, 0.35, -0.012)];
         // express the ring in a 2D frame (s1, s2) perpendicular to the line so sweep() can cap it
         const s1 = nrm(cross(up, ax)), s2 = up;
         acc.sweep(ring.map(p => [dot(p, s1), dot(p, s2)]), A, B, s1, s2);
@@ -583,9 +651,11 @@ export class Roofs {
     const nb = Math.max(2, Math.round((s1 - s0) / sp)), bay = (s1 - s0) / nb;
     for (let k = 0; k < nb; k++) {
       const s = s0 + (k + 0.5) * bay;
-      // runs 1" past each edge onto the curb (ends never lie in the lining's plane)
-      const P = t => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T + 0.16, y]; };
-      slats.sweep([[-0.083, 0], [0.083, 0], [0.083, -0.33], [-0.083, -0.33]], P(t0 - 0.07), P(t1 + 0.07), d3, n3);
+      // r4 (critique-preview3-front #11): the grille sits down in the well, its tops ~4 1/4" under the metal and
+      // 2x3s on edge (undersides at the ceiling), so from the street the curb, the dark lined well and the gaps
+      // read as an opening rather than slats laid on the roof; ends stop 1/8" off the lining (no coincident faces)
+      const P = t => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.36, y]; };
+      slats.sweep([[-0.083, 0], [0.083, 0], [0.083, -0.25], [-0.083, -0.25]], P(t0 + 0.01), P(t1 - 0.01), d3, n3);
     }
     // the lining in a dark stain (concept: reads as a dark gap between the slats, striped by their shadows)
     for (const [acc, m] of [[well, WELL_M()], [slats, mat('woodBeam')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }

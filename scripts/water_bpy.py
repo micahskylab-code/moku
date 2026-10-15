@@ -16,6 +16,7 @@ Every material src/pool.js names is (re)built here:
   falls face                 the garden-wall stone, wet: albedo x0.6, roughness 0.15, glossy film
   falls streamer             water IOR 1.33, glassy at the lip, whitening with entrained air as it falls
   falls foam                 aeration where the streams land (white, broken by noise, fading out)
+  falls spray                mist curtains on the impact line (soft white puffs fading upward)
   spa jet, pool light lens   stainless fittings; light lenses glow at night
 """
 import math
@@ -75,7 +76,8 @@ def r_water(m, ctx, absorb=(0.4, 0.8, 0.86), density=1.0, amp=1.0, basin=False, 
         line = g.maprange(g.math('ABSOLUTE', u), 0.05, 0.45, 1.0, 0.0, smooth=True)
         bend = g.noise(g.comb(g.mul(v, 1.4), g.mul(u, 0.6), 3.3), 1.0, 2.0, 0.5)
         wave = g.math('SINE', g.add(g.mul(u, 2 * math.pi / 0.17), g.mul(bend, 7.0)))
-        h = g.add(h, g.add(g.mul(boil, g.mul(line, 0.02)), g.mul(wave, g.mul(near, 0.002))))
+        wave2 = g.math('SINE', g.add(g.mul(u, 2 * math.pi / 0.41), g.mul(bend, 4.0)))   # longer swell behind them
+        h = g.add(h, g.add(g.mul(boil, g.mul(line, 0.024)), g.mul(g.add(wave, g.mul(wave2, 0.8)), g.mul(near, 0.003))))
     nrm = g.bump(h, strength=1.0, distance=1.0)
     M.finish(g, p, color=(1.0, 1.0, 1.0), rough=0.0, normal=nrm, ior=1.333, spec=0.5)
     p.inputs['Transmission Weight'].default_value = 1.0
@@ -155,7 +157,7 @@ def r_coping(m, ctx, wet=False):
 
 def r_wet_stone(m, ctx):
     """The garden-wall stone behind the falls, soaked: whatever recipe 'ashlar' has, albedo x~0.6 (a touch
-    cooler), roughness 0.15 under a glossy water film that runs in faint vertical rivulets."""
+    deeper, a touch cooler from the film), roughness 0.15 under a glossy water film that runs in faint vertical rivulets."""
     fn = M.RECIPES.get('ashlar')
     if fn: fn(m, ctx)
     g = M.G(m.node_tree)
@@ -167,8 +169,8 @@ def r_wet_stone(m, ctx):
         bc = p.inputs['Base Color']
         src = bc.links[0].from_socket if bc.links else tuple(bc.default_value)
         if bc.links: m.node_tree.links.remove(bc.links[0])
-        k = g.maprange(film, 0.3, 0.7, 0.55, 0.65)
-        g.put(bc, g.mix(1.0, src, g.comb(k, g.mul(k, 1.02), g.mul(k, 1.05)), 'MULTIPLY'))
+        k = g.maprange(film, 0.3, 0.7, 0.5, 0.6)
+        g.put(bc, g.mix(1.0, src, g.comb(k, g.mul(k, 1.0), g.mul(k, 1.04)), 'MULTIPLY'))
         for l in list(p.inputs['Roughness'].links): m.node_tree.links.remove(l)
         p.inputs['Roughness'].default_value = 0.15
         p.inputs['Coat Weight'].default_value = 1.0
@@ -178,37 +180,70 @@ def r_wet_stone(m, ctx):
 
 def r_sheet(m, ctx):
     """The vanishing-edge sheet (src/pool.js): one closed slab, uv x = fall fraction f (0 on the cap .. 1 in
-    the basin), y = ft along the weir. Clear water (IOR 1.33, roughness 0.02-0.05) that refracts the wet stone
-    behind it: glassy at the lip, then a smooth relief resolvable at view distance (no sub-pixel striations,
-    which only frost it) -- strands ~4" across running down the fall and waves ~4" apart travelling down it,
-    ~+-3 mm, tilting the faces ~10 deg so they pick up sky and sun glints. Only the lower third whitens with
-    entrained air, in strands, and tears open there: a Transparent mix (front and back share the uv, so a
-    tear goes through both faces)."""
+    the basin), y = ft along the weir. One continuous clear sheet (IOR 1.33, roughness 0.02-0.06) refracting
+    the wet stone behind it: glassy at the lip, then a ropy relief that grows down the fall -- low strands ~4"
+    across, fine ribs ~1.2" across (~5 deg tilts that pick up sky in thin vertical lines) and faint waves.
+    Only the lower ~30% breaks up (its start wanders along the weir, f 0.64-0.8): there the water clouds with
+    entrained air in soft translucent streaks that follow the strands (never solid white), and narrow slits
+    open between strands -- at most ~1/3 open at the foot, soft-edged, so no white icicle points; a whiter
+    foot merges into the foam band and spray at the impact line (critique-preview3 back #4). A few thin
+    white lines run the full height from disturbances on the lip, as on the brochure's falls."""
     g, p, out = M.fresh(m)
     f, v, _ = g.sep(_uv(g))
+    brk = g.maprange(g.noise(g.comb(g.mul(v, 0.45), 0.0, 7.7), 1.0, 2.0, 0.5), 0.35, 0.65, 0.64, 0.8)
+    fb = g.sub(f, brk)                                                             # > 0 below the break
+    lo = g.maprange(fb, 0.0, 0.2, 0.0, 1.0, smooth=True)
     s1 = g.noise(g.comb(g.mul(v, 3.2), g.mul(f, 0.5), 0.3), 1.0, 2.0, 0.5)         # strands down the fall
     s2 = g.noise(g.comb(g.mul(v, 0.9), g.mul(f, 9.0), 4.1), 1.0, 1.0, 0.5)         # waves travelling down it
-    h = g.mul(g.add(g.mul(s1, 0.026), g.mul(s2, 0.024)), g.maprange(f, 0.0, 0.45, 0.12, 1.0, smooth=True))
+    rib = g.noise(g.comb(g.mul(v, 10.0), g.mul(f, 1.2), 2.2), 1.0, 2.0, 0.5)       # fine ribs
+    h = g.add(g.mul(s1, 0.026), g.mul(s2, 0.012))
+    h = g.add(h, g.mul(rib, g.maprange(f, 0.15, 0.9, 0.0, 0.014)))
+    h = g.mul(h, g.maprange(f, 0.0, 0.45, 0.12, 1.0, smooth=True))
     nrm = g.bump(h, strength=1.0, distance=1.0)
-    M.finish(g, p, color=(0.96, 0.99, 1.0), rough=g.maprange(f, 0.2, 1.0, 0.02, 0.05), normal=nrm, ior=1.33, spec=0.5)
+    M.finish(g, p, color=(0.96, 0.99, 1.0), rough=g.maprange(f, 0.2, 1.0, 0.02, 0.06), normal=nrm, ior=1.33, spec=0.5)
     p.inputs['Transmission Weight'].default_value = 1.0
-    streak = g.noise(g.comb(g.mul(v, 5.0), g.mul(f, 0.8), 2.7), 1.0, 3.0, 0.6)
-    air = g.mul(g.maprange(f, 0.62, 1.0, 0.0, 1.0, smooth=True), g.maprange(streak, 0.47, 0.6, 0.1, 1.0))
+    # aeration: soft streaks along the strands below the break, a whiter foot, thin full-height lines
+    streak = g.noise(g.comb(g.mul(v, 6.0), g.mul(f, 0.7), 2.7), 1.0, 3.0, 0.55)
+    air = g.mul(lo, g.add(g.mul(g.maprange(streak, 0.42, 0.68, 0.0, 1.0, smooth=True), 0.5), 0.08))
+    air = g.add(air, g.maprange(f, 0.86, 1.0, 0.0, 0.3, smooth=True))
+    line = g.maprange(g.noise(g.comb(g.mul(v, 14.0), g.mul(f, 0.25), 9.1), 1.0, 2.0, 0.5), 0.6, 0.68, 0.0, 1.0, smooth=True)
+    line2 = g.maprange(g.noise(g.comb(g.mul(v, 23.0), g.mul(f, 0.35), 3.4), 1.0, 2.0, 0.5), 0.63, 0.7, 0.0, 0.7, smooth=True)
+    line = g.math('MAXIMUM', line, line2)
+    haze = g.maprange(f, 0.05, 0.6, 0.0, 0.07)                                     # micro-bubbles: a faint milkiness
+    air = g.math('MINIMUM', g.add(g.add(air, haze), g.mul(line, g.maprange(f, 0.03, 0.45, 0.0, 0.42))), 0.7)
     foam = g.node('ShaderNodeBsdfPrincipled')
-    M.finish(g, foam, color=(0.93, 0.97, 0.98), rough=0.35, normal=nrm, spec=0.5)
+    M.finish(g, foam, color=(0.9, 0.94, 0.95), rough=0.4, normal=nrm, spec=0.5)
     foam.inputs['Subsurface Weight'].default_value = 0.6
     foam.inputs['Subsurface Radius'].default_value = (0.01, 0.012, 0.014)
-    foam.inputs['Transmission Weight'].default_value = 0.4
-    mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], g.mul(air, 0.7))
+    foam.inputs['Transmission Weight'].default_value = 0.45
+    mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], air)
     g.L.new(p.outputs[0], mx.inputs[1]); g.L.new(foam.outputs[0], mx.inputs[2])
-    # tears: none above f 0.66, then slits stretched down the fall that widen to well over half open at the basin
-    tear = g.noise(g.comb(g.mul(v, 4.5), g.mul(f, 0.6), 5.3), 1.0, 3.0, 0.6, distortion=0.3)
-    thr = g.mul(g.maprange(f, 0.66, 1.0, 0.3, 0.62), g.math('GREATER_THAN', f, 0.66))
-    gap = g.maprange(g.sub(thr, tear), -0.01, 0.03, 0.0, 1.0)
+    # slits between strands below the break (front and back share the uv, so a slit goes through both faces)
+    tear = g.noise(g.comb(g.mul(v, 7.0), g.mul(f, 0.5), 5.3), 1.0, 2.0, 0.5)
+    thr = g.mul(g.maprange(fb, 0.03, 0.3, 0.3, 0.45, smooth=True), g.math('GREATER_THAN', fb, 0.03))
+    gap = g.maprange(g.sub(thr, tear), -0.015, 0.03, 0.0, 1.0)
+    gap = g.mul(gap, g.maprange(f, 0.93, 1.0, 1.0, 0.0))                          # the foot stays whole (foam band)
     tr = g.node('ShaderNodeBsdfTransparent')
     cut = g.node('ShaderNodeMixShader'); g.put(cut.inputs[0], gap)
     g.L.new(mx.outputs[0], cut.inputs[1]); g.L.new(tr.outputs[0], cut.inputs[2])
     g.L.new(cut.outputs[0], out.inputs['Surface'])
+
+
+def r_spray(m, ctx):
+    """Mist at the impact line (src/pool.js: two thin curtains, uv x = height fraction, y = ft along): soft
+    white puffs, densest on the water and gone by the top, broken up along the weir and by fine droplets."""
+    g, p, _ = M.fresh(m)
+    hf, v, _ = g.sep(_uv(g))
+    puff = g.noise(g.P(), 9.0, 3.0, 0.55, distortion=0.3)                         # rounded puffs ~4-6" (world, isotropic)
+    drop = g.noise(g.P(), 60.0, 3.0, 0.6)
+    fade = g.math('POWER', g.math('MAXIMUM', g.sub(1.0, hf), 0.0), 2.2)
+    a = g.mul(g.mul(fade, g.maprange(puff, 0.35, 0.65, 0.15, 1.0, smooth=True)), g.maprange(drop, 0.3, 0.7, 0.6, 1.0))
+    M.finish(g, p, color=(0.93, 0.95, 0.96), rough=0.5, spec=0.3)
+    p.inputs['Subsurface Weight'].default_value = 0.6
+    p.inputs['Subsurface Radius'].default_value = (0.01, 0.012, 0.014)
+    g.put(p.inputs['Alpha'], g.mul(a, 0.42))
+    try: m.blend_method = 'HASHED'
+    except Exception: pass
 
 
 def r_streamer(m, ctx):
@@ -275,17 +310,17 @@ RECIPES = {
     # the steps, blue over the 4.5 ft floor (sun ~2 m down + ~2 m back up there): the floor ~25-30% darker
     'pool water': lambda m, c: r_water(m, c, (0.3, 0.78, 0.88), 1.45, 1.0),
     'spa water': lambda m, c: r_water(m, c, (0.4, 0.78, 0.84), 1.6, 0.6),
-    # the basin: deeper blue-teal than the pool (red ~2/m, green ~0.67/m) so its 1.5 ft reads as water, not a
-    # slab; churned all over by the falls (rougher surface, finer caustic web)
-    'basin water': lambda m, c: r_water(m, c, (0.3, 0.76, 0.84), 2.8, 1.5, basin=True, caustic=1.0, cscale=8.0),
+    # the basin: the brochure's pale green-aqua over the white floor (red ~1.3/m, green ~0.3, blue ~0.5/m: 1.5 ft reads
+    # as clear water, lighter and greener than the pool); churned by the falls (rougher, finer caustics)
+    'basin water': lambda m, c: r_water(m, c, (0.36, 0.84, 0.76), 2.0, 2.0, basin=True, caustic=1.0, cscale=8.0),
     'pool plaster': r_plaster, 'waterline tile': r_tile,
     'pool coping': r_coping, 'weir cap': lambda m, c: r_coping(m, c, wet=True),
-    'falls face': r_wet_stone, 'falls sheet': r_sheet, 'falls streamer': r_streamer, 'falls foam': r_foam,
+    'falls face': r_wet_stone, 'falls sheet': r_sheet, 'falls streamer': r_streamer, 'falls foam': r_foam, 'falls spray': r_spray,
     'spa jet': r_jet, 'pool light lens': r_lens,
 }
 # the water bodies stay shadow-visible: their shaders turn transparent (caustic-tinted) for shadow rays, which
 # then cross the absorbing volume; the thin falls parts are simply skipped by shadow rays
-SHADOWLESS = {'falls sheet', 'falls streamer', 'falls foam'}
+SHADOWLESS = {'falls sheet', 'falls streamer', 'falls foam', 'falls spray'}
 
 
 def apply(meta=None, night=False, log=print):

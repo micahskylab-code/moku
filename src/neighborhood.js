@@ -96,9 +96,15 @@ export function siteLayout(plan) {
   const access = [[roadX, z0 - 40], [roadX, z1 + 30], [roadX - 25, z1 + 140], [roadX - 70, z1 + 330]];
   // the rectangle left to the modelled neighbourhood when the real site is loaded
   const keep = [lot[0] - 45, z0 - 45, roadX + 45, z1 + 45];   // keep in step with scripts/geo_common.py keep_rect()
+  // every other lot from ours is the spec design mirrored across its own lot centreline (plan y -> 2 axisY - y,
+  // before the lot offset), as spec rows are built: the copies next door are mirror images, not repeats
+  const others = lots.map((_, i) => i).filter(i => i !== OUR_LOT);
   return {
     toPlan, lot, keep, lots, ourLot: OUR_LOT,
-    nahiku: lots.filter((_, i) => i !== OUR_LOT),
+    nahiku: others.map(i => lots[i]),
+    nahikuLot: others,                                  // which of the fourteen each entry of nahiku is
+    nahikuMirror: others.map(i => Math.abs(i - OUR_LOT) % 2 === 1),
+    axisY: P[1],                                        // our lot's centreline (plan y): the mirror axis, before the offset
     streets: [access, ...ROADS.slice(1).map(l => l.map(toPlan))],
     homes: HOMES.map(toPlan),
     villas: VILLAS.map(toPlan), cottages: COTTAGES.map(toPlan),
@@ -118,18 +124,44 @@ export async function buildNeighborhood(plan, scene, H, shell) {
   const real = params.get('real') === '0' ? null : await loadRealSite('geodata/', { low });
   const center = [(L.lot[0] + L.lot[2]) / 2, (L.lot[1] + L.lot[3]) / 2];
 
-  // The other thirteen Na Hiku homes: instanced copies of our exterior + garden.
+  // The other thirteen Na Hiku homes: copies of our exterior + garden (src/shell.js, no staged furniture). Every
+  // other lot is the mirrored variant (its own mirrored geometry, translation-only matrices, so winding, normals
+  // and culling stay right in three.js, glTF and Cycles); each home has its own roof paint value, body white and
+  // shutter / garage-door stain (LOT_FINISH below), the architecture unchanged.
+  const offsets = shell ? L.nahiku.map(([x, y]) => [x - center[0], H(x, y) - H(...center), y - center[1]]) : [];
+  const mirror = shell ? L.nahikuMirror : [];
+  const finishes = shell ? L.nahikuLot.map(neighbourFinish) : [];
   if (shell) {
-    const mats = L.nahiku.map(([x, y]) => new THREE.Matrix4().makeTranslation(x - center[0], H(x, y) - H(...center), y - center[1]));
+    const homes = offsets.map((o, k) => ({ k, lot: L.nahikuLot[k], mirror: mirror[k], m: new THREE.Matrix4().makeTranslation(...o) }));
+    const flipped = new Map(), variants = new Map();
+    const geoFor = (geo, mir) => { if (!mir) return geo; if (!flipped.has(geo)) flipped.set(geo, mirrorGeometry(geo, L.axisY)); return flipped.get(geo); };
     for (const { geometry, material } of shell) {
-      const inst = new THREE.InstancedMesh(geometry, material, mats.length);
-      mats.forEach((m, i) => inst.setMatrixAt(i, m));
-      inst.castShadow = inst.receiveShadow = true;
-      inst.frustumCulled = false;
-      g.add(inst);
+      const fam = FINISH_FAMILY[material.name];
+      for (const mir of [false, true]) {
+        const set = homes.filter(h => h.mirror === mir);
+        if (!set.length) continue;
+        const geo = geoFor(geometry, mir);
+        if (fam) {
+          // finishes that differ house to house: one mesh per home sharing the geometry, its own material
+          for (const h of set) {
+            const key = `${material.uuid}:${h.lot}`;
+            if (!variants.has(key)) variants.set(key, finishVariant(material, fam, finishes[h.k], h.lot));
+            const mesh = new THREE.Mesh(geo, variants.get(key));
+            mesh.matrixAutoUpdate = false; mesh.matrix.copy(h.m);
+            mesh.castShadow = mesh.receiveShadow = true;
+            g.add(mesh);
+          }
+        } else {
+          const inst = new THREE.InstancedMesh(geo, material, set.length);
+          set.forEach((h, i) => inst.setMatrixAt(i, h.m));
+          inst.castShadow = inst.receiveShadow = true;
+          inst.frustumCulled = false;
+          g.add(inst);
+        }
+      }
     }
   }
-  const offsets = shell ? L.nahiku.map(([x, y]) => [x - center[0], H(x, y) - H(...center), y - center[1]]) : [];
+  const hood = { layout: L, offsets, mirror, axis: L.axisY, lots: shell ? L.nahikuLot : [], finishes };
 
   if (real) {
     // The real place takes over outside the modelled neighbourhood (L.keep).
@@ -147,7 +179,7 @@ export async function buildNeighborhood(plan, scene, H, shell) {
     window.__realsite = real;
     console.info(`[realsite] terrain ${real.tris} tris ${(t1 - t0).toFixed(0)} ms (${JSON.stringify(real.timing)}), ${real.buildingCount ?? 0} buildings, ${real.treeCount ?? 0} trees, total ${(performance.now() - t0).toFixed(0)} ms; sea level ${real.seaLevel.toFixed(1)} ft`);
     scene.add(g);
-    window.__neighborhood = { layout: L, offsets, real, night: () => real.night(true) };
+    window.__neighborhood = { ...hood, real, night: () => real.night(true) };
     return g;
   }
 
@@ -176,7 +208,7 @@ export async function buildNeighborhood(plan, scene, H, shell) {
   const poolMat = new THREE.MeshStandardMaterial({ color: '#2aa0bf', roughness: 0.1, emissive: '#0b7fa3', emissiveIntensity: 0 });
   add(pools, poolMat);
   scene.add(g);
-  window.__neighborhood = { layout: L, offsets, night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
+  window.__neighborhood = { ...hood, night: () => { win.emissiveIntensity = 0.9; poolMat.emissiveIntensity = 0.8; } };
   return g;
 }
 
@@ -216,6 +248,62 @@ function handOver(scene, keep, real, lotsRect) {
     const p = rec[i];
     if ((p.type === 'tree' || p.type === 'farpalm') && !inside(p.x, p.y, 0)) rec.splice(i, 1);
   }
+}
+
+// ---- the other homes' own finishes (same spec architecture, owner-chosen paint and stain) ----
+// Each is a multiplier (scene-linear) on our finish, so textures and recipes stay: the standing-seam roof paint
+// (pans, ribs and caps, fascia, gable vents, flashing) +-5% in sRGB value; the body white of the lap siding and
+// battens from the range of common exterior whites (LRV ~82-92, warm to cool; trim stays crisp white); the
+// semi-transparent stain on the cedar shutters and carriage garage door. The variant material keeps our
+// material's name plus '.<lot>' (scripts/materials_bpy.py base_name() finds the same recipe) and carries the
+// multiplier to Blender as glTF extras: nhFinish (family), nhTint (linear rgb).
+const FINISH_FAMILY = { roof: 'roof', roofSeam: 'roof', fascia: 'roof', gableLouver: 'roof', flashing: 'roof',
+  siding: 'body', batten: 'body', shutterCedar: 'stain', cedar: 'stain' };
+const BODY_WHITES = ['#f4f2ec',                  // ours (as src/materials.js siding)
+  '#f1efe4', '#eeefea', '#f2efe1', '#ece9df', '#f5f5f1'];  // warm white, cool / extra white, creamy, greige-white (LRV ~82), bright white
+const STAINS = ['#8a6040',                       // ours: natural cedar (as src/walls.js shutter)
+  '#6e4a33', '#857a6c', '#9a6b45', '#7a4b36'];   // walnut, driftwood grey, honey teak, chestnut
+// per lot (0 = north-west end; 6 is ours): sRGB roof value, body white, stain. Neighbours side by side never share
+// a roof value, and the two next to ours differ from it in all three.
+const LOT_FINISH = [
+  [1.03, 3, 2], [0.96, 1, 3], [1.05, 4, 1], [0.98, 2, 4], [1.04, 5, 0], [0.95, 2, 1], [1, 0, 0],
+  [1.05, 4, 2], [0.97, 1, 4], [1.03, 3, 1], [0.95, 5, 3], [1.02, 2, 0], [0.96, 4, 2], [1.04, 1, 4],
+];
+function neighbourFinish(lot) {
+  const [roof, body, stain] = LOT_FINISH[lot] ?? [1, 0, 0];
+  return { roof, body: BODY_WHITES[body], stain: STAINS[stain] };
+}
+function finishVariant(material, fam, f, lot) {
+  const ratio = (a, b) => { const A = new THREE.Color(a), B = new THREE.Color(b); return new THREE.Color(A.r / B.r, A.g / B.g, A.b / B.b); };
+  const tint = fam === 'roof' ? new THREE.Color().setScalar(Math.pow(f.roof, 2.2))
+    : fam === 'body' ? ratio(f.body, BODY_WHITES[0]) : ratio(f.stain, STAINS[0]);
+  const v = material.clone();
+  v.color.multiply(tint);
+  v.name = `${material.name}.${lot}`;
+  v.userData = { ...v.userData, nhFinish: fam, nhTint: tint.toArray().map(x => Math.round(x * 1e4) / 1e4) };
+  return v;
+}
+
+// A merged shell geometry mirrored across plan y = axis (three.js z): positions and normals reflected, triangle
+// winding reversed so front faces stay front faces (a negative-scale instance matrix would turn them inside out).
+function mirrorGeometry(src, axis) {
+  const geo = src.clone();
+  const p = geo.attributes.position, n = geo.attributes.normal;
+  for (let i = 0; i < p.count; i++) p.setZ(i, 2 * axis - p.getZ(i));
+  if (n) for (let i = 0; i < n.count; i++) n.setZ(i, -n.getZ(i));
+  if (geo.index) {
+    const a = geo.index.array;
+    for (let i = 0; i < a.length; i += 3) { const t = a[i + 1]; a[i + 1] = a[i + 2]; a[i + 2] = t; }
+  } else {
+    for (const attr of Object.values(geo.attributes)) {
+      const s = attr.itemSize, a = attr.array;
+      for (let t = 0; t + 2 < attr.count; t += 3) for (let c = 0; c < s; c++) {
+        const i1 = (t + 1) * s + c, i2 = (t + 2) * s + c, tmp = a[i1]; a[i1] = a[i2]; a[i2] = tmp;
+      }
+    }
+  }
+  geo.computeBoundingBox(); geo.computeBoundingSphere();
+  return geo;
 }
 
 // The access road runs on past the end of the row and down to the real road network: end it on the

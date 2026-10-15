@@ -61,7 +61,7 @@ export function buildHouse(plan, scene) {
   });
   for (const [x, y, size = 0.833] of plan.posts ?? []) {
     const b = beamOver(x, y), bh = b ? (b.h ?? 1.167) : 0;
-    const top = roofs.ceilingAt(x, y) - 0.1 - bh, foot = (plan.rooms.find(r => inside([x, y], r.polygon))?.floorLevel ?? 0);
+    const top = (b?.top ?? roofs.ceilingAt(x, y) - 0.1) - bh, foot = (plan.rooms.find(r => inside([x, y], r.polygon))?.floorLevel ?? 0);
     const base = foot + 0.125;                                           // 1 1/2" steel stand-off
     timber.box('woodBeam', size, top - base, size, x, (top + base) / 2, y);
     timber.box('iron', size + 0.08, 0.04, size + 0.08, x, foot + 0.02, y);              // base plate
@@ -74,10 +74,17 @@ export function buildHouse(plan, scene) {
     const bw = b.w ?? 0.833, bh = b.h ?? 1.167, ext = b.ext ?? 1.0;
     // ends run past the posts only into open air (not into a room's wall)
     const e0 = roomAt(ax - ux * (ext + 0.3), ay - uy * (ext + 0.3)) ? bw / 2 : ext, e1 = roomAt(bx + ux * (ext + 0.3), by + uy * (ext + 0.3)) ? bw / 2 : ext;
-    const top = Math.min(roofs.ceilingAt(ax, ay), roofs.ceilingAt(bx, by), roofs.ceilingAt((ax + bx) / 2, (ay + by) / 2)) - 0.1;
+    const ceil = Math.min(roofs.ceilingAt(ax, ay), roofs.ceilingAt(bx, by), roofs.ceilingAt((ax + bx) / 2, (ay + by) / 2));
+    // `top`: a dropped header (p5 lanai: the cedar beam hangs below the eave line, where a level eye sees it under the
+    // gutter); a painted frieze board closes the gap up to the soffit, flush with the beam's outer face
+    const top = b.top ?? ceil - 0.1;
     const mid = (e1 - e0) / 2, cx = (ax + bx) / 2 + ux * mid, cy = (ay + by) / 2 + uy * mid, L = len + e0 + e1;
     const rot = -Math.atan2(by - ay, bx - ax);
     timber.box(b.material ?? 'woodBeam', L, bh, bw, cx, top - bh / 2, cy, rot);
+    if (b.frieze && ceil - top > 0.1) {
+      const fs = b.frieze === true ? 1 : b.frieze, fz = 0.08, fo = bw / 2 - fz / 2 - 0.03;      // fs: which side is outside (+1: left of a->b)
+      timber.box('trim', len, ceil - top + 0.02, fz, (ax + bx) / 2 - uy * fs * fo, (ceil + top) / 2, (ay + by) / 2 + ux * fs * fo, rot);
+    }
     if (b.plates === false) continue;
     // bolted iron plates on both faces at each post, four 4" round washers with hex nuts
     for (const [px, py] of [[ax, ay], [bx, by]]) for (const sd of [1, -1]) {
