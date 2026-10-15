@@ -107,7 +107,7 @@ rng = np.random.default_rng(a.seed)
 grain = gaussian_filter(rng.normal(0, 1, (H, W)), 0.55)
 grain /= grain.std() + 1e-9
 l = img.mean(2, keepdims=True)
-img = np.clip(img + grain[..., None] * (0.010 + 0.012 * (1 - l)) * K, 0, 1)
+img = np.clip(img + grain[..., None] * (0.005 + 0.006 * (1 - l)) * K, 0, 1)   # fine grain (halved after critique r2)
 
 Image.fromarray((img * 255 + 0.5).astype(np.uint8)).save(a.dst, quality=95)
 print('finished', a.dst)
