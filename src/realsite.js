@@ -23,7 +23,9 @@ export async function loadRealSite(base = 'geodata/', { low = false } = {}) {
     const grid = async g => {
       const b = await fetch(base + g.height);
       if (!b.ok) throw new Error(`${g.height} ${b.status}`);
-      const data = new Uint16Array(await b.arrayBuffer());
+      // a host that serves no binary types gets the same bytes as base64 text (scripts/build_artifact.py)
+      const raw = g.height.endsWith('.b64.txt') ? Uint8Array.from(atob((await b.text()).trim()), c => c.charCodeAt(0)).buffer : await b.arrayBuffer();
+      const data = new Uint16Array(raw);
       if (data.length !== g.hsize * g.hsize) throw new Error(`${g.height}: size`);
       return { ...g, data, cell: (g.box[2] - g.box[0]) / g.hsize };
     };

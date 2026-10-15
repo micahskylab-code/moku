@@ -374,7 +374,8 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
 
   // ---------- camera ----------
   let saved = null;
-  const start = () => ({ pos: new THREE.Vector3(cx + 96, 82, cz + 72), target: new THREE.Vector3(cx, 2, cz) });
+  // a portrait screen needs to stand further back to fit the house's length
+  const start = (k = innerWidth < innerHeight ? 1.75 : 1) => ({ pos: new THREE.Vector3(cx + 96 * k, 82 * k, cz + 72 * k), target: new THREE.Vector3(cx, 2, cz) });
   // keep the model centred in the part of the screen the panels leave free: shift the projection centre
   // (a view offset) rather than the orbit target, so the model still turns about its own middle
   function frame(dt = Infinity) {

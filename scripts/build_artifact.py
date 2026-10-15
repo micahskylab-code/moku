@@ -9,9 +9,12 @@ CDNs, and passes no query string to the page. So the copy:
     astronomy-engine 2.1.19 (esm/astronomy.js, which vendor/ holds minified) from jsDelivr instead of publishing vendor/;
   - opens in the model view (window.__NAHIKU_MODE), since ?mode=model cannot reach the page;
   - hides the Ultra button (it reloads with a query string) and the 360 tour link (its panoramas are not built);
-  - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files).
+  - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files), with the two height grids
+    as base64 text, since the host serves no binary types.
 Everything stays labelled as an independent concept visualization.
 """
+import base64
+import json
 import re
 import shutil
 import sys
@@ -48,12 +51,21 @@ def build(out: Path):
         for f in sorted((ROOT / d).rglob('*')):
             if f.is_file() and '__pycache__' not in f.parts:
                 files.append(f)
-    files += sorted(f for f in (ROOT / 'geodata').iterdir() if f.is_file())
+    files += sorted(f for f in (ROOT / 'geodata').iterdir() if f.is_file() and f.suffix != '.bin')
+    files = [f for f in files if f.name != 'test-plan.json']
     for f in files:
         rel = f.relative_to(ROOT)
         (out / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(f, out / rel)
-    print(f'{out}: index.html + {len(files)} files, {sum(f.stat().st_size for f in files) / 1e6:.1f} MB')
+    # the host serves no binary types: height grids go as base64 text (src/realsite.js decodes '.b64.txt')
+    meta = json.loads((ROOT / 'geodata' / 'realsite.json').read_text())
+    for g in ('near', 'far'):
+        src = ROOT / 'geodata' / meta[g]['height']
+        meta[g]['height'] = src.stem + '.b64.txt'
+        (out / 'geodata' / meta[g]['height']).write_text(base64.b64encode(src.read_bytes()).decode())
+    (out / 'geodata' / 'realsite.json').write_text(json.dumps(meta, indent=1))
+    n = sum(1 for f in out.rglob('*') if f.is_file())
+    print(f'{out}: {n} files, {sum(f.stat().st_size for f in out.rglob("*") if f.is_file()) / 1e6:.1f} MB')
 
 
 if __name__ == '__main__':
