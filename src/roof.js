@@ -288,7 +288,7 @@ export class Roofs {
       }
       if (!empty) pieces = subtract(pieces, H);
     }
-    if (!R.companion) for (const h of R.holes ?? []) pieces = subtract(pieces, rectHalf(h));
+    for (const h of (R.companion ? R.parent.holes : R.holes) ?? []) pieces = subtract(pieces, rectHalf(h));   // a well can sit in the gable's zone
     this.#faceCache.set(key, pieces);
     return pieces;
   }
@@ -325,7 +325,12 @@ export class Roofs {
     const cm = caps.mesh(SEAM_M()); if (cm) g.add(cm);
     if (!R.companion) this.#edges(g, R);
     else this.#gableEnds(g, R);
-    if (!R.companion) for (const h of R.holes ?? []) this.#opening(g, R, h);
+    // the well is built by whichever roof carries the metal over its centre (the hip, or its Dutch gable)
+    if (!R.companion) for (const h of R.holes ?? []) {
+      const cx = (h[0] + h[2]) / 2, cy = (h[1] + h[3]) / 2, C = R.child;
+      const own = C && (ceilingOf(C, cx, cy) ?? -1e9) > (ceilingOf(R, cx, cy) ?? -1e9) + EPS ? C : R;
+      this.#opening(g, own, h);
+    }
     return g;
   }
 
@@ -530,10 +535,15 @@ export class Roofs {
     if (!f) return;
     const H = (x, y) => evalP(f.L, x, y), well = new Acc(), slats = new Acc(), curb = new Acc();
     const C = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+    // the lining runs from the ceiling below (the hip's, which can drop under a Dutch gable) up to the metal
+    const Hip = R.companion ? R.parent : R, low = (x, y) => Math.min(H(x, y), ceilingOf(Hip, x, y) ?? H(x, y)) - 0.02;
     for (let i = 0; i < 4; i++) {
       const A = C[i], B = C[(i + 1) % 4];
-      well.quad([A[0], H(...A) - 0.02, A[1]], [B[0], H(...B) - 0.02, B[1]], [B[0], H(...B) + T + 0.01, B[1]], [A[0], H(...A) + T + 0.01, A[1]]);
-      well.quad([A[0], H(...A) + T + 0.01, A[1]], [B[0], H(...B) + T + 0.01, B[1]], [B[0], H(...B) - 0.02, B[1]], [A[0], H(...A) - 0.02, A[1]]);
+      for (let j = 0; j < 8; j++) {
+        const t0 = j / 8, t1 = (j + 1) / 8, P0 = [A[0] + (B[0] - A[0]) * t0, A[1] + (B[1] - A[1]) * t0], P1 = [A[0] + (B[0] - A[0]) * t1, A[1] + (B[1] - A[1]) * t1];
+        well.quad([P0[0], low(...P0), P0[1]], [P1[0], low(...P1), P1[1]], [P1[0], H(...P1) + T + 0.01, P1[1]], [P0[0], H(...P0) + T + 0.01, P0[1]]);
+        well.quad([P0[0], H(...P0) + T + 0.01, P0[1]], [P1[0], H(...P1) + T + 0.01, P1[1]], [P1[0], low(...P1), P1[1]], [P0[0], low(...P0), P0[1]]);
+      }
       // curb: a 2" turned-up metal lip around the cut
       const L = Math.hypot(B[0] - A[0], B[1] - A[1]), ex = (B[0] - A[0]) / L, ey = (B[1] - A[1]) / L;
       const A3 = [A[0] - ex * 0.08, H(...A) + T, A[1] - ey * 0.08], B3 = [B[0] + ex * 0.08, H(...B) + T, B[1] + ey * 0.08];
@@ -556,7 +566,9 @@ export class Roofs {
   // goosenecks back to the wall and runs down beside the corner board to a kick-out at grade.
   #downspouts() {
     const acc = [];
-    for (const R of this.list) for (const [cxp, cyp, along] of R.downspouts ?? []) {
+    for (const R of this.list) for (const [cx0, cy0, along] of R.downspouts ?? []) {
+      // snap to the roof's wall-line corner (the plan's corner can be off by a rounding)
+      const cxp = Math.abs(cx0 - R.x0) < Math.abs(cx0 - R.x1) ? R.x0 : R.x1, cyp = Math.abs(cy0 - R.y0) < Math.abs(cy0 - R.y1) ? R.y0 : R.y1;
       // which eave: the wall the pipe runs down is the one the corner shares with `along` ('x' or 'y')
       const [X0, Y0, X1, Y1] = outline(R);
       const ny = Math.abs(cyp - R.y0) < Math.abs(cyp - R.y1) ? -1 : 1, nx = Math.abs(cxp - R.x0) < Math.abs(cxp - R.x1) ? -1 : 1;

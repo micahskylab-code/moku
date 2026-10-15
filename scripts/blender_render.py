@@ -26,11 +26,11 @@ ap.add_argument('--plate', default='')          # timeline.json: render the 360 
 ap.add_argument('--panos', default='')          # tour/panos.json: path-traced 360 panoramas for the tour
 # sky and light (scripts/materials_bpy.py): a photographed HDRI sky + Sun lamp, or the procedural Nishita sky
 ap.add_argument('--sky', default='hdri', choices=['hdri', 'procedural'])
-ap.add_argument('--hdri', default='kloofendal_48d_partly_cloudy_puresky')   # any day sky in assets/manifest.json
+ap.add_argument('--hdri', default='autumn_field_puresky')                   # any day sky in assets/manifest.json (clear, faint cirrus)
 ap.add_argument('--sky-strength', type=float, default=1.0)                  # x the HDRI's measured sky + sun
 ap.add_argument('--sky-yaw', type=float, default=0.0)                       # turn the clouds (deg) away from the sun-matched angle
 ap.add_argument('--hdri-res', type=int, default=0)                          # cap the HDRI width (e.g. 4096 for tests; 0 = full 8K)
-ap.add_argument('--polarizer', type=float, default=0.35)                    # lens polariser on the visible sky, 0..1
+ap.add_argument('--polarizer', type=float, default=0.12)                    # lens polariser on the visible sky, 0..1 (light: brochure sky is mid blue)
 ap.add_argument('--interior-ev', type=float, default=2.3)                   # interiors exposed +EV over the exteriors
 args = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 meta = json.load(open(args.meta))
@@ -60,6 +60,7 @@ except Exception:
 # transmit light, the ocean is a wind-roughened sea (scripts/materials_bpy.py)
 import materials_bpy
 materials_bpy.apply(meta=meta, night=args.night, log=lambda s: print(s, flush=True))
+import water_bpy; water_bpy.apply(meta=meta, night=args.night, log=lambda s: print(s, flush=True))   # pool, spa, falls (scripts/water_bpy.py)
 
 # ---------------------------------------------------------------- world and light
 # day: a photographed sky (assets/hdri, its sun painted out) lights the scene and is the background, turned

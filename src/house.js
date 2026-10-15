@@ -50,24 +50,50 @@ export function buildHouse(plan, scene) {
   wallsG.userData.shell = roofG.userData.shell = true;
   group.add(wallsG, roofG);
 
-  // Lanai and entry: wood posts and a wood header beam on the open edges (back rendering).
-  for (const [x, y] of plan.posts ?? []) {
-    const top = roofs.ceilingAt(x, y) - 0.1;
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.8, top - grade, 0.8), mat('woodBeam'));
-    post.position.set(x, (top + grade) / 2, y);
-    post.userData.shell = true;
-    group.add(post);
-    colliders.push(...square(x, y, 0.4));
+  // Lanai and entry: rough-sawn cedar posts and header beams on the open edges (back rendering): 10x10 posts on
+  // black steel stand-off bases, a 10x14 header whose ends run 12" past the posts, black iron knife plates with
+  // round bolt washers at every post-to-beam joint. posts: [x, y, size?]; beams: { a, b, w?, h?, ext? } (ft).
+  const timber = new Parts();
+  const roomAt = (x, y) => plan.rooms.find(r => !r.label_only && !r.outdoor && inside([x, y], r.polygon));
+  const beamOver = (x, y) => (plan.beams ?? []).find(b => {
+    const [ax, ay] = b.a, [bx, by] = b.b, L = Math.hypot(bx - ax, by - ay), t = ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / (L * L);
+    return t > -0.05 && t < 1.05 && Math.hypot(ax + (bx - ax) * t - x, ay + (by - ay) * t - y) < 0.3;
+  });
+  for (const [x, y, size = 0.833] of plan.posts ?? []) {
+    const b = beamOver(x, y), bh = b ? (b.h ?? 1.167) : 0;
+    const top = roofs.ceilingAt(x, y) - 0.1 - bh, foot = (plan.rooms.find(r => inside([x, y], r.polygon))?.floorLevel ?? 0);
+    const base = foot + 0.125;                                           // 1 1/2" steel stand-off
+    timber.box('woodBeam', size, top - base, size, x, (top + base) / 2, y);
+    timber.box('iron', size + 0.08, 0.04, size + 0.08, x, foot + 0.02, y);              // base plate
+    timber.box('iron', size * 0.5, 0.1, size * 0.5, x, foot + 0.08, y);                 // stand-off
+    for (const [ux, uy] of [[1, 0], [0, 1]]) timber.box('iron', ux ? 0.02 : size * 0.55, 0.42, uy ? 0.02 : size * 0.55, x, foot + 0.25, y);  // base knife plates
+    colliders.push(...square(x, y, size / 2));
   }
   for (const b of plan.beams ?? []) {
-    const [ax, ay] = b.a, [bx, by] = b.b, len = Math.hypot(bx - ax, by - ay);
-    const top = roofs.ceilingAt((ax + bx) / 2, (ay + by) / 2);
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(len + 0.8, 1.1, 0.75), mat('woodBeam'));
-    beam.position.set((ax + bx) / 2, top - 0.55, (ay + by) / 2);
-    beam.rotation.y = -Math.atan2(by - ay, bx - ax);
-    beam.userData.shell = true;
-    group.add(beam);
+    const [ax, ay] = b.a, [bx, by] = b.b, len = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / len, uy = (by - ay) / len;
+    const bw = b.w ?? 0.833, bh = b.h ?? 1.167, ext = b.ext ?? 1.0;
+    // ends run past the posts only into open air (not into a room's wall)
+    const e0 = roomAt(ax - ux * (ext + 0.3), ay - uy * (ext + 0.3)) ? bw / 2 : ext, e1 = roomAt(bx + ux * (ext + 0.3), by + uy * (ext + 0.3)) ? bw / 2 : ext;
+    const top = Math.min(roofs.ceilingAt(ax, ay), roofs.ceilingAt(bx, by), roofs.ceilingAt((ax + bx) / 2, (ay + by) / 2)) - 0.1;
+    const mid = (e1 - e0) / 2, cx = (ax + bx) / 2 + ux * mid, cy = (ay + by) / 2 + uy * mid, L = len + e0 + e1;
+    const rot = -Math.atan2(by - ay, bx - ax);
+    timber.box(b.material ?? 'woodBeam', L, bh, bw, cx, top - bh / 2, cy, rot);
+    if (b.plates === false) continue;
+    // bolted iron plates on both faces at each post, four 4" round washers with hex nuts
+    for (const [px, py] of [[ax, ay], [bx, by]]) for (const sd of [1, -1]) {
+      const nx = -uy * sd, ny = ux * sd, off = bw / 2 + 0.012;
+      timber.box('iron', 0.62, bh + 0.75, 0.025, px + nx * off, top - (bh + 0.75) / 2, py + ny * off, rot);
+      for (const [du, dv] of [[-0.17, -bh * 0.5], [0.17, -bh * 0.5], [-0.17, -bh - 0.4], [0.17, -bh - 0.4]]) {
+        const qx = px + ux * du + nx * (off + 0.02), qy = py + uy * du + ny * (off + 0.02);
+        timber.cyl('iron', 0.165, 0.025, qx, top + dv, qy, nx, ny);
+        timber.cyl('iron', 0.06, 0.06, qx + nx * 0.03, top + dv, qy + ny * 0.03, nx, ny, 6);
+      }
+    }
   }
+  const timberG = timber.mesh();
+  timberG.userData.shell = true;
+  timberG.traverse(o => { o.userData.shell = true; });
+  group.add(timberG);
 
   for (const item of plan.furniture ?? []) {
     const { mesh, blocks } = buildFurniture(item, { ceilingAt });
@@ -80,6 +106,32 @@ export function buildHouse(plan, scene) {
   group.traverse(o => { if (o.isMesh) { o.castShadow = !o.userData.noShadow && !o.material.transparent; o.receiveShadow = true; } });
   scene.add(group);
   return { group, colliders, roofs, ceilingAt };
+}
+
+// Merged boxes and discs per material (posts, beams, their iron).
+const IRON = () => (IRON.m ??= new THREE.MeshStandardMaterial({ name: 'ironHardware', color: '#1c1c1d', roughness: 0.55, metalness: 0.6 }));
+class Parts {
+  constructor() { this.by = new Map(); }
+  add(name, g) { if (!this.by.has(name)) this.by.set(name, []); this.by.get(name).push(g); }
+  box(name, w, h, d, x, y, z, rotY = 0) { const g = new THREE.BoxGeometry(w, h, d); if (rotY) g.rotateY(rotY); g.translate(x, y, z); this.add(name, g); }
+  cyl(name, r, h, x, y, z, nx, nz, seg = 16) {
+    const g = new THREE.CylinderGeometry(r, r, h, seg);
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(nx, 0, nz).normalize()));
+    g.translate(x, y, z); this.add(name, g);
+  }
+  mesh() {
+    const grp = new THREE.Group();
+    for (const [name, list] of this.by) {
+      const P = [], N = [], U = [];
+      for (let g of list) { g = g.index ? g.toNonIndexed() : g; P.push(...g.attributes.position.array); N.push(...g.attributes.normal.array); U.push(...g.attributes.uv.array); }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2));
+      grp.add(new THREE.Mesh(geo, name === 'iron' ? IRON() : mat(name)));
+    }
+    return grp;
+  }
 }
 
 function square(x, y, r) { return footprint({ x, y, w: 2 * r, d: 2 * r }); }

@@ -11,6 +11,7 @@ import { distToSeg } from './geom.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { siteLayout } from './neighborhood.js';
 import { inside } from './geom.js';
+import { buildPool } from './pool.js';
 
 const rnd = seed => () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822519) ^ (seed + 0x9e3779b9)) >>> 0) / 4294967296;
 
@@ -62,16 +63,28 @@ export function buildSite(plan, scene, colliders) {
 
   // ---- planting ----
   const plants = new THREE.Group();
-  for (const p of S.palms ?? []) plants.add(palm(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 30, p[3] ?? 1));
-  // areca / foxtail clumps: the 8-16 ft understorey palms that fill the renderings
-  for (const [x, y, h = 13] of S.arecas ?? []) {
+  // tall palms: [x, y, height, lean, kind] (kind: queen | foxtail | christmas | coconut; Blender grows the species)
+  for (const p of S.palms ?? []) plants.add(palm(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 30, p[3] ?? 1, 0, { kind: p[4] ?? 'queen', trunkR: p[4] === 'christmas' ? 0.3 : 0.55 }));
+  // understorey palm clumps [x, y, height, kind, stems]: areca / lipstick clumps (many canes), foxtail / christmas /
+  // pygmy date (one to three trunks), cycads: the 3-20 ft palms that fill the renderings
+  const CLUMP = { areca: [6, 0.4, 1.4, 0.55], lipstick: [5, 0.3, 1.0, 0.5], foxtail: [1, 2.5, 3.5, 0.85], christmas: [1, 2.0, 3.0, 0.8],
+    roebelenii: [1, 1.5, 2.5, 0.75], cycad: [1, 1.0, 1.5, 0.7], queen: [1, 3, 4, 0.9] };
+  for (const [x, y, h = 13, kind = 'areca', stems] of S.arecas ?? []) {
     const r = rnd(Math.round(x * 31 + y * 17));
-    for (let k = 0; k < 6; k++) {
-      const a = r() * Math.PI * 2, d = 0.4 + r() * 1.4;
-      plants.add(palm(x + Math.cos(a) * d, y + Math.sin(a) * d, terrainH(x, y), h * (0.55 + r() * 0.45), 4, k, { trunkR: 0.14, frondLen: 0.5, fronds: 0.55, shaft: false }));
+    const [n0, d0, d1, hmin] = CLUMP[kind] ?? CLUMP.areca, n = stems ?? n0;
+    for (let k = 0; k < n; k++) {
+      const a = r() * Math.PI * 2, d = k === 0 && n0 === 1 ? 0 : d0 + r() * (d1 - d0);
+      const clump = kind === 'areca' || kind === 'lipstick';
+      plants.add(palm(x + Math.cos(a) * d, y + Math.sin(a) * d, terrainH(x, y), h * (hmin + r() * (1 - hmin)), clump ? 4 : 1.5, k,
+        { trunkR: clump ? 0.14 : 0.3, frondLen: clump ? 0.5 : 0.65, fronds: 0.55, shaft: kind !== 'areca', kind }));
     }
   }
   for (const p of S.plumeria ?? []) plants.add(plumeria(p[0], p[1], terrainH(p[0], p[1]), p[2] ?? 1));
+  // specimen flowering trees [x, y, scale, kind] (kind 'shower': pink shower tree, grown in Blender by scripts/plants_bpy.py)
+  for (const [x, y, s = 1, kind = 'shower'] of S.specimens ?? []) {
+    if (recording()) recordPlant({ type: kind, x, y, ground: terrainH(x, y), scale: s, seed: Math.round(x * 17 + y * 3 + 23), shell: true });
+    else plants.add(plumeria(x, y, terrainH(x, y), s * 1.6));
+  }
   for (const b of S.beds ?? []) plants.add(plantBed(b, terrainH));
   for (const l of S.loungers ?? []) {
     const L = new THREE.Group(); loungerInto(L); L.position.set(l[0], grade + 0.02, l[1]); L.rotation.y = -(l[2] ?? 0) * Math.PI / 180; plants.add(L);
@@ -101,15 +114,16 @@ function makeTerrain(S, grade) {
   const [ox, oy] = S.oceanDir ?? [-0.87, -0.5];
   const cx = (lot[0] + lot[2]) / 2, cy = (lot[1] + lot[3]) / 2;
   const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-  return (x, y) => {
+  const H = (x, y) => {
     const dx = Math.max(lot[0] - x, 0, x - lot[2]), dy = Math.max(lot[1] - y, 0, y - lot[3]);
     const out = Math.hypot(dx, dy);
     if (out <= 0) return grade;
     const toward = (x - cx) * ox + (y - cy) * oy;
-    // behind our lot the pad is held by a coral retaining wall on the lot line: the ground drops
-    // inside the wall's thickness, so its face shows (as in the rendering); elsewhere a soft bank
+    // behind our lot the pad is held by a coral retaining wall on the lot line: the ground steps down
+    // exactly on the line (inside the wall), so the wall face shows (as in the rendering); elsewhere a
+    // soft bank. terrainMesh() clips its triangles along H.step so no sliver pokes out of the wall.
     const walled = ss(lot[1] - 1.2, lot[1] - 0.2, y) * (1 - ss(lot[3] + 0.2, lot[3] + 1.2, y));   // inside the return walls
-    const gentle = ss(0.6, 5, lot[0] - x), steep = ss(0, 0.8, lot[0] - x);
+    const gentle = ss(0.6, 5, lot[0] - x), steep = lot[0] - x > 0 ? 1 : 0;
     const bank = -(S.bank ?? 7.5) * (gentle + (steep - gentle) * walled);
     const far = ss(60, 600, out);
     const fall = -Math.max(0, toward) * 0.05 * far;
@@ -118,6 +132,8 @@ function makeTerrain(S, grade) {
     const und = (roll(u, v) - 0.5) * 40 * far;
     return grade + bank + fall + rise + und;
   };
+  H.step = { x: lot[0], y0: lot[1] - 1.5, y1: lot[3] + 1.5 };
+  return H;
 }
 
 // Distant tree clumps and palms on the surrounding land (instanced; cheap at any count).
@@ -186,20 +202,43 @@ function terrainMesh(H, S) {
   const fair = new THREE.Color('#9cc95a'), rough = new THREE.Color('#5f8a36'), far = new THREE.Color('#4f7a33'), field = new THREE.Color('#a98c5d'), green = new THREE.Color('#b4dc6a'), sand = new THREE.Color('#f2e6c8');
   const land = S.landuse ?? (() => 0);
   const nn = fbm(8, 3, 77), land2 = (x, y) => nn(((x / 400) % 1 + 1) % 1, ((y / 400) % 1 + 1) % 1);
-  for (let i = 0; i <= rings; i++) for (let j = 0; j <= segs; j++) {
-    const r = radius(i), a = j / segs * Math.PI * 2, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
-    pos.push(x, H(x, y), y); uv.push(x, -y);
-    const lu = land(x, y);
+  const vert = (x, y, h) => {
+    pos.push(x, h, y); uv.push(x, -y);
+    const lu = land(x, y), r = Math.hypot(x - cx, y - cy);
     const c = r > 2600 ? far : rough;
     const v = 0.88 + land2(x, y) * 0.24;
     const lt = S.lot ?? [-60, -40, 140, 90], out = Math.hypot(Math.max(lt[0] - x, 0, x - lt[2]), Math.max(lt[1] - y, 0, y - lt[3]));
     const lawn = new THREE.Color(v, v * 1.02, v * 0.95), wild = c.clone().multiplyScalar((lu === 4 ? 2.6 : lu ? 1.25 : 1.1) * v);
     const k = lawn.lerp(wild, Math.min(1, out / 60));
     col.push(k.r, k.g, k.b);
+    return pos.length / 3 - 1;
+  };
+  for (let i = 0; i <= rings; i++) for (let j = 0; j <= segs; j++) {
+    const r = radius(i), a = j / segs * Math.PI * 2, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+    vert(x, y, H(x, y));
   }
+  // Triangles that cross the retaining-wall step (H.step) are cut exactly on the step line, with the
+  // line's vertices doubled (one at the pad level, one at the lower level), so the drop is a clean
+  // vertical break hidden inside the wall instead of slivers sticking out of its faces.
+  const st = H.step, X = st?.x ?? 0;
+  const px = k => pos[k * 3], pz = k => pos[k * 3 + 2];
+  const crosses = t => st && t.some(k => pz(k) > st.y0 && pz(k) < st.y1) && t.some(k => px(k) >= X) && t.some(k => px(k) < X);
+  const tri = t => {
+    if (!crosses(t)) { idx.push(...t); return; }
+    const hi = [], lo = [];
+    for (let e = 0; e < 3; e++) {
+      const p = t[e], q = t[(e + 1) % 3], pHi = px(p) >= X;
+      (pHi ? hi : lo).push(p);
+      if (pHi !== (px(q) >= X)) {
+        const f = (X - px(p)) / (px(q) - px(p)), y = pz(p) + f * (pz(q) - pz(p));
+        hi.push(vert(X, y, H(X + 1e-3, y))); lo.push(vert(X, y, H(X - 1e-3, y)));
+      }
+    }
+    for (const poly of [hi, lo]) for (let k = 1; k + 1 < poly.length; k++) idx.push(poly[0], poly[k], poly[k + 1]);
+  };
   for (let i = 0; i < rings; i++) for (let j = 0; j < segs; j++) {
     const a = i * (segs + 1) + j, b = a + segs + 1;
-    idx.push(a, a + 1, b, b, a + 1, b + 1);
+    tri([a, a + 1, b]); tri([b, a + 1, b + 1]);
   }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
@@ -277,58 +316,8 @@ function setBoxUV(geo, w, h, d) {
 }
 function sbox(w, h, d, material) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(material)); setBoxUV(m.geometry, w, h, d); return m; }
 
-function pool(P, grade, colliders) {
-  const g = new THREE.Group();
-  const [x0, y0, x1, y1] = P.rect, w = x1 - x0, d = y1 - y0, depth = 4.5, water = grade - 0.35;
-  const deckW = P.deck ?? 3;
-  // deck: coral pavers around three sides (the seaward side is the vanishing edge)
-  g.add(slab([x0 - (P.edge === 'x0' ? 0 : deckW), y0 - deckW, x0, y1 + deckW], grade + 0.04, 'coral'));
-  g.add(slab([x1, y0 - deckW, x1 + deckW, y1 + deckW], grade + 0.04, 'coral'));
-  g.add(slab([x0, y0 - deckW, x1, y0], grade + 0.04, 'coral'));
-  g.add(slab([x0, y1, x1, y1 + deckW], grade + 0.04, 'coral'));
-  // shell: tiled floor and walls
-  const floor = sbox(w, 0.2, d, 'poolTile'); floor.position.set((x0 + x1) / 2, water - depth, (y0 + y1) / 2); g.add(floor);
-  for (const [cx, cz, ww, dd] of [[(x0 + x1) / 2, y0, w, 0.3], [(x0 + x1) / 2, y1, w, 0.3], [x1, (y0 + y1) / 2, 0.3, d], [x0, (y0 + y1) / 2, 0.3, d]]) {
-    const wall = sbox(ww, depth + 0.6, dd, 'poolTile'); wall.position.set(cx, water - depth / 2 + 0.25, cz); g.add(wall);
-  }
-  // coping on the three deck sides
-  for (const [cx, cz, ww, dd] of [[(x0 + x1) / 2, y0 - 0.5, w + 2, 1], [(x0 + x1) / 2, y1 + 0.5, w + 2, 1], [x1 + 0.5, (y0 + y1) / 2, 1, d]]) {
-    const c = sbox(ww, 0.25, dd, 'coral'); c.position.set(cx, grade + 0.08, cz); g.add(c);
-  }
-  // water
-  const watGeo = new THREE.PlaneGeometry(w - 0.3, d - 0.3); { const uv = watGeo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w, uv.getY(i) * d); }
-  const wat = new THREE.Mesh(watGeo, mat('water'));
-  wat.rotation.x = -Math.PI / 2; wat.position.set((x0 + x1) / 2, water, (y0 + y1) / 2); wat.renderOrder = 3; g.add(wat);
-  // raised spa in the corner nearest the house, spilling into the pool
-  if (P.spa) {
-    const [sx0, sy0, sx1, sy1] = P.spa, sw = sx1 - sx0, sd = sy1 - sy0;
-    const rim = 1.2;
-    for (const [cx, cz, ww, dd] of [[(sx0 + sx1) / 2, sy0, sw, 0.6], [(sx0 + sx1) / 2, sy1, sw, 0.6], [sx0, (sy0 + sy1) / 2, 0.6, sd], [sx1, (sy0 + sy1) / 2, 0.6, sd]]) {
-      const wall = sbox(ww + 0.6, depth + rim, dd, 'coral'); wall.position.set(cx, water - depth / 2 + rim / 2 + 0.2, cz); g.add(wall);
-    }
-    const sp = new THREE.Mesh(new THREE.PlaneGeometry(sw - 0.6, sd - 0.6), mat('water'));
-    sp.rotation.x = -Math.PI / 2; sp.position.set((sx0 + sx1) / 2, water + rim - 0.15, (sy0 + sy1) / 2); g.add(sp);
-    const inner = sbox(sw - 0.6, 0.1, sd - 0.6, 'poolTile'); inner.position.set((sx0 + sx1) / 2, water - 2.5, (sy0 + sy1) / 2); g.add(inner);
-  }
-  // vanishing edge on the x0 side: a sheet of water over a tiled face into a catch basin,
-  // all held up by a coral-stone retaining wall
-  if (P.edge === 'x0') {
-    const drop = P.drop ?? 4;
-    const sheet = new THREE.Mesh(new THREE.PlaneGeometry(d, drop), new THREE.MeshPhysicalMaterial({ color: '#8fd3df', transparent: true, opacity: 0.5, roughness: 0.05, envMapIntensity: 1.6, normalMap: texture('ripple').normalMap, normalScale: new THREE.Vector2(0.15, 1.2) }));
-    sheet.position.set(x0 - 0.2, water - drop / 2, (y0 + y1) / 2); sheet.rotation.y = -Math.PI / 2; g.add(sheet);
-    const face = sbox(0.3, drop, d, 'poolTile'); face.position.set(x0 - 0.05, water - drop / 2, (y0 + y1) / 2); g.add(face);
-    const basin = new THREE.Mesh(new THREE.PlaneGeometry(2.6, d), mat('water')); basin.rotation.x = -Math.PI / 2; basin.position.set(x0 - 1.6, water - drop, (y0 + y1) / 2); g.add(basin);
-    // the basin's outer wall: its lip sits just above the basin water (the sheet falls into a full trough)
-    const lip = water - drop + 0.25, foot = grade - 9;
-    const rw = sbox(1.8, lip - foot, d + 6, 'ashlar'); rw.position.set(x0 - 3.4, (lip + foot) / 2, (y0 + y1) / 2); g.add(rw);
-    const bf = sbox(3, 1.0, d + 6, 'ashlar'); bf.position.set(x0 - 1.6, water - drop - 0.4, (y0 + y1) / 2); g.add(bf);
-    // stone ends close the catch basin where the lawn is cut away for it
-    const eTop = grade + 0.25, eBot = water - drop - 0.6;
-    for (const yy of [y0 - 0.3, y1 + 0.3]) { const ew = sbox(3.6, eTop - eBot, 0.6, 'ashlar'); ew.position.set(x0 - 1.8, (eTop + eBot) / 2, yy); g.add(ew); }
-  }
-  colliders.push(...footprint({ x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, d }));
-  return g;
-}
+// Pool, spa, vanishing edge and catch basin: src/pool.js (shaded for Cycles in scripts/water_bpy.py).
+function pool(P, grade, colliders) { return buildPool(P, grade, colliders); }
 
 // Coral-stone wall from a polyline; height above local ground, with a cap.
 function stoneWall(W, H, colliders) {
@@ -353,10 +342,11 @@ const frondShape = (() => {
 })();
 
 // Tall palm: curved ringed trunk, ~16 arching fronds.
-export function palm(x, y, ground, height = 30, lean = 1, seed = 0, { trunkR = 0.55, frondLen = 1, fronds = 1, shaft = true } = {}) {
+export function palm(x, y, ground, height = 30, lean = 1, seed = 0, { trunkR = 0.55, frondLen = 1, fronds = 1, shaft = true, kind = null } = {}) {
   const r = rnd(Math.round(x * 13 + y * 7 + seed));
   const g = new THREE.Group(); g.position.set(x, ground, y);
-  if (globalThis.__palmProxies) { globalThis.__palmProxies.push({ x, y, ground, height, lean, seed, trunkR, frondLen, kind: shaft ? 'foxtail' : 'areca' }); return g; }
+  if (globalThis.__palmProxies) { globalThis.__palmProxies.push({ x, y, ground, height, lean, seed, trunkR, frondLen, kind: kind ?? (shaft ? 'foxtail' : 'areca') }); return g; }
+  if (kind === 'queen' || kind === 'coconut' || kind === 'roebelenii' || kind === 'cycad') shaft = false;
   const leanDir = r() * Math.PI * 2, bend = (0.03 + r() * 0.05) * lean;
   const pts = [];
   for (let k = 0; k <= 12; k++) { const t = k / 12; pts.push(new THREE.Vector3(Math.cos(leanDir) * bend * height * t * t, height * t, Math.sin(leanDir) * bend * height * t * t)); }

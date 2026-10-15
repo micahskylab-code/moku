@@ -423,9 +423,9 @@ def _frond_axis(L, elev, droop, n=24, twist=0.0, rng=None, power=1.6):
 #   r0: frond attachment radius; drop: oldest frond attaches this far down; shaft: crownshaft length (m) or 0;
 #   dead: hanging dead fronds (choices); fruit: panicles (choices); rad: trunk radius (m); ring: scar spacing (m)
 KIND = {
-    'queen': dict(fronds=(15, 19), L=(3.7, 4.7), pet=0.13, ns=160, ll=0.82, lw=0.024, arr='plumose', ld=(2.4, 4.2), limp=0.8,
-                  elev=(74, -42), epow=0.9, rd=(0.95, 0.85), rpow=2.0, r0=0.1, drop=0.55, shaft=0, dead=(2, 2, 3, 3, 4), fruit=(1, 2, 2, 3),
-                  rad=0.17, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.05),
+    'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(3.0, 5.2), limp=0.7,
+                  elev=(60, -50), epow=0.8, rd=(1.25, 0.9), rpow=2.0, r0=0.1, drop=0.55, shaft=0, dead=(2, 2, 3, 3, 4), fruit=(1, 2, 2, 3),
+                  rad=0.17, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.11),
     'foxtail': dict(fronds=(8, 11), L=(2.5, 3.1), pet=0.1, ns=95, ll=0.48, lw=0.028, arr='brush', ld=(0.6, 1.6), limp=1.4,
                     elev=(72, -12), epow=1.0, rd=(0.8, 0.9), rpow=1.8, r0=0.06, drop=0.2, shaft=1.0, dead=(0, 0, 1), fruit=(0, 0, 1),
                     rad=0.15, ring=0.07, href=7.0, spow=0.3, rachis=0.026, broken=0.02),
@@ -691,7 +691,7 @@ def materials():
     photo = photo if os.path.exists(os.path.join(photo, 'color.jpg')) else None
     return {
         # queen: grey-green to yellow-green leaflets, a good share with brown dry ends, the oldest fronds olive-yellow
-        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#2c4424'), _lin('#3a5a2c'), _lin('#4a6a30'), _lin('#5f7a36'), _lin('#788a3e')], 0.55,
+        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#34472a'), _lin('#45582e'), _lin('#566a32'), _lin('#6b7a38'), _lin('#88883e')], 0.62,
                                      age_col=_lin('#8a7a34'), burn_col=_lin('#9a6a2a'), burn_from=0.72, transl=0.36, under=(1.3, 1.32, 1.25)),
         'leaf_foxtail': _leaf_material('palm leaf foxtail', [_lin('#33521f'), _lin('#44672a'), _lin('#55782f'), _lin('#6a8836')], 0.15,
                                        age_col=_lin('#8a8034'), burn_from=0.85, transl=0.36),
@@ -724,7 +724,7 @@ def materials():
         'shaft_lipstick': _plain('palm crownshaft lipstick', _lin('#b0352a'), 0.3, var=0.12, coat=0.35, ramp_to=_lin('#c8402c')),
         'shaft_areca': _plain('palm crownshaft areca', _lin('#9aa860'), 0.5, var=0.1, ramp_to=_lin('#b4b880')),
         'trunk_queen': _trunk_material('palm trunk', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.09,
-                                       photo=photo, tint=(0.4, 0.39, 0.37), tile=(0.45, 0.9)),
+                                       photo=photo, tint=(0.3, 0.295, 0.285), tile=(0.45, 0.9)),
         'trunk_foxtail': _trunk_material('palm trunk foxtail', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.07,
                                          photo=photo, tint=(0.62, 0.62, 0.6), tile=(0.5, 1.2), ring_bump=0.3),
         'trunk_christmas': _trunk_material('palm trunk christmas', _lin('#8a8478'), _lin('#4a463e'), _lin('#a8a698'), 0.09, ring_bump=0.8),

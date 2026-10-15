@@ -20,8 +20,14 @@ from mathutils import Vector
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS = os.path.join(ROOT, 'assets')
 FT = 0.3048
-DEFAULT_HDRI = 'kloofendal_48d_partly_cloudy_puresky'
+DEFAULT_HDRI = 'autumn_field_puresky'   # clear deep-blue sky, faint cirrus near the horizon (as the brochure)
 PROC_STRENGTH = 0.28            # blender_render.py sets the world strength to this (Nishita-sky calibration)
+REF_SUN = 4.615                 # every HDRI is scaled so its measured sun irradiance is this (the exposure calibration)
+DIFFUSE_RATIO = 0.2             # sky fill / direct sun of a humid trade-wind clear day (DHI/DNI ~0.2 on Kauai)
+DAY_EV = 0.6                    # exteriors: bright, airy real-estate exposure (brochure median ~132/255, p99 ~223)
+INTERIOR_LIFT = 0.0             # interiors: metered EV over the exterior, plus this (airy interior photo, median ~180)
+INTERIOR_WB = (4700.0, 11.0)    # interiors: camera WB measured on the walls (sky + lawn bounce -> neutral-warm #f0ede7)
+WINDOW_PULL = 0.4               # interiors: the view out through glass held ~1.3 EV down (window pull)     # interiors: camera white balance (Blender neutral = 6500 K / tint 10)
 
 _manifest = None
 def manifest():
@@ -316,9 +322,33 @@ def grime(g, col, ao_dist=0.35, amount=0.25, dirt='#6e6252', samples=4):
     k = g.mul(g.maprange(ao, 0.35, 1.0, amount, 0.0), g.maprange(br, 0.35, 0.65, 0.4, 1.3))
     return g.mix(g.math('MINIMUM', k, 1.0), col, g.mix(0.5, col, lin(dirt), 'MULTIPLY'))
 
+def red_dirt(g, col, amount=0.22, height=0.35):
+    """Kauai red dirt (iron-rich oxisol, sRGB ~150,80,50) splashed up the bottom few inches of walls, trim
+    and stone by rain and irrigation: an upward-looking AO ray finds the ground close below."""
+    lp = g.node('ShaderNodeAmbientOcclusion', samples=4, inside=False, only_local=False)
+    g.put(lp.inputs['Distance'], height)
+    g.put(lp.inputs['Normal'], g.vmath('NORMALIZE', g.vmath('ADD', g.Nrm(), (0.0, 0.0, -1.3))))   # out and down: ground within `height`
+    near = g.sub(1.0, lp.outputs['AO'])
+    _, _, nz = g.sep(g.Nrm())
+    wall = g.math('LESS_THAN', g.math('ABSOLUTE', nz), 0.6)
+    sp = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=9.0), 1.0, 4.0, 0.7), 0.35, 0.7, 0.3, 1.2)
+    k = g.math('MINIMUM', g.mul(g.mul(g.mul(near, wall), sp), amount), 1.0)
+    return g.mix(k, col, g.mix(1.0, col, lin('#b0704f'), 'MULTIPLY'))
+
+def mildew(g, col, amount=0.18):
+    """Grey-green mildew speckle in shaded, sheltered corners (soffits on Kauai): AO-masked fine speckle."""
+    ao = g.ao(0.6, 4)
+    sp = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=40.0), 1.0, 5.0, 0.7), 0.5, 0.75, 0.0, 1.0)
+    big = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=0.7), 1.0, 2.0, 0.5), 0.4, 0.65, 0.2, 1.0)
+    k = g.math('MINIMUM', g.mul(g.mul(g.maprange(ao, 0.3, 0.95, 1.0, 0.15), g.mul(sp, big)), amount), 1.0)
+    return g.mix(k, col, lin('#7d8273'))
+
 HAZE = []          # aerial-perspective nodes in far materials; World points them at its sky
 
-def aerial(g, beta=6e-5, lift=0.035):
+def aerial(g, beta=6e-5, lift=0.06):
+    # beta: 2e-5 /m over the sea (deep blue right to the horizon, as in the brochure), 9e-5 /m over land (the
+    # trade-wind salt haze that turns the far forest and coast blue-grey: ~9% contrast lost at 1 km, ~35% at 5 km);
+    # the airlight is the sky a few degrees above the horizon in that azimuth (blue-grey, not the white horizon band)
     """Aerial perspective on far surfaces, for camera rays only: L = L_surface * T + L_air * (1 - T),
     T = exp(-beta * distance) (beta 0.06/km ~ 60 km visibility, clean trade-wind air). The airlight is the
     photographed horizon sky in that azimuth (World fills in the HDRI and its rotation), so the sea pales
@@ -353,10 +383,14 @@ def r_siding(m, ctx):
     g, p, _ = fresh(m)
     H = 8 * 0.165; uv = box_uv(g, 2 * H, H)
     ph = photo(g, 'painted_lap_siding', uv, target='#e9e8e3', sat=0.0, contrast=0.55, color_key='color_white',
-               bump=1.0, bump_dist=0.012, rough=(0.38, 0.62))
-    c = g.mix(0.55, ph['color'], lin('#ecebe6'))                 # new paint fills the old weathering
+               bump=1.0, bump_dist=0.018, rough=(0.38, 0.62))
+    c = g.mix(0.55, ph['color'], lin('#e6e4df'))                 # new paint fills the old weathering
+    _, _, pz = g.sep(g.P())
+    course = g.white(g.comb(g.math('FLOOR', g.math('DIVIDE', pz, 0.1778)), 5.1, 0.0))
+    c = g.mix(1.0, c, g.comb(*(g.maprange(course, 0.0, 1.0, 0.985, 1.015),) * 3), 'MULTIPLY')   # board to board
     c = mottle(g, c, 4.0, 0.03)
     c = grime(g, c, 0.45, 0.28, '#8a7f70')
+    c = red_dirt(g, c, 0.2)
     finish(g, p, color=c, rough=ph.get('rough', 0.5), normal=ph['normal'], spec=0.5)
 
 def r_trim(m, ctx):
@@ -389,9 +423,13 @@ def r_batten(m, ctx):
     h = g.mul(rib, wall)
     nrm = g.bump(h, 1.0, 1.0)
     nrm = g.bump(g.noise(g.vmath('SCALE', g.P(), scale=80.0), 1.0, 3.0, 0.6), 0.05, 0.0008, normal=nrm)
-    c = mottle(g, lin('#eeede7'), 2.5, 0.015)
+    c = mottle(g, lin('#f0ede6'), 2.5, 0.015)
+    edge = g.maprange(e, half - 0.004, half + 0.006, 1.0, 0.0)                 # paint line / caulk shadow at batten edges
+    edge = g.mul(g.mul(edge, g.maprange(e, half - 0.004, half - 0.012, 1.0, 0.0)), wall)
+    ek = g.sub(1.0, g.mul(edge, 0.1))
+    c = g.mix(1.0, c, g.comb(ek, ek, ek), 'MULTIPLY')
     c = grime(g, c, 0.25, 0.12, '#9a9080')
-    finish(g, p, color=c, rough=0.62, normal=nrm, spec=0.45)
+    finish(g, p, color=c, rough=0.5, normal=nrm, spec=0.45)
 
 def r_tongue_groove(m, ctx, exterior=False):
     """White painted tongue-and-groove ceiling / soffit boards (5 1/4" exposure, V-groove), boards running
@@ -406,11 +444,13 @@ def r_tongue_groove(m, ctx, exterior=False):
     rnd = g.white(g.comb(board, 3.3, 0.0))
     nrm = g.bump(groove, 1.0, 1.0)
     nrm = g.bump(g.noise(g.vmath('SCALE', g.P(), scale=70.0), 1.0, 3.0, 0.6), 0.05, 0.0008, normal=nrm)
-    base = lin('#efeee8')
+    base = lin('#efeee8' if exterior else '#f2f0ea')
     c = g.mix(1.0, base, g.comb(*(g.maprange(rnd, 0.0, 1.0, 0.975, 1.02),) * 3), 'MULTIPLY')
-    if exterior: c = grime(g, c, 0.4, 0.22, '#8f8575')
+    vg = g.maprange(e, pitch / 2 - 0.005, pitch / 2, 1.0, 0.62)          # the V-groove: shadowed, ~30% darker
+    c = g.mix(1.0, c, g.comb(vg, vg, vg), 'MULTIPLY')
+    if exterior: c = mildew(g, grime(g, c, 0.4, 0.22, '#8f8575'))
     else: c = grime(g, c, 0.3, 0.1, '#9a9080')
-    finish(g, p, color=c, rough=0.55, normal=nrm, spec=0.45)
+    finish(g, p, color=c, rough=0.55 if exterior else 0.32, normal=nrm, spec=0.45 if exterior else 0.5)
 
 def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42):
     """Standing-seam metal roof: 16" panels, 1" ribs running down the slope, painted (Kynar) neutral grey
@@ -450,21 +490,28 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42):
     r = g.add(r, g.maprange(prnd, 0.0, 1.0, -0.04, 0.04))
     finish(g, p, color=c, rough=r, normal=nrm, metallic=metallic, spec=0.5)
 
-def r_fascia(m, ctx):
-    """Painted metal fascia, gutters and hip / ridge caps: the roof's grey (as in the references), a shade
-    darker from the folded edge."""
-    g, p, _ = fresh(m)
-    c = mottle(g, lin('#74787d'), 3.0, 0.04)
-    c = grime(g, c, 0.25, 0.15, '#5a554e')
-    finish(g, p, color=c, rough=0.38, metallic=0.1, spec=0.5)
+ROOF_GREY = '#7f7e83'      # Kynar 'galvalume' grey: lit ~#a7a5aa, shaded planes ~#75747a in the front rendering
 
-def r_black_frame(m, ctx, rough=0.32):
+def r_roof_trim(m, ctx, color=ROOF_GREY, rough=0.42, metallic=0.2):
+    """Roof-colour metal: seam ribs, hip / ridge caps, fascia, gable vents - one folded skin with the roof
+    (front rendering); gutters a shade darker. Same paint, same sheen, faint dust and streaks."""
+    g, p, _ = fresh(m)
+    c = mottle(g, lin(color), 6.0, 0.03)
+    c = grime(g, c, 0.25, 0.12, '#5a554e')
+    r = g.add(rough, g.mul(g.sub(g.noise(g.vmath('SCALE', g.P(), scale=1.5), 1.0, 3.0, 0.5), 0.5), 0.08))
+    finish(g, p, color=c, rough=r, metallic=metallic, spec=0.5)
+
+def r_fascia(m, ctx):
+    """Painted metal fascia (and gable-vent trim): the roof's own grey (as in the references)."""
+    r_roof_trim(m, ctx)
+
+def r_black_frame(m, ctx, rough=0.32, spec=0.5):
     """Black powder-coated aluminium window frames / fixtures."""
     g, p, _ = fresh(m)
     c = lin('#141414')
     c = grime(g, c, 0.15, 0.25, '#7c7468')
     r = g.add(rough, g.mul(g.sub(g.noise(g.vmath('SCALE', g.P(), scale=4.0), 1.0, 3.0, 0.5), 0.5), 0.12))
-    finish(g, p, color=c, rough=r, metallic=0.15, spec=0.5)
+    finish(g, p, color=c, rough=r, metallic=0.15, spec=spec)
 
 def r_wood(m, ctx, asset, tile, target, sat=1.0, contrast=1.0, rough=(0.45, 0.7), grain='V', weather=0.0,
            grime_amt=0.12, coat=None, bump=0.6, aspect=1.0, box=False):
@@ -486,7 +533,7 @@ def r_wood(m, ctx, asset, tile, target, sat=1.0, contrast=1.0, rough=(0.45, 0.7)
 
 def r_cedar_door(m, ctx):
     """Stained cedar carriage garage door: vertical 5 1/2" boards, oiled reddish-brown (front rendering)."""
-    r_wood(m, ctx, 'cedar_door_planks', 1.4, '#a8693f', sat=0.95, contrast=0.68, rough=(0.42, 0.62), grain='V',
+    r_wood(m, ctx, 'cedar_door_planks', 1.4, '#9c5c36', sat=1.0, contrast=0.85, rough=(0.42, 0.62), grain='V',
            aspect=2.0, grime_amt=0.15, box=True)
 
 def r_cedar_batten(m, ctx):
@@ -505,7 +552,7 @@ def r_teak(m, ctx):
 
 def r_oak_millwork(m, ctx):
     """Rift-sawn white oak cabinetry / furniture (design board sample)."""
-    r_wood(m, ctx, 'rift_white_oak', 1.0, '#c9a77c', sat=0.85, contrast=0.95, rough=(0.38, 0.55), grain='V',
+    r_wood(m, ctx, 'rift_white_oak', 1.0, '#c3a273', sat=0.9, contrast=0.95, rough=(0.38, 0.55), grain='V',
            grime_amt=0.05)
 
 def r_oak_floor(m, ctx):
@@ -513,10 +560,18 @@ def r_oak_floor(m, ctx):
     g, p, _ = fresh(m)
     rnd = g.obj_random()
     uv = box_uv(g, 2.0, 2.0, off=(g.mul(rnd, 5.1), g.mul(rnd, 2.3)))
-    ph = photo(g, 'white_oak_floor', uv, target='#c3a47f', sat=0.82, contrast=0.9, bump=0.8, bump_dist=0.0012, rough=(0.38, 0.6))
-    c = mottle(g, ph['color'], 2.5, 0.03)
+    ph = photo(g, 'white_oak_floor', uv, target='#bf9f72', sat=0.95, contrast=1.0, bump=0.8, bump_dist=0.0012, rough=(0.42, 0.55))
+    # per-plank tone (+-6%): 7 1/2 in planks along x, staggered random lengths 3-8 ft
+    px, py, _ = g.sep(g.P())
+    row = g.math('FLOOR', g.math('DIVIDE', py, 0.1905))
+    rr = g.white(g.comb(row, 1.7, 0.0))
+    seg = g.math('FLOOR', g.math('DIVIDE', g.add(px, g.mul(rr, 2.4)), g.add(0.9, g.mul(rr, 1.5))))
+    pr = g.white(g.comb(row, seg, 4.2))
+    k = g.maprange(pr, 0.0, 1.0, 0.94, 1.06)
+    c = g.mix(1.0, ph['color'], g.comb(k, g.mul(k, 0.995), g.mul(k, 0.985)), 'MULTIPLY')
+    c = mottle(g, c, 2.5, 0.03)
     c = grime(g, c, 0.25, 0.08, '#6a5a48')
-    finish(g, p, color=c, rough=ph.get('rough', 0.5), normal=ph.get('normal'), spec=0.5)
+    finish(g, p, color=c, rough=ph.get('rough', 0.5), normal=ph.get('normal'), spec=0.5, coat=0.1, coat_rough=0.2)
 
 def r_slab_paving(m, ctx, asset='travertine_honed', tile=1.2, target='#d9ccb6', slab=(0.6096, 0.6096), joint=0.004,
                   rough=(0.5, 0.75), contrast=0.8, sat=0.85, grime_amt=0.2):
@@ -555,6 +610,35 @@ def r_coral_wall(m, ctx, target='#cfb894', contrast=0.7, sat=0.85, tile=3.0, gri
     c = grime(g, c, 0.5, grime_amt, '#6b5f4c')
     finish(g, p, color=c, rough=ph.get('rough', 0.85), normal=ph['normal'], spec=0.4)
 
+def r_crazy_stone(m, ctx, target='#c0aa88', stone_m=0.17, joint=0.0045, asset='coral_stone_wall', tile=1.3,
+                  grime_amt=0.25, cap=None):
+    """Random crazy-paving limestone / coral-stone cladding (back rendering): small irregular polygons
+    (6-14 in), tight 1/4 in joints only a little darker than the stone, each stone cut from a different part
+    of the photo scan with its own tone; low-relief pitted face; soil at the base. 3-D Voronoi on world
+    position, so stones wrap the corners like real return pieces. Horizontal tops (cap=hex) get the
+    lighter coping colour."""
+    g, p, _ = fresh(m)
+    P = g.P()
+    cell = g.voronoi(P, 1.0 / stone_m, out='Color')
+    edge = g.mul(g.voronoi(P, 1.0 / stone_m, out='Distance', feature='DISTANCE_TO_EDGE'), stone_m)   # metres
+    cx, cy, cz = g.sep(cell)
+    uv = box_uv(g, tile, tile, off=(g.mul(cx, 13.0), g.mul(cy, 13.0)), P=P)
+    ph = photo(g, asset, uv, target=target, sat=0.95, contrast=0.7, bump=0.6, bump_dist=0.006, rough=(0.68, 0.85))
+    tone = g.maprange(cz, 0.0, 1.0, 0.92, 1.07)
+    c = g.mix(1.0, ph['color'], g.comb(tone, tone, tone), 'MULTIPLY')
+    c = g.hsv(c, h=g.maprange(cx, 0.0, 1.0, 0.49, 0.51), s=g.maprange(cy, 0.0, 1.0, 0.85, 1.15))
+    jm = g.maprange(edge, joint, joint * 0.35, 0.0, 1.0)
+    c = g.mix(jm, c, g.mix(1.0, c, lin('#ddd5c6'), 'MULTIPLY'))             # sanded joints, barely darker
+    if cap:
+        _, _, nz = g.sep(g.Nrm())
+        t, cp = lin(target), lin(cap)
+        c = g.mix(g.math('GREATER_THAN', nz, 0.8), c, g.mix(1.0, c, tuple(cp[i] / t[i] for i in range(3)), 'MULTIPLY'))
+    c = mottle(g, c, 3.0, 0.05, hue=0.01)
+    if grime_amt: c = red_dirt(g, grime(g, c, 0.5, grime_amt, '#6b5f4c'), 0.3, 0.45)
+    nrm = g.bump(g.add(g.mul(jm, -0.0025), g.mul(g.mul(cz, 0.0015), g.sub(1.0, jm))), 1.0, 1.0, normal=ph.get('normal'))
+    r = g.mixf(jm, ph.get('rough', 0.78), 0.9)
+    finish(g, p, color=c, rough=r, normal=nrm, spec=0.4)
+
 def r_pool_shell(m, ctx):
     """Pool / spa shell in hand-set glass mosaic (the back rendering shows tile throughout): light aqua on
     the floor and walls, a 6" band of deeper turquoise at the waterline (top of each wall piece)."""
@@ -572,13 +656,42 @@ def r_pool_shell(m, ctx):
 def r_stepping(m, ctx):
     """Entry walk: large honed travertine stepping slabs set in turf. The layout is the three.js texture
     (UV); the slabs get the travertine scan, the joints a real turf photo."""
-    _paver_mask_material(m, ctx, stone=('travertine_honed', 1.2, '#d6cab3'), stone_sat=0.8)
+    _paver_mask_material(m, ctx, stone=('travertine_honed', 1.2, '#bea47e'), stone_sat=1.0, pad_jitter=0.9, pits=True)
 
 def r_grass_pavers(m, ctx):
-    """Driveway: hexagonal concrete grass pavers (the layout from the three.js texture), concrete scan + turf."""
-    _paver_mask_material(m, ctx, stone=('concrete_light', 2.0, '#bdb7aa'), stone_sat=0.6, grass_first=True)
+    """Driveway: hexagonal grass pavers as built and grown in (front rendering): 13 in cells full of turf,
+    1 in concrete ribs that read as fine darker lines, here and there overgrown or dirty."""
+    g, p, _ = fresh(m)
+    P = g.P(); px, py, _ = g.sep(P)
+    s = 0.34                                                       # cell pitch (flat to flat), m
+    qx = g.math('DIVIDE', px, s); qy = g.math('DIVIDE', py, s)
+    r3 = math.sqrt(3.0)
+    def fmod(a, b): return g.sub(a, g.mul(b, g.math('FLOOR', g.math('DIVIDE', a, b))))
+    ax = g.sub(fmod(qx, 1.0), 0.5); ay = g.sub(fmod(qy, r3), r3 / 2)
+    bx = g.sub(fmod(g.sub(qx, 0.5), 1.0), 0.5); by = g.sub(fmod(g.sub(qy, r3 / 2), r3), r3 / 2)
+    la = g.add(g.mul(ax, ax), g.mul(ay, ay)); lb = g.add(g.mul(bx, bx), g.mul(by, by))
+    useb = g.math('GREATER_THAN', la, lb)
+    hx = g.math('ABSOLUTE', g.mixf(useb, ax, bx)); hy = g.math('ABSOLUTE', g.mixf(useb, ay, by))
+    hexd = g.math('MAXIMUM', hx, g.add(g.mul(hx, 0.5), g.mul(hy, r3 / 2)))
+    edge = g.mul(g.sub(0.5, hexd), s)                              # metres from the rib centre line
+    rib = g.maprange(edge, 0.017, 0.011, 0.0, 1.0)
+    over = g.maprange(g.noise(g.vmath('SCALE', P, scale=1.4), 1.0, 3.0, 0.6), 0.55, 0.68, 0.0, 1.0)  # turf creeping over
+    rib = g.mul(rib, g.sub(1.0, g.mul(over, 0.7)))
+    ring = g.maprange(edge, 0.012, 0.06, 0.55, 1.0, smooth=True)   # turf sits low in each cell: shaded toward the ribs
+    uvg = box_uv(g, 1.6, 1.6)
+    gr = photo(g, 'grass004', uvg, target='#6c8a2a', sat=1.1, contrast=1.0, bump=1.0, bump_dist=0.01, rough=(0.6, 0.85))
+    gcol = mottle(g, gr['color'], 3.0, 0.12, hue=0.015)
+    gcol = g.mix(1.0, gcol, g.comb(ring, ring, ring), 'MULTIPLY')
+    ccell = g.white(g.comb(g.math('FLOOR', qx), g.math('FLOOR', qy), 0.3))
+    gcol = g.mix(1.0, gcol, g.comb(*(g.maprange(ccell, 0.0, 1.0, 0.9, 1.06),) * 3), 'MULTIPLY')   # cell to cell
+    st = photo(g, 'concrete_light', box_uv(g, 2.0, 2.0), target='#5e5c53', sat=0.5, contrast=0.8, bump=0.4, bump_dist=0.0015, rough=(0.6, 0.85))
+    scol = g.mix(g.maprange(g.noise(g.vmath('SCALE', P, scale=3.0), 1.0, 2.0, 0.5), 0.4, 0.7, 0.0, 0.5), st['color'], lin('#5f6a3a'))   # moss / dirt
+    c = g.mix(rib, gcol, scol)
+    nrm = g.bump(g.mul(rib, 0.006), 1.0, 1.0, normal=gr['normal'])
+    r = g.mixf(rib, gr.get('rough', 0.8), 0.75)
+    finish(g, p, color=c, rough=r, normal=nrm, spec=0.4)
 
-def _paver_mask_material(m, ctx, stone, stone_sat=0.8, grass_first=False):
+def _paver_mask_material(m, ctx, stone, stone_sat=0.8, grass_first=False, pad_jitter=0.0, pits=False):
     nt = m.node_tree
     old = next((n for n in nt.nodes if n.type == 'TEX_IMAGE' and n.outputs['Color'].links
                 and any(l.to_socket.name in ('Base Color', 'A') for l in n.outputs['Color'].links)), None)
@@ -609,6 +722,16 @@ def _paver_mask_material(m, ctx, stone, stone_sat=0.8, grass_first=False):
     an, tile, target = stone
     uv = box_uv(g, tile, tile, off=(g.mul(g.obj_random(), 9.1), 0.0))
     st = photo(g, an, uv, target=target, sat=stone_sat, contrast=0.85, bump=0.6, bump_dist=0.0015, rough=(0.55, 0.8))
+    if pad_jitter:                       # each pad its own tone (+-5%) and hue: region ~ one pad
+        pc = g.voronoi(g.P(), 1.0 / pad_jitter, out='Color', randomness=0.6)
+        qx, qy, qz = g.sep(pc)
+        k = g.maprange(qz, 0.0, 1.0, 0.93, 1.06)
+        st['color'] = g.hsv(g.mix(1.0, st['color'], g.comb(k, k, k), 'MULTIPLY'), h=g.maprange(qx, 0.0, 1.0, 0.49, 0.51))
+    if pits:                             # coral-stone pitting: small dark pores, 2-4 mm deep
+        pv = g.voronoi(g.P(), 70.0, out='Distance')
+        pit = g.mul(g.maprange(pv, 0.18, 0.05, 0.0, 1.0), g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=6.0), 1.0, 2.0, 0.5), 0.45, 0.6))
+        st['color'] = g.mix(g.mul(pit, 0.5), st['color'], g.mix(1.0, st['color'], lin('#8a7a62'), 'MULTIPLY'))
+        st['normal'] = g.bump(g.mul(pit, -0.003), 1.0, 1.0, normal=st['normal'])
     uvg = box_uv(g, 1.6, 1.6)
     gr = photo(g, 'grass004', uvg, target='#6f8a3c', sat=1.0, contrast=1.0, bump=1.0, bump_dist=0.01, rough=(0.6, 0.85))
     gcol = mottle(g, gr['color'], 3.0, 0.12, hue=0.015)
@@ -674,7 +797,7 @@ def r_terrain(m, ctx):
     col = g.mix(steep, col, soil['color'])
     nrm = g.node('ShaderNodeMix', data_type='VECTOR'); g.put(nrm.inputs[0], steep); g.put(nrm.inputs[4], a['normal']); g.put(nrm.inputs[5], soil['normal'])
     finish(g, p, color=col, rough=rough_val, normal=nrm.outputs[1], spec=0.35)
-    if not ctx.get('night'): aerial(g)
+    if not ctx.get('night'): aerial(g, beta=9e-5)
 
 def _land_cover(g, P, land, col, lawn, rough_grass, soil):
     """meta['land'] = {'box': [x0, y0, w, h] (plan feet), 'image': path} - the three.js land map."""
@@ -699,6 +822,15 @@ def _land_cover(g, P, land, col, lawn, rough_grass, soil):
     c = g.mix(g.mul(A, sandy), c, sand)
     return c
 
+def r_realsite(m, ctx):
+    """The real neighbourhood (src/realsite.js): terrain draped in Sentinel-2 colour, building footprints -
+    textures kept, matte finish, and the aerial haze that turns km-distant land blue-grey."""
+    p = principled(m)
+    if not p: return
+    p.inputs['Specular IOR Level'].default_value = 0.35
+    if base_name(m.name) == 'realsite roofs': p.inputs['Metallic'].default_value = 0.15
+    if not ctx.get('night'): aerial(G(m.node_tree), beta=9e-5)
+
 def r_ocean(m, ctx):
     """Open Pacific: deep navy water body, wind chop + trade swell as bump, roughness of a real wind-blown
     sea so each facet mirrors sky well above the hazy horizon (Fresnel at grazing incidence + wave slopes:
@@ -714,7 +846,7 @@ def r_ocean(m, ctx):
     c = mottle(g, deep, 900.0, 0.12, P=P)
     finish(g, p, color=c, rough=ctx.get('ocean_rough', 0.3), normal=nrm, spec=0.5, ior=1.333)
     m['nh_kind'] = 'ocean'
-    if not ctx.get('night'): aerial(g)
+    if not ctx.get('night'): aerial(g, beta=2e-5)
 
 def r_pool_water(m, ctx):
     """Pool water: clear, refracting; tint = absorption over the ~3 m light path (red lost first)."""
@@ -753,6 +885,13 @@ def r_glass(m, ctx):
     for l in list(p.inputs['Alpha'].links): m.node_tree.links.remove(l)
     p.inputs['Thin Wall'].default_value = True
     p.inputs['Base Color'].default_value = (0.9, 0.95, 0.94, 1)     # faint green of float glass
+    # window pull (interiors): what the camera sees through the glass is held ~1.3 EV down, as a photographer
+    # blends a darker exposure into the windows; the light coming in is untouched (World.auto_exposure sets it)
+    g = G(m.node_tree)
+    pull = g.node('ShaderNodeValue'); pull.name = 'nh_pull'; pull.outputs[0].default_value = 1.0
+    cam = g.node('ShaderNodeLightPath').outputs['Is Camera Ray']
+    k = g.sub(1.0, g.mul(cam, g.sub(1.0, pull.outputs[0])))
+    g.put(p.inputs['Base Color'], g.mix(1.0, (0.9, 0.95, 0.94), g.comb(k, k, k), 'MULTIPLY'))
 
 def r_dark_glass(m, ctx):
     """Massing homes' windows: interior reads dark behind reflective glass."""
@@ -777,12 +916,12 @@ def r_fabric(m, ctx, target, asset='linen_oatmeal', tile=0.15, sat=1.0, sheen=0.
 
 def r_quartz(m, ctx):
     g, p, _ = fresh(m)
-    ph = photo(g, 'white_quartz', box_uv(g, 1.5, 1.5), target='#ecebe7', sat=0.6, contrast=1.0, bump=0.1, bump_dist=0.0003, rough=(0.08, 0.2))
-    finish(g, p, color=ph['color'], rough=ph.get('rough', 0.12), normal=ph.get('normal'), spec=0.5, coat=0.3, coat_rough=0.05)
+    ph = photo(g, 'white_quartz', box_uv(g, 1.5, 1.5), target='#efece6', sat=0.6, contrast=1.15, bump=0.1, bump_dist=0.0003, rough=(0.18, 0.3))
+    finish(g, p, color=ph['color'], rough=ph.get('rough', 0.24), normal=ph.get('normal'), spec=0.5, coat=0.15, coat_rough=0.1)
 
 def r_coral_panel(m, ctx):
     """Interior coral-stone feature wall: pale porous coral stone (design board)."""
-    r_coral_wall(m, ctx, target='#e4dccc', contrast=0.6, sat=0.35, tile=2.0, grime_amt=0.12)
+    r_coral_wall(m, ctx, target='#d4ccbf', contrast=0.85, sat=0.4, tile=1.6, grime_amt=0.1)
 
 def r_rattan(m, ctx):
     r_fabric(m, ctx, '#b48a58', asset='rattan_weave', tile=0.3, sat=0.85, sheen=0.1, rough=(0.5, 0.75))
@@ -860,24 +999,29 @@ def r_glow(m, ctx):
 RECIPES = {
     'terrain': r_terrain, 'ocean': r_ocean, 'water': r_pool_water, 'glass': r_glass,
     'mirror': lambda m, c: r_simple(m, c, rough=0.0, metallic=1.0),
-    'roof': lambda m, c: r_standing_seam(m, c, '#7f8388'),
+    'roof': lambda m, c: r_standing_seam(m, c, ROOF_GREY, metallic=0.2, rough=0.42),
+    'roofSeam': lambda m, c: r_roof_trim(m, c), 'gableLouver': lambda m, c: r_roof_trim(m, c, rough=0.5),
+    'gutter': lambda m, c: r_roof_trim(m, c, color='#6b6d72', rough=0.38),
+    'gableCavity': lambda m, c: r_simple(m, c, color='#0e0f10', rough=0.95),
+    'realsite ocean': r_ocean, 'realsite near': r_realsite, 'realsite far': r_realsite,
+    'realsite walls': r_realsite, 'realsite roofs': r_realsite,
     'roof bronze': lambda m, c: r_standing_seam(m, c, '#5b5049', rough=0.45),
     'roof slate': lambda m, c: r_standing_seam(m, c, '#5c6267', rough=0.45),
     'fascia': r_fascia, 'soffit': lambda m, c: r_tongue_groove(m, c, exterior=True), 'planks': r_tongue_groove,
     'siding': r_siding, 'trim': r_trim, 'paint': r_paint, 'batten': r_batten,
-    'black': r_black_frame, 'blackMatte': lambda m, c: r_black_frame(m, c, rough=0.6),
+    'black': r_black_frame, 'blackMatte': lambda m, c: r_black_frame(m, c, rough=0.6, spec=0.3),   # fan blades: read black even edge-on
     'cedar': r_cedar_door, 'cedarBatten': r_cedar_batten, 'solid #6b4a2e': r_cedar_batten,
     'doorPanel': r_trim, 'solid #efeee9': r_trim,                                 # painted door / shutter panels
     'canLight': lambda m, c: r_simple(m, c, color='#f1efea', rough=0.4), 'solid #f2efe9': lambda m, c: r_simple(m, c, color='#f1efea', rough=0.4),
     'woodBeam': r_beam, 'teak': r_teak, 'woodOak': r_oak_millwork, 'oak': r_oak_floor,
-    'coral': r_slab_paving, 'pavers': lambda m, c: r_slab_paving(m, c, 'limestone_pavers', 2.4, '#cfc3ad', slab=(0.6, 0.6)),
+    'coral': lambda m, c: r_slab_paving(m, c, target='#cdbb9c'), 'pavers': lambda m, c: r_slab_paving(m, c, 'limestone_pavers', 2.4, '#cfc3ad', slab=(0.6, 0.6)),
     'concrete': r_concrete, 'asphalt': r_asphalt,
-    'ashlar': r_coral_wall, 'coralWall': r_coral_panel,
+    'ashlar': lambda m, c: r_crazy_stone(m, c, cap='#cdbb9c'), 'coralWall': r_coral_panel,
     'stepping': r_stepping, 'grassPavers': r_grass_pavers, 'poolTile': r_pool_shell,
     'linen': lambda m, c: r_fabric(m, c, '#e9e2d4'), 'linenWhite': lambda m, c: r_fabric(m, c, '#f0ece3', asset='canvas_white'),
     'linenSand': lambda m, c: r_fabric(m, c, '#d3c4aa'), 'linenSea': lambda m, c: r_fabric(m, c, '#9db1ae'),
     'jute': r_jute, 'rattan': r_rattan, 'quartz': r_quartz,
-    'cane': lambda m, c: r_keep_tex(m, c, tint=(0.95, 0.88, 0.78), rough=0.6),
+    'cane': lambda m, c: r_keep_tex(m, c, tint=(1.0, 0.9, 0.76), rough=0.55, sheen=0.2),
     'slats': lambda m, c: r_keep_tex(m, c, rough=0.6),
     'louver': lambda m, c: r_keep_tex(m, c, tint=(0.82, 0.74, 0.66), rough=0.6),
     'louverWhite': lambda m, c: r_keep_tex(m, c, rough=0.45),
@@ -1114,7 +1258,7 @@ class World:
     None), sun, sun_data, set_sun(three.js dir)."""
 
     def __init__(self, scene, mode='hdri', hdri=DEFAULT_HDRI, strength=1.0, yaw=0.0, max_res=0,
-                 cam_saturation=1.0, cam_value=1.0, polarizer=0.5, log=print):
+                 cam_saturation=1.05, cam_value=1.2, polarizer=0.5, log=print):
         self.polarizer = polarizer; self.sun_vec = None
         self.scene, self.mode, self.yaw, self.log = scene, mode, math.radians(yaw), log
         world = bpy.data.worlds.new('sky'); scene.world = world
@@ -1148,8 +1292,17 @@ class World:
         g.put(mp.inputs['Vector'], tc.outputs['Generated'])
         env = g.node('ShaderNodeTexEnvironment', interpolation='Cubic'); env.image = img
         g.put(env.inputs['Vector'], mp.outputs[0])
-        k = strength / PROC_STRENGTH
-        lit = g.mix(1.0, env.outputs['Color'], (k, k, k), 'MULTIPLY')
+        # normalise the photographer's exposure: sun irradiance -> REF_SUN; the light the sky sheds on the scene
+        # (not what the camera sees) lifted to a humid tropical diffuse share when the HDRI's air is drier
+        sun_m = self.meta.get('sun_irradiance_lum') or REF_SUN
+        norm = REF_SUN / sun_m
+        dif = self.meta.get('sky_horizontal_irradiance_lum_nosun')
+        self.fill = max(1.0, DIFFUSE_RATIO / (dif * norm / REF_SUN)) if dif else 1.0
+        k = strength / PROC_STRENGTH * norm
+        # diffuse bounces only: reflections in the roofs, glass, pool and sea see the photographed sky as it is
+        lpd = g.node('ShaderNodeLightPath')
+        kf = g.mul(k, g.add(1.0, g.mul(lpd.outputs['Is Diffuse Ray'], self.fill - 1.0)))
+        lit = g.mix(1.0, env.outputs['Color'], g.comb(kf, kf, kf), 'MULTIPLY')
         self.bg = g.node('ShaderNodeBackground'); g.put(self.bg.inputs['Color'], lit)
         cam = g.hsv(env.outputs['Color'], s=cam_sat, v=cam_val) if (cam_sat != 1.0 or cam_val != 1.0) else env.outputs['Color']
         if self.polarizer: cam = self._polarizer(cam, tc.outputs['Generated'])
@@ -1160,14 +1313,15 @@ class World:
         g.L.new(self.bg.outputs[0], mix.inputs[1]); g.L.new(self.camsky.outputs[0], mix.inputs[2])
         g.L.new(mix.outputs[0], self.out.inputs['Surface'])
         # irradiance from the HDRI's measurement (luminance); colour from the sun's elevation (set_sun)
-        self.sun_lum = self.meta.get('sun_irradiance_lum', self.meta.get('sun_strength_blender', 4.4)) * strength
+        self.sun_lum = REF_SUN * strength
         self._sun_rgb(50.0)
         self.sun_data.angle = math.radians(0.53)
         self.hdri_sun_az = hdri_sun_azimuth(self.meta)
         for env, mp, em, mg in HAZE:                        # aerial perspective = this sky at the horizon
             env.image = img
-            mg.L.new(env.outputs['Color'], em.inputs['Color']); em.inputs['Strength'].default_value = strength
-        self.log(f"sky: HDRI {name} ({os.path.basename(path)}), strength {strength}, sun {self.sun_data.energy:.2f} W/m2")
+            mg.L.new(env.outputs['Color'], em.inputs['Color']); em.inputs['Strength'].default_value = strength * norm
+        self.log(f"sky: HDRI {name} ({os.path.basename(path)}), strength {strength}, x{norm:.2f} to the reference sun, "
+                 f"fill x{self.fill:.2f}, sun {self.sun_data.energy:.2f} W/m2")
 
     def _polarizer(self, col, view):
         """Circular polariser on the lens, as real-estate photographers use in Hawaii: skylight is linearly
@@ -1240,8 +1394,8 @@ class World:
         L = max(tot / n, 1e-3)
         return max(0.0, min(max_ev, -math.log2(L) * compensation))
 
-    def auto_exposure(self, meta, base_ev=0.0, interior_ev=2.3, interior_wb=(4600.0, 18.0), meter=True, only=None,
-                      lamps_w=15.0):
+    def auto_exposure(self, meta, base_ev=0.0, interior_ev=2.3, interior_wb=INTERIOR_WB, meter=True, only=None,
+                      lamps_w=15.0, day_ev=DAY_EV):
         """Interiors shot the way a real-estate photographer would: metered exposure (about +2 to +4.6 EV
         over the exterior; windows roll off in AgX), white balance on the walls (the light indoors is
         mostly sunlit-lawn and oak-floor bounce, yellow-green, which the camera neutralises), and the
@@ -1256,6 +1410,7 @@ class World:
                 o.location = Vector((l['pos'][0], -l['pos'][2], l['pos'][1])); o.hide_render = True
                 lamp_objs.append(o)
         glows = [m for m in bpy.data.materials if base_name(m.name) == 'glow' and principled(m)]
+        pulls = [m for m in bpy.data.materials if m.node_tree and 'nh_pull' in m.node_tree.nodes]
         views = []
         for vid, v in (meta or {}).get('views', {}).items():
             ev = 0.0
@@ -1272,19 +1427,31 @@ class World:
             hit = min(views, key=lambda pv: (pv[0] - cam.location).length, default=None)
             inside = hit is not None and (hit[0] - cam.location).length < 0.05 and hit[1]
             vs = sc.view_settings
-            vs.exposure = base_ev + (hit[2] if inside else 0.0)
+            vs.exposure = base_ev + day_ev + (hit[2] + INTERIOR_LIFT if inside else 0.0)
             try:
                 vs.use_white_balance = bool(inside and interior_wb)
                 if inside and interior_wb: vs.white_balance_temperature, vs.white_balance_tint = interior_wb
             except Exception: pass
-            for o in lamp_objs: o.hide_render = not inside
+            for o in lamp_objs: o.hide_render = False      # lights on, as for any real-estate shoot (warm glow inside the glass)
+            for m in pulls: m.node_tree.nodes['nh_pull'].outputs[0].default_value = WINDOW_PULL if inside else 1.0
             for m in glows:
                 p = principled(m); p.inputs['Emission Color'].default_value = (1.0, 0.78, 0.52, 1)
-                p.inputs['Emission Strength'].default_value = 4.0 if inside else 0.0
+                p.inputs['Emission Strength'].default_value = 4.0 if inside else 2.5   # sconces / pendants: a soft 2700 K glow by day
         for h in [h for h in bpy.app.handlers.render_pre if getattr(h, '__name__', '') == 'nh_exposure']:
             bpy.app.handlers.render_pre.remove(h)
         pre.__name__ = 'nh_exposure'
         bpy.app.handlers.render_pre.append(pre)
+        if os.environ.get('NH_EXR'):            # also keep the scene-linear render (grading / white-balance tests)
+            def post(sc, *_):
+                try:
+                    im = bpy.data.images['Render Result']; st = sc.render.image_settings
+                    keep = (st.file_format, st.color_depth, st.color_mode)
+                    st.file_format = 'OPEN_EXR'; st.color_depth = '16'; st.color_mode = 'RGB'
+                    im.save_render(os.path.splitext(bpy.path.abspath(sc.render.filepath))[0] + '.exr', scene=sc)
+                    st.file_format, st.color_depth, st.color_mode = keep
+                except Exception as e: self.log(f'sky: exr save failed ({e})')
+            post.__name__ = 'nh_exr'
+            bpy.app.handlers.render_post.append(post)
 
     # --- Nishita sky + painted clouds (the previous look; also what --night builds on)
     def _procedural(self):

@@ -545,11 +545,17 @@ def _prof(kind):
 SHRUBS = {
     # R, H: radius and height (m); twigs per plant; leaves per twig; leaf length (m)
     'bougainvillea': dict(R=0.62, H=1.0, twigs=400, leaves=(7, 12), leaf_len=0.055, twig_len=0.2, leaf_angle=58, droop=0.35, up=0.15,
-                          shape='ovate', stems=6, stem_r=0.016, bloom=0.62, phyllo='alt', lump=0.3, canes=(3, 7), cane_len=0.75),
+                          shape='ovate', stems=6, stem_r=0.016, bloom=0.34, phyllo='alt', lump=0.3, canes=(3, 7), cane_len=0.75),
     'gardenia': dict(R=0.58, H=1.15, twigs=420, leaves=(6, 10), leaf_len=0.09, twig_len=0.15, leaf_angle=50, droop=0.15, up=0.45,
                      shape='elliptic', stems=6, stem_r=0.015, bloom=0.26, phyllo='opp', lump=0.16),
     'hedge': dict(R=0.5, H=1.25, twigs=420, leaves=(8, 12), leaf_len=0.045, twig_len=0.12, leaf_angle=55, droop=0.1, up=0.3,
                   shape='small', stems=6, stem_r=0.014, bloom=0.04, phyllo='alt', lump=0.1),
+    'jasmine': dict(R=0.48, H=0.26, twigs=240, leaves=(6, 10), leaf_len=0.035, twig_len=0.12, leaf_angle=62, droop=0.05, up=0.5,
+                    shape='elliptic', stems=5, stem_r=0.005, bloom=0.0, phyllo='opp', lump=0.12, flat=True),
+    'dichondra': dict(R=0.4, H=0.12, twigs=200, leaves=(5, 8), leaf_len=0.022, twig_len=0.08, leaf_angle=70, droop=0.05, up=0.7,
+                      shape='small', stems=4, stem_r=0.003, bloom=0.0, phyllo='alt', lump=0.08, flat=True),
+    'hibiscus': dict(R=0.7, H=1.6, twigs=380, leaves=(6, 9), leaf_len=0.09, twig_len=0.16, leaf_angle=52, droop=0.15, up=0.35,
+                     shape='ovate', stems=5, stem_r=0.016, bloom=0.12, phyllo='alt', lump=0.25),
     'groundcover': dict(R=0.42, H=0.3, twigs=150, leaves=(6, 9), leaf_len=0.04, twig_len=0.1, leaf_angle=60, droop=0.05, up=0.6,
                         shape='small', stems=4, stem_r=0.006, bloom=0.1, phyllo='opp', lump=0.12, flat=True),
 }
@@ -733,6 +739,96 @@ def ti_plant(seed):
     return out
 
 
+# ---------------------------------------------------------------- strap-leaf groundcovers
+def strap_tufts(seed, tufts=(5, 8), leaves=(28, 46), L=(0.16, 0.3), width=0.6, spread=0.28, el=(70, 15), arch=0.5, key='leaf'):
+    """Mondo grass / liriope / tradescantia: a patch of tufts, each a fountain of narrow arching straps.
+    width: blade width scale (lance template is ~0.14 L wide)."""
+    rng = np.random.default_rng(seed)
+    out = {key: Buf()}
+    tpls = [leaf_tpl(_prof('lance'), fold=0.06, arch=a, twist=tw, cols=1, stations=(0, 0.15, 0.35, 0.55, 0.75, 0.9, 1.0))
+            for a, tw in ((arch * 0.4, 0.3), (arch, -0.4), (arch * 1.6, 0.5))]
+    for k in range(rng.integers(*tufts)):
+        c = np.array([rng.normal(0, spread), rng.normal(0, spread), 0.0])
+        n = rng.integers(*leaves)
+        ph = rng.uniform(0, 6.28, n)
+        e = np.radians(rng.uniform(el[1], el[0], n))
+        hd = np.stack([np.cos(ph), np.sin(ph), np.zeros(n)], 1)
+        D = _norm(np.cos(e)[:, None] * hd + np.sin(e)[:, None] * UP)
+        Nn = _norm(UP - D * (D @ UP)[:, None] + rng.normal(0, 0.25, (n, 3)))
+        P = c + hd * rng.uniform(0, 0.02, (n, 1))
+        Ln = rng.uniform(*L, n) * (0.5 + 0.5 * np.sin(e))
+        pk = rng.integers(0, 3, n)
+        for j, tp in enumerate(tpls):
+            sl = pk == j; place(out[key], tp, P[sl], D[sl], Nn[sl], Ln[sl], width * rng.uniform(0.8, 1.2, sl.sum()))
+    return out
+
+
+def alocasia(seed):
+    """Elephant ear (Alocasia / Colocasia): a few huge glossy arrow-shaped blades on long upright petioles."""
+    rng = np.random.default_rng(seed)
+    out = {'leaf': Buf(), 'stem': Buf()}
+    blades = [monstera_blade(rng, splits=0, holes=False) for _ in range(2)]
+    n = rng.integers(5, 9)
+    for i in range(n):
+        az = rng.uniform(0, 6.28); hd = np.array([math.cos(az), math.sin(az), 0])
+        el = math.radians(rng.uniform(52, 80)); pl = rng.uniform(0.7, 1.35)
+        b0 = np.array([rng.normal(0, 0.06), rng.normal(0, 0.06), 0.0])
+        tip = b0 + (hd * math.cos(el) + UP * math.sin(el)) * pl
+        tubes(out['stem'], curve(b0[None], tip[None], (hd * 0.04)[None], 8), np.linspace(0.028, 0.012, 8)[None], sides=7)
+        size = rng.uniform(0.55, 0.95)
+        dn = math.radians(rng.uniform(-75, -40))
+        D = _norm(hd * math.cos(dn) + UP * math.sin(dn) + np.cross(UP, hd) * rng.normal(0, 0.2))
+        Nn = _norm(UP * 0.5 + hd * 0.9 + rng.normal(0, 0.15, 3))
+        place(out['leaf'], blades[i % 2], tip[None] - D[None] * 0.06 * size, D[None], Nn[None], np.array([size]), np.array([0.85]))
+    return out
+
+
+def _hibiscus_flowers(rng, out, tip, tdir, d, S):
+    """Hibiscus: big five-petalled red flowers facing out of the shrub, with a pale staminal column."""
+    pe = out.setdefault('petal', Buf()); bud = out.setdefault('bud', Buf())
+    pick = rng.random(len(tip)) < S['bloom'] * np.clip(0.4 + 0.6 * d[:, 2] + 0.3, 0.2, 1)
+    tp = leaf_tpl(_prof('obovate'), fold=0.03, cup=0.18, arch=0.06, twist=0.3, stations=(0, 0.2, 0.5, 0.8, 1.0), cols=1)
+    for i in np.nonzero(pick)[0]:
+        c = tip[i] + tdir[i] * 0.02
+        ax = _norm(d[i] * 0.8 + tdir[i] * 0.4 + UP * 0.3 + rng.normal(0, 0.25, 3))[None]
+        e1, e2 = _frame(ax)
+        ph = rng.uniform(0, 6.28) + np.arange(5) * 2 * math.pi / 5
+        rad = np.cos(ph)[:, None] * e1 + np.sin(ph)[:, None] * e2
+        Dd = _norm(ax * 0.45 + rad)
+        place(pe, tp, np.repeat(c[None], 5, 0), Dd, _norm(ax - Dd * 0.2), np.full(5, rng.uniform(0.055, 0.07)), np.full(5, 1.5))
+        tubes(bud, (c + ax * np.linspace(0, 0.07, 4)[:, None])[None], np.array([[0.003, 0.0025, 0.002, 0.004]]), sides=5)
+
+
+def heliconia(seed):
+    """Heliconia (lobster claw / parrot's beak): banana-like paddle leaves on upright pseudostems, red
+    boat-shaped bracts in a zigzag spike with yellow-green tips."""
+    rng = np.random.default_rng(seed)
+    out = {'leaf': Buf(), 'stem': Buf(), 'bract': Buf()}
+    tpl = [leaf_tpl(lambda t: 0.012 if t < 0.12 else 0.012 + 0.2 * max(0.0, math.sin(math.pi * min(1, (t - 0.12) / 0.88))) ** 0.6,
+                    fold=0.08, arch=a, twist=tw, cols=2, stations=(0, 0.12, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0)) for a, tw in ((0.12, 0.15), (0.3, -0.25))]
+    bt = leaf_tpl(lambda t: 0.16 * max(0.0, math.sin(math.pi * min(1, t ** 0.7))) ** 0.6 + 0.01, fold=0.6, cup=0.3, arch=-0.15,
+                  cols=1, stations=(0, 0.2, 0.45, 0.7, 0.9, 1.0))
+    for k in range(rng.integers(4, 8)):
+        b0 = np.array([rng.normal(0, 0.18), rng.normal(0, 0.18), 0.0])
+        h = rng.uniform(0.8, 1.6)
+        lean = np.array([rng.normal(0, 0.08), rng.normal(0, 0.08), 1.0]); top = b0 + _norm(lean) * h
+        tubes(out['stem'], np.linspace(b0, top, 6)[None], np.linspace(0.03, 0.018, 6)[None], sides=7)
+        n = rng.integers(3, 6); az0 = rng.uniform(0, 6.28)
+        for j in range(n):            # distichous: the leaves fan out in one plane, alternating
+            az = az0 + (j % 2) * math.pi + rng.normal(0, 0.25); hd = np.array([math.cos(az), math.sin(az), 0])
+            p0 = b0 + (top - b0) * (0.45 + 0.55 * j / max(1, n - 1))
+            el = math.radians(rng.uniform(45, 75)); D = _norm(hd * math.cos(el) + UP * math.sin(el))
+            place(out['leaf'], tpl[j % 2], p0[None], D[None], _norm(UP - D * D[2] + hd * 0.2)[None], np.array([rng.uniform(0.7, 1.1)]))
+        if rng.random() < 0.6:        # an inflorescence: zigzag rachis with 5-9 bracts
+            nb = rng.integers(5, 10); ax = _norm(lean * np.array([1, 1, 0]) * 2 + UP)
+            pts = top + ax[None] * np.linspace(0.02, 0.38, nb)[:, None]
+            side = np.where(np.arange(nb) % 2, 1.0, -1.0); sd = _norm(np.cross(ax, np.array([1.0, 0.3, 0])))
+            D = _norm(sd[None] * side[:, None] * 1.0 + ax[None] * 0.55)
+            place(out['bract'], bt, pts, D, np.repeat(ax[None], nb, 0), rng.uniform(0.09, 0.13, nb) * np.linspace(1.0, 0.6, nb))
+            tubes(out['stem'], pts[None], np.full((1, nb), 0.008), sides=5)
+    return out
+
+
 # ---------------------------------------------------------------- monstera
 def monstera_blade(rng, splits=7, holes=True):
     """Unit monstera leaf (length 1 from the petiole junction to the tip, +Y), split from the margin
@@ -813,7 +909,7 @@ def plumeria_tree(seed, scale=1.0):
         t = np.linspace(0, 1, 6)[:, None]
         path = (1 - t) ** 2 * p + 2 * (1 - t) * t * mid + t * t * end
         segs.append((path, r, r * 0.9))
-        if depth == 0 or (depth == 1 and rng.random() < 0.25):
+        if depth == 0 or (depth == 1 and rng.random() < 0.4):     # an open crown: some limbs stop a fork early
             tips.append((end, _norm(path[-1] - path[-2]))); return
         k = rng.integers(3, 6) if first else (2 if rng.random() < 0.55 else 3)
         az0 = rng.uniform(0, 6.28)
@@ -843,7 +939,7 @@ def plumeria_tree(seed, scale=1.0):
         pk = np.clip((age * 2.99).astype(int), 0, 2)
         for j, tp in enumerate(tpl):
             s = pk == j; place(out['leaf'], tp, P[s], D[s], Nn[s], L[s], rng.uniform(0.85, 1.15, s.sum()))
-        if rng.random() < 0.9:                  # an inflorescence of white, yellow-eyed flowers
+        if rng.random() < 0.42:                 # an inflorescence of white, yellow-eyed flowers (on some tips only)
             nf = rng.integers(14, 30)
             stalk = rng.uniform(0.14, 0.26)
             fc = pos + UP * stalk + d * 0.05 + rng.normal(0, 1, (nf, 3)) * np.array([0.08, 0.08, 0.035])
@@ -867,7 +963,7 @@ TREE_FORMS = {
 }
 
 
-def canopy_tree(seed, form='dome'):
+def canopy_tree(seed, form='dome', bloom=0.0):
     """A tropical shade tree grown inside a lumpy crown envelope: a buttressed trunk forking into
     scaffold limbs, limbs into branches, branches into twigs ending in clumps of leaves that fill
     the outer shell of the crown (so it reads as a dense, rounded, cumulus-like canopy with gaps,
@@ -875,6 +971,7 @@ def canopy_tree(seed, form='dome'):
     rng = np.random.default_rng(seed)
     F = TREE_FORMS[form]
     out = {'leaf': Buf(), 'bark': Buf()}
+    if bloom: out['bloom'] = Buf()
     Rx, Rz = F['R'][0] * rng.uniform(0.85, 1.15), F['R'][1] * rng.uniform(0.85, 1.15)
     th = rng.uniform(*F['trunk']); cz = F['cz'] * rng.uniform(0.92, 1.08)
     lean = np.array([rng.normal(0, 0.12), rng.normal(0, 0.12), 0])
@@ -922,6 +1019,13 @@ def canopy_tree(seed, form='dome'):
     src = B1[near]
     tw = cp - _norm(cp - C) * 0.25
     tubes(out['bark'], curve(src, tw, rng.normal(0, 0.1, (n, 3)) + np.array([0, 0, 0.1]), 4), np.linspace(r0 * 0.1, r0 * 0.035, 4)[None].repeat(n, 0), sides=4)
+    if bloom:      # pink shower tree (Cassia javanica): pendant clusters of pink-to-white flowers out on the crown
+        ptp = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.2, arch=0.05, stations=(0, 0.3, 0.7, 1.0), cols=1)
+        for i in np.nonzero(rng.random(n) < bloom)[0]:
+            o_ = _norm(cp[i] - C); nf = rng.integers(40, 80)
+            fc = cp[i] + o_ * 0.18 - UP * rng.uniform(0.0, 0.25) + rng.normal(0, 1, (nf, 3)) * np.array([0.16, 0.16, 0.12])
+            Df = _norm(rng.normal(0, 1, (nf, 3)) + o_ * 0.6)
+            place(out['bloom'], ptp, fc, Df, _norm(np.cross(Df, rng.normal(0, 1, (nf, 3)))), rng.uniform(0.018, 0.028, nf), np.full(nf, 1.2))
     lo, hi = F['leaves']
     k = rng.integers(lo, hi + 1, n)
     ci = np.repeat(np.arange(n), k)
@@ -1023,9 +1127,10 @@ def grass_material():
     geo = N.new('ShaderNodeNewGeometry'); uvn = N.new('ShaderNodeUVMap'); sep = N.new('ShaderNodeSeparateXYZ')
     L.new(uvn.outputs['UV'], sep.inputs[0])
     ramp = N.new('ShaderNodeValToRGB'); e = ramp.color_ramp.elements
-    e[0].position = 0.0; e[0].color = _lin('#3e6224'); e[1].position = 1.0; e[1].color = _lin('#8a9440')
-    e.new(0.3).color = _lin('#4d7428'); e.new(0.62).color = _lin('#5c8230'); e.new(0.88).color = _lin('#6e8a36')
-    e.new(0.975).color = _lin('#86804a')
+    # manicured Bermuda / zoysia: warm yellow-green (sunlit lawn in the renderings ~#a8b340), not blue-green
+    e[0].position = 0.0; e[0].color = _lin('#46661f'); e[1].position = 1.0; e[1].color = _lin('#94a040')
+    e.new(0.3).color = _lin('#557624'); e.new(0.62).color = _lin('#64862a'); e.new(0.88).color = _lin('#789234')
+    e.new(0.975).color = _lin('#988e4a')
     L.new(geo.outputs['Random Per Island'], ramp.inputs['Fac'])
     # lawn-scale mottling (soil, water, wear): world-position noise, so neighbouring tiles agree
     no = N.new('ShaderNodeTexNoise'); no.inputs['Scale'].default_value = 0.35; no.inputs['Detail'].default_value = 4
@@ -1071,20 +1176,23 @@ def materials():
     leaf('groundcover', 4, '#6f8a68', '#9aae90', n_veins=5, angle=50, vein=0.2, rough=0.55, transl=0.2, sheen=0.6, val_var=0.12, sat_var=0.15)
     leaf('monstera', 5, '#25501a', '#3f6a28', n_veins=14, angle=89, vein=0.35, vein_w=0.006, aspect=0.5, rough=0.42, spec=0.36, transl=0.2, bump=0.3, val_var=0.12, back=(1.1, 1.12, 1.0))
     leaf('plumeria', 6, '#335d1e', '#86a04a', n_veins=22, angle=75, vein=0.42, vein_w=0.007, rough=0.36, transl=0.3, bump=0.45, val_var=0.15, dry=(1.6, 1.1, 0.25, 1), dry_share=0.05)
-    leaf('ti-red', 7, '#7a1224', '#93283a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.36, spec=0.42, transl=0.35, trans_tint=(1.6, 0.6, 0.7),
-         variegate=(_lin('#b3203f'), 0.3), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
-    leaf('ti-burgundy', 8, '#43101a', '#5a1a28', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.34, spec=0.42, transl=0.3, trans_tint=(1.8, 0.7, 0.8),
-         edge=_lin('#9a1c34'), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
+    leaf('ti-red', 7, '#6e2430', '#8a3442', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.36, spec=0.42, transl=0.42, trans_tint=(1.6, 0.7, 0.75),
+         variegate=(_lin('#b04a5a'), 0.3), edge=_lin('#b85466'), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
+    leaf('ti-burgundy', 8, '#4e1c26', '#66283a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.34, spec=0.42, transl=0.38, trans_tint=(1.8, 0.75, 0.85),
+         edge=_lin('#b04a5a'), val_var=0.2, hue_var=0.015, back=(1.0, 1.0, 1.0))
     leaf('ti-green', 9, '#3e4a1c', '#5a6a2a', n_veins=40, angle=12, vein=0.15, vein_w=0.004, aspect=0.12, rough=0.38, spec=0.4, transl=0.32,
          variegate=(_lin('#6e1a30'), 0.35), val_var=0.2, hue_var=0.03, back=(1.0, 1.0, 1.0))
     leaf('tree', 10, '#2f5a22', '#5f8a3a', n_veins=8, angle=55, vein=0.25, rough=0.4, transl=0.3, val_var=0.22, hue_var=0.04, dry=(1.5, 1.2, 0.3, 1), dry_share=0.04)
     leaf('tree-dark', 11, '#22451a', '#4a6e2c', n_veins=10, angle=60, vein=0.25, rough=0.3, spec=0.6, transl=0.25, val_var=0.2, hue_var=0.03)
     leaf('tree-light', 12, '#4a7a2c', '#7a9a45', n_veins=7, angle=50, vein=0.25, rough=0.45, transl=0.32, val_var=0.22, hue_var=0.05)
-    bimg, bh = leaf_image('bract', 13, _lin('#b8268f'), _lin('#d65cb2'), n_veins=7, angle=40, vein=0.35, vein_w=0.012, margin=0.1, mott=0.08, sunken=False)
-    M['bract'] = petal_material('plant bract', _lin('#b8268f'), vein_img=bimg, transl=0.5, rough=0.5, sheen=0.2)
+    bimg, bh = leaf_image('bract', 13, _lin('#9a4f9e'), _lin('#d896cc'), n_veins=7, angle=40, vein=0.35, vein_w=0.012, margin=0.1, mott=0.08, sunken=False)
+    M['bract'] = petal_material('plant bract', _lin('#9a4f9e'), vein_img=bimg, transl=0.5, rough=0.5, sheen=0.2)
     M['floret'] = petal_material('plant floret', _lin('#f2ead2'), transl=0.4)
     M['petal'] = petal_material('plant petal', _lin('#f6f2e4'), transl=0.42, rough=0.5, sheen=0.35)
     M['plumeria-petal'] = petal_material('plant plumeria petal', _lin('#f7f4ea'), _lin('#f2b818'), center_len=0.42, transl=0.42, rough=0.45, sheen=0.35)
+    M['heliconia-bract'] = petal_material('plant heliconia bract', _lin('#c42a1c'), _lin('#d8c040'), center_len=0.25, transl=0.3, rough=0.35, sheen=0.1)
+    M['hibiscus-petal'] = petal_material('plant hibiscus petal', _lin('#c8202a'), _lin('#7a0a14'), center_len=0.2, transl=0.5, rough=0.45, sheen=0.3)
+    M['shower-petal'] = petal_material('plant shower petal', _lin('#e9a2bd'), _lin('#f6e2ea'), center_len=0.5, transl=0.45, rough=0.5, sheen=0.3)
     M['bud'] = plain_material('plant bud', _lin('#d9dcc0'), 0.5, 0.3)
     M['dry'] = leaf_material('plant dry leaf', *leaf_image('leaf-dry', 14, _lin('#6e5530'), _lin('#8a7040'), n_veins=30, angle=12, aspect=0.12), rough=0.7, transl=0.2)
     M['stem'] = bark_material('plant stem', _lin('#5c4a38'), _lin('#33281e'), scale=30, bump=0.2)
@@ -1092,6 +1200,14 @@ def materials():
     M['cane'] = bark_material('plant ti cane', _lin('#7a6c5a'), _lin('#4a3e32'), scale=40, rings=0.018, ring_col=_lin('#3a3028'), bump=0.5)
     M['plumeria-bark'] = bark_material('plant plumeria bark', _lin('#5e5e54'), _lin('#3a3a32'), scale=14, lichen=_lin('#a8a690'), bump=0.3, stretch=2.0)
     M['tree-bark'] = bark_material('plant tree bark', _lin('#5a5048'), _lin('#2e2822'), scale=9, lichen=_lin('#7a786a'), bump=0.6, stretch=5.0)
+    leaf('mondo', 15, '#24391f', '#46643a', n_veins=12, angle=8, vein=0.12, vein_w=0.004, aspect=0.06, rough=0.42, spec=0.35, transl=0.3, val_var=0.18)
+    leaf('tradescantia', 16, '#4a2050', '#6b3a7a', n_veins=14, angle=10, vein=0.15, aspect=0.2, rough=0.4, spec=0.45, transl=0.25, sheen=0.4, val_var=0.15,
+         trans_tint=(1.2, 0.6, 1.3))
+    leaf('jasmine', 17, '#1f3a18', '#3f6a2e', n_veins=7, angle=50, vein=0.4, vein_w=0.008, rough=0.22, spec=0.65, transl=0.18, bump=0.4, coat=0.3, val_var=0.18)
+    leaf('dichondra', 18, '#8a967a', '#b4bea0', n_veins=6, angle=55, vein=0.15, rough=0.6, transl=0.25, sheen=0.7, val_var=0.1, sat_var=0.1)
+    leaf('heliconia', 20, '#2a5a1e', '#4f7f30', n_veins=40, angle=70, vein=0.15, vein_w=0.004, aspect=0.35, rough=0.4, spec=0.45, transl=0.35, val_var=0.15,
+         dry=(1.5, 1.1, 0.3, 1), dry_share=0.08)
+    leaf('alocasia', 19, '#1f4a1a', '#3a6a2a', n_veins=9, angle=62, vein=0.6, vein_w=0.012, aspect=0.75, rough=0.26, spec=0.6, transl=0.25, bump=0.35, coat=0.25, val_var=0.12)
     M['lawn'] = grass_material()
     M['mulch'] = mulch_material()
     return M
@@ -1242,6 +1358,13 @@ BEDS = {   # spacing (m) of plants in a bed, number of variants built
     'groundcover': dict(spacing=0.5, variants=4),
     'monstera': dict(spacing=1.3, variants=4),
     'ti': dict(spacing=0.48, variants=6),
+    'mondo': dict(spacing=0.42, variants=4),          # dark strap tufts under everything (no bare mulch)
+    'tradescantia': dict(spacing=0.4, variants=3),
+    'jasmine': dict(spacing=0.55, variants=4),        # glossy Asiatic jasmine on the bank below the pool wall
+    'dichondra': dict(spacing=0.45, variants=3),      # silver ribbon along bed edges
+    'alocasia': dict(spacing=1.1, variants=4),
+    'heliconia': dict(spacing=1.0, variants=4),
+    'hibiscus': dict(spacing=1.3, variants=3),
 }
 
 
@@ -1274,21 +1397,34 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
     bed_rects = [brect(p['rect']) for p in beds]
 
     # ---- shrubs, ti and monstera in the beds
-    flowers = {'bougainvillea': _bougainvillea_flowers, 'gardenia': _gardenia_flowers, 'groundcover': _small_white_flowers, 'hedge': _small_white_flowers}
-    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'groundcover': 'groundcover'}
+    flowers = {'bougainvillea': _bougainvillea_flowers, 'gardenia': _gardenia_flowers, 'groundcover': _small_white_flowers, 'hedge': _small_white_flowers,
+               'hibiscus': _hibiscus_flowers}
+    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'groundcover': 'groundcover', 'jasmine': 'jasmine', 'dichondra': 'dichondra', 'hibiscus': 'gardenia'}
     protos = {}
     for kind, cfg in BEDS.items():
         if not any(p.get('kind') == kind for p in beds): continue
         nv = cfg['variants']
         if kind in SHRUBS:
             fn = lambda i, kind=kind: shrub(1000 + 37 * i + len(kind), SHRUBS[kind], flowers.get(kind))
-            km = {'leaf': leafkey[kind], 'stem': 'stem', 'bract': 'bract', 'floret': 'floret', 'petal': 'petal', 'bud': 'bud'}
+            km = {'leaf': leafkey[kind], 'stem': 'stem', 'bract': 'bract', 'floret': 'floret', 'petal': 'hibiscus-petal' if kind == 'hibiscus' else 'petal', 'bud': 'bud'}
         elif kind == 'ti':
             fn = lambda i: ti_plant(2000 + i)
             km = {'leaf': lambda i: ('ti-red', 'ti-burgundy', 'ti-red', 'ti-green', 'ti-red', 'ti-burgundy')[i % 6], 'cane': 'cane', 'dry': 'dry'}
         elif kind == 'monstera':
             fn = lambda i: monstera(3000 + i)
             km = {'leaf': 'monstera', 'stem': 'green-stem'}
+        elif kind == 'mondo':
+            fn = lambda i: strap_tufts(3100 + i, tufts=(6, 9), leaves=(30, 50), L=(0.16, 0.28), width=0.45, spread=0.2)
+            km = {'leaf': 'mondo'}
+        elif kind == 'tradescantia':
+            fn = lambda i: strap_tufts(3200 + i, tufts=(4, 7), leaves=(14, 22), L=(0.1, 0.18), width=1.3, spread=0.18, el=(55, 5), arch=0.25)
+            km = {'leaf': 'tradescantia'}
+        elif kind == 'heliconia':
+            fn = lambda i: heliconia(3400 + i)
+            km = {'leaf': 'heliconia', 'stem': 'green-stem', 'bract': 'heliconia-bract'}
+        elif kind == 'alocasia':
+            fn = lambda i: alocasia(3300 + i)
+            km = {'leaf': 'alocasia', 'stem': 'green-stem'}
         protos[kind] = _variants('v-' + kind, nv, fn, mats, km)
     log(f'plants: bed variants built {time.time() - t0:.1f}s')
     for kind, pc in protos.items():
@@ -1303,7 +1439,8 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 z = ground.z(x, y)
                 if z is None: z = zref
                 nb = [ground.z(x + dx, y + dy) for dx, dy in ((0.12, 0), (-0.12, 0), (0, 0.12), (0, -0.12))]
-                if any(q is not None and abs(q - z) > 0.15 for q in nb): continue    # right on a wall's step or a drop: skip
+                tol = 0.32 if kind in ('jasmine', 'mondo', 'alocasia', 'dichondra', 'tradescantia') else 0.15   # groundcovers climb banks
+                if any(q is not None and abs(q - z) > tol for q in nb): continue    # right on a wall's step or a drop: skip
                 P.append((x, y, z - 0.015)); R.append((r.normal(0, 0.04), r.normal(0, 0.04), r.uniform(0, 6.283)))
                 S.append(r.uniform(0.82, 1.18)); I.append(r.integers(0, nv))
         instancer('plants-' + kind, pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
@@ -1323,6 +1460,19 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
             P.append((v.x, v.y, z - 0.03)); R.append((0, 0, r.uniform(0, 6.283))); S.append(p.get('scale', 1) * r.uniform(1.05, 1.25)); I.append(r.integers(0, 5))
         instancer('plants-plumeria', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
         log(f'plants: plumeria x{len(P)} {time.time() - t0:.1f}s')
+
+    # ---- specimen trees: pink shower tree (Cassia javanica)
+    sh = [p for p in plants if p['type'] == 'shower']
+    if sh:
+        pc = _variants('v-shower', 2, lambda i: canopy_tree(5200 + i, 'dome', bloom=0.45), mats, {'leaf': 'tree-light', 'bark': 'plumeria-bark', 'bloom': 'shower-petal'})
+        P, R, S, I = [], [], [], []
+        for p in sh:
+            r = np.random.default_rng(p['seed'] & 0xffffffff)
+            v = b(p['pos']); z = ground.z(v.x, v.y); z = v.z if z is None else z
+            sc_ = p.get('scale', 1) * r.uniform(0.92, 1.05)
+            P.append((v.x, v.y, z - 0.1)); R.append((0, 0, r.uniform(0, 6.283))); S.append((sc_, sc_, sc_ * 0.95)); I.append(r.integers(0, 2))
+        instancer('plants-shower', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
+        log(f'plants: shower tree x{len(P)}')
 
     # ---- background canopy trees
     tr = [p for p in plants if p['type'] == 'tree']
@@ -1365,6 +1515,9 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         skip = {c.name for c in (col, bpy.data.collections.get('palms')) if c}
         others = [o for o in bpy.data.objects if o.type == 'MESH' and not any(c.name in skip for c in o.users_collection)
                   and not any(m and m.name.startswith('terrain') for m in o.data.materials) and o.data.polygons]
+        # grass pavers: the honeycomb cells are full of turf (only the 1 in ribs show), so the lawn grows through them
+        pav = [o for o in others if any(m and m.name.lower().startswith('grasspavers') for m in o.data.materials)]
+        pav_bvh = _world_tris(pav, box=(X0 - 1, Y0 - 1, X1 + 1, Y1 + 1)) if pav else None
         cover = _world_tris(others, box=(X0 - 1, Y0 - 1, X1 + 1, Y1 + 1), zmax=2.0)
         log(f'plants: lawn cover bvh {time.time() - t0:.1f}s')
         full, part = [], []
@@ -1378,15 +1531,26 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 k = (round(c[0], 3), round(c[1], 3))
                 if k not in seen: seen.add(k); part.append(c)
         log(f'plants: lawn cells {len(full)} full, {len(part)} edge {time.time() - t0:.1f}s')
+        paver = []
+        if pav_bvh is not None:
+            class _PavGround:            # the paver slab's top is the ground in its footprint
+                def zn(self, x, y):
+                    loc, nrm, _, _ = pav_bvh.ray_cast(Vector((x, y, 500.0)), Vector((0, 0, -1)), 2000.0)
+                    return (loc.z, Vector((0, 0, 1))) if loc is not None else (None, None)   # slab top (winding may be either way)
+            for bx in boxes:
+                f_, p_ = lawn_cells(_PavGround(), None, bx, bed_rects)
+                paver += [c for c in f_ if (round(c[0], 2), round(c[1], 2)) not in seen]
+            log(f'plants: grass-paver cells {len(paver)}')
         nv = 6
         big = proto_collection('v-turf', [bpy.data.objects.new(f't{i}', grass_tile(6000 + i, 0.5).mesh(f'turf{i}', [mats['lawn']])) for i in range(nv)])
         small = proto_collection('v-turf-s', [bpy.data.objects.new(f's{i}', grass_tile(6100 + i, 0.125).mesh(f'turfs{i}', [mats['lawn']])) for i in range(nv)])
-        for name, cells, pc in (('lawn', full, big), ('lawn-edge', part, small)):
+        for name, cells, pc in (('lawn', full, big), ('lawn-edge', part, small), ('lawn-pavers', paver, big)):
             if not cells: continue
-            P = np.array([(c[0], c[1], c[2] - 0.004) for c in cells])
+            P = np.array([(c[0], c[1], c[2] - (0.012 if name == 'lawn-pavers' else 0.004)) for c in cells])
             rz = rng.integers(0, 4, len(cells)) * (math.pi / 2)
             R = _tilt_euler([tuple(c[3]) for c in cells], rz)
             S = np.ones((len(cells), 3)); S[:, 0] = rng.choice([-1.0, 1.0], len(cells))
+            if name == 'lawn-pavers': S[:, 2] = 0.7       # mown a little shorter in the cells: the ribs read as fine lines
             instancer('plants-' + name, pc, P, R, S, rng.integers(0, nv, len(cells)), col)
     log(f'plants: done {time.time() - t0:.1f}s')
     return col
