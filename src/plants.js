@@ -20,11 +20,11 @@ const KINDS = {
   monstera: { leaf: ['#1f4a1d', '#2a5a24'], bloom: [], bloomShare: 0, big: true, size: [2.6, 3.6], cards: 12 },
   plumeria: { leaf: ['#3a6a2a', '#4a7a31', '#2f5a24'], bloom: ['#fffaf0', '#fff4d6'], bloomShare: 0.35, bloomShape: 'star', size: [2.4, 3.2], cards: 14 },
   // low groundcovers and accents (scripts/plants_bpy.py grows the real ones)
-  mondo: { leaf: ['#16241a', '#22341f', '#2c4228'], bloom: [], bloomShare: 0, size: [0.8, 1.1], cards: 6 },
+  mondo: { leaf: ['#3c5832', '#4e6e42', '#6e8e58'], bloom: [], bloomShare: 0, size: [0.8, 1.1], cards: 6 },
   jasmine: { leaf: ['#1f3a18', '#2c4a20', '#3f6a2e'], bloom: [], bloomShare: 0, size: [1.2, 1.6], cards: 8 },
   dichondra: { leaf: ['#8a967a', '#9da87e', '#b4bea0'], bloom: [], bloomShare: 0, size: [0.8, 1.1], cards: 6 },
   tradescantia: { leaf: ['#4a2050', '#6b3a7a', '#5a2a62'], bloom: [], bloomShare: 0, size: [0.9, 1.2], cards: 6 },
-  alocasia: { leaf: ['#1f4a1a', '#2e5a22', '#3a6a2a'], bloom: [], bloomShare: 0, big: true, size: [3.0, 4.2], cards: 8 },
+  alocasia: { leaf: ['#2a5222', '#3a6a2c', '#4a7634'], bloom: [], bloomShare: 0, big: true, size: [3.0, 4.2], cards: 8 },
   heliconia: { leaf: ['#2a5a1e', '#3a6a26', '#4f7f30'], bloom: ['#c42a1c', '#d8c040'], bloomShare: 0.1, big: true, size: [3.0, 5.0], cards: 10 },
   hibiscus: { leaf: ['#1f4317', '#2f5d22', '#3a6a29'], bloom: ['#c8202a', '#b01c26'], bloomShare: 0.12, bloomShape: 'star', size: [3.5, 5.0], cards: 18 },
 };

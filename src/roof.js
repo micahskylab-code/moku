@@ -90,6 +90,13 @@ function runs(len, test, step = 0.08) {
 }
 
 // ---------------------------------------------------------------------------------- geometry accumulator
+// One-sided quad wound so its normal points along `want`. Thin linings are one face, never a pair of
+// coincident faces back to back: in Cycles each of a coincident pair shadows the other and both go black.
+function quadToward(acc, a, b, c, d, want) {
+  const n = cross([b[0] - a[0], b[1] - a[1], b[2] - a[2]], [c[0] - a[0], c[1] - a[1], c[2] - a[2]]);
+  if (dot(n, want) >= 0) acc.quad(a, b, c, d); else acc.quad(d, c, b, a);
+}
+
 class Acc {
   constructor() { this.pos = []; this.uv = []; }
   tri(a, b, c, ua = [0, 0], ub = [0, 0], uc = [0, 0]) { this.pos.push(...a, ...b, ...c); this.uv.push(...ua, ...ub, ...uc); }
@@ -479,30 +486,39 @@ export class Roofs {
       const buried = (v, y, d) => this.list.some(S => S !== C && S !== P && !S.companion && (ceilingOf(S, ...plan(v, d)) ?? -1e9) + T > y);
       if (buried(vm, apexC + T - 0.2, 0.2) || buried(vm, b + T + 0.3, 0.3)) return;
       const Ht = v => apexC + T - p * Math.abs(v - vm);          // metal top at the gable plane
-      // rake boards (metal-clad, roof colour) covering the gable roof's cut edge
+      // No two trim solids may share a face plane where they overlap: coincident faces shadow each other in
+      // Cycles and render pure black (the notches that showed at both ends of every gablet base).
+      // rake boards (metal-clad, roof colour) covering the gable roof's cut edge; they butt at the apex and
+      // land, 1" back, on the base ledge
       for (const s of [-1, 1]) {
-        const v0 = vm + s * gh, v1 = vm - s * 0.04;
+        const v0 = vm + s * gh, v1 = vm;
         const bot = v => Ht(v) - T - 0.09, tp = v => Ht(v) + 0.05;
-        trim.hexa([W(v0, bot(v0), -0.02), W(v1, bot(v1), -0.02), W(v1, bot(v1), 0.07), W(v0, bot(v0), 0.07)],
-          [W(v0, tp(v0), -0.02), W(v1, tp(v1), -0.02), W(v1, tp(v1), 0.07), W(v0, tp(v0), 0.07)]);
+        trim.hexa([W(v0, bot(v0), -0.01), W(v1, bot(v1), -0.01), W(v1, bot(v1), 0.07), W(v0, bot(v0), 0.07)],
+          [W(v0, tp(v0), -0.01), W(v1, tp(v1), -0.01), W(v1, tp(v1), 0.07), W(v0, tp(v0), 0.07)]);
       }
-      // base trim on the skirt
-      const yb = b + T, base = yb + 0.28;
-      trim.hexa([W(vm - gh, yb - 0.08, -0.02), W(vm + gh, yb - 0.08, -0.02), W(vm + gh, yb - 0.08, 0.07), W(vm - gh, yb - 0.08, 0.07)],
-        [W(vm - gh, base, -0.02), W(vm + gh, base, -0.02), W(vm + gh, base, 0.07), W(vm - gh, base, 0.07)]);
+      // base ledge: a flashing-capped board along the skirt, proud of the rake boards and 2" past the hip
+      // lines so it closes the corners where the rakes come down onto the hip planes; its foot sits in the metal
+      const yb = b + T, base = yb + 0.28, L0 = vm - gh - 0.17, L1 = vm + gh + 0.17;
+      trim.hexa([W(L0, yb - 0.13, -0.02), W(L1, yb - 0.13, -0.02), W(L1, yb - 0.13, 0.1), W(L0, yb - 0.13, 0.1)],
+        [W(L0, base, -0.02), W(L1, base, -0.02), W(L1, base, 0.1), W(L0, base, 0.1)]);
+      // flashing cap over the ledge, sloped out to shed water: 1/2" drip past the face
+      trim.hexa([W(L0 - 0.02, base, -0.02), W(L1 + 0.02, base, -0.02), W(L1 + 0.02, base - 0.03, 0.14), W(L0 - 0.02, base - 0.03, 0.14)],
+        [W(L0 - 0.02, base + 0.035, -0.02), W(L1 + 0.02, base + 0.035, -0.02), W(L1 + 0.02, base + 0.005, 0.14), W(L0 - 0.02, base + 0.005, 0.14)]);
       // the opening: from the base trim up to the rake boards' underside, the vent set 3" back
       const ya = apexC - 0.09, wv = y => Math.max(0, (ya - y) / p);
       if (ya - base < 0.4) return;
-      const D0 = -0.02, D1 = -0.42;
+      const D0 = -0.02, D1 = -0.42, DJ = -0.01;   // jambs start at the rake boards' back face, the sill at the ledge's
       // frame returns (jambs) along the rakes and the sill
       for (const s of [-1, 1]) {
         const q0 = [vm + s * wv(base), base], q1 = [vm, ya];
-        frame.quad(W(q0[0], q0[1], D0), W(q1[0], q1[1], D0), W(q1[0], q1[1], D1), W(q0[0], q0[1], D1));
-        frame.quad(W(q0[0], q0[1], D1), W(q1[0], q1[1], D1), W(q1[0], q1[1], D0), W(q0[0], q0[1], D0));
+        // one face each, facing down into the opening (see quadToward)
+        const Wd = (dv, dy, dd) => C.alongX ? [n * dd, dy, dv] : [dv, dy, n * dd];
+        quadToward(frame, W(q0[0], q0[1], DJ), W(q1[0], q1[1], DJ), W(q1[0], q1[1], D1), W(q0[0], q0[1], D1), Wd(-s * p, -1, 0));
       }
-      frame.quad(W(vm - wv(base), base, D0), W(vm + wv(base), base, D0), W(vm + wv(base), base, D1), W(vm - wv(base), base, D1));
-      cavity.tri(W(vm - wv(base) - 0.1, base - 0.05, D1 - 0.05), W(vm + wv(base) + 0.1, base - 0.05, D1 - 0.05), W(vm, ya + 0.1, D1 - 0.05));
-      cavity.tri(W(vm - wv(base) - 0.1, base - 0.05, D1 - 0.05), W(vm, ya + 0.1, D1 - 0.05), W(vm + wv(base) + 0.1, base - 0.05, D1 - 0.05));
+      quadToward(frame, W(vm - wv(base), base, D0), W(vm + wv(base), base, D0), W(vm + wv(base), base, D1), W(vm - wv(base), base, D1), [0, 1, 0]);
+      const A0 = W(vm - wv(base) - 0.1, base - 0.05, D1 - 0.05), A1 = W(vm + wv(base) + 0.1, base - 0.05, D1 - 0.05), A2 = W(vm, ya + 0.1, D1 - 0.05);
+      if (dot(cross([A1[0] - A0[0], A1[1] - A0[1], A1[2] - A0[2]], [A2[0] - A0[0], A2[1] - A0[1], A2[2] - A0[2]]), C.alongX ? [n, 0, 0] : [0, 0, n]) >= 0) cavity.tri(A0, A1, A2);
+      else cavity.tri(A0, A2, A1);
       // fixed louver blades, 2" on centre, 2 1/2" deep, tipped 40 deg so rain runs out
       const pitch = 0.165, dep = 0.21, th = 0.03, ang = 40 * Math.PI / 180;
       const cy = Math.cos(ang), sy = Math.sin(ang);
@@ -527,8 +543,11 @@ export class Roofs {
   }
 
   // ------------------------------------------------------------------------------ roof openings
-  // A rectangle cut through the roof (over a garden shower): cedar-lined well, metal curb, 2x6 slats
-  // on edge parallel to the eave, 8" on centre.
+  // A rectangle cut through the roof (over a garden shower): cedar-lined well, metal curb, and a slatted
+  // cedar hatch of 2x6s on edge running down the slope (rain and leaves run off between them), 4" on
+  // centre, their tops level with the curb and their ends bearing on it, so the opening reads from the
+  // street as a deliberate cedar grille. The lining is one face, wound into the well: a second coincident
+  // face behind it shadowed it black in Cycles.
   #opening(g, R, h) {
     const [x0, y0, x1, y1] = h, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, T = ROOF_T;
     const faces = this.#faces(R), f = faces.find(f => inConvex(f.pts, cx, cy));
@@ -541,8 +560,8 @@ export class Roofs {
       const A = C[i], B = C[(i + 1) % 4];
       for (let j = 0; j < 8; j++) {
         const t0 = j / 8, t1 = (j + 1) / 8, P0 = [A[0] + (B[0] - A[0]) * t0, A[1] + (B[1] - A[1]) * t0], P1 = [A[0] + (B[0] - A[0]) * t1, A[1] + (B[1] - A[1]) * t1];
-        well.quad([P0[0], low(...P0), P0[1]], [P1[0], low(...P1), P1[1]], [P1[0], H(...P1) + T + 0.01, P1[1]], [P0[0], H(...P0) + T + 0.01, P0[1]]);
-        well.quad([P0[0], H(...P0) + T + 0.01, P0[1]], [P1[0], H(...P1) + T + 0.01, P1[1]], [P1[0], low(...P1), P1[1]], [P0[0], low(...P0), P0[1]]);
+        quadToward(well, [P0[0], low(...P0), P0[1]], [P1[0], low(...P1), P1[1]], [P1[0], H(...P1) + T + 0.01, P1[1]], [P0[0], H(...P0) + T + 0.01, P0[1]],
+          [cx - (P0[0] + P1[0]) / 2, 0, cy - (P0[1] + P1[1]) / 2]);
       }
       // curb: a 2" turned-up metal lip around the cut
       const L = Math.hypot(B[0] - A[0], B[1] - A[1]), ex = (B[0] - A[0]) / L, ey = (B[1] - A[1]) / L;
@@ -553,10 +572,13 @@ export class Roofs {
     const ux = -f.dir[1], uy = f.dir[0], dx = f.dir[0], dy = f.dir[1];
     const ts = C.map(([x, y]) => x * ux + y * uy), ss = C.map(([x, y]) => x * dx + y * dy);
     const t0 = Math.min(...ts), t1 = Math.max(...ts), s0 = Math.min(...ss), s1 = Math.max(...ss);
-    const n3 = nrm([-f.L[0], 1, -f.L[1]]), s3 = nrm([dx, f.L[0] * dx + f.L[1] * dy, dy]);
-    for (let s = s0 + 0.3; s < s1 - 0.1; s += 0.667) {
-      const P = t => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.05, y]; };
-      slats.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.46], [-0.0625, -0.46]], P(t0), P(t1), s3, n3);
+    const n3 = nrm([-f.L[0], 1, -f.L[1]]), u3 = [ux, 0, uy];
+    const nb = Math.max(2, Math.round((t1 - t0) / 0.333)), bay = (t1 - t0) / nb;
+    for (let k = 0; k < nb; k++) {
+      const t = t0 + (k + 0.5) * bay;
+      // runs 2" past each edge onto the curb (ends never lie in the lining's plane)
+      const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T + 0.16, y]; };
+      slats.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.46], [-0.0625, -0.46]], P(s0 - 0.07), P(s1 + 0.07), u3, n3);
     }
     for (const [acc, m] of [[well, mat('woodBeam')], [slats, mat('woodBeam')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
   }

@@ -110,7 +110,8 @@ def _img(path, colorspace):
 
 
 def _leaf_material(name, greens, tip_burn, age_col=(0.2, 0.17, 0.05, 1), transl=0.35, burn_col=(0.33, 0.2, 0.07, 1),
-                   burn_from=0.78, rough=0.46, spec=0.34, under=(1.25, 1.25, 1.15), age_from=0.55, age_amt=0.75, gloss=0.0):
+                   burn_from=0.78, rough=0.46, spec=0.34, under=(1.25, 1.25, 1.15), age_from=0.55, age_amt=0.75, gloss=0.0,
+                   grade=(0.035, 0.75)):
     """Leaflets: per-leaflet colour from a ramp of greens (attribute-free: Random Per Island), older fronds
     (attribute 'age') yellowing, dry tips on a share of the leaflets (attribute 'tip' = 0 base .. 1 tip),
     a paler waxy underside, translucency (thin leaves glow yellow-green against the sun)."""
@@ -155,13 +156,18 @@ def _leaf_material(name, greens, tip_burn, age_col=(0.2, 0.17, 0.05, 1), transl=
     # the underside is paler and greyer (waxy)
     bk = N.new('ShaderNodeMix'); bk.data_type = 'RGBA'; bk.blend_type = 'MULTIPLY'; bk.inputs[7].default_value = (*under, 1)
     L.new(geo.outputs['Backfacing'], bk.inputs['Factor']); L.new(col, bk.inputs[6]); col = bk.outputs[2]
+    if grade:
+        # living fronds read grey-green in the renderings, not chartreuse: hue toward ~100 deg, saturation -25%
+        gr = N.new('ShaderNodeHueSaturation'); gr.inputs['Hue'].default_value = 0.5 + grade[0]; gr.inputs['Saturation'].default_value = grade[1]
+        L.new(col, gr.inputs['Color']); col = gr.outputs['Color']
     p = N.new('ShaderNodeBsdfPrincipled')
     p.inputs['Roughness'].default_value = rough
     p.inputs['Specular IOR Level'].default_value = spec
     if gloss: p.inputs['Coat Weight'].default_value = gloss; p.inputs['Coat Roughness'].default_value = 0.15
     L.new(col, p.inputs['Base Color'])
     tr = N.new('ShaderNodeBsdfTranslucent')
-    bright = N.new('ShaderNodeHueSaturation'); bright.inputs['Value'].default_value = 1.5; bright.inputs['Saturation'].default_value = 1.2
+    bright = N.new('ShaderNodeHueSaturation'); bright.inputs['Value'].default_value = 1.3; bright.inputs['Saturation'].default_value = 0.9
+    bright.inputs['Hue'].default_value = 0.51       # transmitted light: green, not yellow
     L.new(col, bright.inputs['Color']); L.new(bright.outputs['Color'], tr.inputs['Color'])
     ms = N.new('ShaderNodeMixShader'); ms.inputs['Fac'].default_value = transl
     L.new(p.outputs['BSDF'], ms.inputs[1]); L.new(tr.outputs['BSDF'], ms.inputs[2])
@@ -215,9 +221,9 @@ def _trunk_material(name, bark, ring, lichen, spacing, photo=None, tint=(1, 1, 1
     sep = N.new('ShaderNodeSeparateXYZ'); L.new(tc.outputs['UV'], sep.inputs[0])
     oi = N.new('ShaderNodeObjectInfo')
     # leaf-scar rings: v (metres up) with a little wobble
-    wob = N.new('ShaderNodeTexNoise'); wob.inputs['Scale'].default_value = 3.0
+    wob = N.new('ShaderNodeTexNoise'); wob.inputs['Scale'].default_value = 1.6; wob.inputs['Detail'].default_value = 3.0
     L.new(tc.outputs['Object'], wob.inputs['Vector'])
-    wobm = N.new('ShaderNodeMath'); wobm.operation = 'MULTIPLY_ADD'; wobm.inputs[1].default_value = spacing * 0.5
+    wobm = N.new('ShaderNodeMath'); wobm.operation = 'MULTIPLY_ADD'; wobm.inputs[1].default_value = spacing * 4.0   # irregular spacing
     L.new(wob.outputs['Fac'], wobm.inputs[0]); L.new(sep.outputs['Y'], wobm.inputs[2])
     div = N.new('ShaderNodeMath'); div.operation = 'DIVIDE'; div.inputs[1].default_value = spacing
     L.new(wobm.outputs[0], div.inputs[0])
@@ -231,7 +237,11 @@ def _trunk_material(name, bark, ring, lichen, spacing, photo=None, tint=(1, 1, 1
         off = N.new('ShaderNodeVectorMath'); off.operation = 'MULTIPLY'; off.inputs[1].default_value = (0.37, 3.1, 0)
         L.new(oi.outputs['Random'], off.inputs[0])
         add = N.new('ShaderNodeVectorMath'); add.operation = 'ADD'; L.new(tc.outputs['UV'], add.inputs[0]); L.new(off.outputs[0], add.inputs[1])
-        L.new(add.outputs[0], mp.inputs['Vector'])
+        # warp the photo up the trunk with the ring noise so its 0.9 m repeat never reads as tiled bands
+        wv = N.new('ShaderNodeCombineXYZ'); wsc = N.new('ShaderNodeMath'); wsc.operation = 'MULTIPLY'; wsc.inputs[1].default_value = 0.45
+        L.new(wob.outputs['Fac'], wsc.inputs[0]); L.new(wsc.outputs[0], wv.inputs['Y'])
+        add2 = N.new('ShaderNodeVectorMath'); add2.operation = 'ADD'; L.new(add.outputs[0], add2.inputs[0]); L.new(wv.outputs[0], add2.inputs[1])
+        L.new(add2.outputs[0], mp.inputs['Vector'])
         tx = N.new('ShaderNodeTexImage'); tx.image = col_img; L.new(mp.outputs['Vector'], tx.inputs['Vector'])
         c = tx.outputs['Color']
         tn = N.new('ShaderNodeMix'); tn.data_type = 'RGBA'; tn.blend_type = 'MULTIPLY'; tn.inputs['Factor'].default_value = 1.0
@@ -425,7 +435,7 @@ def _frond_axis(L, elev, droop, n=24, twist=0.0, rng=None, power=1.6):
 KIND = {
     'queen': dict(fronds=(18, 24), L=(3.9, 4.9), pet=0.14, ns=150, ll=0.84, lw=0.02, arr='plumose', ld=(3.0, 5.2), limp=0.7,
                   elev=(60, -50), epow=0.8, rd=(1.25, 0.9), rpow=2.0, r0=0.1, drop=0.55, shaft=0, dead=(2, 2, 3, 3, 4), fruit=(1, 2, 2, 3),
-                  rad=0.17, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.11),
+                  rad=0.16, ring=0.09, href=7.0, spow=0.3, rachis=0.03, broken=0.11),
     'foxtail': dict(fronds=(8, 11), L=(2.5, 3.1), pet=0.1, ns=95, ll=0.48, lw=0.028, arr='brush', ld=(0.6, 1.6), limp=1.4,
                     elev=(72, -12), epow=1.0, rd=(0.8, 0.9), rpow=1.8, r0=0.06, drop=0.2, shaft=1.0, dead=(0, 0, 1), fruit=(0, 0, 1),
                     rad=0.15, ring=0.07, href=7.0, spow=0.3, rachis=0.026, broken=0.02),
@@ -636,10 +646,10 @@ def trunk_mesh(height, r0, lean_dir, bend, kind, seed):
     pts, radii = [], []
     for i in range(n + 1):
         t = i / n
-        off = bend * height * t * t
+        off = bend * height * (0.6 * t + 0.4 * t * t) if kind == 'queen' else bend * height * t * t   # queen: a straight lean
         pts.append([math.cos(lean_dir) * off, math.sin(lean_dir) * off, height * t])
         if kind == 'queen':          # flared foot, a gentle swelling a third of the way up
-            r = r0 * (1.0 + 0.4 * math.exp(-t * 22) + 0.1 * math.exp(-((t - 0.35) / 0.25) ** 2) - 0.12 * t)
+            r = r0 * (1.0 + 0.4 * math.exp(-t * 22) + 0.08 * math.exp(-((t - 0.35) / 0.25) ** 2) - 0.2 * t)
         elif kind == 'foxtail':      # Wodyetia: swollen a little above the middle, narrowing under the crownshaft
             r = r0 * (1.0 + 0.3 * math.exp(-t * 20) + 0.12 * math.exp(-((t - 0.5) / 0.25) ** 2) - 0.2 * t)
         elif kind == 'christmas':    # a swollen foot, then slender
@@ -691,16 +701,16 @@ def materials():
     photo = photo if os.path.exists(os.path.join(photo, 'color.jpg')) else None
     return {
         # queen: grey-green to yellow-green leaflets, a good share with brown dry ends, the oldest fronds olive-yellow
-        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#34472a'), _lin('#45582e'), _lin('#566a32'), _lin('#6b7a38'), _lin('#88883e')], 0.62,
-                                     age_col=_lin('#8a7a34'), burn_col=_lin('#9a6a2a'), burn_from=0.72, transl=0.36, under=(1.3, 1.32, 1.25)),
+        'leaf_queen': _leaf_material('palm leaf queen', [_lin('#2e4628'), _lin('#3a562c'), _lin('#486632'), _lin('#587438'), _lin('#6a7e40')], 0.1,
+                                     age_col=_lin('#74763a'), burn_col=_lin('#8a7440'), burn_from=0.86, transl=0.3, under=(1.25, 1.28, 1.22), age_amt=0.5),
         'leaf_foxtail': _leaf_material('palm leaf foxtail', [_lin('#33521f'), _lin('#44672a'), _lin('#55782f'), _lin('#6a8836')], 0.15,
                                        age_col=_lin('#8a8034'), burn_from=0.85, transl=0.36),
         'leaf_christmas': _leaf_material('palm leaf christmas', [_lin('#3a5e22'), _lin('#4c7228'), _lin('#5f8430'), _lin('#76963a')], 0.12,
                                          age_col=_lin('#9a8a3a'), burn_from=0.88, transl=0.38, rough=0.38, spec=0.45),
         'leaf_lipstick': _leaf_material('palm leaf lipstick', [_lin('#2e5020'), _lin('#3c6226'), _lin('#4c722c'), _lin('#5e8232')], 0.1,
                                         age_col=_lin('#8a8034'), burn_from=0.9, transl=0.34, rough=0.35, spec=0.5),
-        'leaf_areca': _leaf_material('areca leaf', [_lin('#4a6e22'), _lin('#5c8228'), _lin('#6f9230'), _lin('#86a03a')], 0.15,
-                                     age_col=_lin('#a89a3c'), burn_from=0.86, transl=0.4),
+        'leaf_areca': _leaf_material('areca leaf', [_lin('#3c5c26'), _lin('#4a6c2c'), _lin('#587a34'), _lin('#68863e')], 0.12,
+                                     age_col=_lin('#8a8a44'), burn_from=0.86, transl=0.3),
         'leaf_roebelenii': _leaf_material('palm leaf roebelenii', [_lin('#1f3a18'), _lin('#2a4a1e'), _lin('#365a24'), _lin('#446a2a')], 0.08,
                                           age_col=_lin('#7a7030'), burn_from=0.9, transl=0.3, rough=0.32, spec=0.5),
         'leaf_cycad': _leaf_material('palm leaf cycad', [_lin('#1c3416'), _lin('#24421b'), _lin('#2e5020')], 0.05,
@@ -708,13 +718,13 @@ def materials():
         'leaf_coconut': _leaf_material('coconut leaf', [lin(0.05, 0.09, 0.02), lin(0.08, 0.13, 0.03), lin(0.11, 0.15, 0.04), lin(0.15, 0.16, 0.05)], 0.25),
         'rachis': _plain('palm rachis', _lin('#5a6030'), 0.5, var=0.15, ramp_to=_lin('#7a8a3a')),
         'rachis_queen': _plain('palm rachis queen', _lin('#4a5a2a'), 0.5, var=0.15, ramp_to=_lin('#6a7a36')),
-        'rachis_areca': _plain('areca petiole', _lin('#a8a040'), 0.45, var=0.15, ramp_to=_lin('#7a9030')),
+        'rachis_areca': _plain('areca petiole', _lin('#7e8248'), 0.45, var=0.15, ramp_to=_lin('#66763c')),
         'rachis_lipstick': _plain('palm petiole lipstick', _lin('#a8241a'), 0.35, var=0.12, coat=0.3, ramp_to=_lin('#6a5a24')),
         'rachis_roebelenii': _plain('palm rachis roebelenii', _lin('#4a5228'), 0.5, var=0.12),
         'rachis_cycad': _plain('palm rachis cycad', _lin('#3a4a22'), 0.45, var=0.1),
         'dead': _plain('palm dead frond', _lin('#6a5032'), 0.85, var=0.25),
         'deadleaf': _leaf_material('palm dead leaflets', [_lin('#5a4024'), _lin('#7a5a32'), _lin('#9a7a48'), _lin('#b09a68')], 0.0, transl=0.25, rough=0.8, spec=0.2,
-                                   age_from=2.0),
+                                   age_from=2.0, grade=None),
         'fruit': _fruit_material('palm fruit', [_lin('#5a6a1a'), _lin('#8a7a20'), _lin('#c47a1c'), _lin('#d8661a')]),
         'fruit_red': _fruit_material('palm fruit red', [_lin('#7a8a20'), _lin('#c8501a'), _lin('#b8281a'), _lin('#a01c16')]),
         'spathe': _plain('palm spathe', _lin('#6a5038'), 0.75, var=0.2, bump_scale=0.4, noise_scale=80, stretch=(1, 1, 8)),
@@ -722,14 +732,14 @@ def materials():
         'shaft_foxtail': _plain('palm crownshaft foxtail', _lin('#5c7a2e'), 0.4, var=0.08, coat=0.2, ramp_to=_lin('#7a9038')),
         'shaft_christmas': _plain('palm crownshaft christmas', _lin('#7a9a48'), 0.4, var=0.08, coat=0.2, ramp_to=_lin('#8aa65a')),
         'shaft_lipstick': _plain('palm crownshaft lipstick', _lin('#b0352a'), 0.3, var=0.12, coat=0.35, ramp_to=_lin('#c8402c')),
-        'shaft_areca': _plain('palm crownshaft areca', _lin('#9aa860'), 0.5, var=0.1, ramp_to=_lin('#b4b880')),
+        'shaft_areca': _plain('palm crownshaft areca', _lin('#848c64'), 0.5, var=0.1, ramp_to=_lin('#9a9c7c')),
         'trunk_queen': _trunk_material('palm trunk', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.09,
                                        photo=photo, tint=(0.3, 0.295, 0.285), tile=(0.45, 0.9)),
         'trunk_foxtail': _trunk_material('palm trunk foxtail', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.07,
                                          photo=photo, tint=(0.62, 0.62, 0.6), tile=(0.5, 1.2), ring_bump=0.3),
         'trunk_christmas': _trunk_material('palm trunk christmas', _lin('#8a8478'), _lin('#4a463e'), _lin('#a8a698'), 0.09, ring_bump=0.8),
         'trunk_lipstick': _trunk_material('palm stem lipstick', _lin('#7a6a3a'), _lin('#3a3018'), _lin('#8a7a40'), 0.11, ring_bump=0.9, rough=0.5, coat=0.2),
-        'trunk_areca': _trunk_material('areca stem', _lin('#8a9a40'), _lin('#4a5020'), _lin('#a4a858'), 0.1, ring_bump=0.8, rough=0.55),
+        'trunk_areca': _trunk_material('areca stem', _lin('#7a7c5e'), _lin('#64644c'), _lin('#8e8e76'), 0.1, ring_bump=0.3, rough=0.6),   # olive-grey, faint rings
         'trunk_roebelenii': _trunk_material('palm trunk roebelenii', _lin('#4a4034'), _lin('#2a241c'), _lin('#6a6252'), 0.05, ring_bump=1.0, knobs=0.8, rough=0.95),
         'trunk_cycad': _trunk_material('palm trunk cycad', _lin('#4a3e30'), _lin('#2a221a'), _lin('#5a5040'), 0.035, ring_bump=1.0, knobs=1.0, rough=0.95),
         'trunk_coconut': _trunk_material('coconut trunk', (0.075, 0.066, 0.055, 1), (0.035, 0.03, 0.025, 1), (0.13, 0.125, 0.11, 1), 0.09,
@@ -799,7 +809,16 @@ def build(palms, b, variants=None, collection_name='palms'):
         h = max(p['height'], K['shaft'] + 0.2)
         r0 = K['rad'] * rng.uniform(0.9, 1.1) * (min(1.25, max(0.8, (h / K['href']) ** 0.3)))
         bend = (0.03 + rng.random() * 0.05) * min(p.get('lean', 1), 2.5) * {'queen': 0.5, 'coconut': 1.6, 'foxtail': 0.35, 'christmas': 0.8}.get(kind, 1.0)
-        tb, sh, top, tdir = trunk_mesh(h, r0, rng.uniform(0, 6.283), bend, kind, p['seed'])
+        ldir = rng.uniform(0, 6.283)
+        if kind == 'queen':
+            # queen palms lean 3-5 deg; a pair grows apart (each leans away from its neighbour, toward the light)
+            bend = math.tan(math.radians(rng.uniform(3.0, 5.0)))
+            nb = [q for q in palms if q is not p and _kind(q) == 'queen' and q.get('house', 0) == p.get('house', 0)]
+            nb = [(b(q['base']) - base) for q in nb]
+            nb = [v for v in nb if 0.1 < v.length < 6.0]
+            if nb:
+                v = min(nb, key=lambda v: v.length); ldir = math.atan2(-v.y, -v.x) + rng.uniform(-0.3, 0.3)
+        tb, sh, top, tdir = trunk_mesh(h, r0, ldir, bend, kind, p['seed'])
         trunks.setdefault(kind, MeshBuf()).extend(tb, off=np.array(base[:]))      # all trunks of a kind: one mesh
         if sh: boots.setdefault(kind, MeshBuf()).extend(sh, off=np.array(base[:]))
         q = Vector((0, 0, 1)).rotation_difference(tdir)

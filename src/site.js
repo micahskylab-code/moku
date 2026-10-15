@@ -52,6 +52,11 @@ export function buildSite(plan, scene, colliders) {
 
   // ---- hardscape ----
   for (const p of S.paths ?? []) { const m = slab(p.rect, grade + 0.02, p.material ?? 'pavers'); m.userData.shell = true; g.add(m); }
+  // the grass-paver drive sits in a tan coral border band along both long sides (front rendering p4)
+  for (const p of (S.paths ?? []).filter(p => p.material === 'grassPavers')) {
+    const [x0, y0, x1, y1] = p.rect, bw = 0.9;
+    for (const r of [[x0, y0 - bw, x1, y0], [x0, y1, x1, y1 + bw]]) { const m = slab(r, grade + 0.03, 'coral'); m.userData.shell = true; g.add(m); }
+  }
   for (const w of S.walls ?? []) { const m = stoneWall(w, terrainH, colliders); m.userData.shell = true; g.add(m); }
 
   // ---- street ----
@@ -320,6 +325,9 @@ function sbox(w, h, d, material) { const m = new THREE.Mesh(new THREE.BoxGeometr
 function pool(P, grade, colliders) { return buildPool(P, grade, colliders); }
 
 // Coral-stone wall from a polyline; height above local ground, with a cap.
+// Runs that meet at a corner overlap there; each successive run drops its cap 1/8" and pulls its ends
+// in a hair so no two faces coincide (coincident faces shadow each other and render black in Cycles).
+let wallRun = 0;
 function stoneWall(W, H, colliders) {
   const g = new THREE.Group();
   for (let i = 0; i < W.pts.length - 1; i++) {
@@ -327,10 +335,11 @@ function stoneWall(W, H, colliders) {
     const nx = -(by - ay) / len, ny = (bx - ax) / len, probe = [];
     for (const t of [0, 0.5, 1]) for (const s of [-6, -2.5, 2.5, 6]) probe.push(H(ax + (bx - ax) * t + nx * s, ay + (by - ay) * t + ny * s));
     const base = Math.min(...probe) - (W.footing ?? 2.5);
-    const top = (W.top ?? (H(ax, ay) + (W.height ?? 2)));
-    const m = sbox(len + 1.8, top - base, 1.8, 'ashlar');
+    const k = wallRun++ % 4, drop = k * 0.0104, pull = k * 0.012;
+    const top = (W.top ?? (H(ax, ay) + (W.height ?? 2))) - drop;
+    const m = sbox(len + 1.8 - 2 * pull, top - base, 1.8 - pull, 'ashlar');
     m.position.set((ax + bx) / 2, (top + base) / 2, (ay + by) / 2); m.rotation.y = -Math.atan2(by - ay, bx - ax); g.add(m);
-    const cap = sbox(len + 2.0, 0.2, 2.0, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
+    const cap = sbox(len + 2.0 - 2 * pull, 0.2, 2.0 - pull, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
     colliders.push({ a: [ax, ay], b: [bx, by] });
   }
   return g;

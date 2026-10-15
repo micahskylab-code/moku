@@ -27,6 +27,9 @@ ap.add_argument('--panos', default='')          # tour/panos.json: path-traced 3
 # sky and light (scripts/materials_bpy.py): a photographed HDRI sky + Sun lamp, or the procedural Nishita sky
 ap.add_argument('--sky', default='hdri', choices=['hdri', 'procedural'])
 ap.add_argument('--hdri', default='autumn_field_puresky')                   # any day sky in assets/manifest.json (clear, faint cirrus)
+ap.add_argument('--clouds', default='kloofendal_48d_partly_cloudy_puresky')   # its cumulus laid low on the horizon over --hdri ('' = none)
+ap.add_argument('--cloud-top', type=float, default=11.0)                    # clouds kept below this elevation (deg)
+ap.add_argument('--cloud-yaw', type=float, default=0.0)                     # turn the cloud layer (deg) to place the cumulus
 ap.add_argument('--sky-strength', type=float, default=1.0)                  # x the HDRI's measured sky + sun
 ap.add_argument('--sky-yaw', type=float, default=0.0)                       # turn the clouds (deg) away from the sun-matched angle
 ap.add_argument('--hdri-res', type=int, default=0)                          # cap the HDRI width (e.g. 4096 for tests; 0 = full 8K)
@@ -68,7 +71,8 @@ import water_bpy; water_bpy.apply(meta=meta, night=args.night, log=lambda s: pri
 # colour of sunlight at that elevation. Night / plate build on the procedural sky (its strength is set to 0).
 S = materials_bpy.World(scene, mode='procedural' if (args.night or args.plate) else args.sky, hdri=args.hdri,
                         strength=args.sky_strength, yaw=args.sky_yaw, max_res=args.hdri_res,
-                        polarizer=args.polarizer, log=lambda s: print(s, flush=True))
+                        polarizer=args.polarizer, log=lambda s: print(s, flush=True),
+                        clouds=args.clouds, cloud_top=args.cloud_top, cloud_yaw=args.cloud_yaw)
 nt, bg, camsky, sky, sun, sun_data = S.nt, S.bg, S.camsky, S.sky, S.sun, S.sun_data
 set_sun = S.set_sun
 if not args.night: S.auto_exposure(meta, args.exposure, args.interior_ev, only=args.views)   # interiors metered +EV, white-balanced

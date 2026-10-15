@@ -262,8 +262,11 @@ function blades(P, m, xa, xb, ya, yb, z, s, o = {}) {
 // One louvered panel (shutter leaf or fixed louvre): stiles, top / bottom rails, a mid rail on tall leaves.
 function louverPanel(P, m, xa, xb, ya, yb, z, s, o = {}) {
   const st = o.stile ?? 0.17, d = o.depth ?? 0.125, top = o.top ?? 0.25, bot = o.bottom ?? 0.33;
-  rectFrame(P, m, xa, xb, ya, yb, st, d, z, bot);
+  // one solid per member (a second top rail laid over the frame's head made coincident faces that
+  // shadowed each other and rendered as a black slot along the head)
   P.box(m, xb - xa, top, d, (xa + xb) / 2, yb - top / 2, z);
+  P.box(m, xb - xa, bot, d, (xa + xb) / 2, ya + bot / 2, z);
+  for (const x of [xa + st / 2, xb - st / 2]) P.box(m, st, yb - ya - top - bot, d, x, (ya + bot + yb - top) / 2, z);
   const tall = yb - ya > 5.2, mid = ya + (yb - ya) * 0.42;
   if (tall) {
     P.box(m, xb - xa - 2 * st, 0.25, d, (xa + xb) / 2, mid, z);
@@ -417,7 +420,7 @@ function dress(P, g, o, x0, x1, yb, head, T, plusIn, minusIn, colliders, at) {
       if (outSide) {
         const c = 0.42, t = 0.08;
         P.box(M.trim(), w + 2 * c, c, t, cx, head + c / 2, faceOut + outSide * t / 2);
-        for (const xx of [x0 - c / 2, x1 + c / 2]) P.box(M.trim(), c, h + 0.12, t, xx, cy - 0.06, faceOut + outSide * t / 2);
+        for (const xx of [x0 - c / 2, x1 + c / 2]) P.box(M.trim(), c, h, t, xx, cy, faceOut + outSide * t / 2);   // jambs stand on the sill
         P.box(M.trim(), w + 2 * c + 0.2, 0.12, 0.35, cx, yb - 0.06, faceOut + outSide * 0.12);
       }
       inCasing(true);

@@ -265,20 +265,71 @@ function setUV(geo) {
   for (let i = 0; i < uv.count; i++) uv.setXY(i, Math.abs(n.getX(i)) > 0.5 ? p.getZ(i) : p.getX(i), p.getY(i));
 }
 
+// One continuous asphalt ribbon per road line, draped on the ground 0.35 ft up (stations every ~4 ft, five
+// points across, mitred at the bends), with a rolled apron down into the ground along both edges and at the
+// ends. (Flat 16 ft planes stepped at different heights left open risers that rendered as black slots.)
 function roads(lines, H, width = 24) {
-  const parts = [];
-  for (const line of lines) for (let i = 0; i < line.length - 1; i++) {
-    const [ax, ay] = line[i], [bx, by] = line[i + 1], len = Math.hypot(bx - ax, by - ay), n = Math.ceil(len / 16);
-    for (let k = 0; k < n; k++) {
-      const t0 = k / n, t1 = (k + 1) / n;
-      const x0 = ax + (bx - ax) * t0, y0 = ay + (by - ay) * t0, x1 = ax + (bx - ax) * t1, y1 = ay + (by - ay) * t1;
-      const seg = new THREE.PlaneGeometry(Math.hypot(x1 - x0, y1 - y0) + 1.5, width);
-      seg.rotateX(-Math.PI / 2); seg.rotateY(-Math.atan2(y1 - y0, x1 - x0));
-      seg.translate((x0 + x1) / 2, Math.max(H(x0, y0), H(x1, y1), H((x0 + x1) / 2, (y0 + y1) / 2)) + 0.35, (y0 + y1) / 2);
-      parts.push(seg);
+  const pos = [], uv = [], idx = [], C = 4, LIFT = 0.35;
+  const vert = (x, y, z, u, v) => { pos.push(x, y, z); uv.push(u, v); return pos.length / 3 - 1; };
+  // triangle a b c, wound so its normal points along `want` (world vector)
+  const tri = (a, b, c, want) => {
+    const P = i => [pos[3 * i], pos[3 * i + 1], pos[3 * i + 2]], A = P(a), B = P(b), Cc = P(c);
+    const u = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], v = [Cc[0] - A[0], Cc[1] - A[1], Cc[2] - A[2]];
+    const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+    if (n[0] * want[0] + n[1] * want[1] + n[2] * want[2] >= 0) idx.push(a, b, c); else idx.push(a, c, b);
+  };
+  const quad = (a, b, c, d, want) => { tri(a, b, c, want); tri(a, c, d, want); };
+  for (const line0 of lines) {
+    const line = line0.filter((p, i) => i === 0 || Math.hypot(p[0] - line0[i - 1][0], p[1] - line0[i - 1][1]) > 0.01);
+    if (line.length < 2) continue;
+    // stations: [x, y, tx, ty, miter, s]
+    const st = [];
+    let s = 0;
+    for (let i = 0; i < line.length - 1; i++) {
+      const [ax, ay] = line[i], [bx, by] = line[i + 1], len = Math.hypot(bx - ax, by - ay), n = Math.max(1, Math.ceil(len / 4));
+      const tx = (bx - ax) / len, ty = (by - ay) / len;
+      for (let k = i === 0 ? 0 : 1; k <= n; k++) {
+        let dx = tx, dy = ty, m = 1;
+        if (k === n && i < line.length - 2) {                    // a bend: mitre on the bisector
+          const [cx, cy] = line[i + 2], l2 = Math.hypot(cx - bx, cy - by), ux = (cx - bx) / l2, uy = (cy - by) / l2;
+          const hx = tx + ux, hy = ty + uy, hl = Math.hypot(hx, hy);
+          if (hl > 1e-6) { dx = hx / hl; dy = hy / hl; m = Math.min(2, 1 / Math.max(0.5, dx * tx + dy * ty)); }
+        }
+        st.push([ax + (bx - ax) * k / n, ay + (by - ay) * k / n, dx, dy, m, s + len * k / n]);
+      }
+      s += len;
+    }
+    // the deck: (C + 1) points across each station, each on the ground below it
+    const deck = st.map(([x, y, dx, dy, m, sv]) => {
+      const row = [];
+      for (let j = 0; j <= C; j++) {
+        const o = (j / C - 0.5) * width * m, px = x - dy * o, py = y + dx * o;
+        row.push(vert(px, H(px, py) + LIFT, py, sv / width, j / C));
+      }
+      return row;
+    });
+    for (let k = 0; k < st.length - 1; k++) for (let j = 0; j < C; j++) quad(deck[k][j], deck[k + 1][j], deck[k + 1][j + 1], deck[k][j + 1], [0, 1, 0]);
+    // aprons: from each deck edge 1 ft out and 1.4 ft down, so no edge ever floats over the ground
+    for (const [j, side] of [[0, -1], [C, 1]]) {
+      const ring = st.map(([x, y, dx, dy, m, sv], k) => {
+        const e = deck[k][j], ex = pos[3 * e], ey = pos[3 * e + 1], ez = pos[3 * e + 2], ox = -dy * side, oy = dx * side;
+        return [vert(ex, ey, ez, sv / width, 0), vert(ex + ox * 1.0, ey - 1.4, ez + oy * 1.0, sv / width, 0.06), [ox, 0.6, oy]];
+      });
+      for (let k = 0; k < st.length - 1; k++) quad(ring[k][0], ring[k + 1][0], ring[k + 1][1], ring[k][1], ring[k][2]);
+    }
+    // end caps: the same apron across both ends
+    for (const [k, dir] of [[0, -1], [st.length - 1, 1]]) {
+      const [, , dx, dy] = st[k], ox = dx * dir, oy = dy * dir;
+      const cap = deck[k].map(e => [vert(pos[3 * e], pos[3 * e + 1], pos[3 * e + 2], 0, 0), vert(pos[3 * e] + ox, pos[3 * e + 1] - 1.4, pos[3 * e + 2] + oy, 0, 0.06)]);
+      for (let j = 0; j < C; j++) quad(cap[j][0], cap[j + 1][0], cap[j + 1][1], cap[j][1], [ox, 0.6, oy]);
     }
   }
-  const mesh = new THREE.Mesh(mergeGeometries(parts), mat('asphalt'));
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  const mesh = new THREE.Mesh(geo, mat('asphalt'));
   mesh.receiveShadow = true;
   return mesh;
 }

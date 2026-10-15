@@ -336,40 +336,48 @@ plan['site'] = dict(
     # (Syagrus, 25-30 ft) - two in the left planter in front of the lanai, one at the right lawn corner - and the
     # two palms on the far verge that frame the front view (fronds hanging into its top corners); no tall
     # 'telephone pole' palms in the mid-ground
-    palms=[[-29.5, -5.5, 27, 1, 'queen'], [-26, -1.2, 29.5, 1.2, 'queen'], [-8, 47, 28, 1.4, 'queen'],
-           [182.5, 32.2, 31, 1.6, 'queen'], [181.5, 11.2, 29, 1, 'foxtail']],
+    # (height = trunk to the crown; the crown adds ~8-10 ft: the back pair stand ~22-26 ft overall, their crowns in the
+    # back view; the near one sits left of the lanai post so the dining table shows between the trunks, critic r2)
+    # the front framing pair stand at the lot's street corners, trunks just outside the front view: only frond tips
+    # reach into its top corners (~8-10% of the frame)
+    palms=[[-19.8, -6.9, 14.5, 1, 'queen'], [-26, -1.2, 16.5, 1.2, 'queen'], [-8, 47, 28, 1.4, 'queen'],
+           [149, 51.2, 37, 1, 'queen'], [149, -6.6, 34, 1, 'queen']],
     # understorey palms [x, y, height ft, kind, stems]: areca / lipstick clumps, foxtail / christmas / pygmy date
     # singles, cycads - dense and layered in every courtyard and gap, as in the renderings
     arecas=[[60, 16.8, 9], [66, 28.2, 10], [89, 13, 11], [90, 32, 12], [30, -5, 15], [72, -5, 12], [36, 50.5, 14],
             [-40, 40, 15], [140, -5, 13], [-2, 50, 12], [118, 51, 12], [46, -5.5, 12],
             # entry courtyard: lipstick palms (scarlet crownshafts) and christmas palms either side of the walk
-            [99, 17.6, 13, 'lipstick'], [113.5, 26.9, 14, 'lipstick'], [119.5, 17.4, 11, 'lipstick', 4],
-            [106, 17.7, 16, 'christmas'], [101.5, 27.0, 17, 'christmas'], [118, 27.2, 15, 'christmas'],
-            [84, 17.4, 16, 'christmas'], [83.5, 27.6, 15, 'christmas'],
+            # (kept off the walk axis so the glass entry reads between them; the entry pair flank the door past the wing ends)
+            [99, 16.6, 13, 'lipstick'], [113.5, 28.0, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
+            [106, 16.8, 16, 'christmas'], [101.5, 28.2, 17, 'christmas'], [118, 28.0, 15, 'christmas'],
+            [87.2, 15.2, 16, 'christmas'], [86.8, 29.4, 15, 'christmas'],
             # mid-ground fill between and behind the roofs
             [93, 5, 14], [92, 40, 13], [95, 45, 6, 'roebelenii', 2], [62.5, 17.6, 6, 'roebelenii'], [63, 27, 7, 'roebelenii'],
-            [95, -6, 22, 'foxtail'], [141, 50, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
+            [95, -6, 22, 'foxtail'], [138, 47.5, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
             [110, -6.2, 18, 'foxtail'], [99, -5.6, 13], [76, 50.5, 13], [56, 50.8, 16, 'foxtail'],
             # back: a layered palm screen right of the bedroom wing, hiding the neighbour
             [-20, 50, 16], [5, 50.6, 22, 'foxtail'], [14, 50.2, 14], [24, 50.8, 20, 'foxtail'], [-14, 48.6, 13], [-29, 50.5, 12],
             # front corners of the view: pygmy date and sago fronds in the bottom corners
-            [149, 49.5, 6, 'roebelenii', 2], [149.2, -5.6, 3.5, 'cycad', 2], [130, 49, 3, 'cycad']],
+            [147.4, 48.4, 6, 'roebelenii', 2], [147.4, -4.4, 3.5, 'cycad', 2], [130, 49, 3, 'cycad']],
     plumeria=[[-4, 50, 1.2], [44, 50], [139, 30.5, 0.9], [137, 14.5, 0.85]],
     specimens=[[12, -11.5, 0.75, 'shower']],      # a pink shower tree at the far left of the back view
     # beds stay clear of the coral retaining wall on the lot line (x -35.3 .. -33.5, cap to -35.4 / -33.4)
     beds=[dict(rect=[-33.2, 36, -20, 40], kind='bougainvillea'), dict(rect=[-33.2, -7, -31.5, 0.5], kind='bougainvillea'),
           # the bank below the pool wall: glossy Asiatic jasmine right up to the wall, elephant ears at the corner
-          dict(rect=[-42, -8, -36.2, 53], kind='jasmine'), dict(rect=[-44, -16, -35, -9.3], kind='jasmine'),
-          dict(rect=[-41, -15, -35.6, -10], kind='alocasia', density=0.8),
+          # (jasmine runs right to the wall foot, dense: no raw soil or bare patches on the bank)
+          dict(rect=[-42, -8, -35.5, 53], kind='jasmine', density=1.5), dict(rect=[-47, -22, -35, -9.2], kind='jasmine', density=1.8),
+          dict(rect=[-41, -15, -36.5, -11], kind='alocasia', density=0.5),
           # entry courtyard: mondo grass under everything, ti in loose clumps (not rows), tradescantia at the garage
           dict(rect=[96, 16.2, 121, 19.2], kind='mondo'), dict(rect=[96, 25.4, 121, 28.4], kind='mondo'),
           dict(rect=[96.8, 16.4, 99.6, 19], kind='ti'), dict(rect=[108.4, 16.4, 111, 19], kind='ti'),
           dict(rect=[102.6, 25.6, 105.2, 28.2], kind='ti'), dict(rect=[114.6, 25.6, 116.8, 28.2], kind='ti'),
           dict(rect=[117, -7.8, 123, -4.4], kind='tradescantia'),
           # beds along the walk on the front lawn: mondo, gardenia at the pavilion ends, a silver dichondra ribbon
-          dict(rect=[123, 15.5, 150, 19.2], kind='mondo'), dict(rect=[123, 25.4, 150, 29.5], kind='mondo'),
+          # (the street end is a silver dichondra ribbon along the walk, mondo only behind it: lighter, as in p4)
+          dict(rect=[123, 15.5, 150, 17.4], kind='mondo', density=0.9), dict(rect=[123, 27.4, 150, 29.5], kind='mondo', density=0.9),
+          dict(rect=[123, 17.4, 131, 19.2], kind='mondo', density=0.9), dict(rect=[123, 25.4, 132, 27.4], kind='mondo', density=0.9),
           dict(rect=[123, 15.6, 130, 18.4], kind='gardenia', density=0.8), dict(rect=[123, 26.4, 131, 29.4], kind='gardenia', density=0.8),
-          dict(rect=[131, 18.4, 150, 19.2], kind='dichondra'), dict(rect=[132, 25.4, 150, 26.2], kind='dichondra'),
+          dict(rect=[131, 17.4, 150, 19.2], kind='dichondra'), dict(rect=[132, 25.4, 150, 27.4], kind='dichondra'),
           dict(rect=[86, -4, 99, 15.8], kind='monstera'), dict(rect=[86, 28.8, 97, 47], kind='monstera'),
           dict(rect=[57, 16.3, 67.5, 19.3], kind='groundcover'), dict(rect=[57, 25.3, 67.5, 28.2], kind='groundcover'),
           # lot lines: a clipped hedge only where it is out of the hero views; loose monstera understorey elsewhere

@@ -5,8 +5,13 @@
 //   - spa: ~7.5 x 8 ft, set into the pool's back wall (pool water wraps its front and left), coping 8" above
 //     the pool water, full to 5" below its coping, a bench, six jets and a spill notch into the pool;
 //   - vanishing edge on the seaward side: a 10" weir with a rounded wet cap and a 2" tile lip, the falling
-//     water as a rain curtain of ~90 streamers (each its own shape, sheeting at the lip, some breaking into
-//     drops), a turquoise catch basin 2.5 ft wide 3 ft below with foam and aeration where the water lands.
+//     water as one continuous thin sheet (a closed 1/4" slab leaving the cap at ~1 ft/s, so it falls 3-4"
+//     clear of the wet wall; scripts/water_bpy.py tears it into strands over the lower third), a turquoise
+//     catch basin 2.5 ft wide 3 ft below with an aerated foam line and ripples where the sheet lands.
+//
+// The stone ends and caps at the basin's two ends stand where the garden walls (site.js) run into them;
+// their outer faces are set 1/8" inside those walls' faces so no two surfaces coincide (coincident faces
+// render as black slots in Cycles: each one's shadow rays hit the other).
 //
 // Water is modelled as closed bodies (pool, spa, basin) whose sides sit 1/4" inside the shell, so Cycles
 // sees every wall and step through water and can absorb light along the path (scripts/water_bpy.py shades
@@ -30,6 +35,7 @@ function named(name) {
     'weir cap': () => S({ color: '#9d927c', roughness: 0.15 }),
     'falls face': () => S({ color: '#9a917f', roughness: 0.3 }),
     'falls streamer': () => new THREE.MeshPhysicalMaterial({ color: '#e2f5f6', roughness: 0.05, transparent: true, opacity: 0.55, depthWrite: false }),
+    'falls sheet': () => new THREE.MeshPhysicalMaterial({ color: '#e2f5f6', roughness: 0.04, transparent: true, opacity: 0.42, depthWrite: false }),
     'falls foam': () => S({ color: '#f4f8f8', roughness: 0.6, transparent: true, opacity: 0.55, depthWrite: false }),
     'spa jet': () => S({ color: '#c9ccce', roughness: 0.25, metalness: 1 }),
     'pool light lens': () => S({ color: '#f1f3f1', roughness: 0.25 }),
@@ -151,6 +157,43 @@ function fallPath(xs, xl, yTop, r, yEnd, z, v0, R, wob) {
   return pts;
 }
 
+// The vanishing-edge sheet: the centreline profile prof ([x, y] from the lip down, flowing toward -x) swept
+// along the weir from z0 to z1 as one closed slab (front, back, both ends, top and bottom edges, normals
+// out), thick(f) thick. Each column drifts out by drift(z) * f^2 as it falls, so the sheet is never dead flat.
+// uv: x = fall fraction f (0 on the cap .. 1 at the basin), y = ft along the weir; front and back share it,
+// so the shader's tears open through both faces together.
+function sheetSlab(prof, z0, z1, dz, thick, drift, out) {
+  const n = prof.length, nz = Math.max(2, Math.round((z1 - z0) / dz)), yA = prof[0][1], yB = prof[n - 1][1];
+  const NN = [], F = [];
+  for (let i = 0; i < n; i++) {
+    const q = prof[Math.min(n - 1, i + 1)], o = prof[Math.max(0, i - 1)], tx = q[0] - o[0], ty = q[1] - o[1], l = Math.hypot(tx, ty);
+    NN.push([ty / l, -tx / l]);                                   // outward: up over the cap, -x down the fall
+    F.push(Math.min(1, Math.max(0, (yA - prof[i][1]) / (yA - yB))));
+  }
+  const vert = (i, j, side) => {                                  // side +1 front (outer), -1 back (wall side)
+    const z = z0 + (z1 - z0) * j / nz, f = F[i], t = thick(f) / 2 * side;
+    return [prof[i][0] + NN[i][0] * t - drift(z) * f * f, prof[i][1] + NN[i][1] * t, z, f, z];
+  };
+  const mesh = (rows, cols, at, flip) => {                        // a grid of quads -> indexed geometry
+    const pos = [], uv = [], idx = [];
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) { const v = at(r, c); pos.push(v[0], v[1], v[2]); uv.push(v[3], v[4]); }
+    for (let c = 0; c < cols - 1; c++) for (let r = 0; r < rows - 1; r++) {
+      const a = c * rows + r, b = a + rows;
+      if (flip) idx.push(a, b, a + 1, a + 1, b, b + 1); else idx.push(a, a + 1, b, a + 1, b + 1, b);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx); g.computeVertexNormals();
+    out.push(g.toNonIndexed());
+  };
+  mesh(n, nz + 1, (i, j) => vert(i, j, 1), false);                                 // front
+  mesh(n, nz + 1, (i, j) => vert(i, j, -1), true);                                 // back
+  mesh(n, 2, (i, s) => vert(i, 0, s ? -1 : 1), true);                              // end at z0
+  mesh(n, 2, (i, s) => vert(i, nz, s ? -1 : 1), false);                            // end at z1
+  mesh(2, nz + 1, (s, j) => vert(0, j, s ? -1 : 1), true);                         // top edge, on the cap
+  mesh(2, nz + 1, (s, j) => vert(n - 1, j, s ? -1 : 1), false);                    // bottom edge, in the basin
+}
+
 export function buildPool(P, grade, colliders) {
   const R = rnd(7741);
   const parts = {};
@@ -261,58 +304,53 @@ export function buildPool(P, grade, colliders) {
     add('waterline tile', box([x0, y0, x0 + 0.06, y1], W - 0.35, capTop - capH, W - 0.35));        // 2" tile lip
     add('falls face', box([x0, y0, x0 + 0.06, y1], Wb - 0.2, W - 0.35, Wb - 0.2));                 // wet stone face
     add('pool plaster', box([x0, y0, x0 + 0.06, y1], bFloor, Wb - 0.2));
-    // basin: plaster floor, the retaining wall (coral stone, its lip 3" above the basin water), coping
+    // basin: plaster floor, the retaining wall (coral stone, its lip 3" above the basin water), coping.
+    // Where the garden walls (site.js, 1.8 ft thick on the same line) overlap the basin wall and the stone
+    // ends, these sit 1/8" (e) inside the garden walls' faces, so the visible face is always just one.
     add('pool plaster', box([xb, y0, x0, y1], bFloor - 0.6, bFloor));
-    const lip = Wb + 0.25, foot = G - 9;
+    const lip = Wb + 0.25, foot = G - 9, e = 0.012;
     const g = new THREE.Group();
-    const rw = new THREE.Mesh(box([x0 - 4.3, y0 - 3, xb, y1 + 3], foot, lip), mat('ashlar')); g.add(rw);
-    add('pool plaster', box([xb, y0, xb + 0.04, y1], bFloor, Wb - 0.3));
-    copingRun(cope, 'y', y0, y1, x0 - 4.38, xb + 0.08, lip + copeH, copeH, 'hi', 3.0, R);
+    const rw = new THREE.Mesh(box([x0 - 4.3 + e, y0 - 3, xb - e, y1 + 3], foot, lip), mat('ashlar')); g.add(rw);
+    add('pool plaster', box([xb - 2 * e, y0, xb + 0.04, y1], bFloor, Wb - 0.3));
+    copingRun(cope, 'y', y0 - 0.06, y1 + 0.06, x0 - 4.38, xb + 0.08, lip + copeH, copeH, 'hi', 3.0, R);   // ends buried in the stone ends
     add('pool coping', ...cope.splice(0));
-    // stone ends close the basin where the lawn is cut away for it (as high as the garden walls)
+    // stone ends close the basin where the lawn is cut away for it (as high as the garden walls); their caps
+    // sit 1/8" below the garden-wall caps and inside their outer edge, so the two caps never share a face
     const eTop = G + 0.35;
     for (const [ya, yb] of [[y0 - 0.6, y0], [y1, y1 + 0.6]]) {
-      const ew = new THREE.Mesh(box([x0 - 4.3, ya, x0, yb], bFloor - 0.6, eTop), mat('ashlar')); g.add(ew);
-      const cap = new THREE.Mesh(box([x0 - 4.4, ya - 0.1, x0 + 0.02, yb + 0.1], eTop, eTop + 0.2), mat('coral')); g.add(cap);
+      const ew = new THREE.Mesh(box([x0 - 4.3 + e, ya, x0, yb], bFloor - 0.6, eTop), mat('ashlar')); g.add(ew);
+      const cap = new THREE.Mesh(box([x0 - 4.4 + e, ya - 0.1, x0 + 0.02, yb + 0.1], eTop, eTop + 0.2 - e), mat('coral')); g.add(cap);
     }
+    // the falling water: one continuous sheet off the cap's rounded nose (centreline 0.014 ft over the stone,
+    // leaving at ~1.15 ft/s, so it lands ~4" out from the wall), 1/4" thick at the lip thinning to 3/16"
+    const prof = fallPath(x0 + 0.1, x0 - 0.02, capTop, capH / 2, Wb - 0.06, 0, 1.15, R, 0).map(([x, y]) => [x, y]);
+    const xImp = prof[prof.length - 1][0];                                // the impact line in the basin
+    const ph = [R() * 6.28, R() * 6.28, R() * 6.28];
+    const drift = z => 0.035 + 0.02 * Math.sin(z * 0.83 + ph[0]) + 0.012 * Math.sin(z * 2.3 + ph[1]) + 0.006 * Math.sin(z * 5.9 + ph[2]);
+    const sheetG = [];
+    sheetSlab(prof, y0 + 0.01, y1 - 0.01, 0.2, f => 0.021 - 0.006 * f, drift, sheetG);
+    add('falls sheet', ...sheetG);
     add('basin water', (() => {
       const b = body([[xb - ov, y0 - ov], [x0 + ov, y0 - ov], [x0 + ov, y1 + ov], [xb - ov, y1 + ov]], bFloor - ov, Wb);
-      const p = b.attributes.position, uv = b.attributes.uv;            // u = ft out from the falls, v = along
-      for (let i = 0; i < uv.count; i++) uv.setXY(i, x0 - p.getX(i), p.getZ(i));
+      const p = b.attributes.position, uv = b.attributes.uv;            // u = ft out from the impact line (< 0 behind the sheet), v = along
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, xImp - p.getX(i), p.getZ(i));
       return b;
     })());
-    // the rain curtain: the sheet leaves the rounded cap and breaks into streams of 1/2"-5", some
-    // pairs and threads, the odd one breaking into drops before the basin
-    let z = y0 + 0.05;
-    while (z < y1 - 0.1) {
-      const gap = 0.12 + R() * 0.55 + (R() < 0.15 ? R() * 0.5 : 0), share = Math.min(gap, y1 - 0.05 - z);
-      const zc = z + share / 2, w = Math.min(share * 0.9, 0.03 + Math.pow(R(), 1.6) * 0.38), v0 = 0.7 + R() * 0.9, seed = R();
-      const brk = R() < 0.3 ? 0.6 + R() * 0.3 : 1.0, end = Wb - 0.12;
-      const pts = fallPath(x0 + 0.04, x0 - 0.02, capTop, capH / 2, end, zc, v0, R, 0.012 + R() * 0.03);
-      const n = pts.length, cut = Math.max(6, Math.round(n * brk));
-      const hold = 6 + R() * 10, y0p = pts[0][1];
-      const ws = pts.map(p => { const f = (y0p - p[1]) / (y0p - end), k = Math.exp(-f * hold); return share * 1.01 * k + w * (1 - k) * (1 - 0.3 * f); });
-      const ts = ws.map((ww, i) => Math.min(Math.max(0.018, ww * 0.55), 0.07) * (i < 2 ? 0.6 : 1));
-      tube(pts.slice(0, cut), ws.slice(0, cut), ts.slice(0, cut), seed, fall);
-      for (let k = cut; k < n - 1; k += 2 + Math.floor(R() * 2)) {           // drops: short necked lengths
-        const seg = pts.slice(k, Math.min(n, k + 2)).map(p => [p[0], p[1], p[2]]);
-        if (seg.length < 2) break;
-        const ww = ws[k] * 0.7, tt = ts[k] * 0.8;
-        tube(seg, [ww * 0.4, ww * 0.5], [tt * 0.5, tt * 0.6], seed, fall);
-      }
-      z += gap;
-    }
-    // foam and aeration where the streams land; a milky cloud of bubbles just under the surface
-    for (const [yy, ww, ofs] of [[Wb + 0.012, 0.75, 0.0], [Wb - 0.12, 1.1, 0.0]]) {
-      const pg = new THREE.PlaneGeometry(ww, y1 - y0 - 0.1, 8, 240);
+    // the aerated line where the sheet lands: surface foam from the wall to ~9" out (densest on the impact
+    // line, trailing out in patches), and a fainter plume of bubbles just under the surface.
+    // uv.x = ft out from the impact line; colour = the layer's opacity (water_bpy multiplies it in)
+    for (const [yy, xa, xc, alpha] of [[Wb + 0.008, x0 - 0.01, xImp - 0.8, 1.0], [Wb - 0.09, x0 - 0.02, xImp - 0.35, 0.35]]) {
+      const ww = xa - xc, pg = new THREE.PlaneGeometry(ww, y1 - y0 - 0.04, 10, 300);
       pg.rotateX(-Math.PI / 2);
       const p = pg.attributes.position, uv = pg.attributes.uv;
       for (let i = 0; i < p.count; i++) {
-        const x = p.getX(i) + x0 - 0.04 - ww / 2 + ofs, zz = p.getZ(i) + (y0 + y1) / 2;
-        p.setXYZ(i, x, yy + (yy > Wb ? 0.025 * Math.max(0, Math.sin(zz * 9.1 + x * 13) * Math.sin(zz * 3.3 - x * 7)) : 0), zz);
-        uv.setXY(i, x0 - x, zz);
+        const x = p.getX(i) + (xa + xc) / 2, zz = p.getZ(i) + (y0 + y1) / 2, d = xImp - x;
+        const bub = yy > Wb ? 0.02 * Math.exp(-d * d / 0.03) * Math.max(0, Math.sin(zz * 9.1 + x * 13) * Math.sin(zz * 3.3 - x * 7)) : 0;
+        p.setXYZ(i, x, yy + bub, zz);
+        uv.setXY(i, d, zz);
       }
       pg.computeVertexNormals();
+      pg.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(p.count * 3).fill(alpha), 3));
       add('falls foam', pg.toNonIndexed());
     }
     rw.receiveShadow = true;
