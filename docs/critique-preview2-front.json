@@ -1,0 +1,133 @@
+{
+ "view": "front",
+ "usable_internal_draft": true,
+ "verdict": "This is a clear step up from preview 1 and works as an internal concept draft, but it is not ready for buyers. Fixed since round 1: the raised camera puts the horizon about 30% down the frame, the road voids are gone, the gablet notches are closed, the palms are green, the \u02bbohana shutters match p4, and the hex pavers and lit entry now show. What still hurts most is framing and context. The pavilion walls span only about 59% of the width (the file's own target and p4 are about 77%). Identical neighbour roofs fill the outer thirds, and plumeria canopies cut across the bottom fifth. New or newly visible: the courtyard-wing roofs render with a tile-like grid instead of standing seam, the centre roof has a blown-out plane, deep foliage shade crushes to pure black, and the higher camera now shows placeholder-looking background buildings. The caption text fits and is accurate, but front-labelled.jpg will not exist until the back view finishes, and it does not yet disclose the background buildings.",
+ "scores": {
+  "plan_faithful_architecture": 7,
+  "realistic_materials_lighting": 6,
+  "clean_terrain_water": 6,
+  "polished_buyer_camera": 6
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "camera",
+   "where": "Whole frame. Camera in tools/gen_lot25.py line 407 (front: pos [184, 22.3], eye 27, lookH 8.5, fov 40)",
+   "issue": "Round-1 rank 1, partly fixed. The height and horizon are now right, but the house is still small. The pavilion walls run from about x 335 to x 1310, 59% of the width, against about 77% in p4 and the stated target in the line-405 comment. The eaves cover 63% against p4's 91%. At the bottom of the frame (y 685-871), the plumeria canopies at x 470-780 and x 865-1145 are cut through and hide the start of the walk. There is no lawn or drive foreground, which p4 relies on.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the camera in, to about pos [170, 22.3] (about 48 ft from the pavilion fronts instead of 62). Keep the vertical fov at 40. Set eye to about 29-30 and lookH to about 5-6, then check the pavilion walls reach about 77% of the width, their bases sit about 85% down and the horizon about 29% down. That puts the neighbour pavilions outside the frame. If the plumerias still cut the bottom edge, move them 4-5 ft toward the house corners so the hex drive and lawn edge show in the foreground."
+  },
+  {
+   "rank": 2,
+   "criterion": "camera",
+   "where": "Left third, x 0-470, y 320-760; right third, x 1180-1650, y 320-620",
+   "issue": "Round-1 rank 14 remains and is now more prominent. The higher camera shows six or more identical grey Dutch-gablet roofs from the neighbour copies. They read as a continuous run with the subject's roofs, so the house for sale has no edge. p4 shows one softened neighbour on the left and open fairway on the right.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the developer's site plan and the architectural plans for N\u0101 Hiku homes 1-14 (register I-14), plus the plat to confirm which homesite this is and whether it is an end lot (I-6, I-7). For now, the camera move in rank 1 removes most of them. Add tall side-yard canopy (areca or foxtail clumps) along both lot lines so the neighbour roofs are mostly screened."
+  },
+  {
+   "rank": 3,
+   "criterion": "materials-lighting",
+   "where": "Courtyard-wing hip roofs: left wing x 640-780, y 360-430; right wing x 880-1010, y 365-470 (centre of frame)",
+   "issue": "New or newly visible. These roof planes render with a fine light-grey grid that looks like scale or tile, not standing seam. The main roof face next to them (x 800-880, y 360-430) shows correct vertical seams. The seam UVs or normal pattern on these planes appear rotated or tiled on two axes, which aliases into a grid. This sits at the focal centre of the image.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Project the roof seam UVs along each plane's fall line (eave to ridge) for every hip and gablet skirt face, with a single seam direction and a spacing of about 16-18 in. Check that these planes use the same 'roof' and 'roofSeam' materials as the pavilion roofs, which read correctly."
+  },
+  {
+   "rank": 4,
+   "criterion": "materials-lighting",
+   "where": "Left slope of the centre (great-room) roof, x 775-890, y 318-400",
+   "issue": "Round-1 rank 5 remainder. This plane renders almost white and shows no seams, while its neighbouring faces have seams. It reads as a missing texture or a blown highlight, not sunlit Galvalume.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Check that this face's normals are not flipped and that it carries the seam pattern. Raise roof roughness to about 0.35-0.4 so the sky reflection spreads into a gradient, and keep the seam normal visible. Target a peak of about 200 sRGB with seams still legible."
+  },
+  {
+   "rank": 5,
+   "criterion": "architecture",
+   "where": "Centre roof and entry, x 760-1050, y 318-490",
+   "issue": "Round-1 rank 10 remains. The great-room roof is a hip whose ridge runs away from the street, so it shows a pointed triangular end. p4 shows a broad trapezoidal hip face with its ridge across the view, and a glazed entry bay with a cedar header under it. The plan cannot settle the roof form.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the roof plan and the front elevation (register I-3). Interim option: split the main hip at the great-room/l\u0101nai wall line so the great room gets a cross ridge like p4, and record that choice in the register."
+  },
+  {
+   "rank": 6,
+   "criterion": "materials-lighting",
+   "where": "Bed between the \u02bbohana and the walk, x 660-800, y 600-760; left foreground under the foxtails, x 0-280, y 720-871; right of the garage, x 1300-1340, y 650-720",
+   "issue": "About 28,500 px (2% of the frame) are pure black (RGB sum below 15). The shade under the dense planting crushes to black and reads as holes, especially the void beside the walk next to the \u02bbohana. A sunny-day photograph keeps green detail in that shade. This replaces round-1 rank 11 (black mondo beds).",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise the Cycles light-path limits (diffuse and transmission 6-8, transparent 16 or more) and increase leaf translucency so light passes through the canopy. Use AgX or Filmic with a slight toe lift, or have photo_finish.py lift blacks to about 12-18 sRGB. Thin the instance density in the walk-side bed so leaf shapes read."
+  },
+  {
+   "rank": 7,
+   "criterion": "terrain-water",
+   "where": "Horizon, left half: white two-storey block with pale green pyramidal roof at x 365-600, y 240-312; grey hip-roof blocks at x 0-370, y 255-320",
+   "issue": "New, because the higher camera now shows them. The real-site footprint extrusions carry made-up window-grid facades and flat, unweathered roofs. They look like placeholder massing models, and the bright green-roofed block is the strongest point on the horizon, so it pulls the eye. Their facades and heights come from no source, and the caption does not mention them.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Strip the window grids. Render the 'realsite walls/roofs' as soft, low-contrast masses with stronger aerial haze, and darken and desaturate the green roof. Alternatively, screen them with a band of canopy trees in front. Add 'background buildings: footprint massing, generic' to the caption."
+  },
+  {
+   "rank": 8,
+   "criterion": "terrain-water",
+   "where": "Far terrain x 650-1650, y 230-330; lone trees at x 900-1030, y 215-275 and x 1175-1330, y 175-340; ocean sliver x 0-1000, y 255-268",
+   "issue": "Round-1 rank 9, partly fixed. The far hill is greener now (about RGB 101,124,99) but still shows smeared Sentinel bands, so it reads as pasture, not manicured fairway. The few lollipop trees stand isolated against the sky, like a game backdrop. The ocean sliver (about RGB 132-144) cannot be told apart from horizon haze. The hill hiding the ocean on the right comes from the real DEM and is by design.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Apply the fairway canvas shader with mowing stripes, plus a denser canopy-height-driven tree scatter, to the far terrain. Make the ocean a deeper blue, about sRGB 40,80,115 near the horizon, with lower roughness, and ease the aerial haze. Do not add ocean beyond what the DEM and camera allow."
+  },
+  {
+   "rank": 9,
+   "criterion": "architecture",
+   "where": "End of the walk: entry at x 785-845, y 425-490; walk-axis palm crowns at x 670-790 and x 860-960, y 410-620",
+   "issue": "Round-1 rank 4, partly fixed. Warm-lit glazing now shows, but it is a small slot. The two palms on the walk axis cover the wing eaves and both sides of the entry, so p4's framed pivot door with sidelights and cedar header does not read.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move both palms about 3-4 ft outward and about 5 ft back toward the wing walls so they flank the door as in p4. Make sure the cedar header and the sidelight mullions are modelled and lit."
+  },
+  {
+   "rank": 10,
+   "criterion": "architecture",
+   "where": "Wing roofs: tan rectangles at x 675-745, y 395-435 and x 905-975, y 398-418",
+   "issue": "Round-1 rank 6 (roof wells), changed but not fixed. The slatted wells have gone from black slits to solid tan boards lying flat on the metal. They read as a loose plank or a misplaced skylight. p4 shows these wells, on its left neighbour, as open cedar trellises with visible gaps and shadow lines.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Model each well as open slats about 2 in wide at about 4 in spacing, with a dark gap and soffit below so they cast striped shadows. If they cannot read at this distance, close them in this view."
+  },
+  {
+   "rank": 11,
+   "criterion": "terrain-water",
+   "where": "Garage drive, x 1040-1390, y 770-871",
+   "issue": "Round-1 rank 7, fixed: the pavers now show. It now reads as a graphic pattern, though. The cells are oversized and identical, the grass is flat lime-yellow (about RGB 135,146,79) and the ribs are bright white. There is no tan coral border band and no apron at the door, both of which p4 has.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Shrink the cells about 30%. Darken the ribs to concrete grey (about 150-160 sRGB). Vary grass hue and height per cell and let some blades overgrow the ribs. Add the tan coral border and a 3 ft apron at the door. The drive outline itself depends on I-4."
+  },
+  {
+   "rank": 12,
+   "criterion": "materials-lighting",
+   "where": "Right hip of the garage roof, x 1268-1320, y 548-575",
+   "issue": "New. The hip cap renders as two separate pure-white bars with a dark gap between them, the only clipped pixels in the frame. It looks like a floating strip, not flashing. The matching hip on the \u02bbohana reads as a thin grey line.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make the hip cap one folded profile sitting flush on the hip line, with the same roughness as the roof (0.35-0.4). Clamp direct specular if needed."
+  },
+  {
+   "rank": 13,
+   "criterion": "terrain-water",
+   "where": "Walk and front beds, x 780-880, y 490-871",
+   "issue": "Round-1 rank 13 remains. The landscape is ruler-straight: a double row of square pavers runs straight to the frame edge, with no curving lawn edge or diagonal path. p4 has both.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the landscape plan (register I-13) and an architectural or civil site plan for the drive and walk (I-4, I-5). Interim: curve the bed edges and add stone edging as in p4, and keep 'landscape layout assumed' in the caption."
+  },
+  {
+   "rank": 14,
+   "criterion": "labeling-honesty",
+   "where": "shots/preview2/: only front.png exists; the back render is still running",
+   "issue": "Round-1 rank 8, partly fixed. run.sh still labels both views only after the back view renders, so the front has no caption for now. The band text is accurate and fits (the longest line is 1435 of 1650 px), and it now covers landscape layout and the retaining wall. It does not mention the background buildings (rank 7). Test band: /tmp/claude-0/-home-user-moku/ed1d652b-1bcf-5826-a091-375544d493d0/scratchpad/critique-preview2-front/front-labelled-test.jpg",
+   "cause_class": "defect (fixable now)",
+   "fix": "Run photo_finish and label_preview for each view as soon as its PNG is saved, and never share a raw PNG. Add 'background buildings: footprint massing, generic facades \u00b7 ocean/backdrop from DEM, view not verified' to the band."
+  },
+  {
+   "rank": 15,
+   "criterion": "materials-lighting",
+   "where": "Whole frame: sun 21 Jun 10:00 HST (alt 53\u00b0, az 80\u00b0)",
+   "issue": "Round-1 rank 15, unchanged and by design. High mid-morning light from behind the camera on the left gives short shadows and cooler light than p4's warm, raking light. The white walls now model well, with frond shadows on the \u02bbohana.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the real-date sun as policy. For a warmer buyer image, choose another real date or time with a lower sun behind the camera's shoulder, and state it in the caption."
+  }
+ ]
+}
