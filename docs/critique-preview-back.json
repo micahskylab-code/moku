@@ -1,0 +1,133 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "This works as an internal concept draft. The massing matches the p6 plan and the p5 rendering: hip-roofed great room and l\u0101nai, a projecting primary-bedroom wing with a black-gridded slider, standing-seam metal roof, a vanishing-edge pool on a coral retaining wall. The caption band honestly labels the image a concept and marks estimates and assumptions. It is not buyer-ready. The camera sits about at pool-deck height from the lower grade, so retaining walls fill the bottom 40% of the frame. A plastic-looking foreground alocasia and two crown-less palm trunks hide the l\u0101nai, which should be the hero of the shot. Black geometry voids at the coping and wall ends and the gablet base, comb-strand waterfall streams, high-contrast stone texture, a cloudless sky and chartreuse foliage all mark it as CG rather than a photograph. Most of the damage can be fixed now through the camera, the planting assets and closing the geometry. Only the gablet size, window and shutter detailing, and the neighbouring houses need source documents.",
+ "scores": {
+  "plan_faithful_architecture": 7,
+  "realistic_materials_lighting": 5,
+  "clean_terrain_water": 5,
+  "polished_buyer_camera": 4
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "camera",
+   "where": "Whole frame. The eye is about 1-2 ft above pool-deck level, standing on the lower grade close to the wall. The pool water shows as a thin sliver (y\u2248525-600). The stone walls fill y\u2248600-871. The house is squeezed into the band y\u2248200-500.",
+   "issue": "The camera is too low and too close to the retaining wall. The image reads as a picture of a wall with a house behind it. The reference is taken from an elevated three-quarter position looking down onto the water, spa, chaises and l\u0101nai.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise the eye to about 3-4 m above the pool deck (about 5 m above the lower grade) and pull back 4-6 m. Tilt down about 8-10\u00b0 and use lens shift so the verticals stay plumb. Frame from the roof ridge down to the catch-basin coping, so the pool surface, spa, chaises and l\u0101nai furniture all read. Keep the same azimuth as the reference."
+  },
+  {
+   "rank": 2,
+   "criterion": "materials-lighting",
+   "where": "The twin palm trunks at x\u2248478-545 and x\u2248593-650, running the full height y=0-600 at frame centre.",
+   "issue": "The crowns are cropped out of frame, so the trunks read as two grey concrete columns. They sit squarely across the l\u0101nai and great-room glass. They look about 2.5-3 ft in diameter at their depth, against about 1 ft for a queen palm (I-13). Their regular horizontal ring banding looks like a tiled texture.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Rebuild them as queen palms with a 0.30-0.35 m tapering trunk, leaf-base boots below the crown and a 3-5\u00b0 lean. Bring the crowns into frame (the camera change in defect 1 helps). Offset the pair, or move one about 1.5 m left, so the dining table and l\u0101nai opening show between them, as in the reference. Break up the ring texture with noise-driven spacing."
+  },
+  {
+   "rank": 3,
+   "criterion": "camera",
+   "where": "The foreground alocasia at bottom left, x\u22480-560, y\u2248490-871.",
+   "issue": "The closest object in the frame is also the most obviously CG one. It has extruded, glossy, untranslucent leaves with painted stripes and cylinder stems, and a specular hotspot at about (230,800). It covers about 20% of the frame and hides the chaises and the pool corner.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move it out of the frustum, or at least 4 m from the camera. If a foreground frame is wanted, use a proper leaf asset with backlit translucency, roughness about 0.45 and a vein normal map, and keep it under 8% of the frame at an edge."
+  },
+  {
+   "rank": 4,
+   "criterion": "terrain-water",
+   "where": "Pure-black voids (RGB\u22482): the catch-basin end and right-pier junction at x\u22481587-1626, y\u2248539-693 (a vertical slot plus a box); the end of the foreground wall coping at x\u2248352-393, y\u2248639-671; the left end of the vanishing-edge weir under the coping at x\u2248967-997, y\u2248597-610; and the base of the gablet at x\u2248860-880, y\u2248298-303 and x\u2248993-1007, y\u2248313-318.",
+   "issue": "Missing faces or flipped normals at wall returns and coping end caps, plus unclosed hip planes under the Dutch gablet. They read as holes in the model.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Extend the catch-basin front wall and its coping to butt into the right pier, and close the gap between the two piers. Add end caps to the coping slabs and recalculate their normals outward. Add a bottom fascia or cricket under the gablet that meets the hip planes. Re-render and check that no pixel cluster below RGB 10 remains outside foliage shadow."
+  },
+  {
+   "rank": 5,
+   "criterion": "terrain-water",
+   "where": "The vanishing-edge waterfall and catch basin at x\u22481025-1460, y\u2248580-750.",
+   "issue": "The water falls as separate comb-like ribbons with gaps that show dry, fully sunlit stone. There is no continuous sheet, the wall behind is not wet, and there is no aerated white line where the water hits the basin. The basin water is a flat milky cyan slab.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Model one continuous thin sheet from the weir lip to the basin with a water BSDF (IOR 1.33, roughness about 0.03-0.05), and let it break up only in the lower third. Darken and gloss the stone behind it (albedo \u00d70.6, roughness about 0.15). Add a foam band and ripple displacement at the impact line, and give the basin water depth absorption and a little surface noise."
+  },
+  {
+   "rank": 6,
+   "criterion": "materials-lighting",
+   "where": "All coral-stone walls: the foreground wall at x\u2248430-890, y\u2248640-871; the pool wall; the right piers.",
+   "issue": "The stone is a high-contrast crazy-paving texture with dark grout, at one uniform scale everywhere, and reads like tile wallpaper. The reference shows a pale, low-contrast, fine-grained cut coral stone.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Cut grout contrast by about 60% and scale the stones to about 0.6\u00d7. Add per-stone hue, value and roughness variation and real bump or displacement relief. Add soft grime and moisture at the wall base and under the coping drip line."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "The sky, y\u22480-260 across the frame.",
+   "issue": "A flat, cloudless blue gradient (top about RGB 90,146,190). It is the largest single area of the frame and a strong CG tell. The reference has light cirrus and trade-wind cloud.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Use a real clear-to-partly-cloudy afternoon HDRI rotated to keep the computed sun (az 261\u00b0, alt 44\u00b0), or add a volumetric or texture cloud layer with low cumulus near the horizon behind the house."
+  },
+  {
+   "rank": 8,
+   "criterion": "materials-lighting",
+   "where": "The palms and areca clumps at right, x\u22481150-1650, y\u2248120-500, and the queen-palm crown at upper right.",
+   "issue": "The fronds are oversaturated chartreuse and the areca stems are bright yellow-green and banded like bamboo. The reference foliage is grey-green.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Shift the frond hue toward about 100\u00b0 and cut saturation by about 25%. Reduce the yellow in leaf translucency. Make the areca stems olive-grey with fainter rings."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "The chaise lounges at x\u2248335-450, y\u2248478-520, behind the alocasia.",
+   "issue": "The cushions are textureless white blocks close to clipping (max about 231) with no fabric, piping or towel detail, so they read as placeholder geometry.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Use an off-white fabric with albedo about 0.75, a weave normal map, rounded cushion bevels, welt piping and a rolled towel as in the reference. Place them where they read after the camera change."
+  },
+  {
+   "rank": 10,
+   "criterion": "terrain-water",
+   "where": "Bare red soil at the base of the foreground wall (x\u2248380-480, y\u2248760-871); brown mulch bands across the left lawn (x\u2248100-250, y\u2248640-730); bare patches in the bottom-right groundcover (x\u22481350-1650, y\u2248760-871); a seam between the shaggy grass strip (x\u2248230-480, y\u2248540-590) and the flat lawn.",
+   "issue": "The ground reads unfinished and patchy: raw soil, undefined beds and two lawn materials meeting at a hard line.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Scatter the groundcover at 100% coverage on the lower slope and use defined mulch beds with steel or stone edging. Use one lawn material with gentle colour and height variation, plus a mowing-stripe or clump variation map."
+  },
+  {
+   "rank": 11,
+   "criterion": "architecture",
+   "where": "The Dutch gablet on the primary-bedroom wing, x\u2248870-1000, y\u2248255-315.",
+   "issue": "The gablet spans about 55% of the wing's roof width and has a deep, dark louvre that dominates the roof. In the p5 rendering it is a small gablet about a third of the roof width with a light finish.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Until a roof plan and exterior elevations are available, match p5: shrink the gablet to about a third of the wing roof width, raise it toward the ridge and give it a lighter, tighter louvre or board infill. The roof plan and elevations would set the true size (I-3)."
+  },
+  {
+   "rank": 12,
+   "criterion": "architecture",
+   "where": "The l\u0101nai frontage and left wing, x\u2248230-400, y\u2248290-470.",
+   "issue": "The cedar post-and-beam reads thin. The low camera hides the header beam and the posts are slim, while p5 shows a heavy cedar post and an exposed beam across the l\u0101nai opening. The left-wing windows (x\u2248290, x\u2248360) read as dark slits with no cedar louvred shutters. The TV and double-hung window on the l\u0101nai's inner wall are also missing.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Thicken the posts to about 10-12 in, show the cedar header below the eave, and add the louvred shutters and l\u0101nai TV seen in p5. Exterior elevations and the window/door schedule are needed to confirm window widths and heights (I-2, I-12)."
+  },
+  {
+   "rank": 13,
+   "criterion": "materials-lighting",
+   "where": "The l\u0101nai and great-room glass, x\u2248385-830, y\u2248330-480.",
+   "issue": "With the real-date sun (22 Sep 15:25 HST, alt 44\u00b0), the deep overhang puts the whole l\u0101nai and dining set in heavy shade while the wing face is bright. The hero space reads dim, unlike the brochure's warm frontal light.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the real-site sun, but choose a later real time on the same date (about 17:00-17:30 HST, alt about 15-20\u00b0) so the light rakes into the l\u0101nai and warms the fa\u00e7ade. Alternatively, balance the exposure of the shaded l\u0101nai in grading without breaking the sun direction."
+  },
+  {
+   "rank": 14,
+   "criterion": "architecture",
+   "where": "The neighbouring house at right, x\u22481180-1470, y\u2248320-470.",
+   "issue": "A near-identical copy, with the same gablet and a dark window, shows directly behind the right planting and reads as a continuation of this house. Both the copy and the roughly 70 ft spacing are assumptions (I-6, I-14).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "For now, densify the screen planting or lower the neighbour's contrast so this house's right edge reads clearly. To resolve it properly, get the subdivision plat and the developer's site and architectural plans for Fairway 7 homes 1-14."
+  },
+  {
+   "rank": 15,
+   "criterion": "labeling-honesty",
+   "where": "The caption band of back-labelled.jpg, y\u2248880-1040.",
+   "issue": "The concept label is clear and estimates and assumptions are marked. But the about-5 ft coral retaining wall, the grading and the catch-basin drop (I-11), which fill about 40% of this frame, are not listed. 'Terrain USGS 3DEP lidar' under SUPPLIED could be read as covering them. The caption is generic across views (garage and \u02bbohana lines don't apply here) and omits the \u00b125 m site registration. Added film grain is visible across the sky.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make the caption specific to this view. Add 'ASSUMED: ~5 ft coral retaining wall, grading, vanishing-edge drop and catch basin (p5 rendering; needs civil grading plan and pool plans)' and 'site position \u00b125 m'. Drop the lines that don't apply. Reduce the grain strength in photo_finish by about half."
+  }
+ ]
+}
