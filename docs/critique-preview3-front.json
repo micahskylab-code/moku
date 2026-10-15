@@ -1,0 +1,133 @@
+{
+ "view": "front",
+ "usable_internal_draft": true,
+ "verdict": "This works as an internal concept draft, and it is the best front view so far, but it is not ready for buyers. Fixed since round 1: the camera framing now matches p4 (pavilion walls span x 185-1457, 77% of the width; horizon about 30% down). The road voids, yellow fronds, gablet notches, black mondo and black crush are gone (no pixel sums below 30). The \u02bbohana shutters and the hex grass pavers now read, and front-labelled.jpg exists with an accurate band that also discloses the background buildings. What hurts most now is the focal centre: the main hip's sunlit left plane is a blank near-white sheet, and both wing roofs alias into a stippled tile-like grid. Still open from earlier rounds: the main roof form (an assumption), the neighbour copies filling the outer thirds, and an entry still half screened by palms. Newly noticed: lime-plastic foxtail crownshafts, a skyline of identical queen-palm crowns, and the right plumeria cutting into the garage door.",
+ "scores": {
+  "plan_faithful_architecture": 7,
+  "realistic_materials_lighting": 6,
+  "clean_terrain_water": 7,
+  "polished_buyer_camera": 7
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "materials-lighting",
+   "where": "Focal centre. Main hip left plane x 770-885, y 277-375; north-wing walk-facing plane x 630-760, y 320-380; south-wing walk-facing plane x 915-1010, y 315-365",
+   "issue": "Round 2 #3 and #4 are still there. The main roof's sun-facing plane renders as a seamless pale sheet (mean RGB 161, no seams) right next to its front plane, which shows clean seams. Both wing planes show a fine stippled grid that reads as tile or shingle. All three are planes whose downslope seams run along plan y, so from this camera the seam spacing is foreshortened in depth. The seam normal pattern aliases into a grid on the wings and averages out to nothing on the main plane, where near-normal sun incidence then washes it to white. The \u02bbohana and garage skirts, which are close and face the camera, look right.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Replace the normal-map seams with real seam geometry (a 1.5 in. raised bevelled rib every 16-18 in.), or band-limit the seam texture by distance/derivatives so it cannot alias. Align each plane's UV to its own downslope direction. Raise roof roughness to about 0.35 and drop base albedo slightly so the sun-facing plane stays below about 150 with seam shading. Check with a 4x crop of x 600-1050, y 270-400."
+  },
+  {
+   "rank": 2,
+   "criterion": "architecture",
+   "where": "Main great-room roof, x 765-1000, y 277-380 (roofs 'main' and 'main-skirt' in tools/gen_lot25.py, ridge along plan x)",
+   "issue": "Round 1 #10 and round 2 #5 are still there. The great-room roof shows a pointed triangular hip end to the street. p4 shows a broad trapezoidal hip face with its ridge across the view, and a glazed entry bay under it. The plan cannot settle this, and the brochure says its renderings are not to scale.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the roof plan and front elevation (register I-3). Until then, record the choice in the register. Change the caption's 'roof pitch/overhangs' to 'roof forms, pitch, overhangs (main ridge direction differs from p4)' so the difference is disclosed."
+  },
+  {
+   "rank": 3,
+   "criterion": "camera",
+   "where": "Left third x 0-470, y 250-470; right third x 1300-1650, y 275-470",
+   "issue": "Round 1 #14 and round 2 #2 are still there. The identical neighbour copies' grey Dutch-gablet roofs form a continuous roofscape on both sides, about 40% of the width of that band, so the home for sale has no edge. p4 has one softened neighbour on the left and open fairway on the right.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the developer's site plan, the homesite number and the designs of homes 1-14 (register I-6, I-7, I-14). Meanwhile, in the front view only, give the neighbour roofs slightly more aerial haze and a lighter value, and thicken the side-lot palms and monstera at plan y -6 and 51-53 so foliage, not roof, frames each side."
+  },
+  {
+   "rank": 4,
+   "criterion": "materials-lighting",
+   "where": "Foxtail crownshafts at x 330-350, y 362-418; x 1268-1290, y 340-385; x 1525-1545, y 355-400; left-edge palm x 20-50, y 450-545 (foxtail entries in site.arecas)",
+   "issue": "New or newly noticed. Each crownshaft is a saturated, uniform lime-yellow cylinder with no taper, bloom or leaf-base detail, so it reads as a plastic tube. Four of them are scattered across the mid-ground at eye-catching contrast. The left-edge one sits on a trunk that splits the frame edge.",
+   "cause_class": "defect (fixable now)",
+   "fix": "In the palm builder, desaturate the foxtail crownshaft to about sRGB (105,125,95) with a waxy grey-green bloom (higher roughness, slight sheen). Add vertical streaking, a slight swelling and taper, and a darker brown-grey band where it meets the ringed trunk. Move the palm at [95,-6] or [110,-6.2] back 3-4 ft so the left-edge trunk leaves the frustum."
+  },
+  {
+   "rank": 5,
+   "criterion": "materials-lighting",
+   "where": "Skyline band y 180-275: queen-palm crowns at x 30-200, 230-370, 470-570, 640-790, 940-1090, 1100-1200, 1490-1650",
+   "issue": "New or newly noticed. Seven or more crowns of the same queen-palm model, all the same size and symmetrical fan shape, stand at regular lot-pitch spacing along the skyline (this lot's back palms plus their copies on the neighbour lots). The repetition gives it away as CG. p4 has a single queen palm above the main roof and irregular masses beyond.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Vary each instance per lot: rotation, frond count \u00b115%, droop, lean, trunk height \u00b120%. On neighbour copies, drop or replace about half the back queen palms with broadleaf or clumping kinds, so the skyline is irregular and only one or two crowns clear our ridge."
+  },
+  {
+   "rank": 6,
+   "criterion": "architecture",
+   "where": "Entry glazing at x 782-842, y 385-460; screening crowns at x 640-790, y 340-480 and x 830-1000, y 330-560",
+   "issue": "Round 1 #4 and round 2 #9 are partly fixed. The warm-lit pivot door and cedar frame now show, but fronds from the christmas and lipstick palms cross both sides of the glazing. Only a slot about 60 px wide reads, so p4's framed entry with sidelights is still not the clear end point of the walk.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the christmas palms at [96.8,14.4] and [94.4,30.5] about 2 ft further toward the wing walls, or cut their height to 12-13 ft. Rotate their crowns so no frond crosses the centre 120 px. Target the full door-plus-sidelight width (about x 770-855) readable."
+  },
+  {
+   "rank": 7,
+   "criterion": "camera",
+   "where": "Bottom band y 640-871; right plumeria canopy over the garage door at x 1150-1290, y 690-760",
+   "issue": "The pavilion bases sit about 89% down (the file's target and p4 are about 85%). The bottom 11% is mostly cut plumeria canopies, with no foreground lawn or the curved bed edges the r3 code added. The right plumeria [137,14.5] covers the lower-left corner of the carriage door. In p4 it sits beside the door, not in front of it.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Lower lookH from 4.5 to about 2 ft (about 1.3 deg more pitch). That puts the bases near 86% and the horizon near 27%, and brings the curved bed edges and stone edging into frame. Move the right plumeria to about [138, 17.0] at scale 0.8 so its canopy clears the door's left jamb (x 1152)."
+  },
+  {
+   "rank": 8,
+   "criterion": "terrain-water",
+   "where": "Horizon left: white blank-walled box with grey hip roof at x 360-470, y 235-302; lollipop trees at x 410-445, y 285-300, x 690-720, y 280-300 and x 905-935, y 230-260; ocean x 0-900, y 255-275",
+   "issue": "Round 2 #7 and #8 are partly fixed. The green-roofed two-storey block is gone and the ocean is now a real blue band. But one footprint-massing building remains as a featureless white box sitting in front of the ocean, with no openings and no base shadow. Small isolated round 'lollipop' trees dot the fairway. The ocean reads slightly teal-dark (RGB about 46,76,78) next to p4's deep blue.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Give background footprint buildings recessed dark window and door bands, an eave shadow and a ground-contact AO line, or hide this one behind a canopy tree from the Meta/WRI scatter. Cluster fairway trees in groups of 3-5 with varied crowns instead of singles. Shift the ocean colour toward about (40,70,110). The ocean's extent comes from the DEM and stays as is."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "Bottom-left lawn x 150-390, y 760-871 (also below the \u02bbohana's left corner)",
+   "issue": "New or newly noticed. The shaded side-yard lawn is a flat black-green pad: mean RGB about 20,28,16 with a luminance std of only 2.2, so no grass texture at all. It reads as a hole in the corner, while p4's foreground lawn is bright and textured. The black-crush fix removed pure blacks, but this region is still close to them.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Extend the grass blade/displacement scatter to the side yard. Raise the world/sky fill, or add a +0.5 EV shadow lift with a soft toe in photo_finish.py, so shaded lawn sits at about RGB 45-60 with visible blade variation."
+  },
+  {
+   "rank": 10,
+   "criterion": "materials-lighting",
+   "where": "Side hip planes: garage left hip x 960-1100, y 380-550; \u02bbohana right hip x 520-690, y 375-545; \u02bbohana left hip x 130-300, y 420-545",
+   "issue": "These planes render as evenly spaced rounded light/dark ribs about 1 ft apart, which reads as corrugated or barrel-rib roofing. The front skirts of the same roofs show thin standing seams on flat pans about 16-18 in. apart. The same Galvalume roof uses two different profiles.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Use the same seam geometry and spacing on every plane (see rank 1): narrow 1.5 in. ribs on flat pans with a slight oil-canning variation in the pans, not a sinusoidal normal."
+  },
+  {
+   "rank": 11,
+   "criterion": "architecture",
+   "where": "Roof wells on the wing roofs: x 655-730, y 341-382 and x 930-998, y 340-372 (holes on the 'north'/'south' roofs)",
+   "issue": "Round 1 #6 and round 2 #10 are partly fixed. The wells have gone from black slits, then solid tan boards, to a row of cedar slats. They still sit flush on the metal like a ladder laid on the roof, with no visible opening, depth or shadow below.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Cut a real opening through the roof plane with a metal curb or flashing upstand. Set the slats 4-6 in. below the roof surface with dark gaps and the garden-shower interior visible through them, so they read as open trellised wells as on p4's left neighbour."
+  },
+  {
+   "rank": 12,
+   "criterion": "terrain-water",
+   "where": "Front walk x 775-880, y 500-871",
+   "issue": "Round 1 #13 and round 2 #13 are still there. The walk is two columns of small square pavers with a grass strip between them and grass joints, which reads as a checkerboard grid. p4 shows single wide rectangular slabs, about 4 ft x 2 ft, spanning the walk with narrow grass joints, and a curving lawn edge and diagonal path at the street end.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Change the 'stepping' material on the walk path to single full-width slabs about 2 ft deep with 4 in. grass joints, matching p4. The exact layout still needs the landscape plan (register I-13), so keep 'landscape layout' in the caption as assumed."
+  },
+  {
+   "rank": 13,
+   "criterion": "terrain-water",
+   "where": "Garage drive x 1100-1550, y 760-871",
+   "issue": "Round 1 #7 is fixed and round 2 #11 is partly fixed. The hex grass pavers now read naturally, with grass filling the cells. There is still no tan coral border band along the walk side and no solid apron at the door sill. The pavers butt straight into the door, and only the right side has a white concrete curb, while p4 shows a tan stone border.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add a 12-18 in. tan coral border around the grassPavers path, matching the stone edging on the beds. Add a 2-3 ft solid coral apron at the carriage door. Recolour the right-hand curb from white concrete to the same tan."
+  },
+  {
+   "rank": 14,
+   "criterion": "materials-lighting",
+   "where": "front-finished.png and front-labelled.jpg, most visible in the sky, e.g. x 1100-1300, y 20-60",
+   "issue": "New. photo_finish.py adds coloured film grain: the blue-channel local std rises from 0.9 in the raw render to 2.0. The sky looks speckled with RGB noise, which reads as a low-ISO-camera fake rather than a clean architectural photograph.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make the grain luminance-only, finer (sigma under 0.6 px) and lower in amplitude (std \u22641 on a flat sky), or turn it off for the sky and highlights."
+  },
+  {
+   "rank": 15,
+   "criterion": "materials-lighting",
+   "where": "Whole frame: sun 21 Jun 10:00 HST (alt 53\u00b0, az 80\u00b0) from behind-left of the camera",
+   "issue": "Round 1 #15 and round 2 #15 are unchanged and deliberate. High mid-morning light gives short shadows and cooler light than p4's warm, raking light. The white walls now model well, with frond shadows on the \u02bbohana.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it while real-date sun is the policy, and keep it stated in the caption. If a warmer buyer image is wanted, choose another real date and time with lower sun behind the camera's shoulder and state it."
+  }
+ ]
+}
