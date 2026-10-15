@@ -137,7 +137,7 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
   const S = {
     active: false, display: DISPLAYS.includes(params.get('display')) ? params.get('display') : 'exterior',
     selected: null, hover: null, trees: true, rotate: false, card: 'space', cardOpen: true,
-    pointer: null, pointerMoved: false, lineW: 0.6, frame: '', ox: 0, oy: 0,
+    pointer: null, pointerMoved: false, lineW: 0.6, frame: '', ox: 0, oy: 0, exportOpen: false, armDelete: false,
   };
   const store = {
     ok: true,
@@ -273,14 +273,30 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     for (const q of questions) { if (!groups.has(q.space.name)) groups.set(q.space.name, []); groups.get(q.space.name).push(q); }
     return [
       h('h2', {}, `Questions (${questions.length})`),
-      h('div', { class: 'ic-sub' }, 'Stored only in this browser. Nothing is sent. Export makes a file on this device that you can share yourself.'),
+      h('div', { class: 'ic-sub' }, 'Stored only in this browser. Nothing is sent. Export shows them as text to copy, or saves a file on this device, for you to share yourself.'),
       ...(questions.length ? [...groups].flatMap(([name, qs]) => [h('h3', {}, name), h('ol', { class: 'ic-qs' }, qs.map(qItem))])
         : [h('p', { class: 'ic-note' }, 'No saved questions yet. Select a space, draft a question in its panel, or tap “Ask” next to any estimate, assumption or unknown.')]),
       h('div', { class: 'ic-actions' },
-        h('button', { class: 'primary', disabled: !questions.length, onclick: exportQuestions }, 'Export JSON'),
-        h('button', { disabled: !questions.length, onclick: copyQuestions }, 'Copy as text'),
-        h('button', { disabled: !questions.length, onclick: () => { if (confirm(`Delete all ${questions.length} saved questions from this browser?`)) { questions = []; store.write(KEY_Q, questions); renderCard(); } } }, 'Delete all')),
+        h('button', { class: 'primary', disabled: !questions.length, 'aria-expanded': String(S.exportOpen), onclick: () => { S.exportOpen = !S.exportOpen; renderCard(); } }, 'Export JSON'),
+        h('button', { disabled: !questions.length, onclick: e => copyText(plainText(), e.target.parentElement.querySelector('.ic-local')) }, 'Copy as text'),
+        // two taps instead of confirm(), which some embedded viewers refuse
+        h('button', { disabled: !questions.length, onclick: e => {
+          if (S.armDelete) { S.armDelete = false; questions = []; store.write(KEY_Q, questions); S.exportOpen = false; renderCard(); return; }
+          S.armDelete = true; e.target.textContent = `Tap again to delete all ${questions.length}`;
+          setTimeout(() => { S.armDelete = false; if (e.target.isConnected) e.target.textContent = 'Delete all'; }, 4000);
+        } }, 'Delete all'),
+        h('span', { class: 'ic-local' })),
+      S.exportOpen && questions.length ? exportBox() : null,
     ];
+  }
+  // the JSON as selectable text with Copy, and a file download where the browser allows one (an embedded viewer may
+  // block page-started downloads; copying still works)
+  function exportBox() {
+    const json = JSON.stringify(exportDoc(), null, 1), note = h('span', { class: 'ic-local' });
+    const box = h('textarea', { class: 'ic-export', readonly: true, rows: 8, 'aria-label': 'Questions as JSON' }); box.value = json;
+    return [box, h('div', { class: 'ic-actions' },
+      h('button', { class: 'primary', onclick: () => copyText(json, note, box) }, 'Copy JSON'),
+      h('button', { onclick: downloadQuestions }, 'Download file'), note)];
   }
   function saveDraft(id, text) { if (text.trim()) drafts[id] = text; else delete drafts[id]; store.write(KEY_D, drafts); }
   function addToDraft(text) {
@@ -304,13 +320,19 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     return { format: 'nahiku-questions/1', exported: new Date().toISOString(), home: info.home.name, label: info.concept,
       units: 'camera in feet, model coordinates', questions };
   }
-  function exportQuestions() {
+  function downloadQuestions() {
     const a = h('a', { href: URL.createObjectURL(new Blob([JSON.stringify(exportDoc(), null, 1)], { type: 'application/json' })), download: `nahiku-${planId}-questions.json` });
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   }
-  function copyQuestions() {
-    const text = [`${info.home.name}: questions (${info.concept})`, ...questions.map((q, i) => `${i + 1}. [${q.space.name}] ${q.text}`)].join('\n');
-    navigator.clipboard?.writeText(text).catch(() => {});
+  const plainText = () => [`${info.home.name}: questions (${info.concept})`, ...questions.map((q, i) => `${i + 1}. [${q.space.name}] ${q.text}`)].join('\n');
+  // clipboard where allowed; otherwise leave the text selected in a box so the viewer can copy it themselves
+  function copyText(text, note, box) {
+    const fail = () => {
+      if (!box) { S.exportOpen = true; renderCard(); box = card.querySelector('.ic-export'); note = box?.nextElementSibling?.querySelector('.ic-local'); if (box) box.value = text; }
+      if (note) note.textContent = 'Copying is blocked here. The text is selected: copy it from your keyboard or menu.';
+      box?.focus(); box?.select();
+    };
+    try { navigator.clipboard.writeText(text).then(() => { if (note) note.textContent = 'Copied.'; }, fail); } catch { fail(); }
   }
   function goTo(q) {
     setDisplay(q.display);
@@ -400,7 +422,7 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const p = new URLSearchParams(location.search);
     p.set('mode', 'model'); p.set('display', S.display);
     if (S.selected) p.set('space', S.selected.id); else p.delete('space');
-    history.replaceState(null, '', `${location.pathname}?${p}`);
+    try { history.replaceState(null, '', `${location.pathname}?${p}`); } catch { /* an embedded viewer may refuse; the URL is only a convenience */ }
   }
 
   const api = {
@@ -428,7 +450,7 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
       bar.hidden = card.hidden = tip.hidden = true;
       frame();
       const p = new URLSearchParams(location.search); for (const k of ['display', 'space']) p.delete(k); p.delete('mode');
-      history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}`);
+      try { history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}`); } catch { /* as in syncURL */ }
     },
     update(dt = 1 / 60) {
       if (!S.active) return;
@@ -463,6 +485,11 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     },
     table() { return spaces.map(s => ({ id: s.id, name: s.name, p6: s.meta.p6 ?? [], group: s.meta.group, area: round(s.area, 1), w: round(s.box[2] - s.box[0], 0.1), d: round(s.box[3] - s.box[1], 0.1), ceiling: s.room ? (typeof s.room.ceiling === 'number' ? s.room.ceiling : ceilingRange(s.polygon).map(v => round(v, 0.1))) : null })); },
     settled: () => S.ox === S.tx && S.oy === S.ty,
+    // turn the camera about the orbit target by `rad` (scripts/inspect_demo.mjs records a clip in fixed steps)
+    turn(rad) {
+      const t = orbit.target, p = camera.position, dx = p.x - t.x, dz = p.z - t.z, c = Math.cos(rad), sn = Math.sin(rad);
+      p.x = t.x + dx * c - dz * sn; p.z = t.z + dx * sn + dz * c; orbit.update();
+    },
     questions: () => questions, state: () => ({ display: S.display, selected: S.selected?.id ?? null, trees: S.trees, rotate: S.rotate, storage: store.ok }),
   };
   window.__inspect = api;

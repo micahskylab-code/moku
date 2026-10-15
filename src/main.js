@@ -225,7 +225,8 @@ async function startInteractive() {
   // model view (src/inspect.js): this one home to orbit, cut away or ghost, with selectable spaces and local questions
   const { createInspector } = await import('./inspect.js');
   const inspector = await createInspector({ planId, plan, scene, camera, renderer, orbit, house: houseGroup, ceilingAt, center: [cx, cz], aoPass, daylight }).catch(e => { console.warn('model view', e); return null; });
-  let mode = ['fly', 'model'].includes(params.get('mode')) && (params.get('mode') !== 'model' || inspector) ? params.get('mode') : 'walk';
+  const want = params.get('mode') ?? globalThis.__NAHIKU_MODE;   // index.html of a hosted copy may set the opening mode
+  let mode = ['fly', 'model'].includes(want) && (want !== 'model' || inspector) ? want : 'walk';
   const btn = document.getElementById('mode'), modelBtn = document.getElementById('model');
   modelBtn.hidden = !inspector;
   const setMode = m => {

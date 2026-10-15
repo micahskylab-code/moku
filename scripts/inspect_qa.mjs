@@ -48,7 +48,7 @@ await page.goto(`${base}?mode=model&${SKY}`);
 await ready(page);
 console.log(`loaded in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 check('model view opens from ?mode=model', (await state(page)).display === 'exterior');
-check('concept label visible', /Concept visualization/.test(await page.textContent('#concept')));
+check('concept label visible', /concept visualization/i.test(await page.textContent('#concept')));
 check('overview card lists stated areas', /2,300 sq ft/.test(await page.textContent('#inspect')));
 await writeFile(join(out, 'spaces.json'), JSON.stringify(await page.evaluate(() => window.__inspect.table()), null, 1));
 await shot(page, '1-exterior-overview');
@@ -99,10 +99,15 @@ await page.click('#modelbar button:has-text("Questions")');
 const panel = await page.textContent('#inspect');
 check('questions panel lists the saved question under its space', /Kitchen/.test(panel) && /36" refrigerator included/.test(panel) && !/\[object /.test(panel));
 await shot(page, '6-questions-panel');
-const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#inspect button:has-text("Export JSON")')]);
+await page.click('#inspect button:has-text("Export JSON")');
+const shown = await page.inputValue('#inspect .ic-export');
+check('Export JSON shows the questions as copyable text', JSON.parse(shown).questions.length === 1);
+const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#inspect button:has-text("Download file")')]);
 const file = join(out, 'questions-export.json'); await dl.saveAs(file);
 const doc = JSON.parse(await readFile(file, 'utf8'));
-check('export is a local JSON file with the question and the concept label', doc.format === 'nahiku-questions/1' && doc.questions.length === 1 && /Concept visualization/.test(doc.label), dl.suggestedFilename());
+check('export is a local JSON file with the question and the concept label', doc.format === 'nahiku-questions/1' && doc.questions.length === 1 && /concept visualization/i.test(doc.label), dl.suggestedFilename());
+await page.click('#inspect button:has-text("Delete all")');
+check('Delete all asks for a second tap first', (await page.evaluate(() => window.__inspect.questions().length)) === 1 && /Tap again/.test(await page.textContent('#inspect')));
 
 // walk <-> model round trip: the other homes and the materials come back
 await page.goto(`${base}?${SKY}`);

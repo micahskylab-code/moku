@@ -22,7 +22,7 @@ It does not establish dimensional accuracy. The p6 floor plan has no dimension s
 | Rotate / Trees | Slow auto-turn, which any drag stops. Shows or hides the palms and trees. |
 | Click or tap a space | Selects the floor under the pointer: the ray passes through roofs and walls. The map (bottom right) selects too. The selected space is outlined in amber, on the model and on the map. |
 | Overview | The home summary: stated figures, traced totals, main assumptions and missing documents. |
-| Questions (n) | Every saved question, with View (restores the display, space and camera), Delete, Export JSON, Copy as text and Delete all. |
+| Questions (n) | Every saved question, with View (restores the display, space and camera) and Delete. Export JSON shows the questions as JSON with Copy JSON and Download file. Copy as text copies them as plain text. Delete all needs a second tap. |
 
 ## What the labels mean
 | Tag | Meaning | Basis |
@@ -84,12 +84,13 @@ Traced totals (ESTIMATE) against the stated figures (SOURCE, p6). Main-house roo
 ## Questions stay on this device
 - Drafts save as you type. Saved questions go to the browser's `localStorage`, under the keys `nahiku.lot25.drafts.v1` and `nahiku.lot25.questions.v1`.
 - Each saved question records the space, the display and the camera, so **View** can return to it.
-- **Nothing is sent anywhere.** The model view makes no network requests. **Export JSON** creates a file on this device (`nahiku-lot25-questions.json`, format `nahiku-questions/1`, carrying the concept-visualization label). **Copy as text** uses the local clipboard.
+- **Nothing is sent anywhere.** The model view makes no network requests.
+- **Export JSON** shows the questions as JSON (format `nahiku-questions/1`, carrying the concept-visualization label). **Copy JSON** puts it on the clipboard. **Download file** saves `nahiku-lot25-questions.json` where the browser allows page downloads; the private claude.ai page does not. If the clipboard is blocked, the text is left selected for copying by hand.
 - If the browser blocks storage (some private modes), the panel says so, and questions last until the page is reloaded.
 - The walkthrough's existing live weather (`src/weather.js`) asks Open-Meteo for the site's current weather unless `?wx=` or `?weather=` is given. That request carries only the fixed site coordinates, never questions.
 
 ## QA
-Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low&live=0&wx=partly&doy=172&hst=10:30`). Last run: 2026-10-15 21:45 UTC, 753 s, **17/17 checks passed**, 260 requests, all to localhost.
+Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low&live=0&wx=partly&doy=172&hst=10:30`). Last run: 2026-10-15 23:17 UTC, 825 s, **19/19 checks passed**, 260 requests, all to localhost.
 
 | Check | Result |
 |---|---|
@@ -104,7 +105,9 @@ Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low
 | question saved with space, display and camera | pass |
 | reload restores display, space, saved questions and the draft | pass |
 | questions panel lists the saved question under its space | pass |
+| Export JSON shows the questions as copyable text | pass |
 | export is a local JSON file with the question and the concept label | pass |
+| Delete all asks for a second tap first | pass |
 | Model button enters, hides the other homes | pass |
 | Exit model restores homes, materials and URL | pass |
 | phone: nothing overflows the width | pass |
@@ -125,6 +128,17 @@ Not covered by the automated run:
 - Night lighting in the model view.
 - Real-GPU frame rates. SwiftShader is far slower than a phone or laptop GPU.
 - The ultra/high quality path. AO is switched off in cutaway and translucent by design; the exterior display keeps it.
+
+## Private page build
+`python3 scripts/build_artifact.py <dir>` makes the copy published as a private claude.ai page. That page opens only for the account that owns it, unless the owner shares it.
+
+The host wraps the page in its own document, admits scripts only from a few CDNs and passes no query string. So the copy:
+- drops the skeleton tags;
+- loads three.js 0.160.0 and astronomy-engine 2.1.19 from jsDelivr. Those are the same files `vendor/` holds: three.js byte-identical, astronomy-engine as the unminified source;
+- opens in the model view;
+- hides the Ultra button and the 360° tour link.
+
+It publishes only `src/`, `plans/`, `data/` and `geodata/`, about 10 MB.
 
 ## Not claimed
 - Buyer readiness, approved architecture, construction readiness or as-built accuracy.

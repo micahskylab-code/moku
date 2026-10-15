@@ -1,6 +1,6 @@
 {
  "note": "Model view (src/inspect.js): what each selectable space can claim, and on what basis. Room polygons come from plans/lot25.json (traced from brochure p6 by tools/gen_lot25.py); areas are computed from them at runtime. Tags: SOURCE = stated in the brochure; ESTIMATE = scale-derived from p6 (docs/assumptions-register.md E-1..E-4); ASSUMED = inferred from renderings p4/p5, the p7 board, or a default (I-1..I-15); UNKNOWN = no document supplied. Concept visualization, not construction or as-built documentation.",
- "concept": "Concept visualization · not construction or as-built documentation · not approved architecture · views not verified",
+ "concept": "Independent concept visualization · not produced or endorsed by the developer · not construction or as-built documentation · not approved architecture · views not verified",
  "home": {
   "name": "Nā Hiku spec home (brochure “Lot 25” design)",
   "source": [

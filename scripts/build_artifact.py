@@ -1,0 +1,60 @@
+"""Builds a self-contained copy of the viewer for a private claude.ai Artifact page.
+
+Usage: python3 scripts/build_artifact.py <out-dir>
+
+The Artifact host wraps the page in its own <!doctype html><head><body> skeleton, admits scripts only from a few
+CDNs, and passes no query string to the page. So the copy:
+  - drops the document skeleton tags and the viewport meta from index.html (the host supplies both);
+  - loads three.js r160 (three@0.160.0, byte-identical to vendor/, checked against the npm package) and
+    astronomy-engine 2.1.19 (esm/astronomy.js, which vendor/ holds minified) from jsDelivr instead of publishing vendor/;
+  - opens in the model view (window.__NAHIKU_MODE), since ?mode=model cannot reach the page;
+  - hides the Ultra button (it reloads with a query string) and the 360 tour link (its panoramas are not built);
+  - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files).
+Everything stays labelled as an independent concept visualization.
+"""
+import re
+import shutil
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+THREE = 'https://cdn.jsdelivr.net/npm/three@0.160.0/'
+# vendor/astronomy.module.min.js is a terser build of this same file (astronomy-engine 2.1.19, esm/astronomy.js)
+ASTRONOMY = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/esm/astronomy.js'
+
+
+def build(out: Path):
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    html = (ROOT / 'index.html').read_text()
+    html = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*', '', html, flags=re.I)
+    html = re.sub(r'<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', html)
+    html = html.replace('<title>Walkthrough</title>', '<title>Nā Hiku Concept Model</title>')
+    imap = '{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }'
+    assert imap in html, 'importmap changed'
+    # relative keys remap the URLs src/ imports by path ('../vendor/...') to the same files on the CDN
+    html = html.replace(imap, '{ "imports": { "three": "%sbuild/three.module.js", "three/addons/": "%sexamples/jsm/",\n'
+                              '  "./vendor/three.module.js": "%sbuild/three.module.js", "./vendor/astronomy.module.min.js": "%s" } }'
+                        % (THREE, THREE, THREE, ASTRONOMY))
+    html = html.replace('<a href="tour.html">360° tour</a>', '')
+    html = html.replace('</style>', '  #quality { display: none !important; }\n</style>', 1)
+    main = '<script type="module" src="src/main.js"></script>'
+    assert main in html
+    html = html.replace(main, '<script>window.__NAHIKU_MODE = \'model\';</script>\n' + main)
+    (out / 'index.html').write_text(html)
+    files = []
+    for d in ('src', 'plans', 'data'):
+        for f in sorted((ROOT / d).rglob('*')):
+            if f.is_file() and '__pycache__' not in f.parts:
+                files.append(f)
+    files += sorted(f for f in (ROOT / 'geodata').iterdir() if f.is_file())
+    for f in files:
+        rel = f.relative_to(ROOT)
+        (out / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(f, out / rel)
+    print(f'{out}: index.html + {len(files)} files, {sum(f.stat().st_size for f in files) / 1e6:.1f} MB')
+
+
+if __name__ == '__main__':
+    build(Path(sys.argv[1]))
