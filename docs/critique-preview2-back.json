@@ -1,0 +1,133 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "This is still a usable internal concept draft, and it is better than preview 1, but it is not buyer-ready. Six earlier defects are fixed: the black geometry voids (#4), the high-contrast stone (#6), the concrete-column palm trunks (#2, now tapered queen palms with crowns), the oversized dark gablet (#11, now about a third of the wing roof with a lighter louvre), the chartreuse foliage (#8) and the too-low camera (#1, the pool, spa and chaises now read). Eight remain wholly or partly: the CG alocasia, the placeholder chaises, the falls and basin (now a frosted veil rather than comb ribbons), the patchy soil, the missing l\u0101nai TV and header, the neighbour read-through, the generic caption with grain, and the shaded l\u0101nai (#13, kept by design). The main new regression comes from raising the camera too far, to about 6 m. The eave-height queen-palm crowns now project onto the fa\u00e7ade and hang like a curtain across the l\u0101nai and great room. The palm canopy fills the top half of the frame and a second return wall clutters the bottom left, so the house shows on only about 10-15% of the frame, against about 40% in the reference.",
+ "scores": {
+  "plan_faithful_architecture": 7,
+  "realistic_materials_lighting": 6,
+  "clean_terrain_water": 6,
+  "polished_buyer_camera": 5
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "camera",
+   "where": "The two queen-palm crowns over the house, x\u2248380-1000, y\u22480-500. Their fronds hang straight down over the l\u0101nai opening (x\u2248480-830), the great-room glass, the cedar post and the header line.",
+   "issue": "New regression. The trunks are fixed, but from the raised eye the crowns sit at eave height and project onto the fa\u00e7ade. Fronds about 15 ft long drop vertically like a weeping willow and curtain off the hero space, so the dining l\u0101nai and the cedar header are almost unreadable. In the reference the crowns sit above the roofline against the sky and the trunks frame the l\u0101nai.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Lower the eye (defect 2) so the crowns clear the ridge. Raise the clear trunk to about 7-8 m so the crowns sit 1.5-2 m above the ridge from the new eye. Move the centre palm about 1.5 m left into the chaise planter and the left palm about 1 m left, so the l\u0101nai opening reads between the trunks as in p5. Re-pose the fronds to arch out and bend down only in the outer third, tips about 30-45\u00b0 below horizontal, not hanging plumb."
+  },
+  {
+   "rank": 2,
+   "criterion": "camera",
+   "where": "Whole frame. The eye is about 6 m above the lower grade, looking steeply down. The lawn behind the pool reads as a field (y\u2248400-720), palm canopy fills y\u22480-300 across the full width, the sky is reduced to scraps and the house shows only in x\u2248320-1030, y\u2248150-420.",
+   "issue": "Earlier #1 (camera too low) is fixed but overshot to drone height. The image now reads as an aerial of a garden with the house tucked in the back, not the reference's eye-level-plus three-quarter shot where the house fills about 40% of the frame and the sky about 30%.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Set the eye about 3.0-3.5 m above the lower grade, about 1.5 m above the pool deck. Pull back about 4 m and swing about 10\u00b0 right so the catch basin runs diagonally into the frame as in the reference. Use a 28 mm-equivalent lens with vertical lens shift to keep the verticals plumb. Put the ridge about 30% down from the top edge, and aim for at least 25% sky and the house at least 35% of the frame width, unoccluded."
+  },
+  {
+   "rank": 3,
+   "criterion": "camera",
+   "where": "The left areca clump at x\u22480-350, y\u22480-720, the right areca clumps at x\u22481450-1650, y\u2248250-560, and about 10 background palm crowns across x\u2248900-1650, y\u22480-250.",
+   "issue": "The planting density reads as jungle and competes with the house. The reference has three palms and a shrub layer. The areca stems (x\u2248100-180, y\u2248450-700) are pale, smooth, uniform tubes that look like PVC pipe.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Thin the planting to the p5 composition: two queen palms in front and one at right. Push the left areca clump out of frame, or keep at most 8% of it as an edge frame. Halve the background palm count so the roofline reads against the sky. Make the areca stems olive-grey with leaf-scar rings, \u00b120% diameter variation per stem and a slight lean."
+  },
+  {
+   "rank": 4,
+   "criterion": "camera",
+   "where": "Bottom left: a side return wall with coping at x\u22480-560, y\u2248705-871, and the alocasia at x\u2248490-700, y\u2248685-871 between the two walls.",
+   "issue": "New element plus a remaining one (earlier #3). The return-wall coping is the brightest object in the bottom-left corner and pulls the eye out of frame. The alocasia is smaller than before (about 5% of frame) but is still the nearest object and still obviously CG: glossy opaque leaves, painted stripe veins and cylinder stems.",
+   "cause_class": "defect (fixable now)",
+   "fix": "With the new camera, set the frame bottom past the return wall, or crop about 15% off the bottom. Delete the alocasia, or swap in a leaf asset with backlit translucency, roughness about 0.45 and a vein normal map, at least 5 m from the camera and at the frame edge."
+  },
+  {
+   "rank": 5,
+   "criterion": "terrain-water",
+   "where": "The vanishing-edge falls and catch basin at x\u2248940-1290, y\u2248530-665.",
+   "issue": "Partly fixed from earlier #5. The comb ribbons are gone, but the falls now read as a frosted, smeared white veil over dry, sunlit stone: no transparency, no specular glints, no wet darkening behind. The basin is still a flat milky cyan slab with only a faint impact line.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Make the sheet a thin water BSDF (IOR 1.33, roughness 0.02-0.05) that refracts the stone behind it, breaking into strands only in the lower third. Darken and gloss the wetted stone (albedo \u00d70.6, roughness about 0.15). Add a 5-10 cm aerated foam band and ripple displacement at the impact line. Give the basin depth absorption and ripple normals so it reflects the sky."
+  },
+  {
+   "rank": 6,
+   "criterion": "materials-lighting",
+   "where": "The queen-palm frond skirts at x\u2248420-540, y\u2248250-500 and x\u2248620-700, y\u2248380-500, and the orange fruit clusters at x\u2248420-460, y\u2248220-290 and x\u2248640-670, y\u2248170-230.",
+   "issue": "Hanging yellow-brown dead fronds make the hero palms look untrimmed and neglected, which is wrong for a luxury listing. The reference palms have clean trunks, a green crown and green seed clusters.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Remove the brown frond tier, keeping at most 1-2 slightly yellowed lower fronds per crown. Recolour the fruit to green or pale yellow as in p5, at about 60% of the current cluster size."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "Inside the l\u0101nai and great room: an amber, mottled glowing panel at x\u2248605-640, y\u2248285-345; the lounge chairs and side table at x\u2248760-800, y\u2248370-405; the dining chairs at x\u2248500-640, y\u2248350-420.",
+   "issue": "The interior panel reads as firelight or an orange stone texture lit from inside. The l\u0101nai lounge pieces are crate-like teak boxes with no cushions or pillows, so the furnished hero space reads as placeholder geometry.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Check that panel's material (probably the glow material, or oak under a strong warm emitter) and cap interior emitters at about 2700-3000 K, low strength. Swap in the p7-board teak sofa and club chairs with off-white cushions and throw pillows, plus the dining set with woven seats, as shown in p5."
+  },
+  {
+   "rank": 8,
+   "criterion": "materials-lighting",
+   "where": "The chaise lounges at x\u2248515-650, y\u2248490-610.",
+   "issue": "Remains from earlier #9. The cushions are textureless, square-edged white slabs near clipping, with no piping or towels, on a bare timber frame.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Use an off-white fabric with albedo about 0.75 and a weave normal map, 1-2 cm cushion bevels, welt piping and the rolled towels from p5."
+  },
+  {
+   "rank": 9,
+   "criterion": "terrain-water",
+   "where": "Pool water surface at x\u2248640-1290, y\u2248445-575.",
+   "issue": "The water is a uniform pale cyan. There is no Fresnel reflection of the sky or palms, no caustics, and no darkening from the bench and steps toward the deep end. It reads as a tinted plane, not 4.5 ft of water.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add a fine ripple normal (about 2-5 mm amplitude) so the surface picks up sky reflection, enable caustics or a caustic projector, and use volume absorption so the deep end runs 20-30% darker than the steps."
+  },
+  {
+   "rank": 10,
+   "criterion": "materials-lighting",
+   "where": "The l\u0101nai and great-room opening, x\u2248480-830, y\u2248290-450.",
+   "issue": "Remains from earlier #13. With the real-date sun (22 Sep 15:25 HST, altitude 44\u00b0, azimuth 261\u00b0) the deep overhang leaves the hero l\u0101nai in flat shade while the wing face is bright, unlike the brochure's warm frontal light.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the real sun but choose a later real time on the same date (about 17:00-17:30 HST, altitude about 15-20\u00b0) so the light rakes into the l\u0101nai. Alternatively, lift the l\u0101nai exposure in grading without changing the sun direction."
+  },
+  {
+   "rank": 11,
+   "criterion": "architecture",
+   "where": "Right background: the neighbour's white wall with window and shutter at x\u22481150-1330, y\u2248250-350, and the neighbour's pool and chaises at x\u22481420-1650, y\u2248365-405.",
+   "issue": "Partly fixed from earlier #14. The neighbour's house is better screened, but its identical chaises and pool now show at the same level and read as part of this property's yard. The identical-copy neighbour and the 61.5 ft lot width are both assumptions (I-6, I-14).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "For now, add a hedge or wall at least 2 m tall on the side lot line and lower the neighbour's contrast. A proper resolution needs the subdivision plat, the boundary survey, and the developer's site and architectural plans for Fairway 7 homes 1-14."
+  },
+  {
+   "rank": 12,
+   "criterion": "terrain-water",
+   "where": "Between the foreground walls: red soil at x\u2248560-700, y\u2248780-871 and a jagged, stepped mulch strip at x\u2248440-520, y\u2248715-760. Also the mulch ring around the left areca clump at x\u2248100-300, y\u2248640-720.",
+   "issue": "Remains from earlier #10. Raw soil and a polygonal lawn-to-mulch edge read as an unfinished site.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Bring groundcover to 100% coverage in the bed between the walls. Smooth the bed edges into continuous curves with steel or stone edging, and use one dark-brown mulch with a soft edge transition."
+  },
+  {
+   "rank": 13,
+   "criterion": "architecture",
+   "where": "The l\u0101nai inner wall at x\u2248760-835, y\u2248290-405, and the cedar header line just below the eave, y\u2248290-300.",
+   "issue": "Partly fixed from earlier #12. The cedar post at x\u2248475-500 is thicker now, but the wall-mounted TV from p5 is still missing, the header beam can't be seen, and the left-wing windows and louvred shutters are hidden.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Add the p5 TV and a cedar header 10-12 in deep across the opening now. Confirm window widths, head heights and shutter placement against the exterior elevations and the window/door schedule (I-2, I-12)."
+  },
+  {
+   "rank": 14,
+   "criterion": "labeling-honesty",
+   "where": "The caption band of back-labelled.jpg, y\u2248871-1073.",
+   "issue": "Partly fixed from earlier #15. The ~5 ft retaining wall, grading, landscape and background-building lines are now listed. But the caption is identical to the front view apart from the sun line: the garage-pavilion and \u02bbohana line doesn't apply here, the vanishing-edge drop and catch basin (I-10) and the \u00b125 m site registration (I-9) are missing, and photo_finish grain is still visible across the sky.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Pass label_preview.py a per-view assumption line for the back view. Drop the garage and \u02bbohana line, and add 'ASSUMED: vanishing edge 3 ft drop + catch basin (p5; needs pool plans)' and 'site position \u00b125 m'. Halve the grain strength again or mask it out of the sky."
+  },
+  {
+   "rank": 15,
+   "criterion": "materials-lighting",
+   "where": "The sky, mostly y\u22480-150, visible only between crowns.",
+   "issue": "Partly fixed from earlier #7. The cumulus layer only exists below 11\u00b0 of elevation, and the canopy hides that, so the visible sky shows three tiny wisps. Once the camera comes down (defect 2), a nearly cloudless band will again be the largest flat area in the frame.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Place the trade-wind cumulus band at 10-35\u00b0 elevation along the camera azimuth behind the roof, with light cirrus higher up. Keep the computed sun (azimuth 261\u00b0, altitude 44\u00b0)."
+  }
+ ]
+}
