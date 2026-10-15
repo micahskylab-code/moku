@@ -310,8 +310,9 @@ plan['site'] = dict(
     arecas=[[60, 16.8, 9], [66, 28.2, 10], [89, 13, 11], [90, 32, 12], [30, -5, 15], [72, -5, 12], [36, 50.5, 14],
             [-40, 40, 15], [140, -5, 13], [-2, 50, 12], [118, 51, 12], [46, -5.5, 12]],
     plumeria=[[102, 15.2, 0.9], [104, 29.4, 0.9], [-4, 50, 1.2], [44, 50], [139, 30.5, 0.8], [137, 14.5, 0.8]],
-    beds=[dict(rect=[-34, 36, -20, 40], kind='bougainvillea'), dict(rect=[-34.2, -7, -31.5, 0.5], kind='bougainvillea'),
-          dict(rect=[-42, -8, -35.5, 53], kind='bougainvillea', density=0.6),
+    # beds stay clear of the coral retaining wall on the lot line (x -35.3 .. -33.5, cap to -35.4 / -33.4)
+    beds=[dict(rect=[-33.2, 36, -20, 40], kind='bougainvillea'), dict(rect=[-33.2, -7, -31.5, 0.5], kind='bougainvillea'),
+          dict(rect=[-42, -8, -36.2, 53], kind='bougainvillea', density=0.6),
           dict(rect=[96, 16.2, 121, 19.2], kind='ti'), dict(rect=[96, 25.4, 121, 28.4], kind='ti'),
           dict(rect=[123, 15.5, 150, 19.2], kind='gardenia'), dict(rect=[123, 25.4, 150, 29.5], kind='gardenia'),
           dict(rect=[86, -4, 99, 15.8], kind='monstera'), dict(rect=[86, 28.8, 97, 47], kind='monstera'),

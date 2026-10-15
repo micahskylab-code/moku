@@ -1,0 +1,1986 @@
+[
+  {
+    "category": "lawn",
+    "name": "grass004",
+    "files": {
+      "color": "textures/lawn/grass004/color.jpg",
+      "disp": "textures/lawn/grass004/disp.png",
+      "normal": "textures/lawn/grass004/normal.jpg",
+      "roughness": "textures/lawn/grass004/roughness.jpg",
+      "ao": "textures/lawn/grass004/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.6,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated from blade width (~3 mm) - short mown lawn",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.419,
+      "corr_y": -0.415,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.14,
+      1.14
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.378,
+      0.426,
+      0.191
+    ],
+    "source_url": "https://ambientcg.com/view?id=Grass004",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=191610926-200001163",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=231035858-238928970",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=200001218-224273163",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=224273218-227529552",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=227529649-231035803"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "PRIMARY lawn. Real photo of short, dense, fine-bladed mown turf (yellow-green); closest available match to Bermuda/zoysia. Use with a little hue/value variation map at 20-40 m scale to break repetition. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "lawn",
+    "name": "grass001",
+    "files": {
+      "color": "textures/lawn/grass001/color.jpg",
+      "disp": "textures/lawn/grass001/disp.png",
+      "normal": "textures/lawn/grass001/normal.jpg",
+      "roughness": "textures/lawn/grass001/roughness.jpg",
+      "ao": "textures/lawn/grass001/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.6,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated from blade width",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.406,
+      "corr_y": -0.405,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.22,
+      1.08
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.268,
+      0.359,
+      0.159
+    ],
+    "source_url": "https://ambientcg.com/view?id=Grass001",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=96647621-104226723",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=135098719-142970461",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=104226778-128480708",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=128480763-131609035",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=131609132-135098664"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Alternate lawn: darker blue-green turf (shade areas / mixing layer). | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "lawn",
+    "name": "lawn_soil_thatch",
+    "files": {
+      "color": "textures/lawn/lawn_soil_thatch/color.jpg",
+      "disp": "textures/lawn/lawn_soil_thatch/disp.png",
+      "normal": "textures/lawn/lawn_soil_thatch/normal.jpg",
+      "roughness": "textures/lawn/lawn_soil_thatch/roughness.jpg",
+      "ao": "textures/lawn/lawn_soil_thatch/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (twigs, leaf litter)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.67,
+      "corr_y": -0.665,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.1,
+      1.0
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.598,
+      0.575,
+      0.344
+    ],
+    "source_url": "https://ambientcg.com/view?id=Ground037",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=238929918-249613160",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=278684179-285354764",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=249613215-273997666",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=273997721-276914447",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=276914544-278684124"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Thin grass over soil + thatch; for worn edges, under trees, path margins. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "stone",
+    "name": "coral_stone_wall",
+    "files": {
+      "color": "textures/stone/coral_stone_wall/color.jpg",
+      "disp": "textures/stone/coral_stone_wall/disp.png",
+      "normal": "textures/stone/coral_stone_wall/normal.jpg",
+      "roughness": "textures/stone/coral_stone_wall/roughness.jpg",
+      "ao": "textures/stone/coral_stone_wall/ao.jpg"
+    },
+    "resolution": "4096x4096",
+    "tile_m": 3.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: ~10 coral rocks (25-40 cm) across the tile",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "gl",
+      "corr_x": 0.785,
+      "corr_y": 0.788,
+      "declared": "gl"
+    },
+    "seam_ratio_x_y": [
+      0.89,
+      0.96
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.548,
+      0.506,
+      0.468
+    ],
+    "source_url": "https://polyhaven.com/a/coral_stone_wall",
+    "mirror_urls": {
+      "color": "https://raw.githubusercontent.com/milesroxas/landscape/HEAD/static/models/new-landscape/coral-stone/textures/coral_stone_wall_diff_4k.jpg",
+      "disp": "https://raw.githubusercontent.com/milesroxas/landscape/HEAD/static/models/new-landscape/coral-stone/textures/coral_stone_wall_disp_4k.jpg",
+      "normal": "https://raw.githubusercontent.com/milesroxas/landscape/HEAD/static/models/new-landscape/coral-stone/textures/coral_stone_wall_nor_gl_4k.jpg",
+      "roughness": "https://raw.githubusercontent.com/milesroxas/landscape/HEAD/static/models/new-landscape/coral-stone/textures/coral_stone_wall_rough_4k.jpg",
+      "ao": "https://raw.githubusercontent.com/milesroxas/landscape/HEAD/static/models/new-landscape/coral-stone/textures/coral_stone_wall_ao_4k.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "4K Poly Haven scan of a real coral-stone (fossil coral rubble) wall with mortar joints. Use for garden/retaining walls built of coral rock."
+  },
+  {
+    "category": "stone",
+    "name": "limestone_block_wall",
+    "files": {
+      "color": "textures/stone/limestone_block_wall/color.jpg",
+      "disp": "textures/stone/limestone_block_wall/disp.png",
+      "normal": "textures/stone/limestone_block_wall/normal.jpg",
+      "roughness": "textures/stone/limestone_block_wall/roughness.jpg",
+      "ao": "textures/stone/limestone_block_wall/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: ~10 courses of ~25 cm blocks",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.912,
+      "corr_y": -0.928,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.06,
+      1.27
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.702,
+      0.645,
+      0.563
+    ],
+    "source_url": "https://polyhaven.com/a/white_sandstone_blocks_02",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-ceramic.parquet#bytes=1141580288-1149971429",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-ceramic.parquet#bytes=1161313841-1167079520",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-ceramic.parquet#bytes=1149971484-1157104191",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-ceramic.parquet#bytes=1157104246-1159756289",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-ceramic.parquet#bytes=1159756386-1161313786"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Cream ashlar blocks of a porous sedimentary stone - the closest real scan to the cut coral-stone/limestone block cladding on the pool retaining wall in the back rendering. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "wood",
+    "name": "cedar_door_planks",
+    "files": {
+      "color": "textures/wood/cedar_door_planks/color.jpg",
+      "normal": "textures/wood/cedar_door_planks/normal.jpg",
+      "roughness": "textures/wood/cedar_door_planks/roughness.jpg"
+    },
+    "resolution": "2048x1024",
+    "tile_m": 2.0,
+    "tile_aspect": 2.0,
+    "tile_note": "2:1 tile (2.0 x 1.0 m); ~10 vertical boards of ~10 cm",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      0.88,
+      1.28
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.344,
+      0.184,
+      0.046
+    ],
+    "source_url": "https://polyhaven.com/a/wood_cabinet_worn_long",
+    "mirror_urls": {
+      "color": "https://raw.githubusercontent.com/IcterusGames/Garage42/HEAD/assets/textures/wood_cabinet_worn_long_diff_2k.jpg",
+      "normal": "https://raw.githubusercontent.com/IcterusGames/Garage42/HEAD/assets/textures/wood_cabinet_worn_long_nor_gl_2k.png",
+      "roughness": "https://raw.githubusercontent.com/IcterusGames/Garage42/HEAD/assets/textures/wood_cabinet_worn_long_rough_2k.png"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Poly Haven \"wood_cabinet_worn_long\": real photo of warm, oiled reddish-brown vertical tongue-and-groove planks - matches the stained cedar carriage garage door in the front rendering. Tile is 2048x1024 (boards run along V)."
+  },
+  {
+    "category": "wood",
+    "name": "teak",
+    "files": {
+      "color": "textures/wood/teak/color.jpg",
+      "disp": "textures/wood/teak/disp.png",
+      "normal": "textures/wood/teak/normal.jpg",
+      "roughness": "textures/wood/teak/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (plain-sawn board figure)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.565,
+      "corr_y": -0.907,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.13,
+      1.08
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.685,
+      0.504,
+      0.34
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wood003",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=337853685-342233207",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=363521200-370379706",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=342233262-362820511",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=362820564-363521061"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Golden-brown straight grain with dark streaks - teak outdoor furniture / lanai trim. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "wood",
+    "name": "cedar_beam",
+    "files": {
+      "color": "textures/wood/cedar_beam/color.jpg",
+      "disp": "textures/wood/cedar_beam/disp.png",
+      "normal": "textures/wood/cedar_beam/normal.jpg",
+      "roughness": "textures/wood/cedar_beam/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.2,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (knots ~2 cm)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.746,
+      "corr_y": -0.59,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.88,
+      1.02
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.707,
+      0.459,
+      0.249
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wood092",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood.parquet#bytes=50545820-54989045",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood.parquet#bytes=76007439-82906505",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood.parquet#bytes=54989100-74393667",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood.parquet#bytes=74393722-76007300"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Orange-brown softwood with small knots (cedar / Douglas fir look) - lanai beams, posts. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "wood",
+    "name": "weathered_teak_silver",
+    "files": {
+      "color": "textures/wood/weathered_teak_silver/color.jpg",
+      "disp": "textures/wood/weathered_teak_silver/disp.png",
+      "normal": "textures/wood/weathered_teak_silver/normal.jpg",
+      "roughness": "textures/wood/weathered_teak_silver/roughness.jpg",
+      "ao": "textures/wood/weathered_teak_silver/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.689,
+      "corr_y": -0.573,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.95,
+      0.81
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.675,
+      0.673,
+      0.665
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wood033",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1564061635-1569516171",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1594603505-1600107141",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1569516226-1591938865",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1591938920-1593952430",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1593952525-1594603450"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Silver-grey sun-weathered timber with checks - aged teak furniture, fence boards. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "wood",
+    "name": "white_oak_floor",
+    "files": {
+      "color": "textures/wood/white_oak_floor/color.jpg",
+      "disp": "textures/wood/white_oak_floor/disp.png",
+      "normal": "textures/wood/white_oak_floor/normal.jpg",
+      "roughness": "textures/wood/white_oak_floor/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: planks ~19 cm wide, ~10 rows per tile",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "gl",
+      "corr_x": 0.302,
+      "corr_y": 0.283,
+      "declared": "gl"
+    },
+    "seam_ratio_x_y": [
+      0.76,
+      0.79
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.606,
+      0.502,
+      0.389
+    ],
+    "source_url": "https://polyhaven.com/a/laminate_floor_02",
+    "mirror_urls": {
+      "color": "https://raw.githubusercontent.com/Cekator3/carwrack/HEAD/assets/textures/wood063/laminate_floor_02_diff_2k.jpg",
+      "disp": "https://raw.githubusercontent.com/Cekator3/carwrack/HEAD/assets/textures/wood063/laminate_floor_02_disp_2k.png",
+      "normal": "https://raw.githubusercontent.com/Cekator3/carwrack/HEAD/assets/textures/wood063/laminate_floor_02_nor_gl_2k.jpg",
+      "roughness": "https://raw.githubusercontent.com/Cekator3/carwrack/HEAD/assets/textures/wood063/laminate_floor_02_rough_2k.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Poly Haven \"laminate_floor_02\": photographed light natural oak plank floor (wide planks, matt). Use for the white-oak floors."
+  },
+  {
+    "category": "wood",
+    "name": "white_oak_veneer",
+    "files": {
+      "color": "textures/wood/white_oak_veneer/color.jpg",
+      "disp": "textures/wood/white_oak_veneer/disp.png",
+      "normal": "textures/wood/white_oak_veneer/normal.jpg",
+      "roughness": "textures/wood/white_oak_veneer/roughness.jpg",
+      "ao": "textures/wood/white_oak_veneer/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (veneer leaf width)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "?",
+      "corr_x": 0.003,
+      "corr_y": 0.002,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      0.77,
+      0.9
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.634,
+      0.495,
+      0.342
+    ],
+    "source_url": "https://polyhaven.com/a/oak_veneer_01",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=852869719-874748573",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=913303930-914733714",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=874748628-895727149",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=895727204-906315702",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=906315799-913303875"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Real plain-sliced oak veneer - cabinetry, vanity, doors. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "wood",
+    "name": "rift_white_oak",
+    "files": {
+      "color": "textures/wood/rift_white_oak/color.jpg",
+      "disp": "textures/wood/rift_white_oak/disp.png",
+      "normal": "textures/wood/rift_white_oak/normal.jpg",
+      "roughness": "textures/wood/rift_white_oak/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (board figure)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.965,
+      "corr_y": -0.978,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.39,
+      1.19
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.657,
+      0.543,
+      0.423
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wood001",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-3.parquet#bytes=1020839628-1025970685",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-3.parquet#bytes=1049891279-1055965265",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-3.parquet#bytes=1025970740-1047924638",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-3.parquet#bytes=1047924693-1049891140"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Pale, straight, tight-grained light wood photo - closest real match to the rift-sawn white-oak sample on the design board (cabinet doors, built-ins). Grain runs along V. (ambientCG Wood087, the obvious \"rift\" candidate, is procedural-looking and was rejected.) | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "paving",
+    "name": "limestone_pavers",
+    "files": {
+      "color": "textures/paving/limestone_pavers/color.jpg",
+      "disp": "textures/paving/limestone_pavers/disp.png",
+      "normal": "textures/paving/limestone_pavers/normal.jpg",
+      "roughness": "textures/paving/limestone_pavers/roughness.jpg",
+      "ao": "textures/paving/limestone_pavers/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.4,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: 4 x 4 slabs of ~60 cm",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.753,
+      "corr_y": -0.747,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.72,
+      2.24
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.683,
+      0.644,
+      0.537
+    ],
+    "source_url": "https://ambientcg.com/view?id=PavingStones132",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-6.parquet#bytes=1633884607-1641462461",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-6.parquet#bytes=1667505575-1673226280",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-6.parquet#bytes=1641462516-1663439818",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-6.parquet#bytes=1663439873-1665558634",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-6.parquet#bytes=1665558731-1667505520"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Cream square limestone/sandstone slabs with joints - pool deck / terrace. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "paving",
+    "name": "travertine_honed",
+    "files": {
+      "color": "textures/paving/travertine_honed/color.jpg",
+      "disp": "textures/paving/travertine_honed/disp.png",
+      "normal": "textures/paving/travertine_honed/normal.jpg",
+      "roughness": "textures/paving/travertine_honed/roughness.jpg",
+      "ao": "textures/paving/travertine_honed/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.2,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (vein-cut slab)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.636,
+      "corr_y": -0.588,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.29,
+      1.13
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.876,
+      0.776,
+      0.685
+    ],
+    "source_url": "https://ambientcg.com/view?id=Travertine009",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other.parquet#bytes=373240716-378612140",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other.parquet#bytes=391813200-395202301",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other.parquet#bytes=378612195-390588012",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other.parquet#bytes=390588067-391689722",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other.parquet#bytes=391689817-391813145"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Honed cream vein-cut travertine slab surface - entry stepping stones, coping, pool-deck slab faces (cut each paver from a random offset of the tile). | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "paving",
+    "name": "broom_concrete",
+    "files": {
+      "color": "textures/paving/broom_concrete/color.jpg",
+      "normal": "textures/paving/broom_concrete/normal.jpg",
+      "roughness": "textures/paving/broom_concrete/roughness.jpg",
+      "ao": "textures/paving/broom_concrete/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.5,
+    "tile_aspect": 1.0,
+    "tile_note": "Poly Haven published dimensions 2.5 x 2.5 m",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      0.84,
+      0.92
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.419,
+      0.39,
+      0.345
+    ],
+    "source_url": "https://polyhaven.com/a/brushed_concrete",
+    "mirror_urls": {
+      "arm": "https://raw.githubusercontent.com/The64thGamer/Give-LIFE/HEAD/Mods/Real%20FNaF/Custom%20Assets/Textures/brushed_concrete_arm_2k.jpg",
+      "color": "https://raw.githubusercontent.com/The64thGamer/Give-LIFE/HEAD/Mods/Real%20FNaF/Custom%20Assets/Textures/brushed_concrete_diff_2k.jpg",
+      "normal": "https://raw.githubusercontent.com/The64thGamer/Give-LIFE/HEAD/Mods/Real%20FNaF/Custom%20Assets/Textures/brushed_concrete_nor_gl_2k.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required; authors Dimitrios Savva (photo), Dario Barresi (processing)",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Real broom-finished (brushed) exterior concrete - driveway, garage apron, service paths."
+  },
+  {
+    "category": "paving",
+    "name": "concrete_light",
+    "files": {
+      "color": "textures/paving/concrete_light/color.jpg",
+      "disp": "textures/paving/concrete_light/disp.png",
+      "normal": "textures/paving/concrete_light/normal.jpg",
+      "roughness": "textures/paving/concrete_light/roughness.jpg",
+      "ao": "textures/paving/concrete_light/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.643,
+      "corr_y": -0.78,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.16,
+      1.1
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.639,
+      0.592,
+      0.525
+    ],
+    "source_url": "https://ambientcg.com/view?id=Concrete048",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=16064881-23143968",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=51493020-58306132",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=23144023-45607619",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=45607674-48583174",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=48588042-51492965"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Light, slightly streaked concrete - curbs, footings, smooth slab. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "pool",
+    "name": "glass_mosaic",
+    "files": {
+      "color": "textures/pool/glass_mosaic/color.jpg",
+      "color_aqua": "textures/pool/glass_mosaic/color_aqua.jpg",
+      "disp": "textures/pool/glass_mosaic/disp.png",
+      "normal": "textures/pool/glass_mosaic/normal.jpg",
+      "roughness": "textures/pool/glass_mosaic/roughness.jpg",
+      "ao": "textures/pool/glass_mosaic/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.6,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: ~24 irregular chips of ~2.5 cm across",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.927,
+      "corr_y": -0.928,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      2.05,
+      0.49
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.388,
+      0.48,
+      0.565
+    ],
+    "source_url": "https://ambientcg.com/view?id=Tiles019",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-16.parquet#bytes=990130965-995817931",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-16.parquet#bytes=1019338227-1025712482",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-16.parquet#bytes=995817986-1016266261",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-16.parquet#bytes=1016266316-1018276236",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-16.parquet#bytes=1018276333-1019338172"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Real photo of hand-set iridescent blue glass mosaic (irregular chips, sanded grout) - pool waterline band, spa, step edges. color_aqua.jpg is derived by this script (hue rotated blue -> aqua, everything else untouched) to match the turquoise waterline tile in the back rendering. (ambientCG Tiles035/Tiles020 were rejected as procedural-looking.) | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "pool",
+    "name": "pool_plaster_white",
+    "files": {
+      "color": "textures/pool/pool_plaster_white/color.jpg",
+      "disp": "textures/pool/pool_plaster_white/disp.png",
+      "normal": "textures/pool/pool_plaster_white/normal.jpg",
+      "roughness": "textures/pool/pool_plaster_white/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.709,
+      "corr_y": -0.748,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.37,
+      1.18
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.836,
+      0.817,
+      0.804
+    ],
+    "source_url": "https://ambientcg.com/view?id=Plaster002",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=443420552-449663433",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=474651112-481500574",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=449663488-473009848",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=473009903-474650973"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "White troweled plaster - pool shell interior (under water it reads light aqua). | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "ground",
+    "name": "bark_mulch",
+    "files": {
+      "color": "textures/ground/bark_mulch/color.jpg",
+      "disp": "textures/ground/bark_mulch/disp.png",
+      "normal": "textures/ground/bark_mulch/normal.jpg",
+      "roughness": "textures/ground/bark_mulch/roughness.jpg",
+      "ao": "textures/ground/bark_mulch/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (shreds 2-6 cm)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.748,
+      "corr_y": -0.75,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.96,
+      1.05
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.33,
+      0.245,
+      0.201
+    ],
+    "source_url": "https://ambientcg.com/view?id=Ground048",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=543960964-554500425",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=584523346-591595491",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=554500480-578816019",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=578816074-581257483",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic.parquet#bytes=581257580-584523291"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Dark brown shredded-bark mulch - planting beds. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "ground",
+    "name": "red_soil",
+    "files": {
+      "color": "textures/ground/red_soil/color.jpg",
+      "disp": "textures/ground/red_soil/disp.png",
+      "normal": "textures/ground/red_soil/normal.jpg",
+      "roughness": "textures/ground/red_soil/roughness.jpg",
+      "ao": "textures/ground/red_soil/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 2.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.565,
+      "corr_y": -0.583,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.01,
+      1.09
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.444,
+      0.346,
+      0.267
+    ],
+    "source_url": "https://ambientcg.com/view?id=Ground053",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-3.parquet#bytes=428567455-436973681",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-3.parquet#bytes=466971528-474088969",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-3.parquet#bytes=436973736-461107039",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-3.parquet#bytes=461107094-463813290",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-3.parquet#bytes=463813387-466971473"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Red-brown iron-rich soil (Kauai red dirt look) - bare beds, construction lots. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "ground",
+    "name": "gravel_fine_grey",
+    "files": {
+      "color": "textures/ground/gravel_fine_grey/color.jpg",
+      "disp": "textures/ground/gravel_fine_grey/disp.png",
+      "normal": "textures/ground/gravel_fine_grey/normal.jpg",
+      "roughness": "textures/ground/gravel_fine_grey/roughness.jpg",
+      "ao": "textures/ground/gravel_fine_grey/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (5-10 mm aggregate)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.547,
+      "corr_y": -0.536,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.06,
+      0.85
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.423,
+      0.408,
+      0.371
+    ],
+    "source_url": "https://polyhaven.com/a/bicolour_gravel",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-other.parquet#bytes=1177933257-1201703551",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-other.parquet#bytes=1241953055-1249122592",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-other.parquet#bytes=1201703606-1226129291",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-other.parquet#bytes=1226129346-1233820796",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-other.parquet#bytes=1233820893-1241953000"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Fine grey gravel - side yards, drip edges. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "ground",
+    "name": "river_pebbles",
+    "files": {
+      "color": "textures/ground/river_pebbles/color.jpg",
+      "disp": "textures/ground/river_pebbles/disp.png",
+      "normal": "textures/ground/river_pebbles/normal.jpg",
+      "roughness": "textures/ground/river_pebbles/roughness.jpg",
+      "ao": "textures/ground/river_pebbles/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (pebbles 2-6 cm)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.722,
+      "corr_y": -0.72,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.07,
+      1.02
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.577,
+      0.529,
+      0.49
+    ],
+    "source_url": "https://polyhaven.com/a/clean_pebbles",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-stone.parquet#bytes=181029225-203109423",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-stone.parquet#bytes=230024006-236857787",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-stone.parquet#bytes=203109478-212362132",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-stone.parquet#bytes=212362187-222428373",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-stone.parquet#bytes=222428470-230023951"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Real scan of loose grey-brown pebbles - dry stream beds, drip strips, accents. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "ground",
+    "name": "beach_sand",
+    "files": {
+      "color": "textures/ground/beach_sand/color.jpg",
+      "disp": "textures/ground/beach_sand/disp.png",
+      "normal": "textures/ground/beach_sand/normal.jpg",
+      "roughness": "textures/ground/beach_sand/roughness.jpg",
+      "ao": "textures/ground/beach_sand/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 10.0,
+    "tile_aspect": 1.0,
+    "tile_note": "aerial scan; estimated ~10 m",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.952,
+      "corr_y": -0.98,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.02,
+      0.95
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.564,
+      0.513,
+      0.488
+    ],
+    "source_url": "https://polyhaven.com/a/aerial_beach_01",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=405-23509933",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=36804818-45237313",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=23509988-30247982",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=30248037-32261390",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=32261487-36804763"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Aerial scan of a real sand beach - coastline / shore strip in distant views. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "bark",
+    "name": "palm_trunk",
+    "files": {
+      "color": "textures/bark/palm_trunk/color.jpg",
+      "normal": "textures/bark/palm_trunk/normal.jpg",
+      "roughness": "textures/bark/palm_trunk/roughness.jpg",
+      "ao": "textures/bark/palm_trunk/ao.jpg"
+    },
+    "resolution": "2048x4096",
+    "tile_m": 0.65,
+    "tile_aspect": 0.5,
+    "tile_note": "1:2 tile (0.65 x 1.3 m, Poly Haven scan ~1.3 m tall); wrap U around the trunk",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      1.05,
+      0.93
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.597,
+      0.556,
+      0.507
+    ],
+    "source_url": "https://polyhaven.com/a/palm_tree_bark",
+    "mirror_urls": {
+      "arm": "https://raw.githubusercontent.com/dimitricritsinelis/clawd-strike/HEAD/apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_arm_2k.jpg",
+      "color": "https://raw.githubusercontent.com/dimitricritsinelis/clawd-strike/HEAD/apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_diff_2k.jpg",
+      "normal": "https://raw.githubusercontent.com/dimitricritsinelis/clawd-strike/HEAD/apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_nor_gl_2k.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required; authors Dimitrios Savva (photo), Rico Cilliers (processing)",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Real coconut-palm trunk: grey, ringed with leaf scars. U wraps the circumference (one tile ~ 0.65 m), V runs up the trunk."
+  },
+  {
+    "category": "bark",
+    "name": "tree_bark",
+    "files": {
+      "color": "textures/bark/tree_bark/color.jpg",
+      "disp": "textures/bark/tree_bark/disp.png",
+      "normal": "textures/bark/tree_bark/normal.jpg",
+      "roughness": "textures/bark/tree_bark/roughness.jpg",
+      "ao": "textures/bark/tree_bark/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.871,
+      "corr_y": -0.825,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.25,
+      1.22
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.372,
+      0.337,
+      0.251
+    ],
+    "source_url": "https://polyhaven.com/a/bark_brown_02",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=35675131-44189336",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=60252295-66807770",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=44189391-53512586",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=53512641-56339771",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-wood.parquet#bytes=56339868-60252240"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Generic broadleaf tree bark (monkeypod, plumeria trunks, distant trees). | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "foliage",
+    "name": "leaf_blades",
+    "files": {
+      "color": "textures/foliage/leaf_blades/color.jpg",
+      "normal": "textures/foliage/leaf_blades/normal.jpg",
+      "roughness": "textures/foliage/leaf_blades/roughness.jpg",
+      "opacity": "textures/foliage/leaf_blades/opacity.png"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.35,
+    "tile_aspect": 1.0,
+    "tile_note": "atlas (not tiling): 7 scanned blades, each ~30 cm long",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      0.45,
+      0.08
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.415,
+      0.458,
+      0.327
+    ],
+    "source_url": "https://ambientcg.com/view?id=Foliage008",
+    "mirror_urls": {
+      "color": "https://media.githubusercontent.com/media/avsomers25/428ADAA/HEAD/Assets/Park%20Assets/Grass/Foliage008_2K-PNG/Foliage008_2K-PNG_Color.png",
+      "normal": "https://media.githubusercontent.com/media/avsomers25/428ADAA/HEAD/Assets/Park%20Assets/Grass/Foliage008_2K-PNG/Foliage008_2K-PNG_NormalGL.png",
+      "roughness": "https://media.githubusercontent.com/media/avsomers25/428ADAA/HEAD/Assets/Park%20Assets/Grass/Foliage008_2K-PNG/Foliage008_2K-PNG_Roughness.png",
+      "opacity": "https://media.githubusercontent.com/media/avsomers25/428ADAA/HEAD/Assets/Park%20Assets/Grass/Foliage008_2K-PNG/Foliage008_2K-PNG_Opacity.png"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "ATLAS with alpha: 7 scanned long narrow green blades. Use as palm leaflets (pinnae) along a frond rachis, and for lily/grass clumps. Not tileable by design. | opacity check: mean luminance inside 0.372 vs outside 0.449"
+  },
+  {
+    "category": "foliage",
+    "name": "broad_leaf",
+    "files": {
+      "color": "textures/foliage/broad_leaf/color.jpg",
+      "disp": "textures/foliage/broad_leaf/disp.png",
+      "normal": "textures/foliage/broad_leaf/normal.jpg",
+      "roughness": "textures/foliage/broad_leaf/roughness.jpg",
+      "ao": "textures/foliage/broad_leaf/ao.jpg",
+      "opacity": "textures/foliage/broad_leaf/opacity.png"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.25,
+    "tile_aspect": 1.0,
+    "tile_note": "atlas (not tiling): two scanned leaves (front + back), ~10 cm each",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.899,
+      "corr_y": -0.887,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.0,
+      0.0
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.149,
+      0.19,
+      0.056
+    ],
+    "source_url": "https://ambientcg.com/view?id=Leaf001",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-4.parquet#bytes=116196452-118613849",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-4.parquet#bytes=141533127-146436359",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-4.parquet#bytes=118613904-139039597",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-4.parquet#bytes=139039652-140802576",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-organic-4.parquet#bytes=140802671-141533072",
+      "opacity": "https://raw.githubusercontent.com/GuillaumeCa/stargaze-retreat/HEAD/assets/textures/tree/Leaf001_4K_Opacity.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "ATLAS with alpha: scanned serrated broadleaf, upper and lower face. For shrub / tree leaf cards (recolour darker/glossier for tropical shrubs). | normal map converted DirectX -> OpenGL (green flipped); opacity check: mean luminance inside 0.470 vs outside 0.009",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "foliage",
+    "name": "tropical_leaf_palmate",
+    "files": {
+      "color": "textures/foliage/tropical_leaf_palmate/color.jpg",
+      "normal": "textures/foliage/tropical_leaf_palmate/normal.jpg",
+      "roughness": "textures/foliage/tropical_leaf_palmate/roughness.jpg",
+      "ao": "textures/foliage/tropical_leaf_palmate/ao.jpg",
+      "opacity": "textures/foliage/tropical_leaf_palmate/opacity.png"
+    },
+    "resolution": "4096x4096",
+    "tile_m": 0.6,
+    "tile_aspect": 1.0,
+    "tile_note": "atlas (not tiling): 4 palmate leaves, leaflets 12-25 cm",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      38.76,
+      12.74
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.284,
+      0.393,
+      0.136
+    ],
+    "source_url": "https://polyhaven.com/a/pachira_aquatica_01",
+    "mirror_urls": {
+      "arm": "https://raw.githubusercontent.com/IsaacPjones/TerraSphere/HEAD/assets/pachira_aquatica_01_4k.gltf/textures/pachira_aquatica_01_leaves_arm_4k.jpg",
+      "color": "https://raw.githubusercontent.com/IsaacPjones/TerraSphere/HEAD/assets/pachira_aquatica_01_4k.gltf/textures/pachira_aquatica_01_leaves_diff_4k.jpg",
+      "normal": "https://raw.githubusercontent.com/IsaacPjones/TerraSphere/HEAD/assets/pachira_aquatica_01_4k.gltf/textures/pachira_aquatica_01_leaves_nor_gl_4k.jpg",
+      "opacity": "https://raw.githubusercontent.com/IsaacPjones/TerraSphere/HEAD/assets/pachira_aquatica_01_4k.gltf/pachira_aquatica_01_4k.gltf (UV triangles of material pachira_aquatica_01_leaves, rasterised)"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required (Pachira aquatica 01 plant model; leaf texture atlas)",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "ATLAS with alpha: photo-scanned glossy dark-green tropical palmate leaves (money tree, 4 whole leaves of 5-7 leaflets + a petiole strip). opacity.png is rasterised by this script from the leaf-mesh UVs of the Poly Haven glTF (exact leaf outlines, 2x supersampled). Use for tropical shrubs/trees and, leaflet by leaflet, for ti / croton / heliconia-style leaves (recolour red-purple for ti). | opacity check: mean luminance inside 0.281 vs outside 0.354"
+  },
+  {
+    "category": "foliage",
+    "name": "fern_frond",
+    "files": {
+      "color": "textures/foliage/fern_frond/color.jpg",
+      "normal": "textures/foliage/fern_frond/normal.jpg",
+      "roughness": "textures/foliage/fern_frond/roughness.jpg",
+      "ao": "textures/foliage/fern_frond/ao.jpg",
+      "opacity": "textures/foliage/fern_frond/opacity.png"
+    },
+    "resolution": "1024x1024",
+    "tile_m": 0.5,
+    "tile_aspect": 1.0,
+    "tile_note": "atlas (not tiling): scanned fern fronds ~40 cm",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      9.29,
+      4.52
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.339,
+      0.384,
+      0.166
+    ],
+    "source_url": "https://polyhaven.com/a/fern_02",
+    "mirror_urls": {
+      "arm": "https://raw.githubusercontent.com/jackhumphries/neon-paws/HEAD/assets/props/fern_02/textures/fern_02_arm_1k.jpg",
+      "color": "https://raw.githubusercontent.com/jackhumphries/neon-paws/HEAD/assets/props/fern_02/textures/fern_02_diff_1k.jpg",
+      "normal": "https://raw.githubusercontent.com/jackhumphries/neon-paws/HEAD/assets/props/fern_02/textures/fern_02_nor_gl_1k.jpg",
+      "opacity": "https://raw.githubusercontent.com/jackhumphries/neon-paws/HEAD/assets/props/fern_02/textures/fern_02_alpha_1k.png"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required; Fern 02 modelled by Rico Cilliers, scanned by Rob Tuytel",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "ATLAS with alpha: scanned fern fronds (Poly Haven fern_02). Only the 1K version was reachable - fine for ferns more than ~3 m from camera. | opacity check: mean luminance inside 0.320 vs outside 0.365"
+  },
+  {
+    "category": "siding",
+    "name": "painted_lap_siding",
+    "files": {
+      "color": "textures/siding/painted_lap_siding/color.jpg",
+      "color_white": "textures/siding/painted_lap_siding/color_white.jpg",
+      "disp": "textures/siding/painted_lap_siding/disp.png",
+      "normal": "textures/siding/painted_lap_siding/normal.jpg",
+      "roughness": "textures/siding/painted_lap_siding/roughness.jpg",
+      "ao": "textures/siding/painted_lap_siding/ao.jpg"
+    },
+    "resolution": "2048x1024",
+    "tile_m": 1.6,
+    "tile_aspect": 2.0,
+    "tile_note": "estimated: 8 boards of ~20 cm exposure",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.485,
+      "corr_y": -0.83,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.07,
+      1.22
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.786,
+      0.754,
+      0.618
+    ],
+    "source_url": "https://ambientcg.com/view?id=WoodSiding009",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1545236561-1548731102",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1561409241-1564060687",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1548731157-1560005653",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1560005706-1561017525",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-wood-2.parquet#bytes=1561022652-1561409186"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Real photo of painted horizontal wood lap siding (pale yellow paint). color_white.jpg is derived by this script (chroma removed, lifted to a warm white, grain/shadow structure kept) for the white board-and-batten / lap siding of the house. The paint is a little weathered; for crisp new paint mix color_white 50-70% towards flat white (0.85 linear) and keep the normal map for the board shadows. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "metal",
+    "name": "galvanized_steel",
+    "files": {
+      "color": "textures/metal/galvanized_steel/color.jpg",
+      "normal": "textures/metal/galvanized_steel/normal.jpg",
+      "roughness": "textures/metal/galvanized_steel/roughness.jpg",
+      "ao": "textures/metal/galvanized_steel/ao.jpg",
+      "metalness": "textures/metal/galvanized_steel/metalness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.12,
+    "tile_aspect": 1.0,
+    "tile_note": "Poly Haven published dimensions 1.12 x 1.12 m",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": null,
+    "seam_ratio_x_y": [
+      1.13,
+      1.0
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.678,
+      0.708,
+      0.694
+    ],
+    "source_url": "https://polyhaven.com/a/corrugated_iron",
+    "mirror_urls": {
+      "arm": "https://raw.githubusercontent.com/raisimTech/raisim2Lib/HEAD/rsc/warehouse/textures/corrugated_iron/corrugated_iron_arm_2k.jpg",
+      "color": "https://raw.githubusercontent.com/raisimTech/raisim2Lib/HEAD/rsc/warehouse/textures/corrugated_iron/corrugated_iron_diff_2k.jpg",
+      "normal": "https://raw.githubusercontent.com/raisimTech/raisim2Lib/HEAD/rsc/warehouse/textures/corrugated_iron/corrugated_iron_nor_gl_2k.jpg"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required; authors Dimitrios Savva (photo), Jenelle van Heerden (processing)",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Real photo-scan of galvanized (spangled zinc) steel sheet, Poly Haven \"corrugated_iron\". colour/roughness/metalness = the real spangle and patina for galvalume roofing, flashing, gutters. The NORMAL map holds the corrugation profile: for standing-seam panels use colour + roughness + metalness only (seams as geometry or a procedural ridge mask). (ambientCG SheetMetal002 was rejected: procedural Voronoi spangle.)"
+  },
+  {
+    "category": "weave",
+    "name": "rattan_weave",
+    "files": {
+      "color": "textures/weave/rattan_weave/color.jpg",
+      "disp": "textures/weave/rattan_weave/disp.png",
+      "normal": "textures/weave/rattan_weave/normal.jpg",
+      "roughness": "textures/weave/rattan_weave/roughness.jpg",
+      "ao": "textures/weave/rattan_weave/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.3,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.941,
+      "corr_y": -0.899,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      2.19,
+      0.9
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.602,
+      0.496,
+      0.344
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wicker011A",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-11.parquet#bytes=935090790-939539215",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-11.parquet#bytes=962909867-968981474",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-11.parquet#bytes=939539270-960014686",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-11.parquet#bytes=960014741-961409330",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-11.parquet#bytes=961409427-962909812"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": false,
+    "notes": "NOT A PHOTO (procedural ambientCG weave - no real tileable rattan/cane scan was reachable). Stop-gap for woven furniture seen from >2 m only. For the cane-webbing panels use an octagonal cane alpha pattern over wood/teak colour instead. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "weave",
+    "name": "bamboo_blind",
+    "files": {
+      "color": "textures/weave/bamboo_blind/color.jpg",
+      "disp": "textures/weave/bamboo_blind/disp.png",
+      "normal": "textures/weave/bamboo_blind/normal.jpg",
+      "roughness": "textures/weave/bamboo_blind/roughness.jpg",
+      "ao": "textures/weave/bamboo_blind/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated: slats ~1 cm, ~45 per tile",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.639,
+      "corr_y": -0.886,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.96,
+      3.3
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.693,
+      0.487,
+      0.247
+    ],
+    "source_url": "https://ambientcg.com/view?id=Wicker013",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-3.parquet#bytes=38034972-43568133",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-3.parquet#bytes=68832318-75155786",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-3.parquet#bytes=43568188-65055145",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-3.parquet#bytes=65055200-66998048",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-other-3.parquet#bytes=66998145-68832263"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Photo of a natural bamboo/reed slat roll-blind with cord stitching - lanai roll-down shades, woven ceiling panels, placemats. (For seagrass/jute rugs use fabric/jute_burlap scaled up.) | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "fabric",
+    "name": "linen_oatmeal",
+    "files": {
+      "color": "textures/fabric/linen_oatmeal/color.jpg",
+      "disp": "textures/fabric/linen_oatmeal/disp.png",
+      "normal": "textures/fabric/linen_oatmeal/normal.jpg",
+      "roughness": "textures/fabric/linen_oatmeal/roughness.jpg",
+      "ao": "textures/fabric/linen_oatmeal/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.15,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated (weave ~1 mm)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.932,
+      "corr_y": -0.794,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      2.14,
+      2.2
+    ],
+    "tileable": false,
+    "mean_albedo_srgb": [
+      0.777,
+      0.754,
+      0.715
+    ],
+    "source_url": "https://ambientcg.com/view?id=Fabric062",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=366597020-373620113",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=401484242-409096545",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=373620168-396692201",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=396692256-398677276",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=398677373-401484187"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Oatmeal woven upholstery fabric - sofas, throw pillows. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "fabric",
+    "name": "canvas_white",
+    "files": {
+      "color": "textures/fabric/canvas_white/color.jpg",
+      "disp": "textures/fabric/canvas_white/disp.png",
+      "normal": "textures/fabric/canvas_white/normal.jpg",
+      "roughness": "textures/fabric/canvas_white/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 0.15,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.947,
+      "corr_y": -0.955,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.13,
+      1.04
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.911,
+      0.872,
+      0.868
+    ],
+    "source_url": "https://ambientcg.com/view?id=Fabric032",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=994452338-1000084070",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=1026075760-1033122605",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=1000084125-1023355570",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-fabric.parquet#bytes=1023355625-1026075621"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Off-white fine canvas weave - outdoor cushions (Sunbrella-like), curtains, bedding. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "fabric",
+    "name": "jute_burlap",
+    "files": {
+      "color": "textures/fabric/jute_burlap/color.jpg",
+      "disp": "textures/fabric/jute_burlap/disp.png",
+      "normal": "textures/fabric/jute_burlap/normal.jpg",
+      "roughness": "textures/fabric/jute_burlap/roughness.jpg",
+      "ao": "textures/fabric/jute_burlap/ao.jpg"
+    },
+    "resolution": "2048x2036",
+    "tile_m": 0.3,
+    "tile_aspect": 1.006,
+    "tile_note": "estimated (open jute weave ~2 mm)",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.883,
+      "corr_y": -0.886,
+      "declared": "dx"
+    },
+    "seam_ratio_x_y": [
+      1.0,
+      0.97
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.551,
+      0.471,
+      0.35
+    ],
+    "source_url": "https://polyhaven.com/a/hessian_230",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-fabric.parquet#bytes=909695050-932430778",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-fabric.parquet#bytes=977170432-984318882",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-fabric.parquet#bytes=932430833-954264575",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-fabric.parquet#bytes=954264630-962137460",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-fabric.parquet#bytes=970094376-977170377"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Jute hessian - jute rugs (scale the tile 3-5x larger for chunky rug yarn), baskets. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "road",
+    "name": "asphalt",
+    "files": {
+      "color": "textures/road/asphalt/color.jpg",
+      "disp": "textures/road/asphalt/disp.png",
+      "normal": "textures/road/asphalt/normal.jpg",
+      "roughness": "textures/road/asphalt/roughness.jpg",
+      "ao": "textures/road/asphalt/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 4.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.732,
+      "corr_y": -0.713,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.97,
+      1.07
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.356,
+      0.352,
+      0.333
+    ],
+    "source_url": "https://polyhaven.com/a/asphalt_02",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=414441102-424430325",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=439386658-447890604",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=424430380-433548254",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=433548309-436535967",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-polyhaven-2k-organic.parquet#bytes=436536064-439386603"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "notes": "Grey road asphalt with sealed cracks - neighbourhood streets. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "road",
+    "name": "asphalt_dark",
+    "files": {
+      "color": "textures/road/asphalt_dark/color.jpg",
+      "disp": "textures/road/asphalt_dark/disp.png",
+      "normal": "textures/road/asphalt_dark/normal.jpg",
+      "roughness": "textures/road/asphalt_dark/roughness.jpg",
+      "ao": "textures/road/asphalt_dark/ao.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 3.0,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.528,
+      "corr_y": -0.524,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.04,
+      1.02
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.171,
+      0.169,
+      0.16
+    ],
+    "source_url": "https://ambientcg.com/view?id=Asphalt025C",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=400520374-406870695",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=436023271-443419589",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=406870750-430814428",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=430814483-433153017",
+      "ao": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-concrete.parquet#bytes=433153114-436023216"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Dark, newer fine asphalt - private drives / blend layer. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "stone",
+    "name": "white_quartz",
+    "files": {
+      "color": "textures/stone/white_quartz/color.jpg",
+      "disp": "textures/stone/white_quartz/disp.png",
+      "normal": "textures/stone/white_quartz/normal.jpg",
+      "roughness": "textures/stone/white_quartz/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.593,
+      "corr_y": -0.58,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      0.91,
+      0.97
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.981,
+      0.974,
+      0.969
+    ],
+    "source_url": "https://ambientcg.com/view?id=Marble021",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=166665736-171164875",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=184276111-191554270",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=171164930-183068381",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=183068436-184275972"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "White stone with faint fine veining - quartz / honed marble countertops. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "stone",
+    "name": "white_marble_veined",
+    "files": {
+      "color": "textures/stone/white_marble_veined/color.jpg",
+      "disp": "textures/stone/white_marble_veined/disp.png",
+      "normal": "textures/stone/white_marble_veined/normal.jpg",
+      "roughness": "textures/stone/white_marble_veined/roughness.jpg"
+    },
+    "resolution": "2048x2048",
+    "tile_m": 1.5,
+    "tile_aspect": 1.0,
+    "tile_note": "estimated",
+    "normal_convention": "OpenGL (+Y up, green = up); Blender-native",
+    "normal_check": {
+      "detected": "dx",
+      "corr_x": 0.634,
+      "corr_y": -0.635,
+      "declared": null
+    },
+    "seam_ratio_x_y": [
+      1.06,
+      0.99
+    ],
+    "tileable": true,
+    "mean_albedo_srgb": [
+      0.883,
+      0.862,
+      0.815
+    ],
+    "source_url": "https://ambientcg.com/view?id=Marble001",
+    "mirror_urls": {
+      "color": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=1389513389-1393317643",
+      "disp": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=1415010044-1421463143",
+      "normal": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=1393317698-1412778307",
+      "roughness": "https://github.com/MorePET/mat-vis/releases/download/v2026.04.0/mat-vis-ambientcg-2k-stone.parquet#bytes=1412778362-1415009905"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "ambientCG.com (Lennart Demes) - CC0, attribution not required",
+    "library": "ambientCG",
+    "real_photo": true,
+    "notes": "Warm white marble with soft grey veins - vanity tops, shower walls. | normal map converted DirectX -> OpenGL (green flipped)",
+    "fetched_via": "mat-vis v2026.04.0 (github.com/MorePET/mat-vis) 2K tier, HTTP range read"
+  },
+  {
+    "category": "hdri",
+    "name": "kloofendal_48d_partly_cloudy_puresky",
+    "kind": "day",
+    "files": {
+      "hdr": "hdri/kloofendal_48d_partly_cloudy_puresky.hdr",
+      "preview": "hdri/previews/kloofendal_48d_partly_cloudy_puresky.jpg",
+      "hdr_nosun": "hdri/kloofendal_48d_partly_cloudy_puresky_nosun.hdr",
+      "preview_nosun": "hdri/previews/kloofendal_48d_partly_cloudy_puresky_nosun.jpg"
+    },
+    "resolution": "8192x4096",
+    "source_url": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/yql5213576/Sci-Fi-FPS-game-for-godot-4/HEAD/sci-fi-fps/assets/polyhaven_assets/kloofendal_48d_partly_cloudy_puresky_8k.hdr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 75046.9,
+    "sky_horizontal_irradiance_lum": 4.786,
+    "notes": "PRIMARY day sky. Deep blue sky with scattered fair-weather cumulus - the typical trade-wind sky over Poipu. Sun ~48 deg up in the photo. Pure sky (no ground).",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp (angle 0.53 deg) at the astronomically correct direction with strength = sun_strength_blender x world strength and colour = sun_color_rgb_norm (strength x colour reproduces the measured sun irradiance per channel, sun_irradiance_rgb).",
+    "sun_pixel_row_col": [
+      958,
+      4876
+    ],
+    "sun_peak_radiance": 75046.9,
+    "sun_elevation_deg": 47.88,
+    "sun_azimuth_blender_deg": 145.7,
+    "sun_dir_blender_unrotated": [
+      -0.5541,
+      0.378,
+      0.7417
+    ],
+    "sun_irradiance_rgb": [
+      4.636,
+      4.647,
+      4.229
+    ],
+    "sun_irradiance_lum": 4.615,
+    "sun_color_rgb_norm": [
+      0.9976,
+      1.0,
+      0.9099
+    ],
+    "sun_strength_blender": 4.647,
+    "sun_mask_pixels": 106302,
+    "sky_horizontal_irradiance_lum_nosun": 1.362
+  },
+  {
+    "category": "hdri",
+    "name": "qwantani_puresky",
+    "kind": "day",
+    "files": {
+      "hdr": "hdri/qwantani_puresky.hdr",
+      "preview": "hdri/previews/qwantani_puresky.jpg",
+      "hdr_nosun": "hdri/qwantani_puresky_nosun.hdr",
+      "preview_nosun": "hdri/previews/qwantani_puresky_nosun.jpg"
+    },
+    "resolution": "4096x2048",
+    "source_url": "https://polyhaven.com/a/qwantani_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/Rwanee/GameJam_2025/HEAD/assets/qwantani_puresky_4k.exr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 57720.8,
+    "sky_horizontal_irradiance_lum": 2.15,
+    "notes": "Alternate day sky: blue sky with scattered cumulus, mid-high sun. Pure sky. Converted from OpenEXR to Radiance HDR (lossless enough for skies).",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp (angle 0.53 deg) at the astronomically correct direction with strength = sun_strength_blender x world strength and colour = sun_color_rgb_norm (strength x colour reproduces the measured sun irradiance per channel, sun_irradiance_rgb).",
+    "sun_pixel_row_col": [
+      704,
+      2458
+    ],
+    "sun_peak_radiance": 57720.8,
+    "sun_elevation_deg": 28.08,
+    "sun_azimuth_blender_deg": 143.92,
+    "sun_dir_blender_unrotated": [
+      -0.7131,
+      0.5196,
+      0.4707
+    ],
+    "sun_irradiance_rgb": [
+      3.519,
+      3.586,
+      3.126
+    ],
+    "sun_irradiance_lum": 3.539,
+    "sun_color_rgb_norm": [
+      0.9812,
+      1.0,
+      0.8715
+    ],
+    "sun_strength_blender": 3.586,
+    "sun_mask_pixels": 7396,
+    "sky_horizontal_irradiance_lum_nosun": 0.485
+  },
+  {
+    "category": "hdri",
+    "name": "autumn_field_puresky",
+    "kind": "day",
+    "files": {
+      "hdr": "hdri/autumn_field_puresky.hdr",
+      "preview": "hdri/previews/autumn_field_puresky.jpg",
+      "hdr_nosun": "hdri/autumn_field_puresky_nosun.hdr",
+      "preview_nosun": "hdri/previews/autumn_field_puresky_nosun.jpg"
+    },
+    "resolution": "8192x4096",
+    "source_url": "https://polyhaven.com/a/autumn_field_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/yql5213576/Sci-Fi-FPS-game-for-godot-4/HEAD/sci-fi-fps/assets/polyhaven_assets/autumn_field_puresky_8k.hdr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 154590.0,
+    "sky_horizontal_irradiance_lum": 5.07,
+    "notes": "Clear day sky (8K): deep blue, light haze at the horizon, a few wisps of cirrus, sun ~29 deg - matches the clear sky of the brochure renderings. Pure sky.",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp (angle 0.53 deg) at the astronomically correct direction with strength = sun_strength_blender x world strength and colour = sun_color_rgb_norm (strength x colour reproduces the measured sun irradiance per channel, sun_irradiance_rgb).",
+    "sun_pixel_row_col": [
+      1386,
+      4920
+    ],
+    "sun_peak_radiance": 154590.0,
+    "sun_elevation_deg": 29.07,
+    "sun_azimuth_blender_deg": 143.77,
+    "sun_dir_blender_unrotated": [
+      -0.705,
+      0.5166,
+      0.4859
+    ],
+    "sun_irradiance_rgb": [
+      9.579,
+      8.567,
+      7.132
+    ],
+    "sun_irradiance_lum": 8.679,
+    "sun_color_rgb_norm": [
+      1.0,
+      0.8943,
+      0.7446
+    ],
+    "sun_strength_blender": 9.579,
+    "sun_mask_pixels": 26954,
+    "sky_horizontal_irradiance_lum_nosun": 0.856
+  },
+  {
+    "category": "hdri",
+    "name": "kloppenheim_06_puresky",
+    "kind": "golden_hour",
+    "files": {
+      "hdr": "hdri/kloppenheim_06_puresky.hdr",
+      "preview": "hdri/previews/kloppenheim_06_puresky.jpg"
+    },
+    "resolution": "4096x2048",
+    "source_url": "https://polyhaven.com/a/kloppenheim_06_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/yql5213576/Sci-Fi-FPS-game-for-godot-4/HEAD/sci-fi-fps/assets/scenes/office/kloppenheim_06_puresky_4k.hdr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 46.2,
+    "sky_horizontal_irradiance_lum": 2.548,
+    "notes": "Late-afternoon / golden-hour sky: low sun (~5 deg) at the horizon, blue sky with small scattered cumulus and cirrus. Good for warm late-day exteriors.",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp at the astronomically correct direction with strength = sun_irradiance_lum (x world strength) and colour = sun_color_rgb_norm."
+  },
+  {
+    "category": "hdri",
+    "name": "qwantani_dusk_2_puresky",
+    "kind": "twilight",
+    "files": {
+      "hdr": "hdri/qwantani_dusk_2_puresky.hdr",
+      "preview": "hdri/previews/qwantani_dusk_2_puresky.jpg"
+    },
+    "resolution": "4096x2048",
+    "source_url": "https://polyhaven.com/a/qwantani_dusk_2_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/d3cxty/7_of_hearts/HEAD/addins/qwantani_dusk_2_puresky_4k.hdr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 5.6,
+    "sky_horizontal_irradiance_lum": 3.545,
+    "notes": "Sunset / dusk sky with warm horizon glow and clouds - golden-hour and twilight shots.",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp at the astronomically correct direction with strength = sun_irradiance_lum (x world strength) and colour = sun_color_rgb_norm."
+  },
+  {
+    "category": "hdri",
+    "name": "qwantani_night_puresky",
+    "kind": "night",
+    "files": {
+      "hdr": "hdri/qwantani_night_puresky.hdr",
+      "preview": "hdri/previews/qwantani_night_puresky.jpg"
+    },
+    "resolution": "4096x2048",
+    "source_url": "https://polyhaven.com/a/qwantani_night_puresky",
+    "mirror_urls": {
+      "hdr": "https://raw.githubusercontent.com/shush2u/copasetique/HEAD/textures/hdri/qwantani_night_puresky_4k.exr"
+    },
+    "licence": "CC0-1.0 (public domain dedication)",
+    "attribution": "Poly Haven (polyhaven.com) - CC0, attribution not required",
+    "library": "Poly Haven",
+    "real_photo": true,
+    "max_radiance": 557.2,
+    "sky_horizontal_irradiance_lum": 2.026,
+    "notes": "Real night sky photo (stars, faint airglow) - ambient fill for night renders; the project draws its own astronomically placed stars, use this at low strength or for reflections only. Converted from OpenEXR to Radiance HDR (lossless enough for skies).",
+    "blender_usage": "Environment Texture (equirectangular) <- Mapping(Vector, rotation Z = radians(sun_azimuth_blender_deg - target_sun_azimuth_deg)) <- Texture Coordinate.Generated. Azimuths are atan2(y, x) in Blender world XY (counter-clockwise from +X). With the *_nosun file, add a Sun lamp at the astronomically correct direction with strength = sun_irradiance_lum (x world strength) and colour = sun_color_rgb_norm."
+  }
+]

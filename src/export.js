@@ -43,6 +43,24 @@ export async function exportForBlender({ scene, plan, terrainH, lamps, siteLayou
       base: [(p.x + dx) * FT, (p.ground + dy) * FT, (p.y + dz) * FT], height: p.height * FT, trunkR: p.trunkR * FT, frondLen: p.frondLen, lean: p.lean,
     });
   });
+  // the rest of the planting (src/plants.js, site.js record it in export mode; scripts/plants_bpy.py grows it):
+  // beds, plumeria trees on every lot, the background trees once; distant skyline palms join the palms
+  const rec = globalThis.__plantProxies ?? [], r3 = v => Math.round(v * 1000) / 1000;
+  meta.plants = [];
+  meta.lawn = { lot: (plan.site?.lot ?? []).map(v => v * FT), houses: offsets.map(o => o.map(v => r3(v * FT))) };
+  offsets.forEach(([dx, dy, dz], house) => {
+    for (const p of rec) {
+      if (!p.shell) continue;
+      const q = { type: p.type, kind: p.kind, house, seed: p.seed + house * 1000 };
+      if (p.rect) { const [x0, y0, x1, y1] = p.rect; q.rect = [x0 + dx, y0 + dz, x1 + dx, y1 + dz].map(v => r3(v * FT)); q.ground = r3((p.ground + dy) * FT); q.density = p.density; }
+      else { q.pos = [(p.x + dx) * FT, (p.ground + dy) * FT, (p.y + dz) * FT].map(r3); q.scale = p.scale ?? 1; }
+      meta.plants.push(q);
+    }
+  });
+  for (const p of rec) {
+    if (p.type === 'tree') meta.plants.push({ type: 'tree', house: -1, seed: p.seed, pos: [p.x * FT, p.ground * FT, p.y * FT].map(r3), size: r3(p.size * FT), sy: p.sy });
+    if (p.type === 'farpalm') meta.palms.push({ house: -1, kind: 'coconut', seed: p.seed, base: [p.x * FT, p.ground * FT, p.y * FT].map(r3), height: r3(p.height * FT), trunkR: 0.17, lean: 2 });
+  }
 
   // geometry: drop helpers that glTF can't carry or Blender replaces (sky, lights, stars)
   const root = new THREE.Group(); root.name = 'nahiku'; root.scale.setScalar(FT);
@@ -62,7 +80,7 @@ export async function exportForBlender({ scene, plan, terrainH, lamps, siteLayou
     const pos = o.geometry.attributes.position, idx = o.geometry.index.array, keep = [];
     for (let i = 0; i < idx.length; i += 3) {
       let cx = 0, cz = 0; for (let k = 0; k < 3; k++) { cx += pos.getX(idx[i + k]) / 3; cz += pos.getZ(idx[i + k]) / 3; }
-      const inHole = holes.some(([x0, y0, x1, y1]) => cx > x0 - 1.5 && cx < x1 + 1.5 && cz > y0 - 1.5 && cz < y1 + 1.5);
+      const inHole = holes.some(([x0, y0, x1, y1]) => cx > x0 - 0.6 && cx < x1 + 0.6 && cz > y0 - 0.6 && cz < y1 + 0.6);
       if (!inHole) keep.push(idx[i], idx[i + 1], idx[i + 2]);
     }
     o.geometry.setIndex(keep);

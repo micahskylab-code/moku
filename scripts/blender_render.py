@@ -39,6 +39,12 @@ scene = bpy.context.scene
 # palms are exported as positions and sizes only; grow them leaf by leaf here (scripts/palms.py)
 import palms
 palms.build([p for p in meta.get('palms', []) if 'kind' in p], lambda v: Vector((v[0], -v[2], v[1])))
+# beds, plumeria, background trees and the lawn: recorded as proxies too, grown leaf and blade here (scripts/plants_bpy.py)
+try:
+    import plants_bpy
+    plants_bpy.build(meta, lambda v: Vector((v[0], -v[2], v[1])), log=lambda s: print(s, flush=True))
+except Exception:
+    import traceback; traceback.print_exc()
 
 # ---------------------------------------------------------------- materials
 def principled(m):

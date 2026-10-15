@@ -1,4 +1,5 @@
-// Runs the page in export mode and saves nahiku.glb + nahiku-meta.json to blender/.
+// Runs the page in export mode and saves nahiku.glb + nahiku-meta.json to blender/ (or the dir given).
+//   node scripts/export.mjs lot25 [out_dir]
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -11,7 +12,7 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage({ viewport: { width: 640, height: 400 }, acceptDownloads: true });
 page.setDefaultTimeout(1800000);
 page.on('pageerror', e => { if (!/exported/.test(e.message)) console.error('page error:', e.message); });
-const out = join(root, 'blender'); await mkdir(out, { recursive: true });
+const out = process.argv[3] ? normalize(process.argv[3]) : join(root, 'blender'); await mkdir(out, { recursive: true });
 const downloads = [];
 page.on('download', d => downloads.push(d.saveAs(join(out, d.suggestedFilename())).then(() => console.log('saved', d.suggestedFilename()))));
 await page.goto(`http://localhost:${server.address().port}/?plan=${process.argv[2] ?? 'lot25'}&export=1`);

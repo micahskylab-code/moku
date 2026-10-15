@@ -219,9 +219,9 @@ def _frond_axis(L, elev, droop, n=20, twist=0.0):
 
 def _frond(leaf, stem, rng, kind, L, elev, droop):
     axis = _frond_axis(L, elev, droop, twist=rng.uniform(-1, 1))
-    _tube(stem, axis, np.linspace(0.028 if kind == 'foxtail' else 0.018, 0.006, len(axis)), sides=5)
+    _tube(stem, axis, np.linspace({'foxtail': 0.028, 'coconut': 0.04}.get(kind, 0.018), 0.006, len(axis)), sides=5)
     T = _norm(np.gradient(axis, axis=0))
-    n_side = 170 if kind == 'foxtail' else 62
+    n_side = {'foxtail': 190, 'coconut': 100}.get(kind, 62)
     for side in (-1, 1):
         for i in range(n_side):
             s = 0.07 + 0.92 * (i + rng.uniform(0, 0.8)) / n_side
@@ -231,8 +231,12 @@ def _frond(leaf, stem, rng, kind, L, elev, droop):
             prof = math.sin(math.pi * (0.1 + 0.85 * s)) ** 0.8 * (1 - 0.3 * s)
             if kind == 'foxtail':
                 beta = rng.uniform(-0.8, 1.5)              # leaflets radiate all round the rachis
-                _leaflet(leaf, rng, P, Tt, side, beta, rng.uniform(0.3, 0.6), 0.82 * prof * rng.uniform(0.8, 1.1),
-                         0.036, 0.8 + 0.9 * s, 0.25)
+                _leaflet(leaf, rng, P, Tt, side, beta, rng.uniform(0.3, 0.6), 0.9 * prof * rng.uniform(0.8, 1.1),
+                         0.034, 1.6 + 1.8 * s, 0.25)
+            elif kind == 'coconut':
+                beta = -0.55 + rng.uniform(-0.2, 0.2)      # long leaflets hanging in a V under the rachis
+                _leaflet(leaf, rng, P, Tt, side, beta, rng.uniform(0.35, 0.55), 0.95 * prof * rng.uniform(0.85, 1.08),
+                         0.038, 1.1 + 0.9 * s, 0.2)
             else:
                 beta = 0.32 + rng.uniform(-0.12, 0.12)    # a V of arching leaflets
                 _leaflet(leaf, rng, P, Tt, side, beta, rng.uniform(0.5, 0.7), 0.52 * prof * rng.uniform(0.9, 1.05),
@@ -244,15 +248,17 @@ def crown_mesh(kind, seed, mats):
     rng = random.Random(seed)
     leaf, stem, dead, fruit, shaft = MeshBuf(), MeshBuf(), MeshBuf(), MeshBuf(), MeshBuf()
     if kind == 'foxtail':
-        n, Lr = rng.randint(10, 12), (3.0, 3.6)
+        n, Lr = rng.randint(18, 22), (3.7, 4.7)
+    elif kind == 'coconut':
+        n, Lr = rng.randint(20, 26), (3.6, 4.6)
     else:
         n, Lr = rng.randint(6, 8), (1.6, 2.1)
     golden = math.radians(137.5)
     az0 = rng.uniform(0, 2 * math.pi)
     for k in range(n):
         age = k / (n - 1)                                  # 0 = newest (upright) .. 1 = oldest (hanging)
-        elev = math.radians(78 - 95 * age + rng.uniform(-8, 8)) if kind == 'foxtail' else math.radians(75 - 70 * age + rng.uniform(-6, 6))
-        droop = (1.25 if kind == 'foxtail' else 1.5) * (0.6 + 0.6 * age) * rng.uniform(0.85, 1.15)
+        elev = math.radians({'foxtail': 62 - 118 * age, 'coconut': 70 - 110 * age}.get(kind, 75 - 70 * age) + rng.uniform(-8, 8))
+        droop = {'foxtail': 1.9, 'coconut': 1.1}.get(kind, 1.5) * ({'foxtail': 0.55 + 0.6 * age}.get(kind, 0.6 + 0.6 * age)) * rng.uniform(0.85, 1.15)
         L = rng.uniform(*Lr)
         lb, sb = MeshBuf(), MeshBuf()
         _frond(lb, sb, rng, kind, L, elev, droop)
@@ -262,25 +268,39 @@ def crown_mesh(kind, seed, mats):
         _move(sb, stem, R, R @ np.array([0.06, 0, 0]))
     # unopened spear leaf
     _tube(stem, [[0, 0, 0], [0.02, 0, 0.5], [0.03, 0.01, 1.1]], [0.035, 0.03, 0.004], sides=6)
-    # one dry frond hanging against the trunk
-    if kind == 'foxtail' and rng.random() < 0.6:
+    # dry fronds hanging against the trunk
+    for _ in range(rng.choice([0, 1, 1, 2]) if kind in ('foxtail', 'coconut') else 0):
         lb, sb = MeshBuf(), MeshBuf()
-        _frond(lb, sb, rng, kind, rng.uniform(2.0, 2.6), math.radians(-70), 0.3)
+        _frond(lb, sb, rng, kind, rng.uniform(2.0, 2.8), math.radians(rng.uniform(-80, -62)), 0.3)
         R = np.array(Matrix.Rotation(rng.uniform(0, 6.28), 3, 'Z'))
         _move(lb, dead, R, np.array([0, 0, -0.2]), attrs=False)
         _move(sb, dead, R, np.array([0, 0, -0.2]), attrs=False)
-    # crownshaft and fruit for foxtails
+    # coconuts in a cluster under the crown
+    if kind == 'coconut':
+        for _ in range(rng.randint(6, 16)):
+            a = rng.uniform(0, 6.28); q = np.array([math.cos(a) * 0.25, math.sin(a) * 0.25, rng.uniform(-0.55, -0.2)])
+            r = rng.uniform(0.1, 0.13)
+            oct_v = [q + r * np.array(d) for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1.1), (0, 0, -1.1))]
+            fruit.add(oct_v, [[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
+    # fruit for foxtails: one to three panicles of drupes hanging below the crown on arching stalks
     if kind == 'foxtail':
-        if rng.random() < 0.7:
-            a = rng.uniform(0, 6.28)
-            c = np.array([math.cos(a) * 0.2, math.sin(a) * 0.2, -1.25])
-            for _ in range(70):
-                q = c + np.array([rng.gauss(0, 0.1), rng.gauss(0, 0.1), rng.uniform(-0.45, 0.05)])
-                r = rng.uniform(0.018, 0.026)
-                oct_v = [q + r * np.array(d) for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1.3), (0, 0, -1.3))]
-                fruit.add(oct_v, [[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
+        for _ in range(rng.choice([0, 1, 1, 2, 3])):
+            a = rng.uniform(0, 6.28); hd = np.array([math.cos(a), math.sin(a), 0.0])
+            c0 = hd * 0.18 + np.array([0, 0, -0.5])
+            stalk = [c0 + hd * 0.25 * t + np.array([0, 0, -0.5 * t * t]) for t in np.linspace(0, 1, 5)]
+            _tube(stem, stalk, np.linspace(0.02, 0.012, 5), sides=5)
+            top = stalk[-1]
+            for _ in range(rng.randint(14, 22)):            # rachillae hanging off the stalk, fruit along each
+                b0 = top + np.array([rng.gauss(0, 0.06), rng.gauss(0, 0.06), rng.uniform(-0.05, 0.05)])
+                bd = _norm(np.array([rng.gauss(0, 0.5), rng.gauss(0, 0.5), -1.0]))
+                ln = rng.uniform(0.35, 0.7)
+                for t in np.linspace(0.1, 1.0, rng.randint(8, 14)):
+                    q = b0 + bd * ln * t + np.array([rng.gauss(0, 0.012), rng.gauss(0, 0.012), 0])
+                    r = rng.uniform(0.011, 0.015)
+                    oct_v = [q + r * np.array(d) for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1.25), (0, 0, -1.25))]
+                    fruit.add(oct_v, [[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
     objs = []
-    for buf, m, nm in ((leaf, mats['leaf_' + kind], 'leaves'), (stem, mats['rachis'], 'rachis'), (dead, mats['dead'], 'dead'), (fruit, mats['fruit'], 'fruit')):
+    for buf, m, nm in ((leaf, mats['leaf_' + kind], 'leaves'), (stem, mats['rachis'], 'rachis'), (dead, mats['dead'], 'dead'), (fruit, mats['coconut' if kind == 'coconut' else 'fruit'], 'fruit')):
         if buf.v: objs.append(buf.mesh(f'{kind}{seed}-{nm}', m))
     return objs
 
@@ -295,18 +315,27 @@ def trunk_mesh(height, r0, lean_dir, bend, kind, seed, mats):
         pts.append([math.cos(lean_dir) * off, math.sin(lean_dir) * off, height * t])
         if kind == 'foxtail':
             r = r0 * (1.0 + 0.35 * math.exp(-t * 18) + 0.12 * math.exp(-((t - 0.3) / 0.25) ** 2) - 0.18 * t)
+        elif kind == 'coconut':
+            r = r0 * (1.0 + 0.6 * math.exp(-t * 14) - 0.22 * t)
         else:
             r = r0 * (1.0 + 0.2 * math.exp(-t * 20) - 0.15 * t)
         radii.append(r)
     buf, uv = MeshBuf(), []
-    _tube(buf, pts, radii, sides=14 if kind == 'foxtail' else 7, uv=uv)
+    _tube(buf, pts, radii, sides={'foxtail': 14, 'coconut': 10}.get(kind, 7), uv=uv)
     me = buf.mesh(f'trunk{seed}', mats['trunk_' + kind], uv=uv)
     top = np.array(pts[-1]); tdir = _norm(np.array(pts[-1]) - np.array(pts[-2]))
     sh = None
-    if kind == 'foxtail':      # smooth pale-green crownshaft, a little wider than the trunk top
+    if kind == 'foxtail':      # fibrous crown base with the boots of cut old leaf bases (queen palm)
         sb = MeshBuf()
-        L = 1.6
-        _tube(sb, [top + tdir * (L * s - L) for s in np.linspace(0, 1, 6)], [radii[-1] * f for f in (1.04, 1.18, 1.22, 1.15, 0.98, 0.6)], sides=14)
+        L = 1.3
+        _tube(sb, [top + tdir * (L * s - L) for s in np.linspace(0, 1, 6)], [radii[-1] * f for f in (1.0, 1.12, 1.2, 1.18, 1.0, 0.6)], sides=14)
+        for k in range(rng.randint(7, 12)):
+            a = rng.uniform(0, 6.28); hd = np.array([math.cos(a), math.sin(a), 0.0])
+            h0 = rng.uniform(-1.6, -0.35)
+            p0 = top + tdir * h0 + hd * radii[-1] * 0.8
+            d = _norm(hd * rng.uniform(0.5, 1.0) + np.array([0, 0, rng.uniform(0.6, 1.4)]))
+            ln = rng.uniform(0.2, 0.45)
+            _tube(sb, [p0 + d * ln * t for t in np.linspace(0, 1, 4)], [0.05, 0.045, 0.035, 0.01], sides=5)
         sh = sb.mesh(f'shaft{seed}', mats['shaft'])
     return me, sh, Vector(top.tolist()), Vector(tdir.tolist())
 
@@ -314,14 +343,17 @@ def trunk_mesh(height, r0, lean_dir, bend, kind, seed, mats):
 def materials():
     lin = lambda r, g, b: (r, g, b, 1)
     return {
-        'leaf_foxtail': _leaf_material('palm leaf', [lin(0.035, 0.085, 0.018), lin(0.06, 0.12, 0.025), lin(0.085, 0.15, 0.03), lin(0.12, 0.17, 0.045)], 0.18),
+        'leaf_foxtail': _leaf_material('palm leaf', [lin(0.05, 0.09, 0.025), lin(0.075, 0.12, 0.035), lin(0.1, 0.145, 0.045), lin(0.14, 0.165, 0.06)], 0.25),
         'leaf_areca': _leaf_material('areca leaf', [lin(0.05, 0.11, 0.02), lin(0.085, 0.15, 0.03), lin(0.13, 0.19, 0.04)], 0.12),
         'rachis': _plain('palm rachis', (0.16, 0.18, 0.06, 1), 0.5),
         'dead': _plain('palm dead frond', (0.2, 0.14, 0.07, 1), 0.8),
-        'fruit': _plain('palm fruit', (0.24, 0.07, 0.02, 1), 0.35),
-        'shaft': _plain('palm crownshaft', (0.075, 0.12, 0.05, 1), 0.4, bump_scale=0.08, noise_scale=80),
-        'trunk_foxtail': _trunk_material('palm trunk', (0.15, 0.14, 0.125, 1), (0.085, 0.078, 0.068, 1), (0.3, 0.3, 0.27, 1), 0.06),
+        'fruit': _plain('palm fruit', (0.42, 0.2, 0.03, 1), 0.4),
+        'shaft': _plain('palm crownshaft', (0.085, 0.07, 0.045, 1), 0.85, bump_scale=0.4, noise_scale=120),
+        'trunk_foxtail': _trunk_material('palm trunk', (0.05, 0.048, 0.044, 1), (0.022, 0.021, 0.019, 1), (0.11, 0.11, 0.1, 1), 0.06),
         'trunk_areca': _trunk_material('areca stem', (0.2, 0.22, 0.09, 1), (0.08, 0.08, 0.04, 1), (0.25, 0.25, 0.12, 1), 0.12),
+        'leaf_coconut': _leaf_material('coconut leaf', [lin(0.05, 0.09, 0.02), lin(0.08, 0.13, 0.03), lin(0.11, 0.15, 0.04), lin(0.15, 0.16, 0.05)], 0.25),
+        'trunk_coconut': _trunk_material('coconut trunk', (0.075, 0.066, 0.055, 1), (0.035, 0.03, 0.025, 1), (0.13, 0.125, 0.11, 1), 0.09),
+        'coconut': _plain('coconut fruit', (0.12, 0.13, 0.03, 1), 0.45),
     }
 
 
@@ -330,21 +362,22 @@ def build(palms, b, variants=6, collection_name='palms'):
     col = bpy.data.collections.new(collection_name); bpy.context.scene.collection.children.link(col)
     mats = materials()
     crowns = {}
-    for kind in ('foxtail', 'areca'):
-        crowns[kind] = [crown_mesh(kind, 100 + i, mats) for i in range(variants)]
+    for kind in ('foxtail', 'areca', 'coconut'):
+        if any(p.get('kind', 'foxtail') == kind for p in palms):
+            crowns[kind] = [crown_mesh(kind, 100 + i, mats) for i in range(variants)]
     for p in palms:
         rng = random.Random(p['seed'])
         kind = p.get('kind', 'foxtail')
         base = b(p['base'])
-        h = p['height'] * (1.0 if kind == 'foxtail' else 0.92)
-        r0 = max(p.get('trunkR', 0.17), 0.04) * (0.75 if kind == 'foxtail' else 0.9)
-        bend = (0.03 + rng.random() * 0.05) * min(p.get('lean', 1), 2.5) * (0.5 if kind == 'foxtail' else 1.0)
+        h = p['height'] * (0.92 if kind == 'areca' else 1.0)
+        r0 = max(p.get('trunkR', 0.17), 0.04) * {'foxtail': 0.75, 'coconut': 0.85}.get(kind, 0.9)
+        bend = (0.03 + rng.random() * 0.05) * min(p.get('lean', 1), 2.5) * {'foxtail': 0.5, 'coconut': 1.6}.get(kind, 1.0)
         me, sh, top, tdir = trunk_mesh(h, r0, rng.uniform(0, 6.283), bend, kind, p['seed'], mats)
         o = bpy.data.objects.new('trunk', me); o.location = base; col.objects.link(o)
         if sh: so = bpy.data.objects.new('shaft', sh); so.location = base; col.objects.link(so)
         q = Vector((0, 0, 1)).rotation_difference(tdir)
         q = q @ Quaternion((0, 0, 1), rng.uniform(0, 6.283))
-        s = (h / 10.0) ** 0.25 if kind == 'foxtail' else (h / 3.0) ** 0.35
+        s = (h / 10.0) ** 0.25 if kind in ('foxtail', 'coconut') else (h / 3.0) ** 0.35
         for cm in crowns[kind][rng.randrange(variants)]:
             co = bpy.data.objects.new('crown', cm); col.objects.link(co)
             co.location = base + top; co.rotation_mode = 'QUATERNION'; co.rotation_quaternion = q; co.scale = (s, s, s)

@@ -5,3 +5,9 @@ ref/
 blender/
 tour/*.jpg
 __pycache__/
+assets/textures/
+assets/hdri/
+assets/**/previews/
+geodata/raw/
+geodata/cache/
+assets/.cache/

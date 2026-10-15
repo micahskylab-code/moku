@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { mat } from './materials.js';
 import { fbm, texture } from './textures.js';
 import { footprint } from './house.js';
-import { plantBed, plumeria, frondMaterial, foliageTexture } from './plants.js';
+import { plantBed, plumeria, frondMaterial, foliageTexture, recording, recordPlant } from './plants.js';
 import { distToSeg } from './geom.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { siteLayout } from './neighborhood.js';
@@ -41,7 +41,8 @@ export function buildSite(plan, scene, colliders) {
   if (S.pool) {
     const [x0, y0, x1, y1] = S.pool.rect, lc = [(S.lot[0] + S.lot[2]) / 2, (S.lot[1] + S.lot[3]) / 2];
     const offs = [[0, 0], ...L.nahiku.map(([x, y]) => [x - lc[0], y - lc[1]])];
-    S.holes = offs.slice(0, 16).map(([dx, dy]) => [x0 + dx + 0.1, y0 + dy + 0.1, x1 + dx - 0.1, y1 + dy - 0.1]);
+    const ex = S.pool.edge === 'x0' ? 4.0 : 0;      // vanishing edge: the catch basin and its wall sit below the lawn
+    S.holes = offs.slice(0, 16).map(([dx, dy]) => [x0 - ex + dx + 0.1, y0 + dy + 0.1, x1 + dx - 0.1, y1 + dy - 0.1]);
   }
   g.add(terrainMesh(terrainH, S));
 
@@ -105,7 +106,11 @@ function makeTerrain(S, grade) {
     const out = Math.hypot(dx, dy);
     if (out <= 0) return grade;
     const toward = (x - cx) * ox + (y - cy) * oy;
-    const bank = -(S.bank ?? 7.5) * ss(0.6, 5, lot[0] - x);
+    // behind our lot the pad is held by a coral retaining wall on the lot line: the ground drops
+    // inside the wall's thickness, so its face shows (as in the rendering); elsewhere a soft bank
+    const walled = ss(lot[1] - 12, lot[1] - 2, y) * (1 - ss(lot[3] + 2, lot[3] + 12, y));
+    const gentle = ss(0.6, 5, lot[0] - x), steep = ss(0, 0.8, lot[0] - x);
+    const bank = -(S.bank ?? 7.5) * (gentle + (steep - gentle) * walled);
     const far = ss(60, 600, out);
     const fall = -Math.max(0, toward) * 0.05 * far;
     const rise = Math.max(0, -toward - 900) * 0.11 * far;
@@ -137,18 +142,20 @@ function scatterTrees(H, S) {
   const treeMat = foliageTexture('hedge').clone(); treeMat.color = new THREE.Color('#ffffff');
   const clump = new THREE.InstancedMesh(treeGeo, treeMat, 2600);
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), c = new THREE.Color();
+  const rec = recording(), r2 = v => Math.round(v * 100) / 100;     // export: record, Blender grows real trees
   let n = 0;
   for (let i = 0; i < 9000 && n < 2600; i++) {
     const a = r() * Math.PI * 2, d = 200 + Math.pow(r(), 1.4) * 6500, x = 40 + Math.cos(a) * d, y = 20 + Math.sin(a) * d;
     if (!ok(x, y)) continue;
     const s = 9 + r() * 10, h = H(x, y);
+    if (rec) { r(); const sy = 0.8 + r() * 0.4; r(); r(); recordPlant({ type: 'tree', x: r2(x), y: r2(y), ground: r2(h), size: r2(s), sy: r2(sy), seed: i }); n++; continue; }
     q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), r() * Math.PI);
     m.compose(new THREE.Vector3(x, h, y), q, new THREE.Vector3(s, s * (0.8 + r() * 0.4), s));
     clump.setMatrixAt(n, m); clump.setColorAt(n, c.setHSL(0.24 + r() * 0.06, 0.25, 0.55 + r() * 0.25)); n++;
   }
   q.identity();
-  clump.count = n; clump.castShadow = false; clump.receiveShadow = true;
-  g.add(clump);
+  clump.count = rec ? 0 : n; clump.castShadow = false; clump.receiveShadow = true;
+  if (!rec) g.add(clump);
   // tall palms in groups, silhouetted on the skyline
   const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.7, 1, 6), new THREE.MeshStandardMaterial({ color: '#8f877a', roughness: 1 }), 500);
   const crownGeo = new THREE.ConeGeometry(1, 0.6, 9, 1, true); crownGeo.translate(0, -0.3, 0);
@@ -160,19 +167,21 @@ function scatterTrees(H, S) {
     const ht = 28 + r() * 22, h = H(x, y);
     for (let k = 0; k < 1 + Math.floor(r() * 3) && p < 500; k++) {
       const ox = (r() - 0.5) * 18, oy = (r() - 0.5) * 18;
+      if (rec) { recordPlant({ type: 'farpalm', x: r2(x + ox), y: r2(y + oy), ground: r2(H(x + ox, y + oy)), height: r2(ht * (0.85 + 0.3 * ((p * 0.618) % 1))), seed: 5000 + p }); p++; continue; }
       m.compose(new THREE.Vector3(x + ox, h + ht / 2, y + oy), q, new THREE.Vector3(1, ht, 1)); trunk.setMatrixAt(p, m);
       m.compose(new THREE.Vector3(x + ox, h + ht + 1, y + oy), q, new THREE.Vector3(9, 6, 9)); crown.setMatrixAt(p, m); p++;
     }
   }
-  trunk.count = crown.count = p;
-  g.add(trunk, crown);
+  trunk.count = crown.count = rec ? 0 : p;
+  if (!rec) g.add(trunk, crown);
   return g;
 }
 
 function terrainMesh(H, S) {
-  // A radial grid: dense near the house, coarse far away, out to ~3.5 miles.
-  const rings = 170, segs = 360, pos = [], uv = [], col = [], idx = [];
-  const radius = r => 2 + Math.pow(r / rings, 2.4) * 19000;
+  // A radial grid: a fine, even mesh (0.8 ft rings) out to 130 ft so the bank and the pool cut-out
+  // are smooth, then coarser and coarser out to ~3.5 miles.
+  const NI = 160, NO = 170, rings = NI + NO, segs = 360, pos = [], uv = [], col = [], idx = [];
+  const radius = i => i <= NI ? 2 + i * 0.8 : 2 + NI * 0.8 + Math.pow((i - NI) / NO, 2.4) * 19000;
   const cx = 40, cy = 20;
   const fair = new THREE.Color('#9cc95a'), rough = new THREE.Color('#5f8a36'), far = new THREE.Color('#4f7a33'), field = new THREE.Color('#a98c5d'), green = new THREE.Color('#b4dc6a'), sand = new THREE.Color('#f2e6c8');
   const land = S.landuse ?? (() => 0);
@@ -309,8 +318,11 @@ function pool(P, grade, colliders) {
     sheet.position.set(x0 - 0.2, water - drop / 2, (y0 + y1) / 2); sheet.rotation.y = -Math.PI / 2; g.add(sheet);
     const face = sbox(0.3, drop, d, 'poolTile'); face.position.set(x0 - 0.05, water - drop / 2, (y0 + y1) / 2); g.add(face);
     const basin = new THREE.Mesh(new THREE.PlaneGeometry(2.6, d), mat('water')); basin.rotation.x = -Math.PI / 2; basin.position.set(x0 - 1.6, water - drop, (y0 + y1) / 2); g.add(basin);
-    const rw = sbox(1.2, drop + 6, d + 6, 'ashlar'); rw.position.set(x0 - 3.4, water - drop - 3 + 0.4, (y0 + y1) / 2); g.add(rw);
+    const rw = sbox(1.8, drop + 6, d + 6, 'ashlar'); rw.position.set(x0 - 3.4, water - drop - 3 + 0.4, (y0 + y1) / 2); g.add(rw);
     const bf = sbox(3, 1.0, d + 6, 'ashlar'); bf.position.set(x0 - 1.6, water - drop - 0.4, (y0 + y1) / 2); g.add(bf);
+    // stone ends close the catch basin where the lawn is cut away for it
+    const eTop = grade + 0.25, eBot = water - drop - 0.6;
+    for (const yy of [y0 - 0.3, y1 + 0.3]) { const ew = sbox(3.6, eTop - eBot, 0.6, 'ashlar'); ew.position.set(x0 - 1.8, (eTop + eBot) / 2, yy); g.add(ew); }
   }
   colliders.push(...footprint({ x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, d }));
   return g;
@@ -325,9 +337,9 @@ function stoneWall(W, H, colliders) {
     for (const t of [0, 0.5, 1]) for (const s of [-6, -2.5, 2.5, 6]) probe.push(H(ax + (bx - ax) * t + nx * s, ay + (by - ay) * t + ny * s));
     const base = Math.min(...probe) - (W.footing ?? 2.5);
     const top = (W.top ?? (H(ax, ay) + (W.height ?? 2)));
-    const m = sbox(len + 1.2, top - base, 1.2, 'ashlar');
+    const m = sbox(len + 1.8, top - base, 1.8, 'ashlar');
     m.position.set((ax + bx) / 2, (top + base) / 2, (ay + by) / 2); m.rotation.y = -Math.atan2(by - ay, bx - ax); g.add(m);
-    const cap = sbox(len + 1.4, 0.2, 1.5, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
+    const cap = sbox(len + 2.0, 0.2, 2.0, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
     colliders.push({ a: [ax, ay], b: [bx, by] });
   }
   return g;

@@ -6,6 +6,12 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 const rnd = seed => () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822519) ^ (seed + 0x9e3779b9)) >>> 0) / 4294967296;
 const texCache = new Map();
 
+// Export for the path tracer: plants are only recorded (kind, place, size, seed) and grown leaf by
+// leaf in Blender (scripts/plants_bpy.py), like the palms. Only while exporting (main.js sets
+// globalThis.__palmProxies), so the live walkthrough is unchanged.
+export const recording = () => !!globalThis.__palmProxies;
+export function recordPlant(p) { (globalThis.__plantProxies ??= []).push(p); }
+
 const KINDS = {
   bougainvillea: { leaf: ['#2f5a22', '#3d6b2a', '#4a7a30'], bloom: ['#b0388f', '#9c3486', '#c24a98', '#8f3a8c'], bloomShare: 0.45, size: [2.6, 4.2], cards: 22 },
   gardenia: { leaf: ['#244d1c', '#2f5d22', '#3a6a29'], bloom: ['#fbf8ef', '#f4efe0'], bloomShare: 0.16, bloomShape: 'star', size: [2.0, 3.0], cards: 18 },
@@ -68,6 +74,7 @@ export function plantBed(B, H) {
   const K = KINDS[B.kind];
   const g = new THREE.Group();
   const [x0, y0, x1, y1] = B.rect, r = rnd(Math.round(x0 * 31 + y0 * 11 + 7));
+  if (recording()) { recordPlant({ type: 'bed', kind: B.kind, rect: B.rect, density: B.density ?? 1.1, ground: H((x0 + x1) / 2, (y0 + y1) / 2), seed: Math.round(x0 * 31 + y0 * 11 + 7), shell: true }); return g; }
   if (B.kind === 'ti') return tiBed(B, H, r);
   if (!K) return g;
   const area = (x1 - x0) * (y1 - y0), n = Math.max(1, Math.round(area / (K.size[0] * K.size[0]) * (B.density ?? 1.1)));
@@ -117,6 +124,7 @@ function tiBed(B, H, r) {
 export function plumeria(x, y, ground, s = 1) {
   const r = rnd(Math.round(x * 17 + y * 3 + 11));
   const g = new THREE.Group(); g.position.set(x, ground, y); g.scale.setScalar(s);
+  if (recording()) { recordPlant({ type: 'plumeria', x, y, ground, scale: s, seed: Math.round(x * 17 + y * 3 + 11), shell: true }); return g; }
   const bark = new THREE.MeshStandardMaterial({ color: '#6e665c', roughness: 0.9 });
   const tips = [];
   const branch = (from, dir, len, depth) => {
