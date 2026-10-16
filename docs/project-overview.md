@@ -46,11 +46,11 @@ The Nā Hiku walkthrough is a three.js model of the Nā Hiku spec home (the broc
 - **Fixed sun:** stills and the export use each viewpoint's fixed sun. The interactive viewer uses the live sky.
 
 ## Open items
-- Render round 5:
-  - the back-view waterfall and catch basin;
-  - a near tree that reads as CG;
-  - a patchy lawn strip;
-  - the back framing.
-
-  Scores and details are in `docs/critique-preview4-*.json`.
+- **Scores after render round 5:** front 8/7/7/8, back 8/7/7/7 (architecture / materials and lighting / terrain and water / camera). Defects and fixes are in `docs/critique-preview5-*.json`. The main remaining items:
+  - the waterfall still reads as a frosted panel;
+  - a dark side-yard screen behind the back view;
+  - a patchy lawn texture near the lānai;
+  - aliasing on the wing roofs in the front view;
+  - background haze stronger than the sea behind it;
+  - pale background buildings in front of the ocean.
 - **Missing documents:** dimensioned plans, elevations and sections, the roof plan, the site plan or plat, and the landscape and pool plans. The window/door and finish schedules are missing too, so the matching labels say UNKNOWN or ASSUMED.
