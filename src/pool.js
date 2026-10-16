@@ -330,6 +330,14 @@ export function buildPool(P, grade, colliders) {
     // every garden-wall cap height (G+0.319 .. 0.35 / 0.519 .. 0.55), so no two faces coincide
     { const pier = new THREE.Mesh(box([x0 - 4.3 - e, yE, x0 + 0.03, y1 + 0.6], bFloor - 0.6, G + 0.345), mat('ashlar')); g.add(pier);
       const cap = new THREE.Mesh(box([x0 - 4.424, yE - 0.1, x0 + 0.05, y1 + 0.7], G + 0.345, G + 0.565), mat('coral')); g.add(cap); }
+    // r5 (critique-preview4-back #1): the weir stops ~10 cm (0.33 ft) short of the pier in a clean dry return --
+    // a stone dam across the weir, its face 3/8" proud of the falls face (and of the cap's nose), under a
+    // bullnosed coping that meets the y1 coping; the sheet, foam and spray stop at its end face (yR)
+    const yR = yE - 0.33;
+    { const dam = new THREE.Mesh(box([x0 - 0.03, yR, xi0 - 0.01, y1 + 0.1], bFloor - 0.3, copeBot - 0.004), mat('ashlar')); g.add(dam);
+      add('waterline tile', box([xi0 - 0.02, yR, xi0 + 0.012, y1 + 0.02], tb, copeBot - 0.006, copeBot));
+      copingRun(cope, 'y', yR - 0.03, y1 - in_ - 0.006, x0 - 0.07, xi0 + in_, copeTop, copeH, 'hi', 2.0, R);
+      add('pool coping', ...cope.splice(0)); }
     // the falling water: one continuous sheet off the cap's rounded nose (centreline 0.014 ft over the stone,
     // leaving at ~1.15 ft/s, so it lands ~4" out from the wall), 1/4" thick at the lip thinning to 3/16"
     const prof = fallPath(x0 + 0.1, x0 - 0.02, capTop, capH / 2, Wb - 0.06, 0, 1.15, R, 0).map(([x, y]) => [x, y]);
@@ -337,7 +345,7 @@ export function buildPool(P, grade, colliders) {
     const ph = [R() * 6.28, R() * 6.28, R() * 6.28];
     const drift = z => 0.035 + 0.02 * Math.sin(z * 0.83 + ph[0]) + 0.012 * Math.sin(z * 2.3 + ph[1]) + 0.006 * Math.sin(z * 5.9 + ph[2]);
     const sheetG = [];
-    sheetSlab(prof, y0 + 0.01, yE - 0.01, 0.2, f => 0.021 - 0.006 * f, drift, sheetG);
+    sheetSlab(prof, y0 + 0.01, yR - 0.01, 0.2, f => 0.021 - 0.006 * f, drift, sheetG);
     add('falls sheet', ...sheetG);
     add('basin water', (() => {
       const b = body([[xb - ov, y0 - ov], [x0 + ov, y0 - ov], [x0 + ov, yE + ov], [xb - ov, yE + ov]], bFloor - ov, Wb);
@@ -348,12 +356,12 @@ export function buildPool(P, grade, colliders) {
     // the aerated line where the sheet lands: surface foam from the wall to ~9" out (densest on the impact
     // line, trailing out in patches), and a fainter plume of bubbles just under the surface.
     // uv.x = ft out from the impact line; colour = the layer's opacity (water_bpy multiplies it in)
-    for (const [yy, xa, xc, alpha] of [[Wb + 0.008, x0 - 0.01, xImp - 0.8, 1.0], [Wb - 0.09, x0 - 0.02, xImp - 0.35, 0.35]]) {
-      const ww = xa - xc, pg = new THREE.PlaneGeometry(ww, yE - y0 - 0.04, 10, 300);
+    for (const [yy, xa, xc, alpha] of [[Wb + 0.008, x0 - 0.01, xImp - 0.8, 1.0], [Wb - 0.09, x0 - 0.02, xImp - 0.35, 0.22]]) {
+      const ww = xa - xc, pg = new THREE.PlaneGeometry(ww, yR - y0 - 0.04, 10, 300);
       pg.rotateX(-Math.PI / 2);
       const p = pg.attributes.position, uv = pg.attributes.uv;
       for (let i = 0; i < p.count; i++) {
-        const x = p.getX(i) + (xa + xc) / 2, zz = p.getZ(i) + (y0 + yE) / 2, d = xImp - x;
+        const x = p.getX(i) + (xa + xc) / 2, zz = p.getZ(i) + (y0 + yR) / 2, d = xImp - x;
         const bub = yy > Wb ? 0.02 * Math.exp(-d * d / 0.03) * Math.max(0, Math.sin(zz * 9.1 + x * 13) * Math.sin(zz * 3.3 - x * 7)) : 0;
         p.setXYZ(i, x, yy + bub, zz);
         uv.setXY(i, d, zz);
@@ -365,8 +373,8 @@ export function buildPool(P, grade, colliders) {
     // spray: two soft curtains of mist standing on the impact line, one just in front of the sheet's foot
     // (~5" tall) and a lower one behind it, gently waved along the weir; uv.x = height fraction (0 at the
     // water .. 1 at the top), uv.y = ft along the weir (water_bpy fades and breaks them up)
-    for (const [xs, hgt, ph0] of [[xImp - 0.07, 0.42, 0.0], [xImp + 0.08, 0.28, 1.7]]) {
-      const len = yE - y0 - 0.04, nz = 240, pos = [], uvs = [], idx = [];
+    for (const [xs, hgt, ph0] of [[xImp - 0.07, 0.3, 0.0], [xImp + 0.08, 0.22, 1.7]]) {
+      const len = yR - y0 - 0.04, nz = 240, pos = [], uvs = [], idx = [];
       for (let i = 0; i <= nz; i++) for (let j = 0; j <= 2; j++) {
         const zz = y0 + 0.02 + len * i / nz, t = j / 2;
         pos.push(xs - 0.04 * t + 0.025 * Math.sin(zz * 2.7 + ph0), Wb - 0.02 + hgt * t, zz); uvs.push(t, zz);

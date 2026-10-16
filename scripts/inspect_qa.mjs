@@ -108,6 +108,37 @@ const doc = JSON.parse(await readFile(file, 'utf8'));
 check('export is a local JSON file with the question and the concept label', doc.format === 'nahiku-questions/1' && doc.questions.length === 1 && /concept visualization/i.test(doc.label), dl.suggestedFilename());
 await page.click('#inspect button:has-text("Delete all")');
 check('Delete all asks for a second tap first', (await page.evaluate(() => window.__inspect.questions().length)) === 1 && /Tap again/.test(await page.textContent('#inspect')));
+// a redraw disarms Delete all: after Export JSON redraws the panel, one tap only arms it again
+await page.click('#inspect button:has-text("Export JSON")');
+await page.click('#inspect button:has-text("Delete all")');
+check('a redraw disarms Delete all (one tap after it deletes nothing)', (await page.evaluate(() => window.__inspect.questions().length)) === 1 && /Tap again/.test(await page.textContent('#inspect')));
+// a question saved in another tab survives a save in this one
+await page.evaluate(() => { const k = 'nahiku.lot25.questions.v1', q = JSON.parse(localStorage.getItem(k)); q.push({ id: 'other-tab', created: new Date().toISOString(), space: { id: 'bed2', name: 'Bedroom 2' }, display: 'exterior', text: 'From another tab', camera: { position: [0, 50, 0], target: [0, 0, 0] } }); localStorage.setItem(k, JSON.stringify(q)); });
+await page.evaluate(() => window.__inspect.select('pantry'));
+await page.fill('#inspect textarea', 'Is the speed oven included?');
+await page.click('#inspect button[data-k=save]');
+const merged = await page.evaluate(() => JSON.parse(localStorage.getItem('nahiku.lot25.questions.v1')).map(q => q.id === 'other-tab' ? 'other' : q.space.id));
+check('saving keeps a question added by another tab', merged.includes('other') && merged.includes('pantry') && merged.includes('kitchen'), JSON.stringify(merged));
+// a pending draft goes to its own space when the selection changes inside the save delay
+await page.evaluate(() => window.__inspect.select('bed2'));
+await page.fill('#inspect textarea', 'Draft for bedroom 2');
+await page.evaluate(() => window.__inspect.select('laundry'));
+await page.waitForTimeout(600);
+const dr = await page.evaluate(() => JSON.parse(localStorage.getItem('nahiku.lot25.drafts.v1') ?? '{}'));
+check('a draft stays with its own space when the selection changes', dr.bed2 === 'Draft for bedroom 2' && !dr.laundry && /king bed/.test(dr.bed3 ?? ''), JSON.stringify(dr));
+// delete, then undo
+await page.evaluate(() => window.__inspect.select('pantry'));
+const n0 = await page.evaluate(() => window.__inspect.questions().length);
+await page.click('#inspect .ic-qs button:has-text("Delete")');
+const n1 = await page.evaluate(() => window.__inspect.questions().length);
+await page.click('#inspect button[data-k=undo]');
+const n2 = await page.evaluate(() => window.__inspect.questions().length);
+check('a deleted question can be undone', n1 === n0 - 1 && n2 === n0, `${n0} -> ${n1} -> ${n2}`);
+// tapping the selected space again reopens a closed panel
+await page.click('#inspect .ic-close'); await frames(page, 2); await settle(page);
+const pp = await page.evaluate(() => window.__inspect.screenOf('pantry'));
+await page.mouse.click(pp.x, pp.y); await frames(page, 2);
+check('tapping the selected space reopens its panel', !(await page.evaluate(() => document.getElementById('inspect').hidden)) && (await state(page)).selected === 'pantry', JSON.stringify(pp));
 
 // walk <-> model round trip: the other homes and the materials come back
 await page.goto(`${base}?${SKY}`);

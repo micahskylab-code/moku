@@ -44,7 +44,7 @@ def build(out: Path):
     html = html.replace('</style>', '  #quality { display: none !important; }\n</style>', 1)
     main = '<script type="module" src="src/main.js"></script>'
     assert main in html
-    html = html.replace(main, '<script>window.__NAHIKU_MODE = \'model\';</script>\n' + main)
+    html = html.replace(main, '<script>window.__NAHIKU_MODE = \'model\'; window.__NAHIKU_HOSTED = true;</script>\n' + main)   # hosted: no file download offered
     (out / 'index.html').write_text(html)
     files = []
     for d in ('src', 'plans', 'data'):

@@ -13,6 +13,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { siteLayout } from './neighborhood.js';
 import { inside } from './geom.js';
 import { buildPool } from './pool.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const rnd = seed => () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822519) ^ (seed + 0x9e3779b9)) >>> 0) / 4294967296;
 
@@ -52,11 +53,15 @@ export function buildSite(plan, scene, colliders) {
   if (S.pool) { const p = pool(S.pool, grade, colliders); p.userData.shell = true; g.add(p); }
 
   // ---- hardscape ----
-  for (const p of S.paths ?? []) { const m = slab(p.rect, grade + 0.02, p.material ?? 'pavers'); m.userData.shell = true; g.add(m); }
-  // the grass-paver drive sits in a tan coral border band along both long sides (front rendering p4)
+  for (const p of S.paths ?? []) {
+    const m = p.slabs ? slabWalk(p, grade) : slab(p.rect, grade + 0.02, p.material ?? 'pavers');
+    m.userData.shell = true; g.add(m);
+  }
+  // the grass-paver drive sits in a tan stone border band along both long sides (front rendering p4): cut pieces
+  // on a setting bed (so no turf sprouts in the hairline joints); border = [far side, walk side] widths, ft
   for (const p of (S.paths ?? []).filter(p => p.material === 'grassPavers')) {
-    const [x0, y0, x1, y1] = p.rect, bw = 0.9;
-    for (const r of [[x0, y0 - bw, x1, y0], [x0, y1, x1, y1 + bw]]) { const m = slab(r, grade + 0.03, 'coral'); m.userData.shell = true; g.add(m); }
+    const [x0, y0, x1, y1] = p.rect, [b0, b1] = p.border ?? [0.9, 0.9];
+    for (const r of [[x0, y0 - b0, x1, y0], [x0, y1, x1, y1 + b1]]) { const m = borderBand(r, grade); m.userData.shell = true; g.add(m); }
   }
   for (const w of S.walls ?? []) { const m = stoneWall(w, terrainH, colliders); m.userData.shell = true; g.add(m); }
 
@@ -312,6 +317,48 @@ function slab([x0, y0, x1, y1], y, material, t = 0.12) {
   return m;
 }
 
+// A cut stone (walk slab, border piece): a box with a ~3/8 in eased arris. UVs put the viewer's 'stepping'
+// texture's stone (4.8 ft across, rows 2 ft) on the piece; Cycles shades by world position (scripts/materials_bpy.py).
+const stoneCache = new Map();
+function stoneGeo(w, t, d) {
+  const k = `${w.toFixed(3)}|${t}|${d.toFixed(3)}`;
+  if (stoneCache.has(k)) return stoneCache.get(k);
+  const geo = new RoundedBoxGeometry(w, t, d, 2, Math.min(0.03, t / 2 - 0.001));
+  const P = geo.attributes.position, uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, 3 + P.getZ(i) * Math.min(1, 4.4 / d), 1 + P.getX(i) * Math.min(1, 1.8 / w));
+  uv.needsUpdate = true;
+  stoneCache.set(k, geo); return geo;
+}
+// Entry walk (front rendering p4, critique-preview4-front #8): single slabs [along, across, joint] centred on the
+// walk, set 1 1/2 in proud of the lawn so the grass grows in the joints; hand-laid, so each is a hair off square,
+// line and level. One mesh per slab: Cycles gives each its own tone.
+function slabWalk(p, grade) {
+  const [x0, y0, x1, y1] = p.rect, [along, across, joint] = p.slabs, cy = (y0 + y1) / 2, t = 0.3, top = grade + 0.12;
+  const n = Math.floor((x1 - x0 - joint) / (along + joint)), s0 = x0 + (x1 - x0 - n * along - (n - 1) * joint) / 2;
+  const r = rnd(Math.round(x0 * 13 + cy * 7)), g = new THREE.Group();
+  for (let k = 0; k < n; k++) {
+    const w = along + (r() - 0.5) * 0.05, d = across + (r() - 0.5) * 0.06;
+    const m = new THREE.Mesh(stoneGeo(w, t, d), mat(p.material ?? 'stepping'));
+    m.position.set(s0 + k * (along + joint) + along / 2 + (r() - 0.5) * 0.05, top - t / 2 + (r() - 0.5) * 0.012, cy + (r() - 0.5) * 0.1);
+    m.rotation.y = (r() - 0.5) * 0.02;
+    m.castShadow = m.receiveShadow = true;
+    g.add(m);
+  }
+  return g;
+}
+// Drive border band: 2 ft cut pieces of the walk stone with 3/8 in joints on a setting bed a little below them.
+function borderBand([x0, y0, x1, y1], grade, material = 'stepping') {
+  const g = new THREE.Group(), w = y1 - y0, piece = 2.0, j = 0.03, n = Math.max(1, Math.round((x1 - x0) / (piece + j)));
+  const L = (x1 - x0 - (n - 1) * j) / n, r = rnd(Math.round(x0 * 5 + y0 * 11)), t = 0.2, top = grade + 0.07;
+  g.add(slab([x0, y0 + 0.02, x1, y1 - 0.02], top - 0.03, material, 0.15));
+  for (let k = 0; k < n; k++) {
+    const m = new THREE.Mesh(stoneGeo(L - 0.004, t, w - 0.01), mat(material));
+    m.position.set(x0 + k * (L + j) + L / 2, top - t / 2 + (r() - 0.5) * 0.008, (y0 + y1) / 2);
+    m.castShadow = m.receiveShadow = true; g.add(m);
+  }
+  return g;
+}
+
 // World-scale UVs on a box so textures keep their real size.
 function setBoxUV(geo, w, h, d) {
   const uv = geo.attributes.uv, n = geo.attributes.normal, p = geo.attributes.position;
@@ -342,12 +389,39 @@ function stoneWall(W, H, colliders) {
     // ends pull back (so an end never lies in the plane of the crossing run's face) and caps step down
     const k = wallRun++ % 4, drop = k * 0.0104, pull = (k + 1) * 0.03;
     const top = (W.top ?? (H(ax, ay) + (W.height ?? 2))) - drop;
+    if (W.planter) { planterRun(g, W.planter, ax, ay, bx, by, len, nx, ny, base, top, len + 1.8 - 2 * pull); colliders.push({ a: [ax, ay], b: [bx, by] }); continue; }
     const m = sbox(len + 1.8 - 2 * pull, top - base, 1.8, 'ashlar');
     m.position.set((ax + bx) / 2, (top + base) / 2, (ay + by) / 2); m.rotation.y = -Math.atan2(by - ay, bx - ax); g.add(m);
     const cap = sbox(len + 2.0 - 2 * pull, 0.2, 2.0, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
     colliders.push({ a: [ax, ay], b: [bx, by] });
   }
   return g;
+}
+
+// A raised planter riding on a retaining-wall run (critique-preview4-back #10, as the p5 rendering's right wall):
+// the wall's outer (n-side) face carried up `rise` ft past its old top as the planter's outer curb, an inner curb on
+// the lawn side, end curbs, a bed of soil ~2.5" under the rim and a narrow coping on every curb. P.width = the soil
+// width (ft), P.curb = curb thickness; across runs along n from the outer face (+0.9, the old wall face) inward.
+// The soil's material starts with 'terrain', so scripts/plants_bpy.py plants the planter's bed (gen_lot25 beds) on it.
+// Curbs and core only touch back to back (hidden faces); the copings meet edge to edge, so no visible face coincides.
+const PLANTER_SOIL = Object.assign(new THREE.MeshStandardMaterial({ color: '#4a3a2b', roughness: 1 }), { name: 'terrain planter' });
+function planterRun(g, P, ax, ay, bx, by, len, nx, ny, base, top, L) {
+  const ct = P.curb ?? 0.33, pw = P.width ?? 1.4, rim = top + (P.rise ?? 0.9), soil = rim - 0.2;
+  const o = 0.9, inn = o - 2 * ct - pw, ux = (bx - ax) / len, uy = (by - ay) / len, mx = (ax + bx) / 2, my = (ay + by) / 2;
+  const rot = -Math.atan2(by - ay, bx - ax);
+  const put = (w, y0, y1, c0, c1, material, a = 0) => {
+    const m = typeof material === 'string' ? sbox(w, y1 - y0, c1 - c0, material) : new THREE.Mesh(new THREE.BoxGeometry(w, y1 - y0, c1 - c0), material);
+    const c = (c0 + c1) / 2; m.position.set(mx + ux * a + nx * c, (y0 + y1) / 2, my + uy * a + ny * c); m.rotation.y = rot; g.add(m); return m;
+  };
+  put(L, base, rim, o - ct, o, 'ashlar');                                   // outer curb: the retaining face carried up
+  put(L, base, rim, inn, inn + ct, 'ashlar');                               // inner curb, footed like the wall
+  put(L - 2 * ct, base, soil - 0.25, inn + ct, o - ct, 'ashlar');           // core under the soil
+  for (const s of [-1, 1]) put(ct, base, rim, inn + ct, o - ct, 'ashlar', s * (L - ct) / 2);   // end curbs
+  put(L - 2 * ct, soil - 0.3, soil, inn + ct, o - ct, PLANTER_SOIL);
+  const k = 0.07;                                                           // coping overhang
+  put(L + 2 * k, rim, rim + 0.2, o - ct - k, o + k, 'coral');
+  put(L + 2 * k, rim, rim + 0.2, inn - k, inn + ct + k, 'coral');
+  for (const s of [-1, 1]) put(ct + k, rim, rim + 0.2, inn + ct + k, o - ct - k, 'coral', s * (L - ct + k) / 2);
 }
 
 // ---------- plants ----------

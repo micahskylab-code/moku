@@ -382,6 +382,9 @@ function dress(P, g, o, x0, x1, yb, head, T, plusIn, minusIn, colliders, at) {
       leaf.rotation.y = -0.7;
       g.add(leaf);
       outCasing(false); inCasing(false);
+      // r5 (critique-preview4-front #5, p4): `header` (ft): a cedar-clad header band across the door and sidelights,
+      // 3" proud of the wall over the head casing, as in the front rendering
+      if (o.header && outSide) P.box(mat('cedar'), w + 0.8, o.header, 0.26, cx, head + o.header / 2, faceOut + outSide * 0.13);
       break;
     }
     case 'door': {

@@ -11,7 +11,7 @@
 //    a gooseneck back to the wall at chosen corners;
 //  - Dutch gables (`dutch`: the skirt's run in ft): the hip skirt runs up-slope from the eave, then a
 //    gable rides the ridge and ends in a vertical gable wall filled with a recessed louvered vent;
-//  - roof openings (`holes`) over the garden showers: cedar-lined well with 2x6 slats.
+//  - roof openings (`holes`) over the garden showers: cedar-lined well with 2x4 slats down the fall line.
 import * as THREE from 'three';
 import { mat } from './materials.js';
 
@@ -31,7 +31,6 @@ const GUTTER_M = () => finish('gutter', '#36393d', 0.4, 0.3);             // K-s
 const LOUVER_M = () => finish('gableLouver', '#7b8086', 0.5, 0.15);       // gable vent blades: roof colour
 const CAVITY_M = () => finish('gableCavity', '#121314', 0.95);            // the dark attic behind the vent
 const FLASH_M = () => finish('flashing', '#6f7378', 0.4, 0.3);            // valley pans, curbs
-const WELL_M = () => finish('wellLining', '#2b2520', 0.9);                // roof-well lining: dark-stained cedar
 
 // ---------------------------------------------------------------------------------- 2D polygon helpers
 const area = P => { let a = 0; for (let i = 0; i < P.length; i++) { const A = P[i], B = P[(i + 1) % P.length]; a += A[0] * B[1] - B[0] * A[1]; } return a / 2; };
@@ -615,7 +614,7 @@ export class Roofs {
 
   // ------------------------------------------------------------------------------ roof openings
   // A rectangle cut through the roof (over a garden shower): cedar-lined well, metal curb, and a slatted
-  // cedar hatch of 2x6s on edge running down the slope (rain and leaves run off between them), 4" on
+  // cedar hatch of 2x4s on edge running down the slope (rain and leaves run off between them), 4" on
   // centre, their tops level with the curb and their ends bearing on it, so the opening reads from the
   // street as a deliberate cedar grille. The lining is one face, wound into the well: a second coincident
   // face behind it shadowed it black in Cycles.
@@ -643,22 +642,23 @@ export class Roofs {
     const ux = -f.dir[1], uy = f.dir[0], dx = f.dir[0], dy = f.dir[1];
     const ts = C.map(([x, y]) => x * ux + y * uy), ss = C.map(([x, y]) => x * dx + y * dy);
     const t0 = Math.min(...ts), t1 = Math.max(...ts), s0 = Math.min(...ss), s1 = Math.max(...ss);
-    const n3 = nrm([-f.L[0], 1, -f.L[1]]), d3 = nrm([dx, f.L[0] * dx + f.L[1] * dy, dy]);
-    // open cedar slats 2" wide x 4" deep, 6" on centre up the slope (4" clear), running parallel to the eave.
-    // Both wells' planes fall toward the walk, so from the street the eye looks along the slats and down into
-    // the gaps (r2 ran them down the slope: seen across, their 5 1/2" sides closed into one tan board, front #10)
-    const sp = 0.5 / Math.hypot(1, f.L[0] * dx + f.L[1] * dy);                 // 6" along the slope, in plan
-    const nb = Math.max(2, Math.round((s1 - s0) / sp)), bay = (s1 - s0) / nb;
+    const n3 = nrm([-f.L[0], 1, -f.L[1]]), u3w = [ux, 0, uy];
+    // r5 (critique-preview4-front #11): open cedar 2x4s on edge (1 1/2" x 3 1/2"), 4" on centre ACROSS the well's
+    // short axis (along the eave), each running the well's length down the fall line. Both wells' planes fall
+    // toward the walk and the street eye looks along the eave at ~6 deg over the metal, so the slats now show their
+    // broad 3 1/2" faces to the street as a stacked cedar grille (r3/r4 ran them along the eave: seen end-on they
+    // read as a row of glowing orange dots in a black trough). Tops 2" under the metal so the near curb hides less
+    // of them; ends stop 1/8" off the lining (no coincident faces). Stained like the entry screen (cedarBatten).
+    const sp = 4 / 12;
+    const nb = Math.max(3, Math.round((t1 - t0) / sp)), bay = (t1 - t0) / nb;
     for (let k = 0; k < nb; k++) {
-      const s = s0 + (k + 0.5) * bay;
-      // r4 (critique-preview3-front #11): the grille sits down in the well, its tops ~4 1/4" under the metal and
-      // 2x3s on edge (undersides at the ceiling), so from the street the curb, the dark lined well and the gaps
-      // read as an opening rather than slats laid on the roof; ends stop 1/8" off the lining (no coincident faces)
-      const P = t => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.36, y]; };
-      slats.sweep([[-0.083, 0], [0.083, 0], [0.083, -0.25], [-0.083, -0.25]], P(t0 + 0.01), P(t1 - 0.01), d3, n3);
+      const t = t0 + (k + 0.5) * bay;
+      const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.17, y]; };
+      slats.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.29], [-0.0625, -0.29]], P(s0 + 0.01), P(s1 - 0.01), u3w, n3);
     }
-    // the lining in a dark stain (concept: reads as a dark gap between the slats, striped by their shadows)
-    for (const [acc, m] of [[well, WELL_M()], [slats, mat('woodBeam')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
+    // r5: the lining in the same cedar (r4's near-black stain read as a black trough behind the slats); in the
+    // well's shade it falls to a warm mid brown, so the gaps read as a lined opening rather than a void
+    for (const [acc, m] of [[well, mat('#6b4a2e')], [slats, mat('#6b4a2e')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
   }
 
   // ------------------------------------------------------------------------------ downspouts

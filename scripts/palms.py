@@ -604,9 +604,11 @@ def _panicle(stem, fruit, spathe, rng, nr, origin, hd, reach, hang, n_rach, n_fr
 QUEEN_STYLES = [(1.0, 0, 1.0), (1.25, -6, 0.85), (0.9, 4, 1.15), (1.15, -3, 1.0), (1.35, -8, 0.9), (0.95, 2, 1.1), (1.1, -4, 0.95)]
 
 
-def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0)):
+def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0), trim=None):
     """Fronds, spear, crownshaft, leaf bases, dead fronds and fruit; origin at the top of the trunk, Z up.
-    style: (droop factor, lift in degrees, frond-count factor) for per-variant silhouettes."""
+    style: (droop factor, lift in degrees, frond-count factor) for per-variant silhouettes.
+    trim: (azimuth, half width) in radians - the gardener's pruning: spreading fronds pointing into that sector are
+    cut off (a palm beside a walk keeps only the fronds that grow away from it)."""
     rng = random.Random(seed)
     K = KIND[kind]
     dm, de, nf = style
@@ -623,6 +625,8 @@ def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0)):
         lb, sb = MeshBuf(), MeshBuf()
         _frond(lb, sb, rng, kind, L, elev, droop, age)
         az = az0 + k * GOLDEN + rng.uniform(-0.35, 0.35)
+        if trim is not None and age > 0.1 and abs((az - trim[0] + math.pi) % (2 * math.pi) - math.pi) < trim[1]:
+            continue                                       # pruned: no frond (nor its leaf base) toward the walk
         R = np.array(Matrix.Rotation(az, 3, 'Z'))
         off = R @ np.array([K['r0'], 0, drop])
         _move(lb, leaf, R, off); _move(sb, stem, R, off)
@@ -848,11 +852,55 @@ def _neighbour_tree(p):
     return (h % 100) < 50
 
 
+LOT_Z = (-8 * 0.3048, 53.5 * 0.3048)    # our lot's side lot lines (three.js z, metres)
+WALK_Z = 22.3 * 0.3048                   # the entry walk's axis (three.js z)
+FT = 0.3048
+
+
+def _h(seed, salt):
+    return ((((int(seed) + salt * 7919) * 2654435761) >> 7) & 0xffff) / 65536.0
+
+
+def _vary_neighbours(palms):
+    """r5 (critique-preview4 front #6 / back #2): the copies of our queen palms on the other lots no longer repeat one
+    skyline. Each lot keeps, swaps or drops them by its own hash: about a third stay queen palms (height +-25 %), a
+    quarter of the street pairs become foxtails, a third of the back-yard ones a broadleaf shade tree (grown by
+    scripts/plants_bpy.py) and the rest are dropped. The lots either side lose their back-yard queens altogether: the
+    back view's camera stands in the left one's side yard (a canopy there was the nearest thing in the frame), and from
+    the front their crowns stood in a row with ours along the skyline."""
+    for p in palms:
+        house = p.get('house', 0)
+        if house <= 0 or _kind(p) != 'queen': continue
+        z = p['base'][2]
+        u = _h(p['seed'], 1)
+        if p['base'][0] < 0:                                   # back yard
+            if LOT_Z[0] - 22.0 < z < LOT_Z[1] + 22.0: p['_drop'] = True
+            elif u < 0.3: p['_tree'] = True
+            elif u < 0.65: p['_drop'] = True
+            else: p['height'] *= 0.75 + 0.5 * _h(p['seed'], 2)
+        else:                                                  # the street pair
+            if u < 0.45: p['_drop'] = True
+            elif u < 0.7: p['kind'] = 'foxtail'; p['height'] *= 0.55 + 0.15 * _h(p['seed'], 3)
+            else: p['height'] *= 0.75 + 0.5 * _h(p['seed'], 2)
+
+
+def _walk_trim(p, base, b_axis_y):
+    """Our entry courtyard's christmas / lipstick palms either side of the walk: (azimuth toward the walk, half width)
+    of the fronds the gardener prunes (critique-preview4-front #5), or None."""
+    if p.get('house', 0) != 0 or _kind(p) not in ('christmas', 'lipstick'): return None
+    x, z = p['base'][0], p['base'][2]
+    if not (80 * FT < x < 122 * FT and abs(z - WALK_Z) < 4.6): return None
+    toward = 1.0 if b_axis_y > base.y else -1.0
+    return (math.atan2(toward, 0.0), math.radians(78))
+
+
 def build(palms, b, variants=None, collection_name='palms'):
     """palms: [{kind, seed, base (three.js metres), height, trunkR, lean}]; b: three.js -> Blender.
     Trunks of a kind are merged into one mesh; crowns are a few variants per kind, instanced."""
     col = bpy.data.collections.new(collection_name); bpy.context.scene.collection.children.link(col)
     mats = materials()
+    _vary_neighbours(palms)
+    palms = [p for p in palms if not p.get('_drop')]
     nvar = {k: (variants or v) for k, v in VARIANTS.items()}
     protos = {}
     kinds = sorted({_kind(p) for p in palms})
@@ -870,8 +918,7 @@ def build(palms, b, variants=None, collection_name='palms'):
         kind = _kind(p); K = KIND[kind]
         base = b(p['base'])
         house = p.get('house', 0)
-        if kind == 'queen' and house > 0 and p['base'][0] < 0 and _neighbour_tree(p):
-            p['_tree'] = True                              # grown as a broadleaf tree by scripts/plants_bpy.py
+        if p.get('_tree'):                                 # grown as a broadleaf tree by scripts/plants_bpy.py
             continue
         h = max(p['height'], K['shaft'] + 0.2)
         if house > 0:                                      # the copies on the other lots: no two gardens alike
@@ -888,12 +935,23 @@ def build(palms, b, variants=None, collection_name='palms'):
             nb = [v for v in nb if 0.1 < v.length < 6.0]
             if nb:
                 v = min(nb, key=lambda v: v.length); ldir = math.atan2(-v.y, -v.x) + rng.uniform(-0.3, 0.3)
+        trim = _walk_trim(p, base, b([0, 0, WALK_Z]).y)
+        if trim is not None:                               # lean away from the walk, as palms grow toward open light
+            ldir = trim[0] + math.pi + rng.uniform(-0.4, 0.4); bend = max(bend, 0.05)
         tb, sh, top, tdir = trunk_mesh(h, r0, ldir, bend, kind, p['seed'])
         trunks.setdefault(kind, MeshBuf()).extend(tb, off=np.array(base[:]))      # all trunks of a kind: one mesh
         if sh: boots.setdefault(kind, MeshBuf()).extend(sh, off=np.array(base[:]))
-        q = Vector((0, 0, 1)).rotation_difference(tdir)
-        q = q @ Quaternion((0, 0, 1), rng.uniform(0, 6.283))
+        q0 = Vector((0, 0, 1)).rotation_difference(tdir)
+        q = q0 @ Quaternion((0, 0, 1), rng.uniform(0, 6.283))
         s = min(1.4, max(0.6, (h / K['href']) ** K['spow']))
+        # r5 (critique-preview4-front #6): crown size varies +-20 % palm to palm (queens), +-10 % for the rest
+        s *= rng.uniform(0.82, 1.2) if kind == 'queen' else rng.uniform(0.9, 1.1)
+        if trim is not None:                               # a crown of its own, pruned on the walk side
+            ob = bpy.data.objects.new(f'{kind}-crown-pruned-{abs(int(p["seed"]))}',
+                                      crown_mesh(kind, 300 + abs(int(p['seed'])) % 997, mats, (1.0, 0.0, 1.0), trim=trim)[0])
+            col.objects.link(ob); ob.location = base + top; ob.rotation_mode = 'QUATERNION'; ob.rotation_quaternion = q0
+            ob.scale = (s, s, s)
+            continue
         P, R, S, I = inst[kind]
         # never the same crown twice in a row among neighbours: pick the variant least used so far nearby
         near = [i for (pp, i) in used[kind] if (pp - base).length < 12]

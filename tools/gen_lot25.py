@@ -36,6 +36,7 @@ KIT = dict(sill=4.0, head=8.0)
 SLIDE = dict(head=9.0)
 DH = dict(sill=2.5, head=8.0, dh=True)             # double-hung 1-over-1, bronze sashes (back rendering, TV wall)
 DOOR = dict(head=8.0)
+HALLWIN = dict(sill=2.0, head=8.0)                 # p6 draws windows (not openings) from the hall and vestibule onto the entry; heights assumed (I-2)
 
 # ---------------- main house, north side (bedroom 3 wing + great room) ----------------
 hwall(555, 588, 1986, EXT, [
@@ -48,11 +49,12 @@ hwall(627, 217, 596, EXT, [('louvered', 241, 286, dict(sill=3.5, head=7.5)), ('l
 # Great room west wall: thick pocket wall, 18 ft of stacking glass that disappears into the pocket
 vwall(604, 551, 1211, 1.39, [('pocket', 672, 1090, dict(head=9.5, panels=6, deployed=4, rows=3))])
 # Great room east wall: kitchen side openings, hall, glass pivot front door with sidelights
-vwall(1284, 551, 1211, EXT, [('cased', 614, 737, DOOR), ('cased', 847, 913, DOOR), ('pivot', 959, 1168, dict(head=9.0))])
+# r5 (critique-preview4-front #5): p4's 1 ft cedar header band over the pivot door and sidelights (register I-2b)
+vwall(1284, 551, 1211, EXT, [('cased', 614, 737, DOOR), ('cased', 847, 913, DOOR), ('pivot', 959, 1168, dict(head=9.0, header=1.0))])
 hwall(683, 1284, 1427, INT, [('cased', 1325, 1382, DOOR)])          # pantry north
 hwall(786, 1280, 1427, INT)                                         # pantry south / hall north
 vwall(1421, 551, 919, INT, [('door', 852, 919, DOOR)])              # bedroom 3 west + door from hall
-hwall(921, 1280, 1753, EXT, [('cased', 1330, 1377, DOOR), ('slider', 1497, 1682, SLIDE)])  # hall + bedroom 3 to courtyard
+hwall(921, 1280, 1753, EXT, [('window', 1330, 1377, HALLWIN), ('slider', 1497, 1682, SLIDE)])  # hall window onto the entry + bedroom 3 to courtyard
 vwall(1749, 551, 919, INT, [('door', 700, 760, DOOR), ('window', 857, 919, BED)])
 vwall(1802.5, 551, 688, INT)                                       # bath 3 closet / WC
 vwall(1879, 551, 694, INT)                                         # bath 3 WC / shower
@@ -64,7 +66,7 @@ vwall(1980, 551, 831, EXT, [('slider', 622, 761, SLIDE)])           # glass to g
 # r4 (critique-preview3-back #8): the right-hand window moved 3.2 ft clear of the lanai corner post (it sat behind it),
 # so the TV hangs between two double-hungs as in p5; same size
 hwall(1207, 169, 1000, EXT, [('window', 275, 323, DH), ('window', 471, 518, DH), ('door', 620, 701, DOOR)], outside='batten')
-hwall(1207, 1280, 1753, EXT, [('cased', 1330, 1377, DOOR), ('slider', 1497, 1683, SLIDE)])
+hwall(1207, 1280, 1753, EXT, [('window', 1330, 1377, HALLWIN), ('slider', 1497, 1683, SLIDE)])
 # primary bedroom west, gable end (back rendering): a centred 10 ft 4-panel slider, 3 lites high, cylinder sconces
 vwall(175, 1203, 1576, EXT, [('slider', 1275, 1505, dict(head=8.0, panels=4, rows=3, sconces=True))])
 hwall(1572, 170, 914, EXT, [('window', 216, 264, BED), ('window', 456, 504, BED), ('window', 754, 802, BATH)])
@@ -259,8 +261,12 @@ furniture = [
 posts = [[X(217), Y(627), 0.833], [X(217), Y(1207), 0.833], [X(1465), Y(921), 0.667], [X(1465), Y(1207), 0.667]]
 # r4 (critique-preview3-back #8): the lanai header dropped to a 7'-11" soffit as in p5 (at the plate it hid behind the
 # gutter from any eye near deck height), a painted frieze above it up to the soffit
-beams = [dict(a=[X(217), Y(627)], b=[X(217), Y(1207)], w=0.833, h=1.167, ext=1.0, top=9.1, frieze=True),
-         dict(a=[X(1465), Y(921)], b=[X(1465), Y(1207)], w=0.667, h=1.5, ext=0.0, material='cedar', plates=False)]
+# r5 (critique-preview4-back #9): the header stands 2" proud of the frieze (p5's shadow line under the soffit)
+beams = [dict(a=[X(217), Y(627)], b=[X(217), Y(1207)], w=0.833, h=1.167, ext=1.0, top=9.1, frieze=True, proud=0.17),
+         # r5 (critique-preview4-front #5): p4's cedar header over the entry. At the plate it sat behind the great
+         # roof's gutter from the street eye (sight lines pass under the gutter at ~7.9 ft here, and the pivot door's
+         # 9 ft head is hidden too): dropped to a 7'-3" underside with a painted frieze above, like the lanai (I-2b)
+         dict(a=[X(1465), Y(921)], b=[X(1465), Y(1207)], w=0.667, h=1.5, ext=0.0, material='cedar', plates=False, top=8.75, frieze=-1)]
 
 plan = dict(
     name='Nā Hiku spec home · Lot 25 design · Kukuiʻula',
@@ -294,20 +300,20 @@ walls += oh_walls
 rooms += [
     dict(id='ohana', name='Guest Ohana', polygon=[[oX(2636), oY(1389)], [oX(3005), oY(1389)], [oX(3005), oY(1753)], [oX(2636), oY(1753)]], floor='oak'),
     dict(id='ohbath', name='Ohana Bath', polygon=[[oX(3005), oY(1389)], [oX(3137), oY(1389)], [oX(3137), oY(1700)], [oX(3005), oY(1700)]], floor='coral', ceiling=9),
-    dict(id='ohlanai', name='Ohana Lanai', polygon=[[oX(2575), oY(1389)], [oX(2636), oY(1389)], [oX(2636), oY(1753)], [oX(2575), oY(1753)]], floor='coral', outdoor=True, covered=True),
+    dict(id='ohlanai', name='Ohana Lanai', polygon=[[oX(2491), oY(1389)], [oX(2636), oY(1389)], [oX(2636), oY(1753)], [oX(2491), oY(1753)]], floor='coral', outdoor=True, covered=True),
 ]
-roofs.append(dict(id='ohana', type='hip', rect=[oX(2575), oY(1389), oX(3137), oY(1753)], pitch=0.55, overhang=2.0, dutch=3.5, dutchEnds='hi',
+roofs.append(dict(id='ohana', type='hip', rect=[oX(2491), oY(1389), oX(3137), oY(1753)], pitch=0.55, overhang=2.0, dutch=3.5, dutchEnds='hi',
                   downspouts=[[XF, YL, 'y']]))
-posts += [[oX(2575), oY(1389)], [oX(2575), oY(1753)]]
-beams.append(dict(a=[oX(2575), oY(1389)], b=[oX(2575), oY(1753)]))
+posts += [[oX(2491), oY(1389)], [oX(2491), oY(1753)]]   # p6 lānai corner posts (the lānai is ~6.3 ft deep)
+beams.append(dict(a=[oX(2491), oY(1389)], b=[oX(2491), oY(1753)]))
 furniture += [
     dict(type='bed', x=oX(2830), y=oY(1475), w=ft(170), d=ft(150), rot=90, material='linen'),
     dict(type='nightstand', x=oX(2700), y=oY(1412), w=2, d=1.6, lamp=True, rot=90), dict(type='nightstand', x=oX(2960), y=oY(1412), w=2, d=1.6, lamp=True, rot=90),
     dict(type='armchair', x=oX(2700), y=oY(1690), w=2.8, d=2.8, rot=45, material='linen', frame='oak'),
     dict(type='vanity', x=oX(3070), y=oY(1408), w=5, d=1.8, rot=0, double=False),
     dict(type='toilet', x=oX(3100), y=oY(1660), w=1.6, d=2.4, rot=270),
-    dict(type='outdoor-chair', x=oX(2605), y=oY(1470), w=2.8, d=2.8, rot=90),
-    dict(type='outdoor-chair', x=oX(2605), y=oY(1660), w=2.8, d=2.8, rot=90),
+    dict(type='outdoor-chair', x=oX(2540), y=oY(1470), w=2.8, d=2.8, rot=90),
+    dict(type='outdoor-chair', x=oX(2540), y=oY(1660), w=2.8, d=2.8, rot=90),
     dict(type='fan', x=oX(2820), y=oY(1570)),
 ]
 
@@ -340,13 +346,24 @@ plan['site'] = dict(
     # pool: rect = weir face (x0) and tile faces; spa = its water (tile faces), set into the back wall with
     # pool water wrapping its seaward side and the steps either side (back rendering)
     pool=dict(rect=[-31, 1, -17, 31], spa=[-23.5, 10.5, -17, 17], edge='x0', drop=3.0, deck=3),
-    paths=[dict(rect=[X(1753), 19.8, 152, 24.8], material='stepping'), dict(rect=[GX1, GY0, 152, GY1], material='grassPavers')],
+    # r5 (critique-preview4-front #8, back #6; register I-13b): the entry walk is single 2 x 4 ft cut-stone slabs
+    # [along, across, joint ft] centred on the walk with 5 in grass joints (p4); the grass-paver drive gets a tan stone
+    # border [far side, walk side ft] (15 in on the walk side, p4); a paved deck at the pool's left end carries the
+    # two chaises (p5), up to the bougainvillea bed; its pool-side and inner edges on the 2 ft paver grid
+    paths=[dict(rect=[X(1753), 19.8, 152, 24.8], material='stepping', slabs=[2.0, 4.0, 0.42]),
+           dict(rect=[GX1, GY0, 152, GY1], material='grassPavers', border=[1.0, 1.25]),
+           dict(rect=[-31.5, -7, -24, 0], material='coral')],
     # coral retaining wall on the back lot line, returning down the bank at both side lines
     # (a wall's top follows the ground at its first point, so each run starts on the lot line)
     # return walls step down the bank in 1.6 ft runs (each run's top follows the ground at its start), so no tall pier stands proud
     walls=[dict(pts=[[-34.4, -8.6], [-34.4, 1]], height=0.35), dict(pts=[[-34.4, -8.6], [-36, -8.6], [-37.6, -8.6], [-39.2, -8.6], [-41, -8.6]], height=0.35),
-           dict(pts=[[-34.4, 31], [-34.4, 54.1]], height=0.35), dict(pts=[[-34.4, 54.1], [-36, 54.1], [-37.6, 54.1], [-39.2, 54.1], [-41, 54.1]], height=0.35)],
-    loungers=[[-28.5, -5, 90], [-24.5, -5, 90]],
+           # r5: the long run right of the pier carries a raised planter (p5: bougainvillea spilling over the right wall,
+           # critique-preview4-back #10): its face carried 0.9 ft up, 1.4 ft of soil between 4" curbs (~0.63 m overall)
+           dict(pts=[[-34.4, 31], [-34.4, 54.1]], height=0.35, planter=dict(rise=0.9, width=1.4, curb=0.33)),
+           dict(pts=[[-34.4, 54.1], [-36, 54.1], [-37.6, 54.1], [-39.2, 54.1], [-41, 54.1]], height=0.35)],
+    # chaises [x, y, rot]: side by side on the pool-end deck, backs to the side yard, feet to the pool (p5); placed so
+    # the r5 back view sees their backs above the bougainvillea planter and clear of the queen palm trunks (back #6)
+    loungers=[[-29.85, -3.6, 0], [-26.75, -3.6, 0]],
     # tall palms [x, y, height ft, lean, kind] (scripts/palms.py grows the species): the brochure's queen palms
     # (Syagrus, 25-30 ft) - two in the left planter in front of the lanai, one at the right lawn corner - and the
     # two palms on the far verge that frame the front view (fronds hanging into its top corners); no tall
@@ -360,7 +377,7 @@ plan['site'] = dict(
     # the front framing pair stand at the lot's street corners, trunks just outside the front view: only frond tips
     # reach into its top corners (~8-10% of the frame)
     palms=[[-19.9, -6.7, 21, 1, 'queen'], [-18.6, -3.3, 19.5, 1.2, 'queen'], [-31, 39, 24, 1.2, 'queen'],
-           [149, 51.2, 37, 1, 'queen'], [149, -6.6, 34, 1, 'queen']],
+           [149, 51.2, 37, 1, 'queen'], [149, -6.6, 29, 1, 'queen']],   # r5: front pair 37 vs 29 ft, no twin crowns (critique-preview4-front #6)
     # understorey palms [x, y, height ft, kind, stems]: areca / lipstick clumps, foxtail / christmas / pygmy date
     # singles, cycads - layered in the courtyards and gaps, as in the renderings (thinned r3: the back view's
     # roofline reads against the sky, critic r2 back #3)
@@ -369,23 +386,39 @@ plan['site'] = dict(
             # entry courtyard: lipstick palms (scarlet crownshafts) and christmas palms either side of the walk
             # (kept off the walk axis so the glass entry reads between them; the walk pair stand back by the wing
             # walls, clear of their eaves, so they flank the entry as in p4 - critic r2 front #9)
-            [98.6, 15.0, 13, 'lipstick'], [114.0, 29.6, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
-            [96.8, 12.4, 14, 'christmas'], [94.4, 32.5, 14.5, 'christmas'],   # r4: 2 ft out toward the wing walls, 12-14 ft (front #6)
-            [87.2, 13.4, 15, 'christmas'], [86.8, 31.2, 14, 'christmas'],
+            # r5 (critique-preview4-front #5): the walk-axis crowns 2.5 ft further out toward the wing corners, and
+            # scripts/palms.py prunes the fronds that point at the walk, so the glass entry reads clear between them
+            [98.6, 12.5, 13, 'lipstick'], [114.0, 29.6, 14, 'lipstick'], [119.5, 17.0, 11, 'lipstick', 4],
+            [96.8, 10.0, 14, 'christmas'], [90.8, 35.0, 14.5, 'christmas'],   # r4: 2 ft out toward the wing walls, 12-14 ft (front #6); r5: clear of the 6.3 ft ʻohana lānai eave
+            [87.2, 11.0, 15, 'christmas'], [86.8, 33.7, 14, 'christmas'],
             # mid-ground fill between and behind the roofs
-            [93, 5, 14], [92, 40, 13], [95, 45, 6, 'roebelenii', 2], [62.5, 17.6, 6, 'roebelenii'], [63, 27, 7, 'roebelenii'],
-            [95, -6, 22, 'foxtail'], [141, 50.2, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [131, 51, 12], [128, -6, 14],
+            [93, 5, 14], [90.4, 40.5, 13], [92.6, 45, 6, 'roebelenii', 2], [62.5, 17.6, 6, 'roebelenii'], [63, 27, 7, 'roebelenii'],
+            # r5 (critique-preview4-front #7): the left foxtail pair and areca 5 ft further from the ʻohana (toward the
+            # street and the lot line), so its street face takes the 10:00 sun
+            [95, -6, 22, 'foxtail'], [146, 52.2, 20, 'foxtail', 2], [100, 50.6, 19, 'foxtail'], [136, 52.4, 10], [128, -6, 14],
             [114, -6.2, 18, 'foxtail'], [99, -5.6, 13], [76, 50.5, 13], [56, 50.8, 16, 'foxtail'],
             # back: a few palms right of the bedroom wing (half the r2 count; the tall hedge behind does the screening)
             [-20, 50, 16], [14, 50.2, 14], [-14, 48.6, 13],
             # front corners of the view: pygmy date and sago fronds in the bottom corners
-            [147.4, 48.4, 6, 'roebelenii', 2], [147.4, -4.4, 3.5, 'cycad', 2], [130, 49, 3, 'cycad']],
-    plumeria=[[-4, 50, 1.2], [44, 50], [139, 30.5, 0.9], [138, 17.0, 0.8]],   # r4: right one beside the garage door, not in front (front #7)
+            [147.4, 48.4, 6, 'roebelenii', 2], [147.4, -4.4, 3.5, 'cycad', 2], [130, 49, 3, 'cycad'],
+            # r5 interim side-yard screen (critique-preview4-front #4 / back #8; register I-13a): 10-14 ft areca clumps
+            # on both side lot lines, cutting each neighbour copy's roof below its gablet in the front view, and behind
+            # the bedroom wing so the next roof is hidden below about y 300 of the back view
+            [66, 52.4, 13], [86, 52.6, 14], [108, 52.6, 12], [123, 52.8, 11],
+            [70, -6.9, 13], [82, -7.0, 14], [106, -6.9, 12], [121, -7.0, 11],
+            [-6, 52.4, 13], [4, 52.6, 14], [22, 52.4, 13.5], [30, 52.6, 12.5]],
+    # r5 (critique-preview4-front #2): the street pair hug the pavilions' walk-side corners, 4-5 ft off their faces,
+    # at about half the r4 size, so the walk's start and a strip of lawn read; the right one stays left of the garage
+    # door jamb (p4)
+    plumeria=[[-4, 50, 1.2], [44, 50], [126.5, 29.4, 0.5], [126.0, 15.8, 0.48]],
     specimens=[[16, -16.0, 0.45, 'shower']],      # a pink shower tree at the far left of the back view (r4: by the side lot line, clear of the left wing, back #6)
     # beds stay clear of the coral retaining wall on the lot line (x -35.3 .. -33.5, cap to -35.4 / -33.4)
     # curve: the bed's sides (plan x0 / x1 / y0 / y1) that sweep in soft curves with a tan stone edging (scripts/plants_bpy.py);
     # edge=False: a planting inside another bed (no edging of its own)
     beds=[dict(rect=[-33.2, 36, -20, 40], kind='bougainvillea', curve='x1y0y1'), dict(rect=[-33.2, -7, -31.5, 0.5], kind='bougainvillea'),
+          # r5: the raised planter on the right wall (site.js planterRun: soil x -34.97 .. -33.57, y 30.46 .. 54.64), one
+          # row of bougainvillea 1 ft in from the outer face, spilling over the coping toward the bank (p5)
+          dict(rect=[-34.97, 30.46, -33.57, 54.64], kind='bougainvillea', density=1.7, edge=False),
           # the chaise planter: the two queen palms rise from a mondo island at the chaises' foot (p5)
           dict(rect=[-21.3, -8.0, -15.6, -2.2], kind='mondo', curve='x0x1y0y1'),
           # the bank below the pool wall: glossy Asiatic jasmine right up to the wall, full cover (no raw soil), its lawn
@@ -404,7 +437,7 @@ plan['site'] = dict(
           dict(rect=[123, 13.6, 150, 19.3], kind='mondo', density=0.75, curve='y0'), dict(rect=[123, 25.3, 150, 31.4], kind='mondo', density=0.75, curve='y1'),
           dict(rect=[123, 15.6, 130, 18.4], kind='gardenia', density=0.7, edge=False), dict(rect=[123, 26.4, 131, 29.4], kind='gardenia', density=0.7, edge=False),
           dict(rect=[131, 17.4, 150, 19.2], kind='dichondra', edge=False), dict(rect=[132, 25.4, 150, 27.4], kind='dichondra', edge=False),
-          dict(rect=[86, -4, 99, 15.8], kind='monstera'), dict(rect=[86, 28.8, 97, 47], kind='monstera'),
+          dict(rect=[86, -4, 99, 15.8], kind='monstera'), dict(rect=[86, 28.8, 93.2, 47], kind='monstera'),   # r5: stops at the ʻohana lānai edge
           dict(rect=[57, 16.3, 67.5, 19.3], kind='groundcover'), dict(rect=[57, 25.3, 67.5, 28.2], kind='groundcover'),
           # lot lines: a clipped hedge only where it is out of the hero views; loose monstera understorey elsewhere;
           # behind the back lawn a 7 ft screen hedge on the side lot line hides the neighbour's pool (critic r2 back #11)
@@ -436,7 +469,7 @@ plan['viewpoints'] = [
     # ~62 ft out from the pavilion fronts, ~27 ft up, pitched ~8.5 deg down; the street stays out of frame
     dict(id='front', pos=[170, 22.3], eye=21, absolute=True, look=[60, 22.3], lookH=2.0, fov=40, sun=[53, 34], aspect=1.895, photo='ref/front.png'),   # r3: ~48 ft out so the pavilions span ~77%
     # back: elevated three-quarter view over the vanishing edge onto pool, spa, chaises and lanai (critic r1)
-    dict(id='back', pos=[-59.4, -11.2], eye=9.8, absolute=True, look=[-4, 23], lookH=9.8, fov=43, shiftY=-0.13, sun=[45.2, 156.3], aspect=1.895, photo='ref/back.png'),   # r4: in and up (~3 m above the deck), level + lens shift (plumb verticals); sun 20 Nov 13:30 HST (alt 45, compass 202) side-lights the facade
+    dict(id='back', pos=[-59.4, -11.2], eye=9.8, absolute=True, look=[-7, 23], lookH=9.8, fov=38.5, shiftY=-0.13, sun=[45.2, 156.3], aspect=1.895, photo='ref/back.png'),   # r4: in and up (~3 m above the deck), level + lens shift (plumb verticals); sun 20 Nov 13:30 HST (alt 45, compass 202) side-lights the facade; r5: fov 43 -> 38.5 and look 3 ft left so the house fills ~25% and sits near centre (critique-preview4-back #4)
     dict(id='front-wide', pos=[166, 22.3], eye=30, absolute=True, look=[66, 22.3], lookH=4, fov=50, sun=[58, 320]),
     dict(id='back-wide', pos=[-54, -2], eye=5.2, absolute=True, look=[6, 18], lookH=6.0, fov=64, sun=[44, 215]),
     dict(id='great-room', pos=[X(1240), Y(1150)], look=[X(620), Y(800)], fov=72),

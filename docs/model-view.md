@@ -22,13 +22,13 @@ It does not establish dimensional accuracy. The p6 floor plan has no dimension s
 | Rotate / Trees | Slow auto-turn, which any drag stops. Shows or hides the palms and trees. |
 | Click or tap a space | Selects the floor under the pointer: the ray passes through roofs and walls. The map (bottom right) selects too. The selected space is outlined in amber, on the model and on the map. |
 | Overview | The home summary: stated figures, traced totals, main assumptions and missing documents. |
-| Questions (n) | Every saved question, with View (restores the display, space and camera) and Delete. Export JSON shows the questions as JSON with Copy JSON and Download file. Copy as text copies them as plain text. Delete all needs a second tap. |
+| Questions (n) | Every saved question, with View (restores the display, space and camera) and Delete (with Undo for 8 s). Export JSON shows the questions as JSON with Copy JSON, plus Download file outside the private page. Copy as text copies them as plain text. Delete all needs a second tap, and any redraw of the panel disarms it. |
 
 ## What the labels mean
 | Tag | Meaning | Basis |
 |---|---|---|
-| **SOURCE** | Stated in the Nā Hiku brochure | p6 room labels and the stated areas (2,300 / 352 / 2,652 / 494 sq ft, 4 bd / 4.5 ba); the p6 appliance labels; USGS lidar for terrain |
-| **ESTIMATE** | Scaled from the p6 plan at the fitted 23 px/ft | assumptions-register E-1 to E-4. Linear ±3–8 %, which is roughly ±6–17 % on an area |
+| **SOURCE** | Stated in the Nā Hiku brochure | p6 room labels and the stated areas (2,300 / 352 / 2,652 / 494 sq ft, 4 bd / 4.5 ba); the p6 appliance labels |
+| **ESTIMATE** | Scaled from the p6 plan at the fitted 23 px/ft | assumptions-register E-1 to E-4. ±3–8 % on a length, roughly ±6–17 % on an area. Every card's tag tooltip and legend say both |
 | **ASSUMED** | Inferred from the p4/p5 renderings, the p7 concept board or a default | register I-1 to I-15 (heights, roof, garage, ʻohana siting, pool, lot, finishes, styling) |
 | **UNKNOWN** | No document was supplied | dimensioned drawings, sections, window/door and finish schedules, electrical/lighting, site/grading/pool plans, plat |
 
@@ -82,7 +82,8 @@ The wording per space is in `plans/lot25-spaces.json`. Polygons come from `plans
 Traced totals (ESTIMATE) against the stated figures (SOURCE, p6). Main-house rooms ≈ 2,279 against 2,300 sq ft. ʻOhana rooms ≈ 332 against 352. Lānai ≈ 424 (522 with the entry) against 494 covered lānai. p6 does not say whether its figures are gross or net, or which spaces the lānai figure includes. The kitchen is a zone inside the great room and is not counted twice.
 
 ## Questions stay on this device
-- Drafts save as you type. Saved questions go to the browser's `localStorage`, under the keys `nahiku.lot25.drafts.v1` and `nahiku.lot25.questions.v1`.
+- Drafts save as you type, each to its own space. Saved questions go to the browser's `localStorage`, under the keys `nahiku.lot25.drafts.v1` and `nahiku.lot25.questions.v1`.
+- Storage is read again before every change and followed across tabs, so two open tabs add to each other's questions instead of overwriting them.
 - Each saved question records the space, the display and the camera, so **View** can return to it.
 - **Nothing is sent anywhere.** The model view makes no network requests.
 - **Export JSON** shows the questions as JSON (format `nahiku-questions/1`, carrying the concept-visualization label). **Copy JSON** puts it on the clipboard. **Download file** saves `nahiku-lot25-questions.json` where the browser allows page downloads; the private claude.ai page does not. If the clipboard is blocked, the text is left selected for copying by hand.

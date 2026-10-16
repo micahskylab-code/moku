@@ -456,7 +456,7 @@ function cushion(g, w, t, d, x, y, z, m = 'linenWhite', r = 0.05) {
 // crowned by the fill, the boxing strip bulging slightly, a shallow dent where it is sat / leaned on, and faint
 // fabric ripples. dent: [z0 (local), depth ft]. Smooth-shaded (shared vertices).
 const padCache = new Map();
-function padGeo(w, t, d, { r = 0.08, crown = 0.03, dent = null, seed = 0 } = {}) {
+function padGeo(w, t, d, { r = 0.12, crown = 0.04, dent = null, seed = 0 } = {}) {   // r5: 3.7 cm rounded seams (back #6)
   const key = [w, t, d, r, crown, dent?.join(','), seed].join('|');
   if (padCache.has(key)) return padCache.get(key);
   const nx = Math.ceil(w / 0.1), ny = 6, nz = Math.ceil(d / 0.1);
@@ -490,9 +490,9 @@ function padGeo(w, t, d, { r = 0.08, crown = 0.03, dent = null, seed = 0 } = {})
 function pad(g, w, t, d, x, y, z, opts = {}) {
   const c = new THREE.Group(); c.position.set(x, y, z); g.add(c);
   c.add(new THREE.Mesh(padGeo(w, t, d, opts), mat('linenWhite')));
-  const r = Math.min(opts.r ?? 0.08, t / 2 * 0.9), e = r * 0.293;
+  const r = Math.min(opts.r ?? 0.12, t / 2 * 0.9), e = r * 0.293;
   for (const s of [-1, 1]) {
-    const p = new THREE.Mesh(pipeLoop(w - 2 * e + 0.01, d - 2 * e + 0.01, Math.max(0.03, r * 0.9), 0.024), PIPING());
+    const p = new THREE.Mesh(pipeLoop(w - 2 * e + 0.012, d - 2 * e + 0.012, Math.max(0.03, r * 0.9), 0.03), PIPING());   // 1.8 cm welt cord
     p.position.y = s * (t / 2 - e); c.add(p);
   }
   return c;
@@ -544,7 +544,7 @@ export function chaiseInto(g, w = 2.3, d = 6.3) {
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(g, leg, top, leg, sx * (w / 2 - leg / 2), top / 2, sz * (d / 2 - leg / 2), T, 0.02);
   for (const sx of [-1, 1]) box(g, 0.13, railH, d, sx * (w / 2 - 0.065), top - railH / 2, 0, T, 0.02);
   for (const sz of [-1, 1]) box(g, w - 0.26, railH, 0.13, 0, top - railH / 2, sz * (d / 2 - 0.065), T, 0.02);
-  const hinge = -0.55, inW = w - 0.3, padT = 0.3;          // 3 1/2" filled pads (r4: were 2.4" slabs, critique-preview3-back #9)
+  const hinge = -0.55, inW = w - 0.3, padT = 0.36;         // 4 1/4" filled pads (r4: were 2.4" slabs, critique-preview3-back #9; r5 fuller)
   box(g, inW, 0.05, d / 2 - hinge - 0.15, 0, top - 0.06, (hinge + d / 2 - 0.15) / 2, T);                  // seat slats
   const sl = d / 2 - 0.12 - hinge;
   pad(g, inW, padT, sl, 0, top - 0.035 + padT / 2, (hinge + d / 2 - 0.12) / 2, { dent: [-sl / 2 + 0.95, 0.04], seed: 1 });

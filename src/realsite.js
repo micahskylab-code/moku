@@ -294,6 +294,29 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     const base = gmin - 3, eave = gmax + b.e, wc = walls[(n++ * 7) % walls.length], rc = sRGB(b.r);
     // walls (footprint ring is CCW or CW: emit both windings' outward faces by checking the area sign)
     let area = 0; for (let i = 0; i < m; i++) { const j = (i + 1) % m; area += p[2 * i] * p[2 * j + 1] - p[2 * j] * p[2 * i + 1]; }
+    // export: a belt of mixed canopy along the foot of each background building, crowns kept below its eave, so a
+    // footprint box 100 m - 1.2 km off shows its roof over trees, as every Kukui'ula / Po'ipu house does, instead of
+    // a bare sunlit wall (critique-preview4-front #3). Blender grows them (scripts/plants_bpy.py; seed >= 700000 =
+    // belt: no grove companions). Within ~300 ft of our lot the modelled neighbourhood and the plan decide.
+    const dc = Math.hypot(cx - centre[0], cz - centre[1]);
+    if (globalThis.__palmProxies && dc > 300 && dc < 4000) {
+      const rec = (globalThis.__plantProxies ??= []), hsh = k => { const s = Math.sin(k * 12.9898 + n * 78.233) * 43758.5453; return s - Math.floor(s); };
+      for (let i = 0; i < m; i++) {
+        const j = (i + 1) % m, ax = p[2 * i], az = p[2 * i + 1], ex = p[2 * j] - ax, ez = p[2 * j + 1] - az, L = Math.hypot(ex, ez);
+        if (L < 14) continue;
+        let nx = -ez / L, nz = ex / L;
+        if (nx * (ax + ex / 2 - cx) + nz * (az + ez / 2 - cz) < 0) { nx = -nx; nz = -nz; }
+        const k = Math.max(1, Math.floor((L - 8) / 24));
+        for (let t = 0; t < k; t++) {
+          const u = (t + 0.5 + (hsh(i * 31 + t) - 0.5) * 0.5) / k, size = 9 + hsh(i * 17 + t * 5 + 1) * 6, off = size * (0.35 + 0.3 * hsh(i * 7 + t));
+          const x = ax + ex * u + nx * off, z = az + ez * u + nz * off, gr = this.ground(x, z);
+          if (gr < this.seaLevel + 2) continue;
+          const top = (eave - gr) * (0.72 + 0.2 * hsh(i * 3 + t * 11 + 2));            // crown top under the eave
+          rec.push({ type: 'tree', x: Math.round(x * 100) / 100, y: Math.round(z * 100) / 100, ground: Math.round(gr * 100) / 100, size: Math.round(size * 100) / 100,
+            sy: Math.round(Math.max(0.45, Math.min(1.3, 0.533 * top / size)) * 100) / 100, seed: 700000 + rec.length, real: true });
+        }
+      }
+    }
     for (let i = 0; i < m; i++) {
       const j = (i + 1) % m, [i0, j0] = area > 0 ? [i, j] : [j, i];
       const ax = p[2 * i0], az = p[2 * i0 + 1], bx = p[2 * j0], bz = p[2 * j0 + 1];

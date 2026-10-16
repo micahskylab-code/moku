@@ -54,6 +54,10 @@ export function buildHouse(plan, scene) {
   // black steel stand-off bases, a 10x14 header whose ends run 12" past the posts, black iron knife plates with
   // round bolt washers at every post-to-beam joint. posts: [x, y, size?]; beams: { a, b, w?, h?, ext? } (ft).
   const timber = new Parts();
+  // r5: every post and beam is its own mesh (the iron stays merged): the Blender wood shader runs the grain along
+  // each object's longest extent (nh_axis), and one merged timber object gave posts and beams one shared axis
+  const members = [];
+  const member = () => { const p = new Parts(); members.push(p); return p; };
   const roomAt = (x, y) => plan.rooms.find(r => !r.label_only && !r.outdoor && inside([x, y], r.polygon));
   const beamOver = (x, y) => (plan.beams ?? []).find(b => {
     const [ax, ay] = b.a, [bx, by] = b.b, L = Math.hypot(bx - ax, by - ay), t = ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / (L * L);
@@ -63,7 +67,7 @@ export function buildHouse(plan, scene) {
     const b = beamOver(x, y), bh = b ? (b.h ?? 1.167) : 0;
     const top = (b?.top ?? roofs.ceilingAt(x, y) - 0.1) - bh, foot = (plan.rooms.find(r => inside([x, y], r.polygon))?.floorLevel ?? 0);
     const base = foot + 0.125;                                           // 1 1/2" steel stand-off
-    timber.box('woodBeam', size, top - base, size, x, (top + base) / 2, y);
+    member().box('woodBeam', size, top - base, size, x, (top + base) / 2, y);
     timber.box('iron', size + 0.08, 0.04, size + 0.08, x, foot + 0.02, y);              // base plate
     timber.box('iron', size * 0.5, 0.1, size * 0.5, x, foot + 0.08, y);                 // stand-off
     for (const [ux, uy] of [[1, 0], [0, 1]]) timber.box('iron', ux ? 0.02 : size * 0.55, 0.42, uy ? 0.02 : size * 0.55, x, foot + 0.25, y);  // base knife plates
@@ -80,9 +84,10 @@ export function buildHouse(plan, scene) {
     const top = b.top ?? ceil - 0.1;
     const mid = (e1 - e0) / 2, cx = (ax + bx) / 2 + ux * mid, cy = (ay + by) / 2 + uy * mid, L = len + e0 + e1;
     const rot = -Math.atan2(by - ay, bx - ax);
-    timber.box(b.material ?? 'woodBeam', L, bh, bw, cx, top - bh / 2, cy, rot);
+    member().box(b.material ?? 'woodBeam', L, bh, bw, cx, top - bh / 2, cy, rot);
     if (b.frieze && ceil - top > 0.1) {
-      const fs = b.frieze === true ? 1 : b.frieze, fz = 0.08, fo = bw / 2 - fz / 2 - 0.03;      // fs: which side is outside (+1: left of a->b)
+      // `proud`: how far the beam's outer face stands in front of the frieze (r5, p5: ~2", a shadow line under the soffit)
+      const fs = b.frieze === true ? 1 : b.frieze, fz = 0.08, fo = bw / 2 - fz / 2 - (b.proud ?? 0.03);      // fs: which side is outside (+1: left of a->b)
       timber.box('trim', len, ceil - top + 0.02, fz, (ax + bx) / 2 - uy * fs * fo, (ceil + top) / 2, (ay + by) / 2 + ux * fs * fo, rot);
     }
     if (b.plates === false) continue;
@@ -98,6 +103,7 @@ export function buildHouse(plan, scene) {
     }
   }
   const timberG = timber.mesh();
+  for (const p of members) timberG.add(p.mesh());
   timberG.userData.shell = true;
   timberG.traverse(o => { o.userData.shell = true; });
   group.add(timberG);

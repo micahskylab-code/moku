@@ -16,10 +16,11 @@ import { inside } from './geom.js';
 const CUT = 7.0;                     // section height, ft above the floor
 const GHOST = 0.16;                  // wall and roof opacity in the translucent display
 const DISPLAYS = ['exterior', 'cutaway', 'translucent'];
+const SHEET = '(max-width: 600px), (max-height: 480px)';               // the panel is a bottom sheet on phones, either way up
 const FLOOR_NAMES = { oak: 'White oak plank', coral: 'Coral stone', pavers: 'Pavers', concrete: 'Concrete' };
 const TAG_HELP = {
   SOURCE: 'Stated in the Nā Hiku brochure',
-  ESTIMATE: 'Scaled from the p6 floor plan, which has no dimension strings (fitted scale, ±3–8 % linear)',
+  ESTIMATE: 'Scaled from the p6 floor plan, which has no dimension strings (fitted scale: ±3–8 % on a length, roughly ±6–17 % on an area)',
   ASSUMED: 'Inferred from the renderings, the p7 design board or a default, not from a plan',
   UNKNOWN: 'No document supplied',
 };
@@ -128,6 +129,8 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
       if (m.emissive) { v.emissive.copy(m.emissive); v.emissiveIntensity = m.emissiveIntensity; }
       if (v.envMap !== m.envMap) { v.envMap = m.envMap; v.needsUpdate = true; }
       v.envMapIntensity = m.envMapIntensity;
+      if (m.color) v.color.copy(m.color);                                // rain.js wets siding, cedar and roofs
+      if (m.roughness !== undefined) { v.roughness = m.roughness; v.metalness = m.metalness; }
       if (mode === 'cut') v.opacity = m.opacity;
     }
   }
@@ -145,8 +148,13 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { this.ok = false; return false; } },
   };
   const KEY_Q = `nahiku.${planId}.questions.v1`, KEY_D = `nahiku.${planId}.drafts.v1`;
-  let questions = store.read(KEY_Q, []); if (!Array.isArray(questions)) questions = [];
-  let drafts = store.read(KEY_D, {}); if (typeof drafts !== 'object' || !drafts) drafts = {};
+  // read again before every change, so two open tabs add to each other's questions instead of overwriting them
+  const loadQ = () => { const v = store.read(KEY_Q, null); return Array.isArray(v) ? v : (questions ?? []); };
+  const loadD = () => { const v = store.read(KEY_D, null); return v && typeof v === 'object' && !Array.isArray(v) ? v : (drafts ?? {}); };
+  let questions = null, drafts = null;
+  questions = loadQ(); drafts = loadD();
+  let armTimer = 0, undoTimer = 0, flushDraft = null;
+  const hosted = !!globalThis.__NAHIKU_HOSTED;                          // the private-page copy (scripts/build_artifact.py)
 
   // ---------- UI ----------
   const bar = h('div', { id: 'modelbar', hidden: true });
@@ -158,26 +166,38 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
   const qBtn = h('button', { onclick: () => { S.card = S.card === 'questions' && S.cardOpen ? 'space' : 'questions'; S.cardOpen = true; renderCard(); } });
   const resetBtn = h('button', { onclick: () => home(), title: 'Back to the starting view' }, 'Reset view');
   bar.append(seg, rotBtn, treeBtn, infoBtn, qBtn, resetBtn);
-  const card = h('aside', { id: 'inspect', hidden: true, 'aria-live': 'polite' });
+  const card = h('aside', { id: 'inspect', hidden: true, 'aria-label': 'Space details' });
   const tip = h('div', { id: 'insp-tip', hidden: true });
-  document.body.append(bar, card, tip);
+  const status = h('div', { class: 'insp-status', role: 'status', 'aria-live': 'polite' });   // short announcements only
+  document.body.append(bar, card, tip, status);
+  const say = t => { status.textContent = ''; requestAnimationFrame(() => { status.textContent = t; }); };
+  addEventListener('storage', e => {
+    if (e.key !== null && e.key !== KEY_Q && e.key !== KEY_D) return;
+    questions = loadQ(); drafts = loadD();
+    if (S.active && document.activeElement?.tagName !== 'TEXTAREA') renderCard(); else refreshBar();
+  });
 
   function refreshBar() {
-    for (const b of seg.children) b.classList.toggle('on', b.dataset.display === S.display);
+    for (const b of seg.children) { b.classList.toggle('on', b.dataset.display === S.display); b.setAttribute('aria-pressed', String(b.dataset.display === S.display)); }
     rotBtn.classList.toggle('on', S.rotate); treeBtn.classList.toggle('on', S.trees);
+    rotBtn.setAttribute('aria-pressed', String(S.rotate)); treeBtn.setAttribute('aria-pressed', String(S.trees));
     qBtn.textContent = `Questions (${questions.length})`;
     qBtn.classList.toggle('on', S.card === 'questions' && S.cardOpen);
   }
 
   function renderCard() {
+    flushDraft?.(); flushDraft = null;                                   // a pending draft save goes to its own space first
+    S.armDelete = false; clearTimeout(armTimer);                         // a re-render never leaves Delete all armed
     refreshBar();
     card.hidden = !S.active || !S.cardOpen;
     if (card.hidden) return;
+    const focusKey = card.contains(document.activeElement) ? document.activeElement.dataset.k : null;
     card.replaceChildren();
-    const close = h('button', { class: 'ic-close', 'aria-label': 'Close panel', onclick: () => { S.cardOpen = false; renderCard(); } }, '×');
+    const close = h('button', { class: 'ic-close', 'aria-label': 'Close panel', 'data-k': 'close', onclick: () => { S.cardOpen = false; renderCard(); } }, '×');
     const parts = S.card === 'questions' ? questionsPanel() : S.selected ? spacePanel(S.selected) : overviewPanel();
     card.append(close, ...parts.flat(2).filter(x => x != null && x !== false));
     card.append(h('p', { class: 'ic-foot' }, info.concept, h('br'), 'Brochure: “Renderings and illustrations are an artistic representation only.” (p6)'));
+    if (focusKey) card.querySelector(`[data-k="${focusKey}"]`)?.focus();   // keyboard focus stays on the control just used
   }
 
   const tag = t => h('span', { class: `tag t-${t.toLowerCase()}`, title: TAG_HELP[t] }, t);
@@ -246,44 +266,69 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
   // ---------- questions (this browser only) ----------
   let ta = null;
   function askBox(s) {
-    ta = h('textarea', { rows: 3, maxlength: 2000, placeholder: `Draft a question about the ${s.name} (saved in this browser only)`, 'aria-label': `Question about the ${s.name}` });
-    ta.value = drafts[s.id] ?? '';
-    let timer = 0;
-    ta.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => saveDraft(s.id, ta.value), 250); });
-    ta.addEventListener('keydown', e => e.stopPropagation());
+    const box = ta = h('textarea', { rows: 3, maxlength: 2000, 'data-k': 'draft', placeholder: `Draft a question about the ${s.name} (saved in this browser only)`, 'aria-label': `Question about the ${s.name}` });
+    box.value = drafts[s.id] ?? '';
+    const id = s.id; let timer = 0;
+    const save = () => { clearTimeout(timer); timer = 0; saveDraft(id, box.value); };
+    box.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(save, 250); flushDraft = () => { if (timer) save(); }; });
+    box.addEventListener('blur', () => { if (timer) save(); });
+    box.addEventListener('keydown', e => e.stopPropagation());
     const mine = questions.filter(q => q.space.id === s.id);
     return [
       h('h3', {}, 'Your questions'),
       ta,
       h('div', { class: 'ic-actions' },
-        h('button', { class: 'primary', onclick: () => saveQuestion(s) }, 'Save question'),
+        h('button', { class: 'primary', 'data-k': 'save', onclick: () => saveQuestion(s) }, 'Save question'),
         h('span', { class: 'ic-local' }, store.ok ? 'Saved on this device only. Nothing is sent.' : 'This browser blocks storage: questions last until you reload.')),
+      undoNote(),
       mine.length ? h('ol', { class: 'ic-qs' }, mine.map(qItem)) : null,
     ];
+  }
+  // a deleted question can be put back for a few seconds
+  function undoNote() {
+    if (!S.undo) return null;
+    return h('div', { class: 'ic-actions ic-undo' }, h('span', { class: 'ic-local' }, 'Question deleted.'),
+      h('button', { 'data-k': 'undo', onclick: () => {
+        const { q, at } = S.undo; S.undo = null; clearTimeout(undoTimer);
+        questions = loadQ(); if (!questions.some(x => x.id === q.id)) questions.splice(Math.min(at, questions.length), 0, q);
+        store.write(KEY_Q, questions); renderCard(); say('Question restored');
+      } }, 'Undo'));
   }
   function qItem(q) {
     return h('li', {},
       h('div', { class: 'q-text' }, q.text),
       h('div', { class: 'q-meta' }, `${q.space.name} · ${q.display} · ${new Date(q.created).toLocaleString()}`, ' ',
         h('button', { onclick: () => goTo(q) }, 'View'), ' ',
-        h('button', { onclick: () => { questions = questions.filter(x => x.id !== q.id); store.write(KEY_Q, questions); renderCard(); } }, 'Delete')));
+        h('button', { onclick: () => {
+          questions = loadQ(); const at = questions.findIndex(x => x.id === q.id);
+          questions = questions.filter(x => x.id !== q.id); store.write(KEY_Q, questions);
+          S.undo = { q, at: Math.max(0, at) }; clearTimeout(undoTimer); undoTimer = setTimeout(() => { S.undo = null; if (card.querySelector('.ic-undo')) renderCard(); }, 8000);
+          renderCard(); say('Question deleted');
+        } }, 'Delete')));
   }
   function questionsPanel() {
     const groups = new Map();
     for (const q of questions) { if (!groups.has(q.space.name)) groups.set(q.space.name, []); groups.get(q.space.name).push(q); }
     return [
       h('h2', {}, `Questions (${questions.length})`),
-      h('div', { class: 'ic-sub' }, 'Stored only in this browser. Nothing is sent. Export shows them as text to copy, or saves a file on this device, for you to share yourself.'),
+      h('div', { class: 'ic-sub' }, hosted ? 'Stored only in this browser. Nothing is sent. Export shows them as text for you to copy and share yourself.'
+        : 'Stored only in this browser. Nothing is sent. Export shows them as text to copy, or saves a file on this device, for you to share yourself.'),
+      undoNote(),
       ...(questions.length ? [...groups].flatMap(([name, qs]) => [h('h3', {}, name), h('ol', { class: 'ic-qs' }, qs.map(qItem))])
         : [h('p', { class: 'ic-note' }, 'No saved questions yet. Select a space, draft a question in its panel, or tap “Ask” next to any estimate, assumption or unknown.')]),
       h('div', { class: 'ic-actions' },
-        h('button', { class: 'primary', disabled: !questions.length, 'aria-expanded': String(S.exportOpen), onclick: () => { S.exportOpen = !S.exportOpen; renderCard(); } }, 'Export JSON'),
-        h('button', { disabled: !questions.length, onclick: e => copyText(plainText(), e.target.parentElement.querySelector('.ic-local')) }, 'Copy as text'),
-        // two taps instead of confirm(), which some embedded viewers refuse
-        h('button', { disabled: !questions.length, onclick: e => {
-          if (S.armDelete) { S.armDelete = false; questions = []; store.write(KEY_Q, questions); S.exportOpen = false; renderCard(); return; }
+        h('button', { class: 'primary', 'data-k': 'export', disabled: !questions.length, 'aria-expanded': String(S.exportOpen), onclick: () => { S.exportOpen = !S.exportOpen; renderCard(); } }, 'Export JSON'),
+        h('button', { 'data-k': 'copytext', disabled: !questions.length, onclick: e => copyText(plainText(), e.target.parentElement.querySelector('.ic-local')) }, 'Copy as text'),
+        // two taps instead of confirm(), which some embedded viewers refuse; any re-render disarms it (renderCard)
+        h('button', { 'data-k': 'deleteall', disabled: !questions.length, onclick: e => {
+          if (S.armDelete) {
+            S.armDelete = false; clearTimeout(armTimer);
+            const shown = new Set(questions.map(q => q.id));                // only what this tab showed, not questions added elsewhere since
+            questions = loadQ().filter(q => !shown.has(q.id)); store.write(KEY_Q, questions); S.exportOpen = false; S.undo = null;
+            renderCard(); say('All questions deleted'); return;
+          }
           S.armDelete = true; e.target.textContent = `Tap again to delete all ${questions.length}`;
-          setTimeout(() => { S.armDelete = false; if (e.target.isConnected) e.target.textContent = 'Delete all'; }, 4000);
+          clearTimeout(armTimer); armTimer = setTimeout(() => { S.armDelete = false; if (e.target.isConnected) e.target.textContent = 'Delete all'; }, 4000);
         } }, 'Delete all'),
         h('span', { class: 'ic-local' })),
       S.exportOpen && questions.length ? exportBox() : null,
@@ -295,10 +340,10 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const json = JSON.stringify(exportDoc(), null, 1), note = h('span', { class: 'ic-local' });
     const box = h('textarea', { class: 'ic-export', readonly: true, rows: 8, 'aria-label': 'Questions as JSON' }); box.value = json;
     return [box, h('div', { class: 'ic-actions' },
-      h('button', { class: 'primary', onclick: () => copyText(json, note, box) }, 'Copy JSON'),
-      h('button', { onclick: downloadQuestions }, 'Download file'), note)];
+      h('button', { class: 'primary', 'data-k': 'copyjson', onclick: () => copyText(json, note, box) }, 'Copy JSON'),
+      hosted ? null : h('button', { 'data-k': 'download', onclick: downloadQuestions }, 'Download file'), note)];
   }
-  function saveDraft(id, text) { if (text.trim()) drafts[id] = text; else delete drafts[id]; store.write(KEY_D, drafts); }
+  function saveDraft(id, text) { drafts = loadD(); if (text.trim()) drafts[id] = text; else delete drafts[id]; store.write(KEY_D, drafts); }
   function addToDraft(text) {
     if (!ta) return;
     ta.value = ta.value.trim() ? `${ta.value.trim()}\n${text}` : text;
@@ -308,13 +353,14 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const text = ta.value.trim();
     if (!text) { ta.focus(); return; }
     const r2 = v => Math.round(v * 100) / 100;
+    questions = loadQ();
     questions.push({
       id: globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
       created: new Date().toISOString(), space: { id: s.id, name: s.name }, display: S.display, text,
       camera: { position: camera.position.toArray().map(r2), target: orbit.target.toArray().map(r2) },
     });
-    store.write(KEY_Q, questions); saveDraft(s.id, '');
-    renderCard();
+    store.write(KEY_Q, questions); flushDraft = null; saveDraft(s.id, '');
+    renderCard(); say('Question saved');
   }
   function exportDoc() {
     return { format: 'nahiku-questions/1', exported: new Date().toISOString(), home: info.home.name, label: info.concept,
@@ -330,9 +376,10 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const fail = () => {
       if (!box) { S.exportOpen = true; renderCard(); box = card.querySelector('.ic-export'); note = box?.nextElementSibling?.querySelector('.ic-local'); if (box) box.value = text; }
       if (note) note.textContent = 'Copying is blocked here. The text is selected: copy it from your keyboard or menu.';
+      say('Copying is blocked here; the text is selected');
       box?.focus(); box?.select();
     };
-    try { navigator.clipboard.writeText(text).then(() => { if (note) note.textContent = 'Copied.'; }, fail); } catch { fail(); }
+    try { navigator.clipboard.writeText(text).then(() => { if (note) note.textContent = 'Copied.'; say('Copied'); }, fail); } catch { fail(); }
   }
   function goTo(q) {
     setDisplay(q.display);
@@ -345,6 +392,7 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     S.selected = s; S.card = 'space';
     if (s) { S.cardOpen = true; setOutline(hl.fill, hl.line, s); }
     hl.fill.visible = hl.line.visible = !!s && S.active;
+    S.pointerMoved = true;                                               // hover outline: hide it on the now-selected space
     renderCard(); syncURL();
   }
   function setOutline(fill, line, s) {
@@ -366,7 +414,7 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const p = S.pointer; S.pointer = null;
     if (!S.active || !p || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6 || performance.now() - p.t > 700) return;
     const s = pick(e.clientX, e.clientY);
-    if (s !== S.selected) select(s);
+    if (s !== S.selected || (s && !S.cardOpen)) select(s);          // tapping the selected space again reopens a closed panel
   });
   let mouse = null;
   el.addEventListener('pointermove', e => { if (S.active && e.pointerType === 'mouse' && !e.buttons) { mouse = { x: e.clientX, y: e.clientY }; S.pointerMoved = true; } });
@@ -382,6 +430,9 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const W = innerWidth, H = innerHeight;
     let top = 0, right = W, bottom = H;
     if (S.active && !bar.hidden) top = bar.getBoundingClientRect().bottom;
+    // the side panel starts below the model bar, however many rows it wraps to
+    const cardTop = S.active && !matchMedia(SHEET).matches ? `${Math.round(top + 8)}px` : '';
+    if (card.style.top !== cardTop) card.style.top = cardTop;
     if (S.active && !card.hidden) { const r = card.getBoundingClientRect(); if (r.top > H * 0.3) bottom = r.top; else right = r.left; }
     // glide to the new centre when a panel opens or closes (no jump under the pointer)
     const tx = S.active ? W / 2 - right / 2 : 0, ty = S.active ? H / 2 - (top + bottom) / 2 : 0, k = Math.min(1, dt * 7);
@@ -391,9 +442,9 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
     const dx = Math.round(S.ox), dy = Math.round(S.oy);
     const key = `${W}x${H}:${dx}:${dy}:${camera.aspect.toFixed(4)}`;
     if (key === S.frame) return;
-    const F = W + 2 * Math.abs(dx), FH = H + 2 * Math.abs(dy);
-    if (dx || dy) { camera.aspect = F / FH; camera.setViewOffset(F, FH, dx > 0 ? 2 * dx : 0, dy > 0 ? 2 * dy : 0, W, H); }
-    else { camera.clearViewOffset(); camera.aspect = W / H; camera.updateProjectionMatrix(); }
+    camera.aspect = W / H;
+    if (dx || dy) camera.setViewOffset(W, H, dx, dy, W, H);               // shifts the picture without scaling it
+    else { camera.clearViewOffset(); camera.updateProjectionMatrix(); }
     S.frame = `${W}x${H}:${dx}:${dy}:${camera.aspect.toFixed(4)}`;
     S.pointerMoved = true;                                               // the model moved under the pointer: re-pick the hover
   }
@@ -401,10 +452,15 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
   function setRotate(on) { S.rotate = on; orbit.autoRotate = on && S.active; orbit.autoRotateSpeed = 0.55; refreshBar(); }
   orbit.addEventListener('start', () => { if (S.active && S.rotate) setRotate(false); });
   const B = spaces.filter(s => !s.site).reduce((b, s) => [Math.min(b[0], s.box[0]), Math.min(b[1], s.box[1]), Math.max(b[2], s.box[2]), Math.max(b[3], s.box[3])], [Infinity, Infinity, -Infinity, -Infinity]);
+  // keep the pan near the house: move the camera by the same correction as the target, so the view keeps its angle
+  // and distance (clamping only the target made the offset grow every frame: tilt and zoom while panning)
   orbit.addEventListener('change', () => {
     if (!S.active) return;
-    const t = orbit.target;
-    t.set(THREE.MathUtils.clamp(t.x, B[0] - 30, B[2] + 30), THREE.MathUtils.clamp(t.y, -2, 16), THREE.MathUtils.clamp(t.z, B[1] - 30, B[3] + 30));
+    const t = orbit.target, C = THREE.MathUtils.clamp;
+    const x = C(t.x, B[0] - 30, B[2] + 30), y = C(t.y, -2, 16), z = C(t.z, B[1] - 30, B[3] + 30);
+    camera.position.x += x - t.x; camera.position.y += y - t.y; camera.position.z += z - t.z;
+    t.set(x, y, z);
+    S.pointerMoved = true;                                               // the model moved under the pointer
   });
 
   // ---------- context: the other homes and the trees ----------
@@ -438,9 +494,10 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
       const homes = window.__neighborhood?.homes; if (homes) homes.visible = false;
       daylight?.autoSunPath(false);
       const sky = document.getElementById('skypanel'); if (sky?.classList.contains('open')) sky.querySelector('.sp-head')?.click();
-      bar.hidden = false; S.cardOpen = !matchMedia('(max-width: 600px)').matches || !!S.selected;
+      bar.hidden = false; S.cardOpen = !matchMedia(SHEET).matches || !!S.selected;
       setDisplay(S.display); setRotate(S.rotate);
-      const want = params.get('space'); if (want && byId.has(want) && !S.selected) select(byId.get(want)); else select(S.selected);
+      const want = params.get('space'); params.delete('space');           // a deep link applies once, not on every re-entry
+      if (want && byId.has(want) && !S.selected) select(byId.get(want)); else select(S.selected);
     },
     exit() {
       if (!S.active) return;
@@ -451,7 +508,8 @@ export async function createInspector({ planId, plan, scene, camera, renderer, o
       bar.hidden = card.hidden = tip.hidden = true;
       frame();
       const p = new URLSearchParams(location.search); for (const k of ['display', 'space']) p.delete(k); p.delete('mode');
-      try { history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}`); } catch { /* as in syncURL */ }
+      const qs = p.toString();                                            // (URLSearchParams.size is missing on older Safari)
+      try { history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}`); } catch { /* as in syncURL */ }
     },
     update(dt = 1 / 60) {
       if (!S.active) return;

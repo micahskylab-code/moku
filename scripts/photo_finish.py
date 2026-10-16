@@ -8,7 +8,7 @@ a clean path-traced frame. Every step is subtle on purpose — overdone post-pro
  3. highlight glow (lens bloom) on sun-lit white, water glints and lamps
  4. lateral chromatic aberration toward the frame edges
  5. lens vignette
- 6. fine luminance grain and a light unsharp mask (camera sharpening)
+ 6. shadow lift, then fine luminance grain kept out of the sky and highlights, and a light unsharp mask
 """
 import argparse
 import numpy as np
@@ -23,6 +23,7 @@ ap.add_argument('--strength', type=float, default=1.0)
 ap.add_argument('--grade', type=float, default=0.4, help='how far to move toward the reference grade (0..1)')
 ap.add_argument('--haze', type=float, default=0.22)
 ap.add_argument('--seed', type=int, default=7)
+ap.add_argument('--lift', type=float, default=0.08, help='shadow lift: deep shade (not true black) raised by up to this much (sRGB 0..1)')
 a = ap.parse_args()
 K = a.strength
 
@@ -103,11 +104,24 @@ img = np.clip(img, 0, 1)
 # 6. camera sharpening + fine grain (luminance, stronger in the shadows like a real sensor)
 blur = gaussian_filter(img, sigma=(0.9, 0.9, 0))
 img = np.clip(img + (img - blur) * 0.35 * K, 0, 1)
+# shadow lift: foliage shade and side-yard lawn keep their texture instead of crushing to black (critique-preview4-front
+# #7); a toe that lifts dark-but-not-black values most and leaves true contact shadows deep, applied to luminance
+# so hues keep their balance
+if a.lift > 0:
+    l = img @ np.array([0.2126, 0.7152, 0.0722])
+    t = np.clip((l - 0.15) / 0.30, 0, 1)
+    f = l + a.lift * K * l / (l + 0.05) * (1 - t * t * (3 - 2 * t))
+    img = np.clip(img * (f / np.maximum(l, 1e-4))[..., None], 0, 1)
 rng = np.random.default_rng(a.seed)
 grain = gaussian_filter(rng.normal(0, 1, (H, W)), 0.55)
 grain /= grain.std() + 1e-9
 l = img.mean(2, keepdims=True)
-img = np.clip(img + grain[..., None] * (0.005 + 0.006 * (1 - l)) * K, 0, 1)   # fine grain (halved after critique r2)
+# grain only where a real sensor shows it at base ISO: textured mid-tones and shadows. Smooth areas (sky, render
+# walls) and highlights stay clean (critique-preview4-front #13: the sky speckled at 4x the raw render's noise).
+detail = gaussian_filter(np.abs(l[..., 0] - gaussian_filter(l[..., 0], 1.5)), 2.0)
+texture = np.clip(detail / 0.012, 0, 1)[..., None]
+bright = np.clip((l - 0.6) / 0.2, 0, 1); bright = bright * bright * (3 - 2 * bright)
+img = np.clip(img + grain[..., None] * (0.002 + 0.0025 * (1 - l)) * texture * (1 - bright) * K, 0, 1)   # -60% vs r4
 
 Image.fromarray((img * 255 + 0.5).astype(np.uint8)).save(a.dst, quality=95)
 print('finished', a.dst)
