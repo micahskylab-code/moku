@@ -1,0 +1,117 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "This is the strongest back view so far and a usable internal concept draft. It is close to the p5 composition, but the vanishing-edge falls and the dark right-hand screen planting still keep it from being buyer-ready. Against preview 4: fixed are #2 (the broadleaf tree is gone), #5 (the hill now has haze and spreading canopies), #7 (the register, caption and gen_lot25 comment now agree on 20 Nov 13:30; lot width and the civil grading plan are added), #9 (the cedar beam is warm and stands proud, the posts are dark) and #11 (magenta bougainvillea, burgundy ti). Mostly fixed are #4 (the house now fills about 22% of the frame against about 28% in p5, and sits near centre), #6 (teak chaises with bevelled cushions and rolled towels, but half buried behind the planter), #8 (the neighbour roofs are veiled and separated from the wing by foliage) and #12 (fewer, softer flowers, and a feathered lawn edge). Partly fixed are #1 (the falls are now a continuous sheet, but it reads as an opaque frosted panel under a dry tile band, over a flat basin), #3 (the lawn is now fully covered but has a tufted, divot-like pattern, and the log still shows 61k edge cells) and #10 (stone scale now varies and the right-wall planter is added, but there is no weathering). #13 stays a deliberate plan-over-rendering choice; the shutters now read edge-on. New regressions are small: the pier's coping runs through the raised planter-wall return, a black block sits on the left lānai post head, the basin touches the bottom frame edge, and stool gaps read as '1216'. The caption band is honest and complete.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 7,
+  "clean_terrain_water": 7,
+  "polished_buyer_camera": 7
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "terrain-water",
+   "where": "The vanishing-edge falls at x≈725-1335, y≈615-860; the outer tile band along the weir lip at x≈700-1320, y≈600-650; the catch-basin water at x≈725-1340, y≈700-871.",
+   "issue": "Partly fixed from preview-4 #1. The strands are now one continuous sheet, and the right end has a dry stone return. But the sheet reads as an opaque, grey-beige frosted panel: mean RGB about 168/178/179 with only low-contrast vertical streaks, no clear glassy zone at the top, no wet wall showing through, and no sun specular. The sheet also starts below a dry blue tile band, so it seems to come out from under the lip rather than pour over it. At the foot there is only a thin white line, with no foam band, spray or ripple rings. The basin is a flat pale cyan with no reflection of the sheet. This is still the image's main CG tell, on the brochure's signature feature.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Carry the falls sheet up and over the outer tile band to the knife edge, or move the tile to the pool's inner face. Make the top 20-25% of the drop glassy water (water BSDF, IOR 1.33, high transmission), so the dark, wet tile and stone show through. Ramp aeration to about 80% white by the foot, and add vertical anisotropic highlights that catch the 202° sun. At the impact line add a 10-15 cm foam and spray band and outward ripple displacement. Give the basin roughness about 0.05 so it mirrors the lower sheet."
+  },
+  {
+   "rank": 2,
+   "criterion": "materials-lighting",
+   "where": "The side-yard screen planting behind the right bougainvillea bed at x≈1060-1650, y≈290-480, and the pool's far-right quarter at x≈1060-1310, y≈545-615, which reflects it.",
+   "issue": "Remains from the right-third problem in preview-4 #4. The areca and plumeria screen is a near-black wall: mean luminance 37, against about 93 for the same zone in p5. It is the heaviest mass in the frame and reads as a hole behind the magenta bed. Its reflection turns the far-right pool water navy, with a smooth S-shaped edge that reads as a stain. p5 shows sun-lit shrubs, lawn running back and sky gaps here. The screen is an interim retouching choice (I-13a), not a plan item.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Thin the areca screen by about 40% and set it 3-4 m further back. Raise its leaf albedo about 1.5× and add back-translucency. Put one or two sun-lit plumerias or shrubs in front, and let a strip of lit lawn read under the canopy. Alternatively, lift that region by about +0.7 EV in photo_finish with a feathered mask. Re-check the pool's far-right reflection afterwards."
+  },
+  {
+   "rank": 3,
+   "criterion": "terrain-water",
+   "where": "The lawn left of and in front of the lānai and around the two palm trunks, x≈170-720, y≈530-615, and the left side yard at x≈0-170, y≈560-640.",
+   "issue": "Partly fixed from preview-4 #3. There is no bare green paint now, but the turf shows rows of lighter, coarse tufts over a smoother, darker base. It reads as divots or patchy new sod right beside the hero lānai, while the lawn between the lānai and the pool (x≈700-1300) is uniform. run.log still reports 'lawn cells 17792 full, 61249 edge', so the edge-cell scatter is the likely cause.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Fill the edge cells at the same density and blade-height distribution as the full cells, randomise tuft scale ±30%, and cap tuft height so no clump stands proud. Match the base albedo to the mean blade colour."
+  },
+  {
+   "rank": 4,
+   "criterion": "camera",
+   "where": "The chaise pair and its teak frames at x≈220-500, y≈635-800, behind the front bougainvillea planter at x≈240-720, y≈640-800.",
+   "issue": "Mostly fixed from preview-4 #6. The chaises now have teak frames, bevelled cushions, a seam and rolled towels. But the foot halves are buried in the bougainvillea, and the frames show as a stair-stepped jumble of teak boards beside the planter at x≈220-290, y≈690-800. The cushions are still near clipping (mean RGB about 222, max 232). Register I-13b says the deck was placed so the chaises read 'above the planter', which the render does not yet deliver.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the paved strip and chaises about 1.2 m back toward the house and about 0.5 m right, so their full length reads above the planter. Alternatively, cut the left half of the front-planter bougainvillea to about 0.4 m. Drop the cushion albedo to about 0.72. Update I-13b to match."
+  },
+  {
+   "rank": 5,
+   "criterion": "architecture",
+   "where": "The junction of the pool pier and the raised right-hand planter wall at x≈1440-1478, y≈598-616; the pier's side return at x≈1340-1450, y≈580-700.",
+   "issue": "New regression from the round-5 planter (I-11a). The pier's lower coping cap was not trimmed when the planter wall was raised 0.9 ft. It runs through the planter's side return and sticks out past the wall's front face as a small shelf, under the planter's own curb cap, so two coping levels stack at the corner. The pier return also uses a larger, greyer stone than the bright retaining-wall face beside it, so the corner reads as two kits pushed together.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Stop the pier coping at the planter wall's return face, or turn it as a mitred return, so each level has one cap. Use the same stone module and tint on the pier return and the retaining wall."
+  },
+  {
+   "rank": 6,
+   "criterion": "camera",
+   "where": "The bottom frame edge at x≈720-800, y≈835-871 (catch-basin water and the foot of the falls), and x≈120-720, y≈840-871 (the front planter's coping).",
+   "issue": "The catch-basin water and the left end of the falls run into the bottom frame edge, and the front planter's coping is cut, so the base of the signature feature looks tangent and cramped. In p5 the basin and lower wall sit fully inside the frame, with groundcover below. The top band (y≈0-60, mostly frond tips and cloud) has room to give.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Change shiftY from -0.13 to about -0.17 (or tilt down about 1°) so the basin coping clears the bottom edge by about 30 px. Keep fov 38.5 and the look target; the house moves up about 35 px, which the current headroom allows."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "The foreground planter wall at x≈120-720, y≈760-871; the basin front wall at x≈760-1450, y≈720-871; the right retaining wall at x≈1450-1650, y≈560-750.",
+   "issue": "Partly fixed from preview-4 #10. The stone scale now varies (larger low, smaller high) and the right wall has its bougainvillea planter. But all the walls are showroom-clean: no base grime band, no drip lines under the copings, and no damp darkening next to the basin. The right wall face is also slightly washed out, with cool blue-grey blotches under the hanging canes.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add a 15-20 cm darker band at the wall bases where they meet the groundcover. Add faint drip streaks under each coping, and about 30% damp darkening for 10 cm above the basin waterline and on the coping lip by the falls. Reduce the right wall's albedo by about 8%."
+  },
+  {
+   "rank": 8,
+   "criterion": "architecture",
+   "where": "The head of the lānai's left cedar post, x≈370-385, y≈340-377.",
+   "issue": "New. A flat, matte black rectangle sits on the post face at beam level, with no form or highlight. It reads as a sticker or missing texture rather than a fixture. p5 shows clean cedar posts and beam, and the wing's sconces at x≈855 and x≈1035 are clearly lamps.",
+   "cause_class": "defect (fixable now)",
+   "fix": "If this is meant to be a sconce, use the same sconce model as the wing, mount it on the side wall clear of the post, and give it a lit diffuser. Otherwise delete it so the cedar post and beam read continuously."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "The crown of the right-hand foreground queen palm at x≈305-385, y≈60-205; both trunks at x≈150-220 and x≈295-350.",
+   "issue": "The crown shows a cluster of stiff, sunlit leaf-base stubs radiating like bare antlers. p5's crowns have drooping old fronds and hanging fruit stalks. Both trunks also carry identical, evenly spaced wavy ring bands that repeat like a tiled texture. These are the two largest objects in the left third.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Replace the bare boots with two or three drooping brown dead fronds and an orange fruit stalk, or trim them to short dark stubs. Randomise the trunk ring spacing by ±30%, offset the texture between the two trunks, and add some lichen and value variation."
+  },
+  {
+   "rank": 10,
+   "criterion": "architecture",
+   "where": "Neighbour roof at x≈1100-1240, y≈240-292; second neighbour roof and white wall corner at x≈1565-1650, y≈280-350.",
+   "issue": "Mostly fixed from preview-4 #8. The 28% veil and the plumeria and areca between them now separate the copies from this home's wing roof, which ends at x≈1075. But the copies still repeat this home's seam pattern and eave height. The design copy and the 70 ft spacing remain assumptions (I-6, I-14, I-14a).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the subdivision plat and boundary survey (I-6) and the developer's site and architectural plans for Fairway 7 homes 1-14 (I-14). Until then, keep the veil and the foliage gap. If the screen planting is thinned under defect 2, make sure the first copy's roof does not reconnect visually with the wing."
+  },
+  {
+   "rank": 11,
+   "criterion": "materials-lighting",
+   "where": "Through the great-room glazing behind the outdoor-kitchen counter, x≈417-436, y≈450-461.",
+   "issue": "New, minor. Bright gaps between the counter-stool legs against the lit island read as the legible digits '1216' at full resolution, like a stray clock readout or a texture label.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Rotate or shift the nearest stool about 0.2 m, or lower the island's backlight, so the leg gaps stop forming glyph-like shapes."
+  },
+  {
+   "rank": 12,
+   "criterion": "labeling-honesty",
+   "where": "The caption band of back-labelled.jpg, and assumptions-register.md (I-16 / I-14a); run.sh line 'photo_finish.py ... --ref ref/back.png --grade 0.3'.",
+   "issue": "The caption band is honest and complete. It says independent draft, not by the developer; supplied, estimate and assumed rows; the real-date sun and the art-direction reason; and the documents still needed. But the finishing pass grades the whole frame 30% toward the developer's p5 rendering, and neither the register nor the caption discloses this, although background retouching (I-16) and the neighbour veils (I-14a) are disclosed.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add a register row: 'I-17 Global colour grade: 30% matched to brochure rendering p5 (photo_finish --grade 0.3); a look choice, not a claim about finishes'. Extend the caption's retouch note to 'colour grade matched to rendering p5 (retouch)'."
+  },
+  {
+   "rank": 13,
+   "criterion": "architecture",
+   "where": "The house's left side wall, x≈190-360, y≈330-470: cedar shutters seen edge-on at x≈195-215 and x≈255-268.",
+   "issue": "This remains preview-4 #13, kept on purpose. p5 shows this wall face-on with two shuttered windows; the p6 plan makes it the lānai's side wall, which recedes from this camera. The shutters (I-2a) now read as cedar edges, which is the right plan-faithful result. p5 is disclaimed as not to scale.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the plan geometry. Exterior elevations and a window/door schedule (I-2, I-2a) would confirm the opening and shutter sizes."
+  }
+ ]
+}

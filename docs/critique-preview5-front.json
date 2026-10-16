@@ -1,0 +1,117 @@
+{
+ "view": "front",
+ "usable_internal_draft": true,
+ "verdict": "Preview 5 is better than preview 4 and works as an internal concept draft, but it is not ready for buyers. Six of preview 4's 15 defects are fixed: #2 plumerias, #7 crushed shade and the ʻohana face, #8 walk and drive, #10 caption band and register, #12 main-roof pan steps, and #13 sky grain. Seven are partly fixed (#1, #3 with a regression, #4, #5, #6, #9, #11), and #14 and #15 remain as deliberate real-site and real-date choices. The worst flaw is still in the focal centre: the two wing roof planes beside the entry still alias into a stipple that reads as tile, because the round-5 fix only re-shaded them and did not touch the geometry. The new haze pass is the main regression. It leaves two pale background massing blocks fully exposed in the only ocean view, and it washes land 200-400 m away into fog while the sea 2-10 km behind it stays deep navy, so the horizon reads less like a photograph than p4.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 7,
+  "clean_terrain_water": 7,
+  "polished_buyer_camera": 8
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "materials-lighting",
+   "where": "Focal centre, flanking the main roof. South-wing walk-facing plane x 870-1015, y 285-395; north-wing plane x 620-780, y 280-350",
+   "issue": "P4 #1 is partly fixed. seam_lod brought the south plane down about 10 levels (RGB ~168 to ~157), so it no longer reads white. At 4x, though, both planes still show a cross-hatched stipple: a fine dot mesh on the north wing and tile-like courses on the south wing. Next to the clean seams of the main roof they read as tile or shingle. The round-5 change was shading-only. The modelled rib geometry still packs to about 2 px and aliases, and in r_standing_seam the across-seam streak noise (t/0.06 m) is not band-limited by seam_lod either.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Where seam_lod > 0.5, hide the rib geometry from camera rays: mix the roofSeam material to Transparent for camera rays only, or use a decimated rib mesh on these four wing planes. Then the pans' pre-filtered average shows through. Multiply the streak term and the galvanized-UV across-seam frequency by (1 - lod). Accept check: 4x crops of both planes should read as smooth grey, with at most faint lines running down the fall line."
+  },
+  {
+   "rank": 2,
+   "criterion": "terrain-water",
+   "where": "Left horizon x 140-590, y 205-280: two footprint-massing blocks. Dark diagonal bands on the right block's hip roof at x 440-530, y 208-240",
+   "issue": "P4 #3 is partly fixed, with a regression. The veil, storey openings and dark base were applied, but the dark canopy that hid the left block in p4 (x 0-300, y 195-250) is gone. Two large two-storey blocks now sit fully exposed. The 0.3 airlight floor lifted them, not recessed them: mean RGB is 140,157,161, against 114,131,123 in p4. The veiled tree belt and the walls merge into one pale surface that looks see-through. The blocks cover x 360-590, about 40% of the only ocean in the frame, and they read as CG massing at first glance.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Plant an opaque canopy belt 10-12 m tall in front of both blocks so only the tops of their roofs clear it. Give that belt no more airlight than the ground it stands on. Darken the massing roofs to a weathered grey (about RGB 110-120 after haze) and shade the hip faces consistently, so the dark bands disappear. Lower the massing airlight floor from 0.3 to about 0.15, and make them recede with darker walls instead of more haze."
+  },
+  {
+   "rank": 3,
+   "criterion": "materials-lighting",
+   "where": "Right horizon land x 1100-1650, y 150-265 (mean RGB 143,163,165). Ghost tree x 1215-1345, y 155-235. Coastal trees x 600-670 and x 740-830, y 210-260. All set against the ocean at x 560-900, y 232-260",
+   "issue": "P4 #9 is partly fixed, with a new realism problem. The coastal canopy band and the fairway dressing (register I-16) exist, but the round-5 haze floor (land: 25% airlight by 220 m and 45% desaturation by 100 m) washes land 200-400 m away into pale blue-grey fog. The sea 2-10 km behind it keeps its saturated navy (beta 1.2e-5), so the aerial perspective is inverted. The mowing stripes and groves cannot be read, and the trees look like faded cut-outs (the ghost tree right of the main roof). p4 shows saturated green fairway all the way to a hazier sea.",
+   "cause_class": "defect (fixable now)",
+   "fix": "In r_realsite, cut the land floor to about 0.08-0.12 at 220 m and desaturation to about 0.2, so the fairway stripes and canopy read olive-green. Let the sea take at least as much airlight as the land in front of it (about 15-20% near the horizon). Keep the tree veils equal to the ground they stand on, so crowns do not go paler than their hillside."
+  },
+  {
+   "rank": 4,
+   "criterion": "camera",
+   "where": "Left third x 0-330, y 240-430 (neighbour copy roofs). Right x 1200-1650, y 240-360",
+   "issue": "P4 #4 is partly fixed. The side-yard areca screen and the 28% roof veil now cut most right-hand copies below their gablets. On the left, though, the copy's large hip roof (x 0-330, y 240-330) and a second plane (x 0-60, y 360-430) still run straight into the ʻohana roof, so the buyer cannot see where the home for sale ends on that side.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the developer's site and architectural plans for Nā Hiku homes 1-14 (register I-14). Interim: raise the left screen arecas [108, 52.6, 12] and [123, 52.8, 11] to 15-16 ft, and add one clump at about (138, 52.6), so the left copy is cut below about y 300."
+  },
+  {
+   "rank": 5,
+   "criterion": "architecture",
+   "where": "Entry at the end of the walk: glazing x 800-860, y 355-440; fronds from crowns at x 720-800 and x 850-905",
+   "issue": "P4 #5 is partly fixed. The cedar header band now reads, interior EV 3 lifts the glazing (mean RGB 51,50,34 to 65,58,35), and the walk-side fronds were pruned. But fronds still cross the left third of the door (x 800-830) and its right edge (x 850-870). The opening is only about 55 x 80 px and sits in shade, so it is still not the bright, clear end point of the axis it is in p4.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move the christmas palms [90.8, 35.0] and [96.8, 10.0] another 2 ft outward, or drop them to about 11 ft so their crowns fall below the door head in the image. Raise the front interior EV to about 4, or add a soft fill on the courtyard paving so the threshold reads."
+  },
+  {
+   "rank": 6,
+   "criterion": "architecture",
+   "where": "Roof wells over garden showers 2 and 3: north wing x 655-730, y 312-345; south wing x 920-1000, y 315-355",
+   "issue": "P4 #11 is partly fixed. The orange dots are gone, but each well now reads as a flat, saturated orange strip, like copper flashing or a lit skylight, with no slats and no depth. At about 3 px/ft, 2x4 slats at 4 in. centres are sub-pixel, so they blend into one tone.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Use fewer, chunkier slats (2x6 at 9-10 in. centres, 5-6 across the well) so they resolve at 2-3 px with dark gaps. Darken and desaturate the cedar to match the entry screen (about sRGB 120,80,55). Add a dark shadow band along the upslope edge so each well reads as a recessed trellis."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "Garage carriage door x 1145-1365, y 550-730",
+   "issue": "This is a new finding; it was also present in p4. The door's wood reads as distressed, reclaimed barn wood: high-contrast grain with pale scuffs and streaks across every board. p4 shows a clean stained-cedar frame-and-panel door with darker stiles and rails. It is the most saturated object in the frame, so the worn look reads as cheap, not luxury.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Swap in a clean vertical-grain cedar texture. Cut grain contrast by about 50% and remove the white scuffs. Use a semi-gloss sealed finish (roughness about 0.35) with slightly darker stiles and rails, as in p4."
+  },
+  {
+   "rank": 8,
+   "criterion": "terrain-water",
+   "where": "Lipstick palm crown lying on the ʻohana's walk-side roof plane x 560-690, y 395-480, with red canes rising from under the gutter at x 650-690, y 470-650. gen_lot25.py lipstick [114.0, 29.6, 14]",
+   "issue": "This is a new finding. The clump stands only 0.7 ft outside the ʻohana's 2 ft eave (walk face y 32.3). Its fronds lie on the metal and cast shadows on it, so it reads as growing through the eave. A landscape plan would keep it clear of the roof.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Move it to about y 27, so it stands 2.5 ft or more clear of the eave. Or cut it to about 9 ft so the crown sits below the gutter line in the image."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "Skyline queen palm crowns: x 0-200, 660-770, 890-1000 plus 960-1100 (a side-by-side pair), 1460-1650 (two)",
+   "issue": "P4 #6 is partly fixed. Front-pair heights now differ (37 vs 29 ft) and the neighbour lots vary their palms. Six or seven crowns of the same symmetric queen model still punctuate the skyline, though. The pair at x 890-1100 (likely the back-yard queens at plan (-19.9, -6.7) and (-18.6, -3.3)) stand together at the same height as near-twins.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Give each instance its own crown yaw (vary by 40-90°), frond count (±3), droop and crown scale (±20%). Keep the back pair's positions for the back view, but rotate one crown and drop its trunk 3 ft so the two read as separate trees from the street."
+  },
+  {
+   "rank": 10,
+   "criterion": "camera",
+   "where": "Street plumerias x 570-740 and x 890-1085, y 640-800",
+   "issue": "This is a side effect of the p4 #2 fix, which otherwise worked: the walk start, lawn and garage door corner now read. At 0.48-0.5 scale both plumerias are dense round bushes of almost the same shape, mirrored either side of the walk. They read as gardenia shrubs, not p4's small plumeria trees with grey candelabra branches.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Keep the size and siting. Lift each canopy on a 3-4 ft bare, branching trunk, thin the lower rosettes so the branches show, and vary the pair (rotate one 90°, scale 0.45 vs 0.55)."
+  },
+  {
+   "rank": 11,
+   "criterion": "labeling-honesty",
+   "where": "front-labelled.jpg caption band, line A3 (y ~1010-1025)",
+   "issue": "P4 #10 is fixed. The band now discloses the cross-hip roof as inferred from p4 and the neighbour-roof retouch, and the register's sun row now reads 20 Nov 13:30. One gap remains: A3 says 'ocean/backdrop from DEM', but the backdrop's fairway stripes, groves, coastal canopy band and roofs, building belts and haze floor are illustrative retouching (register I-16). The side-yard areca screen is also an interim retouch (I-13a), and the band does not say so.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Change A3 to '... · backdrop terrain from DEM; its fairway, trees, coastal band and haze illustrative · side-yard screen planting illustrative · view not verified'."
+  },
+  {
+   "rank": 12,
+   "criterion": "terrain-water",
+   "where": "Ocean band x 300-900, y 230-260; centre and right of the horizon x 850-1650",
+   "issue": "P4 #14 is unchanged and deliberate. Ocean shows only in the left half: the I-3a cross-hip ridge covers the centre and the real DEM terrain rises above the horizon on the right. p4 shows an unbroken band, but this follows from the real site, and the band says 'view not verified'.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it, and do not extend the ocean. Recovering the x 360-590 stretch is a fix to rank 2, not a change to the ocean."
+  },
+  {
+   "rank": 13,
+   "criterion": "materials-lighting",
+   "where": "Whole frame: sun 21 Jun 10:00 HST (alt 53°, az 80°)",
+   "issue": "P4 #15 is unchanged and deliberate. High mid-morning sun gives short shadows and a cooler balance than p4's warm raking light. The ʻohana face is now sunlit (median RGB 114,134,145 to 159,167,173) and near-black shade dropped from about 6,700 to about 1,300 px, so the image no longer feels dead on the left.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it if real-date sun is the policy. For a warmer buyer image, pick another real date and time with a lower sun and state it in the band. Do not warm-grade it to imitate p4."
+  }
+ ]
+}

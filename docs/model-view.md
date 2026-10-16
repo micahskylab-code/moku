@@ -52,7 +52,7 @@ The wording per space is in `plans/lot25-spaces.json`. Polygons come from `plans
 | `kitchen` | Kitchen | KITCHEN | Main house | ≈ 150 sq ft (ESTIMATE) | ≈ 11 × 13.5 ft | vault 10′11″–18′6″ |
 | `great` | Great Room | GREAT ROOM · DINING | Main house | ≈ 885 sq ft (ESTIMATE) | ≈ 30 × 32 ft | vault 9′5″–18′6″ |
 | `pantry` | Pantry | PANTRY | Main house | ≈ 60 sq ft (ESTIMATE) | ≈ 6 × 10 ft | flat 9′ |
-| `hall` | Hall | — (Unlabelled circulation on p6; named “Hall” here) | Main house | ≈ 35 sq ft (ESTIMATE) | ≈ 6 × 6 ft | flat 9′ |
+| `hall` | Hall | — (Unlabelled on p6: a closet with bypass doors plus the circulation to Bedroom 3; named “Hall” here) | Main house | ≈ 35 sq ft (ESTIMATE) | ≈ 6 × 6 ft | flat 9′ |
 | `bed3` | Bedroom 3 | BEDROOM 3 | Main house | ≈ 225 sq ft (ESTIMATE) | ≈ 14.5 × 16 ft | vault 10′6″–14′5″ |
 | `bath3` | Bathroom 3 | BATHROOM 3 | Main house | ≈ 120 sq ft (ESTIMATE) | ≈ 10 × 12 ft | flat 9′ |
 | `entry` | Entry | ENTRY | Covered lānai | ≈ 100 sq ft (ESTIMATE) | ≈ 8 × 12.5 ft | vault 10′2″–14′1″ |
@@ -60,7 +60,7 @@ The wording per space is in `plans/lot25-spaces.json`. Polygons come from `plans
 | `primary` | Primary Bedroom | PRIMARY BEDROOM | Main house | ≈ 285 sq ft (ESTIMATE) | ≈ 24.5 × 16 ft | vault 10′6″–14′5″ |
 | `pcloset1` | Primary Closet | — (Unlabelled on p6; read as a closet from the hanging-rod symbols) | Main house | ≈ 25 sq ft (ESTIMATE) | ≈ 6.5 × 4.5 ft | flat 9′ |
 | `pcloset2` | Primary Closet | — (Unlabelled on p6; read as a closet from the hanging-rod symbols) | Main house | ≈ 25 sq ft (ESTIMATE) | ≈ 6.5 × 4.5 ft | flat 9′ |
-| `ppass` | Primary Bathroom | PRIMARY BATHROOM | Main house | ≈ 25 sq ft (ESTIMATE) | ≈ 6.5 × 4 ft | flat 9′ |
+| `ppass` | Primary closet passage | — (Unlabelled on p6: the passage between the two closets, next to the area p6 labels PRIMARY BATHROOM) | Main house | ≈ 25 sq ft (ESTIMATE) | ≈ 6.5 × 4 ft | flat 9′ |
 | `pbath` | Primary Bathroom | PRIMARY BATHROOM | Main house | ≈ 145 sq ft (ESTIMATE) | ≈ 9.5 × 16 ft | vault 10′4″–14′5″ |
 | `wh` | WH closet | WH | Main house | ≈ 15 sq ft (ESTIMATE) | ≈ 4 × 3.5 ft | flat 7′9″ |
 | `vest2` | Hall | — (Unlabelled circulation on p6; named “Hall” here) | Main house | ≈ 20 sq ft (ESTIMATE) | ≈ 6 × 3.5 ft | flat 9′ |
@@ -72,14 +72,19 @@ The wording per space is in `plans/lot25-spaces.json`. Polygons come from `plans
 | `gs2` | Garden Shower 2 | GARDEN SHOWER 2 | Outdoor space on the plan | ≈ 95 sq ft (ESTIMATE) | ≈ 6 × 16 ft | vault 10′2″–13′1″ |
 | `gs1` | Garden Shower 1 | GARDEN SHOWER 1 | Outdoor space on the plan | ≈ 70 sq ft (ESTIMATE) | ≈ 6 × 12 ft | open to sky |
 | `court` | Courtyard | COURTYARD | Outdoor space on the plan | ≈ 155 sq ft (ESTIMATE) | ≈ 12.5 × 12.5 ft | open to sky |
-| `ohana` | Guest Ohana | GUEST | Guest ʻohana | ≈ 255 sq ft (ESTIMATE) | ≈ 16 × 16 ft | vault 10′6″–14′5″ |
+| `ohana` | ʻOhana guest room | GUEST | Guest ʻohana | ≈ 255 sq ft (ESTIMATE) | ≈ 16 × 16 ft | vault 10′6″–14′5″ |
 | `ohbath` | Ohana Bath | BATH | Guest ʻohana | ≈ 80 sq ft (ESTIMATE) | ≈ 5.5 × 13.5 ft | flat 9′ |
-| `ohlanai` | Ohana Lanai | LANAI | Guest ʻohana | ≈ 40 sq ft (ESTIMATE) | ≈ 2.5 × 16 ft | vault 10′1″–11′5″ |
+| `ohlanai` | ʻOhana lānai | LANAI | Covered lānai | ≈ 100 sq ft (ESTIMATE) | ≈ 6.5 × 16 ft | vault 10′2″–13′4″ |
 | `garage` | Garage | — (Not on p6; the cedar carriage-door pavilion in the p4 front rendering) | Garage pavilion | ≈ 350 sq ft (ASSUMED) | ≈ 22 × 16 ft | flat 9′6″ |
 | `pool` | Pool & spa | — (Not on p6; from the p5 back rendering) | Site | ≈ 420 sq ft (ASSUMED) | ≈ 14 × 30 ft | — |
 | `homesite` | Homesite (modelled) | — (Fairway-7 lot boundaries not supplied) | Site | ≈ 11,340 sq ft (ASSUMED) | ≈ 184.5 × 61.5 ft | — |
 
-Traced totals (ESTIMATE) against the stated figures (SOURCE, p6). Main-house rooms ≈ 2,279 against 2,300 sq ft. ʻOhana rooms ≈ 332 against 352. Lānai ≈ 424 (522 with the entry) against 494 covered lānai. p6 does not say whether its figures are gross or net, or which spaces the lānai figure includes. The kitchen is a zone inside the great room and is not counted twice.
+Traced totals (ESTIMATE) against the stated figures (SOURCE, p6):
+- Main-house rooms ≈ 2,279 against 2,300 sq ft.
+- ʻOhana guest room and bath ≈ 332 against 352.
+- Lānai ≈ 424 (522 with the entry; the ʻohana lānai adds ≈ 100) against 494 covered lānai.
+
+p6 does not say whether its figures are gross or net, or which spaces the lānai figure includes. The kitchen is a zone inside the great room and is not counted twice.
 
 ## Questions stay on this device
 - Drafts save as you type, each to its own space. Saved questions go to the browser's `localStorage`, under the keys `nahiku.lot25.drafts.v1` and `nahiku.lot25.questions.v1`.
@@ -91,7 +96,7 @@ Traced totals (ESTIMATE) against the stated figures (SOURCE, p6). Main-house roo
 - The walkthrough's existing live weather (`src/weather.js`) asks Open-Meteo for the site's current weather unless `?wx=` or `?weather=` is given. That request carries only the fixed site coordinates, never questions.
 
 ## QA
-Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low&live=0&wx=partly&doy=172&hst=10:30`). Last run: 2026-10-15 23:17 UTC, 825 s, **19/19 checks passed**, 260 requests, all to localhost.
+Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low&live=0&wx=partly&doy=172&hst=10:30`). Last run: 2026-10-16 05:48 UTC, 1083 s, **24/24 checks passed**, 260 requests, all to localhost.
 
 | Check | Result |
 |---|---|
@@ -109,6 +114,11 @@ Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low
 | Export JSON shows the questions as copyable text | pass |
 | export is a local JSON file with the question and the concept label | pass |
 | Delete all asks for a second tap first | pass |
+| a redraw disarms Delete all (one tap after it deletes nothing) | pass |
+| saving keeps a question added by another tab | pass |
+| a draft stays with its own space when the selection changes | pass |
+| a deleted question can be undone | pass |
+| tapping the selected space reopens its panel | pass |
 | Model button enters, hides the other homes | pass |
 | Exit model restores homes, materials and URL | pass |
 | phone: nothing overflows the width | pass |
@@ -116,6 +126,16 @@ Run `node scripts/inspect_qa.mjs` (headless Chromium, SwiftShader WebGL, `?q=low
 | no page or console errors | pass |
 
 Screenshots are in `shots/model-view/` (not in git): 1 exterior overview, 2 exterior with Bedroom 2 picked, 3 cutaway great room, 4 translucent primary suite, 5 cutaway kitchen with a saved question, 6 questions panel, 7 phone (390 × 844) cutaway, Bedroom 2.
+
+Independent review (round 5): three read-only reviewers looked for defects in logic, label honesty, and phone and hosted robustness. A skeptic then tried to refute each finding. 6 findings were confirmed and none refuted. All 6 are fixed, along with the lower-priority findings that held up:
+- panning past the limits tilted and zoomed the view;
+- the homesite ground was tagged SOURCE;
+- the ʻohana lānai was traced 60 % too shallow;
+- Delete all stayed armed across redraws;
+- a pending draft could save into the wrong space;
+- two tabs overwrote each other's questions.
+
+The QA rows from "a redraw disarms Delete all" to "tapping the selected space reopens its panel" cover these fixes.
 
 Fixed during QA:
 - The house sat under the info panel. The projection centre now glides into the free area as panels open and close (a view offset), so orbiting still turns about the house and nothing jumps under the pointer.
