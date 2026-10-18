@@ -46,11 +46,11 @@ The Nā Hiku walkthrough is a three.js model of the Nā Hiku spec home (the broc
 - **Fixed sun:** stills and the export use each viewpoint's fixed sun. The interactive viewer uses the live sky.
 
 ## Open items
-- **Scores after render round 5:** front 8/7/7/8, back 8/7/7/7 (architecture / materials and lighting / terrain and water / camera). Defects and fixes are in `docs/critique-preview5-*.json`. The main remaining items:
-  - the waterfall still reads as a frosted panel;
-  - a dark side-yard screen behind the back view;
-  - a patchy lawn texture near the lānai;
-  - aliasing on the wing roofs in the front view;
-  - background haze stronger than the sea behind it;
-  - pale background buildings in front of the ocean.
+- **Scores after render round 6:** front 8/8/7/8, back 8/8/7/8 (architecture / materials and lighting / terrain and water / camera), up from 8/7/7/8 and 8/7/7/7 in round 5. Both are usable internal concept drafts, not buyer-ready. Defects and fixes are in `docs/critique-preview6-*.json`. The main remaining items:
+  - front: the two flat grey footprint-massing roofs on the left horizon;
+  - front: side-yard screen fronds now crossing the pavilions' outer hip corners;
+  - front: the regular hex grid of the grass-paver drive, and a dull foreground lawn;
+  - back: the vanishing-edge falls, whose aeration still reads as CG;
+  - back: wall weathering too faint, and a dark understorey on the right;
+  - back: the neighbour copy's roof, more exposed now the areca screen is lower.
 - **Missing documents:** dimensioned plans, elevations and sections, the roof plan, the site plan or plat, and the landscape and pool plans. The window/door and finish schedules are missing too, so the matching labels say UNKNOWN or ASSUMED.

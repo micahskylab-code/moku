@@ -463,6 +463,10 @@ function shutters(P, x0, x1, yb, head, face, s) {
 // Cedar carriage door (front rendering): 6" stiles, 6"/8" rails, a top row of 4 lites split by 2" mullions,
 // a lock rail, then two tiers of V-groove plank panels recessed 3/4" between 3 intermediate stiles and a rail;
 // black strap hinges with bolt heads, two pull handles, white casing and black cylinder sconces either side.
+// r6 (critique-preview5-front #7): stiles, rails and mullions are tagged by an integer +8 on their uv u (invisible
+// under the viewer's repeat-wrapped texture); scripts/materials_bpy.py r_cedar_door reads it to set the frame a shade
+// darker than the plank panels, as in p4.
+const frameUV = g => { if (g) { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) + 8); } return g; };
 function carriage(P, o, x0, x1, yb, head, T, outSide, colliders, at) {
   const w = x1 - x0, h = head - yb, cx = (x0 + x1) / 2, s = outSide || 1;
   const zc = outSide * (T / 2 - 0.32), d = 0.15, face = zc + s * d / 2, W = M.carriage();
@@ -471,18 +475,18 @@ function carriage(P, o, x0, x1, yb, head, T, outSide, colliders, at) {
   const yl1 = yt - top, yl0 = yl1 - lite, ylock = yl0 - lock, ymid = ya + bot + (ylock - ya - bot) * 0.5;
   rectFrame(P, M.frame(), x0, x1, yb, head, 0.07, 0.05, zc - s * 0.1);     // dark stop seen through the 1/2" gap
   // perimeter stiles and rails
-  P.box(W, st, yt - ya, d, xa + st / 2, (ya + yt) / 2, zc);
-  P.box(W, st, yt - ya, d, xb - st / 2, (ya + yt) / 2, zc);
-  P.box(W, xb - xa - 2 * st, top, d, cx, yt - top / 2, zc);
-  P.box(W, xb - xa - 2 * st, bot, d, cx, ya + bot / 2, zc);
-  P.box(W, xb - xa - 2 * st, lock, d, cx, ylock + lock / 2, zc);
-  P.box(W, xb - xa - 2 * st, 0.42, d, cx, ymid, zc);                        // intermediate rail
+  frameUV(P.box(W, st, yt - ya, d, xa + st / 2, (ya + yt) / 2, zc));
+  frameUV(P.box(W, st, yt - ya, d, xb - st / 2, (ya + yt) / 2, zc));
+  frameUV(P.box(W, xb - xa - 2 * st, top, d, cx, yt - top / 2, zc));
+  frameUV(P.box(W, xb - xa - 2 * st, bot, d, cx, ya + bot / 2, zc));
+  frameUV(P.box(W, xb - xa - 2 * st, lock, d, cx, ylock + lock / 2, zc));
+  frameUV(P.box(W, xb - xa - 2 * st, 0.42, d, cx, ymid, zc));                        // intermediate rail
   const ia = xa + st, ib = xb - st, mull = 0.17, mstile = 0.42;
   // lites: 4 across, 2" mullions, glass set back, a thin black glazing bead
   const lw = (ib - ia - (cols - 1) * mull) / cols;
   for (let k = 0; k < cols; k++) {
     const la = ia + k * (lw + mull), lb = la + lw;
-    if (k) P.box(W, mull, lite, d, la - mull / 2, (yl0 + yl1) / 2, zc);
+    if (k) frameUV(P.box(W, mull, lite, d, la - mull / 2, (yl0 + yl1) / 2, zc));
     P.pane(la, lb, yl0, yl1, zc - s * 0.02);
     rectFrame(P, M.frame(), la, lb, yl0, yl1, 0.03, 0.04, zc + s * 0.01);
   }
@@ -491,7 +495,7 @@ function carriage(P, o, x0, x1, yb, head, T, outSide, colliders, at) {
   for (const [pa, pb] of [[ya + bot, ymid - 0.21], [ymid + 0.21, ylock]]) {
     for (let k = 0; k < cols; k++) {
       const qa = ia + k * (pw + mstile), qb = qa + pw;
-      if (k) P.box(W, mstile, pb - pa, d, qa - mstile / 2, (pa + pb) / 2, zc);
+      if (k) frameUV(P.box(W, mstile, pb - pa, d, qa - mstile / 2, (pa + pb) / 2, zc));
       const nb = Math.max(1, Math.round(pw / 0.458)), bw = pw / nb;
       for (let j = 0; j < nb; j++) P.box(W, bw - 0.025, pb - pa, d * 0.5, qa + (j + 0.5) * bw, (pa + pb) / 2, zc - s * 0.0625);
       P.box(M.frame(), pw, pb - pa, 0.02, (qa + qb) / 2, (pa + pb) / 2, zc - s * 0.11);    // dark behind the V-grooves

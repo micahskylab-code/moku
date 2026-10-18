@@ -1,0 +1,101 @@
+{
+ "view": "back",
+ "usable_internal_draft": true,
+ "verdict": "Preview 6 is the best back view so far and a usable internal concept draft, but it is not buyer-ready, mainly because the vanishing-edge falls still read as CG. Against preview 5, five defects are fixed: #3 (the lawn tufts are gone), #5 (the planter corner now has one coping), #8 (the black block on the post is gone), #11 (the stool-leg gaps now read as two outlet plates) and #12 (register I-17 and the caption both disclose the 30% grade). Four are mostly fixed: #2 (sunlit plumerias and tall bougainvillea replace the black areca wall, though the understory stays near-black), #4 (the chaises read full length and the cushions no longer clip), #6 (the basin coping clears the bottom edge) and #9 (drooping dead fronds replace the antler stubs). #1 is partly fixed (the tile band moved inside, and wet stone and foot foam were added), #7 is essentially unchanged, #10 is still assumption-driven and #13 is kept by design. There are four new regressions: the aeration forms sharp, upward-pointing white 'flame' spikes; the new basin-end return shows a texture seam and oversized stones; the first neighbour copy's roof is now more exposed and no lighter than this home's; and the 35 px lift pushes the palm crowns out of the top of the frame. The caption band is honest and complete.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 8,
+  "clean_terrain_water": 7,
+  "polished_buyer_camera": 8
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "terrain-water",
+   "where": "The falls sheet at x≈700-1340: the near (left) end runs y≈625-830 and the far (right) end y≈590-700. The weir coping is at x≈700-1335, y≈580-625, and the catch-basin water at x≈725-1330, y≈700-835.",
+   "issue": "Partly fixed from preview-5 #1. The tile band is off the outer face, wet stone shows in the top ~25%, and a soft foam band sits at the foot. But the aeration mask breaks into sharp, upward-pointing triangular spikes with hard edges, like a comb of white flames, and white cover peaks at only ~50% mid-drop instead of building toward the foot. The 'clear' top zone (mean RGB ≈133/151/154) has no specular sheen, so it reads as a brown, drip-stained wall rather than a water film. The weir coping is still dry, rough flagstone with no wet nose or water curl, so the water still seems to appear from under the cap. The basin is a flat, uniform pale cyan with no ripples and no mirrored sheet, although register I-10a says it mirrors the foot. This is still the image's main CG tell, on the brochure's signature feature.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Replace the triangle-threshold aeration mask with vertical streak noise stretched about 1:40, seeded at the lip, thin at the top and widening downward. Use soft edges (a smoothstep band of at least 30% of the range) and cap cover at about 60%, so gaps of wet stone show as in the brochure. Lay a glossy film (roughness ~0.03) over the whole sheet so the sky and the 202° sun give a continuous vertical sheen. Darken the coping's outer nose and front 3-4 cm by ~35% at roughness 0.1, and add a 1-2 cm water curl over it. Give the basin a ripple normal radiating from the impact line and a roughness of ~0.05, so it reflects the lower sheet."
+  },
+  {
+   "rank": 2,
+   "criterion": "materials-lighting",
+   "where": "The front planter wall at x≈260-720, y≈730-871; the basin front wall at x≈760-1450, y≈700-871; the right retaining wall at x≈1450-1650, y≈540-700.",
+   "issue": "Remains from preview-5 #7. Register I-11a now says the walls have a damp/grime band at the base, drip streaks under the copings and damp at the basin waterline. In the render only a faint warm darkening at the right wall's foot is visible. The front planter and the basin wall are showroom-clean, there is no damp line at the basin waterline, and the right wall still carries cool blue-grey blotches under the hanging canes. These three walls fill most of the lower third.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise the weathering strength about 3×. Add a 15-20 cm base band at about −25% value, drip streaks 20-40 cm long under each coping at about −12%, and a 10 cm damp band at about −30% above the basin waterline and on the weir-face ends. Warm or desaturate the blue-grey blotches on the right wall (check the shadow-tint or AO mask), and drop that wall's albedo by about 8%."
+  },
+  {
+   "rank": 3,
+   "criterion": "materials-lighting",
+   "where": "The band under the two plumeria canopies behind the right bougainvillea bed, x≈1080-1330, y≈330-430 (mean luminance ≈39, against ≈41 in preview 5).",
+   "issue": "Mostly fixed from preview-5 #2. The black areca wall is gone. Sunlit plumeria canopies (luminance ≈62) and tall bougainvillea now fill the right third, and lit lawn shows at x≈1580-1640, so the area reads as garden rather than a hole. But the strip under the canopies is still near-black, and the bougainvillea inside it reads as dull maroon. It is the darkest mass in the frame, set right behind the hero planting.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Thin or remove the 7 ft screen hedge from plan x≈−17 to −1 (I-13a) behind the plumeria trunks, so lit lawn and dappled sun read under the canopy. Alternatively, lift that strip by about +0.5 EV with a feathered mask in photo_finish and note it under I-16."
+  },
+  {
+   "rank": 4,
+   "criterion": "architecture",
+   "where": "The basin-end return and the planter's side face, x≈1335-1450, y≈530-675; a vertical seam at x≈1408 running y≈545-675.",
+   "issue": "Preview-5 #5 is fixed: there is now one coping at the planter rim, and the stacked pier cap is gone. New regression: where the round-6 return meets the planter's side face, the stone texture breaks along a straight vertical line at x≈1408. The return's stones are also about twice the size of those on the adjacent retaining wall, which uses ~8.5 cm stones at that height. The corner reads as a separate ashlar block pushed against the crazy-paving wall.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Weld the return and the planter side into one mesh, or map both with the same world-space (box or triplanar) stone mapping so the pattern runs across the seam. Use the retaining wall's stone module and its large-low, small-high grading on the return."
+  },
+  {
+   "rank": 5,
+   "criterion": "camera",
+   "where": "The top edge at x≈0-420, y≈0-60 (left queen palm crowns) and x≈1220-1650, y≈0-110 (right queen palm, whose crown runs out of frame); the bottom-left planter step at x≈60-260, y≈825-871.",
+   "issue": "Preview-5 #6 is mostly fixed. The round-6 shiftY change from −0.13 to −0.17 lifted the content about 35 px, and the basin coping now clears the bottom edge by about 5-30 px. The front planter's lower step is still cropped, but that is a normal foreground crop (the brochure does the same). The cost is at the top: both left crowns' hearts now sit on the top edge and the right crown is cut off, so the top band is a mass of cut fronds. In the brochure the crowns sit fully inside the frame against sky.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Keep shiftY −0.17 and widen fov from 38.5 to about 40 (about 35 px more at top and bottom). Move the camera about 1-1.5 ft closer along the look axis so the house stays at about 21% of the frame. Alternatively, lower the left pair's crowns by 1-2 ft (I-13a lists them at 18 and 21 ft)."
+  },
+  {
+   "rank": 6,
+   "criterion": "architecture",
+   "where": "The first neighbour copy's roof at x≈1100-1380, y≈195-262, above the plumeria canopy and just right of this home's wing roof (which ends at x≈1065).",
+   "issue": "Preview-5 #10 remains, and the roof is now more exposed. With the areca screen replaced by lower plumerias, the copy's roof shows about 280 px wide with crisp standing seams. Its value (luminance ≈145) matches this home's wing roof (≈143), so the 28% veil no longer sets it apart, and it competes with the wing for the upper right. The brochure shows a neighbour roof in this spot too, but smaller and broken up by palms. The design copy and the 70 ft spacing are assumptions (I-6, I-14, I-14a).",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Resolving it needs the subdivision plat and boundary survey (I-6) and the developer's site and architectural plans for Fairway 7 homes 1-14 (I-14). In the meantime, set one or two foxtail crowns at plan x≈−20 to −10 behind the plumeria to break the roof below its ridge, or raise this roof's veil to about 40% and update I-14a."
+  },
+  {
+   "rank": 7,
+   "criterion": "materials-lighting",
+   "where": "Both queen palm trunks at x≈150-220 and x≈295-350, y≈300-650; the left palm's hanging dead fronds at x≈190-230, y≈150-400.",
+   "issue": "Preview-5 #9 is mostly fixed: the antler-like leaf-base stubs have been replaced by drooping dead fronds. Remaining: both trunks still carry evenly spaced wavy ring bands of equal contrast, so they repeat like a tiled texture. The dead fronds are flat, uniform straw-yellow sheets with no separate leaflets.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Jitter the ring spacing by ±30% and offset its phase between the two trunks, with some value variation. Make the dead fronds darker brown (sRGB ~110/80/50) with separate, curled leaflet cards."
+  },
+  {
+   "rank": 8,
+   "criterion": "materials-lighting",
+   "where": "Bougainvillea canes from the front planter: from (160,700) up to (340,600) over the lawn; over the chaise feet at x≈420-500, y≈600-680; across the pool's left corner and the falls' left end at x≈620-720, y≈600-700.",
+   "issue": "Long, bare, wire-thin canes of even width with sparse leaves arch out of the front planter like L-system whips, crossing the chaise feet and the pool. The brochure shows compact flowering mounds. This is the nearest planting in the frame.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Cap cane length at about 0.8 m, taper the stems, and add leaf and bract clusters along each cane. Remove the two left-most canes, which cross the chaise feet and the lawn."
+  },
+  {
+   "rank": 9,
+   "criterion": "materials-lighting",
+   "where": "The groundcover bank below the basin and the right wall, x≈1000-1650, y≈680-871.",
+   "issue": "The groundcover carries pure-white pinpoint flowers at an even density across the whole bank, so at full resolution they read as sensor noise or sparkle rather than flowers.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Cut flower density by about 60% and clump the flowers in groups. Tint them off-white or pale pink (~sRGB 230/220/215), and scale the petals up about 1.5× so they resolve as blossoms."
+  },
+  {
+   "rank": 10,
+   "criterion": "labeling-honesty",
+   "where": "assumptions-register.md rows I-10a, I-11a and I-14a (the caption band of back-labelled.jpg is fine).",
+   "issue": "The caption band is honest and complete, and I-17 now discloses the grade. But three register rows describe effects this render does not show. I-10a says the basin is 'calm enough to mirror the sheet's foot', and no reflection is visible. I-11a says the walls show weathering, which is barely visible. I-14a says the copies 'read lighter and softer than this home', but the first copy's roof measures the same value as this home's wing.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Either make the render deliver these effects (defects 1, 2 and 6), or reword the rows as 'modelled; weak or not visible in the back still', so the register matches the image."
+  },
+  {
+   "rank": 11,
+   "criterion": "architecture",
+   "where": "The house's left side wall, x≈190-360, y≈300-480, with cedar shutters seen edge-on.",
+   "issue": "Preview-5 #13 is kept on purpose. The brochure's p5 rendering shows this wall face-on with two shuttered windows; on the p6 plan it is the lānai's side wall, which recedes from this camera. The shutters read correctly as cedar edges, and p5 is disclaimed as not to scale.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep the plan geometry. Exterior elevations and a window/door schedule (I-2, I-2a) would confirm the opening and shutter sizes."
+  }
+ ]
+}

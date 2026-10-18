@@ -4,9 +4,9 @@
 //     12" sandstone coping with a bullnose (2 ft pieces, 1/8" joints), entry steps with tiled nosings;
 //   - spa: ~7.5 x 8 ft, set into the pool's back wall (pool water wraps its front and left), coping 8" above
 //     the pool water, full to 5" below its coping, a bench, six jets and a spill notch into the pool;
-//   - vanishing edge on the seaward side: a 10" weir with a rounded wet cap and a 2" tile lip, the falling
-//     water as one continuous thin sheet (a closed 1/4" slab leaving the cap at ~1 ft/s, so it falls 3-4"
-//     clear of the wet wall; scripts/water_bpy.py tears it into strands over the lower third), a turquoise
+//   - vanishing edge on the seaward side: a 10" weir with a rounded wet cap, wet stone below it (its tile band on
+//     the pool side, r6), the falling water as one continuous thin sheet (a closed 1/4" slab leaving the cap at
+//     ~1 ft/s, so it falls 3-4" clear of the wet wall; scripts/water_bpy.py: glassy top, white strands below), a turquoise
 //     catch basin 2.5 ft wide 3 ft below with an aerated foam line and ripples where the sheet lands.
 //
 // The stone ends and caps at the basin's two ends stand where the garden walls (site.js) run into them;
@@ -302,8 +302,11 @@ export function buildPool(P, grade, colliders) {
     add('pool plaster', box([x0 + 0.06, y0, xi0, y1], floor - 0.5, capTop - capH));
     copingRun(cope, 'y', y0, y1, x0 - 0.02, xi0, capTop, capH, 'lo', 2.0, R);
     add('weir cap', ...cope.splice(0));
-    add('waterline tile', box([x0, y0, x0 + 0.06, y1], W - 0.35, capTop - capH, W - 0.35));        // 2" tile lip
-    add('falls face', box([x0, y0, x0 + 0.06, y1], Wb - 0.2, W - 0.35, Wb - 0.2));                 // wet stone face
+    // r6 (critique-preview5-back #1: the sheet seemed to start below a dry blue tile band): no tile on the outer face;
+    // the wet stone runs up under the cap's nose, so the glassy top of the sheet shows dark wet stone, and the 6" tile
+    // band moves to the weir's pool-side face (under water, as on a real knife edge)
+    add('falls face', box([x0, y0, x0 + 0.06, y1], Wb - 0.2, capTop - capH, Wb - 0.2));            // wet stone face
+    add('waterline tile', box([xi0, y0 + tileT, xi0 + tileT, y1 - tileT], capTop - capH - band, capTop - capH, capTop - capH));
     add('pool plaster', box([x0, y0, x0 + 0.06, y1], bFloor, Wb - 0.2));
     // basin: plaster floor, the retaining wall (coral stone, its lip 3" above the basin water), coping.
     // Where the garden walls (site.js, 1.8 ft thick on the same line) overlap the basin wall and the stone
@@ -328,8 +331,9 @@ export function buildPool(P, grade, colliders) {
     // the y1 pier: its seaward face 1/8" proud of the garden wall's, its basin face just proud of the garden
     // wall's run end (y1 - 0.85 .. 0.78 by the run's pull-back); its cap (bottom / top G+0.345 / +0.565) clears
     // every garden-wall cap height (G+0.319 .. 0.35 / 0.519 .. 0.55), so no two faces coincide
-    { const pier = new THREE.Mesh(box([x0 - 4.3 - e, yE, x0 + 0.03, y1 + 0.6], bFloor - 0.6, G + 0.345), mat('ashlar')); g.add(pier);
-      const cap = new THREE.Mesh(box([x0 - 4.424, yE - 0.1, x0 + 0.05, y1 + 0.7], G + 0.345, G + 0.565), mat('coral')); g.add(cap); }
+    // r6 (critique-preview5-back #5): no pier here any more -- its low cap ran through the raised planter (site.js) and
+    // stacked two coping levels at the corner. The planter now starts at yE - 0.02 and its end block (gen_lot25 walls,
+    // planter.endBlock) closes the basin end from the planter to the pool, both to the planter rim under one coping.
     // r5 (critique-preview4-back #1): the weir stops ~10 cm (0.33 ft) short of the pier in a clean dry return --
     // a stone dam across the weir, its face 3/8" proud of the falls face (and of the cap's nose), under a
     // bullnosed coping that meets the y1 coping; the sheet, foam and spray stop at its end face (yR)
@@ -373,7 +377,9 @@ export function buildPool(P, grade, colliders) {
     // spray: two soft curtains of mist standing on the impact line, one just in front of the sheet's foot
     // (~5" tall) and a lower one behind it, gently waved along the weir; uv.x = height fraction (0 at the
     // water .. 1 at the top), uv.y = ft along the weir (water_bpy fades and breaks them up)
-    for (const [xs, hgt, ph0] of [[xImp - 0.07, 0.3, 0.0], [xImp + 0.08, 0.22, 1.7]]) {
+    // r6 (critique-preview5-back #1: only a thin white line at the foot): ~6" and ~4" curtains, a third low one
+    // ~2" further out over the foam (the shader makes them denser), so a 10-15 cm foam-and-spray band reads
+    for (const [xs, hgt, ph0] of [[xImp - 0.07, 0.48, 0.0], [xImp + 0.08, 0.36, 1.7], [xImp - 0.2, 0.26, 3.1]]) {
       const len = yR - y0 - 0.04, nz = 240, pos = [], uvs = [], idx = [];
       for (let i = 0; i <= nz; i++) for (let j = 0; j <= 2; j++) {
         const zz = y0 + 0.02 + len * i / nz, t = j / 2;

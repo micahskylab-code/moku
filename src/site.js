@@ -389,7 +389,9 @@ function stoneWall(W, H, colliders) {
     // ends pull back (so an end never lies in the plane of the crossing run's face) and caps step down
     const k = wallRun++ % 4, drop = k * 0.0104, pull = (k + 1) * 0.03;
     const top = (W.top ?? (H(ax, ay) + (W.height ?? 2))) - drop;
-    if (W.planter) { planterRun(g, W.planter, ax, ay, bx, by, len, nx, ny, base, top, len + 1.8 - 2 * pull); colliders.push({ a: [ax, ay], b: [bx, by] }); continue; }
+    // r6 (critique-preview5-back #5): planter.from = ft from the run's first point back to its start face (default the
+    // usual 0.9 - pull), so the planter's end can stand exactly where the pool pier was (see planterRun endBlock)
+    if (W.planter) { const e1 = 0.9 - pull, e0 = W.planter.from ?? e1; planterRun(g, W.planter, ax, ay, bx, by, len, nx, ny, base, top, len + e0 + e1, (e1 - e0) / 2); colliders.push({ a: [ax, ay], b: [bx, by] }); continue; }
     const m = sbox(len + 1.8 - 2 * pull, top - base, 1.8, 'ashlar');
     m.position.set((ax + bx) / 2, (top + base) / 2, (ay + by) / 2); m.rotation.y = -Math.atan2(by - ay, bx - ax); g.add(m);
     const cap = sbox(len + 2.0 - 2 * pull, 0.2, 2.0, 'coral'); cap.position.set((ax + bx) / 2, top + 0.1, (ay + by) / 2); cap.rotation.y = m.rotation.y; g.add(cap);
@@ -405,9 +407,9 @@ function stoneWall(W, H, colliders) {
 // The soil's material starts with 'terrain', so scripts/plants_bpy.py plants the planter's bed (gen_lot25 beds) on it.
 // Curbs and core only touch back to back (hidden faces); the copings meet edge to edge, so no visible face coincides.
 const PLANTER_SOIL = Object.assign(new THREE.MeshStandardMaterial({ color: '#4a3a2b', roughness: 1 }), { name: 'terrain planter' });
-function planterRun(g, P, ax, ay, bx, by, len, nx, ny, base, top, L) {
+function planterRun(g, P, ax, ay, bx, by, len, nx, ny, base, top, L, shift = 0) {
   const ct = P.curb ?? 0.33, pw = P.width ?? 1.4, rim = top + (P.rise ?? 0.9), soil = rim - 0.2;
-  const o = 0.9, inn = o - 2 * ct - pw, ux = (bx - ax) / len, uy = (by - ay) / len, mx = (ax + bx) / 2, my = (ay + by) / 2;
+  const o = 0.9, inn = o - 2 * ct - pw, ux = (bx - ax) / len, uy = (by - ay) / len, mx = (ax + bx) / 2 + ux * shift, my = (ay + by) / 2 + uy * shift;
   const rot = -Math.atan2(by - ay, bx - ax);
   const put = (w, y0, y1, c0, c1, material, a = 0) => {
     const m = typeof material === 'string' ? sbox(w, y1 - y0, c1 - c0, material) : new THREE.Mesh(new THREE.BoxGeometry(w, y1 - y0, c1 - c0), material);
@@ -422,6 +424,19 @@ function planterRun(g, P, ax, ay, bx, by, len, nx, ny, base, top, L) {
   put(L + 2 * k, rim, rim + 0.2, o - ct - k, o + k, 'coral');
   put(L + 2 * k, rim, rim + 0.2, inn - k, inn + ct + k, 'coral');
   for (const s of [-1, 1]) put(ct + k, rim, rim + 0.2, inn + ct + k, o - ct - k, 'coral', s * (L - ct + k) / 2);
+  // r6 (critique-preview5-back #5: the pool pier's low cap ran through this planter's return and stood out past its face
+  // as a shelf, two coping levels stacked at the corner, in a bigger, greyer stone): P.endBlock = plan rect [x0, y0, x1, y1]
+  // of a solid return on the planter's lawn side, from the planter's start face to the pool (it replaces the pool's pier,
+  // src/pool.js): one stone body to the planter rim, so the corner is one face in the same stone (same island top, so
+  // the same two-size module) under one coping at the planter's level. Its face is flush with the planter's start face and
+  // touches its inner curb; its cap butts the inner coping's side, tops level (adjacent faces, none coincide)
+  if (P.endBlock) {
+    const [rx0, ry0, rx1, ry1] = P.endBlock, sv = [], cv = [];
+    for (const [px, py] of [[rx0, ry0], [rx1, ry0], [rx0, ry1], [rx1, ry1]]) { sv.push((px - mx) * ux + (py - my) * uy); cv.push((px - mx) * nx + (py - my) * ny); }
+    const s0 = Math.min(...sv), s1 = Math.max(...sv), c0 = Math.min(...cv), c1 = Math.min(Math.max(...cv), inn);
+    put(s1 - s0, base, rim, c0, c1, 'ashlar', (s0 + s1) / 2);
+    put(s1 - s0 + 2 * k, rim, rim + 0.2, c0 - k, inn - k, 'coral', (s0 + s1) / 2);
+  }
 }
 
 // ---------- plants ----------

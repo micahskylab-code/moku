@@ -52,7 +52,8 @@ export function buildHouse(plan, scene) {
 
   // Lanai and entry: rough-sawn cedar posts and header beams on the open edges (back rendering): 10x10 posts on
   // black steel stand-off bases, a 10x14 header whose ends run 12" past the posts, black iron knife plates with
-  // round bolt washers at every post-to-beam joint. posts: [x, y, size?]; beams: { a, b, w?, h?, ext? } (ft).
+  // round bolt washers at every post-to-beam joint unless `plates: false` (r6: the lanai beams in tools/gen_lot25.py
+  // use concealed connectors, as p5 shows). posts: [x, y, size?]; beams: { a, b, w?, h?, ext?, plates? } (ft).
   const timber = new Parts();
   // r5: every post and beam is its own mesh (the iron stays merged): the Blender wood shader runs the grain along
   // each object's longest extent (nh_axis), and one merged timber object gave posts and beams one shared axis

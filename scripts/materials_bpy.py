@@ -364,6 +364,15 @@ def mildew(g, col, amount=0.18):
 
 HAZE = []          # aerial-perspective nodes in far materials; World points them at its sky
 
+# r6 (critique-preview5-front #2 / #3): the r5 floors (land 25% airlight by 220 m and 45% desaturation; massing 30%,
+# and beta 9e-4 on the massing) washed land 200-400 m off into pale fog while the sea 2-10 km behind stayed navy - an
+# inverted aerial perspective. One haze now serves the real-site land and everything standing on it (canopy-height
+# trees, building belts: scripts/plants_bpy.py uses LAND_HAZE), so no crown is paler than its hillside; the massing
+# takes a little more; the sea takes more again with distance, ~18% near the horizon (register I-16)
+LAND_HAZE = dict(beta=1.3e-4, desat=0.2, desat_m=100.0, floor=(0.1, 60.0, 220.0))     # ~10% by 220 m, olive not fog
+MASSING_HAZE = dict(beta=1.3e-4, lift=0.08, desat=0.3, floor=(0.15, 80.0, 250.0))     # walls / roofs: 15% from ~250 m
+SEA_HAZE = dict(beta=1.2e-5, floor=(0.18, 300.0, 3000.0))                             # ~12% at 2 km, 18% from 3 km
+
 def aerial(g, beta=6e-5, lift=0.06, fac=None, desat=0.0, floor=None, desat_m=300.0):
     # beta: 2e-5 /m over the sea (deep blue right to the horizon, as in the brochure), 9e-5 /m over land (the
     # trade-wind salt haze that turns the far forest and coast blue-grey: ~9% contrast lost at 1 km, ~35% at 5 km);
@@ -519,7 +528,10 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42, aniso=0.0
     # oil canning: slow waves across each flat pan, stronger mid-pan
     # (period across the pan ~1.2 m, half the old depth: the 0.35 m waves repeated every ~14" and read as corrugation, critique r3)
     oc = g.noise(g.comb(g.math('DIVIDE', t, 1.2), g.math('DIVIDE', s, 2.2), g.mul(prnd, 9.0)), 1.0, 1.0, 0.4)
-    oc = g.mul(g.sub(oc, 0.5), g.mul(g.maprange(e, 0.0, W / 2 - 0.02, 0.0015, 0.0), 1.0))
+    # r6 (critique-preview5-front #1): every across-seam term below (oil canning, spangle, wash streaks, the per-pan
+    # tint and sheen) fades out with lod, so a plane seen along its eave from far off is one smooth pre-filtered grey
+    unlod = g.sub(1.0, lod)
+    oc = g.mul(g.sub(oc, 0.5), g.mul(g.maprange(e, 0.0, W / 2 - 0.02, 0.0015, 0.0), unlod))
     pencil = g.maprange(g.math('ABSOLUTE', g.sub(e, W * 0.17)), 0.004, 0.0, 0.0, 0.0012)   # two pencil ribs
     pencil = g.mul(pencil, near)
     h = g.add(g.add(rib, oc), pencil)
@@ -534,18 +546,18 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42, aniso=0.0
     galr = g.noise(g.comb(g.math('DIVIDE', t, 0.9), g.math('DIVIDE', s, 6.0), 0.0), 1.0, 2.0, 0.5)
     base = lin(color)
     lum = g.bw(gal)
-    tone = g.maprange(lum, 0.25, 0.65, 0.965, 1.03)
-    tone = g.mul(tone, g.maprange(prnd, 0.0, 1.0, 0.965, 1.035))
+    tone = g.mixf(lod, g.maprange(lum, 0.25, 0.65, 0.965, 1.03), 0.9975)
+    tone = g.mul(tone, g.mixf(g.mul(lod, 0.75), g.maprange(prnd, 0.0, 1.0, 0.965, 1.035), 1.0))
     streak = g.noise(g.comb(g.math('DIVIDE', t, 0.06), g.math('DIVIDE', s, 3.0), 0.0), 1.0, 3.0, 0.6)
-    tone = g.mul(tone, g.maprange(streak, 0.35, 0.75, 1.025, 0.96))
+    tone = g.mul(tone, g.mixf(lod, g.maprange(streak, 0.35, 0.75, 1.025, 0.96), 0.9925))
     seam_dirt = g.maprange(d, 0.03, 0.012, 1.0, 0.86)                               # dust lodges along the seams
     seam_dirt = g.mixf(lod, seam_dirt, 1.0)                                          # (band-limited: see seam_lod)
     tone = g.mul(tone, seam_dirt)
     c = g.mix(1.0, base, g.comb(tone, tone, tone), 'MULTIPLY')
     c = mottle(g, c, 12.0, 0.03)
-    c = grime(g, c, 0.5, 0.18, '#6f6a62')
-    r = g.add(rough, g.mul(g.sub(galr, 0.5), 0.25 if not metallic else 0.12))
-    r = g.add(r, g.maprange(prnd, 0.0, 1.0, -0.04, 0.04))
+    c = g.mix(lod, grime(g, c, 0.5, 0.18, '#6f6a62'), c)       # r6: the AO dust lines at every rib base fade with lod too
+    r = g.add(rough, g.mul(g.mul(g.sub(galr, 0.5), 0.25 if not metallic else 0.12), unlod))
+    r = g.add(r, g.mul(g.maprange(prnd, 0.0, 1.0, -0.04, 0.04), g.sub(1.0, g.mul(lod, 0.75))))
     r = g.add(r, g.mul(lod, 0.12))
     finish(g, p, color=c, rough=r, normal=nrm, metallic=metallic, spec=g.mixf(lod, 0.4, 0.2), aniso=aniso or None)
     # painted / aged sheet: lower edge (F82) reflectance than bare metal - the planes seen at grazing angles
@@ -553,7 +565,7 @@ def r_standing_seam(m, ctx, color='#8d9196', metallic=0.0, rough=0.42, aniso=0.0
     if metallic: g.put(p.inputs['Specular Tint'], ROOF_EDGE)
     if aniso: g.put(p.inputs['Tangent'], seam_tangent(g))     # rolled along the seams: sheen stretched down the fall line
 
-def seam_lod(g, rib=False):
+def seam_lod(g, rib=False, N=None, I=None, dist=None):
     """0..1: band limit of the 16" seam pattern (r5, critique-preview4-front #1). Looking along a plane's eave -
     across its seams - at a grazing angle from beyond ~20 m (the wing planes either side of the entry in the front
     view), the 1 1/2" ribs pack to ~2 px and hide the pans: the camera sees a wall of rib faces square to it, which
@@ -562,8 +574,11 @@ def seam_lod(g, rib=False):
     tone. Only camera rays past ~16 m; the main face seen square-on (seams across the view) is untouched.
     rib=True also catches the rib sides and bevels seen face-on (normal within ~40 deg of the view): on a plane
     seen square-on the ribs never face the lens that directly (r5 test: sides alone left the bevels, sunlit
-    and square to the lens, carrying the near-white)."""
-    N = g.Nrm(); I = g.geo().outputs['Incoming']
+    and square to the lens, carrying the near-white).
+    N: the roof plane's world normal to judge by instead of the shading point's own (r6: the ribs' plane normal,
+    decoded from their uv, so every face of a rib - crown, bevels, sides - gets its plane's value). I, dist: the unit
+    vector toward the camera and the camera distance of some other point (then no camera-ray mask)."""
+    N = N if N is not None else g.Nrm(); I = I if I is not None else g.geo().outputs['Incoming']
     nx, ny, nz = g.sep(N); ix, iy, _ = g.sep(I)
     hl = g.math('SQRT', g.add(g.mul(nx, nx), g.mul(ny, ny)))
     ndi = g.math('ABSOLUTE', g.vmath('DOT_PRODUCT', N, I, out=1))
@@ -575,6 +590,8 @@ def seam_lod(g, rib=False):
         side = g.maprange(ndi, 0.68, 0.8, 0.0, 1.0, smooth=True)
         k = g.math('MAXIMUM', k, side)
     lp = g.node('ShaderNodeLightPath')
+    if dist is not None:          # r6: judged for another point and view (I, dist) on any ray type
+        return g.mul(k, g.maprange(dist, 16.0, 26.0, 0.0, 1.0, smooth=True))
     far = g.maprange(lp.outputs['Ray Length'], 16.0, 26.0, 0.0, 1.0, smooth=True)
     return g.mul(g.mul(k, far), lp.outputs['Is Camera Ray'])
 
@@ -616,6 +633,35 @@ def r_roof_trim(m, ctx, color=ROOF_GREY, rough=0.36, metallic=0.75):
         spec = g.mixf(lod, 0.4, 0.28)
     finish(g, p, color=c, rough=r, metallic=metallic, spec=spec)
     g.put(p.inputs['Specular Tint'], ROOF_EDGE)
+    if base_name(m.name) == 'roofSeam':
+        # r6 (critique-preview5-front #1): re-shading alone left the wing planes beside the entry a cross-hatched
+        # stipple - the modelled ribs themselves pack to ~2 px there. Ribs (src/roof.js stores their plane's normal
+        # in the uv: 20 + n.x, 20 + n.z in glTF axes; Blender's v = 1 - v) turn Transparent for CAMERA rays where
+        # their plane's seam_lod passes ~0.5, so the camera sees the pans' pre-filtered average; shadows, reflections
+        # and bounce light still see them. Caps (small uvs) and planes seen square-on keep their real ribs.
+        u, v, _ = g.sep(g.texco().outputs['UV'])
+        isrib = g.mul(g.math('GREATER_THAN', u, 18.0), g.math('LESS_THAN', u, 22.0))
+        nx = g.sub(u, 20.0); nz = g.sub(-19.0, v)
+        ny = g.math('SQRT', g.math('MAXIMUM', g.sub(1.0, g.add(g.mul(nx, nx), g.mul(nz, nz))), 0.0))
+        vt = g.node('ShaderNodeVectorTransform', vector_type='NORMAL', convert_from='OBJECT', convert_to='WORLD')
+        g.put(vt.inputs['Vector'], g.comb(nx, g.mul(nz, -1.0), ny))        # glTF (x, y up, z) -> Blender (x, -z, y)
+        Nw = g.vmath('NORMALIZE', vt.outputs['Vector'])
+        hide = g.smoothstep(0.4, 0.6, seam_lod(g, N=Nw))
+        # ...and for the short shadow / bounce rays leaving those same pans: else the camera would see each rib's
+        # shadow strip and the unlit strip under its base as a 2 px periodic pattern (the stipple again). The ray's
+        # origin O = P + Incoming * length; judged with O's own view (camera position from camera space)
+        lp = g.node('ShaderNodeLightPath'); rl = lp.outputs['Ray Length']
+        O = g.vmath('ADD', g.P(), g.vmath('SCALE', g.geo().outputs['Incoming'], scale=rl))
+        cp = g.node('ShaderNodeVectorTransform', vector_type='POINT', convert_from='CAMERA', convert_to='WORLD')
+        g.put(cp.inputs['Vector'], (0.0, 0.0, 0.0))
+        V = g.vmath('SUBTRACT', cp.outputs['Vector'], O)
+        lod_o = seam_lod(g, N=Nw, I=g.vmath('NORMALIZE', V), dist=g.vmath('LENGTH', V, out=1))
+        near = g.mul(g.math('LESS_THAN', rl, 0.35), g.sub(1.0, lp.outputs['Is Camera Ray']))
+        hide = g.mul(g.math('MAXIMUM', hide, g.mul(g.smoothstep(0.4, 0.6, lod_o), near)), isrib)
+        out = next(n for n in g.N if n.type == 'OUTPUT_MATERIAL')
+        tr = g.node('ShaderNodeBsdfTransparent')
+        mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], hide)
+        g.L.new(p.outputs[0], mx.inputs[1]); g.L.new(tr.outputs[0], mx.inputs[2]); g.L.new(mx.outputs[0], out.inputs['Surface'])
 
 def r_fascia(m, ctx):
     """Painted metal fascia (and gable-vent trim): the roof's own grey (as in the references); vertical, so
@@ -657,15 +703,30 @@ def r_wood(m, ctx, asset, tile, target, sat=1.0, contrast=1.0, rough=(0.45, 0.7)
     return g, p
 
 def r_cedar_door(m, ctx):
-    """Stained cedar carriage garage door: vertical 5 1/2" boards, oiled reddish-brown (front rendering)."""
-    r_wood(m, ctx, 'cedar_door_planks', 1.4, '#9c5c36', sat=1.0, contrast=0.85, rough=(0.42, 0.62), grain='V',
-           aspect=2.0, grime_amt=0.15, box=True)
+    """Stained cedar carriage garage door: vertical 5 1/2" boards, oiled reddish-brown (front rendering).
+    r6 (critique-preview5-front #7): the worn-cabinet scan (nail holes, pale scuffs) read as distressed reclaimed barn
+    wood, the most saturated thing in the frame. Now the clean vertical-grain softwood scan (cedar_beam), grain
+    contrast about halved, a sealed semi-gloss finish (roughness ~0.35), a slightly less saturated stain, and the
+    stiles / rails / mullions (src/walls.js tags them +8 on uv u) a shade darker than the plank panels, as in p4.
+    Also the entry's cedar header band and porch header."""
+    # (r6 test at contrast 0.55 / bump 0.25: clean but grainless, read as painted; a little more figure back)
+    g, p = r_wood(m, ctx, 'cedar_beam', 1.1, '#87573a', sat=0.88, contrast=0.72, rough=(0.3, 0.4), grain='V',
+                  grime_amt=0.05, box=True, bump=0.35)
+    bc = p.inputs['Base Color']
+    if bc.links:
+        u, _, _ = g.sep(g.texco().outputs['UV'])
+        frame = g.mul(g.math('GREATER_THAN', u, 4.0), g.math('LESS_THAN', u, 14.0))
+        k = g.mixf(frame, 1.0, 0.8)
+        g.put(bc, g.mix(1.0, bc.links[0].from_socket, g.comb(k, k, k), 'MULTIPLY'))
 
 def r_cedar_batten(m, ctx):
     """Dark-stained cedar battens: the roof-well slats and lining (r5, critique-preview4-front #11: a shade darker
     and less sheeny, so the sunlit slat faces read as stained cedar like the entry screen, not a glowing strip)."""
-    r_wood(m, ctx, 'cedar_door_planks', 1.4, '#74472b', sat=0.9, contrast=0.7, rough=(0.55, 0.78), grain='V',
-           aspect=2.0, grime_amt=0.15)
+    # r6 (critique-preview5-front #6): still a flat saturated orange strip like copper flashing: the clean cedar scan
+    # (no worn-cabinet scuffs), darker and desaturated toward the entry screen's ~sRGB(120,80,55), matte oiled finish;
+    # the 2x6 slats are separate objects now (src/roof.js), so board-to-board tone varies
+    r_wood(m, ctx, 'cedar_beam', 1.2, '#6e4c37', sat=0.75, contrast=0.8, rough=(0.62, 0.82), grain='V',
+           grime_amt=0.2)
 
 def r_beam(m, ctx):
     """Lanai posts and beams: rough-sawn cedar, oiled, a little sun-greyed (back rendering).
@@ -740,7 +801,7 @@ def r_coral_wall(m, ctx, target='#cfb894', contrast=0.7, sat=0.85, tile=3.0, gri
     c = grime(g, c, 0.5, grime_amt, '#6b5f4c')
     finish(g, p, color=c, rough=ph.get('rough', 0.85), normal=ph['normal'], spec=0.4)
 
-def r_crazy_stone(m, ctx, target='#c5b394', stone_m=0.085, joint=0.0035, asset='limestone_block_wall', tile=3.2,
+def r_crazy_stone(m, ctx, target='#bdab8c', stone_m=0.085, joint=0.0035, asset='limestone_block_wall', tile=3.2,
                   grime_amt=0.2, cap=None, stone_big=0.15):
     """Random crazy-paving cut coral stone cladding (back rendering): small irregular polygons (~4 in, 0.6x
     the first cut - critique-preview-back #6), pale and low-contrast: sanded joints only ~10% off the stone,
@@ -836,7 +897,9 @@ def r_crazy_stone(m, ctx, target='#c5b394', stone_m=0.085, joint=0.0035, asset='
     r = g.mixf(jm, r, 0.92)
     if grime_amt:
         c = red_dirt(g, grime(g, c, 0.5, grime_amt, '#6b5f4c'), 0.13, 0.45)
-        c, r = wall_weathering(g, c, r)
+        # r6 (critique-preview5-back #7: still showroom-clean at 1650 px; the right wall washed out): albedo ~8% down
+        # (target #c5b394 -> #bdab8c) and the weathering made to read: see wall_weathering (dtop = depth under the cap)
+        c, r = wall_weathering(g, c, r, dtop=g.attr('nh_dtop', 'Fac'))
     if basin:                                           # damp wicking ~30 cm up the stone round the basin
         (bx0, by0, _), (bx1, by1, bzt) = basin
         inside = g.mul(g.mul(g.math('GREATER_THAN', px, bx0 - 0.1), g.math('LESS_THAN', px, bx1 + 0.1)),
@@ -848,7 +911,7 @@ def r_crazy_stone(m, ctx, target='#c5b394', stone_m=0.085, joint=0.0035, asset='
         r = g.sub(r, g.mul(dmp, 0.3))
     finish(g, p, color=c, rough=r, normal=nrm, spec=0.4)
 
-def wall_weathering(g, col, rough, base_h=0.5, drip_h=0.6):
+def wall_weathering(g, col, rough, base_h=0.5, drip_h=0.6, dtop=None):
     """Masonry weathering: damp soil darkening a hand-span up from the ground (darker, a little less rough),
     and soft vertical drip streaks under an overhanging coping / cap (an upward AO ray finds it close above).
     r4 (critique-preview3 back #13): warm soil / tannin tints instead of grey; the slight occlusion under a
@@ -866,9 +929,11 @@ def wall_weathering(g, col, rough, base_h=0.5, drip_h=0.6):
     # r5 (critique-preview4-back #10): the damp / grime band reaches ~15-20 cm at full strength and fades out by
     # ~35 cm, so it shows above the bank's groundcover; a distinct darker line ~4-10 cm under each coping
     occ_dn = g.sub(1.0, dn.outputs['AO'])
-    near_ground = g.maprange(occ_dn, 0.5, 0.8, 0.0, 1.0, smooth=True)
-    br = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=1.8), 1.0, 3.0, 0.6), 0.3, 0.7, 0.55, 1.15)
-    damp = g.math('MINIMUM', g.mul(g.mul(g.mul(near_ground, wall), br), 0.75), 1.0)
+    # r6 (critique-preview5-back #7: the band hid under the 28 cm jasmine): full strength to ~25 cm, fading out by ~45 cm
+    # (0.42 -> 0.8 of the down-AO), stronger and darker, so ~15-20 cm of it shows above the groundcover
+    near_ground = g.maprange(occ_dn, 0.42, 0.8, 0.0, 1.0, smooth=True)
+    br = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=1.8), 1.0, 3.0, 0.6), 0.3, 0.7, 0.7, 1.15)
+    damp = g.math('MINIMUM', g.mul(g.mul(g.mul(near_ground, wall), br), 0.9), 1.0)
     # efflorescence: a faint salt bloom where the damp dries out, ~30-45 cm up, just above the damp band
     salt = g.mul(g.maprange(occ_dn, 0.28, 0.4, 0.0, 1.0, smooth=True), g.maprange(occ_dn, 0.55, 0.66, 1.0, 0.0, smooth=True))
     patch = g.maprange(g.noise(g.vmath('SCALE', g.P(), scale=6.0), 1.0, 4.0, 0.65), 0.5, 0.68, 0.0, 1.0)
@@ -887,6 +952,24 @@ def wall_weathering(g, col, rough, base_h=0.5, drip_h=0.6):
     line = g.mul(g.mul(g.maprange(g.sub(1.0, up.outputs['AO']), 0.33, 0.5, 0.0, 1.0, smooth=True), wall),
                  g.maprange(streak, 0.25, 1.0, 0.6, 1.0))
     col = g.mix(g.mul(line, 0.5), col, g.mix(1.0, col, lin('#8c7a62'), 'MULTIPLY'))
+    if dtop is not None:
+        # r6 (critique-preview5-back #7: no drip lines visible at 1650 px): streaks hanging from every coping, measured
+        # by the depth under the wall's top (nh_dtop, r_crazy_stone) rather than the AO's few cm: ~3-8 cm wide on about a
+        # third of the wall's length, each its own length (12-55 cm), darkest at the cap and tapering, warm tannin-grey
+        # with a faint green cast in some (algae on the shaded runs), and a soft 4-6 cm darker band right under the cap
+        along = g.add(px, py)
+        sk = g.noise(g.comb(g.mul(along, 11.0), g.mul(pz, 0.4), 3.3), 1.0, 2.0, 0.5)
+        mask = g.maprange(sk, 0.5, 0.6, 0.0, 1.0, smooth=True)
+        ln = g.maprange(g.noise(g.comb(g.mul(along, 2.6), 0.0, 7.7), 1.0, 1.0, 0.5), 0.35, 0.65, 0.12, 0.55)
+        fade = g.maprange(dtop, 0.0, ln, 1.0, 0.0, smooth=True)
+        fine = g.maprange(g.noise(g.comb(g.mul(along, 40.0), g.mul(pz, 3.0), 1.1), 1.0, 2.0, 0.5), 0.35, 0.65, 0.6, 1.1)
+        d2 = g.math('MINIMUM', g.mul(g.mul(g.mul(g.mul(mask, fade), fine), wall), 0.55), 1.0)
+        algae = g.maprange(g.noise(g.comb(g.mul(along, 0.7), 0.0, 2.9), 1.0, 1.0, 0.5), 0.45, 0.6, 0.0, 1.0)
+        tint = g.mix(algae, lin('#8a775e'), lin('#7e7d62'))
+        col = g.mix(d2, col, g.mix(1.0, col, tint, 'MULTIPLY'))
+        band = g.mul(g.maprange(dtop, 0.02, 0.06, 1.0, 0.0, smooth=True), wall)
+        col = g.mix(g.mul(band, 0.3), col, g.mix(1.0, col, lin('#8c7a62'), 'MULTIPLY'))
+        rough = g.sub(rough, g.mul(d2, 0.1))
     return col, rough
 
 def r_pool_shell(m, ctx):
@@ -1099,20 +1182,24 @@ def r_realsite(m, ctx):
     name = base_name(m.name)
     if name in ('realsite walls', 'realsite roofs'):
         _massing(G(m.node_tree), p, name, ctx)
-        # ~26% airlight at 340 m, 4% saturation lost per 100 m: soft, recessive, our home stays the subject (preview3-front #8);
-        # r5 (critique-preview4-front #3): at least a 0.3 veil on any footprint massing beyond ~250 m
-        if not ctx.get('night'): aerial(G(m.node_tree), beta=9e-4, lift=0.08, desat=0.35, floor=(0.3, 80.0, 250.0))
+        # r6 (critique-preview5-front #2): beta 9e-4 (26% at 340 m) plus the r5 0.3 floor lifted the blocks 300-450 m off
+        # into pale see-through slabs paler than the land and trees around them. Now ~15% airlight (the land's haze plus a
+        # little); the darker walls and roofs in _massing and the canopy belt in front do the receding
+        if not ctx.get('night'): aerial(G(m.node_tree), **MASSING_HAZE)
         return
     if name in ('realsite near', 'realsite far') and p.inputs['Base Color'].links: _landscape(G(m.node_tree), p)
     g = G(m.node_tree)
     water = _sea(g, p, ctx) if name in ('realsite near', 'realsite far') else None
     # land: a hillside 200 m off reads olive and soft, not lawn green (critique-preview3-back #11); the sea keeps its blue.
-    # r5 (critique-preview4-back #5): the 200 m hill behind the roof still read saturated and crisp - ~40% saturation
-    # lost and ~25% lifted toward the horizon sky by 200 m (the photographic haze of a humid trade-wind afternoon)
+    # r5 (critique-preview4-back #5) lifted the land 25% and took 45% of its saturation by 200 m; r6 (critique-preview5-front
+    # #3): that read as fog at 200-400 m in front of a navy sea. Land: LAND_HAZE (~10% airlight by 220 m, 20% less
+    # saturated), so fairway and canopy stay olive-green; the sea behind: SEA_HAZE, at least the land's share from ~2 km
     if not ctx.get('night'):
-        aerial(g, beta=1.3e-4 if water is None else g.mixf(water, 1.3e-4, 1.2e-5),
-               desat=0.45 if water is None else g.mixf(water, 0.45, 0.0), desat_m=100.0,
-               floor=(0.25 if water is None else g.mul(g.sub(1.0, water), 0.25), 60.0, 220.0))   # land only: the sea keeps its blue
+        if water is None: aerial(g, **LAND_HAZE)
+        else:
+            L, S = LAND_HAZE, SEA_HAZE
+            aerial(g, beta=g.mixf(water, L['beta'], S['beta']), desat=g.mixf(water, L['desat'], 0.0), desat_m=L['desat_m'],
+                   floor=tuple(g.mixf(water, a, b) for a, b in zip(L['floor'], S['floor'])))
 
 def _sea(g, p, ctx, body=OCEAN_BODY):
     """The sea the front view sees 2-10 km off is terrain at sea level (the far rings drape Sentinel's water
@@ -1169,7 +1256,9 @@ def _massing(g, p, name, ctx):
     if name == 'realsite walls':
         # r5 (critique-preview4-front #3): still the brightest thing on the horizon - a shade darker (a 300 m wall in a
         # photo is seen through haze, under eaves and behind planting, never as its paint chip)
-        c = g.mix(0.65, g.hsv(col, s=0.55, v=0.72), lin('#8f887d'))
+        # r6 (critique-preview5-front #2): with the haze cut to ~15% the walls themselves recede - a shade darker again
+        # (albedo ~0.2 before openings, eave shadow and base: a stucco wall 300-450 m off through salt haze and planting)
+        c = g.mix(0.7, g.hsv(col, s=0.5, v=0.6), lin('#6f6a62'))
         rough, metal = 0.9, 0.0
         # critique-preview3-front #8: a sunlit footprint wall still read as a blank white box in front of the sea. A real
         # house 300 m off shows its openings as dark slots, a darker band where the ground meets the wall and soiling
@@ -1203,10 +1292,24 @@ def _massing(g, p, name, ctx):
         rough = g.mixf(opening, 0.9, g.mixf(lanai, 0.15, 0.9))
     else:
         # preview3-front #8: the hazed hip roof on the horizon still read as one pale sheet: weathered, matte, darker
-        c = g.mix(0.65, g.hsv(col, s=0.25, v=0.55), lin('#55524d'))               # r5: weathered grey, a shade darker
+        # r6 (critique-preview5-front #2): the r5 roofs still rendered ~150/255 on their own (the bright exterior
+        # exposure); weathered dark-grey metal / shingle (albedo ~0.035) lands them at ~115-125 after the 15% haze,
+        # below this home's galvalume, so the roofs over the belt recede
+        c = g.mix(0.7, g.hsv(col, s=0.25, v=0.3), lin('#353431'))
         rough, metal = 0.85, 0.0
     c = mottle(g, c, 8.0, 0.05)
-    finish(g, p, color=c, rough=rough, metallic=0.0 if name == 'realsite walls' else metal, spec=0.3)
+    nrm = None
+    if name == 'realsite roofs':
+        # r6 (critique-preview5-front #2): the footprint roofs are hips or shrunk-polygon hips over irregular footprints;
+        # the narrow corner facets turned away from the sun read as dark diagonal bands across the roof. Shade every
+        # facet with its own normal pulled 75% toward vertical (facing up, whatever the winding; the folded facets of a
+        # concave footprint face sideways or down): the faces of one roof keep a gentle sun / shade difference and no
+        # facet goes darker than the plane beside it. _smooth_terrain also stops them shadowing each other
+        tn = g.Nrm()
+        _, _, tz = g.sep(tn)
+        tn = g.vmath('SCALE', tn, scale=g.math('SIGN', g.add(tz, 1e-4)))
+        nrm = g.vmath('NORMALIZE', g.vmath('ADD', g.vmath('SCALE', tn, scale=0.25), (0.0, 0.0, 0.75)))
+    finish(g, p, color=c, rough=rough, normal=nrm, metallic=0.0 if name == 'realsite walls' else metal, spec=0.3)
 
 def _landscape(g, p, crown_m=6.0):
     """Sentinel-2 land seen at grazing angles from eye height: each 1.8-8 m texel is many pixels wide and
@@ -1243,7 +1346,7 @@ def _landscape(g, p, crown_m=6.0):
     fair = g.maprange(g.math('ABSOLUTE', g.add(across, wob)), g.add(half, 5.0), g.sub(half, 3.0), 0.0, 1.0, smooth=True)
     lane = g.add(g.mul(along, 0.5), g.mul(across, 0.866))
     stripe = g.maprange(g.math('SINE', g.mul(lane, math.pi / 6.0)), -0.3, 0.3, 0.93, 1.07, smooth=True)
-    fw = g.mix(1.0, lin('#6f8a3c'), g.comb(stripe, stripe, stripe), 'MULTIPLY')
+    fw = g.mix(1.0, lin('#647f37'), g.comb(stripe, stripe, stripe), 'MULTIPLY')    # r6: olive fairway (preview5-front #3)
     fw = mottle(g, fw, 30.0, 0.05, P=P, seed=4.0)
     rough_c = mottle(g, lin('#5a6834'), 25.0, 0.14, hue=0.02, P=P, seed=5.0)
     rough_c = mottle(g, rough_c, 9.0, 0.08, P=P, seed=9.0)
@@ -1292,7 +1395,7 @@ def r_ocean(m, ctx):
     mx = g.node('ShaderNodeMixShader'); g.put(mx.inputs[0], g.mul(cam, OCEAN_BODY))
     g.L.new(p.outputs['BSDF'], mx.inputs[1]); g.L.new(body.outputs[0], mx.inputs[2]); g.L.new(mx.outputs[0], out.inputs['Surface'])
     m['nh_kind'] = 'ocean'
-    if not ctx.get('night'): aerial(g, beta=1.2e-5, lift=0.1)
+    if not ctx.get('night'): aerial(g, lift=0.1, **SEA_HAZE)     # r6: the same sea haze as the real-site water (#3)
 
 def r_pool_water(m, ctx):
     """Pool water: clear, refracting; tint = absorption over the ~3 m light path (red lost first)."""
@@ -1363,6 +1466,11 @@ def r_fabric(m, ctx, target, asset='linen_oatmeal', tile=0.15, sat=1.0, sheen=0.
     ph = photo(g, asset, uv, target=target, sat=sat, contrast=contrast, bump=bump, bump_dist=0.0006 * max(1.0, bump), rough=rough)
     c = mottle(g, ph['color'], 0.6, 0.03)
     c = grime(g, c, 0.12, 0.1, '#7a6e60')
+    # r6: per-object albedo scale (three.js userData.nh_albedo_k -> glTF extras -> object property; unset reads 0 = 1x).
+    # The sunlit pool-deck chaise pads use 0.9 (canvas ~0.6) so they hold texture in full sun (critique-preview5-back #4).
+    k = g.obj_attr('nh_albedo_k')
+    k = g.mixf(g.math('GREATER_THAN', k, 0.0), 1.0, k)
+    c = g.mix(1.0, c, g.comb(k, k, k), 'MULTIPLY')
     nrm = ph.get('normal')
     if pucker:                  # filled cushions: soft puckering of the cover over the foam, reads at a distance
         h = g.noise(g.vmath('SCALE', g.P(), scale=1.0 / 0.09), 1.0, 2.0, 0.5)
@@ -1713,6 +1821,14 @@ def _smooth_terrain(log):
             n += 1
         except Exception as e: log(f'materials: smooth {o.name} failed ({e})')
     log(f'materials: terrain shaded smooth x{n}')
+    # r6 (critique-preview5-front #2): a concave footprint's shrunk-polygon roof folds facets through each other; their
+    # shadows on the roof read as dark diagonal bands 300-450 m off. The footprint roofs cast no shadows (their walls
+    # carry a painted eave shadow, _massing; at that distance no roof shadow on the ground is visible)
+    k = 0
+    for o in bpy.data.objects:
+        if o.type == 'MESH' and any(m and base_name(m.name) == 'realsite roofs' for m in o.data.materials):
+            o.visible_shadow = False; k += 1
+    log(f'materials: footprint roofs cast no shadow x{k}')
 
 
 # ------------------------------------------------------------------------------------------ sky and sun

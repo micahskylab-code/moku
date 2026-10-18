@@ -252,22 +252,41 @@ def _trunk_material(name, bark, ring, lichen, spacing, photo=None, tint=(1, 1, 1
     tc = N.new('ShaderNodeTexCoord')
     sep = N.new('ShaderNodeSeparateXYZ'); L.new(tc.outputs['UV'], sep.inputs[0])
     oi = N.new('ShaderNodeObjectInfo')
+    # r6 (critique-preview5-back #9): all trunks of a kind are one merged mesh, so the object's random value was the same
+    # for every trunk and both back-yard queens carried identical, evenly spaced ring bands. Per-trunk vertex attributes
+    # (trunk_mesh): 'tseed' (0..1) offsets the photo and the rings and sets the scar-band width, 'tring' (-0.25..+0.3)
+    # stretches the ring spacing; a 1-D noise up the trunk makes the spacing irregular within each trunk
+    ts = N.new('ShaderNodeAttribute'); ts.attribute_name = 'tseed'
+    tk = N.new('ShaderNodeAttribute'); tk.attribute_name = 'tring'
+    vk = N.new('ShaderNodeMath'); vk.operation = 'MULTIPLY_ADD'          # v * (1 + tring)
+    L.new(sep.outputs['Y'], vk.inputs[0]); L.new(tk.outputs['Fac'], vk.inputs[1]); L.new(sep.outputs['Y'], vk.inputs[2])
+    iv = N.new('ShaderNodeCombineXYZ'); ivm = N.new('ShaderNodeMath'); ivm.operation = 'MULTIPLY'; ivm.inputs[1].default_value = 3.5
+    L.new(sep.outputs['Y'], ivm.inputs[0]); L.new(ivm.outputs[0], iv.inputs['X'])
+    ivs = N.new('ShaderNodeMath'); ivs.operation = 'MULTIPLY'; ivs.inputs[1].default_value = 17.0
+    L.new(ts.outputs['Fac'], ivs.inputs[0]); L.new(ivs.outputs[0], iv.inputs['Y'])
+    irr = N.new('ShaderNodeTexNoise'); irr.inputs['Scale'].default_value = 1.0; irr.inputs['Detail'].default_value = 2.0
+    L.new(iv.outputs[0], irr.inputs['Vector'])
+    irm = N.new('ShaderNodeMath'); irm.operation = 'MULTIPLY_ADD'; irm.inputs[1].default_value = spacing * 2.4; irm.inputs[2].default_value = -spacing * 1.2
+    L.new(irr.outputs['Fac'], irm.inputs[0])
     # leaf-scar rings: v (metres up) with a little wobble
     wob = N.new('ShaderNodeTexNoise'); wob.inputs['Scale'].default_value = 1.6; wob.inputs['Detail'].default_value = 3.0
     L.new(tc.outputs['Object'], wob.inputs['Vector'])
     wobm = N.new('ShaderNodeMath'); wobm.operation = 'MULTIPLY_ADD'; wobm.inputs[1].default_value = spacing * 4.0   # irregular spacing
-    L.new(wob.outputs['Fac'], wobm.inputs[0]); L.new(sep.outputs['Y'], wobm.inputs[2])
+    L.new(wob.outputs['Fac'], wobm.inputs[0]); L.new(vk.outputs[0], wobm.inputs[2])
+    wob2 = N.new('ShaderNodeMath'); wob2.operation = 'ADD'; L.new(wobm.outputs[0], wob2.inputs[0]); L.new(irm.outputs[0], wob2.inputs[1])
     div = N.new('ShaderNodeMath'); div.operation = 'DIVIDE'; div.inputs[1].default_value = spacing
-    L.new(wobm.outputs[0], div.inputs[0])
+    L.new(wob2.outputs[0], div.inputs[0])
     fr = N.new('ShaderNodeMath'); fr.operation = 'FRACT'; L.new(div.outputs[0], fr.inputs[0])
     ringv = N.new('ShaderNodeMapRange'); ringv.interpolation_type = 'SMOOTHSTEP'
     ringv.inputs['From Min'].default_value = 0.0; ringv.inputs['From Max'].default_value = 0.14
+    rw = N.new('ShaderNodeMath'); rw.operation = 'MULTIPLY_ADD'; rw.inputs[1].default_value = 0.13; rw.inputs[2].default_value = 0.08   # band width per trunk
+    L.new(ts.outputs['Fac'], rw.inputs[0]); L.new(rw.outputs[0], ringv.inputs['From Max'])
     L.new(fr.outputs[0], ringv.inputs['Value'])
     col_img = _img(os.path.join(photo, 'color.jpg'), 'sRGB') if photo else None
     if col_img is not None:
         mp = N.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (round(0.8 / tile[0]) or 1, 1.0 / tile[1], 1)
         off = N.new('ShaderNodeVectorMath'); off.operation = 'MULTIPLY'; off.inputs[1].default_value = (0.37, 3.1, 0)
-        L.new(oi.outputs['Random'], off.inputs[0])
+        L.new(ts.outputs['Fac'], off.inputs[0])
         add = N.new('ShaderNodeVectorMath'); add.operation = 'ADD'; L.new(tc.outputs['UV'], add.inputs[0]); L.new(off.outputs[0], add.inputs[1])
         # warp the photo up the trunk with the ring noise so its 0.9 m repeat never reads as tiled bands
         wv = N.new('ShaderNodeCombineXYZ'); wsc = N.new('ShaderNodeMath'); wsc.operation = 'MULTIPLY'; wsc.inputs[1].default_value = 0.45
@@ -278,6 +297,13 @@ def _trunk_material(name, bark, ring, lichen, spacing, photo=None, tint=(1, 1, 1
         c = tx.outputs['Color']
         tn = N.new('ShaderNodeMix'); tn.data_type = 'RGBA'; tn.blend_type = 'MULTIPLY'; tn.inputs['Factor'].default_value = 1.0
         tn.inputs[7].default_value = (*tint, 1); L.new(c, tn.inputs[6]); c = tn.outputs[2]
+        # r6: each trunk a little lighter or darker (+-15 %)
+        tv = N.new('ShaderNodeMapRange'); tv.inputs['To Min'].default_value = 0.85; tv.inputs['To Max'].default_value = 1.15
+        tvf = N.new('ShaderNodeMath'); tvf.operation = 'FRACT'; tvm = N.new('ShaderNodeMath'); tvm.operation = 'MULTIPLY'; tvm.inputs[1].default_value = 5.3
+        L.new(ts.outputs['Fac'], tvm.inputs[0]); L.new(tvm.outputs[0], tvf.inputs[0]); L.new(tvf.outputs[0], tv.inputs['Value'])
+        tvc = N.new('ShaderNodeCombineColor'); [L.new(tv.outputs['Result'], tvc.inputs[i]) for i in range(3)]
+        tvx = N.new('ShaderNodeMix'); tvx.data_type = 'RGBA'; tvx.blend_type = 'MULTIPLY'; tvx.inputs['Factor'].default_value = 1.0
+        L.new(c, tvx.inputs[6]); L.new(tvc.outputs[0], tvx.inputs[7]); c = tvx.outputs[2]
         # darker scar bands
         rb = N.new('ShaderNodeMix'); rb.data_type = 'RGBA'; rb.blend_type = 'MULTIPLY'; rb.inputs[6].default_value = (1, 1, 1, 1)
         inv = N.new('ShaderNodeMath'); inv.operation = 'SUBTRACT'; inv.inputs[0].default_value = 1.0; L.new(ringv.outputs['Result'], inv.inputs[1])
@@ -601,7 +627,11 @@ def _panicle(stem, fruit, spathe, rng, nr, origin, hd, reach, hang, n_rach, n_fr
 
 # queen crown variants (critic preview3 front #5 / back #14): (droop factor, lift deg, frond-count factor) - no two
 # crowns on the skyline share a silhouette
-QUEEN_STYLES = [(1.0, 0, 1.0), (1.25, -6, 0.85), (0.9, 4, 1.15), (1.15, -3, 1.0), (1.35, -8, 0.9), (0.95, 2, 1.1), (1.1, -4, 0.95)]
+# r6 (critique-preview5-front #9: six or seven crowns of one symmetric model still punctuated the skyline): nine
+# variants spanning a wider range - droop 0.8-1.5, lift -10..+6 deg, frond count x0.7-1.2 (about 13-29 fronds) - and a
+# 4th entry, the hanging dead fronds (0-3); build() also squashes or stretches each instance and picks its yaw
+QUEEN_STYLES = [(1.0, 0, 1.0, 1), (1.3, -7, 0.8, 2), (0.85, 5, 1.2, 0), (1.15, -3, 1.0, 3), (1.45, -10, 0.72, 1),
+                (0.92, 3, 1.12, 2), (1.1, -4, 0.92, 0), (1.25, -2, 1.05, 2), (0.8, 6, 0.85, 1)]
 
 
 def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0), trim=None):
@@ -611,7 +641,7 @@ def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0), trim=None):
     cut off (a palm beside a walk keeps only the fronds that grow away from it)."""
     rng = random.Random(seed)
     K = KIND[kind]
-    dm, de, nf = style
+    dm, de, nf = style[:3]
     leaf, stem, dead, fruit, base, shaft, deadleaf, spathe, band = (MeshBuf() for _ in range(9))
     n = max(4, int(round(rng.randint(*K['fronds']) * nf)))
     az0 = rng.uniform(0, 2 * math.pi)
@@ -654,10 +684,14 @@ def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0), trim=None):
             bz = np.linspace(-L_ - 0.07, -L_ + 0.05, 4)
             _tube(band, [[0, 0, z] for z in bz], [r_ * f for f in (0.93, 1.0, 1.07, 1.06)], sides=16, age=0.6)
     # dry fronds hanging against the trunk (queen palms keep a few until they fall)
-    for _ in range(rng.choice(K['dead'])):
+    # r6 (critique-preview5-front #9 / back #9): queen variants carry 0-3 of them (style[3]); some still drooping out at
+    # 40-65 deg below level, half-dead, rather than all plumb
+    ndead = style[3] if len(style) > 3 else rng.choice(K['dead'])
+    for j in range(ndead):
         lb, sb = MeshBuf(), MeshBuf()
-        La = rng.uniform(*K['L']) * rng.uniform(0.7, 0.95)
-        _frond(lb, sb, rng, kind, La, math.radians(rng.uniform(-86, -70)), 0.15, 1.0)
+        La = rng.uniform(*K['L']) * (rng.uniform(0.5, 0.72) if kind == 'queen' else rng.uniform(0.7, 0.95))   # queen: short, hugging the trunk
+        el = rng.uniform(-62, -45) if (kind == 'queen' and j == 1) else rng.uniform(-86, -74)
+        _frond(lb, sb, rng, kind, La, math.radians(el), 0.15, 1.0)
         R = np.array(Matrix.Rotation(rng.uniform(0, 6.28), 3, 'Z'))
         o = R @ np.array([K['r0'] + 0.04, 0, -K['drop'] - rng.uniform(0.05, 0.4)])
         _move(lb, deadleaf, R, o); _move(sb, dead, R, o)
@@ -671,7 +705,8 @@ def crown_mesh(kind, seed, mats, style=(1.0, 0.0, 1.0), trim=None):
         # one to three panicles of orange/green drupes hanging below the crown on arching stalks, with spathes
         for _ in range(rng.choice(K['fruit'])):
             a = rng.uniform(0, 6.28); hd = np.array([math.cos(a), math.sin(a), 0.0])
-            _panicle(stem, fruit, spathe, rng, nr, hd * 0.16 + np.array([0, 0, -0.42]), hd, 0.28, 0.26, rng.randint(15, 24), (5, 9), (0.009, 0.012),
+            # r6 (back #9): the stalks reach out further and hang lower, so the fruit reads hanging below the crown (p5)
+            _panicle(stem, fruit, spathe, rng, nr, hd * 0.16 + np.array([0, 0, -0.42]), hd, 0.34, 0.42, rng.randint(15, 24), (5, 9), (0.009, 0.012),
                      spathe_len=rng.uniform(0.45, 0.65))
     elif kind in ('foxtail', 'christmas'):
         for _ in range(rng.choice(K['fruit'])):
@@ -717,26 +752,31 @@ def trunk_mesh(height, r0, lean_dir, bend, kind, seed):
             r = r0 * (1.0 + 0.2 * math.exp(-t * 20) - 0.15 * t)
         radii.append(r)
     buf = MeshBuf()
-    _tube(buf, pts, radii, sides={'queen': 16, 'foxtail': 14, 'coconut': 10, 'christmas': 10}.get(kind, 8), u0=rng.random())
+    # r6 (critique-preview5-back #9): per-trunk ring offset / spacing / band width (see _trunk_material)
+    _tube(buf, pts, radii, sides={'queen': 16, 'foxtail': 14, 'coconut': 10, 'christmas': 10}.get(kind, 8), u0=rng.random(),
+          tseed=rng.random(), tring=rng.uniform(-0.25, 0.3))
     top = np.array(pts[-1]); tdir = _norm(np.array(pts[-1]) - np.array(pts[-2]))
     sh = None
     if kind == 'queen':
         # the cut leaf bases ('boots') of old fronds in a spiral below the crown: a fibrous collar and flat,
-        # wedge-shaped stubs standing up and out from the trunk, the older ones lower down and greyer
+        # wedge-shaped stubs, the older ones lower down and greyer
+        # r6 (critique-preview5-back #9): the 0.3-0.6 m stubs standing up and out read as sunlit antlers; trimmed to short
+        # dark stubs that hug the trunk (12-18, 10-22 cm, leaning in), with the dead fronds and fruit stalks of the crown
+        # (crown_mesh) hanging over them as in p5
         sb = MeshBuf()
         rt = radii[-1]
         _tube(sb, [top + tdir * (h - 1.5) for h in np.linspace(0, 1.5, 7)], [rt * f for f in (0.98, 1.08, 1.18, 1.26, 1.3, 1.25, 1.0)], sides=16, age=0.6)
-        nb = rng.randint(18, 26); a0 = rng.uniform(0, 6.28)
+        nb = rng.randint(12, 18); a0 = rng.uniform(0, 6.28)
         for k in range(nb):
             u = k / (nb - 1)
             a = a0 + k * GOLDEN + rng.uniform(-0.2, 0.2); hd = np.array([math.cos(a), math.sin(a), 0.0])
-            h0 = -0.5 - 1.25 * u + rng.uniform(-0.08, 0.08)
+            h0 = -0.45 - 1.1 * u + rng.uniform(-0.08, 0.08)
             if top[2] + h0 < 1.5: continue
-            p0 = top + tdir * h0 + hd * rt * 0.95
-            d = _norm(hd * rng.uniform(0.45, 1.0) + np.array([0, 0, 1.0]))
-            ln = rng.uniform(0.3, 0.6) * (1 - 0.35 * u)
-            w = rng.uniform(0.06, 0.09)
-            _tube(sb, [p0 + d * ln * t + hd * 0.05 * t * t for t in np.linspace(0, 1, 4)], [w, w * 0.9, w * 0.75, w * 0.4], sides=6, flat=0.35, age=0.4 + 0.6 * u)
+            p0 = top + tdir * h0 + hd * rt * 1.0
+            d = _norm(hd * rng.uniform(0.2, 0.45) + np.array([0, 0, 1.0]))
+            ln = rng.uniform(0.1, 0.22) * (1 - 0.3 * u)
+            w = rng.uniform(0.05, 0.075)
+            _tube(sb, [p0 + d * ln * t - hd * 0.015 * t * t for t in np.linspace(0, 1, 4)], [w, w * 0.9, w * 0.7, w * 0.35], sides=6, flat=0.35, age=0.6 + 0.4 * u)
         sh = sb
     elif kind == 'cycad':
         # a shaggy collar of old leaf bases at the top of the stem
@@ -765,8 +805,9 @@ def materials():
                                          age_col=_lin('#9a8a3a'), burn_from=0.88, transl=0.38, rough=0.38, spec=0.45),
         'leaf_lipstick': _leaf_material('palm leaf lipstick', [_lin('#2e5020'), _lin('#3c6226'), _lin('#4c722c'), _lin('#5e8232')], 0.1,
                                         age_col=_lin('#8a8034'), burn_from=0.9, transl=0.34, rough=0.35, spec=0.5),
-        'leaf_areca': _leaf_material('areca leaf', [_lin('#3c5c26'), _lin('#4a6c2c'), _lin('#587a34'), _lin('#68863e')], 0.12,
-                                     age_col=_lin('#8a8a44'), burn_from=0.86, transl=0.3),
+        # r6 (critique-preview5-back #2): the side-lot areca screens read near-black: ~1.3x linear albedo, more light through
+        'leaf_areca': _leaf_material('areca leaf', [_lin('#446a2b'), _lin('#547b32'), _lin('#638a3b'), _lin('#749645')], 0.12,
+                                     age_col=_lin('#8a8a44'), burn_from=0.86, transl=0.4),
         'leaf_roebelenii': _leaf_material('palm leaf roebelenii', [_lin('#1f3a18'), _lin('#2a4a1e'), _lin('#365a24'), _lin('#446a2a')], 0.08,
                                           age_col=_lin('#7a7030'), burn_from=0.9, transl=0.3, rough=0.32, spec=0.5),
         'leaf_cycad': _leaf_material('palm leaf cycad', [_lin('#1c3416'), _lin('#24421b'), _lin('#2e5020')], 0.05,
@@ -813,7 +854,8 @@ def _instancer(name, proto_col, P, rot, scale, idx, parent_col):
     n = len(P)
     me = bpy.data.meshes.new(name + '-pts')
     me.vertices.add(n); me.vertices.foreach_set('co', np.asarray(P, np.float32).ravel())
-    sc3 = np.repeat(np.asarray(scale, np.float32)[:, None], 3, 1)
+    sc3 = np.asarray(scale, np.float32)
+    if sc3.ndim == 1: sc3 = np.repeat(sc3[:, None], 3, 1)      # uniform, or (n, 3) per axis
     for an, typ, data in (('rot', 'FLOAT_VECTOR', np.asarray(rot, np.float32)), ('scl', 'FLOAT_VECTOR', sc3), ('idx', 'INT', np.asarray(idx, np.int32))):
         a = me.attributes.new(an, typ, 'POINT'); a.data.foreach_set('vector' if typ == 'FLOAT_VECTOR' else 'value', data.ravel())
     ob = bpy.data.objects.new(name, me); parent_col.objects.link(ob)
@@ -836,7 +878,7 @@ def _instancer(name, proto_col, P, rot, scale, idx, parent_col):
     return ob
 
 
-VARIANTS = {'queen': 7, 'foxtail': 5, 'christmas': 5, 'lipstick': 5, 'areca': 5, 'roebelenii': 4, 'cycad': 3, 'coconut': 4}
+VARIANTS = {'queen': 9, 'foxtail': 5, 'christmas': 5, 'lipstick': 5, 'areca': 5, 'roebelenii': 4, 'cycad': 3, 'coconut': 4}
 CLUMPING = ('areca', 'lipstick')        # young suckers at the foot of every cane
 
 
@@ -873,22 +915,30 @@ def _vary_neighbours(palms):
         if house <= 0 or _kind(p) != 'queen': continue
         z = p['base'][2]
         u = _h(p['seed'], 1)
+        # r6 (critique-preview5-front #9): fewer copies survive as queens - a fifth of the back-yard ones and of the street
+        # pairs (r5: a third) - the rest become shade trees or foxtails, or go
         if p['base'][0] < 0:                                   # back yard
             if LOT_Z[0] - 22.0 < z < LOT_Z[1] + 22.0: p['_drop'] = True
             elif u < 0.3: p['_tree'] = True
-            elif u < 0.65: p['_drop'] = True
+            elif u < 0.8: p['_drop'] = True
             else: p['height'] *= 0.75 + 0.5 * _h(p['seed'], 2)
         else:                                                  # the street pair
-            if u < 0.45: p['_drop'] = True
-            elif u < 0.7: p['kind'] = 'foxtail'; p['height'] *= 0.55 + 0.15 * _h(p['seed'], 3)
+            if u < 0.5: p['_drop'] = True
+            elif u < 0.8: p['kind'] = 'foxtail'; p['height'] *= 0.55 + 0.15 * _h(p['seed'], 3)
             else: p['height'] *= 0.75 + 0.5 * _h(p['seed'], 2)
 
 
 def _walk_trim(p, base, b_axis_y):
     """Our entry courtyard's christmas / lipstick palms either side of the walk: (azimuth toward the walk, half width)
     of the fronds the gardener prunes (critique-preview4-front #5), or None."""
-    if p.get('house', 0) != 0 or _kind(p) not in ('christmas', 'lipstick'): return None
+    if p.get('house', 0) != 0: return None
     x, z = p['base'][0], p['base'][2]
+    # r6 (critique-preview5-front #5): the fronds crossing the glass entry in the front view come from the areca and
+    # pygmy-date clumps in the entry courtyard (plan x 56-69 ft, either side of the axis), not from the christmas palms:
+    # those are pruned on the side facing the pivot door (plan x 47.7, on the axis)
+    if _kind(p) in ('areca', 'roebelenii') and 55 * FT < x < 70 * FT and abs(z - WALK_Z) < 2.5:
+        return (math.atan2(-WALK_Z - base.y, 47.7 * FT - base.x), math.radians(85))
+    if _kind(p) not in ('christmas', 'lipstick'): return None
     if not (80 * FT < x < 122 * FT and abs(z - WALK_Z) < 4.6): return None
     toward = 1.0 if b_axis_y > base.y else -1.0
     return (math.atan2(toward, 0.0), math.radians(78))
@@ -955,17 +1005,23 @@ def build(palms, b, variants=None, collection_name='palms'):
         P, R, S, I = inst[kind]
         # never the same crown twice in a row among neighbours: pick the variant least used so far nearby
         near = [i for (pp, i) in used[kind] if (pp - base).length < 12]
-        cand = [i for i in range(nvar[kind]) if i not in near] or list(range(nvar[kind]))
+        pool = list(range(nvar[kind]))
+        if kind == 'queen' and house == 0:                 # our own palms: the full-crowned variants (no sparse 13-frond crown
+            pool = [i for i in pool if QUEEN_STYLES[i % len(QUEEN_STYLES)][2] >= 0.92 and QUEEN_STYLES[i % len(QUEEN_STYLES)][3] <= 2] or pool   # over the lanai)
+        cand = [i for i in pool if i not in near] or pool
         vi = cand[rng.randrange(len(cand))]
         used[kind].append((base.copy(), vi))
-        P.append(tuple(base + top)); R.append(tuple(q.to_euler('XYZ'))); S.append(s); I.append(vi)
+        # r6 (critique-preview5-front #9): queen crowns squashed or stretched along their axis (+-12 %), so a variant
+        # repeated across the skyline droops flatter or stands more upright each time
+        ax = rng.uniform(0.88, 1.12) if kind == 'queen' else 1.0
+        P.append(tuple(base + top)); R.append(tuple(q.to_euler('XYZ'))); S.append((s * ax ** 0.5, s * ax ** 0.5, s / ax)); I.append(vi)
         if kind in CLUMPING:
             # a young sucker or two at the foot of every cane: these palms grow as dense clumps
             for _ in range(rng.choice([1, 1, 2])):
                 a_ = rng.uniform(0, 6.283); d_ = rng.uniform(0.15, 0.4)
                 sb = base + Vector((math.cos(a_) * d_, math.sin(a_) * d_, -0.02)); hs = rng.uniform(0.3, 0.6)
                 qs = Quaternion((0, 0, 1), rng.uniform(0, 6.283)); qs = Quaternion(Vector((math.cos(a_ + 1.57), math.sin(a_ + 1.57), 0)), rng.uniform(0.1, 0.35)) @ qs
-                P.append(tuple(sb + Vector((0, 0, K['shaft'] * hs * 0.5)))); R.append(tuple(qs.to_euler('XYZ'))); S.append(hs); I.append(rng.randrange(nvar[kind]))
+                P.append(tuple(sb + Vector((0, 0, K['shaft'] * hs * 0.5)))); R.append(tuple(qs.to_euler('XYZ'))); S.append((hs, hs, hs)); I.append(rng.randrange(nvar[kind]))
     for kind, (P, R, S, I) in inst.items():
         if P: _instancer('palms-' + kind, protos[kind], P, R, S, I, col)
     for kind, tb in trunks.items():

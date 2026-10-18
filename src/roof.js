@@ -11,7 +11,7 @@
 //    a gooseneck back to the wall at chosen corners;
 //  - Dutch gables (`dutch`: the skirt's run in ft): the hip skirt runs up-slope from the eave, then a
 //    gable rides the ridge and ends in a vertical gable wall filled with a recessed louvered vent;
-//  - roof openings (`holes`) over the garden showers: cedar-lined well with 2x4 slats down the fall line.
+//  - roof openings (`holes`) over the garden showers: cedar-lined well with 2x6 slats down the fall line.
 import * as THREE from 'three';
 import { mat } from './materials.js';
 
@@ -31,6 +31,7 @@ const GUTTER_M = () => finish('gutter', '#36393d', 0.4, 0.3);             // K-s
 const LOUVER_M = () => finish('gableLouver', '#7b8086', 0.5, 0.15);       // gable vent blades: roof colour
 const CAVITY_M = () => finish('gableCavity', '#121314', 0.95);            // the dark attic behind the vent
 const FLASH_M = () => finish('flashing', '#6f7378', 0.4, 0.3);            // valley pans, curbs
+const WELL_DARK_M = () => finish('wellLining', '#2b2520', 0.7);           // r6: dark-stained header at a roof well's upslope end
 
 // ---------------------------------------------------------------------------------- 2D polygon helpers
 const area = P => { let a = 0; for (let i = 0; i < P.length; i++) { const A = P[i], B = P[(i + 1) % P.length]; a += A[0] * B[1] - B[0] * A[1]; } return a / 2; };
@@ -370,6 +371,7 @@ export class Roofs {
     const ux = -f.dir[1], uy = f.dir[0], dx = f.dir[0], dy = f.dir[1];
     const [a, b, c] = f.L, T = ROOF_T;
     const n3 = nrm([-a, 1, -b]), u3 = [ux, 0, uy];
+    const uv0 = acc.uv.length;
     const byK = new Map();
     for (const P of this.#visible(R, fi, 'top')) {
       const ts = P.map(([x, y]) => x * ux + y * uy);
@@ -428,6 +430,11 @@ export class Roofs {
         acc.sweep(prof, P(s0), P(s1), u3, n3, true, { axis: D3, a: oa, b: ob });
       }
     }
+    // r6 (critique-preview5-front #1): every rib vertex carries its PLANE's normal in its uv (20 + n.x, 20 + n.z; the
+    // seam material has no texture, so the uv is free; caps keep small sweep uvs). scripts/materials_bpy.py r_roof_trim
+    // reads it to hide a plane's ribs from camera rays where that plane is seen along its eave from far off (seam_lod),
+    // so the pans' pre-filtered average shows instead of 2 px ribs aliasing into a tile-like stipple
+    for (let i = uv0; i < acc.uv.length; i += 2) { acc.uv[i] = 20 + n3[0]; acc.uv[i + 1] = 20 + n3[2]; }
   }
 
   // The union's top surface at a plan point: its height (ceiling plane) and the up-slope direction of the face.
@@ -622,7 +629,7 @@ export class Roofs {
     const [x0, y0, x1, y1] = h, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, T = ROOF_T;
     const faces = this.#faces(R), f = faces.find(f => inConvex(f.pts, cx, cy));
     if (!f) return;
-    const H = (x, y) => evalP(f.L, x, y), well = new Acc(), slats = new Acc(), curb = new Acc();
+    const H = (x, y) => evalP(f.L, x, y), well = new Acc(), curb = new Acc();
     const C = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
     // the lining runs from the ceiling below (the hip's, which can drop under a Dutch gable) up to the metal
     const Hip = R.companion ? R.parent : R, low = (x, y) => Math.min(H(x, y), ceilingOf(Hip, x, y) ?? H(x, y)) - 0.02;
@@ -649,16 +656,31 @@ export class Roofs {
     // broad 3 1/2" faces to the street as a stacked cedar grille (r3/r4 ran them along the eave: seen end-on they
     // read as a row of glowing orange dots in a black trough). Tops 2" under the metal so the near curb hides less
     // of them; ends stop 1/8" off the lining (no coincident faces). Stained like the entry screen (cedarBatten).
-    const sp = 4 / 12;
+    // r6 (critique-preview5-front #6): at ~3 px/ft the 2x4s at 4" blended into one flat orange strip. Now fewer,
+    // chunkier 2x6s on edge (1 1/2" x 5 1/2") at ~9 1/2" centres (6 across a 4.5 ft well), tops 1 1/2" under the
+    // metal, each its own mesh (board-to-board tone and grain along its length in Blender). At the upslope end they
+    // stop 5" short and bear on a dark-stained recessed header, a shadow band that reads the well as a recess.
+    const up = f.L[0] * dx + f.L[1] * dy > 0;                                 // +s runs up the slope
+    const sp = 9.5 / 12, gapUp = 5 / 12;
     const nb = Math.max(3, Math.round((t1 - t0) / sp)), bay = (t1 - t0) / nb;
+    const sa = s0 + 0.01 + (up ? 0 : gapUp), sb = s1 - 0.01 - (up ? gapUp : 0);
+    const slatM = mat('#6b4a2e');
     for (let k = 0; k < nb; k++) {
-      const t = t0 + (k + 0.5) * bay;
-      const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.17, y]; };
-      slats.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.29], [-0.0625, -0.29]], P(s0 + 0.01), P(s1 - 0.01), u3w, n3);
+      const t = t0 + (k + 0.5) * bay, one = new Acc();
+      const P = s => { const x = t * ux + s * dx, y = t * uy + s * dy; return [x, H(x, y) + T - 0.125, y]; };
+      one.sweep([[-0.0625, 0], [0.0625, 0], [0.0625, -0.458], [-0.0625, -0.458]], P(sa), P(sb), u3w, n3);
+      const me = one.mesh(slatM); if (me) { me.name = 'well slat'; g.add(me); }
+    }
+    {
+      const sh = up ? s1 - 0.01 - gapUp * 0.5 : s0 + 0.01 + gapUp * 0.5, head = new Acc(), hw = gapUp * 0.5 - 0.01;
+      const Q = t => { const x = t * ux + sh * dx, y = t * uy + sh * dy; return [x, H(x, y) + T - 0.4, y]; };
+      const D3 = nrm([dx, f.L[0] * dx + f.L[1] * dy, dy]);                   // in-plane, down the fall line
+      head.sweep([[-hw, 0], [hw, 0], [hw, -0.12], [-hw, -0.12]], Q(t0 + 0.01), Q(t1 - 0.01), D3, n3);
+      const me = head.mesh(WELL_DARK_M()); if (me) g.add(me);
     }
     // r5: the lining in the same cedar (r4's near-black stain read as a black trough behind the slats); in the
     // well's shade it falls to a warm mid brown, so the gaps read as a lined opening rather than a void
-    for (const [acc, m] of [[well, mat('#6b4a2e')], [slats, mat('#6b4a2e')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
+    for (const [acc, m] of [[well, mat('#6b4a2e')], [curb, FLASH_M()]]) { const me = acc.mesh(m); if (me) g.add(me); }
   }
 
   // ------------------------------------------------------------------------------ downspouts

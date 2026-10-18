@@ -1,0 +1,133 @@
+{
+ "view": "front",
+ "usable_internal_draft": true,
+ "verdict": "Preview 6 is a clear step up from preview 5 and works as an internal concept draft, but it is not ready for buyers. Of preview 5's defects, #1 (wing-roof stipple, now smooth grey in the focal centre), #3 (fogged backdrop: the land reads olive, the ghost tree is green, and the sea is now hazier than the land) and #8 (lipstick palm on the ʻohana roof) are fixed. #7 (garage door) is fixed apart from its tone. #4 (left side), #5 and #9 are mostly fixed; #2, #6, #10 and #11 are partly fixed; and #12 and #13 are unchanged on purpose. The worst flaw left is the pair of flat, untextured grey hip pyramids on the left horizon. The canopy belt now hides their walls, but they still break the skyline and still show dark hip bands and window slots. The main regression comes from the #4 fix: the raised 17-18 ft side-yard clumps, and the clumps on the garage side, now hang fronds over the outer hip corners of both pavilions. A new honest finding is the foreground drive, whose bright, regular hex grid is the most obviously CG surface left in the frame.",
+ "scores": {
+  "plan_faithful_architecture": 8,
+  "realistic_materials_lighting": 8,
+  "clean_terrain_water": 7,
+  "polished_buyer_camera": 8
+ },
+ "defects": [
+  {
+   "rank": 1,
+   "criterion": "terrain-water",
+   "where": "Left horizon: left block x 187-340, y 217-240; right block x 390-553, y 208-245. Dark diagonal hip bands at x 440-457 and x 490-520, y 208-233. Storey openings still showing at x 410-433, y 247-263",
+   "issue": "P5 #2 is partly fixed. The canopy belt now hides most of the walls, and the roofs went from about RGB 155 to about 110,124,126. But both blocks still rise above the sea horizon (y ~231) as two smooth, untextured, flat-shaded grey pyramids, and they cover about half the left ocean. The right block's hips still show dark diagonal bands, and a two-storey window strip still shows through the belt. They are also darker than the veiled neighbour roofs 30-60 m away (about 127,146,135), so the aerial perspective runs backwards. They are still the first thing that reads as CG placeholder massing.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Their heights are not sourced (materials_bpy _massing). If Overture gives no height or floor count, model them single-storey with a 4:12 roof so the ridges fall below the sea line. Otherwise raise the belt trees to about 75-85% of roof height, up from 38-52%, so only the top third of each hip clears the canopy. Bring the roof tone up to about RGB 125-135, matching the veiled near roofs, with ±5% facet variation and a faint seam or shingle texture. Give the hip caps the same material and pulled normal as the facets, so the two dark bands disappear. Accept check: in a 3x crop neither roof shows hard dark lines or window slots, and neither is darker than the neighbour roofs in front of it."
+  },
+  {
+   "rank": 2,
+   "criterion": "terrain-water",
+   "where": "ʻOhana left (far-side) hip corner x 140-265, y 435-525. Garage right hip corner and eave x 1340-1480, y 430-560",
+   "issue": "This is a new regression from the p5 #4 fix. The left screen clumps [108,52.6,17], [115.5,52.7,18] and [123,52.8,18] stand only 2.5-2.7 ft outside the ʻohana's far eave (wall at plan y ≈48.1, eave ≈50.1). Their fronds lie over the left hip corner and shade it, so the corner reads as growing into the roof (it was clean in p5). On the garage side, foxtail [114,-6.2,18] and areca [128,-6,14] stand 0.4-0.6 ft beyond the garage's far eave (≈ -5.6), and their fronds cover its right hip corner. Both pavilion silhouettes lose their crisp outer corners, which p4 shows clear against the planting.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Extend the scripts/palms.py pruning used on the walk-facing fronds: remove any frond whose tip comes within 1.5 ft of a roof plane. Or set these clumps back onto the lot line and swap the ones beside the pavilions for slim upright species (Alexander palm or clumping bamboo, 16-18 ft, under 4 ft spread). Keep the full-width areca clumps only past the pavilions' street faces (plan x > 125) and behind them (x < 100). Accept check: both outer hip corners and eaves read clean, with no frond shadows on the metal."
+  },
+  {
+   "rank": 3,
+   "criterion": "materials-lighting",
+   "where": "Grass-paver drive, lower-right foreground x 1060-1560, y 745-871",
+   "issue": "This is a new finding; it was also present in p5. The drive is a perfectly regular hex grid: a bright white concrete web around evenly filled turf cells, which reads as a tiled texture or chicken wire. It is the largest hard surface in the foreground. In p4 the same pavers read as lush lawn with only faint hex lines.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Darken the web to a weathered grey-tan (about sRGB 140,135,120) and let the turf overgrow each web edge, so 40-60% of the web is hidden. Vary the turf density and tone per cell (±10%), with a few thinner cells, and add two faint wheel-wear tracks toward the door. Accept check: at 1x the drive should read as green lawn with a subtle pattern, not a grid."
+  },
+  {
+   "rank": 4,
+   "criterion": "architecture",
+   "where": "Great-room cross-hip, x 760-1030, y 245-355 (ridge about x 840-955 at y 245)",
+   "issue": "The great roof reads as a tall, steep tent: its height-to-width ratio in the frame is about 0.39, against about 0.2 in p4, because the 0.95 (11.4:12) hip ends make the side hips rise at about 45°. Its ridge sits only about 13 px under the sea horizon and well above the wing ridges (y ~280). p4 shows a broad, low trapezoid well below the horizon. The pavilions read about 25% taller than p4 too, but the great roof is about twice as tall in proportion, so the focal building looks steeper than the reference design.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the roof plan and the front and side elevations (register I-3, I-3a). Interim: test pitch 0.45 (5.4:12) on the street and back planes, with the hip ends at about 0.7 and a longer ridge (stay above a triangular hip end), and compare the trapezoid against p4. Note the change in the band if adopted."
+  },
+  {
+   "rank": 5,
+   "criterion": "materials-lighting",
+   "where": "Foreground lawn x 0-600, y 740-871, plus the lawn strips beside the walk",
+   "issue": "The turf reads dull and dark: sunlit lawn is about RGB 115,119,54 and shaded lawn about 68,75,37, against p4's sunlit lawn at about 173,178,77. About half the left lawn also sits under mottled palm shade. The hue matches p4; the brightness does not. Overall frame saturation is 0.28 against p4's 0.39. Irrigated Kukuiʻula turf under a 53° sun should be the brightest green in the frame.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Raise the turf base albedo about 25-30% (keep the hue) and add a slight blade sheen. Thin the canopy of whichever front-left palm throws the large mottled shadow across x 100-500, y 760-871, or move it 3-4 ft toward the lot line, so most of the left lawn takes sun."
+  },
+  {
+   "rank": 6,
+   "criterion": "camera",
+   "where": "Left third x 0-330, y 225-870. Small cut-off tree on the left edge x 0-18, y 198-235",
+   "issue": "With the screen raised, about 20% of the frame is one undifferentiated mass of the same feathery areca frond at one scale, with no trunks, layering or flowers. It makes the left side much heavier than the right. The p5 frame-left crown is gone, so only a frame-right palm (x 1490-1650) frames the top. A sliver of tree on the left edge also makes an edge tangent right at the horizon.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Replace two of the left screen clumps ([66,52.4,13] and [86,52.6,14]) with a broadleaf canopy tree (kamani or monkeypod, about 25 ft) and red ti or heliconia understorey. Vary frond scale (±20%) and yaw across the rest. Either move the edge tree 20+ px into the frame or remove it."
+  },
+  {
+   "rank": 7,
+   "criterion": "camera",
+   "where": "Right neighbour copy roofs x 1190-1640, y 240-360",
+   "issue": "P4/p5 #4 remains on the right. The copy's cross-hip great roof and a wing still show above the 11-14 ft garage-side screen, veiled to a pale, ghostly blue with every seam legible. It reads as a translucent twin of the home for sale right beside it.",
+   "cause_class": "assumption-driven (needs a source document)",
+   "fix": "Needs the developer's site and architectural plans for Nā Hiku homes 1-14 (register I-14). Interim: replace the foxtail at [95,-6,22] behind the garage with a 28-30 ft monkeypod whose crown cuts the copy below its ridge. Once screened, drop the I-14a veil from 28% to about 12%, so the visible slivers read solid, not translucent."
+  },
+  {
+   "rank": 8,
+   "criterion": "camera",
+   "where": "Street plumerias: left tree x 540-700, y 590-720 over a mound x 610-745, y 700-800; right tree x 920-1010, y 640-720 over a mound x 930-1030, y 705-790",
+   "issue": "P5 #10 is partly fixed. Each plumeria now has a bare grey candelabra trunk with a few rosettes, but a dense round white-flowered mound still sits at its base. The form is upside down, bushy below and spindly above, so it reads as a gardenia shrub with a plumeria sprouting from it. p4 shows small trees with full flowering canopies on top.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Remove the base mound, or cut it to a low groundcover under 1.5 ft. Give each tree 10-14 terminal rosettes with flower clusters on the upper limbs, so the canopy mass sits at about 4-7 ft. Keep the 0.55/0.45 size difference."
+  },
+  {
+   "rank": 9,
+   "criterion": "terrain-water",
+   "where": "Right backdrop hill x 1080-1650, y 195-265",
+   "issue": "This is the residual after the p5 #3 fix. The fog is gone, but the slope is now a smooth DEM surface with low-frequency camouflage blotches. The mowing stripes cannot be read, and there are no bunkers, cart path or tree lines, so it reads as game terrain. p4's fairway reads unmistakably as golf.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Within the disclosed I-16 retouch: make the stripes 12-15 m wide, alternating ±8% in value along a fairway axis. Add two or three pale bunkers and a tan cart-path ribbon, and two or three tree clumps along the crest. Lift turf saturation about 10% so it sits between the foreground lawn and the haze."
+  },
+  {
+   "rank": 10,
+   "criterion": "architecture",
+   "where": "Roof wells: north wing x 655-730, y 312-345; south wing x 920-1000, y 315-355",
+   "issue": "P5 #6 is partly fixed. The cedar is darker and less saturated, and at 8x the 2x6 slats faintly resolve. At 1x, though, each well is still a flat orange-brown sliver with no depth or shadow, because the plane is seen nearly edge-on. It still reads as copper flashing.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Darken the well's upslope and side linings to near-black (about sRGB 40,32,28), so a dark rim frames the slats. Lower the slat tops another 2 in. for more self-shadow, and desaturate the cedar about 15% more. Accept check: at 2x each well reads as a dark slot with lighter slats inside it."
+  },
+  {
+   "rank": 11,
+   "criterion": "architecture",
+   "where": "Entry: left fronds x 740-802, y 355-470; right frond across the sidelight and door foot x 835-880, y 390-435",
+   "issue": "P5 #5 is mostly fixed. The cedar header band reads, the pivot door and sidelights are lit and legible, and the walk-facing fronds are gone. One christmas-palm frond still crosses the lower right of the door and sidelight, the left sidelight is half hidden, and the opening is still small (about 60 x 85 px).",
+   "cause_class": "defect (fixable now)",
+   "fix": "Prune the one remaining frond on the walk-side christmas palm [96.8, 8.0] that crosses x 835-880, or rotate that crown about 30° away from the axis. No other change needed."
+  },
+  {
+   "rank": 12,
+   "criterion": "materials-lighting",
+   "where": "Garage carriage door x 1150-1365, y 550-740",
+   "issue": "P5 #7 is fixed in form: clean vertical-grain cedar, with darker stiles and rails and no scuffs. Its tone, though, is a light orange new-pine (mean RGB 159,105,65) against p4's deep weathered cedar (about 111,68,45), so it still jumps out as the most saturated object in the frame.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Darken the base colour about 25-30% and desaturate about 10%. Add ±6% per-board tonal variation and keep roughness about 0.35."
+  },
+  {
+   "rank": 13,
+   "criterion": "labeling-honesty",
+   "where": "front-labelled.jpg caption band, lines A2-A4",
+   "issue": "P5 #11 is mostly fixed. The band now labels the image CONCEPT VISUALIZATION, splits SUPPLIED, ESTIMATE and ASSUMED, and says the backdrop trees, fairway striping and coastal roofs are illustrative (I-16). One gap remains. The side-yard screen planting is an interim retouch that hides the assumed neighbours (I-13a), yet A2 rolls it into 'landscape layout ... (renderings p4/p5)'. Neither rendering shows it, and a buyer could read the screened lot as part of the offering.",
+   "cause_class": "defect (fixable now)",
+   "fix": "Add to A3: '· side-yard screen planting is an interim retouch hiding the assumed neighbours (I-13a)'."
+  },
+  {
+   "rank": 14,
+   "criterion": "terrain-water",
+   "where": "Ocean band x 0-200 and x 540-880, y 231-244",
+   "issue": "P5 #12 is unchanged and deliberate. Ocean shows only in the left half, because the great roof and the real DEM hill on the right rise to and above the sea line. The visible band is now plausibly hazed (about RGB 84,126,164) and is no clearer than the land in front of it.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it, and do not paint ocean in. More sea comes back only through rank 1 (lower or screen the massing) and rank 4 (a lower great roof, if documents support it)."
+  },
+  {
+   "rank": 15,
+   "criterion": "materials-lighting",
+   "where": "Whole frame: sun 21 Jun 10:00 HST (alt 53°, az 80°)",
+   "issue": "P5 #13 is unchanged and deliberate. High mid-morning sun gives short shadows and a cooler, flatter balance than p4's warm raking light. Part of the saturation gap in rank 5 comes from this.",
+   "cause_class": "reference mismatch by design (real date sun, real site)",
+   "fix": "Keep it if real-date sun is the policy. For a warmer buyer image, pick another real date and time with a lower sun and state it in the band. Do not raise the 30% grade toward p4."
+  }
+ ]
+}

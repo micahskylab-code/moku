@@ -185,7 +185,9 @@ const B = {
       const c = new THREE.Group(); teakDiningChair(c);
       c.position.set(-w / 2 + (k + 0.5) * w / side, 0, s * (d / 2 + 0.55)); c.rotation.y = s < 0 ? 0 : Math.PI; g.add(c);
     }
-    for (let k = 0; k < ends; k++) { const c = new THREE.Group(); teakDiningChair(c); const s = k ? 1 : -1; c.position.set(s * (w / 2 + 0.6), 0, 0); c.rotation.y = -s * Math.PI / 2; g.add(c); }
+    // r6: the end chairs sit pulled out and turned ~20 deg (as left after a meal), so the seaward one no longer shows its
+    // legs edge-on, evenly spaced, in the great-room glass (the '1216' glyph, critique-preview5-back #11)
+    for (let k = 0; k < ends; k++) { const c = new THREE.Group(); teakDiningChair(c); const s = k ? 1 : -1; c.position.set(s * (w / 2 + 0.85), 0, -0.3 * s); c.rotation.y = -s * Math.PI / 2 + 0.35; g.add(c); }
     lathe(g, [[0, 0], [0.5, 0], [0.55, 0.25], [0, 0.25]], 0, 2.5, 0, 'rattan');
   },
 
@@ -489,7 +491,10 @@ function padGeo(w, t, d, { r = 0.12, crown = 0.04, dent = null, seed = 0 } = {})
 }
 function pad(g, w, t, d, x, y, z, opts = {}) {
   const c = new THREE.Group(); c.position.set(x, y, z); g.add(c);
-  c.add(new THREE.Mesh(padGeo(w, t, d, opts), mat('linenWhite')));
+  const body = new THREE.Mesh(padGeo(w, t, d, opts), mat('linenWhite')); c.add(body);
+  // r6: the Blender canvas recipe scales this pad's albedo by 0.9 (~0.6): sunlit chaise pads were near clipping
+  // (critique-preview5-back #4); the lanai's shaded cushions keep the full canvas white
+  body.userData.nh_albedo_k = opts.albedoK ?? 0.9;
   const r = Math.min(opts.r ?? 0.12, t / 2 * 0.9), e = r * 0.293;
   for (const s of [-1, 1]) {
     const p = new THREE.Mesh(pipeLoop(w - 2 * e + 0.012, d - 2 * e + 0.012, Math.max(0.03, r * 0.9), 0.03), PIPING());   // 1.8 cm welt cord
@@ -586,8 +591,9 @@ function teakDiningChair(g) {
     box(g, 0.14, 1.5, 0.14, sx * 0.7, 0.75, 0.66, 'teak', 0.02);                                 // front legs
     box(g, 0.14, 2.95, 0.14, sx * 0.7, 1.47, -0.68, 'teak', 0.02).rotation.x = -0.05;              // back legs / stiles
     box(g, 0.1, 0.16, 1.2, sx * 0.7, 1.42, -0.01, 'teak', 0.02);                                  // side rails
-    box(g, 0.07, 0.07, 1.2, sx * 0.7, 0.45, -0.01, 'teak');                                       // stretchers
   }
+  // r6: no low stretchers (an apron chair: the deep seat rails carry it). Seen edge-on in the great-room glass, the legs
+  // plus side stretchers against the sunlit lanai floor read as the digits '1216' (critique-preview5-back #11)
   for (const z of [0.66, -0.68]) box(g, 1.26, 0.16, 0.1, 0, 1.42, z, 'teak', 0.02);
   box(g, 1.28, 0.08, 1.26, 0, 1.53, -0.01, 'rattan', 0.03);                                       // woven seat
   const back = new THREE.Group(); back.position.set(0, 2.35, -0.73); back.rotation.x = -0.1; g.add(back);

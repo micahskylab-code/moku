@@ -85,7 +85,8 @@ export function plantBed(B, H) {
   const [x0, y0, x1, y1] = B.rect, r = rnd(Math.round(x0 * 31 + y0 * 11 + 7));
   // curved sides / no edging travel to Blender in the kind ('mondo@y0', 'ti@!'; parsed by scripts/plants_bpy.py)
   const spec = (B.curve ?? '') + (B.edge === false ? '!' : '');
-  if (recording()) { recordPlant({ type: 'bed', kind: spec ? `${B.kind}@${spec}` : B.kind, rect: B.rect, density: B.density ?? 1.1, ground: H((x0 + x1) / 2, (y0 + y1) / 2), seed: Math.round(x0 * 31 + y0 * 11 + 7), shell: true }); return g; }
+  // r6: B.scale (default 1) grows a bed's plants larger in Blender (scripts/plants_bpy.py), e.g. a tall bougainvillea screen
+  if (recording()) { recordPlant({ type: 'bed', kind: spec ? `${B.kind}@${spec}` : B.kind, rect: B.rect, density: B.density ?? 1.1, scale: B.scale ?? 1, ground: H((x0 + x1) / 2, (y0 + y1) / 2), seed: Math.round(x0 * 31 + y0 * 11 + 7), shell: true }); return g; }
   if (B.kind === 'ti') return tiBed(B, H, r);
   if (!K) return g;
   const area = (x1 - x0) * (y1 - y0), n = Math.max(1, Math.round(area / (K.size[0] * K.size[0]) * (B.density ?? 1.1)));
@@ -138,14 +139,18 @@ export function plumeria(x, y, ground, s = 1) {
   if (recording()) { recordPlant({ type: 'plumeria', x, y, ground, scale: s, seed: Math.round(x * 17 + y * 3 + 11), shell: true }); return g; }
   const bark = new THREE.MeshStandardMaterial({ color: '#6e665c', roughness: 0.9 });
   const tips = [];
+  // r6 (critique-preview5-front #10): a small one (s < 0.7, the street pair) is a young tree, not a shrunken mature
+  // crown: a bare ~3.4 ft trunk (world feet, whatever s), then candelabra limbs (as scripts/plants_bpy.py grows it)
+  const young = s < 0.7;
   const branch = (from, dir, len, depth) => {
     const to = from.clone().addScaledVector(dir, len);
     const m = new THREE.Mesh(new THREE.CylinderGeometry(0.1 * depth, 0.14 * depth, len, 7), bark);
     m.position.copy(from).lerp(to, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); g.add(m);
     if (depth <= 1) { tips.push(to); return; }
-    for (let k = 0; k < 2 + (r() > 0.4 ? 1 : 0); k++) branch(to, new THREE.Vector3(dir.x + (r() - 0.5) * 1.5, dir.y + 0.25, dir.z + (r() - 0.5) * 1.5).normalize(), len * 0.72, depth - 1);
+    const next = young && from.lengthSq() === 0 ? 1.7 / s : len * 0.72;
+    for (let k = 0; k < 2 + (r() > 0.4 ? 1 : 0); k++) branch(to, new THREE.Vector3(dir.x + (r() - 0.5) * 1.5, dir.y + 0.25, dir.z + (r() - 0.5) * 1.5).normalize(), next, depth - 1);
   };
-  branch(new THREE.Vector3(), new THREE.Vector3(0, 1, 0), 3.2, 4);
+  branch(new THREE.Vector3(), new THREE.Vector3(0, 1, 0), young ? 3.4 / s : 3.2, young ? 3 : 4);
   const parts = [];
   for (const t of tips) parts.push(...shrubGeometry(t.x, t.z, t.y - 0.9, 2.6 + r() * 0.6, KINDS.plumeria, r));
   const crown = new THREE.Mesh(mergeGeometries(parts), foliageTexture('plumeria'));

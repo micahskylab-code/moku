@@ -904,11 +904,69 @@ def monstera(seed):
 
 
 # ---------------------------------------------------------------- plumeria tree
-def plumeria_tree(seed, scale=1.0):
+def plumeria_tree(seed, scale=1.0, young=False):
+    """young (r6, critique-preview5-front #10): the small street plumerias as real-size young trees, not a scaled-down
+    mature crown (which forked at ~25 cm and read as a round gardenia bush): a bare grey trunk to 0.85-1.1 m (3-3.6 ft),
+    two to four candelabra limbs, one or two more forks, a rosette only at each blunt branch tip, so the branching
+    shows under and between the leaves."""
     rng = np.random.default_rng(seed)
     out = {'leaf': Buf(), 'bark': Buf(), 'petal': Buf()}
     segs = []                                # (path (k,3), r0, r1)
     tips = []
+    if young:
+        def grow_y(p, d, L, r, depth, first=False):
+            end = p + d * L
+            side = _norm(np.cross(d, UP) + 1e-6)
+            mid = p + d * L * 0.45 + side * rng.normal(0, 0.06) * L - UP * 0.05 * L * (1 - d[2])
+            t = np.linspace(0, 1, 6)[:, None]
+            path = (1 - t) ** 2 * p + 2 * (1 - t) * t * mid + t * t * end
+            segs.append((path, r, r * 0.88))
+            if depth == 0 or (not first and rng.random() < 0.3):
+                tips.append((end, _norm(path[-1] - path[-2]))); return
+            k = rng.integers(2, 5) if first else (2 if rng.random() < 0.7 else 3)
+            az0 = rng.uniform(0, 6.28)
+            for j in range(k):
+                az = az0 + j * 2 * math.pi / k + rng.normal(0, 0.4)
+                hd = np.array([math.cos(az), math.sin(az), 0])
+                spread = math.radians(rng.uniform(32, 50) if first else rng.uniform(16, 30))
+                nd = _norm(d * math.cos(spread) + _norm(hd - d * (hd @ d) + 1e-6) * math.sin(spread) + UP * 0.3)
+                grow_y(end, nd, rng.uniform(0.4, 0.58) if first else L * rng.uniform(0.7, 0.9), r * 0.8, depth - 1)
+        h0 = rng.uniform(0.85, 1.1)
+        lean = rng.normal(0, 0.12, 3) * np.array([1, 1, 0])
+        # the bare trunk: a slight S, then the first fork
+        grow_y(np.zeros(3), _norm(UP + lean), h0, 0.075, 3, first=True)
+        for path, r0, r1 in segs:
+            tubes(out['bark'], path[None], np.linspace(r0, r1, len(path))[None], sides=9)
+        tpl = [leaf_tpl(_prof('plumeria'), fold=0.14, arch=a, twist=tw, cols=1, stations=(0, 0.1, 0.3, 0.55, 0.8, 1.0)) for a, tw in ((0.05, 0.1), (0.18, -0.2), (0.34, 0.25))]
+        petal = leaf_tpl(_prof('obovate'), fold=0.05, cup=0.15, arch=-0.05, twist=0.5, stations=(0, 0.25, 0.55, 0.8, 1.0), cols=1)
+        for pos, d in tips:
+            rs = rng.uniform(0.8, 1.15); d = _norm(d + rng.normal(0, 0.2, 3))
+            n = rng.integers(int(13 * rs), int(20 * rs) + 1)            # thin rosettes: the limbs show below them
+            i = np.arange(n); age = i / (n - 1)
+            ph = rng.uniform(0, 6.28) + i * GOLDEN
+            hd = np.stack([np.cos(ph), np.sin(ph), np.zeros(n)], 1)
+            el = np.radians(72 - 70 * age ** 0.9 + rng.normal(0, 8, n))   # held up and out, none hanging below the tip
+            D = _norm(np.cos(el)[:, None] * hd + np.sin(el)[:, None] * UP + d * 0.25)
+            Nn = _norm(UP - D * (D @ UP)[:, None] + rng.normal(0, 0.15, (n, 3)))
+            L = rng.uniform(0.2, 0.32, n) * (0.55 + 0.45 * np.clip(age * 2.5, 0, 1)) * rs
+            P = pos - d * (age * 0.03)[:, None]
+            pk = np.clip((age * 2.99).astype(int), 0, 2)
+            for j, tp in enumerate(tpl):
+                s = pk == j; place(out['leaf'], tp, P[s], D[s], Nn[s], L[s], rng.uniform(0.85, 1.15, s.sum()))
+            if rng.random() < 0.55:
+                nf = rng.integers(8, 18)
+                stalk = rng.uniform(0.1, 0.2)
+                fc = pos + UP * stalk + d * 0.04 + rng.normal(0, 1, (nf, 3)) * np.array([0.06, 0.06, 0.03])
+                tubes(out['bark'], curve(np.repeat(pos[None] + UP * 0.02, nf, 0), fc, rng.normal(0, 0.01, (nf, 3)), 3), np.full((nf, 3), 0.003), sides=4)
+                ax = _norm(UP * 1.2 + (fc - pos) * 6 + rng.normal(0, 0.3, (nf, 3)))
+                e1, e2 = _frame(ax)
+                ph0 = rng.uniform(0, 6.28)
+                for j in range(5):
+                    phj = np.full(nf, j * 1.2566 + ph0)
+                    rad = np.cos(phj)[:, None] * e1 + np.sin(phj)[:, None] * e2
+                    tang = np.cross(ax, rad)
+                    place(out['petal'], petal, fc + ax * 0.004, _norm(rad * 0.85 + ax * 0.25 + tang * 0.25), _norm(ax - rad * 0.2), rng.uniform(0.032, 0.042, nf), np.full(nf, 1.15))
+        return out
     def grow(p, d, L, r, depth, first=False):
         end = p + d * L
         side = _norm(np.cross(d, UP) + 1e-6)
@@ -1368,6 +1426,10 @@ def materials():
     leaf('bougainvillea', 1, '#3d6a24', '#7a9a44', n_veins=6, angle=50, vein=0.3, rough=0.48, transl=0.32, val_var=0.2)
     leaf('gardenia', 2, '#1f4317', '#4f7a2e', n_veins=9, angle=58, vein=0.45, rough=0.22, spec=0.65, transl=0.2, bump=0.5, coat=0.25, val_var=0.15)
     leaf('hedge', 3, '#2b5520', '#5a8236', n_veins=7, angle=55, vein=0.25, rough=0.3, spec=0.6, transl=0.25, val_var=0.18)
+    # r6 (critique-preview5-back #2): the side-lot screen read as a near-black wall behind the right bougainvillea bed: its
+    # own leaf at ~1.5x the hedge's linear albedo, a larger share of light through the leaves and a paler back face
+    leaf('screen', 21, '#36672a', '#6e9c44', n_veins=7, angle=55, vein=0.25, rough=0.34, spec=0.55, transl=0.45, val_var=0.2, hue_var=0.04,
+         trans_tint=(1.35, 1.45, 0.65), back=(1.3, 1.35, 1.15))
     leaf('groundcover', 4, '#6f8a68', '#9aae90', n_veins=5, angle=50, vein=0.2, rough=0.55, transl=0.2, sheen=0.6, val_var=0.12, sat_var=0.15)
     leaf('monstera', 5, '#25501a', '#3f6a28', n_veins=14, angle=89, vein=0.35, vein_w=0.006, aspect=0.5, rough=0.42, spec=0.36, transl=0.2, bump=0.3, val_var=0.12, back=(1.1, 1.12, 1.0))
     leaf('plumeria', 6, '#335d1e', '#86a04a', n_veins=22, angle=75, vein=0.42, vein_w=0.007, rough=0.36, transl=0.3, bump=0.45, val_var=0.15, dry=(1.6, 1.1, 0.25, 1), dry_share=0.05)
@@ -1819,7 +1881,7 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
     # ---- shrubs, ti and monstera in the beds
     flowers = {'bougainvillea': _bougainvillea_flowers, 'gardenia': _gardenia_flowers, 'groundcover': _small_white_flowers, 'hedge': _small_white_flowers,
                'hibiscus': _hibiscus_flowers, 'jasmine': _small_white_flowers}
-    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'screen': 'hedge', 'groundcover': 'groundcover', 'jasmine': 'jasmine', 'dichondra': 'dichondra', 'hibiscus': 'gardenia'}
+    leafkey = {'bougainvillea': 'bougainvillea', 'gardenia': 'gardenia', 'hedge': 'hedge', 'screen': 'screen', 'groundcover': 'groundcover', 'jasmine': 'jasmine', 'dichondra': 'dichondra', 'hibiscus': 'gardenia'}
     protos = {}
     for kind, cfg in BEDS.items():
         if not any(p.get('kind') == kind for p in beds): continue
@@ -1870,7 +1932,7 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 tol = 0.32 if kind in ('mondo', 'alocasia', 'dichondra', 'tradescantia') else 1.6 if kind == 'jasmine' else 0.15   # groundcovers climb banks (jasmine: all of it, no bare soil)
                 if any(q is not None and abs(q - z) > tol for q in nb): continue    # right on a wall's step or a drop: skip
                 P.append((x, y, z - 0.015)); R.append((r.normal(0, 0.04), r.normal(0, 0.04), r.uniform(0, 6.283)))
-                S.append(r.uniform(0.65, 1.35) if kind == 'jasmine' else r.uniform(0.82, 1.18)); I.append(r.integers(0, nv))
+                S.append((r.uniform(0.65, 1.35) if kind == 'jasmine' else r.uniform(0.82, 1.18)) * p.get('scale', 1)); I.append(r.integers(0, nv))
         instancer('plants-' + kind, pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
         log(f'plants: {kind} x{len(P)}')
     # mulch under every bed
@@ -1887,14 +1949,28 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
     # ---- plumeria trees
     plu = [p for p in plants if p['type'] == 'plumeria']
     if plu:
-        pc = _variants('v-plumeria', 5, lambda i: plumeria_tree(4000 + i), mats, {'leaf': 'plumeria', 'bark': 'plumeria-bark', 'petal': 'plumeria-petal'})
+        km = {'leaf': 'plumeria', 'bark': 'plumeria-bark', 'petal': 'plumeria-petal'}
+        pc = _variants('v-plumeria', 5, lambda i: plumeria_tree(4000 + i), mats, km)
+        # r6 (critique-preview5-front #10): the small ones (scale < 0.7, the street pair) are young trees grown at real size
+        # (scale 0.5 -> 1.0), each pair member its own variant and size, a quarter turn apart
+        yc = _variants('v-plumeria-young', 3, lambda i: plumeria_tree(4100 + 13 * i, young=True), mats, km)
         P, R, S, I = [], [], [], []
+        YP, YR, YS, YI = [], [], [], []
         for p in plu:
             r = np.random.default_rng(p['seed'] & 0xffffffff)
             v = b(p['pos']); z = ground.z(v.x, v.y); z = v.z if z is None else z
-            P.append((v.x, v.y, z - 0.03)); R.append((0, 0, r.uniform(0, 6.283))); S.append(p.get('scale', 1) * r.uniform(1.05, 1.25)); I.append(r.integers(0, 5))
-        instancer('plants-plumeria', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
-        log(f'plants: plumeria x{len(P)} {time.time() - t0:.1f}s')
+            sc = p.get('scale', 1)
+            if sc < 0.7:
+                # pair members differ (seed = x * 17 + y * 3 + 11 in src/plants.js; the pair's are 2200 / 2250): other
+                # variant, a quarter turn apart
+                k = (int(p['seed']) // 50) % 2
+                YP.append((v.x, v.y, z - 0.03)); YR.append((r.normal(0, 0.02), r.normal(0, 0.02), (1.1 if k else 2.67) + r.uniform(-0.3, 0.3)))
+                YS.append(sc / 0.5 * r.uniform(0.95, 1.05)); YI.append(k if r.random() < 0.85 else 2)
+                continue
+            P.append((v.x, v.y, z - 0.03)); R.append((0, 0, r.uniform(0, 6.283))); S.append(sc * r.uniform(1.05, 1.25)); I.append(r.integers(0, 5))
+        if P: instancer('plants-plumeria', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
+        if YP: instancer('plants-plumeria-young', yc, np.array(YP), np.array(YR), np.array(YS), np.array(YI), col)
+        log(f'plants: plumeria x{len(P)}, young x{len(YP)} {time.time() - t0:.1f}s')
 
     # ---- specimen trees: pink shower tree (Cassia javanica)
     sh = [p for p in plants if p['type'] == 'shower']
@@ -1927,7 +2003,16 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
         fm = dict(mats)
         for key in ('tree', 'tree-dark', 'tree-light', 'tree-bark'):
             m2 = mats[key].copy(); m2.name = mats[key].name + ' far'
-            _mb.aerial(_mb.G(m2.node_tree), beta=1.3e-4, desat=0.45, desat_m=100.0, floor=(0.25, 60.0, 220.0))
+            # r6 (critique-preview5-front #2 / #3): exactly the land's haze (materials_bpy.LAND_HAZE), so no crown or
+            # building belt goes paler than the hillside it stands on
+            _mb.aerial(_mb.G(m2.node_tree), **_mb.LAND_HAZE)
+            if key != 'tree-bark':
+                # and matte at distance: the leaves' sky sheen (spec 0.5, rough 0.4) turned crowns 100-200 m off
+                # blue-grey, faded cut-outs against the land (critique-preview5-front #3, the ghost tree)
+                for n_ in m2.node_tree.nodes:
+                    if n_.type == 'BSDF_PRINCIPLED':
+                        n_.inputs['Specular IOR Level'].default_value = min(n_.inputs['Specular IOR Level'].default_value, 0.3)
+                        n_.inputs['Roughness'].default_value = max(n_.inputs['Roughness'].default_value, 0.55)
             fm[key] = m2
         pc = _variants('v-tree', nv, lambda i: canopy_tree(5000 + i, forms[i]), fm, {'leaf': tk, 'bark': 'tree-bark'})
         P, R, S, I = [], [], [], []
@@ -1948,6 +2033,44 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 loc = rs_bvh.ray_cast(Vector((x, y, 800.0)), Vector((0, 0, -1)), 3000.0)[0]
                 z = None if loc is None else loc.z
             return z
+        # r6 (critique-preview5-front #2): src/realsite.js plants the building belts with their crowns under the eave, so the
+        # two-storey footprint blocks 300-450 m off stood bare across the only ocean view (crowns 2-6 m tall in front of
+        # walls 3-8 m high). Each belt tree now grows from its own ground to 38-52% of the way up the roof of the building
+        # it fronts (eave and ridge read off the exported massing), 5-13 m tall (~10-12 m in front of those blocks), and
+        # gets one or two more crowns just outside it: a two-deep, opaque band of canopy over which only the upper roof
+        # shows, as Kukui'ula / Po'ipu houses show over their trees (register I-16)
+        TH = {'monkeypod': 7.0, 'kiawe': 5.5, 'kamani': 7.0}                  # crown top (m) at scale 1, canopy_tree SPREAD
+        ekd = rkd = None
+        if any(p['seed'] >= 700000 for p in tr):
+            from mathutils import kdtree
+            def wtris(key):
+                out = []
+                for o in bpy.data.objects:
+                    if o.type != 'MESH' or not any(m and m.name.startswith(key) for m in o.data.materials): continue
+                    me = o.data; me.calc_loop_triangles()
+                    co = np.empty(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', co)
+                    M = np.array(o.matrix_world); co = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+                    ti = np.empty(len(me.loop_triangles) * 3, np.int32); me.loop_triangles.foreach_get('vertices', ti)
+                    out.append(co[ti.reshape(-1, 3)])
+                return np.concatenate(out) if out else None
+            WT, RT = wtris('realsite walls'), wtris('realsite roofs')
+            if WT is not None and RT is not None and len(WT) and len(RT):
+                wz = WT[:, :, 2]; wtop = np.abs(wz - wz.max(1)[:, None]) < 0.02          # each wall quad's eave edge
+                two = np.where(wtop.sum(1) == 2)[0]
+                o2 = np.argsort(~wtop[two], axis=1, kind='stable')[:, :2]
+                EA, EB = WT[two, o2[:, 0]], WT[two, o2[:, 1]]
+                en = np.ceil(np.hypot(*(EB - EA)[:, :2].T) / 3.0).astype(int) + 1     # a sample every ~3 m
+                sid = np.repeat(np.arange(len(en)), en); first = np.cumsum(en) - en
+                et = (np.arange(en.sum()) - first[sid]) / np.maximum(en[sid] - 1, 1)
+                EV = EA[sid] + (EB - EA)[sid] * et[:, None]
+                ekd = kdtree.KDTree(len(EV))
+                for i, q in enumerate(EV): ekd.insert((q[0], q[1], 0.0), i)
+                ekd.balance()
+                RV = np.unique(np.round(RT.reshape(-1, 3), 1), axis=0)
+                rkd = kdtree.KDTree(len(RV))
+                for i, q in enumerate(RV): rkd.insert((q[0], q[1], 0.0), i)
+                rkd.balance()
+        nbelt = [0, 0]
         for k, p in enumerate(tr):
             r = np.random.default_rng(p['seed'])
             v = b(p['pos']); s = p['size'] / 4.0
@@ -1957,8 +2080,40 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
             if lone and r.random() < 0.25: continue
             if not belt and not p.get('near'): s *= r.uniform(0.8, 1.2)
             ax = r.uniform(0.85, 1.15)
-            P.append((v.x, v.y, v.z - 0.25)); R.append((r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283)))
-            S.append((s * ax, s / ax, s * p.get('sy', 1.0) * r.uniform(0.85, 1.05))); I.append(r.integers(0, nv))
+            rot = (r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283))
+            jit = r.uniform(0.85, 1.05); vi = int(r.integers(0, nv))       # (same draw order as before r6)
+            syy = p.get('sy', 1.0)
+            comp = []
+            if belt and ekd is not None:
+                ec, ei, ed_ = ekd.find((v.x, v.y, 0.0))
+                if ed_ < 12.0:
+                    rb = np.random.default_rng(p['seed'] + 7919)
+                    eave = EV[ei][2]
+                    ridge = max([RV[j][2] for _, j, _ in rkd.find_range((v.x, v.y, 0.0), 30.0)], default=eave)
+                    ridge = min(max(ridge, eave), eave + 12.0)
+                    bH = min(max(eave + (ridge - eave) * rb.uniform(0.38, 0.52) - v.z, 5.0), 13.0)
+                    kk = bH / (TH[forms[vi]] * s * syy * jit)
+                    if kk > 1.0:                                              # never shrink; widen a little, mostly taller
+                        sh = kk ** 0.4; s *= sh; syy *= kk / sh
+                    nbelt[0] += 1
+                    ox, oy = v.x - ec.x, v.y - ec.y; dn = math.hypot(ox, oy)
+                    if dn < 0.3:
+                        a = rb.uniform(0, 6.283); ox, oy = math.cos(a), math.sin(a)
+                    else: ox, oy = ox / dn, oy / dn
+                    for _ in range(1 if rb.random() < 0.6 else 2):
+                        out_, along = 4.0 * s * rb.uniform(0.7, 1.1), 4.0 * s * rb.uniform(-0.7, 0.7)
+                        x, y = v.x + ox * out_ - oy * along, v.y + oy * out_ + ox * along
+                        z = gz(x, y)
+                        if z is None or abs(z - v.z) > 4.0: continue
+                        v2 = int(rb.integers(0, nv)); s2 = s * rb.uniform(0.75, 1.0)
+                        H2 = min(max(v.z + bH * rb.uniform(0.75, 0.95) - z, 4.0), 14.0)
+                        comp.append(((x, y, z - 0.25), (rb.normal(0, 0.03), rb.normal(0, 0.03), rb.uniform(0, 6.283)),
+                                     (s2, s2, H2 / TH[forms[v2]]), v2))
+                    nbelt[1] += len(comp)
+            P.append((v.x, v.y, v.z - 0.25)); R.append(rot)
+            S.append((s * ax, s / ax, s * syy * jit)); I.append(vi)
+            for c_ in comp:
+                P.append(c_[0]); R.append(c_[1]); S.append(c_[2]); I.append(c_[3])
             # trees grow in groves: companions crowding in beside the far ones, crowns interlocking, mixed kinds and sizes
             # (not near our lot, where the plan is exact; not the building belts, already a row)
             far = not p.get('near') and not belt and (lot_c is None or math.hypot(v.x - lot_c.x, v.y - lot_c.y) > 140)
@@ -1971,7 +2126,7 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
                 P.append((x, y, z - 0.25)); R.append((r.normal(0, 0.03), r.normal(0, 0.03), r.uniform(0, 6.283)))
                 S.append((s2, s2, s2 * r.uniform(0.8, 1.15))); I.append(r.integers(0, nv))
         instancer('plants-trees', pc, np.array(P), np.array(R), np.array(S), np.array(I), col)
-        log(f'plants: trees x{len(P)} {time.time() - t0:.1f}s')
+        log(f'plants: trees x{len(P)} (belt raised x{nbelt[0]}, +{nbelt[1]} belt crowns) {time.time() - t0:.1f}s')
 
     # ---- lawn: grass blades on the open ground of our lot and the nearest neighbours
     lw = meta.get('lawn')
@@ -1984,7 +2139,11 @@ def build(meta, b, near=60.0, lawn=True, trees=True, log=print):
             boxes.append((math.floor(bx_[0] * 2) / 2, math.floor(bx_[1] * 2) / 2, math.ceil(bx_[2] * 2) / 2, math.ceil(bx_[3] * 2) / 2))
         X0 = min(bx[0] for bx in boxes); Y0 = min(bx[1] for bx in boxes); X1 = max(bx[2] for bx in boxes); Y1 = max(bx[3] for bx in boxes)
         skip = {c.name for c in (col, bpy.data.collections.get('palms')) if c}
-        others = [o for o in bpy.data.objects if o.type == 'MESH' and not any(c.name in skip for c in o.users_collection)
+        # r6 (critique-preview5-back #3, the 'divots'): only objects in the scene. The instancing prototypes (palm crowns,
+        # shrubs, plumerias, canopy trees) live in collections never linked to the scene, all built at the world origin,
+        # which is plan (0, 0) in front of the lanai: their leaves counted as cover and punched frond-shaped holes in
+        # the turf there, the smooth terrain showing between the surviving tiles
+        others = [o for o in scene.objects if o.type == 'MESH' and not any(c.name in skip for c in o.users_collection)
                   and not any(m and (m.name.startswith('terrain') or m.name.startswith('realsite near')) for m in o.data.materials) and o.data.polygons]
         # grass pavers: the honeycomb cells are full of turf (only the 1 in ribs show), so the lawn grows through them
         pav = [o for o in others if any(m and m.name.lower().startswith('grasspavers') for m in o.data.materials)]
