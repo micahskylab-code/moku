@@ -75,7 +75,9 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const U = {
     uTime: { value: 0 }, uSun: { value: new THREE.Vector3(0, 1, 0) }, uShadowK: { value: 1 },
     uGrid: { value: new THREE.Vector2(meta.cols, meta.rows) }, uTileM: { value: meta.tile_m }, uSdfK: { value: meta.sdfPerM ?? 3 },
-    uDeep: { value: new THREE.Vector3(...(meta.deepSea ?? [0.0026, 0.0089, 0.0248])) },
+    // the open sea, drawn: a cobalt (linear) lifted from the bake's measured deep water (meta.deepSea, about 0.003 / 0.009 /
+    // 0.025, which reads near black from the air); the sea beyond the tiles takes the same (realsite.js SEA_DEEP)
+    uDeep: { value: new THREE.Vector3(0.006, 0.025, 0.09) },
     // the modelled lot, a soft feathered tint on the ground (no lot line: the brochure gives none, its size is assumed)
     uLotC: { value: new THREE.Vector2() }, uLotH: { value: new THREE.Vector2(-1, -1) },
     uEast: { value: new THREE.Vector2(T.east[0], T.east[1]) }, uNorth: { value: new THREE.Vector2(T.north[0], T.north[1]) },
@@ -202,9 +204,17 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const inBoxW = (x, z) => { const [E, N] = toUTM(x, z); return E > E0 + 300 && E < E1 - 300 && N > N0 + 300 && N < N1 - 300; };
   const clampW = (x, z) => { const [E, N] = toUTM(x, z); return toWorld(Math.max(E0 + 300, Math.min(E1 - 300, E)), Math.max(N0 + 300, Math.min(N1 - 300, N))); };
   let fly = null, active = false, fogBase = null, fogSet = null, expBase = null, expSet = null, viewOff = null;
-  // on wide screens the card is docked left: centre the view in the space to its right, at the same scale
-  function frame() {
+  // where the card stands as a column on the left (wide screens, where it is docked, and phones held in landscape, where
+  // it folds to its title at the top left), the view is centred in the space to its right, at the same scale: the
+  // place a flight aims at is never under the card
+  function cardDock() {
     const c = ui.dock();
+    if (c > 0 || innerWidth <= innerHeight) return c;
+    const card = document.querySelector('#community .cm-card'), b = card && !card.closest('[hidden]') ? card.getBoundingClientRect() : null;
+    return b && b.width && b.left < 40 && b.right < innerWidth * 0.5 ? Math.round(b.right + 12) : 0;
+  }
+  function frame() {
+    const c = cardDock();
     const key = `${innerWidth}x${innerHeight}:${c}`;
     if (key === viewOff) return; viewOff = key;
     if (c > 0) { camera.aspect = (innerWidth + c) / innerHeight; camera.setViewOffset(innerWidth + c, innerHeight, 0, 0, innerWidth, innerHeight); }
@@ -243,10 +253,52 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   }
   const cancelFly = () => { fly = null; };
 
-  function establishing() {
-    // across the home toward the coast, framed between it and the Club
-    const club = pins.find(p => p.id === 'club')?.ground, t = club ? homeG.clone().lerp(club, 0.35) : homeG.clone();
-    return pose(t, 3000, 1.08, northAz - 0.35);
+  // The hero frame, at the end of the flight in: from north-north-west of the home, over the golf course, across it to the coast,
+  // the reef and the sea, with the horizon on the upper third and sky above it, the sun from the side, and the home on a
+  // lower third point of the part of the screen the chrome leaves free. Per layout: b, the camera's compass bearing from
+  // the home (degrees); d, its distance to the target (ft); pol, its polar angle; sx, sy, where the home sits in the free
+  // area (fractions). Phones in portrait come closer, with the home near the middle.
+  const HERO = {
+    wide: { b: 345, d: 4000, pol: 1.29, sx: 0.4, sy: 0.66 },
+    landscape: { b: 345, d: 3800, pol: 1.28, sx: 0.45, sy: 0.64 },
+    portrait: { b: 345, d: 3300, pol: 1.2, sx: 0.5, sy: 0.6 },
+  };
+  const probeCam = new THREE.PerspectiveCamera();
+  // the part of the screen no panel covers: below the header, above a bottom card (phones), right of a card column
+  function freeRect() {
+    const W = innerWidth, H = innerHeight, r = [0, 0, W, H];
+    for (const id of ['hud', 'buttons']) { const e = document.getElementById(id); if (e && !e.hidden) { const b = e.getBoundingClientRect(); if (b.height && b.top < H * 0.3) r[1] = Math.max(r[1], b.bottom); } }
+    for (const el of [document.querySelector('#community .cm-card'), document.querySelector('#community .cm-attr'), document.getElementById('skypanel')]) {
+      if (!el || el.closest('[hidden]')) continue;
+      const b = el.getBoundingClientRect();
+      if (b.height && b.top > H * 0.5 && (b.width > W * 0.6 || el.id === 'skypanel')) r[3] = Math.min(r[3], b.top);
+    }
+    const c = cardDock(); if (c > 0) r[0] = c;
+    if (r[3] - r[1] < H * 0.4) { r[1] = 0; r[3] = H; }
+    return r;
+  }
+  function establishing(o = {}) {
+    frame();
+    const W = innerWidth, H = innerHeight, P = { ...(H > W * 1.05 ? HERO.portrait : W <= 600 || H <= 480 ? HERO.landscape : HERO.wide), ...o };
+    const br = P.b * Math.PI / 180, az = Math.atan2(Math.sin(br) * T.east[1] + Math.cos(br) * T.north[1], Math.sin(br) * T.east[0] + Math.cos(br) * T.north[0]);
+    const f = freeRect(), want = [((f[0] + (f[2] - f[0]) * P.sx) / W) * 2 - 1, 1 - ((f[1] + (f[3] - f[1]) * P.sy) / H) * 2];
+    // find the target (on the ground) that puts the home there, with this camera's projection: a few Newton steps
+    probeCam.copy(camera); probeCam.updateProjectionMatrix();
+    const fwd = new THREE.Vector3(-Math.cos(az), 0, -Math.sin(az)), right = new THREE.Vector3(Math.sin(az), 0, -Math.cos(az)), v = new THREE.Vector3();
+    const onGround = q => { q.y = groundAt(q.x, q.z); return q; };
+    const at = q => { const p = pose(q, P.d, P.pol, az); probeCam.position.copy(p.pos); probeCam.lookAt(q); probeCam.updateMatrixWorld(); return v.copy(homeG).project(probeCam).clone(); };
+    const t = homeG.clone().addScaledVector(fwd, P.d * Math.sin(P.pol) * 0.5); onGround(t);
+    for (let i = 0; i < 10; i++) {
+      const s = at(t), ex = want[0] - s.x, ey = want[1] - s.y;
+      if (Math.abs(ex) + Math.abs(ey) < 2e-3) break;
+      const h = 40, sF = at(onGround(t.clone().addScaledVector(fwd, h))), sR = at(onGround(t.clone().addScaledVector(right, h)));
+      const a = (sF.x - s.x) / h, b = (sR.x - s.x) / h, c = (sF.y - s.y) / h, d = (sR.y - s.y) / h, det = a * d - b * c;
+      if (Math.abs(det) < 1e-12) break;
+      let mF = (d * ex - b * ey) / det, mR = (-c * ex + a * ey) / det;
+      const m = Math.hypot(mF, mR), cap = P.d; if (m > cap) { mF *= cap / m; mR *= cap / m; }
+      onGround(t.addScaledVector(fwd, mF).addScaledVector(right, mR));
+    }
+    return pose(t, P.d, P.pol, az);
   }
   function overview() {
     // low over the sea: the coast, the reef, the community rising to the mountains
@@ -305,10 +357,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     U.uTime.value += dt;
     const sd = daylight?.light?.sDir;
     if (sd) U.uSun.value.set(sd[0], sd[1], sd[2]);
-    // the walkthrough's haze is set for looking across the lot; from the air, a clear trade-wind day sees farther
-    if (scene.fog && scene.fog.density !== fogSet) { fogBase = scene.fog.density; scene.fog.density = fogBase * 0.55; fogSet = scene.fog.density; }
-    // and the eye, adapted to a bright sea and sky from up here, sees the land a little lighter than from the lawn
-    if (renderer.toneMappingExposure !== expSet) { expBase = renderer.toneMappingExposure; renderer.toneMappingExposure = expBase * 1.18; expSet = renderer.toneMappingExposure; }
+    // the haze, the exposure, the sky fill and the grade of this view are daylight.js's community look (main.js switches it)
     stepFly(dt);
     if (!fly) {
       // keep the target on the ground inside the box, and the camera above the ground
@@ -513,7 +562,13 @@ function tileMaterial(U, flat, low) {
       // metres to the box's edge: over its last 300 m the sea takes the open-sea colour the view's outer sea is drawn in
       vec2 cmBoxM = vec2((uTileCR.x + cmUv.x) * uTileM, (uTileCR.y + cmUv.y) * uTileM);
       float cmEdgeM = min(min(cmBoxM.x, uGrid.x * uTileM - cmBoxM.x), min(cmBoxM.y, uGrid.y * uTileM - cmBoxM.y));
-      diffuseColor.rgb = mix(diffuseColor.rgb, uDeep, cmSea * (1.0 - smoothstep(0.0, 300.0, cmEdgeM)));
+      // open water past about 10 m hands over to the open sea's cobalt (the bake's depth stops at 25.5 m and its albedo's dark
+      // streaks run on below that); over the box's last 300 m the whole sea takes it
+      diffuseColor.rgb = mix(diffuseColor.rgb, uDeep, cmSea * max(smoothstep(10.0, 24.0, cmDepth), 1.0 - smoothstep(0.0, 300.0, cmEdgeM)));
+      // ponds: a lighter teal-grey margin where the water meets its bank, and the water itself a shade lighter
+      float cmPondEdge = smoothstep(0.08, 0.3, cmW.g) * (1.0 - smoothstep(0.5, 0.85, cmW.g));
+      diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15 + vec3(0.004, 0.01, 0.012), cmPond);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.085, 0.12, 0.105), 0.55 * cmPondEdge);
       if (cmSea > 0.0) {
         // sets of swell rolling in over the reef and breaking in the 1-3 m band at its crest, in groups; swash at the shore
         float n = cmNoise(vCmWorld.xz / 30.0 + vec2(uTime * 0.02, 0.0)), n2 = cmNoise(vCmWorld.xz / 7.0 - uTime * 0.05);
@@ -537,7 +592,7 @@ function tileMaterial(U, flat, low) {
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.84, 0.64, 0.27), 0.24 * (1.0 - smoothstep(-4.0, 10.0, lsd)));
       }`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-      roughnessFactor = mix(roughnessFactor, mix(0.06, 0.42, smoothstep(300.0, 9000.0, cmDist)), cmWater * (1.0 - cmFoam));   // as the real-site sea`)
+      roughnessFactor = mix(roughnessFactor, mix(0.12, 0.5, smoothstep(300.0, 9000.0, cmDist)), cmWater * (1.0 - cmFoam));   // as the real-site sea in this view`)
       .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
       if (cmHiFade > 0.0 && cmWater < 0.99) {
         vec3 tn = texture2D(uN, vMapUv).xyz;
@@ -555,6 +610,10 @@ function tileMaterial(U, flat, low) {
         vec3 wn = normalize(vec3(-g.x, 1.0, -g.y));
         normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), cmWater * (1.0 - cmFoam)));
       }`)
+      .replace('#include <aomap_fragment>', `#include <aomap_fragment>
+      // water: the sun's highlights on the ripples capped (no white speckles), the ponds' sky reflection a little stronger
+      reflectedLight.directSpecular = mix(reflectedLight.directSpecular, min(reflectedLight.directSpecular, vec3(0.45)), cmWater);
+      reflectedLight.indirectSpecular *= 1.0 + 0.7 * cmPond;`)
       .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
       // shadows of trees, scrub and buildings, traced over the tile's height map toward the live sun
       #ifdef CM_LOW
