@@ -270,6 +270,9 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const t of tiles) t.want = 0;
     const sky = document.getElementById('skypanel'); if (sky?.classList.contains('open')) sky.querySelector('.sp-head')?.click();   // the card needs the left side
     if (intro) {
+      // a first look in daylight: opened at night or in twilight, the sky moves to mid-morning today (Night sky and the
+      // time panel still give any time)
+      if (daylight && (daylight.light?.sun?.alt ?? 90) < 8) daylight.toDay?.();
       const o = overview(); orbit.target.copy(o.target); camera.position.copy(o.pos); camera.lookAt(o.target);
       setTimeout(() => active && !userMoved && flyTo(establishing(), 7.5), 600);
     } else {
