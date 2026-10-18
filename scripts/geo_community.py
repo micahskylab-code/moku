@@ -819,7 +819,16 @@ def bake_tile(I, col, row, out):
     # under woody cover (crowns, thickets) the broad term is softened, so tree-filled gullies keep their shape but are
     # not crushed black under the live shadows; the crown-scale terms keep the gaps between crowns
     woody = np.clip(trees + np.maximum(shrub * 0.8, scrub_m) * (1 - trees), 0, 1) * land
-    hs = np.where(sea > 0.5, 0, dem) + chm * 0.9 + bh * (bmask > 0.5) + h_scrub
+    # lone crowns (canopy patches under 150 m2): the view stands a 3D tree on each (realsite trees), so the ground is
+    # not also raised into a shaded mound under it: a fifth of their relief stays in the normals, 40% in the
+    # occlusion; their traced shadow (cast height) stays. Woods keep their full rounded canopy.
+    lab, nl = ndi.label(chm > 2.0)
+    lone = np.zeros_like(chm)
+    if nl:
+        small = np.bincount(lab.ravel(), minlength=nl + 1) * PX * PX < 150; small[0] = False
+        lone = blur(ndi.binary_dilation(small[lab], iterations=int(2.5 / PX)).astype(np.float32), 0.8 / PX)   # over the crown's whole edge
+    del lab
+    hs = np.where(sea > 0.5, 0, dem) + chm * 0.9 * (1 - 0.6 * lone) + bh * (bmask > 0.5) + h_scrub
     ao = np.ones_like(hs)
     for r, k in ((1.2, 0.20), (3.5, 0.10), (9.0, 0.045)):
         d = blur(hs, r / PX) - hs
@@ -851,7 +860,7 @@ def bake_tile(I, col, row, out):
     # under thick vegetation the lidar found little ground and drew big flat facets: soften them there
     veg = np.clip(scrub + trees + shrub, 0, 1)
     dem_l = dem + (blur(dem, 2.0 / PX) - dem) * veg
-    hl = np.where(sea > 0.5, 0, dem_l) + ndi.gaussian_filter(chm, 0.6 / PX) * (chm > 1.0) + h_scrub
+    hl = np.where(sea > 0.5, 0, dem_l) + ndi.gaussian_filter(chm, 0.6 / PX) * (chm > 1.0) * (1 - 0.8 * lone) + h_scrub
     hl = ndi.gaussian_filter(hl, 0.5)
     dE = ndi.sobel(hl, 1) / (8 * PX); dN = -ndi.sobel(hl, 0) / (8 * PX)    # rows run south
     nz = 1 / np.sqrt(1 + dE ** 2 + dN ** 2)
