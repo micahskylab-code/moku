@@ -727,7 +727,7 @@ def bake_tile(I, col, row, out):
     a = over(a, follow(thicket, thicket) * (0.62 + 0.62 * fbm(Eo, No, 1.3, 3, 95)[..., None]), np.maximum(shrub * 0.8, scrub_m), LC_SCRUB)
     # golf turf: rough darker, a first cut, fairways with mower stripes (a natural green, not lime), greens finer with a
     # collar, white sand
-    a = over(a, follow(np.array([0.058, 0.112, 0.034], np.float32), pasture) * (0.86 + 0.26 * g_fine), rough, LC_GRASS)
+    a = over(a, follow(np.array([0.058, 0.112, 0.034], np.float32), pasture) * (0.86 + 0.26 * g_fine), rough, LC_TURF)   # mown: turf up close
     fair_c = follow(np.array([0.074, 0.160, 0.050], np.float32), pasture)          # was lime (0.086, 0.170, 0.044) * (0.96 + 0.08 * g_fine) * (0.93 + 0.14 * g_mid)
     a = over(a, fair_c * np.array([0.90, 0.86, 0.88], np.float32) * (0.95 + 0.1 * g_fine), first_cut, LC_TURF)
     st = I.stripes_at(E, N, Eo, No, 6.0)

@@ -513,10 +513,11 @@ const CM_COVER = `
         vec2 lp = vCmWorld.xz, lr = mat2(0.8, -0.6, 0.6, 0.8) * lp;
         float lfade = cmLand * (1.0 - smoothstep(0.55 * CM_COVER_FAR, CM_COVER_FAR, cmDist));
         float aF = 1.0 - smoothstep(0.55, 1.2, cmGroundPx), aM = 1.0 - smoothstep(1.6, 3.4, cmGroundPx), aC = 1.0 - smoothstep(4.0, 9.0, cmGroundPx);
-        float f1 = (cmNoise(lr / 2.2 + 11.3) - 0.5) * aF, f2 = (cmNoise(lr / 6.5 + 3.7) - 0.5) * aM, f3 = (cmNoise(lp / 17.0 + 9.1) - 0.5) * aC;
+        float f1 = (cmNoise(lr / 2.2 + 11.3) - 0.5) * aF, f3 = (cmNoise(lp / 17.0 + 9.1) - 0.5) * aC;
+        float f2 = (cmNoise(lr / 6.5 + 3.7) * 0.6 + cmNoise(lp / 4.4 + 7.9) * 0.4 - 0.5) * aM;   // two grids: no blocks
         vec3 lk = lcA.x * vec3(0.12 * f1 + 0.10 * f2);                                       // turf: a fine, even grain
-        float gap = smoothstep(-0.04, -0.22, f2);                                           // grass: tussocks and gaps,
-        lk += lcA.y * (vec3(0.50 * f1 + 0.50 * f2 + 0.40 * f3 - 0.22 * gap)
+        float gap = smoothstep(-0.06, -0.2, f2);                                            // grass: tussocks and gaps,
+        lk += lcA.y * (vec3(0.38 * f1 + 0.34 * f2 + 0.30 * f3 - 0.12 * gap)
               + lcDry * smoothstep(0.08, 0.3, f2 + 0.5 * f1) * vec3(0.14, 0.04, -0.20));     // dry tips straw-coloured
         float bush = smoothstep(-0.12, 0.2, f2 * 0.7 + f3 * 0.5);
         lk += lcA.z * vec3(mix(-0.45, 0.18, bush) * max(aM, aC) + 0.22 * f1);              // scrub: bushes, dark gaps
@@ -527,7 +528,7 @@ const CM_COVER = `
         lk += lcB.z * vec3(0.10 * f1);                                                      // sand: a faint grain
         diffuseColor.rgb *= max(vec3(0.0), 1.0 + lk * lfade);
         #ifndef CM_LOW
-          float lb = (lcA.z * 3.4 + lcA.w * 2.6 + lcB.y * 2.0 + lcA.y * 0.9 + lcB.x * 0.6) * lfade * aM;
+          float lb = (lcA.z * 3.4 + lcA.w * 2.6 + lcB.y * 2.0 + lcA.y * 0.6 + lcB.x * 0.6) * lfade * aM;
           if (lb > 0.01) {
             float h0 = cmNoise(lp / 6.5 + 5.3), hx = cmNoise((lp + vec2(1.5, 0.0)) / 6.5 + 5.3), hz = cmNoise((lp + vec2(0.0, 1.5)) / 6.5 + 5.3);
             vec2 lg = vec2(hx - h0, hz - h0) / 1.5 * lb;
