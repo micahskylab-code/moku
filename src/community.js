@@ -477,6 +477,68 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   }
 }
 
+// ---- land cover close up (start) ------------------------------------------------------------
+// On land well inside the coast, w_*.png B carries a land-cover class from the bake (scripts/geo_community.py
+// LANDCOVER: 16 x class + dryness 0-15; classes turf, grass, scrub, canopy, soil, rock, sand, paved). Near the camera
+// each class gets its own grain over the baked albedo (tussocks and straw tips, bush clumps, leaf clumps, clods,
+// speckle and cracks), and scrub, canopy, rock and grass a little relief for the live sun, so near ground stops
+// reading as clay. The four texels around are fetched and weighted by hand (a filtered class means nothing); it
+// fades out with distance and with the size of a pixel on the ground, so it never shimmers. A tile baked without
+// the class (B = 0 on land) is drawn as before. Inserted ahead of emissivemap_fragment: the albedo and the normal
+// are final there and the lights have not read them yet.
+const CM_COVER = `
+      #ifdef CM_LOW
+        #define CM_COVER_FAR 2600.0
+      #else
+        #define CM_COVER_FAR 4200.0
+      #endif
+      float cmGroundPx = max(length(dFdx(vCmWorld)), length(dFdy(vCmWorld)));     // ft of ground per pixel (outside the branch)
+      #ifndef CM_NO_COVER
+      if (cmLand > 0.01 && cmDist < CM_COVER_FAR) {
+        ivec2 lcN = textureSize(uW, 0);
+        vec2 lcT = vMapUv * vec2(lcN) - 0.5, lcF = fract(lcT);
+        ivec2 lcI = ivec2(floor(lcT));
+        vec4 lcA = vec4(0.0), lcB = vec4(0.0); float lcDry = 0.0;
+        for (int k = 0; k < 4; k++) {
+          ivec2 o = ivec2(k & 1, k >> 1);
+          vec4 tx = texelFetch(uW, clamp(lcI + o, ivec2(0), lcN - 1), 0);
+          float wt = mix(1.0 - lcF.x, lcF.x, float(o.x)) * mix(1.0 - lcF.y, lcF.y, float(o.y));
+          wt *= step((tx.r * 255.0 - 128.0) / uSdfK, -4.0) * step(tx.g * 255.0, 7.5);   // only where the bake wrote a class
+          int code = int(tx.b * 255.0 + 0.5);
+          ivec4 cls = ivec4(code >> 4);
+          lcA += wt * vec4(equal(cls, ivec4(1, 2, 3, 4)));   // turf, grass, scrub, canopy
+          lcB += wt * vec4(equal(cls, ivec4(5, 6, 7, 8)));   // soil, rock, sand, paved
+          lcDry += wt * float(code & 15) / 15.0;
+        }
+        vec2 lp = vCmWorld.xz, lr = mat2(0.8, -0.6, 0.6, 0.8) * lp;
+        float lfade = cmLand * (1.0 - smoothstep(0.55 * CM_COVER_FAR, CM_COVER_FAR, cmDist));
+        float aF = 1.0 - smoothstep(0.55, 1.2, cmGroundPx), aM = 1.0 - smoothstep(1.6, 3.4, cmGroundPx), aC = 1.0 - smoothstep(4.0, 9.0, cmGroundPx);
+        float f1 = (cmNoise(lr / 2.2 + 11.3) - 0.5) * aF, f2 = (cmNoise(lr / 6.5 + 3.7) - 0.5) * aM, f3 = (cmNoise(lp / 17.0 + 9.1) - 0.5) * aC;
+        vec3 lk = lcA.x * vec3(0.12 * f1 + 0.10 * f2);                                       // turf: a fine, even grain
+        float gap = smoothstep(-0.04, -0.22, f2);                                           // grass: tussocks and gaps,
+        lk += lcA.y * (vec3(0.50 * f1 + 0.50 * f2 + 0.40 * f3 - 0.22 * gap)
+              + lcDry * smoothstep(0.08, 0.3, f2 + 0.5 * f1) * vec3(0.14, 0.04, -0.20));     // dry tips straw-coloured
+        float bush = smoothstep(-0.12, 0.2, f2 * 0.7 + f3 * 0.5);
+        lk += lcA.z * vec3(mix(-0.45, 0.18, bush) * max(aM, aC) + 0.22 * f1);              // scrub: bushes, dark gaps
+        lk += lcA.w * vec3(0.50 * f1 + 0.40 * f2);                                          // canopy: leaf clumps
+        lk += lcB.x * (vec3(0.45 * f1 + 0.35 * f2) + vec3(0.06, 0.0, -0.06) * f3);          // soil: clods, drier patches
+        float crack = (1.0 - smoothstep(0.0, 0.05, abs(cmNoise(lr / 5.0 + 1.9) - 0.5))) * aM;
+        lk += lcB.y * vec3(0.60 * f1 + 0.35 * f2 - 0.40 * crack);                           // rock: speckle, cracks
+        lk += lcB.z * vec3(0.10 * f1);                                                      // sand: a faint grain
+        diffuseColor.rgb *= max(vec3(0.0), 1.0 + lk * lfade);
+        #ifndef CM_LOW
+          float lb = (lcA.z * 3.4 + lcA.w * 2.6 + lcB.y * 2.0 + lcA.y * 0.9 + lcB.x * 0.6) * lfade * aM;
+          if (lb > 0.01) {
+            float h0 = cmNoise(lp / 6.5 + 5.3), hx = cmNoise((lp + vec2(1.5, 0.0)) / 6.5 + 5.3), hz = cmNoise((lp + vec2(0.0, 1.5)) / 6.5 + 5.3);
+            vec2 lg = vec2(hx - h0, hz - h0) / 1.5 * lb;
+            normal = normalize(normal + (viewMatrix * vec4(-lg.x, 0.0, -lg.y, 0.0)).xyz);
+          }
+        #endif
+      }
+      #endif
+`;
+// ---- land cover close up (end) --------------------------------------------------------------
+
 // ---------------------------------------------------------------------------------------------
 function tileMaterial(U, flat, low) {
   const u = { uN: { value: flat }, uW: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
@@ -520,8 +582,9 @@ function tileMaterial(U, flat, low) {
         float brk = smoothstep(0.8, 1.6, cmDepth) * (1.0 - smoothstep(1.6, 3.5, cmDepth));
         float inR = 1.0 - smoothstep(0.75 * cmSdfMax, 0.97 * cmSdfMax, cmSdf);
         float ph = cmSdf * 0.16 + uTime * 0.9 + n * 1.2;
-        float crest = smoothstep(0.86, 1.0, sin(ph)) * brk * inR * smoothstep(0.35, 0.7, cmNoise(vCmWorld.xz / 60.0 + uTime * 0.01)) * (0.55 + 0.45 * n2);
-        float swash = (1.0 - smoothstep(0.0, 1.0 + 1.0 * (0.5 + 0.5 * sin(uTime * 0.8 + n * 9.0)), cmSdf)) * step(-0.4, cmSdf) * (0.5 + 0.5 * n2);
+        float calm = clamp(cmW.g * 255.0 / 80.0, 0.0, 1.0);   // inside the harbour's breakwater (bake: G = 80 x calm on the sea)
+        float crest = smoothstep(0.86, 1.0, sin(ph)) * brk * inR * smoothstep(0.35, 0.7, cmNoise(vCmWorld.xz / 60.0 + uTime * 0.01)) * (0.55 + 0.45 * n2) * (1.0 - calm);
+        float swash = (1.0 - smoothstep(0.0, 1.0 + 1.0 * (0.5 + 0.5 * sin(uTime * 0.8 + n * 9.0)), cmSdf)) * step(-0.4, cmSdf) * (0.5 + 0.5 * n2) * (1.0 - 0.7 * calm);
         cmFoam = max(crest * 0.8, swash * 0.65) * (1.0 - smoothstep(5000.0, 16000.0, cmDist));
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80, 0.82, 0.82), cmFoam);
       }
@@ -588,6 +651,7 @@ function tileMaterial(U, flat, low) {
         float k = 1.0 - 0.6 * occ * uShadowK * cmHiFade * (1.0 - smoothstep(0.45 * CM_FAR, CM_FAR, cmDist)) * (1.0 - cmWater);
         reflectedLight.directDiffuse *= k; reflectedLight.directSpecular *= k;
       }`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_COVER + '\n#include <emissivemap_fragment>');   // land cover close up
   };
   m.customProgramCacheKey = () => 'community-tile-3';
   return m;
