@@ -226,20 +226,43 @@ async function startInteractive() {
   const { createInspector } = await import('./inspect.js');
   const inspector = await createInspector({ planId, plan, scene, camera, renderer, orbit, house: houseGroup, ceilingAt, center: [cx, cz], aoPass, daylight }).catch(e => { console.warn('model view', e); return null; });
   const want = params.get('mode') ?? globalThis.__NAHIKU_MODE;   // index.html of a hosted copy may set the opening mode
-  let mode = ['fly', 'model'].includes(want) && (want !== 'model' || inspector) ? want : 'walk';
-  const btn = document.getElementById('mode'), modelBtn = document.getElementById('model');
+  // community view (src/community.js): the home in Kukui'ula, from the air; built on first use
+  let community = null, communityLoading = null;
+  const loadCommunity = () => communityLoading ??= import('./community.js').then(({ createCommunity }) => createCommunity({
+    scene, camera, renderer, orbit, daylight, real: window.__realsite, plan, center: [cx, cz], low: quality === 'low', aoPass,
+  })).then(c => (community = c)).catch(e => { console.warn('community view', e); communityLoading = null; return null; });   // a later click retries
+  let mode = ['fly', 'model', 'community'].includes(want) && (want !== 'model' || inspector) ? want : 'walk';
+  const btn = document.getElementById('mode'), modelBtn = document.getElementById('model'), commBtn = document.getElementById('community-btn');
   modelBtn.hidden = !inspector;
-  const setMode = m => {
+  let modeReq = 0;
+  const setMode = async m => {
+    const req = ++modeReq;
+    if (m === 'community' && !community) {
+      commBtn.textContent = 'Loading…'; commBtn.disabled = true;
+      await loadCommunity(); commBtn.disabled = false;
+      if (req !== modeReq) return;                   // the viewer picked another mode meanwhile
+      if (!community) {
+        commBtn.textContent = 'Community';
+        if (mode !== 'community') return;            // keep the mode in use
+        m = 'walk'; mode = 'walk';                   // an opening ?mode=community that could not load: walk instead
+      }
+    }
     if (mode === 'model' && m !== 'model') inspector.exit();
+    if (mode === 'community' && m !== 'community') community?.exit();
     mode = m; btn.textContent = m === 'fly' ? 'Walk in' : 'Fly over'; modelBtn.textContent = m === 'model' ? 'Exit model' : 'Model';
+    commBtn.textContent = m === 'community' ? 'Exit community' : 'Community';
+    document.body.classList.toggle('community-mode', m === 'community');
     orbit.enabled = m !== 'walk'; overlay.hidden = m !== 'walk';
     if (m === 'fly') { look.unlock(); orbit.target.set(cx, 0, cz); camera.position.set(cx - 160, 140, cz + 120); }
     else if (m === 'model') { look.unlock(); inspector.enter(); }
+    else if (m === 'community') { look.unlock(); community.enter(); }
     else { place(plan.start.pos, plan.start.look); }
+    if (aoPass && m !== 'model') aoPass.enabled = m !== 'community';   // the model view sets its own (inspect.js)
     daylight?.autoSunPath(m === 'fly');
   };
   btn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'fly' ? 'walk' : 'fly'); });
   modelBtn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'model' ? 'walk' : 'model'); });
+  commBtn.addEventListener('click', e => { e.stopPropagation(); setMode(mode === 'community' ? 'walk' : 'community'); });
   const timeBtn = document.getElementById('time');
   if (daylight) {
     // in-page: to the next great night for Na Hiku and back to daylight, no reload
@@ -254,7 +277,7 @@ async function startInteractive() {
   overlay.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) look.lock(); else overlay.hidden = true; });
   look.addEventListener('lock', () => (overlay.hidden = true));
   look.addEventListener('unlock', () => (overlay.hidden = mode !== 'walk'));
-  setMode(mode);
+  await setMode(mode);
 
   const touch = { move: null, look: null };
   addEventListener('touchstart', e => { if (mode !== 'walk') return; for (const t of e.changedTouches) { const s = t.clientX < innerWidth / 2 ? 'move' : 'look'; touch[s] = { id: t.identifier, x0: t.clientX, y0: t.clientY, x: t.clientX, y: t.clientY }; } }, { passive: true });
@@ -301,6 +324,7 @@ async function startInteractive() {
     }
     if (mode === 'fly') { orbit.update(); label.textContent = 'Nā Hiku · Kukuiʻula'; render(); return; }
     if (mode === 'model') { orbit.update(); inspector.update(dt); label.textContent = inspector.title(); minimap(null, camera, inspector.selectedPolygon()); render(); return; }
+    if (mode === 'community') { orbit.update(); community.update(dt); label.textContent = community.title(); render(); return; }
     let f = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
     let r = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
     if (touch.move) { f = Math.max(-1, Math.min(1, -(touch.move.y - touch.move.y0) / 60)); r = Math.max(-1, Math.min(1, (touch.move.x - touch.move.x0) / 60)); }

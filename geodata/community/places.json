@@ -1,0 +1,178 @@
+{
+ "about": "Places around the home in the community view (src/community.js). Names and positions from open data only; nothing copied from the developer's site or map. Positions are approximate (map data, plus the home's own ±25 m registration).",
+ "attribution": "places © OpenStreetMap contributors (ODbL), Overture Maps (CDLA-Permissive-2.0)",
+ "license": "OpenStreetMap-derived entries: ODbL-1.0 (https://opendatacommons.org/licenses/odbl/1-0/); Overture places entries: CDLA-Permissive-2.0 (https://cdla.dev/permissive-2-0/)",
+ "places": [
+  {
+   "id": "kukuiula-golf",
+   "name": "Kukuiʻula Golf Course",
+   "cat": "golf",
+   "lat": 21.8916,
+   "lon": -159.48593,
+   "note": "Its outline, one green, the driving range and its ponds are mapped in OpenStreetMap; the fairways drawn here are inferred from satellite colour, not surveyed. Views from the home are not shown or claimed.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 5
+  },
+  {
+   "id": "club",
+   "name": "The Club at Kukuiʻula",
+   "cat": "club",
+   "lat": 21.88547,
+   "lon": -159.48381,
+   "src": "Overture Maps places 2026-09-23 (CDLA-Permissive-2.0) · 2700 Ke Alaula St",
+   "prio": 4
+  },
+  {
+   "id": "lodge",
+   "name": "The Lodge at Kukuiʻula",
+   "cat": "club",
+   "lat": 21.88591,
+   "lon": -159.48333,
+   "src": "Overture Maps places 2026-09-23 (CDLA-Permissive-2.0) · 2700 Ke Alaula St",
+   "prio": 3
+  },
+  {
+   "id": "shops",
+   "name": "Kukuiʻula Village Shopping Center",
+   "cat": "dining",
+   "lat": 21.8839,
+   "lon": -159.46962,
+   "note": "Named as in OpenStreetMap, whose website tag for it is theshopsatkukuiula.com (The Shops at Kukuiʻula).",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 4
+  },
+  {
+   "id": "harbor",
+   "name": "Kukuiʻula Small Boat Harbor",
+   "cat": "ocean",
+   "lat": 21.88431,
+   "lon": -159.48788,
+   "note": "With Kukuiʻula Landing Park on Kukuiʻula Bay.",
+   "src": "Overture Maps places 2026-09-23 (CDLA-Permissive-2.0)",
+   "prio": 4
+  },
+  {
+   "id": "spouting-horn",
+   "name": "Spouting Horn",
+   "cat": "ocean",
+   "lat": 21.8847,
+   "lon": -159.49344,
+   "note": "A blowhole in the lava shelf, in Spouting Horn Park.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 4
+  },
+  {
+   "id": "ntbg",
+   "name": "National Tropical Botanical Garden",
+   "cat": "garden",
+   "lat": 21.88638,
+   "lon": -159.49279,
+   "note": "South Shore visitor centre for the Allerton and McBryde gardens in Lāwaʻi Valley.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 4
+  },
+  {
+   "id": "mcbryde",
+   "name": "McBryde Garden",
+   "cat": "garden",
+   "lat": 21.90415,
+   "lon": -159.50734,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 2
+  },
+  {
+   "id": "lawai-kai",
+   "name": "Lāwaʻi Bay beach",
+   "cat": "beach",
+   "lat": 21.88855,
+   "lon": -159.50206,
+   "note": "The beach at Lāwaʻi Bay, at the foot of Lāwaʻi Valley.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 2
+  },
+  {
+   "id": "lawai-beach",
+   "name": "Lāwaʻi Beach",
+   "cat": "beach",
+   "lat": 21.88161,
+   "lon": -159.47602,
+   "note": "On Hoai Bay, beside Lāwaʻi Road.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 3
+  },
+  {
+   "id": "baby-beach",
+   "name": "Baby Beach",
+   "cat": "beach",
+   "lat": 21.8796,
+   "lon": -159.47165,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 3
+  },
+  {
+   "id": "poipu-beach",
+   "name": "Poʻipū Beach Park",
+   "cat": "beach",
+   "lat": 21.87317,
+   "lon": -159.45287,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 3
+  },
+  {
+   "id": "brennecke",
+   "name": "Brennecke Beach",
+   "cat": "beach",
+   "lat": 21.87305,
+   "lon": -159.45139,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 1
+  },
+  {
+   "id": "kiahuna-beach",
+   "name": "Kiahuna Beach",
+   "cat": "beach",
+   "lat": 21.87543,
+   "lon": -159.45883,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 2
+  },
+  {
+   "id": "kiahuna-golf",
+   "name": "Kiahuna Golf Club",
+   "cat": "golf",
+   "lat": 21.88798,
+   "lon": -159.46392,
+   "note": "Its fairways, greens and bunkers are mapped in OpenStreetMap and drawn from that.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 2
+  },
+  {
+   "id": "poipu-village",
+   "name": "Poʻipū Shopping Village",
+   "cat": "dining",
+   "lat": 21.87938,
+   "lon": -159.45911,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 2
+  },
+  {
+   "id": "old-koloa",
+   "name": "Old Kōloa Town",
+   "cat": "garden",
+   "lat": 21.90365,
+   "lon": -159.46593,
+   "note": "The historic plantation town, with shops and restaurants.",
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 3
+  },
+  {
+   "id": "moir",
+   "name": "Moir Garden",
+   "cat": "garden",
+   "lat": 21.87727,
+   "lon": -159.46012,
+   "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
+   "prio": 1
+  }
+ ]
+}

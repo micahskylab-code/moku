@@ -9,8 +9,8 @@ CDNs, and passes no query string to the page. So the copy:
     astronomy-engine 2.1.19 (esm/astronomy.js, which vendor/ holds minified) from jsDelivr instead of publishing vendor/;
   - opens in the model view (window.__NAHIKU_MODE), since ?mode=model cannot reach the page;
   - hides the Ultra button (it reloads with a query string) and the 360 tour link (its panoramas are not built);
-  - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files), with the two height grids
-    as base64 text, since the host serves no binary types.
+  - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files) and geodata/community/ (the
+    community view's tiles), with the height grids as base64 text, since the host serves no binary types.
 Everything stays labelled as an independent concept visualization.
 """
 import base64
@@ -64,6 +64,16 @@ def build(out: Path):
         meta[g]['height'] = src.stem + '.b64.txt'
         (out / 'geodata' / meta[g]['height']).write_text(base64.b64encode(src.read_bytes()).decode())
     (out / 'geodata' / 'realsite.json').write_text(json.dumps(meta, indent=1))
+    # community view tiles (scripts/geo_community.py): images and json as they are, the height grid as base64 text
+    # (src/community.js falls back to h.b64.txt when h.bin is not served)
+    comm = ROOT / 'geodata' / 'community'
+    if comm.is_dir():
+        (out / 'geodata' / 'community').mkdir(parents=True, exist_ok=True)
+        for f in sorted(comm.iterdir()):
+            if f.suffix in ('.webp', '.png', '.json'):
+                shutil.copy2(f, out / 'geodata' / 'community' / f.name)
+            elif f.suffix == '.bin':
+                (out / 'geodata' / 'community' / (f.stem + '.b64.txt')).write_text(base64.b64encode(f.read_bytes()).decode())
     n = sum(1 for f in out.rglob('*') if f.is_file())
     print(f'{out}: {n} files, {sum(f.stat().st_size for f in out.rglob("*") if f.is_file()) / 1e6:.1f} MB')
 

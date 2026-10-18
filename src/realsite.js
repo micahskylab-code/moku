@@ -24,7 +24,7 @@ export async function loadRealSite(base = 'geodata/', { low = false } = {}) {
       const b = await fetch(base + g.height);
       if (!b.ok) throw new Error(`${g.height} ${b.status}`);
       // a host that serves no binary types gets the same bytes as base64 text (scripts/build_artifact.py)
-      const raw = g.height.endsWith('.b64.txt') ? Uint8Array.from(atob((await b.text()).trim()), c => c.charCodeAt(0)).buffer : await b.arrayBuffer();
+      const raw = g.height.endsWith('.b64.txt') ? (s => { const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; })(atob((await b.text()).trim())) : await b.arrayBuffer();
       const data = new Uint16Array(raw);
       if (data.length !== g.hsize * g.hsize) throw new Error(`${g.height}: size`);
       return { ...g, data, cell: (g.box[2] - g.box[0]) / g.hsize };
@@ -193,8 +193,14 @@ const NOISE = `
 // (fading out with distance, so it never shimmers). On water (where the roughness map says glassy):
 // a level surface with wind ripples near by and longer waves further out, fading before they alias,
 // and rougher (blurrier, darker) reflections with distance as the eye averages the wave facets.
+// Sun glint and haze in the Sentinel-2 median mosaic: a spectrally flat offset over open water (median deep water
+// 0.041 / 0.046 / 0.063 linear against 0.003 / 0.007 / 0.024 with the near-infrared taken off, scripts/geo_community.py).
+// The community view takes it off this terrain's water so the sea beyond its tiles matches the sea in them.
+export const SEA_LIFT = { value: 0 };
+
 function rippleShader(m, all = false) {
   m.onBeforeCompile = sh => {
+    sh.uniforms.rsSeaLift = SEA_LIFT;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRsWorld;')
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvRsWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     // waves tilt their facets toward the sky: water reflects the sky above the horizon, not the
@@ -202,10 +208,14 @@ function rippleShader(m, all = false) {
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), rsWetG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      varying vec3 vRsWorld; float rsWetG = 0.0;${NOISE}`)
+      varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift;${NOISE}`)
       .replace('#include <envmap_physical_pars_fragment>', ibl)
       .replace('#include <map_fragment>', `#include <map_fragment>
       float rsDist = length(vRsWorld - cameraPosition);
+      if (rsSeaLift > 0.0) {
+        float wl = ${all ? '1.0' : '1.0 - smoothstep(0.2, 0.6, texture2D(roughnessMap, vRoughnessMapUv).g)'};
+        diffuseColor.rgb = mix(diffuseColor.rgb, max(diffuseColor.rgb - rsSeaLift, vec3(0.002)), wl);
+      }
       ${all ? '' : `{
         float wet0 = 1.0 - smoothstep(0.2, 0.6, texture2D(roughnessMap, vRoughnessMapUv).g);
         float fade = (1.0 - smoothstep(250.0, 1800.0, rsDist)) * (1.0 - wet0);
@@ -232,7 +242,7 @@ function rippleShader(m, all = false) {
         normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), rsWet));
       }`);
   };
-  m.customProgramCacheKey = () => 'realsite-ground4' + (all ? '-sea' : '');
+  m.customProgramCacheKey = () => 'realsite-ground5' + (all ? '-sea' : '');
 }
 
 // ---------------------------------------------------------------------------------------------
