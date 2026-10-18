@@ -40,7 +40,7 @@ export async function loadRealSite(base = 'geodata/', { low = false } = {}) {
 class RealSite {
   constructor(meta, far, near, base, low) {
     Object.assign(this, { meta, far, near, base, low });
-    this.seaLevel = meta.seaLevel;
+    this.seaLevel = meta.seaLevel; SEA_Y.value = meta.seaLevel;
     this.north = meta.north;
   }
 
@@ -103,6 +103,7 @@ class RealSite {
     const m = new THREE.MeshStandardMaterial({ name: `realsite ${which}`, map, roughnessMap: rough, roughness: 0.96, metalness: 0, envMapIntensity: 1 });
     m.polygonOffset = true; m.polygonOffsetFactor = 2; m.polygonOffsetUnits = 2;   // the modelled ground wins where they overlap
     m.userData.box = g.box;
+    m.userData.liftLod = { value: Math.log2(map.image.width / 128) };   // a ~260 m average of the colour (the glint field)
     rippleShader(m);
     return m;
   }
@@ -169,7 +170,7 @@ class RealSite {
 
   // Open sea beyond the far square, out to the horizon, in the deep-water colour of the imagery.
   oceanSkirt(half) {
-    const g = new THREE.RingGeometry(half * 0.98, 400000, 64, 1);
+    const g = new THREE.RingGeometry(half * 0.98, 1.8e6, 64, 1);         // to the horizon, also from the community view's height
     g.rotateX(-Math.PI / 2);
     // linear albedo of the deep water off Po'ipū in the mosaic
     const m = new THREE.MeshStandardMaterial({ name: 'realsite ocean', color: new THREE.Color().setRGB(0.021, 0.042, 0.075), roughness: 0.07, metalness: 0 });
@@ -195,26 +196,41 @@ const NOISE = `
 // and rougher (blurrier, darker) reflections with distance as the eye averages the wave facets.
 // Sun glint and haze in the Sentinel-2 median mosaic: a spectrally flat offset over open water (median deep water
 // 0.041 / 0.046 / 0.063 linear against 0.003 / 0.007 / 0.024 with the near-infrared taken off, scripts/geo_community.py).
-// The community view takes it off this terrain's water so the sea beyond its tiles matches the sea in them.
-export const SEA_LIFT = { value: 0 };
+// The community view (src/community.js) switches SEA_LIFT on: this terrain's water near sea level loses the offset, read
+// from its own red averaged over ~260 m, so the sea beyond the tiles meets the sea in them; the open-sea skirt takes the
+// tiles' deep colour. SINK lowers this terrain under the tiles inside their box (no clipped edge to see through).
+export const SEA_LIFT = { value: 0 }, SEA_DEEP = { value: new THREE.Vector3(0.0026, 0.0089, 0.0248) }, SEA_Y = { value: -58 };
+export const SINK = { value: 0 }, SINK_BOX = { value: new THREE.Vector4() }, SINK_FRAME = { lot: { value: new THREE.Vector2() }, origin: { value: new THREE.Vector2() },
+  east: { value: new THREE.Vector2(1, 0) }, north: { value: new THREE.Vector2(0, 1) }, ft: { value: 0.3048 } };
 
 function rippleShader(m, all = false) {
   m.onBeforeCompile = sh => {
-    sh.uniforms.rsSeaLift = SEA_LIFT;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRsWorld;')
+    Object.assign(sh.uniforms, { rsSeaLift: SEA_LIFT, rsDeep: SEA_DEEP, rsSeaY: SEA_Y, rsLiftLod: m.userData.liftLod ?? { value: 0 },
+      rsSink: SINK, rsBox: SINK_BOX, rsLot: SINK_FRAME.lot, rsOrigin: SINK_FRAME.origin, rsEast: SINK_FRAME.east, rsNorth: SINK_FRAME.north, rsFt: SINK_FRAME.ft });
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
+      varying vec3 vRsWorld; uniform float rsSink, rsFt; uniform vec4 rsBox; uniform vec2 rsLot, rsOrigin, rsEast, rsNorth;`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+      ${all ? '' : `if (rsSink > 0.0) {                   // the ground's own coordinates are world feet (mesh at the origin)
+        vec2 d = transformed.xz - rsOrigin, utm = rsLot + vec2(dot(d, rsEast), dot(d, rsNorth)) * rsFt;
+        float inside = min(min(utm.x - rsBox.x, rsBox.z - utm.x), min(utm.y - rsBox.y, rsBox.w - utm.y));
+        transformed.y -= rsSink * smoothstep(0.0, 150.0, inside);
+      }`}`)
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvRsWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     // waves tilt their facets toward the sky: water reflects the sky above the horizon, not the
     // environment's ground half (which only the land below would see)
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), rsWetG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift;${NOISE}`)
+      varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift, rsSeaY, rsLiftLod; uniform vec3 rsDeep;${NOISE}`)
       .replace('#include <envmap_physical_pars_fragment>', ibl)
       .replace('#include <map_fragment>', `#include <map_fragment>
       float rsDist = length(vRsWorld - cameraPosition);
       if (rsSeaLift > 0.0) {
-        float wl = ${all ? '1.0' : '1.0 - smoothstep(0.2, 0.6, texture2D(roughnessMap, vRoughnessMapUv).g)'};
-        diffuseColor.rgb = mix(diffuseColor.rgb, max(diffuseColor.rgb - rsSeaLift, vec3(0.002)), wl);
+        ${all ? 'diffuseColor.rgb = mix(diffuseColor.rgb, rsDeep, rsSeaLift);' : `
+        float rsSeaW = 1.0 - smoothstep(rsSeaY + 20.0, rsSeaY + 60.0, vRsWorld.y);                        // the sea, not a reservoir
+        float wl = 1.0 - smoothstep(0.2, 0.6, textureLod(roughnessMap, vRoughnessMapUv, 2.0).g);        // the mask, its holes filled
+        float off = clamp(textureLod(map, vMapUv, rsLiftLod).r - rsDeep.r, 0.0, 0.065);                // the glint field, not waves
+        diffuseColor.rgb = mix(diffuseColor.rgb, max(diffuseColor.rgb - off, vec3(0.002)), wl * rsSeaW * rsSeaLift);`}
       }
       ${all ? '' : `{
         float wet0 = 1.0 - smoothstep(0.2, 0.6, texture2D(roughnessMap, vRoughnessMapUv).g);
@@ -242,7 +258,7 @@ function rippleShader(m, all = false) {
         normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), rsWet));
       }`);
   };
-  m.customProgramCacheKey = () => 'realsite-ground5' + (all ? '-sea' : '');
+  m.customProgramCacheKey = () => 'realsite-ground6' + (all ? '-sea' : '');
 }
 
 // ---------------------------------------------------------------------------------------------

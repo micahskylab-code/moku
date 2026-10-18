@@ -117,15 +117,17 @@
     #inspect { top: auto; bottom: 0; right: 0; left: 0; width: auto; max-width: none; max-height: 46vh; border-radius: 16px 16px 0 0;
       padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
   }
+  @media (max-width: 380px) { #buttons { gap: 5px; } #buttons button, #buttons a { padding: 6px 7px; font-size: 11.5px; } }
   @media (max-width: 600px) { #skypanel { left: 10px; bottom: 10px; max-width: calc(100vw - 156px); font-size: 12px; } #skypanel .sp-chip, #skypanel .sp-toggle { padding: 6px 9px; } }
   /* community view (src/community.js) */
+  body.community-mode #concept { display: inline-block; opacity: 1; margin-top: 4px; padding: 2px 8px; border-radius: 8px; background: rgba(14,20,28,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); text-shadow: none; }
   #community[hidden] { display: none; }
   body.community-mode #minimap { display: none; }
   #community .cm-card { position: fixed; left: calc(16px + env(safe-area-inset-left, 0px)); top: calc(112px + env(safe-area-inset-top, 0px)); z-index: 5; width: 292px; box-sizing: border-box; padding: 14px 16px 12px;
     max-height: calc(100vh - 124px - env(safe-area-inset-top, 0px)); overflow-y: auto;
     color: #17202b; background: rgba(255,255,255,.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; box-shadow: 0 6px 28px rgba(10,20,30,.22); }
   #community .cm-fold { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: default; position: relative; }
-  #community .cm-kicker { display: block; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #9a7434; }
+  #community .cm-kicker { display: block; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7d5c22; }
   #community .cm-title { display: block; margin-top: 3px; font: 500 19px/1.22 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; letter-spacing: .005em; }
   #community .cm-chev { display: none; position: absolute; right: 2px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); opacity: .55; transition: transform .2s; }
   #community .cm-attr-short, #community .cm-credits { display: none; }
@@ -150,19 +152,18 @@
   #community .cm-actions { display: flex; gap: 6px; }
   #community .cm-btn { font: inherit; font-size: 12px; border: 0; border-radius: 999px; padding: 6px 11px; background: #17202b; color: #fff; cursor: pointer; }
   #community .cm-btn + .cm-btn { background: rgba(23,32,43,.08); color: inherit; }
-  #community .cm-fine { margin-top: 10px; font-size: 10px; line-height: 1.4; opacity: .58; }
-  #community .cm-lot { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; }
-  #community .cm-lot-fill { fill: rgba(214,162,70,.30); }
+  #community .cm-fine { margin-top: 10px; font-size: 10.5px; line-height: 1.4; opacity: .74; }
   #community .cm-pins { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
   #community .cm-pin { position: absolute; left: 0; top: 0; width: 0; height: 0; padding: 0; border: 0; background: none; pointer-events: none; will-change: transform; }
   #community .cm-pin::after { content: ''; position: absolute; left: -3.5px; top: -3.5px; width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 1px 4px rgba(0,0,0,.4); transition: opacity .3s; }
   #community .cm-stem { position: absolute; left: -.5px; bottom: 0; width: 1px; height: var(--stem); background: linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.95)); transition: opacity .3s; }
-  #community .cm-label { position: absolute; left: 0; bottom: var(--stem); transform: translate(-50%, 0); display: flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; white-space: nowrap;
+  #community .cm-label { position: absolute; left: var(--dx, 0px); bottom: var(--stem); transform: translate(-50%, 0); display: flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; white-space: nowrap;
     font-size: 12px; font-weight: 600; letter-spacing: .01em; color: #17202b; background: rgba(255,255,255,.96);
     box-shadow: 0 2px 10px rgba(10,20,30,.22); pointer-events: auto; cursor: pointer; transition: opacity .3s, transform .3s; }
   #community .cm-label:hover { transform: translate(-50%, -2px); }
   #community .cm-ico { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--c); color: #fff; flex: none; }
   #community .cm-off .cm-label, #community .cm-off .cm-stem, #community .cm-off::after { opacity: 0; pointer-events: none; }
+  #community .cm-off::before { opacity: 0; animation: none; }
   #community .cm-sel .cm-label { box-shadow: 0 0 0 2px var(--c), 0 2px 12px rgba(10,20,30,.3); }
   #community .cm-hero .cm-label { padding: 5px 13px 5px 5px; font-size: 13px; color: #fff; background: rgba(23,32,43,.92); }
   #community .cm-hero .cm-ico { width: 24px; height: 24px; }
@@ -190,22 +191,23 @@
     #community .cm-fine { margin-top: 6px; font-size: 9.5px; }
     #community.cm-info-open .cm-card { display: none; }
     body.community-mode #buttons a[href="tour.html"], body.community-mode #buttons #mode { display: none; }
-    #community .cm-info { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-height: 50vh; overflow-y: auto; border-radius: 18px 18px 0 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
-    #community .cm-attr { left: 10px; right: 10px; max-width: none; bottom: calc(46px + env(safe-area-inset-bottom, 0px)); text-align: left; font-size: 8.5px; }
+    #community .cm-info { top: auto; bottom: 0; left: 10px; right: 10px; width: auto; max-height: 50vh; overflow-y: auto; border-radius: 18px; padding-bottom: 12px; }
+    #community .cm-attr { left: 10px; right: 10px; max-width: none; bottom: calc(46px + env(safe-area-inset-bottom, 0px)); text-align: left; font-size: 9.5px; }
     #community .cm-label { font-size: 11px; }
   }
   /* landscape phones: a compact card that fits above the sky panel */
   @media (max-height: 480px) and (min-width: 601px) {
-    #community .cm-card { top: calc(64px + env(safe-area-inset-top, 0px)); width: 284px; max-height: calc(100vh - 116px); padding: 10px 12px; }
+    #community .cm-card { top: calc(84px + env(safe-area-inset-top, 0px)); width: 284px; max-height: calc(100vh - 136px); padding: 10px 12px; }
+    #community .cm-folded .cm-chev { transform: rotate(45deg); margin-top: -6px; }   /* a top card opens downward */
     #community .cm-title { font-size: 16px; }
     #community .cm-chips { flex-wrap: nowrap; overflow-x: auto; margin: 8px -12px 6px; padding: 0 12px; scrollbar-width: none; }
-    #community .cm-info { max-height: calc(100vh - 80px); overflow-y: auto; }
+    #community .cm-info { max-height: calc(100vh - 104px); overflow-y: auto; }
   }
   .shot #community .cm-card, .shot #community .cm-info { display: none !important; }
 </style>
 </head>
 <body>
-<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept">Independent concept visualization · not by the developer · not construction documentation</div></div>
+<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept">Independent concept visualization · not by the developer · not construction documentation · views not verified</div></div>
 <div id="buttons"><button id="quality">Ultra</button><button id="time">Night sky</button><button id="model" hidden>Model</button><button id="community-btn">Community</button><button id="mode">Fly over</button><a href="tour.html">360° tour</a></div>
 <canvas id="minimap" width="340" height="300"></canvas>
 <div id="caption"></div>

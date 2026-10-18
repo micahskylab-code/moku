@@ -242,7 +242,8 @@ async function startInteractive() {
       await loadCommunity(); commBtn.disabled = false;
       if (req !== modeReq) return;                   // the viewer picked another mode meanwhile
       if (!community) {
-        commBtn.textContent = 'Community';
+        commBtn.textContent = 'Community unavailable'; commBtn.title = 'The community map could not load. Click to try again.';
+        setTimeout(() => { if (!community) commBtn.textContent = 'Community'; }, 3000);
         if (mode !== 'community') return;            // keep the mode in use
         m = 'walk'; mode = 'walk';                   // an opening ?mode=community that could not load: walk instead
       }

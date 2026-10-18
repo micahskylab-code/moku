@@ -13,7 +13,7 @@
 //   w_c_r.png                distance to the sea's edge, pond water and sea depth: glassy water, rolling
 //                            surf over the shallow reef, swash at the shore
 import * as THREE from 'three';
-import { SEA_LIFT } from './realsite.js';
+import { SEA_LIFT, SEA_DEEP, SINK, SINK_BOX, SINK_FRAME } from './realsite.js';
 
 const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -73,14 +73,19 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
 
   // ---- shared shader uniforms
   const U = {
-    uTime: { value: 0 }, uSun: { value: new THREE.Vector3(0, 1, 0) }, uShadowK: { value: 1 }, uHiR: { value: 1e9 },
+    uTime: { value: 0 }, uSun: { value: new THREE.Vector3(0, 1, 0) }, uShadowK: { value: 1 },
+    uGrid: { value: new THREE.Vector2(meta.cols, meta.rows) }, uTileM: { value: meta.tile_m }, uSdfK: { value: meta.sdfPerM ?? 3 },
+    uDeep: { value: new THREE.Vector3(...(meta.deepSea ?? [0.0026, 0.0089, 0.0248])) },
+    // the modelled lot, a soft feathered tint on the ground (no lot line: the brochure gives none, its size is assumed)
+    uLotC: { value: new THREE.Vector2() }, uLotH: { value: new THREE.Vector2(-1, -1) },
     uEast: { value: new THREE.Vector2(T.east[0], T.east[1]) }, uNorth: { value: new THREE.Vector2(T.north[0], T.north[1]) },
   };
   const flat = new THREE.DataTexture(new Uint8Array([128, 128, 0, 255]), 1, 1); flat.needsUpdate = true;
+  const lotR = plan.site?.lot;
+  if (lotR) { U.uLotC.value.set((lotR[0] + lotR[2]) / 2, (lotR[1] + lotR[3]) / 2); U.uLotH.value.set((lotR[2] - lotR[0]) / 2, (lotR[3] - lotR[1]) / 2); }
 
   // ---- tiles
   const group = new THREE.Group(); group.name = 'community'; group.visible = false;
-  scene.add(group);
   const S = low ? 50 : 100;
   const tiles = [];
   for (const { c, r } of meta.tiles) {
@@ -109,6 +114,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     geo.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
     geo.setIndex(idx); geo.computeBoundingSphere();
     const mat = tileMaterial(U, flat, low);
+    mat.userData.u.uTileCR.value.set(c, r);
     mat.polygonOffset = true; mat.polygonOffsetFactor = 1; mat.polygonOffsetUnits = 1;   // over the far terrain, under the modelled ground
     const mesh = new THREE.Mesh(geo, mat);
     mesh.name = `community tile ${c},${r}`; mesh.receiveShadow = true;
@@ -119,7 +125,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   }
   // the 512 px albedo and the water data of every tile up front (small); the rest streams by distance
   const firstLoad = await Promise.allSettled(tiles.map(async t => {
-    const [a, w] = await Promise.all([loadTex(`${base}s_${t.c}_${t.r}.webp`, { srgb: true, low }), loadTex(`${base}w_${t.c}_${t.r}.png`, { srgb: false, mip: false })]);
+    const [a, w] = await Promise.all([loadTex(`${base}s_${t.c}_${t.r}.webp`, { srgb: true, low, closeAfterUpload: true }), loadTex(`${base}w_${t.c}_${t.r}.png`, { srgb: false, mip: false, closeAfterUpload: true })]);
     t.low = a; t.mat.map = a; t.mat.userData.u.uW.value = w; t.mat.needsUpdate = true;
   }));
   firstLoad.forEach((res, k) => {
@@ -130,15 +136,18 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   for (let k = tiles.length - 1; k >= 0; k--) if (tiles[k].dropped) tiles.splice(k, 1);
   if (!tiles.length) throw new Error('no community tiles');
 
+  scene.add(group);
   // The walkthrough's 10 m real terrain stays outside the box; inside it the tiles carry the ground, and the coarse
-  // terrain (whose valleys sit above the lidar ground) is clipped away while the view is on. Only when every tile came.
+  // terrain (whose valleys sit above the lidar ground) is sunk 120 ft under them while the view is on (realsite.js SINK):
+  // no clipped edge to see through at the box's rim. Its sea loses the mosaic's glint so it meets the tiles' sea.
+  SINK_BOX.value.set(E0, N0, E1, N1); SINK_FRAME.lot.value.set(T.lotUTM[0], T.lotUTM[1]); SINK_FRAME.origin.value.set(T.origin[0], T.origin[1]);
+  SINK_FRAME.east.value.set(T.east[0], T.east[1]); SINK_FRAME.north.value.set(T.north[0], T.north[1]); SINK_FRAME.ft.value = FT;
+  SEA_DEEP.value.copy(U.uDeep.value);
   const realMats = [];
-  scene.traverse(o => { if (o.isMesh && /^realsite (near|far)$/.test(o.material?.name ?? '')) realMats.push(o.material); });
-  const edgePlane = (Ee, Ne, nE, nN) => {
-    const [x, z] = toWorld(Ee, Ne), n = new THREE.Vector3(nE * T.east[0] + nN * T.north[0], 0, nE * T.east[1] + nN * T.north[1]).normalize();
-    return new THREE.Plane(n, -n.dot(new THREE.Vector3(x, 0, z)));
-  };
-  const boxPlanes = tiles.length === meta.tiles.length ? [edgePlane(E1 - 5, N0, 1, 0), edgePlane(E0 + 5, N0, -1, 0), edgePlane(E0, N1 - 5, 0, 1), edgePlane(E0, N0 + 5, 0, -1)] : null;
+  scene.traverse(o => { if (o.isMesh && /^realsite (near|far|ocean)$/.test(o.material?.name ?? '')) realMats.push(o.material); });
+  // the modelled access roads, darker from the air (their pale texture reads as a gravel slab at this distance)
+  const roadMeshes = [], darkRoad = new THREE.MeshStandardMaterial({ name: 'community road', color: '#3c4046', roughness: 0.9 });
+  scene.traverse(o => { if (o.isMesh && /asphalt/.test(o.material?.name ?? '') && !o.userData.realsite) roadMeshes.push(o); });
 
   const maxHi = low ? 4 : 10, dHi = (low ? 4200 : 7500), hiSize = low ? 1024 : 2048;
   let streamT = 0, inflight = 0;
@@ -160,24 +169,29 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
               return;
             }
             t.hiTex = [a, n]; t.hi = 1; t.mat.map = a; t.mat.userData.u.uN.value = n; t.mat.userData.u.uHasN.value = 1; t.mat.needsUpdate = true;
+            edges();
           })
           .finally(() => { t.busy = false; inflight--; });
       } else if (!t.want && t.hi) dropHi(t);
     }
-    // lidar normals and traced shadows fade out before the nearest tile that has none: no seam at a tile edge
-    let r = 1e9;
-    for (const { t, d } of order) if (!t.hi) r = Math.min(r, Math.max(0, d - meta.tile_m / FT * 0.71));
-    U.uHiR.value = r;
+    edges();
+  }
+  // lidar normals and traced shadows fade out only toward an edge shared with a 2 m tile (or the box): no seam there
+  const tileAt = new Map(tiles.map(t => [`${t.c},${t.r}`, t]));
+  function edges() {
+    const lo = (c, r) => !tileAt.get(`${c},${r}`)?.hi ? 1 : 0;
+    for (const t of tiles) t.mat.userData.u.uEdgeLo.value.set(lo(t.c, t.r - 1), lo(t.c + 1, t.r), lo(t.c, t.r + 1), lo(t.c - 1, t.r));
   }
   function dropHi(t) {
     t.mat.map = t.low; t.mat.userData.u.uN.value = flat; t.mat.userData.u.uHasN.value = 0; t.mat.needsUpdate = true;
     for (const x of t.hiTex) x.dispose(); t.hiTex = null; t.hi = 0;
+    edges();
   }
 
   // ---- places
   const places = await fetch(base + 'places.json').then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
   const home = { id: 'home', name: 'Concept home (modelled)', sub: 'The brochure’s “Lot 25” spec design, modelled on an assumed Nā Hiku lot', cat: 'home', world: [center[0], center[1]], prio: 10,
-    note: 'This walkthrough’s concept model. The soft gold patch is its modelled lot (61.5 × 184.4 ft, an assumed size); the brochure gives no lot lines, and the position is registered to ±25 m. The other Nā Hiku homes shown are assumed copies of this design.' };
+    note: 'This walkthrough’s concept model. The soft gold patch is its modelled lot (61.5 × 184.4 ft, an assumed size); the brochure gives no lot lines, and the position is registered to ±25 m. The other Nā Hiku homes shown are assumed copies of this design; in 2025–26 imagery the Nā Hiku strip is graded, unbuilt land, and the homes, pools and lawns on it are modelled. Views from the home are not shown or verified.' };
   const pins = [home, ...(places.places ?? []).map(p => ({ ...p, world: fromLatLon(p.lat, p.lon) }))];
   for (const p of pins) p.ground = new THREE.Vector3(p.world[0], groundAt(p.world[0], p.world[1]), p.world[1]);
   const ui = buildUI(pins, places, meta.attribution ?? []);
@@ -187,7 +201,16 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const boxW = [toWorld(E0, N0), toWorld(E1, N0), toWorld(E1, N1), toWorld(E0, N1)];
   const inBoxW = (x, z) => { const [E, N] = toUTM(x, z); return E > E0 + 300 && E < E1 - 300 && N > N0 + 300 && N < N1 - 300; };
   const clampW = (x, z) => { const [E, N] = toUTM(x, z); return toWorld(Math.max(E0 + 300, Math.min(E1 - 300, E)), Math.max(N0 + 300, Math.min(N1 - 300, N))); };
-  let fly = null, active = false, fogBase = null, fogSet = null, expBase = null, expSet = null;
+  let fly = null, active = false, fogBase = null, fogSet = null, expBase = null, expSet = null, viewOff = null;
+  // on wide screens the card is docked left: centre the view in the space to its right, at the same scale
+  function frame() {
+    const c = ui.dock();
+    const key = `${innerWidth}x${innerHeight}:${c}`;
+    if (key === viewOff) return; viewOff = key;
+    if (c > 0) { camera.aspect = (innerWidth + c) / innerHeight; camera.setViewOffset(innerWidth + c, innerHeight, 0, 0, innerWidth, innerHeight); }
+    else { camera.clearViewOffset(); camera.aspect = innerWidth / innerHeight; }
+    camera.updateProjectionMatrix();
+  }
 
   function pose(target, dist, polar, azim) {          // azim: world angle of the camera from the target (0 = +x)
     const h = dist * Math.cos(polar), r = dist * Math.sin(polar);
@@ -221,29 +244,29 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const cancelFly = () => { fly = null; };
 
   function establishing() {
-    // from high over the sea, round to a view across the home toward the coast
-    return pose(homeG.clone().add(new THREE.Vector3(0, 0, 0)), 2600, 0.98, northAz - 0.35);
+    // across the home toward the coast, framed between it and the Club
+    const club = pins.find(p => p.id === 'club')?.ground, t = club ? homeG.clone().lerp(club, 0.35) : homeG.clone();
+    return pose(t, 3000, 1.08, northAz - 0.35);
   }
   function overview() {
-    // low over the sea off the harbour: the coast, the reef, the community rising to the mountains
-    const [cx, cz] = toWorld(450300, 2420600);
-    return pose(new THREE.Vector3(cx, groundAt(cx, cz), cz), 10500, 1.1, southAz + 0.12);
+    // low over the sea: the coast, the reef, the community rising to the mountains
+    const [cx, cz] = toWorld(450300, 2421100);
+    return pose(new THREE.Vector3(cx, groundAt(cx, cz), cz), 9000, 1.16, southAz + 0.12);
   }
 
   let entered = false;
   function enter({ intro = !entered } = {}) {
     active = true; entered = true;
     Object.assign(saved, { near: camera.near, far: camera.far, minD: orbit.minDistance, maxD: orbit.maxDistance, maxP: orbit.maxPolarAngle, ssp: orbit.screenSpacePanning, fog: scene.fog?.density });
-    camera.near = 6; camera.far = 160000; camera.updateProjectionMatrix();
+    camera.near = 6; camera.far = 2.0e6; camera.updateProjectionMatrix();   // the sea skirt reaches the horizon (realsite.js)
     Object.assign(orbit, { minDistance: 180, maxDistance: 32000, maxPolarAngle: 1.36, screenSpacePanning: false });
     orbit.enabled = true;
     group.visible = true; ui.show(true);
     for (const m of modelGround) { m.userData.cmVisible = m.visible; m.visible = false; }
-    SEA_LIFT.value = 0.0384;                                   // the sea beyond the tiles without the mosaic's glint (realsite.js)
-    if (boxPlanes) {
-      saved.clip = renderer.localClippingEnabled; renderer.localClippingEnabled = true;
-      for (const m of realMats) { m.clippingPlanes = boxPlanes; m.clipIntersection = true; m.needsUpdate = true; }
-    }
+    SEA_LIFT.value = 1; SINK.value = 120;                     // realsite.js: glint off its sea; sunk under the tiles in the box
+    for (const m of realMats) { m.userData.cmEnv = m.envMapIntensity; m.envMapIntensity = 1; }
+    for (const o of roadMeshes) { o.userData.cmMat = o.material; o.material = darkRoad; }
+    const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 1;   // haze below the horizon, not ground
     for (const t of tiles) t.want = 0;
     const sky = document.getElementById('skypanel'); if (sky?.classList.contains('open')) sky.querySelector('.sp-head')?.click();   // the card needs the left side
     if (intro) {
@@ -262,11 +285,11 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     Object.assign(orbit, { minDistance: saved.minD, maxDistance: saved.maxD, maxPolarAngle: saved.maxP, screenSpacePanning: saved.ssp });
     group.visible = false; ui.show(false);
     for (const m of modelGround) m.visible = m.userData.cmVisible ?? true;
-    SEA_LIFT.value = 0;
-    if (boxPlanes) {
-      for (const m of realMats) { m.clippingPlanes = null; m.clipIntersection = false; m.needsUpdate = true; }
-      renderer.localClippingEnabled = saved.clip;
-    }
+    SEA_LIFT.value = 0; SINK.value = 0;
+    for (const m of realMats) m.envMapIntensity = m.userData.cmEnv ?? 1;
+    for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
+    const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 0;
+    camera.clearViewOffset(); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); viewOff = null;
     // give the full-size tiles back to the GPU; the 2 m ones stay for next time
     for (const t of tiles) { t.want = 0; if (t.hi) dropHi(t); }
   }
@@ -280,7 +303,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const sd = daylight?.light?.sDir;
     if (sd) U.uSun.value.set(sd[0], sd[1], sd[2]);
     // the walkthrough's haze is set for looking across the lot; from the air, a clear trade-wind day sees farther
-    if (scene.fog && scene.fog.density !== fogSet) { fogBase = scene.fog.density; scene.fog.density = fogBase * 0.4; fogSet = scene.fog.density; }
+    if (scene.fog && scene.fog.density !== fogSet) { fogBase = scene.fog.density; scene.fog.density = fogBase * 0.55; fogSet = scene.fog.density; }
     // and the eye, adapted to a bright sea and sky from up here, sees the land a little lighter than from the lawn
     if (renderer.toneMappingExposure !== expSet) { expBase = renderer.toneMappingExposure; renderer.toneMappingExposure = expBase * 1.18; expSet = renderer.toneMappingExposure; }
     stepFly(dt);
@@ -296,6 +319,8 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       if (camera.position.y < cg) camera.position.y = cg;
     }
     stream(dt);
+    frame();
+    const wx = daylight?.state?.weather?.source === 'live'; if (wx !== ui.wx) ui.setWx(wx);
     ui.place(camera, renderer);
   }
 
@@ -303,10 +328,12 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   window.__community = { groundAt, toWorld, toUTM, fromLatLon, tiles, pins, flyTo, jump, pose, establishing, overview, northAz, settled: () => !fly && tiles.every(t => !t.busy && (!t.want || t.hi || (t.fails ?? 0) >= 3)) };
   // compile the tile shader and upload the small textures now, not in the first frame of the view (a long stall)
   try {
-    group.visible = true;
-    await renderer.compileAsync?.(group, camera, scene);
+    // the composer draws into a half-float target: compile that variant, not the screen's
+    const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }), prev = renderer.getRenderTarget();
+    renderer.setRenderTarget(rt); const pc = renderer.compileAsync?.(group, camera, scene); renderer.setRenderTarget(prev);
+    await pc; rt.dispose();
     for (const [k, t] of tiles.entries()) { renderer.initTexture(t.low); renderer.initTexture(t.mat.userData.u.uW.value); if (k % 6 === 5) await new Promise(requestAnimationFrame); }
-  } catch (e) { console.warn('[community] precompile', e.message); } finally { group.visible = false; }
+  } catch (e) { console.warn('[community] precompile', e.message); }
   return { enter, exit, update, group, flyTo, establishing, title: () => ui.title(), get active() { return active; } };
 
   // ---------------------------------------------------------------------------------------------
@@ -314,18 +341,20 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const root = document.createElement('div'); root.id = 'community'; root.hidden = true;
     root.innerHTML = `
       <div class="cm-card">
-        <button class="cm-fold" type="button" aria-expanded="true" aria-label="Show or hide the panel"><span class="cm-kicker">Kukuiʻula · Kōloa, Kauaʻi</span>
+        <button class="cm-fold" type="button" aria-controls="cm-body"><span class="cm-kicker">Kukuiʻula · Kōloa, Kauaʻi</span>
           <span class="cm-title">The neighbourhood around the home</span><span class="cm-chev" aria-hidden="true"></span></button>
+        <div id="cm-body">
         <div class="cm-chips"></div>
         <div class="cm-actions"><button class="cm-btn" data-a="home">Back to the home</button><button class="cm-btn" data-a="overview">Whole community</button></div>
-        <div class="cm-fine">A map rendering of open public data, not an aerial photograph or the developer's map. Places and distances are approximate; the home, its lot and the other Nā Hiku homes are a concept model.</div>
+        <div class="cm-fine">A map rendering of open public data, not an aerial photograph or the developer's map. Places and distances are approximate. The home, its lot and the other Nā Hiku homes (assumed copies of this design, on a strip that is graded, unbuilt land in 2025–26 imagery) are a concept model; views are not shown or verified.</div>
+        </div>
       </div>
-      <svg class="cm-lot" aria-hidden="true"><path class="cm-lot-fill"/></svg>
       <div class="cm-pins"></div>
       <div class="cm-info" hidden></div>
-      <div class="cm-attr"><b>Map rendering of open data, not an aerial photograph.</b>
+      <div class="cm-attr"><b>Map rendering of open data, not an aerial photograph; the Nā Hiku homes are modelled.</b>
         <span class="cm-attr-full">${[...credits, data.attribution].filter(Boolean).map(linkify).join(' · ')}</span>
-        <span class="cm-attr-short">${linkify('© OpenStreetMap contributors, Microsoft, TomTom (ODbL)')} · Copernicus Sentinel · USGS · USACE/NOAA · Meta/WRI (${linkify('CC BY 4.0')})</span>
+        <span class="cm-attr-short">${linkify('© OpenStreetMap contributors, Microsoft, TomTom (ODbL)')}, via Overture · Contains modified Copernicus Sentinel data 2023–26 · USGS · USACE/NOAA · Meta/WRI (${linkify('CC BY 4.0')}, modified)</span>
+        <span class="cm-wx" hidden> · Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>)</span>
         <button class="cm-credits" type="button" aria-expanded="false">Credits</button></div>`;
     document.body.appendChild(root);
     const card = root.querySelector('.cm-card'), chips = root.querySelector('.cm-chips'), layer = root.querySelector('.cm-pins'), info = root.querySelector('.cm-info');
@@ -333,17 +362,25 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const attr = root.querySelector('.cm-attr'), phone = matchMedia('(max-width: 600px)'), small = matchMedia('(max-width: 600px), (max-height: 480px)');
     // small screens: the card folds to its title (tap to open) and the credits to one line (Credits for the full list)
     const fold = root.querySelector('.cm-fold');
-    const setFold = f => { card.classList.toggle('cm-folded', f); fold.setAttribute('aria-expanded', String(!f)); fitCard?.(); };
+    const setFold = f => {
+      card.classList.toggle('cm-folded', f);
+      if (small.matches) { fold.setAttribute('aria-expanded', String(!f)); fold.tabIndex = 0; } else { fold.removeAttribute('aria-expanded'); fold.tabIndex = -1; }
+      fitCard?.();
+    };
     fold.addEventListener('click', e => { e.stopPropagation(); if (small.matches) setFold(!card.classList.contains('cm-folded')); });
     setFold(small.matches);
     small.addEventListener?.('change', () => setFold(small.matches));
     const credBtn = root.querySelector('.cm-credits');
     credBtn.addEventListener('click', e => { e.stopPropagation(); const o = !attr.classList.contains('cm-attr-open'); attr.classList.toggle('cm-attr-open', o); credBtn.setAttribute('aria-expanded', String(o)); credBtn.textContent = o ? 'Less' : 'Credits'; });
-    var fitCard = () => { card.style.bottom = phone.matches && attr.offsetHeight ? `calc(${attr.offsetHeight + 54}px + env(safe-area-inset-bottom, 0px))` : ''; };
+    var fitCard = () => { const lift = phone.matches && attr.offsetHeight ? `calc(${attr.offsetHeight + 54}px + env(safe-area-inset-bottom, 0px))` : ''; card.style.bottom = lift; info.style.bottom = lift; };
     if (typeof ResizeObserver === 'function') new ResizeObserver(fitCard).observe(attr);
     phone.addEventListener?.('change', fitCard);
     addEventListener('resize', () => { for (const p of pins) { p.w = undefined; p.stem = undefined; } });
-    const setInfo = open => { info.hidden = !open; root.classList.toggle('cm-info-open', open); };
+    const setInfo = open => {
+      info.hidden = !open; root.classList.toggle('cm-info-open', open);
+      if (open && small.matches) { attr.classList.remove('cm-attr-open'); credBtn.setAttribute('aria-expanded', 'false'); credBtn.textContent = 'Credits'; }
+      fitCard();
+    };
     const on = Object.fromEntries(Object.keys(CATEGORIES).map(k => [k, true]));
     const counts = {}; for (const p of pins) counts[p.cat] = (counts[p.cat] ?? 0) + 1;
     for (const [k, c] of Object.entries(CATEGORIES)) {
@@ -379,28 +416,24 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       const near = p.cat === 'home' ? establishing() : pose(aim, 1500, 0.92, Math.atan2(camera.position.z - aim.z, camera.position.x - aim.x));
       flyTo(near, 2.8);
     }
-    // the modelled lot, a soft patch (not a lot line: the brochure gives none, and its size is assumed, register I-6)
-    const lot = plan.site?.lot, lotPts = lot ? [[lot[0], lot[1]], [lot[2], lot[1]], [lot[2], lot[3]], [lot[0], lot[3]]].map(([x, z]) => new THREE.Vector3(x, groundAt(x, z) + 1, z)) : [];
-    const lotFill = root.querySelector('.cm-lot-fill'), lotSvg = root.querySelector('.cm-lot');
     const v = new THREE.Vector3(), rects = [];
     return {
       show(s) { root.hidden = !s; if (!s) { setInfo(false); sel = null; } else fitCard(); },
+      // width of the docked card (wide screens), for framing the view beside it
+      dock: () => (!root.hidden && !small.matches && !phone.matches) ? Math.round(card.getBoundingClientRect().right + 16) : 0,
+      wx: false,
+      setWx(v) { this.wx = v; root.querySelector('.cm-wx').hidden = !v; },
       title: () => sel ? sel.name : 'Kukuiʻula · community view',
       place(cam, rend) {
         cam.updateMatrixWorld();                         // this frame's camera, not last frame's (no lag in flights)
         const W = innerWidth, H = innerHeight;
-        rects.length = 0;
-        for (const el of [card, info, document.getElementById('hud'), document.getElementById('buttons')]) {
+        rects.length = 0; let ui0 = 0;
+        for (const el of [card, info, attr, document.getElementById('hud'), document.getElementById('buttons'), document.getElementById('skypanel')]) {
           if (!el || el.hidden) continue;
           const b = el.getBoundingClientRect(); if (b.width) rects.push([b.left, b.top, b.right, b.bottom]);
         }
-        if (lotPts.length) {
-          let ok = true;
-          const d = lotPts.map(p => { v.copy(p).project(cam); if (v.z > 1) ok = false; return `${((v.x * 0.5 + 0.5) * W).toFixed(1)},${((-v.y * 0.5 + 0.5) * H).toFixed(1)}`; });
-          const path = ok ? `M${d.join('L')}Z` : '';
-          lotFill.setAttribute('d', path);
-          lotSvg.style.opacity = String(ss(9000, 3000, homeG.distanceTo(cam.position)));
-        }
+        ui0 = rects.length;
+        const hit = (R, o, m = 4) => R[0] < o[2] + m && R[2] > o[0] - m && R[1] < o[3] + 3 && R[3] > o[1] - 3;
         const list = pins.map(p => {
           v.copy(p.ground); v.y += 6;
           const dist = v.distanceTo(cam.position);
@@ -412,9 +445,25 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
           const stem = Math.max(14, Math.min(70, 70 * 2500 / q.dist));
           let show = q.front && on[p.cat] !== false && q.x > -40 && q.x < W + 40 && q.y > 0 && q.y < H + 20;
           const w = p.w ??= (p.el.querySelector('.cm-label').offsetWidth || 120), h = p.cat === 'home' ? 34 : 26;
-          const R = [q.x - w / 2, q.y - stem - h, q.x + w / 2, q.y - stem];
-          if (show) for (const o of (p.cat === 'home' ? rects.slice(0, 4) : rects)) if (R[0] < o[2] + 4 && R[2] > o[0] - 4 && R[1] < o[3] + 3 && R[3] > o[1] - 3) { show = false; break; }
-          if (show) rects.push(R);
+          const R = [q.x - w / 2, q.y - stem - h, q.x + w / 2, q.y - stem], S2 = [q.x - 5, q.y - stem, q.x + 5, q.y + 6];
+          // at the screen's edge the label slides in along its stem rather than being cut off
+          let dx = R[0] < 8 ? 8 - R[0] : R[2] > W - 8 ? W - 8 - R[2] : 0;
+          if (Math.abs(dx) > w / 2 - 14) show = false;
+          R[0] += dx; R[2] += dx;
+          if (show) for (let k = 0; k < rects.length; k++) {
+            const o = rects[k];
+            if (!hit(R, o) && !hit(S2, o, 2)) continue;
+            // the home's label slides sideways off a panel, unless its spot is under the panel itself
+            if (p.cat === 'home' && k < ui0 && !(q.x > o[0] && q.x < o[2] && q.y > o[1] && q.y < o[3])) {
+              const ndx = q.x >= o[2] ? (o[2] + 8) - (R[0] - dx) : (o[0] - 8) - (R[2] - dx);
+              R[0] += ndx - dx; R[2] += ndx - dx; dx = ndx;
+              if (Math.abs(dx) > w - 14) { show = false; break; }
+              continue;
+            }
+            show = false; break;
+          }
+          if (show) rects.push(R, S2);                    // later labels keep off this label, its stem and its dot
+          if (Math.round(dx) !== p.dx) { p.dx = Math.round(dx); p.el.style.setProperty('--dx', p.dx + 'px'); }
           p.el.style.transform = `translate(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px)`;
           if (Math.round(stem) !== p.stem) { p.stem = Math.round(stem); p.el.style.setProperty('--stem', p.stem + 'px'); }
           p.el.classList.toggle('cm-off', !show);
@@ -427,8 +476,8 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
 
 // ---------------------------------------------------------------------------------------------
 function tileMaterial(U, flat, low) {
-  const u = { uN: { value: flat }, uW: { value: flat }, uHasN: { value: 0 } };
-  const m = new THREE.MeshStandardMaterial({ name: 'community tile', roughness: 0.93, metalness: 0, envMapIntensity: 0.9 });
+  const u = { uN: { value: flat }, uW: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
+  const m = new THREE.MeshStandardMaterial({ name: 'community tile', roughness: 0.93, metalness: 0, envMapIntensity: 1 });   // as the real-site terrain
   if (low) m.defines = { CM_LOW: '' };                 // phones: a shorter shadow trace, nearer
   m.userData.u = u;
   m.onBeforeCompile = sh => {
@@ -439,7 +488,7 @@ function tileMaterial(U, flat, low) {
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), cmWaterG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      uniform sampler2D uN, uW; uniform float uHasN, uTime, uShadowK, uHiR; uniform vec3 uSun; uniform vec2 uEast, uNorth;
+      uniform sampler2D uN, uW; uniform float uHasN, uTime, uShadowK, uTileM, uSdfK; uniform vec3 uSun, uDeep; uniform vec2 uEast, uNorth, uGrid, uTileCR, uLotC, uLotH; uniform vec4 uEdgeLo;
       varying vec3 vCmWorld; float cmWaterG = 0.0;
       float cmHash(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
       float cmNoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -448,24 +497,44 @@ function tileMaterial(U, flat, low) {
       .replace('#include <envmap_physical_pars_fragment>', ibl)
       .replace('#include <map_fragment>', `#include <map_fragment>
       vec4 cmW = texture2D(uW, vMapUv);
-      float cmSdf = (cmW.r * 255.0 - 128.0) / 3.0;          // metres from the sea's edge, + in the sea
+      float cmSdf = (cmW.r * 255.0 - 128.0) / uSdfK;        // metres from the sea's edge, + in the sea
+      float cmSdfMax = 127.0 / uSdfK;                         // where the encoding saturates
       float cmSea = smoothstep(-0.4, 0.8, cmSdf), cmPond = smoothstep(0.4, 0.7, cmW.g);
       float cmDepth = cmW.b * 25.5;
       float cmWater = max(cmSea, cmPond), cmFoam = 0.0;
       float cmDist = length(vCmWorld - cameraPosition);
-      float cmHiFade = uHasN * (1.0 - smoothstep(0.7 * uHiR, 0.95 * uHiR, cmDist));   // lidar normals and shadows, fading before the nearest tile without them
+      // lidar normals and traced shadows: full on a full-detail tile, fading out only toward an edge it shares with a 2 m tile
+      vec2 cmUv = vMapUv;
+      float cmHiFade = uHasN * min(min(mix(1.0, smoothstep(0.0, 0.12, cmUv.y), uEdgeLo.x), mix(1.0, smoothstep(0.0, 0.12, 1.0 - cmUv.x), uEdgeLo.y)),
+                                   min(mix(1.0, smoothstep(0.0, 0.12, 1.0 - cmUv.y), uEdgeLo.z), mix(1.0, smoothstep(0.0, 0.12, cmUv.x), uEdgeLo.w)));
+      // metres to the box's edge: over its last 300 m the sea takes the open-sea colour the view's outer sea is drawn in
+      vec2 cmBoxM = vec2((uTileCR.x + cmUv.x) * uTileM, (uTileCR.y + cmUv.y) * uTileM);
+      float cmEdgeM = min(min(cmBoxM.x, uGrid.x * uTileM - cmBoxM.x), min(cmBoxM.y, uGrid.y * uTileM - cmBoxM.y));
+      diffuseColor.rgb = mix(diffuseColor.rgb, uDeep, cmSea * (1.0 - smoothstep(0.0, 300.0, cmEdgeM)));
       if (cmSea > 0.0) {
-        // swell rolling in over the shallow reef, breaking where it is shallowest; swash at the shore
+        // sets of swell rolling in over the reef and breaking in the 1-3 m band at its crest, in groups; swash at the shore
         float n = cmNoise(vCmWorld.xz / 30.0 + vec2(uTime * 0.02, 0.0)), n2 = cmNoise(vCmWorld.xz / 7.0 - uTime * 0.05);
-        float shallow = 1.0 - smoothstep(0.6, 5.0, cmDepth);
-        float ph = cmSdf * 0.42 + uTime * 1.1 + n * 4.0;
-        float crest = smoothstep(0.82, 1.0, sin(ph)) * shallow * (0.55 + 0.45 * n2);
-        float swash = (1.0 - smoothstep(0.0, 2.5 + 2.0 * (0.5 + 0.5 * sin(uTime * 0.8 + n * 9.0)), cmSdf)) * step(-0.4, cmSdf) * (0.5 + 0.5 * n2);
-        cmFoam = max(crest * 0.75, swash * 0.65) * (1.0 - smoothstep(5000.0, 16000.0, cmDist));
+        float brk = smoothstep(0.8, 1.6, cmDepth) * (1.0 - smoothstep(1.6, 3.5, cmDepth));
+        float inR = 1.0 - smoothstep(0.75 * cmSdfMax, 0.97 * cmSdfMax, cmSdf);
+        float ph = cmSdf * 0.16 + uTime * 0.9 + n * 1.2;
+        float crest = smoothstep(0.86, 1.0, sin(ph)) * brk * inR * smoothstep(0.35, 0.7, cmNoise(vCmWorld.xz / 60.0 + uTime * 0.01)) * (0.55 + 0.45 * n2);
+        float swash = (1.0 - smoothstep(0.0, 1.0 + 1.0 * (0.5 + 0.5 * sin(uTime * 0.8 + n * 9.0)), cmSdf)) * step(-0.4, cmSdf) * (0.5 + 0.5 * n2);
+        cmFoam = max(crest * 0.8, swash * 0.65) * (1.0 - smoothstep(5000.0, 16000.0, cmDist));
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80, 0.82, 0.82), cmFoam);
+      }
+      // land: a little lighter from the air, and a fine mottle close up so a 0.5 m texel never reads as paint
+      float cmLand = 1.0 - cmWater;
+      diffuseColor.rgb *= mix(1.0, 1.12, cmLand);
+      float cmDn = cmNoise(vCmWorld.xz / 2.3) * 0.4 + cmNoise(vCmWorld.xz / 7.0 + 1.7) * 0.35 + cmNoise(vCmWorld.xz / 23.0 + 5.1) * 0.25;
+      diffuseColor.rgb *= mix(1.0, 0.82 + 0.36 * cmDn, cmLand * (1.0 - smoothstep(500.0, 4000.0, cmDist)));
+      // the modelled lot: a soft gold tint with a 14 ft feather (houses and trees stand over it)
+      if (uLotH.x > 0.0) {
+        vec2 lq = abs(vCmWorld.xz - uLotC) - uLotH;
+        float lsd = length(max(lq, 0.0)) + min(max(lq.x, lq.y), 0.0);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.84, 0.64, 0.27), 0.24 * (1.0 - smoothstep(-4.0, 10.0, lsd)));
       }`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-      roughnessFactor = mix(roughnessFactor, mix(0.05, 0.38, smoothstep(400.0, 14000.0, cmDist)), cmWater * (1.0 - cmFoam));`)
+      roughnessFactor = mix(roughnessFactor, mix(0.06, 0.42, smoothstep(300.0, 9000.0, cmDist)), cmWater * (1.0 - cmFoam));   // as the real-site sea`)
       .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
       if (cmHiFade > 0.0 && cmWater < 0.99) {
         vec3 tn = texture2D(uN, vMapUv).xyz;
@@ -513,11 +582,11 @@ function tileMaterial(U, flat, low) {
           #endif
           if (h0 + t * tanA > 26.0) break;
         }
-        float k = 1.0 - 0.8 * occ * uShadowK * cmHiFade * (1.0 - smoothstep(0.45 * CM_FAR, CM_FAR, cmDist)) * (1.0 - cmWater);
+        float k = 1.0 - 0.6 * occ * uShadowK * cmHiFade * (1.0 - smoothstep(0.45 * CM_FAR, CM_FAR, cmDist)) * (1.0 - cmWater);
         reflectedLight.directDiffuse *= k; reflectedLight.directSpecular *= k;
       }`);
   };
-  m.customProgramCacheKey = () => 'community-tile-2';
+  m.customProgramCacheKey = () => 'community-tile-3';
   return m;
 }
 
@@ -532,7 +601,7 @@ async function fetchBinary(url) {
   return u8.buffer;
 }
 
-async function loadTex(url, { srgb = true, size = 0, mip = true, low = false } = {}) {
+async function loadTex(url, { srgb = true, size = 0, mip = true, low = false, closeAfterUpload = false } = {}) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`${url} ${r.status}`);
   const blob = await r.blob();
@@ -553,6 +622,8 @@ async function loadTex(url, { srgb = true, size = 0, mip = true, low = false } =
   }
   const t = new THREE.Texture(img);
   t.addEventListener('dispose', () => img.close?.());   // a decoded ImageBitmap holds its pixels until closed
+  // textures that are never re-uploaded let go of the decoded copy once it is on the GPU
+  if (closeAfterUpload && typeof img.close === 'function') t.onUpdate = () => { img.close(); t.onUpdate = null; };
   t.flipY = false;                                  // row 0 of every tile image is its north edge (uv v = 0)
   t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
   t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;

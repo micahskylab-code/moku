@@ -148,12 +148,13 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
     uSunDir: lutU.uSunDir, uSunDisc: { value: new THREE.Vector3() }, uSunR: { value: 0.00465 },
     uMoonDir: lutU.uMoonDir, uMoonDisc: { value: new THREE.Vector3() }, uMoonR: { value: 0.0045 }, uEarthshine: { value: 0.0 }, uPole: { value: new THREE.Vector3(0, 1, 0) },
     uClouds: { value: null }, uCloudTexel: { value: new THREE.Vector2() },
+    uNoGround: { value: 0 },          // 1: below the horizon the horizon's haze, not the ground (the community view's sea runs out there)
   };
   const domeMat = new THREE.ShaderMaterial({
     uniforms: domeU, side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
     vertexShader: 'varying vec3 vD; void main(){ vD = position; vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_Position = p.xyww; }',
     fragmentShader: `varying vec3 vD;
-      uniform sampler2D uLUT;
+      uniform sampler2D uLUT; uniform float uNoGround;
       uniform vec3 uSunDir, uSunDisc, uMoonDir, uMoonDisc, uPole, uCloudLight, uCloudLightDir, uCloudAmb;
       uniform float uSunR, uMoonR, uEarthshine, uCloudDark, uCloudThick;
       uniform sampler2D uClouds; uniform vec2 uCloudTexel;
@@ -177,7 +178,7 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
       }
       void main() {
         vec3 d = normalize(vD);
-        vec3 c = sky(d);
+        vec3 c = sky(uNoGround > 0.5 && d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d);
         // sun's disc, limb-darkened; a little glare round it
         float sa = length(cross(d, uSunDir)), sd = dot(d, uSunDir);
         if (sd > 0.0) {

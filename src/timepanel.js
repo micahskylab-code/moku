@@ -100,7 +100,7 @@ export function createPanel(handlers) {
       <div><b>Sun</b> rises ${fmtTime(di.sunrise)} · sets ${fmtTime(di.sunset)} · now ${sun.alt.toFixed(0)}° up${sun.alt < 0 ? ' (below)' : ''}</div>
       <div><b>Golden hour</b> ${fmtTime(g[0])} – ${fmtTime(g[1])} · dusk ${fmtTime(di.civilDusk)}</div>
       <div><b>Moon</b> ${m.name}, ${Math.round(m.illum * 100)}% lit · ${m.hawaiian.name} · rises ${rise} · sets ${set}</div>
-      <div><b>Weather</b> ${describe(weather)} <i>(${weather?.source === 'live' ? 'live, Open-Meteo' : weather?.source === 'typical' ? 'typical trades — live data unavailable' : 'simulated'})</i></div>`;
+      <div><b>Weather</b> ${describe(weather)} <i>(${weather?.source === 'live' ? 'live, <a href="https://open-meteo.com/" target="_blank" rel="noopener">weather data by Open-Meteo.com</a> (CC BY 4.0)' : weather?.source === 'typical' ? 'typical trades — live data unavailable' : 'simulated'})</i></div>`;
   }
   return { el, update, setOpen };
 }
