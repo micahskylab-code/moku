@@ -245,7 +245,7 @@ async function startInteractive() {
         commBtn.textContent = 'Community unavailable'; commBtn.title = 'The community map could not load. Click to try again.';
         setTimeout(() => { if (!community) commBtn.textContent = 'Community'; }, 3000);
         if (mode !== 'community') return;            // keep the mode in use
-        m = 'walk'; mode = 'walk';                   // an opening ?mode=community that could not load: walk instead
+        m = inspector && globalThis.__NAHIKU_HOSTED ? 'model' : 'walk'; mode = m;   // an opening community view that could not load
       }
     }
     if (mode === 'model' && m !== 'model') inspector.exit();

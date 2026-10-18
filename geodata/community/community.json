@@ -162,8 +162,9 @@
  ],
  "encoding": {
   "n": "R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless",
-  "w": "R = 128 + 3 * signed distance to the sea edge (m, sea positive); G = 255 in ponds; B = 10 * sea depth (m)"
+  "w": "R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water; B = 10 * sea depth (m)"
  },
+ "sdfPerM": 1,
  "deepSea": [
   0.0026,
   0.0089,
@@ -173,7 +174,7 @@
   "Ground: U.S. Geological Survey 3DEP 1 m lidar DEM (2019\u201321), public domain",
   "Seafloor: USACE NCMP 2013 Kaua\u02bbi topobathy lidar, via NOAA Digital Coast, public domain",
   "Contains modified Copernicus Sentinel data 2023\u20132026 (colour)",
-  "Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0",
+  "Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0, modified (resampled and drawn as crowns, shading and shadows)",
   "Roads, paths, water, beaches, golf: \u00a9 OpenStreetMap contributors, and some roads \u00a9 TomTom (ODbL), via Overture Maps Foundation",
   "Buildings: \u00a9 OpenStreetMap contributors, Microsoft ML Building Footprints (ODbL), via Overture Maps Foundation"
  ]

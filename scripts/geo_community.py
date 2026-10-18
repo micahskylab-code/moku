@@ -9,7 +9,8 @@ pipeline can use (docs/community-view.md). Every pixel is placed by data:
     shorelines, slopes, every tree crown;
   - depth, from the USACE 2013 topobathy lidar (seafloor colour, surf, the shoreline);
   - lines, from OpenStreetMap via Overture (roads, a few of them TomTom's; paths, ponds, pools, beaches, bare
-    rock, golf features where mapped) and building footprints (OSM + Microsoft);
+    rock, golf features where mapped) and building footprints (OSM + Microsoft); a mapped pond is drawn as water only
+    while the canopy map and the satellite still see open water there (Inputs._pond_check);
 and drawn with procedural surface texture (grass grain, mowing stripes, sand, crowns, asphalt) whose
 colour follows the measured colour. Golf turf on courses where OSM maps (almost) no fairways (Kukui'ula's) is
 inferred from the satellite colour (tree-free mown grass, lighter than the course around it); greens, tees and
@@ -23,8 +24,8 @@ Outputs (geodata/community/):
   s_<c>_<r>.webp   the same, 512 px (2 m), loaded first and for distant tiles
   n_<c>_<r>.webp   1024 px, lossless: R, G = surface normal east / north (lidar ground + canopy), B = height of
                    what casts shadow (canopy, buildings), 0.1 m per step
-  w_<c>_<r>.png    512 px: R = signed distance to the sea's edge (128 + 3 per m, sea positive), G = pond water,
-                   B = sea depth (10 per m)
+  w_<c>_<r>.png    512 px: R = signed distance to the sea's edge (128 + 1 per m, sea positive, +-127 m), G = pond
+                   water, B = sea depth (10 per m)
   h.bin            Uint16 ground heights over the whole box, 5 m, world feet (as geodata/realsite.json)
   community.json   box, tiles, transforms, attribution
     python3 scripts/geo_community.py [--only "c,r;c,r"]
@@ -45,6 +46,7 @@ TEX = 2048                        # albedo texels per tile
 MARGIN = 200                      # texels of context around a tile (98 m: blurs up to 25 m sigma, normals, AO)
 PX = TILE / TEX
 HRES = 5.0                        # m, mesh height grid
+SDF_PER_M = 1                     # w_*.png R: 128 + this per metre from the sea's edge (+-127 m: surf sets out to the reef edge)
 
 
 # ------------------------------------------------------------------ noise (seamless: a function of E, N)
@@ -102,6 +104,7 @@ class Inputs:
         self._fill_voids()
         self._vectors()
         self._chm()
+        self._pond_check()
         self._golf_global()
 
     # sea: no lidar ground, or below 0.3 m and spectrally water, connected to the open sea
@@ -224,6 +227,45 @@ class Inputs:
             self.chm_a = ds.read(1, window=w).astype(np.float32); self.chm_tr = ds.window_transform(w)
         self.chm_t = t
         self.chm_a[~np.isfinite(self.chm_a)] = 0
+
+    def _pond_check(self):
+        """Mapped ponds that are no longer open water stay land: an overgrown reservoir that OSM still maps (trees
+        standing in it, a plant canopy over it) and golf 'water hazard' outlines around dry ground. A pond is drawn
+        as land when trees (canopy height > 2 m) cover 15% of it or more, or when its Sentinel-2 NDVI median is above
+        0.3 (open water is below 0) and it is not dark in the near-infrared: its median NIR is at least 0.75 of its
+        banks' (the land 10-30 m around it). Water absorbs near-infrared whatever grows in it; a pond's 10 m pixels
+        take in the turf around it, and Kukui'ula's golf ponds (algae-green, a few pixels across) read 0.35-0.7 in
+        NDVI while their NIR is a fifth to three quarters of their banks'. The satellite test applies only to ponds with a
+        whole 10 m pixel inside them (at least 100 m2 after a 5 m inset); smaller ones are judged by the canopy alone.
+        A dropped pond gets no water paint, no pond bit in w_*.png and no levelling in the heights."""
+        E0, N0, E1, N1 = self.box
+        kept, dropped, seen = [], 0, {}
+        for P in self.ponds:
+            key = (round(float(P[0][:, 0].mean())), round(float(P[0][:, 1].mean())), len(P[0]))
+            if key not in seen:                                              # OSM water and golf hazard copies of one pond
+                x0, y0 = P[0].min(0) - 32; x1, y1 = P[0].max(0) + 32
+                nc, nr = int(np.ceil(x1 - x0)) + 1, int(np.ceil(y1 - y0)) + 1
+                m = Canvas(x0, y1, nc, 1.0, nr).polys([P], ss=2) > 0.5
+                if not m.any(): seen[key] = True
+                else:
+                    E, N = np.meshgrid(x0 + np.arange(nc) + 0.5, y1 - np.arange(nr) - 0.5)
+                    share = float((self.chm_at(E[m], N[m]) > 2.0).mean())
+                    rf = self.s2_at(E, N)
+                    ndvi = float(np.median(((rf[..., 3] - rf[..., 0]) / (rf[..., 3] + rf[..., 0] + 1e-6))[m]))
+                    r2 = np.clip(((N1 - N) / 2).astype(int), 0, self.sea2.shape[0] - 1)
+                    c2 = np.clip(((E - E0) / 2).astype(int), 0, self.sea2.shape[1] - 1)
+                    bank = ndi.binary_dilation(m, iterations=30) & ~ndi.binary_dilation(m, iterations=10) & ~self.sea2[r2, c2]
+                    nir_r = float(np.median(rf[..., 3][m]) / max(np.median(rf[..., 3][bank]), 1e-3)) if bank.sum() > 50 else 0.0
+                    seen_px = ndi.binary_erosion(m, iterations=5).sum() >= 100
+                    water = share < 0.15 and not (seen_px and ndvi > 0.3 and nir_r >= 0.75)
+                    seen[key] = water
+                    if not water:
+                        dropped += 1
+                        print(f'  pond at E{P[0][:, 0].mean():.0f} N{P[0][:, 1].mean():.0f} ({int(m.sum())} m2) drawn as land: '
+                              f'canopy {share:.0%}, NDVI {ndvi:+.2f}, NIR {nir_r:.2f} of its banks', flush=True)
+            if seen[key]: kept.append(P)
+        print(f'  ponds: {len(kept)} drawn as water, {len(self.ponds) - len(kept)} outlines ({dropped} places) left as land', flush=True)
+        self.ponds = kept
 
     def _golf_global(self):
         """Golf turf over the whole box at 2 m, so that every tile gets the same answer at the same place: the fairways
@@ -447,6 +489,7 @@ def bake_tile(I, col, row, out):
     for k in range(3):
         if bl: broof[..., k] = cv.polys([(int(r[k] * 255), [P]) for P, h, r in bl], ss=1, value=True) / 255
     water = np.maximum(sea, ponds)
+    chm = np.where(ponds > 0.5, 0, chm).astype(np.float32)                 # no crowns standing in the water (AO, normals, shadow)
     keep = blur(cv.polys([I.keep]), 4.0 / PX)                              # the modelled row of lots
 
     # ---- golf. Where a course has (almost) no mapped fairways (Kukui'ula's), turf is inferred: bright, mown, tree-free
@@ -497,6 +540,9 @@ def bake_tile(I, col, row, out):
     a = over(a, follow(np.array([0.066, 0.135, 0.040], np.float32), pasture) * (0.93 + 0.12 * g_fine), lawn)
     # soil (Kaua'i red earth, graded pads): clods, tyre-track streaks, a dry crust
     soil_m = crisp(np.clip((0.36 - ndvi) / 0.1, -1, 1) * 0.5 + np.clip((redness - 1.05) / 0.15, -1, 1) * 0.5 - 0.35) * land * (1 - sand) * (1 - rock) * (1 - lawn)
+    # softened by 2 m and broken up where it meets the grass (grass thinning into dirt), so a patch does not read as paint
+    soil_m = blur(soil_m, 2.0 / PX)
+    soil_m = np.clip(soil_m + 10.0 * (fbm(Eo, No, 0.9, 3, 57) - 0.5) * soil_m * (1 - soil_m), 0, 1)
     red = np.array([0.175, 0.090, 0.058], np.float32)
     clods = fbm(Eo, No, 0.6, 3, 51)[..., None]
     a = over(a, follow(red, red) * (0.80 + 0.36 * clods) * (0.94 + 0.12 * g_mid), soil_m)
@@ -540,7 +586,10 @@ def bake_tile(I, col, row, out):
     a = over(a, broof * (0.92 + 0.12 * g_fine), bmask)
     tint = (0.85 + 0.3 * fbm(Eo, No, 9, 2, 81))[..., None]
     canopy = np.array([0.030, 0.058, 0.022], np.float32)
-    tree_c = (canopy * 0.6 + sat(base, 1.15) * 0.3) * tint * (0.72 + 0.5 * fbm(Eo, No, 0.8, 3, 91)[..., None])
+    leaf = fbm(Eo, No, 0.8, 3, 91)
+    crown = canopy * 0.6 + sat(base, 1.15) * 0.3
+    crown = crown * (1 + (0.045 / np.maximum(crown[..., 1:2], 1e-4)) ** 4) ** 0.25   # floored at about 0.045 in green
+    tree_c = crown * tint * (0.72 + 0.5 * leaf[..., None])
     tree_c[..., 0] *= (0.9 + 0.25 * vnoise(Eo, No, 11, 93))               # some crowns warmer (monkeypod, kiawe), some cooler
     a = over(a, tree_c, trees)
     del tree_c, sand_c, rock_c, asphalt, fair_c
@@ -572,13 +621,21 @@ def bake_tile(I, col, row, out):
     del sea_c
 
     # ---- static ambient occlusion from everything that stands up (ground, canopy, buildings)
+    # under woody cover (crowns, thickets) the broad term is softened, so tree-filled gullies keep their shape but are
+    # not crushed black under the live shadows; the crown-scale terms keep the gaps between crowns
+    woody = np.clip(trees + np.maximum(shrub * 0.8, scrub_m) * (1 - trees), 0, 1) * land
     hs = np.where(sea > 0.5, 0, dem) + chm * 0.9 + bh * (bmask > 0.5) + h_scrub
     ao = np.ones_like(hs)
     for r, k in ((1.2, 0.20), (3.5, 0.10), (9.0, 0.045)):
         d = blur(hs, r / PX) - hs
-        ao *= np.clip(1 - k * np.clip(d, 0, None), 0.45, 1)
+        ao *= np.clip(1 - k * np.clip(d, 0, None), 0.45, 1) ** (1 - 0.6 * woody if r > 5 else 1)
     ao = np.where(bmask > 0.5, 1, ao)                                     # roofs are 3D, lit live
     a = a * (land * ao + (1 - land))[..., None]
+    # and nothing woody ends darker than about 0.032 in green (a smooth floor that follows the leaf texture)
+    floor = 0.032 * (0.86 + 0.28 * leaf)
+    lift = np.minimum((1 + (floor / np.maximum(a[..., 1], 1e-4)) ** 4) ** 0.25, 3.0)
+    a = a * (1 + (lift - 1) * woody)[..., None]
+    del leaf, floor, lift
 
     # ---- the outer 150 m of the box hands over to the plain satellite colour (the view's other ground); over the sea
     # with the glint offset taken off as for the open-sea colour (eased in over the first 20 m, where 10 m pixels
@@ -614,7 +671,7 @@ def bake_tile(I, col, row, out):
     m2, t2 = MARGIN // 2, TEX // 2
     Image.fromarray(np.clip(nrm, 0, 255).astype(np.uint8)).resize((n // 2, n // 2), Image.BILINEAR).crop((m2, m2, m2 + t2, m2 + t2)) \
         .save(f'{out}/n_{tag}.webp', lossless=True, quality=100, method=6)
-    wimg = np.stack([np.clip(128 + 3 * sdf, 0, 255), ponds * 255, np.clip(depth * 10, 0, 255) * sea], -1)[sl]
+    wimg = np.stack([np.clip(128 + SDF_PER_M * sdf, 0, 255), ponds * 255, np.clip(depth * 10, 0, 255) * sea], -1)[sl]
     if os.environ.get('COMM_DEBUG'):
         dbg = np.stack([ponds, courses, manicured], -1)[sl]
         Image.fromarray((dbg * 255).astype(np.uint8)).resize((1024, 1024)).save(f'{out}/../dbg_{col}_{row}.png')
@@ -681,14 +738,15 @@ def main():
         'heights': hgrid,
         'tiles': tiles,
         'encoding': {'n': 'R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless',
-                     'w': 'R = 128 + 3 * signed distance to the sea edge (m, sea positive); G = 255 in ponds; B = 10 * sea depth (m)'},
+                     'w': 'R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water; B = 10 * sea depth (m)'},
+        'sdfPerM': SDF_PER_M,                                   # w_*.png R steps per metre of sea distance
         'deepSea': [round(float(v), 4) for v in I.deep_rgb],   # linear albedo of the open sea in the tiles (glint taken off)
         # one line each, for the view's credits (with places.json's own attribution)
         'attribution': [
             'Ground: U.S. Geological Survey 3DEP 1 m lidar DEM (2019–21), public domain',
             'Seafloor: USACE NCMP 2013 Kauaʻi topobathy lidar, via NOAA Digital Coast, public domain',
             'Contains modified Copernicus Sentinel data 2023–2026 (colour)',
-            'Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0',
+            'Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0, modified (resampled and drawn as crowns, shading and shadows)',
             'Roads, paths, water, beaches, golf: © OpenStreetMap contributors, and some roads © TomTom (ODbL), via Overture Maps Foundation',
             'Buildings: © OpenStreetMap contributors, Microsoft ML Building Footprints (ODbL), via Overture Maps Foundation',
         ],

@@ -12,7 +12,7 @@ Files
                        visualization drawn from open data, not an aerial photograph:
     a_c_r.webp s_c_r.webp   drawn albedo, 1 km tiles in UTM 4N (2048 / 512 px)
     n_c_r.webp              lidar ground and crown normals, cast height (lossless)
-    w_c_r.png               sea distance, pond water, sea depth
+    w_c_r.png               sea distance (1 step per m, +-127 m), pond water, sea depth
     h.bin                   Uint16 ground heights, 5 m, world feet
     community.json          box, tiles, transform, encodings, attribution (one line per source)
     places.json             place pins: names and positions, written by hand from OSM and Overture records
@@ -30,7 +30,8 @@ Sources and licences
               and are themselves under ODbL 1.0 (attribution: "(c) OpenStreetMap contributors,
               Microsoft").
   Trees       Meta and World Resources Institute, High Resolution Canopy Height Maps (2024), tile
-              022211101, CC BY 4.0 (Tolan et al. 2024): tree tops and heights.
+              022211101, CC BY 4.0 (Tolan et al. 2024), modified: resampled, and tree tops and heights
+              picked from it.
 
 Community view (geodata/community/), in addition to the sources above
   Elevation   USGS 3DEP 1 m DEM, HI_FEMAR9Kauai_2019_D19, over the box E 447500-453500, N 2418000-2423000
@@ -39,7 +40,8 @@ Community view (geodata/community/), in addition to the sources above
               s3://noaa-nos-coastal-lidar-pds). Public domain. Sea colour, depth and surf; shore voids.
   Imagery     the Sentinel-2 mosaic above (land cover and tint; open-sea colour with the near-infrared glint
               offset taken off). "Contains modified Copernicus Sentinel data 2023-2026."
-  Trees       the canopy height tile above (CC BY 4.0, Meta and WRI, Tolan et al. 2024).
+  Trees       the canopy height tile above (CC BY 4.0, Meta and WRI, Tolan et al. 2024), modified: resampled
+              and drawn as crowns, shading and shadows; also used to leave overgrown mapped ponds as land.
   Map data    via Overture Maps Foundation release 2026-09-23.0, all ODbL 1.0: OpenStreetMap contributors
               (roads, paths, ponds, pools, beaches, bare rock, golf courses and features, building
               footprints, place names), TomTom (29 road segments, about 3.7 km, class unknown) and Microsoft
@@ -48,7 +50,9 @@ Community view (geodata/community/), in addition to the sources above
               attribution "(c) OpenStreetMap contributors, TomTom, Microsoft".
   Places      three pins (The Club, The Lodge, Kukui'ula Small Boat Harbor) are Overture places records
               (confidence >= 0.9), CDLA-Permissive-2.0 (https://cdla.dev/permissive-2-0/). Names are as the
-              records give them; nothing is copied from the developer's site or map.
+              records give them, with the Hawaiian 'okina restored; nothing is copied from the developer's
+              site or map. One OSM name is changed: the beach OSM calls Lawa'i Beach (at Lawa'i Bay) is pinned
+              as "Lawa'i Bay beach", to tell it from Lawa'i Beach on Hoai Bay (its note in places.json says so).
 
 Rebuild (python3, numpy scipy pillow rasterio pyproj shapely pyarrow; network to AWS S3)
   python3 scripts/geo_s2_list.py <cache>           # Sentinel-2 scenes over 04QDK
@@ -65,6 +69,6 @@ Rebuild (python3, numpy scipy pillow rasterio pyproj shapely pyarrow; network to
   python3 scripts/geo_dem1m.py                     # USGS 1 m DEM over the box -> dem_comm_1m.npy
   python3 scripts/geo_bathy.py                     # USACE 2013 topobathy -> bathy_comm_1m.npy
   python3 scripts/geo_overture.py <cache> base/land -159.515 21.86 -159.445 21.915   # beaches, bare rock
-  GEO_CHM=<dir>/022211101.tif python3 scripts/geo_community.py   # all 30 tiles (~2 min each), h.bin, community.json
+  GEO_CHM=<dir>/022211101.tif python3 scripts/geo_community.py   # all 30 tiles (~3 min each), h.bin, community.json
   python3 scripts/geo_community.py --only "2,2;1,2"              # some tiles again
   (<cache> defaults to ../geo-test/cache next to the repo; set GEO_CACHE to move it)

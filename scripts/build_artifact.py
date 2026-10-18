@@ -7,7 +7,7 @@ CDNs, and passes no query string to the page. So the copy:
   - drops the document skeleton tags and the viewport meta from index.html (the host supplies both);
   - loads three.js r160 (three@0.160.0, byte-identical to vendor/, checked against the npm package) and
     astronomy-engine 2.1.19 (esm/astronomy.js, which vendor/ holds minified) from jsDelivr instead of publishing vendor/;
-  - opens in the model view (window.__NAHIKU_MODE), since ?mode=model cannot reach the page;
+  - opens in the community view (window.__NAHIKU_MODE; the model view if that cannot load), since ?mode= cannot reach the page;
   - hides the Ultra button (it reloads with a query string) and the 360 tour link (its panoramas are not built);
   - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files) and geodata/community/ (the
     community view's tiles), with the height grids as base64 text, since the host serves no binary types.
@@ -44,7 +44,7 @@ def build(out: Path):
     html = html.replace('</style>', '  #quality { display: none !important; }\n</style>', 1)
     main = '<script type="module" src="src/main.js"></script>'
     assert main in html
-    html = html.replace(main, '<script>window.__NAHIKU_MODE = \'model\'; window.__NAHIKU_HOSTED = true;</script>\n' + main)   # hosted: no file download offered
+    html = html.replace(main, '<script>window.__NAHIKU_MODE = \'community\'; window.__NAHIKU_HOSTED = true;</script>\n' + main)   # hosted: no file download offered
     (out / 'index.html').write_text(html)
     files = []
     for d in ('src', 'plans', 'data'):
