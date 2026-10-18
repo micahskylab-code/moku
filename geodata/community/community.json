@@ -162,7 +162,18 @@
  ],
  "encoding": {
   "n": "R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless",
-  "w": "R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water; B = 10 * sea depth (m)"
+  "w": "R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water, and on the sea 80 * calm (0-1) inside the harbour breakwater (no breaking surf); B = 10 * sea depth (m), except on land more than 4 m from the sea and off the ponds (R < 124, G < 8), where B = 16 * landCover + dryness (0-15, from NDVI: 0 at 0.62 and over, 15 at 0.22 and under)",
+  "landCover": [
+   "none",
+   "turf",
+   "grass",
+   "scrub",
+   "canopy",
+   "soil",
+   "rock",
+   "sand",
+   "paved"
+  ]
  },
  "sdfPerM": 1,
  "deepSea": [
