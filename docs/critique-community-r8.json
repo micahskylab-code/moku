@@ -1,0 +1,166 @@
+{
+ "about": "Blind re-score of the community view after round 8 (19 Oct 2026): the land is the USDA NAIP 2022 aerial photo. Three critics (art director, terrain realism, mobile UX), each flaw checked by a skeptic, plus a before/after judge against the round 7 shots (set1 = round 8, set2 = round 7; the judge did not know which). Anchors as round 7: 10 indistinguishable from a commissioned photoreal aerial, 8 buyer-ready premium, 7 high quality with a few tells, 6 competent but game-like in places, 5 a technical map/GIS rendering, 3 broken. Note: the round 7 phone and landscape shots were taken after the credits text had changed, so their credits line already names the photo.",
+ "scores": {
+  "overall": {
+   "median": 6,
+   "mean": 6,
+   "each": [
+    "art-director:6",
+    "terrain-realism:6",
+    "mobile-ux:6"
+   ],
+   "r7": {
+    "median": 6,
+    "mean": 5.67
+   }
+  },
+  "land": {
+   "median": 5,
+   "mean": 5,
+   "each": [
+    "art-director:5",
+    "terrain-realism:5",
+    "mobile-ux:5"
+   ],
+   "r7": {
+    "median": 5,
+    "mean": 5
+   }
+  },
+  "sea": {
+   "median": 7,
+   "mean": 6.67,
+   "each": [
+    "art-director:6",
+    "terrain-realism:7",
+    "mobile-ux:7"
+   ],
+   "r7": {
+    "median": 6,
+    "mean": 6.33
+   }
+  },
+  "ui": {
+   "median": 7,
+   "mean": 7.33,
+   "each": [
+    "art-director:7",
+    "terrain-realism:8",
+    "mobile-ux:7"
+   ],
+   "r7": {
+    "median": 7,
+    "mean": 6.67
+   }
+  },
+  "phone": {
+   "median": 6,
+   "mean": 6,
+   "each": [
+    "art-director:6",
+    "terrain-realism:6",
+    "mobile-ux:6"
+   ],
+   "r7": {
+    "median": 6,
+    "mean": 6
+   }
+  }
+ },
+ "confirmed_flaws": [
+  {
+   "id": "ground-soft-close",
+   "shot": "desk/6-trees-east.png, desk/3-home-close.png",
+   "region": "foreground y 450-900",
+   "issue": "Close up the photo is a soft green smear with no grass or rock detail: 0.5 m imagery magnified (3 critics, confirmed).",
+   "impact": 4
+  },
+  {
+   "id": "context-buildings-boxes",
+   "shot": "desk/6, desk/3, desk/1",
+   "region": "desk/6 x 90-470, y 200-290",
+   "issue": "Context houses are untextured grey or salmon hipped boxes beside the detailed Nā Hiku models (3 critics, confirmed; carried over from round 7).",
+   "impact": 4
+  },
+  {
+   "id": "trees-blobs",
+   "shot": "desk/6-trees-east.png",
+   "region": "x 40-950, y 290-620",
+   "issue": "Blob crowns on thin trunks; one crown at about 660,280 shows no trunk or contact shadow (partly confirmed; no tree clearly floats).",
+   "impact": 3
+  },
+  {
+   "id": "bunkers-pale-decals",
+   "shot": "desk/3-home-close.png",
+   "region": "x 1060-1240, y 520-670",
+   "issue": "Bunkers read as flat pale grey decals, no warm sand tone or lip (2 critics, confirmed). The grade toward green had made the photo's white sand grey-green; pale photo ground is now warmed toward sand.",
+   "impact": 3
+  },
+  {
+   "id": "row-road-dead-ends",
+   "shot": "desk/3-home-close.png, desk/1",
+   "region": "x 710-790, y 255-830",
+   "issue": "The modelled access road is a flat grey strip that ends square in grass at both ends (confirmed; carried over).",
+   "impact": 2
+  },
+  {
+   "id": "sky-sprites-hard-horizon",
+   "shot": "desk/1-establishing.png",
+   "region": "y 0-275",
+   "issue": "Billboard cloud puffs and a ruler-straight sea horizon at y about 265 (3 critics; horizon confirmed, cloud style a taste call; carried over).",
+   "impact": 3
+  },
+  {
+   "id": "open-ocean-flat",
+   "shot": "desk/4-coast.png",
+   "region": "y 90-340",
+   "issue": "Open ocean is a smooth navy gradient with no wave texture or glint (confirmed; carried over).",
+   "impact": 2
+  },
+  {
+   "id": "harbour-milky",
+   "shot": "desk/4-coast.png",
+   "region": "x 200-450, y 500-660",
+   "issue": "The harbour basin is a milky turquoise wash with a hard white shore rim (confirmed; unchanged from round 7, drawn sea).",
+   "impact": 3
+  },
+  {
+   "id": "landscape-notice-clipped",
+   "shot": "land/0-opening.png, land/1-establishing.png",
+   "region": "x 560-670, y 32-48",
+   "issue": "In 844x390 the notice's last letters run under 'The home' (confirmed; also in round 7). Fixed: tighter letter spacing on landscape phones.",
+   "impact": 3
+  },
+  {
+   "id": "photo-without-3d",
+   "shot": "desk/4-coast.png, desk/6",
+   "region": "desk/4 x 660-760, y 780-890",
+   "issue": "Photo structures and woods with no 3D counterpart lie flat on the ground beside 3D trees and boxes (partly confirmed).",
+   "impact": 2
+  },
+  {
+   "id": "touch-targets",
+   "shot": "phone/0, land/1",
+   "region": "pills",
+   "issue": "Place pills about 24-26 px tall, dots about 10 px (confirmed; carried over).",
+   "impact": 2
+  },
+  {
+   "id": "phone-credits-small",
+   "shot": "phone/*",
+   "region": "y 810-838",
+   "issue": "Phone credits about 8 px; Credits chip about 42x14 px (partly: small, not low-contrast).",
+   "impact": 2
+  }
+ ],
+ "before_after": {
+  "overall": "round 8 (set1)",
+  "confidence": "medium",
+  "per_view": "10 of 12 views prefer round 8; phone/3-home-close a tie; desk/3-home-close prefers round 7 (crisp drawn fairways and paths against a soft photo up close).",
+  "key_differences": [
+   "Round 8's photo ground reads as real Kauaʻi; round 7's drawn ground has hard-edged brown patches that look game-like.",
+   "Round 7's drawn golf (stripes, cart paths) is crisper up close, where the photo turns soft.",
+   "Round 8 credits the photo consistently at every width."
+  ]
+ }
+}
