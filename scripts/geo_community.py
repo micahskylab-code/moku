@@ -823,9 +823,10 @@ def bake_tile(I, col, row, out):
     # under woody cover (crowns, thickets) the broad term is softened, so tree-filled gullies keep their shape but are
     # not crushed black under the live shadows; the crown-scale terms keep the gaps between crowns
     woody = np.clip(trees + np.maximum(shrub * 0.8, scrub_m) * (1 - trees), 0, 1) * land
-    # lone crowns (canopy patches under 150 m2): the view stands a 3D tree on each (realsite trees), so the ground is
-    # not also raised into a shaded mound under it: a fifth of their relief stays in the normals, 40% in the
-    # occlusion; their traced shadow (cast height) stays. Woods keep their full rounded canopy.
+    # lone crowns (canopy patches under 150 m2): the view stands a 3D tree on each (realsite.js communityTrees), so the
+    # ground is not also raised into a shaded mound under it: a fifth of their relief stays in the normals, 40% in the
+    # occlusion; their traced shadow (cast height) stays. Woods keep their full rounded canopy (the viewer then halves
+    # every crown's relief: src/community.js CM_RELIEF).
     lab, nl = ndi.label(chm > 2.0)
     lone = np.zeros_like(chm)
     if nl:

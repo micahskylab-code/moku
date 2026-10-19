@@ -207,7 +207,9 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const x of t.hiTex) x.dispose(); t.hiTex = null; t.hi = 0;
     edges();
   }
-  // the ground the tiles draw at world (x, z): their own triangles (vertices every tile_m / S on the UTM grid), NaN off them
+  // the ground the tiles draw at world (x, z): their own triangles (vertices every tile_m / S on the UTM grid), NaN off them.
+  // The view's 3D trees stand on it (groundAt, the smooth 5 m function between the triangles' corners, is up to about
+  // 9 ft off it on a gulch's edge, more on the 20 m mesh of low quality)
   function surfaceAt(x, z) {
     const [E, N] = toUTM(x, z), c = Math.floor((E - E0) / meta.tile_m), r = Math.floor((N1 - N) / meta.tile_m), t = tileAt.get(`${c},${r}`);
     if (!t) return NaN;
@@ -215,33 +217,6 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const i = Math.max(0, Math.min(S - 1, Math.floor(u))), j = Math.max(0, Math.min(S - 1, Math.floor(v))), fu = u - i, fv = v - j;
     const p = t.mesh.geometry.attributes.position.array, y = k => p[3 * k + 1], a = j * (S + 1) + i, b = a + 1, d = a + S + 1, e = d + 1;
     return fu + fv <= 1 ? y(a) + (y(b) - y(a)) * fu + (y(d) - y(a)) * fv : y(e) + (y(d) - y(e)) * (1 - fu) + (y(b) - y(e)) * (1 - fv);
-  }
-  // The walkthrough's 3D trees (realsite.js trees()) stand on its own ground, real.ground() from the near lidar grid.
-  // Over the tiles the ground drawn is the community bake's (h.bin, whose voids are filled its own way, and drawn as
-  // 10 m triangles): while the view is on, each tree over a tile stands on the tile surface beneath it. Its matrices
-  // are kept and given back on exit, so the walkthrough's trees are exactly as before.
-  let treesSaved = null;
-  function treesOnTiles() {
-    treesSaved = [];
-    if (!real) return;
-    const v = new THREE.Vector3(), inv = new THREE.Matrix4();
-    scene.traverse(o => {
-      if (!o.isInstancedMesh || !o.userData.realsite || o.parent?.name !== 'realsite trees') return;
-      o.updateWorldMatrix(true, false); inv.copy(o.matrixWorld).invert();
-      const arr = o.instanceMatrix.array, keepArr = arr.slice();
-      let moved = false;
-      for (let k = 0; k < o.count; k++) {
-        v.fromArray(arr, 16 * k + 12).applyMatrix4(o.matrixWorld);
-        const s = surfaceAt(v.x, v.z); if (Number.isNaN(s)) continue;
-        const dy = s - real.ground(v.x, v.z); if (Math.abs(dy) < 0.01) continue;
-        v.y += dy; v.applyMatrix4(inv); v.toArray(arr, 16 * k + 12); moved = true;
-      }
-      if (moved) { treesSaved.push([o, keepArr]); o.instanceMatrix.needsUpdate = true; }
-    });
-  }
-  function treesBack() {
-    for (const [o, a] of treesSaved ?? []) { o.instanceMatrix.array.set(a); o.instanceMatrix.needsUpdate = true; }
-    treesSaved = null;
   }
 
   // ---- places
@@ -258,19 +233,13 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const inBoxW = (x, z) => { const [E, N] = toUTM(x, z); return E > E0 + 300 && E < E1 - 300 && N > N0 + 300 && N < N1 - 300; };
   const clampW = (x, z) => { const [E, N] = toUTM(x, z); return toWorld(Math.max(E0 + 300, Math.min(E1 - 300, E)), Math.max(N0 + 300, Math.min(N1 - 300, N))); };
   let fly = null, active = false, viewOff = null;
-  let cardEl = null;                                   // looked up once (frame() asks every frame on a landscape phone)
+  let cardEl = null;                                   // looked up once
   const cardOf = () => (cardEl?.isConnected ? cardEl : (cardEl = document.querySelector('#community .cm-card')));
-  // where the card stands as a column on the left (wide screens, where it is docked, and phones held in landscape, where
-  // it folds to its title at the top left), the view is centred in the space to its right, at the same scale: the
-  // place a flight aims at is never under the card
-  function cardDock() {
-    const c = ui.dock();
-    if (c > 0 || innerWidth <= innerHeight) return c;
-    const card = cardOf(), b = card && !card.closest('[hidden]') ? card.getBoundingClientRect() : null;
-    return b && b.width && b.left < 40 && b.right < innerWidth * 0.5 ? Math.round(b.right + 12) : 0;
-  }
+  // where the open card stands as a column on the left (wide screens only: on small screens it is a sheet at the bottom),
+  // the view is centred in the space to its right, at the same scale, so the place a flight aims at is never under the
+  // card; ui.dock() eases that width as the card folds or opens, so the frame glides
   function frame() {
-    const c = cardDock();
+    const c = ui.dock();
     const key = `${innerWidth}x${innerHeight}:${c}`;
     if (key === viewOff) return; viewOff = key;
     if (c > 0) { camera.aspect = (innerWidth + c) / innerHeight; camera.setViewOffset(innerWidth + c, innerHeight, 0, 0, innerWidth, innerHeight); }
@@ -321,7 +290,9 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     portrait: { b: 318, d: 3000, pol: 1.22, sx: 0.5, sy: 0.64 },     // a narrow view: from the north-west, over the fairways
   };
   const probeCam = new THREE.PerspectiveCamera();
-  // the part of the screen no panel covers: below the header, above a bottom card (phones), right of a card column
+  // the part of the screen no panel covers: below the header, above a bottom card (phones), right of the card where it
+  // stands open as a column (docked on wide screens; a landscape phone's open sheet), left of a place's card standing at
+  // the right (wide screens and landscape phones: the home's own card, when its pin is picked)
   function freeRect() {
     const W = innerWidth, H = innerHeight, r = [0, 0, W, H];
     for (const id of ['hud', 'buttons']) { const e = document.getElementById(id); if (e && !e.hidden) { const b = e.getBoundingClientRect(); if (b.height && b.top < H * 0.3) r[1] = Math.max(r[1], b.bottom); } }
@@ -329,8 +300,11 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       if (!el || el.closest('[hidden]')) continue;
       const b = el.getBoundingClientRect();
       if (b.height && b.top > H * 0.5 && (b.width > W * 0.6 || el.id === 'skypanel')) r[3] = Math.min(r[3], b.top);
+      if (el === cardEl && b.height > H * 0.5 && b.left < 40 && b.right < W * 0.5) r[0] = Math.max(r[0], b.right + 12);   // not when folded
     }
-    const c = cardDock(); if (c > 0) r[0] = c;
+    const info = document.querySelector('#community .cm-info');
+    if (info && !info.closest('[hidden]')) { const b = info.getBoundingClientRect(); if (b.height && b.left > W * 0.5) r[2] = Math.min(r[2], b.left - 16); }
+    const c = ui.dock(); if (c > 0) r[0] = c;
     if (r[3] - r[1] < H * 0.4) { r[1] = 0; r[3] = H; }
     return r;
   }
@@ -370,7 +344,8 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   // walkthrough's 220 ft round the lot over the whole row, so every home, palm and garden casts its shadow and the row
   // sits on the ground instead of half of it standing shadowless. Only the row casts into it: the tiles already trace
   // the trees' and buildings' shadows. On desktop a contact shadow pass (GTAO) at this scale grounds what stands.
-  const cmTrees = real?.communityTrees?.({ ground: groundAt });
+  // The trees stand on the surface the tiles draw (off the tiles, on groundAt); the walkthrough's are hidden meanwhile.
+  const cmTrees = real?.communityTrees?.({ ground: (x, z) => { const s = surfaceAt(x, z); return Number.isNaN(s) ? groundAt(x, z) : s; } });
   if (cmTrees) group.add(cmTrees);
   const keyL = daylight?.keyLight, kp = real?.keep;
   const rowC = kp ? new THREE.Vector3((kp[0] + kp[2]) / 2, 0, (kp[1] + kp[3]) / 2) : new THREE.Vector3(center[0], 0, center[1]);
@@ -441,7 +416,6 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     orbit.enabled = true;
     group.visible = true; ui.show(true);
     for (const m of modelGround) { m.userData.cmVisible = m.visible; m.visible = false; }
-    if (!treesSaved) treesOnTiles();
     SEA_LIFT.value = 1; SINK.value = 120;                     // realsite.js: glint off its sea; sunk under the tiles in the box
     for (const m of realMats) { m.userData.cmEnv = m.envMapIntensity; m.envMapIntensity = 1; }
     for (const o of roadMeshes) { o.userData.cmMat = o.material; o.material = darkRoad; }
@@ -466,7 +440,6 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     Object.assign(orbit, { minDistance: saved.minD, maxDistance: saved.maxD, maxPolarAngle: saved.maxP, screenSpacePanning: saved.ssp });
     group.visible = false; ui.show(false);
     for (const m of modelGround) m.visible = m.userData.cmVisible ?? true;
-    treesBack();
     SEA_LIFT.value = 0; SINK.value = 0;
     for (const m of realMats) m.envMapIntensity = m.userData.cmEnv ?? 1;
     for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
@@ -644,7 +617,17 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       info.querySelector('.cm-x').addEventListener('click', e => { e.stopPropagation(); setInfo(false); sel = null; });
       // aim where the camera may rest (the target is kept 300 m inside the box)
       const [gx, gz] = clampW(p.ground.x, p.ground.z), aim = new THREE.Vector3(gx, groundAt(gx, gz), gz);
-      const near = p.cat === 'home' ? establishing() : pose(aim, 1500, 0.92, Math.atan2(camera.position.z - aim.z, camera.position.x - aim.x));
+      let near;
+      if (p.cat === 'home') near = establishing();
+      else {
+        // the place lands midway across the part of the screen left free, beside its own card where that stands at the
+        // right, not at the frame's centre ((W + dock) / 2): a sideways shift of the orbit at the place's distance (none
+        // under a phone's bottom sheet)
+        const az = Math.atan2(camera.position.z - aim.z, camera.position.x - aim.x), f = freeRect();
+        const sh = (innerWidth + ui.dock() - f[0] - f[2]) / 2 * (2 * 1500 * Math.tan(camera.fov * Math.PI / 360) / innerHeight);   // ft
+        const [tx, tz] = clampW(aim.x + Math.sin(az) * sh, aim.z - Math.cos(az) * sh);
+        near = pose(new THREE.Vector3(tx, groundAt(tx, tz), tz), 1500, 0.92, az);
+      }
       flyTo(near, 2.8);
     }
     // the view is framed beside the open card on wide screens; when the card folds or opens the frame glides over
@@ -806,7 +789,7 @@ function tileMaterial(U, flat, low) {
   m.userData.u = u;
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, U, u);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_CANOPY + '\n#include <emissivemap_fragment>');   // canopy stopgap
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_RELIEF + '\n#include <emissivemap_fragment>');   // crown relief and banks
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vCmWorld;')
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvCmWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     // the sea reflects the sky above the horizon, not the environment's ground half
@@ -939,43 +922,22 @@ function tileMaterial(U, flat, low) {
   return m;
 }
 
-// ---- canopy and steep banks, a viewer stopgap (start) --------------------------------------------------------------
-// Until the re-bake's crown colour (scripts/geo_community.py: a leaf palette, lone crowns without a shaded mound) is on
-// every tile, the crowns drawn in the full-detail tiles' albedo (where the cast height in n_*.webp B is over about 1.6 m,
-// on land) are lifted 40% toward a sunlit leaf green and floored at about 6% reflectance, so tree-filled ground reads as
-// leaves, not near-black felt; the crowns' baked relief in the normals is halved (thickets read as bubble wrap) and, on
-// desktop, a lone crown (little canopy 8 m round it: a 3D tree of the view stands on it) loses most of it, so it is not
-// also a shaded molehill under its tree. And the lidar's
-// steepest metre-scale walls (a ditch's or gulch's banks, tilted 40-70 degrees or more from the vertical) have their tilt
-// eased by half toward the 10 m ground's and, in shade, take the light the sunlit ground throws into a narrow cut (30% of
-// the sun's, by day): from the air a shaded bank read as a black, beaded crack. Mild on purpose; to drop it, delete this
-// block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
+// ---- crown relief and steep banks (start) ---------------------------------------------------------------------------
+// The crowns' colour and the lone crowns' cut relief are the bake's (scripts/geo_community.py: a leaf palette and a tone
+// floor; a lone crown, where a 3D tree of the view stands, keeps a fifth of its relief). Here, on the full-detail tiles,
+// every crown's baked relief in the normals (where the cast height in n_*.webp B is over about 0.3-1.4 m, on land) is
+// halved: thickets read as bubble wrap from the air. And the lidar's steepest metre-scale walls (a ditch's or gulch's
+// banks, tilted 40-70 degrees or more from the vertical) have their tilt eased by half toward the 10 m ground's and, in
+// shade, take the light the sunlit ground throws into a narrow cut (30% of the sun's, by day): from the air a shaded bank
+// read as a black, beaded crack. Mild on purpose; define CM_NO_RELIEF to drop it.
 // Inserted ahead of emissivemap_fragment: the albedo and the normal are final there and the lights have not read them.
-const CM_CANOPY = `
-      #ifndef CM_NO_CANOPY_LIFT
+const CM_RELIEF = `
+      #ifndef CM_NO_RELIEF
       if (uHasN > 0.5 && cmLand > 0.01 && cmHiFade > 0.0) {
         float cpCast = texture2D(uN, vMapUv).b * 25.5;                      // m
-        // leaves only: green over red (a roof's eaves, under its 3D building, and the bake's beige teeth keep their colour)
-        float cpCrown = smoothstep(1.2, 2.6, cpCast) * cmLand * cmHiFade * smoothstep(-0.02, 0.08, (diffuseColor.g - diffuseColor.r) / max(diffuseColor.g, 1e-3));
-        if (cpCrown > 0.0) {
-          float cpL = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-          vec3 cpC = mix(diffuseColor.rgb, vec3(0.058, 0.094, 0.030) * clamp(cpL / 0.075, 0.7, 1.3), 0.4);
-          cpC *= clamp(0.062 / max(dot(cpC, vec3(0.2126, 0.7152, 0.0722)), 1e-4), 1.0, 1.8);
-          diffuseColor.rgb = mix(diffuseColor.rgb, cpC, cpCrown);
-        }
-        // the crowns' baked relief: halved everywhere (thickets read as bubble wrap from the air), and on desktop most of
-        // it gone from a lone crown, where a 3D tree of the view stands
+        // the crowns' baked relief, halved
         float cpEdge = smoothstep(0.3, 1.4, cpCast) * cmLand * cmHiFade;
-        if (cpEdge > 0.0) {
-          float cpFlat = 0.5;
-          #ifndef CM_LOW
-          vec2 o = vec2(0.008, 0.0);                                          // 8 m across a 1 km tile
-          float cpN = step(1.6, texture2D(uN, vMapUv + o.xy).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.xy).b * 25.5)
-                    + step(1.6, texture2D(uN, vMapUv + o.yx).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.yx).b * 25.5);
-          cpFlat = mix(0.5, 0.85, 1.0 - smoothstep(0.5, 2.5, cpN));
-          #endif
-          normal = normalize(mix(normal, nonPerturbedNormal, cpFlat * cpEdge));
-        }
+        if (cpEdge > 0.0) normal = normalize(mix(normal, nonPerturbedNormal, 0.5 * cpEdge));
         // steep banks: tilted 40-70 degrees or more from the vertical at the lidar's metre (the 10 m ground stays as it is)
         float cpSteep = (1.0 - smoothstep(0.35, 0.75, (vec4(normal, 0.0) * viewMatrix).y)) * cmLand * cmHiFade;
         if (cpSteep > 0.0) {
@@ -989,7 +951,7 @@ const CM_CANOPY = `
       }
       #endif
 `;
-// ---- canopy and steep banks, a viewer stopgap (end) ---------------------------------------------------------------
+// ---- crown relief and steep banks (end) -----------------------------------------------------------------------------
 
 async function fetchBinary(url) {
   // a host that serves no binary types gets the same bytes as base64 text (scripts/build_artifact.py)

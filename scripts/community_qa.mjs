@@ -59,7 +59,7 @@ const poses = {
   '3-home-close': `C.pose(C.pins[0].ground, 900, 0.95, C.northAz - 0.6)`,
   '4-coast': `(() => { const [x, z] = C.fromLatLon(21.8846, -159.4925); const g = new (C.pins[0].ground.constructor)(x, C.groundAt(x, z), z); return C.pose(g, 2400, 1.05, C.northAz + 0.4); })()`,
   '5-golf-oblique': `(() => { const [x, z] = C.fromLatLon(21.8925, -159.4850); const g = new (C.pins[0].ground.constructor)(x, C.groundAt(x, z), z); return C.pose(g, 3200, 1.18, C.northAz + 2.6); })()`,
-  // the walkthrough's 3D trees nearest the home, east of the strip, low and close: trunks on the ground, not buried
+  // the view's own 3D trees nearest the home, east of the strip, low and close: umbrella trunks on the tiles, not buried or afloat
   '6-trees-east': `(() => { const g = new (C.pins[0].ground.constructor)(445, C.groundAt(445, 200), 200); return C.pose(g, 420, 1.15, C.northAz - 0.6); })()`,
 };
 const only = process.env.SHOTS ? process.env.SHOTS.split(',') : null;   // e.g. SHOTS=1,3 for a quick pass
@@ -69,47 +69,52 @@ for (const [name, expr] of Object.entries(poses)) {
   await frames(3);
   await shot(name);
 }
-// The walkthrough's 3D trees stand on the tiles while the view is on (trunk base on the tile surface) and get their own
-// matrices back on exit (trunk base on the realsite ground, crowns moved back by the same amount); re-entering repeats it.
+// The view's own 3D trees (realsite.js communityTrees) stand on the surface the tiles draw: each umbrella's trunk base
+// (sunk 0.4 ft) on the tile triangles under it. The walkthrough's trees are hidden while the view is open, are never
+// moved, and are shown again on exit on their own ground; entering again draws the same trees.
 const treeState = () => page.evaluate(() => {
-  const C = window.__community, R = window.__realsite; let grp = null;
-  window.__scene?.scene.traverse(o => { if (o.name === 'realsite trees') grp = o; });
-  if (!grp || !R) return null;
-  const meshes = grp.children.filter(m => m.isInstancedMesh).map(m => {
-    const a = m.instanceMatrix.array, xyz = [];
-    for (let k = 0; k < m.count; k++) xyz.push(a[16 * k + 12], a[16 * k + 13], a[16 * k + 14]);
-    return { trunk: /trunk/.test(m.material.name), xyz };
-  });
-  // per instance: the tile surface and the realsite ground under it (identity group transform, see neighborhood.js)
-  for (const m of meshes) { m.s = []; m.g = []; for (let i = 0; i < m.xyz.length; i += 3) { m.s.push(C.surfaceAt(m.xyz[i], m.xyz[i + 2])); m.g.push(R.ground(m.xyz[i], m.xyz[i + 2])); } }
-  return meshes;
+  const C = window.__community, R = window.__realsite, grp = {};
+  window.__scene?.scene.traverse(o => { if (o.name === 'realsite trees' || o.name === 'community trees') grp[o.name] = o; });
+  const shown = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+  // instance positions (identity group transforms, see neighborhood.js), and under each trunk the ground it should stand on
+  const read = (o, ground) => o ? { shown: shown(o), meshes: o.children.filter(m => m.isInstancedMesh).map(m => {
+    const a = m.instanceMatrix.array, xyz = [], g = [], trunk = /trunk/.test(m.material.name);
+    for (let k = 0; k < m.count; k++) { xyz.push(a[16 * k + 12], a[16 * k + 13], a[16 * k + 14]); if (trunk) g.push(ground(a[16 * k + 12], a[16 * k + 14])); }
+    return { trunk, xyz, g };
+  }) } : null;
+  return { cm: read(grp['community trees'], (x, z) => C.surfaceAt(x, z)), rs: R ? read(grp['realsite trees'], (x, z) => R.ground(x, z)) : null };
 });
+// largest move of any instance between two states (Infinity if the sets differ)
+const moved = (a, b) => {
+  if (!a || !b || a.meshes.length !== b.meshes.length) return Infinity;
+  let d = 0;
+  a.meshes.forEach((m, j) => { const o = b.meshes[j].xyz; if (o.length !== m.xyz.length) d = Infinity; else for (let i = 0; i < o.length; i++) d = Math.max(d, Math.abs(o[i] - m.xyz[i])); });
+  return d;
+};
 const inView = await treeState();
-if (inView) {
+if (inView.cm) {
   const toggle = () => page.evaluate(() => document.getElementById('community-btn').click());
   await toggle(); await page.waitForFunction(() => !document.body.classList.contains('community-mode')); await frames(2);
   const walk = await treeState();
   await toggle(); await page.waitForFunction(() => document.body.classList.contains('community-mode')); await frames(2);
   const again = await treeState();
-  let onTiles = 0, n = 0, back = 0, crownMove = 0, same = 0, worst = '', big = 0, maxD = 0;
-  inView.forEach((m, j) => {
-    for (let k = 0; k < m.s.length; k++) {
-      const y = m.xyz[3 * k + 1], yw = walk[j].xyz[3 * k + 1], s = m.s[k] ?? NaN, g = m.g[k];   // NaN (off the tiles) arrives as null
-      same = Math.max(same, Math.abs(again[j].xyz[3 * k + 1] - y), Math.abs(walk[j].xyz[3 * k] - m.xyz[3 * k]), Math.abs(walk[j].xyz[3 * k + 2] - m.xyz[3 * k + 2]));
-      if (m.trunk) {
-        back = Math.max(back, Math.abs(yw + 0.4 - g));
-        if (!Number.isNaN(s)) {
-          n++; const e = Math.abs(y + 0.4 - s); if (e > onTiles) { onTiles = e; worst = `trunk ${k}`; }
-          if (Math.abs(s - g) > 1) big++; maxD = Math.max(maxD, Math.abs(s - g));
-        }
-      }
-      crownMove = Math.max(crownMove, Math.abs((y - yw) - (Number.isNaN(s) ? 0 : s - g)));
-    }
+  let n = 0, off = 0, gap = 0, worst = '';
+  for (const m of inView.cm.meshes) if (m.trunk) m.g.forEach((s, k) => {
+    if (s == null || Number.isNaN(s)) { off++; return; }                // off the tiles (NaN arrives as null)
+    n++; const e = Math.abs(m.xyz[3 * k + 1] + 0.4 - s);
+    if (e > gap) { gap = e; worst = `trunk ${k} at (${m.xyz[3 * k].toFixed(0)}, ${m.xyz[3 * k + 2].toFixed(0)})`; }
   });
-  check('3D trees stand on the tiles in the view', onTiles < 0.05, `${n} trunks over tiles, worst gap ${onTiles.toFixed(3)} ft (${worst}); ${big} moved more than 1 ft, at most ${maxD.toFixed(1)} ft`);
-  check('3D trees back on the walkthrough ground on exit', back < 0.05 && crownMove < 0.05, `trunk base vs realsite ground ${back.toFixed(3)} ft, crown shift vs tile offset ${crownMove.toFixed(3)} ft`);
-  check('re-entering the view moves the same trees the same way', same < 1e-3, `max difference ${same.toExponential(1)} ft`);
-} else check('3D trees present', false, 'no realsite trees group');
+  check('3D trees stand on the tiles in the view', inView.cm.shown && n > 0 && gap < 0.05, `${n} umbrella trunks over tiles (${off} off them), worst gap ${gap.toFixed(3)} ft${worst ? ` (${worst})` : ''}`);
+  const again1 = moved(inView.cm, again.cm);
+  check("the view's trees hidden on exit, the same trees on entering again", !walk.cm.shown && again.cm.shown && again1 < 1e-3, `max difference ${again1.toExponential(1)} ft`);
+  if (inView.rs && walk.rs && again.rs) {
+    let back = 0;
+    for (const m of walk.rs.meshes) if (m.trunk) m.g.forEach((g, k) => { back = Math.max(back, Math.abs(m.xyz[3 * k + 1] + 0.4 - g)); });
+    const still = Math.max(moved(inView.rs, walk.rs), moved(walk.rs, again.rs));
+    check("the walkthrough's trees hidden in the view", !inView.rs.shown && !again.rs.shown);
+    check("the walkthrough's trees shown on exit, unmoved, on their own ground", walk.rs.shown && still < 1e-3 && back < 0.05, `max move ${still.toExponential(1)} ft, trunk base vs realsite ground ${back.toFixed(3)} ft`);
+  } else check("the walkthrough's trees present", false, 'no realsite trees group');
+} else check('3D trees present', false, 'no community trees group');
 const errs = errors.filter(e => !/GPU stall|swiftshader|WebGL: INVALID_ENUM|Automatic fallback/i.test(e));
 check('no page errors', !errs.some(e => e.startsWith('pageerror')), errs.join(' | ').slice(0, 600));
 await writeFile(join(out, 'qa.json'), JSON.stringify({ checks, errors: errs }, null, 1));
