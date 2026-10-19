@@ -47,7 +47,7 @@ check('community view opens from ?mode=community', true);
 const shown = sel => page.evaluate(sel => { const e = document.querySelector(sel), r = e?.getBoundingClientRect();
   return e && getComputedStyle(e).display !== 'none' && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight ? e.innerText.replace(/\s+/g, ' ') : ''; }, sel);
 const notice = await shown('#concept .cc-cm');
-check('notice visible', /independent concept/i.test(notice) && /not by the developer/i.test(notice) && /views not shown or verified/i.test(notice), notice);
+check('notice visible', /independent concept/i.test(notice) && /homes modeled/i.test(notice) && /not by the developer/i.test(notice) && /views not shown or verified/i.test(notice), notice);
 const credits = await shown('#community .cm-attr');
 check('short credits visible', /© OpenStreetMap contributors/.test(credits) && /Copernicus Sentinel/.test(credits) && /Meta\/WRI/.test(credits) && /CC BY 4\.0/.test(credits) && /Credits\s*$/.test(credits), credits);
 check('card note in the card', /not an aerial photograph/.test(await page.textContent('#community .cm-fine')));

@@ -82,11 +82,11 @@
   },
   {
    "id": "lawai-kai",
-   "name": "Lāwaʻi Bay beach",
+   "name": "Lāwaʻi Bay",
    "cat": "beach",
    "lat": 21.88855,
    "lon": -159.50206,
-   "note": "The beach at Lāwaʻi Bay, at the foot of Lāwaʻi Valley. OpenStreetMap names it Lāwaʻi Beach; called Lāwaʻi Bay beach here to tell it from Lāwaʻi Beach on Hoai Bay.",
+   "note": "The beach at Lāwaʻi Bay, at the foot of Lāwaʻi Valley. OpenStreetMap names it Lāwaʻi Beach; called Lāwaʻi Bay here to tell it from Lāwaʻi Beach on Hoai Bay.",
    "src": "OpenStreetMap contributors, via Overture Maps 2026-09-23 (ODbL)",
    "prio": 2
   },

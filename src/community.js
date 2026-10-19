@@ -532,7 +532,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
         <div class="cm-ikick">Credits</div>
         <ul>${full.map(s => `<li>${linkify(s)}</li>`).join('')}<li class="cm-wx" hidden>${wxCredit}</li></ul>
       </div>
-      <div class="cm-attr"><span class="cm-attr-short">© ${linkify('OpenStreetMap contributors')}<span class="cm-w">, Microsoft, TomTom (${linkify('ODbL')}) via Overture</span> · <span class="cm-w">Contains modified </span>Copernicus Sentinel<span class="cm-w"> data 2023–26 · USGS · USACE/NOAA</span> · Meta/WRI <span class="cm-w">canopy </span>${linkify('CC BY 4.0')}</span><span class="cm-wx cm-w" hidden> · ${wxCredit}</span><button class="cm-credits" type="button" aria-expanded="false" aria-controls="cm-cred">Credits</button></div>`;
+      <div class="cm-attr"><span class="cm-attr-short"><span class="cm-w">Map of open data, not a photo · </span>© ${linkify('OpenStreetMap contributors')}<span class="cm-w">, Microsoft, TomTom (${linkify('ODbL')}) via Overture</span> · <span class="cm-w">Contains modified </span>Copernicus Sentinel<span class="cm-w"> data 2023–26 · USGS · USACE/NOAA</span> · Meta/WRI <span class="cm-w">canopy </span>${linkify('CC BY 4.0')}</span><span class="cm-wx cm-w" hidden> · ${wxCredit}</span><button class="cm-credits" type="button" aria-expanded="false" aria-controls="cm-cred">Credits</button></div>`;
     document.body.appendChild(root);
     const card = root.querySelector('.cm-card'), chips = root.querySelector('.cm-chips'), layer = root.querySelector('.cm-pins'), info = root.querySelector('.cm-info');
     const attr = root.querySelector('.cm-attr'), cred = root.querySelector('.cm-cred'), credBtn = root.querySelector('.cm-credits');
