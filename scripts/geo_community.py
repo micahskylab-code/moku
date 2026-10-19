@@ -223,10 +223,10 @@ class Inputs:
         d[np.isnan(d)] = 0.0
 
     @staticmethod
-    def _seamless(d, hole, sigma=20.0):
+    def _seamless(d, hole, sigma=14.0):
         """The 2 m merged DEM carries its own seams inside the 1 m lidar's voids (a ridge or a trench a metre or two in
         from the rim, 10 m blocks inside), which drew a black, jagged 'crack' and a row of pale teeth beside the Nā Hiku
-        strip. Inside each void only its broad shape is kept (smoothed over 20 m), and the difference to the lidar along
+        strip. Inside each void only its broad shape is kept (smoothed over 14 m), and the difference to the lidar along
         the void's rim is spread inward as a membrane (Laplace), so the fill meets the lidar with no step."""
         from scipy.sparse import coo_matrix
         from scipy.sparse.linalg import spsolve
