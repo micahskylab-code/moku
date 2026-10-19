@@ -293,6 +293,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
     const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 0;
     camera.clearViewOffset(); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); viewOff = null;
+    document.body.style.removeProperty('--cm-glow'); glowSet = 0;
     // give the full-size tiles back to the GPU; the 2 m ones stay for next time
     for (const t of tiles) { t.want = 0; if (t.hi) dropHi(t); }
   }
@@ -324,8 +325,12 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     stream(dt);
     frame();
     const wx = daylight?.state?.weather?.source === 'live'; if (wx !== ui.wx) ui.setWx(wx);
+    // golden hour and dusk light the sky behind the header: its scrim deepens so the notice line stays legible (index.html)
+    const alt = daylight?.light?.sun?.alt, glow = alt == null ? 0 : Math.round(ss(16, 5, alt) * ss(-10, -4, alt) * 20) / 20;
+    if (glow !== glowSet) { glowSet = glow; if (glow) document.body.style.setProperty('--cm-glow', glow); else document.body.style.removeProperty('--cm-glow'); }
     ui.place(camera, renderer);
   }
+  let glowSet = 0;
 
   const jump = p => { fly = null; userMoved = true; orbit.target.copy(p.target); camera.position.copy(p.pos); camera.lookAt(p.target); };
   window.__community = { groundAt, toWorld, toUTM, fromLatLon, tiles, pins, flyTo, jump, pose, establishing, overview, northAz, settled: () => !fly && tiles.every(t => !t.busy && (!t.want || t.hi || (t.fails ?? 0) >= 3)) };
@@ -390,7 +395,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const fold = root.querySelector('.cm-fold');
     let autoFold = false, sawFly = false, shown = false;
     const setFold = (f, byUser = false) => {
-      card.classList.toggle('cm-folded', f); fold.setAttribute('aria-expanded', String(!f));
+      card.classList.toggle('cm-folded', f); fold.setAttribute('aria-expanded', String(!f)); card.classList.toggle('cm-scrolled', !f && card.scrollTop > 1);
       if (byUser) autoFold = false;
       sheets(); fitCard();
     };
