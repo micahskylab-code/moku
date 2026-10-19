@@ -52,8 +52,11 @@ function makeNoise() {
 export const CLOUD_H = 1.1, CLOUD_TOP = 2.0, CIRRUS_H = 8.5, TILE_KM = 9.0;   // trade cumulus: base ~1.1 km, tops ~2 km under the trade inversion; a noise tile spans 9 km
 const SIGMA = 9.0;                                             // extinction per km of cloud (soft edges, opaque cores)
 // The sky's textures, shared with shaders that fade into it (src/realsite.js: the community view's far terrain and its sea
-// skirt inland): the sky texture (scene units) and the half-resolution cumulus pass of this frame (premultiplied).
-export const SKY_U = { lut: { value: null }, clouds: { value: null }, texel: { value: new THREE.Vector2(1, 1) } };
+// skirt inland): the sky texture (scene units), the half-resolution cumulus pass of this frame (premultiplied), and a tint
+// of the low sky (1 everywhere but in the community view by day, where src/daylight.js gives the sky near the horizon the
+// hue of that view's haze, so distant land fades into a sky of its own colour; SKY_TINT_GLSL).
+export const SKY_U = { lut: { value: null }, clouds: { value: null }, texel: { value: new THREE.Vector2(1, 1) }, tint: { value: new THREE.Vector3(1, 1, 1) } };
+export const SKY_TINT_GLSL = (u = 'uSkyTint') => `vec3 skyTint(vec3 d) { return mix(vec3(1.0), ${u}, exp(-max(d.y, 0.0) / 0.12)); }`;
 export const CLOUD_GLSL = /* glsl */`
 uniform sampler2D uNoise; uniform vec2 uCloudOff, uCirrusOff; uniform float uCloudThr, uCloudSoft, uCirrus, uMountain, uDome, uMarchKm; uniform vec2 uNorth;
 float nz(vec2 p) { return texture(uNoise, p).r; }
@@ -157,6 +160,7 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
     uMoonDir: lutU.uMoonDir, uMoonDisc: { value: new THREE.Vector3() }, uMoonR: { value: 0.0045 }, uEarthshine: { value: 0.0 }, uPole: { value: new THREE.Vector3(0, 1, 0) },
     uClouds: SKY_U.clouds, uCloudTexel: SKY_U.texel,
     uNoGround: { value: 0 },          // 1: below the horizon the horizon's haze, not the ground (the community view's sea runs out there)
+    uSkyTint: SKY_U.tint,
   };
   const domeMat = new THREE.ShaderMaterial({
     uniforms: domeU, side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
@@ -165,8 +169,9 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
       uniform sampler2D uLUT; uniform float uNoGround;
       uniform vec3 uSunDir, uSunDisc, uMoonDir, uMoonDisc, uPole, uCloudLight, uCloudLightDir, uCloudAmb;
       uniform float uSunR, uMoonR, uEarthshine, uCloudDark, uCloudThick;
-      uniform sampler2D uClouds; uniform vec2 uCloudTexel;
+      uniform sampler2D uClouds; uniform vec2 uCloudTexel; uniform vec3 uSkyTint;
       ${CLOUD_GLSL}
+      ${SKY_TINT_GLSL()}
       vec3 sky(vec3 d) { return texture(uLUT, vec2(atan(d.z, d.x) * 0.15915494 + 0.5, asin(clamp(d.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb; }
       // the moon's near side: maria and bright highlands, lunar north toward the celestial pole
       float maria(vec2 p) {
@@ -186,7 +191,7 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
       }
       void main() {
         vec3 d = normalize(vD);
-        vec3 c = sky(uNoGround > 0.5 && d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d);
+        vec3 c = sky(uNoGround > 0.5 && d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d) * skyTint(d);
         // sun's disc, limb-darkened; a little glare round it
         float sa = length(cross(d, uSunDir)), sd = dot(d, uSunDir);
         if (sd > 0.0) {
@@ -233,15 +238,16 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
   domeMat.extensions = { derivatives: true };
   // ---------- cumulus: a half-resolution pass, marched with per-pixel jitter, blurred into the dome ----------
   const cloudRT = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, depthBuffer: false, magFilter: THREE.LinearFilter, minFilter: THREE.LinearFilter });
-  const passU = { ...cloudU, ...lightU, uLUT: domeU.uLUT, uProjInv: { value: new THREE.Matrix4() }, uCamWorld: { value: new THREE.Matrix4() } };
+  const passU = { ...cloudU, ...lightU, uLUT: domeU.uLUT, uSkyTint: SKY_U.tint, uProjInv: { value: new THREE.Matrix4() }, uCamWorld: { value: new THREE.Matrix4() } };
   const cloudMat = new THREE.ShaderMaterial({
     uniforms: passU, depthTest: false, depthWrite: false,
     defines: { CLOUD_STEPS: quality === 'low' ? 8 : 14 },
     vertexShader: 'varying vec2 vNdc; void main(){ vNdc = position.xy; gl_Position = vec4(position.xy, 0.0, 1.0); }',
     fragmentShader: `varying vec2 vNdc;
       uniform sampler2D uLUT; uniform mat4 uProjInv, uCamWorld;
-      uniform vec3 uCloudLight, uCloudLightDir, uCloudAmb; uniform float uCloudDark, uCloudThick;
+      uniform vec3 uCloudLight, uCloudLightDir, uCloudAmb, uSkyTint; uniform float uCloudDark, uCloudThick;
       ${CLOUD_GLSL}
+      ${SKY_TINT_GLSL()}
       vec3 sky(vec3 d) { return texture(uLUT, vec2(atan(d.z, d.x) * 0.15915494 + 0.5, asin(clamp(d.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb; }
       void main() {
         vec4 v = uProjInv * vec4(vNdc, 1.0, 1.0); v /= v.w;
@@ -255,7 +261,7 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
           float g = 0.6, cs = dot(d, uCloudLightDir);
           float hg = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * cs, 1.5) / 12.566;
           float inland = inlandAt(d, tb), ds = (tt - tb) / float(CLOUD_STEPS);
-          vec3 hazeSky = sky(vec3(d.x, max(d.y, 0.02), d.z));
+          vec3 hazeSky = sky(vec3(d.x, max(d.y, 0.02), d.z)) * skyTint(d);
           float haze = (1.0 - exp(-tb / 50.0)) * 0.8;                       // distant clouds sink into the haze over the sea
           vec2 sh = ld * 0.35 / max(0.3, lift + 0.2);                          // toward the light, further when it is low
           float jit = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);    // white-noise jitter: no pattern left after the blur

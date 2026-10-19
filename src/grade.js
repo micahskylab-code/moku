@@ -39,7 +39,7 @@ export const CommunityGrade = {
       // olive (about 40-160 deg) toward yellow-green (88 deg)
       vec3 h = rgb2hsv(g);
       float gw = smoothstep(0.11, 0.17, h.x) * (1.0 - smoothstep(0.36, 0.45, h.x)) * smoothstep(0.05, 0.18, h.y);
-      h.x = mix(h.x, 0.245, 0.3 * gw);
+      h.x = mix(h.x, 0.245, 0.4 * gw);
       h.y = min(1.0, h.y * (1.0 + 0.2 * gw * (1.0 - h.y) * (1.0 - h.y)));   // the dull ones most: fairways stay grass, not lime
       h.z = min(1.0, h.z * (1.0 + 0.08 * gw * (1.0 - h.y)));
       // pale blues (sky, the haze at the horizon, the sea) a little deeper: a clear day, not a grey one

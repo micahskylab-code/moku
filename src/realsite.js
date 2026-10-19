@@ -12,7 +12,7 @@
 // Also here: real buildings (OSM + Microsoft footprints) and trees (Meta/WRI canopy height), and the
 // colour hand-over of the modelled ground. Sources and licences: geodata/realsite.json, scripts/geo_*.py.
 import * as THREE from 'three';
-import { SKY_U } from './skydome.js';
+import { SKY_U, SKY_TINT_GLSL } from './skydome.js';
 
 const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -215,7 +215,7 @@ function rippleShader(m, all = false) {
   const centre = { value: new THREE.Vector2(b ? (b[0] + b[2]) / 2 : 0, b ? (b[1] + b[3]) / 2 : 0) };
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, { rsSeaLift: SEA_LIFT, rsDeep: SEA_DEEP, rsSeaY: SEA_Y, rsLiftLod: m.userData.liftLod ?? { value: 0 },
-      rsSkyLut: SKY_U.lut, rsSkyClouds: SKY_U.clouds, rsSkyTexel: SKY_U.texel, rsEdge: edge, rsCentre: centre,
+      rsSkyLut: SKY_U.lut, rsSkyClouds: SKY_U.clouds, rsSkyTexel: SKY_U.texel, rsSkyTint: SKY_U.tint, rsEdge: edge, rsCentre: centre,
       rsSink: SINK, rsBox: SINK_BOX, rsLot: SINK_FRAME.lot, rsOrigin: SINK_FRAME.origin, rsEast: SINK_FRAME.east, rsNorth: SINK_FRAME.north, rsFt: SINK_FRAME.ft });
     sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
       varying vec3 vRsWorld; uniform float rsSink, rsFt; uniform vec4 rsBox; uniform vec2 rsLot, rsOrigin, rsEast, rsNorth;`)
@@ -232,11 +232,12 @@ function rippleShader(m, all = false) {
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), rsWetG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
       varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift, rsSeaY, rsLiftLod, rsEdge; uniform vec3 rsDeep;${NOISE}
-      uniform sampler2D rsSkyLut, rsSkyClouds; uniform vec2 rsSkyTexel, rsCentre, rsNorth;
+      uniform sampler2D rsSkyLut, rsSkyClouds; uniform vec2 rsSkyTexel, rsCentre, rsNorth; uniform vec3 rsSkyTint;
+      ${SKY_TINT_GLSL('rsSkyTint')}
       // what the sky dome draws behind this pixel (community view: haze below the horizon, the cumulus above it)
       vec3 rsSkyBehind(vec3 d) {
         vec3 e = d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d;
-        vec3 c = texture2D(rsSkyLut, vec2(atan(e.z, e.x) * 0.15915494 + 0.5, asin(clamp(e.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb;
+        vec3 c = texture2D(rsSkyLut, vec2(atan(e.z, e.x) * 0.15915494 + 0.5, asin(clamp(e.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb * skyTint(d);
         if (d.y > 0.003) { vec4 cl = texture2D(rsSkyClouds, gl_FragCoord.xy * rsSkyTexel * 0.5); c = c * (1.0 - cl.a) + cl.rgb; }
         return c;
       }`)
