@@ -298,8 +298,10 @@ RealSite.prototype.nearestRoad = function (x, z, maxD = 500) {
 // footprints are rectangles) or, for irregular ones, a roof rising from the footprint to a ridge.
 RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] } = {}) {
   const F = this.features; if (!F) return null;
-  const wall = { pos: [], col: [], uv: [] }, roof = { pos: [], col: [] };
-  const tri = (P, a, b, c, col) => { P.pos.push(...a, ...b, ...c); for (let k = 0; k < 3; k++) P.col.push(col.r, col.g, col.b); };
+  const wall = { pos: [], col: [], uv: [] }, roof = { pos: [], col: [], ek: [] };
+  // ek: each roof vertex's eave height and the community view's pitch factor for its building (cmPitch below)
+  let cmE = 0, cmK = 1;
+  const tri = (P, a, b, c, col) => { P.pos.push(...a, ...b, ...c); for (let k = 0; k < 3; k++) { P.col.push(col.r, col.g, col.b); P.ek?.push(cmE, cmK); } };
   const quad = (P, a, b, c, d, col) => { tri(P, a, b, c, col); tri(P, a, c, d, col); };
   // wall quad with (distance along the wall, height above the floor) uvs for the window pattern
   const wallQuad = (a, b, c, d, col, len, h0, h1, floor) => {
@@ -350,13 +352,16 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     }
     // roof
     const obb = orientedRect(p);
+    cmE = eave;
     if (b.q >= 0.62) {
       const { c, u, v, hu, hv } = obb, o = 1.6, X = hu + o, Z = hv + o, h = Math.min(X, Z) * 0.42, r = Math.max(0, X - Z), s2 = Math.max(0, Z - X);
+      cmK = cmPitch(h);
       const P = (a, bb, y) => [c[0] + u[0] * a + v[0] * bb, eave + y, c[1] + u[1] * a + v[1] * bb];
       const A = P(-X, -Z, 0), B = P(X, -Z, 0), C = P(X, Z, 0), D = P(-X, Z, 0), R1 = P(-r, -s2, h), R2 = P(r, s2, h);
       for (const [a, bq, cq] of [[A, R1, B], [B, R1, R2], [B, R2, C], [C, R2, D], [D, R2, R1], [D, R1, A]]) tri(roof, a, bq, cq, rc);
     } else {
       const h = Math.min(obb.hu, obb.hv) * 0.42;
+      cmK = cmPitch(h);
       let px = 0, pz = 0; for (let i = 0; i < m; i++) { px += p[2 * i] / m; pz += p[2 * i + 1] / m; }
       const sh = 0.3;
       for (let i = 0; i < m; i++) {
@@ -384,14 +389,29 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     if (P.uv) { mat.map = windowTexture(); mat.emissiveMap = windowTexture(true); mat.emissive = new THREE.Color('#ffc27a'); mat.emissiveIntensity = 0; this.windowMaterial = mat; }
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = mesh.receiveShadow = true; mesh.name = name;
-    // the community view's colours (communityLook): the roof palette below; walls a warm off-white a little below paper white
-    mesh.userData.cmColor = new THREE.BufferAttribute(P.uv ? Float32Array.from(P.col, (v, i) => v * [0.76, 0.73, 0.68][i % 3]) : cmRoofColours(P.col), 3);
+    // the community view's look (communityLook): walls a warm off-white a little below paper white; roofs in the palette
+    // below, on their own geometry with the big ones' pitch eased (cmPitch)
+    if (P.uv) mesh.userData.cmColor = new THREE.BufferAttribute(Float32Array.from(P.col, (v, i) => v * [0.76, 0.73, 0.68][i % 3]), 3);
+    else {
+      const cp = Float32Array.from(P.pos);
+      for (let i = 0, j = 0; i < cp.length; i += 3, j += 2) cp[i + 1] = P.ek[j] + (cp[i + 1] - P.ek[j]) * P.ek[j + 1];
+      const cg = new THREE.BufferGeometry();
+      cg.setAttribute('position', new THREE.BufferAttribute(cp, 3));
+      cg.setAttribute('color', new THREE.BufferAttribute(cmRoofColours(P.col), 3));
+      cg.computeVertexNormals();
+      mesh.userData.cmGeo = cg;
+    }
     this.buildingMeshes.push(mesh);
     g.add(mesh);
   }
   this.buildingCount = n;
   return g;
 };
+
+// The community view's roof pitch: a hip roof over a big footprint rises 0.42 of its half-width (a 200 ft lodge carried a
+// 42 ft pyramid, a dark toy from the air, its shaded half near black); from the air, rises over 10 ft are eased to 30%
+// above that, so houses keep their roofs and lodges and the clubhouse get the low hips they have.
+const cmPitch = h => (h > 10 ? (10 + (h - 10) * 0.3) / h : 1);
 
 // The community view's roof palette: the five snapped satellite finishes, mapped by brightness into a muted range (dark
 // grey, warm grey, a light warm grey; never pitch black, never white) and, for the red ones, a weathered terracotta. A
@@ -559,7 +579,7 @@ function cmTrunk() { const g = new THREE.CylinderGeometry(0.55, 1, 1, 6, 1, true
 
 // While the community view is open (on), its look for the context buildings and trees, all put back when it closes:
 //  - walls lose the window pattern (by day the plain wall colour; the lit windows of night are the emissive map and
-//    stay) and take a warm off-white a little below paper white; roofs take the muted palette above, matt;
+//    stay) and take a warm off-white a little below paper white; roofs take the muted palette and eased pitch above, matt;
 //  - the walkthrough's trees give way to communityTrees();
 //  - buildings cast no shadow map (the tiles trace their shadows from the baked eave heights).
 let whiteTex = null;
@@ -570,16 +590,17 @@ RealSite.prototype.communityLook = function (on) {
     const saved = this.cmSaved = { meshes: [], trees: this.treesGroup?.visible };
     for (const m of this.buildingMeshes ?? []) {
       const mat = m.material;
-      saved.meshes.push({ m, color: m.geometry.attributes.color, cast: m.castShadow, map: mat.map, rough: mat.roughness, metal: mat.metalness });
-      if (m.userData.cmColor) m.geometry.setAttribute('color', m.userData.cmColor);
+      saved.meshes.push({ m, geo: m.geometry, color: m.geometry.attributes.color, cast: m.castShadow, map: mat.map, rough: mat.roughness, metal: mat.metalness });
+      if (m.userData.cmGeo) m.geometry = m.userData.cmGeo;
+      else if (m.userData.cmColor) m.geometry.setAttribute('color', m.userData.cmColor);
       m.castShadow = false;
       if (mat.map) mat.map = whiteTex;
       else { mat.roughness = 0.8; mat.metalness = 0; }
     }
     if (this.treesGroup) this.treesGroup.visible = false;
   } else if (!on && s) {
-    for (const { m, color, cast, map, rough, metal } of s.meshes) {
-      m.geometry.setAttribute('color', color); m.castShadow = cast;
+    for (const { m, geo, color, cast, map, rough, metal } of s.meshes) {
+      m.geometry = geo; geo.setAttribute('color', color); m.castShadow = cast;
       Object.assign(m.material, { map, roughness: rough, metalness: metal });
     }
     if (this.treesGroup) this.treesGroup.visible = s.trees ?? true;

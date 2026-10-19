@@ -674,13 +674,15 @@ function tileMaterial(U, flat, low) {
   return m;
 }
 
-// ---- canopy, a viewer stopgap (start) -----------------------------------------------------------------------------
+// ---- canopy and steep banks, a viewer stopgap (start) --------------------------------------------------------------
 // Until the re-bake's crown colour (scripts/geo_community.py: a leaf palette, lone crowns without a shaded mound) is on
 // every tile, the crowns drawn in the full-detail tiles' albedo (where the cast height in n_*.webp B is over about 1.6 m,
 // on land) are lifted 40% toward a sunlit leaf green and floored at about 6% reflectance, so tree-filled ground reads as
 // leaves, not near-black felt; and on desktop a lone crown (little canopy 8 m round it: a 3D tree of the view stands on
-// it) loses most of its baked relief in the normals, so it is not also a shaded molehill under its tree. Mild on purpose;
-// to drop it, delete this block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
+// it) loses most of its baked relief in the normals, so it is not also a shaded molehill under its tree. And the lidar's
+// steepest metre-scale walls (a ditch's banks, a metre or two across, tilted 60-80 degrees from the 10 m ground) have
+// their tilt eased by about half: from the air their shaded bank read as a black, beaded crack. Mild on purpose; to drop
+// it, delete this block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
 // Inserted ahead of emissivemap_fragment: the albedo and the normal are final there and the lights have not read them.
 const CM_CANOPY = `
       #ifndef CM_NO_CANOPY_LIFT
@@ -702,10 +704,12 @@ const CM_CANOPY = `
           normal = normalize(mix(normal, nonPerturbedNormal, 0.7 * (1.0 - smoothstep(0.5, 2.5, cpN)) * cpEdge));
         }
         #endif
+        float cpSteep = (1.0 - smoothstep(0.3, 0.7, dot(normal, nonPerturbedNormal))) * cmLand * cmHiFade;
+        if (cpSteep > 0.0) normal = normalize(mix(normal, nonPerturbedNormal, 0.55 * cpSteep));
       }
       #endif
 `;
-// ---- canopy, a viewer stopgap (end) -------------------------------------------------------------------------------
+// ---- canopy and steep banks, a viewer stopgap (end) ---------------------------------------------------------------
 
 async function fetchBinary(url) {
   // a host that serves no binary types gets the same bytes as base64 text (scripts/build_artifact.py)
