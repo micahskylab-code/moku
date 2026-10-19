@@ -344,6 +344,10 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   // credits line and the full credits. The one-line notice under the title ("Independent concept · not by the
   // developer · views not shown or verified") is index.html's #concept; it stays on screen.
   function buildUI(pins, data, credits) {
+    // the card's display serif (index.html .cm-title, .cm-iname), with a system serif until it arrives or if it cannot;
+    // requested here, when the view is first built, so the walkthrough and the model view never contact Google
+    if (!document.getElementById('cm-font')) document.head.appendChild(Object.assign(document.createElement('link'),
+      { id: 'cm-font', rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500&display=swap' }));
     const root = document.createElement('div'); root.id = 'community'; root.hidden = true;
     const full = [...credits, data.attribution].filter(Boolean).map(s => (s[0].toUpperCase() + s.slice(1)).replace(/\bcolour\b/g, 'color'));
     const wxCredit = 'Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>)';
@@ -390,15 +394,22 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       if (byUser) autoFold = false;
       sheets(); fitCard();
     };
-    fold.addEventListener('click', e => { e.stopPropagation(); setFold(!card.classList.contains('cm-folded'), true); });
+    // wide screens: the open card and the open sun panel share the left side, so opening one folds or closes the other
+    const sky = document.getElementById('skypanel'), skyOpen = () => !!sky?.classList.contains('open');
+    fold.addEventListener('click', e => {
+      e.stopPropagation(); const f = !card.classList.contains('cm-folded'); setFold(f, true);
+      if (!f && !small.matches && skyOpen()) sky.querySelector('.sp-head')?.click();
+    });
+    sky?.querySelector('.sp-head')?.addEventListener('click', () => { if (!root.hidden && !small.matches && skyOpen()) setFold(true, true); });
     setFold(small.matches);
-    small.addEventListener?.('change', () => setFold(small.matches));
+    small.addEventListener?.('change', () => { if (small.matches) setFold(true); else { sheets(); fitCard(); } });   // a sheet starts folded; growing keeps the viewer's choice
     const how = root.querySelector('.cm-how'), howText = root.querySelector('.cm-howtext');
     how.addEventListener('click', e => {
       e.stopPropagation(); const o = howText.hidden; howText.hidden = !o; how.setAttribute('aria-expanded', String(o));
-      // a card too short for the full text scrolls it up under its title, the toggle at the top
-      if (o && card.scrollHeight > card.clientHeight) card.scrollTo?.({ top: how.offsetTop - (small.matches ? fold.offsetHeight : 0) - 6, behavior: 'smooth' });
+      // a card too short for the full text scrolls it up under its title, which stays (index.html), the toggle at the top
+      if (o && card.scrollHeight > card.clientHeight) card.scrollTo?.({ top: how.offsetTop - fold.offsetHeight - 6, behavior: 'smooth' });
     });
+    card.addEventListener('scroll', () => card.classList.toggle('cm-scrolled', card.scrollTop > 1), { passive: true });
     const setCred = o => {
       cred.hidden = !o; credBtn.setAttribute('aria-expanded', String(o));
       if (o && small.matches) setInfo(false);

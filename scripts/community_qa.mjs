@@ -42,7 +42,14 @@ await page.goto(`${base}?mode=community&${SKY}${extra ? '&' + extra : ''}`);
 await page.waitForFunction(() => window.__community && document.body.classList.contains('community-mode'), null, { timeout: 900000 });
 console.log(`loaded in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 check('community view opens from ?mode=community', true);
-check('disclaimer visible', /not an aerial photograph/.test(await page.textContent('#community .cm-fine')));
+// what stays on screen: the one-line notice under the title and the short credits (the card's note folds away with it)
+const shown = sel => page.evaluate(sel => { const e = document.querySelector(sel), r = e?.getBoundingClientRect();
+  return e && getComputedStyle(e).display !== 'none' && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight ? e.innerText.replace(/\s+/g, ' ') : ''; }, sel);
+const notice = await shown('#concept .cc-cm');
+check('notice visible', /independent concept/i.test(notice) && /not by the developer/i.test(notice) && /views not shown or verified/i.test(notice), notice);
+const credits = await shown('#community .cm-attr');
+check('short credits visible', /© OpenStreetMap contributors/.test(credits) && /Copernicus Sentinel/.test(credits) && /Meta\/WRI/.test(credits) && /CC BY 4\.0/.test(credits) && /Credits\s*$/.test(credits), credits);
+check('card note in the card', /not an aerial photograph/.test(await page.textContent('#community .cm-fine')));
 await frames(2);
 await page.screenshot({ path: join(out, '0-opening.png') });   // the opening frame, before the flight in (512 px tiles)
 const poses = {
