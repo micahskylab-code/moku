@@ -566,9 +566,16 @@ function tileMaterial(U, flat, low) {
       // open water past about 10 m hands over to the open sea's cobalt (the bake's depth stops at 25.5 m and its albedo's dark
       // streaks run on below that); over the box's last 300 m the whole sea takes it
       diffuseColor.rgb = mix(diffuseColor.rgb, uDeep, cmSea * max(smoothstep(10.0, 24.0, cmDepth), 1.0 - smoothstep(0.0, 300.0, cmEdgeM)));
-      // ponds: a lighter teal-grey margin where the water meets its bank, and the water itself a shade lighter
+      // ponds: the water a shade lighter, a narrow shelf of lighter, greener water along the bank (the pond mask blurred over
+      // about 4 m, four taps, on pond pixels only), and a teal-grey margin where the water meets its bank
       float cmPondEdge = smoothstep(0.08, 0.3, cmW.g) * (1.0 - smoothstep(0.5, 0.85, cmW.g));
       diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15 + vec3(0.004, 0.01, 0.012), cmPond);
+      if (cmPond > 0.0) {
+        vec2 cmO = vec2(2.0 / 512.0);
+        float cmGb = 0.25 * (textureLod(uW, vMapUv + cmO, 0.0).g + textureLod(uW, vMapUv - cmO, 0.0).g
+                           + textureLod(uW, vMapUv + vec2(cmO.x, -cmO.y), 0.0).g + textureLod(uW, vMapUv - vec2(cmO.x, -cmO.y), 0.0).g);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.06, 0.105, 0.09), 0.4 * cmPond * (1.0 - smoothstep(0.7, 1.0, cmGb)));
+      }
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.085, 0.12, 0.105), 0.55 * cmPondEdge);
       if (cmSea > 0.0) {
         // sets of swell rolling in over the reef and breaking in the 1-3 m band at its crest, in groups; swash at the shore
