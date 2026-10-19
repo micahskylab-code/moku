@@ -141,7 +141,7 @@
   body.community-mode #concept .cc-walk { display: none; }
   body.community-mode #concept .cc-cm { display: inline; }
   /* toolbar: one way back to the home, and the rest in a menu */
-  body.community-mode #buttons { top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); flex-wrap: nowrap; align-items: center; gap: 8px; }
+  body.community-mode #buttons { z-index: 8; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); flex-wrap: nowrap; align-items: center; gap: 8px; }   /* its menu opens over the panels */
   body.community-mode #buttons > :not(#community-btn):not(#more):not(#more-menu) { display: none; }
   body.community-mode #community-btn, body.community-mode #more { position: relative; box-sizing: border-box; height: 40px; }
   body.community-mode #community-btn { display: inline-flex; align-items: center; gap: 4px; padding: 0 16px 0 10px; font-size: 14px; font-weight: 600; color: #17202b; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.2); }
@@ -303,7 +303,7 @@
 </style>
 </head>
 <body>
-<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept"><span class="cc-walk">Independent concept visualization · not by the developer · not construction documentation · views not verified</span><span class="cc-cm">Independent&nbsp;concept · not&nbsp;by&nbsp;the&nbsp;developer · views&nbsp;not&nbsp;shown&nbsp;or&nbsp;verified</span></div></div>
+<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept"><span class="cc-walk">Independent concept visualization · not by the developer · not construction documentation · views not verified</span><span class="cc-cm">Independent&nbsp;concept&nbsp;· not&nbsp;by&nbsp;the&nbsp;developer&nbsp;· views&nbsp;not&nbsp;shown&nbsp;or&nbsp;verified</span></div></div>
 <div id="buttons"><button id="quality">Ultra</button><button id="time">Night sky</button><button id="model" hidden>Model</button><button id="community-btn">Community</button><button id="mode">Fly over</button><a href="tour.html">360° tour</a><button id="more" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="More views and settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/></svg></button>
   <div id="more-menu" role="menu" aria-label="More views and settings" hidden>
     <button type="button" role="menuitem" data-for="time"><b>Night sky</b><small>Stars over the home</small></button>
