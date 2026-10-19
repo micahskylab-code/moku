@@ -6,7 +6,7 @@ The Nā Hiku walkthrough is a three.js model of the Nā Hiku spec home (the broc
 - a walkable house on its site, with the neighbourhood and the real terrain;
 - the real sun, moon and stars for any date, with weather;
 - a model view for inspecting the home: orbit, cutaway and translucent displays, selectable rooms, and questions saved locally;
-- a community view: the home in Kukuiʻula from the air, over half-metre map tiles drawn from open data (lidar ground, the reef's real depth, satellite colour, mapped roads, golf, beaches and buildings), with pins for the places around;
+- a community view: the home in Kukuiʻula from the air, over half-metre tiles of a public-domain USDA aerial photo (NAIP, Feb 2022) laid on the lidar ground, with the reef's real depth, mapped buildings and trees from open data, with pins for the places around;
 - a Blender/Cycles pipeline for photoreal stills.
 
 **Status:** independent concept visualization. It is not construction or as-built documentation, not approved architecture, not produced or endorsed by the developer, and its views are not verified.
@@ -34,7 +34,7 @@ The Nā Hiku walkthrough is a three.js model of the Nā Hiku spec home (the broc
 | Plan data (source of truth) | `tools/gen_lot25.py` (+ `tools/details_ext.py`, `tools/details_int.py`) → `plans/lot25.json` |
 | Viewer entry, modes, camera, minimap | `index.html`, `src/main.js` |
 | Model view | `src/inspect.js`, with per-room wording in `plans/lot25-spaces.json`. The display modes, room picking, info cards and local questions are documented in `docs/model-view.md` |
-| Community view | `src/community.js` (tiles, shader, pins, camera), `geodata/community/` (tiles, heights, `places.json`) baked by `scripts/geo_community.py` from `scripts/geo_dem1m.py` and `scripts/geo_bathy.py` inputs. Sources, licences and what is drawn rather than measured: `docs/community-view.md`. Screens: `scripts/community_qa.mjs` |
+| Community view | `src/community.js` (tiles, shader, pins, camera), `geodata/community/` (tiles, heights, `places.json`) baked by `scripts/geo_community.py` from `scripts/geo_dem1m.py`, `scripts/geo_bathy.py` and `scripts/geo_naip.py` inputs. Sources, licences and what is drawn rather than measured: `docs/community-view.md`. Screens: `scripts/community_qa.mjs` |
 | House geometry | `src/house.js` (slabs, posts, beams), `src/walls.js`, `src/roof.js`, `src/furniture.js`, `src/details*.js` |
 | Site | `src/site.js` (terrain, retaining walls, palms), `src/plants.js`, `src/pool.js` |
 | Surroundings | `src/neighborhood.js` (the other 13 homes, mirrored and varied), `src/shell.js`, `src/realsite.js` (USGS lidar terrain, Sentinel-2 colour, OSM/Overture roads and buildings from `geodata/`) |

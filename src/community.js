@@ -2,7 +2,8 @@
 // real depth from the USACE topobathy survey, Sentinel-2 colour, OSM/Overture roads, paths, pools, golf
 // features and building footprints, Meta/WRI tree heights), drawn as half-metre map tiles baked by
 // scripts/geo_community.py, with the walkthrough's sky, buildings and trees over them, and pins for the
-// places around. A map rendering of open data, not an aerial photograph; not the developer's map.
+// places around. The land is a USDA aerial photo (NAIP, Feb 2022) over the lidar ground; the reef, the sea and the
+// modelled Nā Hiku row are drawn from open data. Not the developer's map.
 //
 // Tiles: 1 km squares in north-up UTM 4N (geodata/community/community.json). Each tile's ground is a
 // 10 m mesh from the 5 m height grid, easing into the modelled neighbourhood's ground at its edge, with:
@@ -516,12 +517,12 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
         <div id="cm-body">
           <div class="cm-chips"></div>
           <div class="cm-actions"><button class="cm-btn" type="button" data-a="home">Center on home</button><button class="cm-btn" type="button" data-a="overview">Whole community</button></div>
-          <p class="cm-fine">A map rendering of open public data, not an aerial photograph. Places and distances are approximate; views from the home are not shown or verified.</p>
+          <p class="cm-fine">Aerial photo: USDA NAIP 2022, over open map data; the Nā Hiku homes are modeled. Places and distances are approximate; views from the home are not shown or verified.</p>
           <button class="cm-how" type="button" aria-expanded="false" aria-controls="cm-howtext">How this was made<span class="cm-chev" aria-hidden="true"></span></button>
           <div class="cm-howtext" id="cm-howtext" hidden>
             <p>An independent concept visualization. It is not by the developer, it is not the developer’s map, nothing in it is copied from the developer’s maps, and it is not construction documentation.</p>
-            <p>The ground is drawn from open data, not photographed: its shape from USGS lidar, the reef from the 2013 USACE survey, its color from Copernicus Sentinel-2, the roads, paths, water, golf features and building footprints from OpenStreetMap (building heights are mostly estimated), and the trees from the Meta/WRI canopy map. Where Kukuiʻula’s fairways are not mapped, they are inferred from the satellite color.</p>
-            <p>The home is this walkthrough’s concept model of the brochure’s “Lot 25” spec design, placed to about ±25 m on a lot of assumed size; no lot lines are drawn. The other Nā Hiku homes are assumed copies of this design: in 2025–26 imagery their strip is graded, unbuilt land, and the homes, pools and lawns on it are modeled.</p>
+            <p>The land is a USDA aerial photo (NAIP, flown in February 2022, public domain), color-matched to Copernicus Sentinel-2, which also gives its color under thin cloud and at the edges. It lies over the ground’s shape from USGS lidar. The photo predates the 2025–26 grading on the Nā Hiku strip and some newer buildings. The reef and the sea are drawn from the 2013 USACE survey; the roads, paths, water and building footprints come from OpenStreetMap (building heights are mostly estimated), and the 3D trees from the Meta/WRI canopy map.</p>
+            <p>The home is this walkthrough’s concept model of the brochure’s “Lot 25” spec design, placed to about ±25 m on a lot of assumed size; no lot lines are drawn. The other Nā Hiku homes are assumed copies of this design: in 2025–26 imagery their strip is graded, unbuilt land, and the homes, pools and lawn on it are modeled (the lawn is drawn, tinted like the photo’s turf).</p>
           </div>
         </div>
       </div>
@@ -532,7 +533,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
         <div class="cm-ikick">Credits</div>
         <ul>${full.map(s => `<li>${linkify(s)}</li>`).join('')}<li class="cm-wx" hidden>${wxCredit}</li></ul>
       </div>
-      <div class="cm-attr"><span class="cm-attr-short"><span class="cm-w">Map of open data, not a photo · </span>© ${linkify('OpenStreetMap contributors')}<span class="cm-w">, Microsoft, TomTom (${linkify('ODbL')}) via Overture</span> · <span class="cm-w">Contains modified </span>Copernicus Sentinel<span class="cm-w"> data 2023–26 · USGS · USACE/NOAA</span> · Meta/WRI <span class="cm-w">canopy </span>${linkify('CC BY 4.0')}</span><span class="cm-wx cm-w" hidden> · ${wxCredit}</span><button class="cm-credits" type="button" aria-expanded="false" aria-controls="cm-cred">Credits</button></div>`;
+      <div class="cm-attr"><span class="cm-attr-short"><span class="cm-w">Aerial photo</span><span class="cm-p">Photo</span>: USDA NAIP 2022 · © ${linkify('OpenStreetMap contributors')}<span class="cm-w">, Microsoft, TomTom (${linkify('ODbL')}) via Overture · Contains modified Copernicus Sentinel data 2023–26 · USGS · USACE/NOAA</span> · Meta/WRI <span class="cm-w">canopy </span>${linkify('CC BY 4.0')}</span><span class="cm-wx cm-w" hidden> · ${wxCredit}</span><button class="cm-credits" type="button" aria-expanded="false" aria-controls="cm-cred">Credits</button></div>`;
     document.body.appendChild(root);
     const card = root.querySelector('.cm-card'), chips = root.querySelector('.cm-chips'), layer = root.querySelector('.cm-pins'), info = root.querySelector('.cm-info');
     const attr = root.querySelector('.cm-attr'), cred = root.querySelector('.cm-cred'), credBtn = root.querySelector('.cm-credits');
@@ -752,7 +753,7 @@ const CM_COVER = `
           lcDry += wt * float(code & 15) / 15.0;
         }
         vec2 lp = vCmWorld.xz, lr = mat2(0.8, -0.6, 0.6, 0.8) * lp;
-        float lfade = cmLand * (1.0 - smoothstep(0.55 * CM_COVER_FAR, CM_COVER_FAR, cmDist));
+        float lfade = cmLand * (1.0 - 0.6 * cmPh) * (1.0 - smoothstep(0.55 * CM_COVER_FAR, CM_COVER_FAR, cmDist));
         float aF = 1.0 - smoothstep(0.55, 1.2, cmGroundPx), aM = 1.0 - smoothstep(1.6, 3.4, cmGroundPx), aC = 1.0 - smoothstep(4.0, 9.0, cmGroundPx);
         float f1 = (cmNoise(lr / 2.2 + 11.3) - 0.5) * aF, f3 = (cmNoise(lp / 17.0 + 9.1) - 0.5) * aC;
         float f2 = (cmNoise(lr / 6.5 + 3.7) * 0.6 + cmNoise(lp / 4.4 + 7.9) * 0.4 - 0.5) * aM;   // two grids: no blocks
@@ -769,7 +770,7 @@ const CM_COVER = `
         lk += lcB.z * vec3(0.10 * f1);                                                      // sand: a faint grain
         diffuseColor.rgb *= max(vec3(0.0), 1.0 + lk * lfade);
         #ifndef CM_LOW
-          float lb = (lcA.z * 3.4 + lcA.w * 2.6 + lcB.y * 2.0 + lcA.y * 0.6 + lcB.x * 0.6) * lfade * aM;
+          float lb = (lcA.z * 3.4 + lcA.w * 2.6 + lcB.y * 2.0 + lcA.y * 0.6 + lcB.x * 0.6) * lfade * aM * (1.0 - 0.5 * cmPh);
           if (lb > 0.01) {
             float h0 = cmNoise(lp / 6.5 + 5.3), hx = cmNoise((lp + vec2(1.5, 0.0)) / 6.5 + 5.3), hz = cmNoise((lp + vec2(0.0, 1.5)) / 6.5 + 5.3);
             vec2 lg = vec2(hx - h0, hz - h0) / 1.5 * lb;
@@ -851,9 +852,12 @@ function tileMaterial(U, flat, low) {
       }
       // land: a little lighter from the air, and a fine mottle close up so a 0.5 m texel never reads as paint
       float cmLand = 1.0 - cmWater;
+      // the aerial photo's weight (the bake writes 7 x it in G on land, under the ponds' threshold): the photo holds the
+      // flight's own sun and shadows, so the live sun's relief, traced shadows and grain are eased there (no doubled shade)
+      float cmPh = clamp(cmW.g * 255.0 / 7.0, 0.0, 1.0) * (1.0 - smoothstep(7.5, 12.0, cmW.g * 255.0)) * cmLand;
       diffuseColor.rgb *= mix(1.0, 1.12, cmLand);
       float cmDn = cmNoise(vCmWorld.xz / 2.3) * 0.4 + cmNoise(vCmWorld.xz / 7.0 + 1.7) * 0.35 + cmNoise(vCmWorld.xz / 23.0 + 5.1) * 0.25;
-      diffuseColor.rgb *= mix(1.0, 0.82 + 0.36 * cmDn, cmLand * (1.0 - smoothstep(500.0, 4000.0, cmDist)));
+      diffuseColor.rgb *= mix(1.0, 0.82 + 0.36 * cmDn, cmLand * (1.0 - 0.75 * cmPh) * (1.0 - smoothstep(500.0, 4000.0, cmDist)));
       // the modelled lot: a soft gold tint with a 14 ft feather (houses and trees stand over it)
       if (uLotH.x > 0.0) {
         vec2 lq = abs(vCmWorld.xz - uLotC) - uLotH;
@@ -868,7 +872,7 @@ function tileMaterial(U, flat, low) {
         vec2 ne = (tn.xy * 255.0 - 128.0) / 127.0;
         float up = sqrt(max(0.0, 1.0 - dot(ne, ne)));
         vec3 wn = normalize(vec3(ne.x * uEast.x + ne.y * uNorth.x, up, ne.x * uEast.y + ne.y * uNorth.y));
-        normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), (1.0 - cmWater) * cmHiFade));
+        normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), (1.0 - cmWater) * cmHiFade * (1.0 - 0.7 * cmPh)));
       }
       cmWaterG = cmWater;
       if (cmWater > 0.0) {
@@ -913,12 +917,12 @@ function tileMaterial(U, flat, low) {
           #endif
           if (h0 + t * tanA > 26.0) break;
         }
-        float k = 1.0 - 0.6 * occ * uShadowK * cmHiFade * (1.0 - smoothstep(0.45 * CM_FAR, CM_FAR, cmDist)) * (1.0 - cmWater);
+        float k = 1.0 - 0.6 * occ * (1.0 - 0.75 * cmPh) * uShadowK * cmHiFade * (1.0 - smoothstep(0.45 * CM_FAR, CM_FAR, cmDist)) * (1.0 - cmWater);
         reflectedLight.directDiffuse *= k; reflectedLight.directSpecular *= k;
       }`);
     sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_COVER + '\n#include <emissivemap_fragment>');   // land cover close up
   };
-  m.customProgramCacheKey = () => 'community-tile-4';
+  m.customProgramCacheKey = () => 'community-tile-5';
   return m;
 }
 
@@ -936,7 +940,7 @@ const CM_RELIEF = `
       if (uHasN > 0.5 && cmLand > 0.01 && cmHiFade > 0.0) {
         float cpCast = texture2D(uN, vMapUv).b * 25.5;                      // m
         // the crowns' baked relief, halved
-        float cpEdge = smoothstep(0.3, 1.4, cpCast) * cmLand * cmHiFade;
+        float cpEdge = smoothstep(0.3, 1.4, cpCast) * cmLand * cmHiFade * (1.0 - cmPh);   // (on the photo the lidar's relief is eased already)
         if (cpEdge > 0.0) normal = normalize(mix(normal, nonPerturbedNormal, 0.5 * cpEdge));
         // steep banks: tilted 40-70 degrees or more from the vertical at the lidar's metre (the 10 m ground stays as it is)
         float cpSteep = (1.0 - smoothstep(0.35, 0.75, (vec4(normal, 0.0) * viewMatrix).y)) * cmLand * cmHiFade;

@@ -235,6 +235,7 @@
   /* the short credits line, with the full list a tap away */
   #community .cm-attr { position: fixed; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 6; max-width: calc(100vw - 440px); text-align: right;
     font-size: 10.5px; line-height: 1.4; color: rgba(255,255,255,.88); text-shadow: 0 1px 2px rgba(0,0,0,.75); }
+  #community .cm-attr .cm-p { display: none; }   /* the phone's own short words (shown under 600 px) */
   #community .cm-attr a { color: inherit; text-decoration: underline; text-decoration-thickness: from-font; text-underline-offset: 1.5px; }
   #community .cm-credits { position: relative; margin-left: 6px; padding: 2px 9px; border: 0; border-radius: 999px; font: inherit; font-weight: 650; color: #17202b; background: rgba(255,255,255,.88); text-shadow: none; cursor: pointer; }
   #community .cm-credits::after { content: ''; position: absolute; inset: -12px -6px; }
@@ -289,6 +290,7 @@
     body.community-mode::after { height: calc(96px + env(safe-area-inset-bottom, 0px)); }
     #community.cm-info-open .cm-card { display: none; }
     #community .cm-attr .cm-w { display: none; }
+    #community .cm-attr .cm-p { display: inline; }
     #community .cm-attr-short { white-space: nowrap; }
   }
   @media (max-width: 400px) { #community .cm-attr { font-size: 9px; } #community .cm-credits { margin-left: 3px; padding: 1px 6px; } }

@@ -9,10 +9,10 @@ Files
   far_w.png near_w.png water masks (roughness / ripples in src/realsite.js)
   features.json        roads (near square), building footprints, trees (world feet)
   community/           the community view's map tiles (src/community.js, docs/community-view.md), a concept
-                       visualization drawn from open data, not an aerial photograph:
-    a_c_r.webp s_c_r.webp   drawn albedo, 1 km tiles in UTM 4N (2048 / 512 px)
+                       visualization: a USDA NAIP aerial photo (Feb 2022) on the land, the rest drawn from open data:
+    a_c_r.webp s_c_r.webp   albedo (the matched photo on land), 1 km tiles in UTM 4N (2048 / 512 px)
     n_c_r.webp              lidar ground and crown normals, cast height (lossless)
-    w_c_r.png               sea distance (1 step per m, +-127 m), pond water, sea depth
+    w_c_r.png               sea distance (1 step per m, +-127 m), pond water / the photo's weight, sea depth / land cover
     h.bin                   Uint16 ground heights, 5 m, world feet
     community.json          box, tiles, transform, encodings, attribution (one line per source)
     places.json             place pins: names and positions, written by hand from OSM and Overture records
@@ -34,12 +34,20 @@ Sources and licences
               picked from it.
 
 Community view (geodata/community/), in addition to the sources above
+  Aerial photo USDA Farm Service Agency, National Agriculture Imagery Program (NAIP) 2021-2023 Hawai'i, 4-band,
+              0.6 m; the box was flown 11 Feb 2022 (quarter quads m_2115904_se, m_2115905_sw, m_2115913_nw).
+              Via NOAA Digital Coast, dataset 9668 (https://www.fisheries.noaa.gov/inport/item/69406;
+              https://coastalimagery.blob.core.windows.net/digitalcoast/HI_NAIP_2021_9668/). "Use Constraints: None.
+              The USDA-FSA Aerial Photography Field office asks to be credited in derived products." Public domain.
+              Credited as "Aerial photo: USDA NAIP 2022". Modified: reprojected to EPSG:32604 at 0.488 m,
+              colour-matched to the Sentinel-2 mosaic, its broad colour taken from it under thin cloud; drawn
+              over on the modelled row of lots and in the ponds and sea.
   Elevation   USGS 3DEP 1 m DEM, HI_FEMAR9Kauai_2019_D19, over the box E 447500-453500, N 2418000-2423000
               (UTM 4N), read from s3://prd-tnm. Public domain.
   Seafloor    USACE NCMP 2013 Kaua'i topobathy lidar, bare earth 1 m grid (NOAA Digital Coast dataset 9335,
               s3://noaa-nos-coastal-lidar-pds). Public domain. Sea colour, depth and surf; shore voids.
-  Imagery     the Sentinel-2 mosaic above (land cover and tint; open-sea colour with the near-infrared glint
-              offset taken off). "Contains modified Copernicus Sentinel data 2023-2026."
+  Imagery     the Sentinel-2 mosaic above (land cover and tint; the photo's colour match; open-sea colour with the
+              near-infrared glint offset taken off). "Contains modified Copernicus Sentinel data 2023-2026."
   Trees       the canopy height tile above (CC BY 4.0, Meta and WRI, Tolan et al. 2024), modified: resampled
               and drawn as crowns, shading and shadows; also used to leave overgrown mapped ponds as land.
   Map data    via Overture Maps Foundation release 2026-09-23.0, all ODbL 1.0: OpenStreetMap contributors
@@ -69,6 +77,7 @@ Rebuild (python3, numpy scipy pillow rasterio pyproj shapely pyarrow; network to
   python3 scripts/geo_dem1m.py                     # USGS 1 m DEM over the box -> dem_comm_1m.npy
   python3 scripts/geo_bathy.py                     # USACE 2013 topobathy -> bathy_comm_1m.npy
   python3 scripts/geo_overture.py <cache> base/land -159.515 21.86 -159.445 21.915   # beaches, bare rock
+  python3 scripts/geo_naip.py                      # NAIP 2022 photo over the box -> naip_comm.npy (tiles in <cache>/../naip)
   GEO_CHM=<dir>/022211101.tif python3 scripts/geo_community.py   # all 30 tiles (~3 min each), h.bin, community.json
   python3 scripts/geo_community.py --only "2,2;1,2"              # some tiles again
   (<cache> defaults to ../geo-test/cache next to the repo; set GEO_CACHE to move it)

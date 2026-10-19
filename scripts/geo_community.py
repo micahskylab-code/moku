@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Bake the Kukui'ula community map: half-metre ground tiles in north-up UTM, for the community view
-(src/community.js). A map rendering of open data, not an aerial photograph.
+(src/community.js). Land: a USDA NAIP aerial photo; the reef, the sea and the modelled row are drawn.
 
-The ground is drawn, not photographed: there is no open sub-metre aerial imagery of Kukui'ula that this
-pipeline can use (docs/community-view.md). Every pixel is placed by data:
+The land's colour is the USDA NAIP aerial photo flown on 11 Feb 2022 (public domain; scripts/geo_naip.py), matched
+to the Sentinel-2 median mosaic at 10 m (Inputs._photo: a curve per band, then a smooth gain field that takes out flight
+lines and falloff), with its broad colour taken from the satellite under thin cloud. The photo holds the flight's
+own sun and shadows, so the baked occlusion is eased on its pixels and w_*.png G tells the view to ease its live
+shading there too. Under the photo the ground is still drawn from data, and shows wherever the photo does not:
+past its edge, on the modelled row of lots (one lawn, tinted from the photo's turf), in the ponds drawn as water;
+the drawing also decides the land-cover class the view's close-range grain reads:
   - colour, from the Sentinel-2 L2A median mosaic (10 m): it decides grass vs soil vs reef, and the hue;
   - shape, from the USGS 3DEP 1 m lidar DEM (2019-21) and the Meta/WRI 1 m canopy height map (2024):
     shorelines, slopes, every tree crown;
@@ -17,7 +22,8 @@ inferred from the satellite colour (tree-free mown grass, lighter than the cours
 bunkers are drawn wherever they are mapped.
 
 Inputs (cache): dem_comm_1m.npy (scripts/geo_dem1m.py), bathy_comm_1m.npy (scripts/geo_bathy.py),
-dem_near_2m.npy (scripts/geo_dem.py), s2_aoi.npz, ov_segment.json, ov_land_use.json, ov_water.json, ov_land.json;
+dem_near_2m.npy (scripts/geo_dem.py), s2_aoi.npz, ov_segment.json, ov_land_use.json, ov_water.json, ov_land.json,
+naip_comm.npy (scripts/geo_naip.py; COMM_NO_PHOTO=1 bakes without it);
 geodata/features.json (buildings with eave height and roof colour); the canopy height tile.
 Outputs (geodata/community/):
   a_<c>_<r>.webp   albedo, 2048 px over 1 km (0.49 m per texel), sRGB
@@ -25,7 +31,8 @@ Outputs (geodata/community/):
   n_<c>_<r>.webp   1024 px, lossless: R, G = surface normal east / north (lidar ground + canopy), B = height of
                    what casts shadow (canopy, buildings), 0.1 m per step
   w_<c>_<r>.png    512 px: R = signed distance to the sea's edge (128 + 1 per m, sea positive, +-127 m), G = pond
-                   water (land) or the harbour's calm (sea, CALM_G per unit), B = sea depth (10 per m), or on land more
+                   water (land), the photo's weight on other land (PH_G per unit) or the harbour's calm (sea, CALM_G
+                   per unit), B = sea depth (10 per m), or on land more
                    than LC_SHORE_M from the sea: 16 x land-cover class (LC_NAMES) + dryness 0-15
   h.bin            Uint16 ground heights over the whole box, 5 m, world feet (as geodata/realsite.json)
   community.json   box, tiles, transforms, attribution
@@ -40,13 +47,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from geo_common import *
 from geo_dem1m import COMM_BOX
 
-OUT = os.path.join(ROOT, 'geodata', 'community')
+OUT = os.environ.get('COMM_OUT') or os.path.join(ROOT, 'geodata', 'community')
 C = cache_dir()
 TILE = 1000.0                     # m
 TEX = 2048                        # albedo texels per tile
 MARGIN = 200                      # texels of context around a tile (98 m: blurs up to 25 m sigma, normals, AO)
 PX = TILE / TEX
 HRES = 5.0                        # m, mesh height grid
+PH_SAT, PH_GAIN = 1.08, 1.18      # the aerial photo's grade (after matching it to the Sentinel-2 mosaic)
+PH_AO = 0.75                      # how much of the baked occlusion the photo's pixels lose
+PH_G = 7                          # w_*.png G on land: PH_G x the photo's weight
 SDF_PER_M = 1                     # w_*.png R: 128 + this per metre from the sea's edge (+-127 m: surf sets out to the reef edge)
 
 
@@ -121,6 +131,101 @@ class Inputs:
         self._chm()
         self._pond_check()
         self._golf_global()
+        self._photo()
+
+    # ------------------------------------------------------------ the aerial photo (USDA NAIP, 11 Feb 2022)
+    def _photo(self):
+        """The NAIP photo (scripts/geo_naip.py: 8 bit R, G, B, NIR on the bake's own texel grid) as linear albedo. Its
+        8 bit values are not reflectance, and its brightness drifts between flight lines and toward the tiles' edges, so
+        it is matched to the Sentinel-2 median mosaic (the colour the box's edges hand over to, and the rest of the
+        view's ground) at 10 m: per band a curve g * (DN / 255) ** gamma fitted over stable land, then a smooth gain
+        field (about 250 m) that takes out what is left: flight lines, falloff. Places that changed since (graded
+        land, new buildings, fields) differ too much to count and are left out of both. Cloud (much brighter and
+        greyer than the satellite sees the place) and its shadow (much darker) are masked; there the drawn ground
+        shows, feathered over about 20 m."""
+        self.photo = None
+        p = f'{C}/naip_comm.npy'
+        if os.environ.get('COMM_NO_PHOTO') or not os.path.exists(p):
+            print('  no aerial photo: the ground is drawn', flush=True); return
+        q = np.load(p, mmap_mode='r'); m = json.load(open(f'{C}/naip_comm.json'))
+        assert abs(m['res'] - PX) < 1e-9 and m['margin_px'] == MARGIN and list(m['box']) == list(self.box)
+        self.photo, self.photo_meta = q, m
+        # 10 m cells: every second texel, 10 x 10 of them (9.77 m)
+        s = np.asarray(q[::2, ::2]); K = 10
+        nr, nc = s.shape[0] // K, s.shape[1] // K
+        s = s[:nr * K, :nc * K]
+        valid = (s[..., :3].max(-1) > 0).reshape(nr, K, nc, K).mean((1, 3)) > 0.999
+        gE0, gN1 = m['grid'][0], m['grid'][3]; cm = 2 * K * PX
+        Ec = gE0 + (np.arange(nc) + 0.5) * cm; Nc = gN1 - (np.arange(nr) + 0.5) * cm
+        EE, NN = np.meshgrid(Ec, Nc)
+        rf = self.s2_at(EE, NN)
+        sdf = self.grid_at(self.sdf2, 2.0, EE, NN, cval=-50.0)
+        ndvi_s = (rf[..., 3] - rf[..., 0]) / (rf[..., 3] + rf[..., 0] + 1e-6)
+        land = (sdf < -25) & valid & (ndvi_s > 0.05) & (rf[..., :3].min(-1) > 0.01)
+        cell = lambda a: a.reshape(nr, K, nc, K).mean((1, 3))
+        # per band: the gamma whose cell means fit the satellite's best (median absolute log residual), then its gain
+        fit = []
+        for b in range(4):
+            dn = s[..., b]; best = None
+            for gam in np.arange(1.0, 3.01, 0.1):
+                P = cell(((np.arange(256) / 255.0) ** gam).astype(np.float32)[dn])
+                r = np.log(np.maximum(rf[..., b], 1e-3)) - np.log(np.maximum(P, 1e-4))
+                ok = land & (P > 1e-3)
+                mu = np.median(r[ok]); mad = np.median(np.abs(r[ok] - mu))
+                if best is None or mad < best[0]: best = (mad, gam, mu, P)
+            mad, gam, mu, P = best
+            fit.append((float(gam), float(np.exp(mu)), P))
+            print(f'  photo band {"RGBN"[b]}: gamma {gam:.1f}, gain {np.exp(mu):.3f}, spread {mad:.3f}', flush=True)
+        self.photo_fit = [(g, k) for g, k, _ in fit]
+        P = np.stack([k * P for g, k, P in fit], -1)                          # the photo, globally matched, per cell
+        # cloud: much brighter and greyer than the satellite's median there; its shadow much darker; on land
+        lp, ls = lum(P[..., :3]), lum(rf[..., :3])
+        grey = (P[..., :3].max(-1) - P[..., :3].min(-1)) / np.maximum(P[..., :3].max(-1), 1e-4) < 0.35
+        # (the box's clouds are thin wisps: brighter, greyer and much bluer than the place; a cloud's shadow is darker)
+        cloud = valid & (sdf < 0) & (lp > 1.3 * ls) & (P[..., 2] > 1.5 * rf[..., 2]) & (P[..., 2] > 0.035) & (grey | (lp > 2 * ls))
+        cloud = ndi.binary_opening(cloud, iterations=1)
+        cshad = valid & (sdf < 0) & (lp < 0.45 * ls) & ndi.binary_dilation(cloud, iterations=60)   # within 600 m of a cloud
+        bad = ndi.binary_dilation(cloud | ndi.binary_opening(cshad, iterations=1), iterations=3)
+        print(f'  photo: cloud {cloud.sum() * cm * cm / 1e4:.1f} ha, its shadow {cshad.sum() * cm * cm / 1e4:.1f} ha', flush=True)
+        # the smooth gain field over what has not changed (log residual under 0.35 in every visible band)
+        res = np.log(np.maximum(rf, 1e-3)) - np.log(np.maximum(P, 1e-4))
+        stable = land & ~bad & (np.abs(res[..., :3] - np.median(res[..., :3][land], 0)).max(-1) < 0.35)
+        w = stable.astype(np.float32); sig = 250.0 / cm
+        wb = ndi.gaussian_filter(w, sig)
+        gain = np.stack([np.exp(np.clip(ndi.gaussian_filter(np.where(stable, res[..., b], 0), sig) / np.maximum(wb, 1e-3), -0.4, 0.4))
+                         for b in range(4)], -1)
+        gain[wb < 1e-3] = 1.0
+        print(f'  photo: {stable.mean():.0%} of the cells stable; gain field {np.percentile(gain[..., :3], 2):.2f}-{np.percentile(gain[..., :3], 98):.2f}', flush=True)
+        # the photo's colour is greyer than the satellite's: the saturation that matches them (the ratio of their RMS
+        # chroma, rgb / luminance - 1, over the stable cells)
+        Pm = P[..., :3] * gain[..., :3]
+        cp = (Pm / np.maximum(lum(Pm), 1e-4)[..., None] - 1)[stable]; cs = (rf[..., :3] / np.maximum(ls, 1e-4)[..., None] - 1)[stable]
+        self.photo_sat = float(np.clip(np.sqrt((cs * cs).sum() / max((cp * cp).sum(), 1e-6)), 1.0, 2.0))
+        print(f'  photo: saturation x{self.photo_sat:.2f} to match', flush=True)
+        self.photo_gain = gain.astype(np.float32); self.photo_cm = cm
+        self.photo_ok = np.where(valid, 1.0, 0.0).astype(np.float32)
+        self.photo_cloud = np.where(bad, 1.0, 0.0).astype(np.float32)
+        self.photo_lut = [((np.arange(256) / 255.0) ** g * k).astype(np.float32) for g, k in self.photo_fit]
+        if os.environ.get('COMM_DEBUG'):
+            Image.fromarray((np.stack([bad, stable, valid], -1) * 255).astype(np.uint8)).save(f'{OUT}/../dbg_photo_masks.png')
+            Image.fromarray((lin2srgb(P[..., :3] * gain[..., :3]) * 255).astype(np.uint8)).save(f'{OUT}/../dbg_photo_matched.png')
+            Image.fromarray((lin2srgb(rf[..., :3]) * 255).astype(np.uint8)).save(f'{OUT}/../dbg_photo_s2.png')
+
+    def photo_at(self, r0, c0, n):
+        """The matched photo (linear R, G, B, NIR) and its weight (0 without data, under cloud or its shadow) over an
+        n x n window of the texel grid starting at texel (r0, c0) of the photo grid; and the cloud's weight there (the
+        bake keeps the photo's detail under it but takes its broad colour from the satellite)."""
+        q = np.asarray(self.photo[r0:r0 + n, c0:c0 + n])
+        ph = np.stack([self.photo_lut[b][q[..., b]] for b in range(4)], -1)
+        rr, cc = np.meshgrid((np.arange(r0, r0 + n) + 0.5) * PX / self.photo_cm - 0.5,
+                             (np.arange(c0, c0 + n) + 0.5) * PX / self.photo_cm - 0.5, indexing='ij')
+        for b in range(4):
+            ph[..., b] *= map_coordinates(self.photo_gain[..., b], [rr, cc], order=1, mode='nearest')
+        ph[..., :3] = sat(ph[..., :3], self.photo_sat)
+        ok = map_coordinates(ndi.gaussian_filter(self.photo_ok, 1.0), [rr, cc], order=1, mode='nearest')
+        ok = np.clip((ok - 0.5) * 2.5 + 0.5, 0, 1) * (q[..., :3].max(-1) > 0)
+        cw = np.clip(map_coordinates(ndi.gaussian_filter(self.photo_cloud, 1.5), [rr, cc], order=1, mode='nearest') * 1.5, 0, 1)
+        return ph, ok.astype(np.float32), cw.astype(np.float32)
 
     # sea: no lidar ground, or below 0.3 m and spectrally water, connected to the open sea
     def _sea(self):
@@ -755,6 +860,7 @@ def bake_tile(I, col, row, out):
     # the modelled lots: one lawn (the homes, drives and pools are 3D in the view), tinted like the grass around it,
     # its mowing stripes fading out toward the feathered edge
     kst = np.sign(np.sin((Eo * 0.7 + No * 0.7) * np.pi / 4.0)) * keep ** 2
+    if I.photo is not None: kst = kst * 0                               # among the photo's lawns stripes outline the row
     a = over(a, follow(lawn_c, pasture, 0.3) * (0.94 + 0.10 * g_fine) * (1 + 0.04 * kst)[..., None], keep * land, LC_TURF)
     # roads, drives, cart paths and paths: a soft verge (worn grass and dust) instead of a kerb line, a light weathered
     # asphalt (patched, the main roads a little darker and fresher), pale concrete drives, narrow cart paths shaded
@@ -790,6 +896,30 @@ def bake_tile(I, col, row, out):
     tree_c[..., 0] *= (0.9 + 0.25 * vnoise(Eo, No, 11, 93))               # some crowns warmer (monkeypod, kiawe), some cooler
     a = over(a, tree_c, trees, LC_CANOPY)
     del tree_c, crown, sand_c, rock_c, asphalt, fair_c, straw
+    # the aerial photo (NAIP, 11 Feb 2022) over all of that, wherever it has data: the drawn ground stays past the
+    # photo's edge, on the modelled row of lots (its lawn) and in the ponds drawn as water. The
+    # drawing still decides the land-cover class (w_*.png B), and the normals, shadows and sea are as before.
+    pw = np.zeros((n, n), np.float32)
+    if I.photo is not None:
+        ph, pok, cw = I.photo_at(row * TEX, col * TEX, n)
+        php = ph[..., :3]
+        if cw.max() > 0.01:     # under thin cloud: the photo's detail (contrast restored) on the satellite's colour
+            low = np.stack([blur(php[..., k], 8 / PX) for k in range(3)], -1)
+            php = php * (1 - cw[..., None]) + rf_s[..., :3] * np.clip(php / np.maximum(low, 1e-4), 0.3, 3) ** 1.5 * cw[..., None]
+            del low
+        # the modelled row keeps its drawn lawn, tinted like the photo's own mown grass around it (turf, no trees)
+        if keep.max() > 0:
+            grass = (np.clip(fairway + first_cut + rough + lawn, 0, 1) * (chm < 1.0) * (keep < 0.05)).astype(np.float32) * pok
+            gw = blur(grass, 60 / PX)
+            if gw.max() > 1e-3:
+                gc = np.stack([blur(php[..., k] * grass, 60 / PX) for k in range(3)], -1) / np.maximum(gw, 1e-4)[..., None]
+                tone = np.clip(gc / np.maximum(follow(lawn_c, pasture, 0.3), 1e-4), 0.5, 2.0)
+                # and the photo's own fine grain at half its contrast, so the lawn's edge does not read as paint
+                pl = lum(php); grain = np.clip(pl / np.maximum(blur(pl, 1.5 / PX), 1e-4), 0.7, 1.4) ** 0.5
+                a = over(a, a * tone * grain[..., None], keep * land * (gw > 1e-3))
+        pw = pok * (1 - keep)
+        a = over(a, php, pw)
+        del ph, pok, php
     a = over(a, np.array([0.028, 0.062, 0.058], np.float32) * (0.9 + 0.2 * g_big), ponds * land)
 
     # sea: coloured by its real depth (USACE 2013 topobathy). Light crosses the water to the bottom and back:
@@ -815,7 +945,9 @@ def bake_tile(I, col, row, out):
     foam = np.maximum(foam, np.clip(1 - sdf / 4, 0, 1) * (sdf > -0.5) * np.clip(fbm(Eo, No, 2.0, 3, 111) * 1.8 - 0.45, 0, 1) * (1 - 0.7 * calm))
     sea_c = sea_c * (1 - 0.85 * foam[..., None]) + 0.7 * 0.85 * foam[..., None]
     # land grade: the 10 m median mosaic is flatter than any one clear morning
-    a = over(a, sat(a, 1.15) * 1.05, land)
+    # (the photo is one clear morning already: it takes the satellite's 1.18 calibration and a little colour)
+    a = over(a, sat(a, 1.15) * 1.05, land * (1 - pw))
+    a = over(a, sat(a, PH_SAT) * PH_GAIN, land * pw)
     a = over(a, sea_c, sea)
     del sea_c
 
@@ -839,11 +971,12 @@ def bake_tile(I, col, row, out):
         d = blur(hs, r / PX) - hs
         ao *= np.clip(1 - k * np.clip(d, 0, None), 0.45, 1) ** (1 - 0.6 * woody if r > 5 else 1)
     ao = np.where(bmask > 0.5, 1, ao)                                     # roofs are 3D, lit live
+    ao = ao ** (1 - PH_AO * pw)                                           # the photo holds its own shade
     a = a * (land * ao + (1 - land))[..., None]
     # and nothing woody ends darker than about 0.045 in green (a smooth floor that follows the leaf texture)
     floor = 0.045 * (0.86 + 0.28 * leaf)
     lift = np.minimum((1 + (floor / np.maximum(a[..., 1], 1e-4)) ** 4) ** 0.25, 3.0)
-    a = a * (1 + (lift - 1) * woody)[..., None]
+    a = a * (1 + (lift - 1) * woody * (1 - 0.5 * pw))[..., None]
     del leaf, floor, lift
 
     # ---- the outer 150 m of the box hands over to the plain satellite colour (the view's other ground); over the sea
@@ -881,7 +1014,9 @@ def bake_tile(I, col, row, out):
         .save(f'{out}/n_{tag}.webp', lossless=True, quality=100, method=6)
     # water data: R sea distance, G pond water (land) or the harbour's calm (sea), B sea depth; then, on land well away
     # from the sea and the ponds, B carries the land cover (LANDCOVER) for the view's close-range ground detail
-    wimg = np.stack([np.clip(128 + SDF_PER_M * sdf, 0, 255), np.maximum(ponds * 255, calm * CALM_G * sea),
+    # G on land off the ponds: 7 x the photo's weight (0-7, under the ponds' threshold): the view eases its live
+    # shading there (the photo holds the flight's own sun and shadows)
+    wimg = np.stack([np.clip(128 + SDF_PER_M * sdf, 0, 255), np.maximum.reduce([ponds * 255, calm * CALM_G * sea, np.round(PH_G * pw * land * (1 - ponds))]),
                      np.clip(depth * 10, 0, 255) * sea], -1)[sl]
     if os.environ.get('COMM_DEBUG'):
         dbg = np.stack([ponds, courses, manicured], -1)[sl]
@@ -940,8 +1075,8 @@ def main():
     I = Inputs()
     cols = int((I.box[2] - I.box[0]) / TILE); rows = int((I.box[3] - I.box[1]) / TILE)
     todo = [(c, r) for r in range(rows) for c in range(cols)]
-    if args.only:
-        todo = [tuple(int(v) for v in t.split(',')) for t in args.only.split(';')]
+    if args.only:                                         # 'none': only h.bin and community.json
+        todo = [] if args.only == 'none' else [tuple(int(v) for v in t.split(',')) for t in args.only.split(';')]
     for c, r in todo:
         print(f'tile {c},{r}', flush=True)
         bake_tile(I, c, r, OUT)
@@ -950,7 +1085,7 @@ def main():
     ex, ez = world_axes()
     (px, pz), _ = plan_lot_centre()
     meta = {
-        'about': "Kukui'ula community map tiles: a map rendering of open data (not an aerial photograph). North-up UTM 4N tiles, 1 km, row 0 at the north edge.",
+        'about': "Kukui'ula community map tiles: a USDA NAIP aerial photo (11 Feb 2022) over lidar ground, with the reef, sea and modelled row drawn from open data. North-up UTM 4N tiles, 1 km, row 0 at the north edge.",
         'crs': 'EPSG:32604', 'box': list(I.box), 'tile_m': TILE, 'cols': cols, 'rows': rows, 'tex': TEX,
         # world feet (x, z) = origin + (E - lotE) / 0.3048 * east + (N - lotN) / 0.3048 * north
         'toWorld': {'lotUTM': list(LOT_UTM), 'origin': [px, pz], 'east': [float(ex[0]), float(ez[0])], 'north': [float(ex[1]), float(ez[1])], 'ft': FT},
@@ -959,6 +1094,7 @@ def main():
         'encoding': {'n': 'R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless',
                      'w': 'R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); '
                           f'G = 255 in ponds drawn as water, and on the sea {CALM_G} * calm (0-1) inside the harbour breakwater (no breaking surf); '
+                          f'on other land G = {PH_G} * the aerial photo\'s weight (0-1: the view eases its live shading there); '
                           f'B = 10 * sea depth (m), except on land more than {LC_SHORE_M:g} m from the sea and off the ponds (R < {128 - LC_SHORE_M * SDF_PER_M:g}, G < 8), '
                           'where B = 16 * landCover + dryness (0-15, from NDVI: 0 at 0.62 and over, 15 at 0.22 and under)',
                      'landCover': LC_NAMES},
@@ -968,7 +1104,8 @@ def main():
         'attribution': [
             'Ground: U.S. Geological Survey 3DEP 1 m lidar DEM (2019–21), public domain',
             'Seafloor: USACE NCMP 2013 Kauaʻi topobathy lidar, via NOAA Digital Coast, public domain',
-            'Contains modified Copernicus Sentinel data 2023–2026 (colour)',
+            'Aerial photo: USDA Farm Service Agency, National Agriculture Imagery Program (NAIP), flown 11 Feb 2022, via NOAA Digital Coast, public domain; colour-matched to Sentinel-2 and corrected under thin cloud',
+            'Contains modified Copernicus Sentinel data 2023–2026 (colour matching, box edges, open sea)',
             'Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0, modified (resampled and drawn as crowns, shading and shadows)',
             'Roads, paths, water, beaches, golf: © OpenStreetMap contributors, and some roads © TomTom (ODbL), via Overture Maps Foundation',
             'Buildings: © OpenStreetMap contributors, Microsoft ML Building Footprints (ODbL), via Overture Maps Foundation',
