@@ -329,8 +329,10 @@ RealSite.prototype.nearestRoad = function (x, z, maxD = 500) {
 // footprints are rectangles) or, for irregular ones, a roof rising from the footprint to a ridge.
 RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] } = {}) {
   const F = this.features; if (!F) return null;
-  const wall = { pos: [], col: [], uv: [] }, roof = { pos: [], col: [] };
-  const tri = (P, a, b, c, col) => { P.pos.push(...a, ...b, ...c); for (let k = 0; k < 3; k++) P.col.push(col.r, col.g, col.b); };
+  const wall = { pos: [], col: [], uv: [] }, roof = { pos: [], col: [], ek: [] };
+  // ek: each roof vertex's eave height and the community view's pitch factor for its building (cmPitch below)
+  let cmE = 0, cmK = 1;
+  const tri = (P, a, b, c, col) => { P.pos.push(...a, ...b, ...c); for (let k = 0; k < 3; k++) { P.col.push(col.r, col.g, col.b); P.ek?.push(cmE, cmK); } };
   const quad = (P, a, b, c, d, col) => { tri(P, a, b, c, col); tri(P, a, c, d, col); };
   // wall quad with (distance along the wall, height above the floor) uvs for the window pattern
   const wallQuad = (a, b, c, d, col, len, h0, h1, floor) => {
@@ -381,13 +383,16 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     }
     // roof
     const obb = orientedRect(p);
+    cmE = eave;
     if (b.q >= 0.62) {
       const { c, u, v, hu, hv } = obb, o = 1.6, X = hu + o, Z = hv + o, h = Math.min(X, Z) * 0.42, r = Math.max(0, X - Z), s2 = Math.max(0, Z - X);
+      cmK = cmPitch(h);
       const P = (a, bb, y) => [c[0] + u[0] * a + v[0] * bb, eave + y, c[1] + u[1] * a + v[1] * bb];
       const A = P(-X, -Z, 0), B = P(X, -Z, 0), C = P(X, Z, 0), D = P(-X, Z, 0), R1 = P(-r, -s2, h), R2 = P(r, s2, h);
       for (const [a, bq, cq] of [[A, R1, B], [B, R1, R2], [B, R2, C], [C, R2, D], [D, R2, R1], [D, R1, A]]) tri(roof, a, bq, cq, rc);
     } else {
       const h = Math.min(obb.hu, obb.hv) * 0.42;
+      cmK = cmPitch(h);
       let px = 0, pz = 0; for (let i = 0; i < m; i++) { px += p[2 * i] / m; pz += p[2 * i + 1] / m; }
       const sh = 0.3;
       for (let i = 0; i < m; i++) {
@@ -403,6 +408,7 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     }
   }
   const g = new THREE.Group(); g.name = 'realsite buildings';
+  this.buildingMeshes = [];
   for (const [P, name, rough, metal] of [[wall, 'realsite walls', 0.85, 0], [roof, 'realsite roofs', 0.55, 0.25]]) {
     if (!P.pos.length) continue;
     const geo = new THREE.BufferGeometry();
@@ -414,11 +420,44 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     if (P.uv) { mat.map = windowTexture(); mat.emissiveMap = windowTexture(true); mat.emissive = new THREE.Color('#ffc27a'); mat.emissiveIntensity = 0; this.windowMaterial = mat; }
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = mesh.receiveShadow = true; mesh.name = name;
+    // the community view's look (communityLook): walls a warm off-white a little below paper white; roofs in the palette
+    // below, on their own geometry with the big ones' pitch eased (cmPitch)
+    if (P.uv) mesh.userData.cmColor = new THREE.BufferAttribute(Float32Array.from(P.col, (v, i) => v * [0.76, 0.73, 0.68][i % 3]), 3);
+    else {
+      const cp = Float32Array.from(P.pos);
+      for (let i = 0, j = 0; i < cp.length; i += 3, j += 2) cp[i + 1] = P.ek[j] + (cp[i + 1] - P.ek[j]) * P.ek[j + 1];
+      const cg = new THREE.BufferGeometry();
+      cg.setAttribute('position', new THREE.BufferAttribute(cp, 3));
+      cg.setAttribute('color', new THREE.BufferAttribute(cmRoofColours(P.col), 3));
+      cg.computeVertexNormals();
+      mesh.userData.cmGeo = cg;
+    }
+    this.buildingMeshes.push(mesh);
     g.add(mesh);
   }
   this.buildingCount = n;
   return g;
 };
+
+// The community view's roof pitch: a hip roof over a big footprint rises 0.42 of its half-width (a 200 ft lodge carried a
+// 42 ft pyramid, a dark toy from the air, its shaded half near black); from the air, rises over 10 ft are eased to 30%
+// above that, so houses keep their roofs and lodges and the clubhouse get the low hips they have.
+const cmPitch = h => (h > 10 ? (10 + (h - 10) * 0.3) / h : 1);
+
+// The community view's roof palette: the five snapped satellite finishes, mapped by brightness into a muted range (dark
+// grey, warm grey, a light warm grey; never pitch black, never white) and, for the red ones, a weathered terracotta. A
+// quarter of each finish's own hue is kept (the red ones keep about half; the green-grey one, mostly a crown's colour
+// snapped onto a roof, a tenth), so the roofs still differ as they do without a teal or salmon toy roof.
+function cmRoofColours(col) {
+  const out = new Float32Array(col.length);
+  for (let i = 0; i < col.length; i += 3) {
+    const r = col[i], g = col[i + 1], b = col[i + 2], L = Math.max(1e-4, 0.2126 * r + 0.7152 * g + 0.0722 * b);
+    const Lt = Math.min(0.26, 0.11 + Math.max(0, L - 0.1) * 0.5);
+    const keep = r > 1.6 * g ? 0.55 : g > 1.15 * r ? 0.1 : 0.25, warm = [1.05, 1.0, 0.93];
+    for (let k = 0; k < 3; k++) out[i + k] = Lt * warm[k] * (1 + ([r, g, b][k] / L - 1) * keep);
+  }
+  return out;
+}
 
 // One storey-high, 10 ft wide bay of wall in world feet: a dark window with a frame in the middle,
 // a darker plinth at the foot; tiled along the walls (uv = feet along the wall, feet above the floor).
@@ -495,7 +534,109 @@ RealSite.prototype.trees = function ({ max = this.low ? 2500 : 9000, record = 26
     crown.instanceColor.needsUpdate = true;
   }
   this.treeCount = n;
+  this.treesGroup = g;
   return g;
+};
+
+// ---- the community view's trees and buildings (src/community.js) -------------------------------------------------
+// The same measured trees (Meta/WRI canopy height: position, height, crown radius), drawn for the view from the air
+// as its own instanced set in the community group, so the walkthrough's trees above stay exactly as they are:
+//  - three crown forms, picked by the tree's own height to width and a hash: a broad umbrella (monkeypod, rain tree)
+//    on a short thick trunk, a rounded dome (mango, Java plum) and an uneven, narrower crown (kiawe, ironwood); the
+//    dome and the uneven crown come down close to the ground with no trunk, so no thin stalk shows from the air;
+//  - crown colour from a small leaf palette (deep green, a fresh yellow-green, olive, grey-green) chosen per form,
+//    with jitter and only a light pull toward the measured pixel's tint; lighter than the walkthrough's (which reads
+//    near black from above), and a little more sky light through the leaves on their shaded side;
+//  - no shadow map: the tiles already trace each tree's shadow from the baked canopy height.
+const CM_LEAF = [[0.034, 0.068, 0.026], [0.062, 0.104, 0.030], [0.064, 0.079, 0.034], [0.050, 0.068, 0.046]];   // linear
+const CM_FORM_LEAF = [[0, 1, 1, 0], [1, 1, 0, 2], [2, 3, 2, 0]];       // umbrella, dome, uneven: palette entries to draw from
+RealSite.prototype.communityTrees = function ({ low = this.low, ground = (x, z) => this.ground(x, z) } = {}) {
+  const T = this.features?.trees; if (!T || globalThis.__palmProxies) return null;
+  const n = Math.min(low ? 2500 : 9000, T.x.length), nNear = Math.min(n, low ? 250 : 900);
+  const crownMat = new THREE.MeshStandardMaterial({ name: 'community tree crowns', roughness: 0.9, metalness: 0 });
+  leafShader(crownMat, true);
+  const trunkMat = new THREE.MeshStandardMaterial({ name: 'community trunks', color: '#3f3830', roughness: 1 });
+  const hash = (i, k) => { const s = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return s - Math.floor(s); };
+  // per tree: form, crown base (ft above ground), crown depth, crown radius, colour
+  const med = [0.048, 0.071, 0.039], col = new THREE.Color();
+  const pick = [[], [], []];
+  for (let i = 0; i < n; i++) {
+    const h = Math.max(9, T.h[i]), r = Math.max(5, T.r[i] * 1.1), ratio = h / r, u = hash(i, 1);
+    const form = ratio < 2.2 ? (u < 0.6 ? 0 : 1) : ratio > 3.2 ? (u < 0.55 ? 2 : 1) : (u < 0.2 ? 0 : u < 0.8 ? 1 : 2);
+    const base = form === 0 ? 0.42 * h : form === 1 ? Math.max(1.5, Math.min(h - Math.min(h * 0.8, Math.max(r * 1.3, h * 0.55)), 0.2 * h)) : Math.max(1.5, 0.16 * h);
+    const rr = form === 0 ? r * 1.12 : form === 2 ? r * 0.9 : r;
+    const pal = CM_LEAF[CM_FORM_LEAF[form][Math.floor(hash(i, 2) * 4)]];
+    const tint = k => Math.pow(Math.min(1.25, Math.max(0.8, T.c[3 * i + k] / med[k])), 0.3);
+    const j = 0.88 + 0.24 * hash(i, 3);
+    col.setRGB(pal[0] * tint(0) * j, pal[1] * tint(1) * j, pal[2] * tint(2) * j);
+    pick[form].push({ i, x: T.x[i], z: T.z[i], gr: ground(T.x[i], T.z[i]) - 0.4, base, depth: h - base, r: rr, h, c: col.clone(), near: i < nNear });
+  }
+  const g = new THREE.Group(); g.name = 'community trees';
+  const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), V = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+  const forms = [[cmUmbrella(2), cmUmbrella(low ? 0 : 1)], [crownCluster(2), cmDome(low)], [cmUneven(2), cmUneven(1)]];   // phones: lighter far crowns
+  for (let f = 0; f < 3; f++) for (const near of [true, false]) {
+    const list = pick[f].filter(t => t.near === near); if (!list.length) continue;
+    const crown = new THREE.InstancedMesh(forms[f][near ? 0 : 1], crownMat, list.length);
+    const trunk = f === 0 ? new THREE.InstancedMesh(cmTrunk(), trunkMat, list.length) : null;
+    list.forEach((t, k) => {
+      const sq = 0.85 + 0.3 * hash(t.i, 4);
+      Q.setFromAxisAngle(Y, hash(t.i, 5) * Math.PI * 2);
+      M.compose(V.set(t.x, t.gr + t.base, t.z), Q, S.set(t.r * sq, t.depth, t.r / sq)); crown.setMatrixAt(k, M);
+      crown.setColorAt(k, t.c);
+      if (trunk) { const tw = Math.max(1.1, t.h * 0.05); M.compose(V.set(t.x, t.gr, t.z), Q, S.set(tw, t.base + t.depth * 0.3, tw)); trunk.setMatrixAt(k, M); }
+    });
+    for (const m of [crown, trunk]) if (m) { m.castShadow = false; m.receiveShadow = true; m.frustumCulled = false; m.instanceMatrix.needsUpdate = true; g.add(m); }
+    crown.instanceColor.needsUpdate = true;
+  }
+  return g;
+};
+// Umbrella: a broad, flat-topped crown, a ring of lumps round a low central one (unit radius, y 0-1).
+function cmUmbrella(lod) {
+  const parts = lod >= 2
+    ? [[0, 0.62, 0, 0.62, 0.36], ...[0, 1, 2, 3, 4].map(k => { const a = k * 1.2566 + 0.4; return [0.5 * Math.cos(a), 0.5 + 0.06 * (k % 2), 0.5 * Math.sin(a), 0.52, 0.42]; })]
+    : [[0, 0.5, 0, 1, 0.5]];
+  return mergeIndexed(parts.map(([x, y, z, r, ry], k) => { const g = lumpyCrown(Math.min(1, lod), k + 3); g.scale(r, ry, r); g.translate(x, y, z); return g; }));
+}
+// Dome, far: one lump at the walkthrough's middle detail (its single 20-triangle lump reads faceted from the air).
+function cmDome(low) { const g = lumpyCrown(low ? 0 : 1, 0); g.scale(1, 0.5, 1); g.translate(0, 0.5, 0); return mergeIndexed([g]); }
+// Uneven: lumps stacked off centre, narrowing upward.
+function cmUneven(lod) {
+  const parts = lod >= 2
+    ? [[0.05, 0.3, 0, 0.82, 0.32], [0.28, 0.55, -0.18, 0.55, 0.3], [-0.22, 0.62, 0.15, 0.5, 0.28], [0.02, 0.84, 0.04, 0.38, 0.17]]
+    : [[0.05, 0.36, 0, 0.85, 0.36], [0, 0.75, 0, 0.5, 0.25]];
+  return mergeIndexed(parts.map(([x, y, z, r, ry], k) => { const g = lumpyCrown(lod >= 2 ? 1 : 0, k + 7); g.scale(r, ry, r); g.translate(x, y, z); return g; }));
+}
+function cmTrunk() { const g = new THREE.CylinderGeometry(0.55, 1, 1, 6, 1, true); g.translate(0, 0.5, 0); g.deleteAttribute('uv'); return g; }
+
+// While the community view is open (on), its look for the context buildings and trees, all put back when it closes:
+//  - walls lose the window pattern (by day the plain wall colour; the lit windows of night are the emissive map and
+//    stay) and take a warm off-white a little below paper white; roofs take the muted palette and eased pitch above, matt;
+//  - the walkthrough's trees give way to communityTrees();
+//  - buildings cast no shadow map (the tiles trace their shadows from the baked eave heights).
+let whiteTex = null;
+RealSite.prototype.communityLook = function (on) {
+  const s = this.cmSaved;
+  if (on && !s) {
+    whiteTex ??= Object.assign(new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1), { needsUpdate: true, colorSpace: THREE.SRGBColorSpace });
+    const saved = this.cmSaved = { meshes: [], trees: this.treesGroup?.visible };
+    for (const m of this.buildingMeshes ?? []) {
+      const mat = m.material;
+      saved.meshes.push({ m, geo: m.geometry, color: m.geometry.attributes.color, cast: m.castShadow, map: mat.map, rough: mat.roughness, metal: mat.metalness });
+      if (m.userData.cmGeo) m.geometry = m.userData.cmGeo;
+      else if (m.userData.cmColor) m.geometry.setAttribute('color', m.userData.cmColor);
+      m.castShadow = false;
+      if (mat.map) mat.map = whiteTex;
+      else { mat.roughness = 0.8; mat.metalness = 0; }
+    }
+    if (this.treesGroup) this.treesGroup.visible = false;
+  } else if (!on && s) {
+    for (const { m, geo, color, cast, map, rough, metal } of s.meshes) {
+      m.geometry = geo; geo.setAttribute('color', color); m.castShadow = cast;
+      Object.assign(m.material, { map, roughness: rough, metalness: metal });
+    }
+    if (this.treesGroup) this.treesGroup.visible = s.trees ?? true;
+    this.cmSaved = null;
+  }
 };
 
 // A crown of unit radius sitting on y = 0 and 1 high: a broad base lump and a few smaller lumps on top
@@ -545,8 +686,10 @@ function mergeVerts(g) {
   const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); out.setIndex(idx);
   return out;
 }
-// Leaf clumps on the crowns: light and dark mottling and a bumpy normal from world-space noise.
-function leafShader(m) {
+// Leaf clumps on the crowns: light and dark mottling and a bumpy normal from world-space noise. cm: the community
+// view's crowns (communityTrees), which also take half as much again of the sky's light on their shaded side (light
+// through and between the leaves), so a crown in its own shade is not a black ball from the air.
+function leafShader(m, cm = false) {
   m.onBeforeCompile = sh => {
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLeafW;')
       .replace('#include <worldpos_vertex>', `#include <worldpos_vertex>
@@ -561,8 +704,10 @@ function leafShader(m) {
       { float e = 0.35, h0 = leaf3(vLeafW), hx = leaf3(vLeafW + vec3(e, 0.0, 0.0)), hy = leaf3(vLeafW + vec3(0.0, e, 0.0)), hz = leaf3(vLeafW + vec3(0.0, 0.0, e));
         vec3 gw = vec3(hx - h0, hy - h0, hz - h0) / e;
         normal = normalize(normal - (viewMatrix * vec4(gw, 0.0)).xyz * 0.9); }`);
+    if (cm) sh.fragmentShader = sh.fragmentShader.replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
+      reflectedLight.indirectDiffuse *= 1.5;`);
   };
-  m.customProgramCacheKey = () => 'realsite-leaves';
+  m.customProgramCacheKey = () => 'realsite-leaves' + (cm ? '-cm' : '');
 }
 
 // Oriented bounding rectangle of a footprint (flat [x, z, ...]): minimum area over its edge directions.

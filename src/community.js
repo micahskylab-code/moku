@@ -14,6 +14,7 @@
 //                            surf over the shallow reef, swash at the shore
 import * as THREE from 'three';
 import { SEA_LIFT, SEA_DEEP, SINK, SINK_BOX, SINK_FRAME } from './realsite.js';
+import { aerialFinishes } from './materials.js';
 
 const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -28,7 +29,7 @@ export const CATEGORIES = {
   club:    { label: 'Clubs & amenities', color: '#b07a2a' },
 };
 
-export async function createCommunity({ scene, camera, renderer, orbit, daylight, real, plan, center, low = false, base = 'geodata/community/' }) {
+export async function createCommunity({ scene, camera, renderer, orbit, daylight, real, plan, center, low = false, base = 'geodata/community/', aoPass = null }) {
   const meta = await (await fetch(base + 'community.json')).json();
   const T = meta.toWorld, FT = T.ft;
   const toWorld = (E, N) => {
@@ -147,36 +148,53 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   SEA_DEEP.value.copy(U.uDeep.value);
   const realMats = [];
   scene.traverse(o => { if (o.isMesh && /^realsite (near|far|ocean)$/.test(o.material?.name ?? '')) realMats.push(o.material); });
-  // the modelled access roads, darker from the air (their pale texture reads as a gravel slab at this distance)
-  const roadMeshes = [], darkRoad = new THREE.MeshStandardMaterial({ name: 'community road', color: '#3c4046', roughness: 0.9 });
+  // the modelled access roads in a plain weathered asphalt from the air (their pale texture reads as a gravel slab at this
+  // distance; a near-black slab read as pasted on): a warm mid grey, about 10% reflectance, as the bake's roads
+  const roadMeshes = [], darkRoad = new THREE.MeshStandardMaterial({ name: 'community road', color: '#5d5b57', roughness: 0.92 });
   scene.traverse(o => { if (o.isMesh && /asphalt/.test(o.material?.name ?? '') && !o.userData.realsite) roadMeshes.push(o); });
 
-  const maxHi = low ? 4 : 10, dHi = (low ? 4200 : 7500), hiSize = low ? 1024 : 2048;
-  let streamT = 0, inflight = 0;
+  // Full-detail tiles go where they show: tiles in view ranked by how large they stand on the screen (by the distance to
+  // the tile's nearest point, not its centre, so a tile the camera hangs over counts as near), tiles out of view far
+  // behind; one keeps its detail a little past the cut, so none flickers at the margin.
+  const maxHi = low ? 4 : 12, dHi = (low ? 4200 : 7500), hiSize = low ? 1024 : 2048;
+  const frustum = new THREE.Frustum(), projView = new THREE.Matrix4();
+  for (const t of tiles) { t.mesh.geometry.computeBoundingBox(); t.box = t.mesh.geometry.boundingBox; }
+  let streamT = 0, inflight = 0, order = [];
   function stream(dt) {
     streamT -= dt; if (streamT > 0) return; streamT = 0.4;
-    const cam = camera.position;
-    const order = tiles.map(t => ({ t, d: t.centre.distanceTo(cam) })).sort((a, b) => a.d - b.d);
+    const cam = camera.position, [cE, cN] = toUTM(cam.x, cam.z);
+    camera.updateMatrixWorld(); projView.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(projView);
+    order = tiles.map(t => {
+      const tE0 = E0 + t.c * meta.tile_m, tN1 = N1 - t.r * meta.tile_m;
+      const dE = Math.max(tE0 - cE, 0, cE - tE0 - meta.tile_m), dN = Math.max(tN1 - meta.tile_m - cN, 0, cN - tN1);
+      const d = Math.hypot(Math.hypot(dE, dN) / FT, cam.y - t.centre.y);
+      return { t, d, s: (frustum.intersectsBox(t.box) ? 1 : 0.15) / Math.max(d, 300) };
+    }).sort((a, b) => b.s - a.s);
     order.forEach(({ t, d }, k) => { t.want = k < maxHi && d < dHi ? 1 : (t.hi && d < dHi * 1.35 && k < maxHi + 2 ? 1 : 0); });
+    for (const { t } of order) if (!t.want && t.hi) dropHi(t);
+    pump();
+    edges();
+  }
+  // start the wanted loads, best first, two at a time; each finished load starts the next (no wait for the next tick)
+  function pump() {
     const now = performance.now();
     for (const { t } of order) {
-      if (t.want && !t.hi && !t.busy && (t.fails ?? 0) < 3 && !(t.failUntil > now) && inflight < 2) {
-        t.busy = true; inflight++;
-        Promise.allSettled([loadTex(`${base}a_${t.c}_${t.r}.webp`, { srgb: true, size: hiSize, low }), loadTex(`${base}n_${t.c}_${t.r}.webp`, { srgb: false, size: low ? 512 : 1024 })])
-          .then(([ra, rn]) => {
-            const a = ra.value, n = rn.value;
-            if (!a || !n || !t.want) {
-              a?.dispose(); n?.dispose();
-              if (!a || !n) { t.fails = (t.fails ?? 0) + 1; t.failUntil = performance.now() + 2000 * 2 ** t.fails; console.warn('[community] tile', t.c, t.r, (ra.reason ?? rn.reason)?.message); }
-              return;
-            }
-            t.hiTex = [a, n]; t.hi = 1; t.mat.map = a; t.mat.userData.u.uN.value = n; t.mat.userData.u.uHasN.value = 1; t.mat.needsUpdate = true;
-            edges();
-          })
-          .finally(() => { t.busy = false; inflight--; });
-      } else if (!t.want && t.hi) dropHi(t);
+      if (inflight >= 2) break;
+      if (!t.want || t.hi || t.busy || (t.fails ?? 0) >= 3 || t.failUntil > now) continue;
+      t.busy = true; inflight++;
+      Promise.allSettled([loadTex(`${base}a_${t.c}_${t.r}.webp`, { srgb: true, size: hiSize, low }), loadTex(`${base}n_${t.c}_${t.r}.webp`, { srgb: false, size: low ? 512 : 1024 })])
+        .then(([ra, rn]) => {
+          const a = ra.value, n = rn.value;
+          if (!a || !n || !t.want || !active) {
+            a?.dispose(); n?.dispose();
+            if (!a || !n) { t.fails = (t.fails ?? 0) + 1; t.failUntil = performance.now() + 2000 * 2 ** t.fails; console.warn('[community] tile', t.c, t.r, (ra.reason ?? rn.reason)?.message); }
+            return;
+          }
+          t.hiTex = [a, n]; t.hi = 1; t.mat.map = a; t.mat.userData.u.uN.value = n; t.mat.userData.u.uHasN.value = 1; t.mat.userData.u.uLow.value = t.low; t.mat.needsUpdate = true;
+          edges();
+        })
+        .finally(() => { t.busy = false; inflight--; if (active) pump(); });
     }
-    edges();
   }
   // lidar normals and traced shadows fade out only toward an edge shared with a 2 m tile (or the box): no seam there
   const tileAt = new Map(tiles.map(t => [`${t.c},${t.r}`, t]));
@@ -185,7 +203,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const t of tiles) t.mat.userData.u.uEdgeLo.value.set(lo(t.c, t.r - 1), lo(t.c + 1, t.r), lo(t.c, t.r + 1), lo(t.c - 1, t.r));
   }
   function dropHi(t) {
-    t.mat.map = t.low; t.mat.userData.u.uN.value = flat; t.mat.userData.u.uHasN.value = 0; t.mat.needsUpdate = true;
+    t.mat.map = t.low; t.mat.userData.u.uN.value = flat; t.mat.userData.u.uHasN.value = 0; t.mat.userData.u.uLow.value = flat; t.mat.needsUpdate = true;
     for (const x of t.hiTex) x.dispose(); t.hiTex = null; t.hi = 0;
     edges();
   }
@@ -345,6 +363,75 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     return pose(new THREE.Vector3(cx, groundAt(cx, cz), cz), 9000, 1.16, southAz + 0.12);
   }
 
+  // ---- the subject and its surroundings (start) ------------------------------------------------------------------
+  // While the view is open: the modelled Nā Hiku row in finishes for the air (materials.js aerialFinishes: no seam
+  // speckle, deeper pools, a warm light on our home's roof by day), the context buildings as calm massing and the trees
+  // in the view's own forms (realsite.js communityLook, communityTrees), and the sun's shadow map stretched from the
+  // walkthrough's 220 ft round the lot over the whole row, so every home, palm and garden casts its shadow and the row
+  // sits on the ground instead of half of it standing shadowless. Only the row casts into it: the tiles already trace
+  // the trees' and buildings' shadows. On desktop a contact shadow pass (GTAO) at this scale grounds what stands.
+  const cmTrees = real?.communityTrees?.({ ground: groundAt });
+  if (cmTrees) group.add(cmTrees);
+  const keyL = daylight?.keyLight, kp = real?.keep;
+  const rowC = kp ? new THREE.Vector3((kp[0] + kp[2]) / 2, 0, (kp[1] + kp[3]) / 2) : new THREE.Vector3(center[0], 0, center[1]);
+  rowC.y = groundAt(rowC.x, rowC.z);
+  const rowR = (kp ? Math.hypot(kp[2] - kp[0], kp[3] - kp[1]) / 2 : 300) + 140;      // + the long shadows of a low sun
+  const SHADOW_D = rowR + 900;                                                         // the light's distance from the row
+  let finishes = null, shadowSaved = null, aoSaved = null;
+  const aoBox = new THREE.Box3();                                                      // contact shadows only round the target
+  function subjectOn() {
+    if (finishes) return;                                                              // already on
+    finishes = aerialFinishes(scene);
+    real?.communityLook?.(true);
+    if (keyL) {
+      const sh = keyL.shadow, sc = sh.camera;
+      shadowSaved = { box: [sc.left, sc.right, sc.top, sc.bottom, sc.near, sc.far], bias: sh.bias, nb: sh.normalBias, target: keyL.target.position.clone() };
+      Object.assign(sc, { left: -rowR, right: rowR, top: rowR, bottom: -rowR, near: SHADOW_D - rowR - 400, far: SHADOW_D + rowR + 400 });
+      sc.updateProjectionMatrix();
+      sh.bias = -0.00015; sh.normalBias = 0.35 * (low ? 2 : 1);                        // about a texel of the wider map
+      keyL.target.position.copy(rowC); keyL.target.updateMatrixWorld();
+    }
+    if (aoPass && !low) {
+      const u = aoPass.gtaoMaterial.uniforms;
+      aoSaved = { radius: u.radius.value, distanceExponent: u.distanceExponent.value, thickness: u.thickness.value, scale: u.scale.value, clip: aoPass.gtaoMaterial.defines.SCENE_CLIP_BOX };
+      aoPass.updateGtaoMaterial({ radius: 22, distanceExponent: 1.2, thickness: 30, scale: 1.0 });
+    }
+  }
+  function subjectOff() {
+    finishes?.restore(); finishes = null;
+    real?.communityLook?.(false);
+    if (keyL && shadowSaved) {
+      const sh = keyL.shadow, sc = sh.camera, [l, r, t, b, n, f] = shadowSaved.box;
+      Object.assign(sc, { left: l, right: r, top: t, bottom: b, near: n, far: f }); sc.updateProjectionMatrix();
+      sh.bias = shadowSaved.bias; sh.normalBias = shadowSaved.nb;
+      keyL.target.position.copy(shadowSaved.target); keyL.target.updateMatrixWorld();
+      if (daylight?.state) daylight.state.dirty = true;                                  // daylight.js puts the light back
+      shadowSaved = null;
+    }
+    if (aoPass && aoSaved) {
+      const { clip, ...p } = aoSaved;
+      aoPass.updateGtaoMaterial(p);
+      aoPass.gtaoMaterial.defines.SCENE_CLIP_BOX = clip ?? 0; aoPass.gtaoMaterial.needsUpdate = true;
+      aoSaved = null;
+    }
+  }
+  function subjectFrame() {
+    const L = daylight?.light;
+    if (keyL && shadowSaved && L) {
+      const d = L.sun.alt > -2 || L.EmoonDir <= 0 ? L.sDir : L.mDir;                     // as daylight.js picks its key light
+      keyL.position.set(rowC.x + d[0] * SHADOW_D, rowC.y + d[1] * SHADOW_D, rowC.z + d[2] * SHADOW_D);
+    }
+    finishes?.update(ss(-1, 12, L?.sun?.alt ?? 30));                                    // the warm light fades with the sun
+    if (aoSaved) {
+      if (!aoPass.enabled) aoPass.enabled = true;                                      // main.js turns it off for this view
+      // within 4000 ft of the target: farther out the radius is under a pixel, and the depth's steps drew a faint hatch
+      const t = orbit.target;
+      aoBox.min.set(t.x - 4000, t.y - 800, t.z - 4000); aoBox.max.set(t.x + 4000, t.y + 1500, t.z + 4000);
+      aoPass.setSceneClipBox(aoBox);
+    }
+  }
+  // ---- the subject and its surroundings (end) --------------------------------------------------------------------
+
   let entered = false;
   function enter({ intro = !entered } = {}) {
     active = true; entered = true;
@@ -358,6 +445,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     SEA_LIFT.value = 1; SINK.value = 120;                     // realsite.js: glint off its sea; sunk under the tiles in the box
     for (const m of realMats) { m.userData.cmEnv = m.envMapIntensity; m.envMapIntensity = 1; }
     for (const o of roadMeshes) { o.userData.cmMat = o.material; o.material = darkRoad; }
+    subjectOn();
     const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 1;   // haze below the horizon, not ground
     for (const t of tiles) t.want = 0;
     const sky = document.getElementById('skypanel'); if (sky?.classList.contains('open')) sky.querySelector('.sp-head')?.click();   // the card needs the left side
@@ -382,6 +470,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     SEA_LIFT.value = 0; SINK.value = 0;
     for (const m of realMats) m.envMapIntensity = m.userData.cmEnv ?? 1;
     for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
+    subjectOff();
     const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 0;
     camera.clearViewOffset(); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); viewOff = null;
     // give the full-size tiles back to the GPU; the 2 m ones stay for next time
@@ -409,7 +498,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       const cg = groundAt(camera.position.x, camera.position.z) + 60;
       if (camera.position.y < cg) camera.position.y = cg;
     }
-    stream(dt);
+    stream(dt); subjectFrame();
     frame();
     const wx = daylight?.state?.weather?.source === 'live'; if (wx !== ui.wx) ui.setWx(wx);
     ui.place(camera, renderer);
@@ -630,19 +719,20 @@ const CM_COVER = `
 
 // ---------------------------------------------------------------------------------------------
 function tileMaterial(U, flat, low) {
-  const u = { uN: { value: flat }, uW: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
+  const u = { uN: { value: flat }, uW: { value: flat }, uLow: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
   const m = new THREE.MeshStandardMaterial({ name: 'community tile', roughness: 0.93, metalness: 0, envMapIntensity: 1 });   // as the real-site terrain
   if (low) m.defines = { CM_LOW: '' };                 // phones: a shorter shadow trace, nearer
   m.userData.u = u;
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, U, u);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_CANOPY + '\n#include <emissivemap_fragment>');   // canopy stopgap
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vCmWorld;')
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvCmWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     // the sea reflects the sky above the horizon, not the environment's ground half
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), cmWaterG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      uniform sampler2D uN, uW; uniform float uHasN, uTime, uShadowK, uTileM, uSdfK; uniform vec3 uSun, uDeep; uniform vec2 uEast, uNorth, uGrid, uTileCR, uLotC, uLotH; uniform vec4 uEdgeLo;
+      uniform sampler2D uN, uW, uLow; uniform float uHasN, uTime, uShadowK, uTileM, uSdfK; uniform vec3 uSun, uDeep; uniform vec2 uEast, uNorth, uGrid, uTileCR, uLotC, uLotH; uniform vec4 uEdgeLo;
       varying vec3 vCmWorld; float cmWaterG = 0.0;
       float cmHash(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
       float cmNoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -659,8 +749,11 @@ function tileMaterial(U, flat, low) {
       float cmDist = length(vCmWorld - cameraPosition);
       // lidar normals and traced shadows: full on a full-detail tile, fading out only toward an edge it shares with a 2 m tile
       vec2 cmUv = vMapUv;
-      float cmHiFade = uHasN * min(min(mix(1.0, smoothstep(0.0, 0.12, cmUv.y), uEdgeLo.x), mix(1.0, smoothstep(0.0, 0.12, 1.0 - cmUv.x), uEdgeLo.y)),
-                                   min(mix(1.0, smoothstep(0.0, 0.12, 1.0 - cmUv.y), uEdgeLo.z), mix(1.0, smoothstep(0.0, 0.12, cmUv.x), uEdgeLo.w)));
+      float cmHiFade = uHasN * min(min(mix(1.0, smoothstep(0.0, 0.22, cmUv.y), uEdgeLo.x), mix(1.0, smoothstep(0.0, 0.22, 1.0 - cmUv.x), uEdgeLo.y)),
+                                   min(mix(1.0, smoothstep(0.0, 0.22, 1.0 - cmUv.y), uEdgeLo.z), mix(1.0, smoothstep(0.0, 0.22, cmUv.x), uEdgeLo.w)));
+      // and over the same 220 m the albedo eases into the tile's own 2 m albedo (s_*.webp, still on the GPU), the very
+      // texture the neighbour shows: at the shared edge both sides draw the same pixels, so no seam in colour or sharpness
+      if (uHasN > 0.5 && cmHiFade < 0.999) diffuseColor.rgb = mix(diffuse * texture2D(uLow, vMapUv).rgb, diffuseColor.rgb, cmHiFade);
       // metres to the box's edge: over its last 300 m the sea takes the open-sea colour the view's outer sea is drawn in
       vec2 cmBoxM = vec2((uTileCR.x + cmUv.x) * uTileM, (uTileCR.y + cmUv.y) * uTileM);
       float cmEdgeM = min(min(cmBoxM.x, uGrid.x * uTileM - cmBoxM.x), min(cmBoxM.y, uGrid.y * uTileM - cmBoxM.y));
@@ -764,6 +857,58 @@ function tileMaterial(U, flat, low) {
   m.customProgramCacheKey = () => 'community-tile-4';
   return m;
 }
+
+// ---- canopy and steep banks, a viewer stopgap (start) --------------------------------------------------------------
+// Until the re-bake's crown colour (scripts/geo_community.py: a leaf palette, lone crowns without a shaded mound) is on
+// every tile, the crowns drawn in the full-detail tiles' albedo (where the cast height in n_*.webp B is over about 1.6 m,
+// on land) are lifted 40% toward a sunlit leaf green and floored at about 6% reflectance, so tree-filled ground reads as
+// leaves, not near-black felt; the crowns' baked relief in the normals is halved (thickets read as bubble wrap) and, on
+// desktop, a lone crown (little canopy 8 m round it: a 3D tree of the view stands on it) loses most of it, so it is not
+// also a shaded molehill under its tree. And the lidar's
+// steepest metre-scale walls (a ditch's or gulch's banks, tilted 40-70 degrees or more from the vertical) have their tilt
+// eased by half toward the 10 m ground's and, in shade, take the light the sunlit ground throws into a narrow cut (30% of
+// the sun's, by day): from the air a shaded bank read as a black, beaded crack. Mild on purpose; to drop it, delete this
+// block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
+// Inserted ahead of emissivemap_fragment: the albedo and the normal are final there and the lights have not read them.
+const CM_CANOPY = `
+      #ifndef CM_NO_CANOPY_LIFT
+      if (uHasN > 0.5 && cmLand > 0.01 && cmHiFade > 0.0) {
+        float cpCast = texture2D(uN, vMapUv).b * 25.5;                      // m
+        // leaves only: green over red (a roof's eaves, under its 3D building, and the bake's beige teeth keep their colour)
+        float cpCrown = smoothstep(1.2, 2.6, cpCast) * cmLand * cmHiFade * smoothstep(-0.02, 0.08, (diffuseColor.g - diffuseColor.r) / max(diffuseColor.g, 1e-3));
+        if (cpCrown > 0.0) {
+          float cpL = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+          vec3 cpC = mix(diffuseColor.rgb, vec3(0.058, 0.094, 0.030) * clamp(cpL / 0.075, 0.7, 1.3), 0.4);
+          cpC *= clamp(0.062 / max(dot(cpC, vec3(0.2126, 0.7152, 0.0722)), 1e-4), 1.0, 1.8);
+          diffuseColor.rgb = mix(diffuseColor.rgb, cpC, cpCrown);
+        }
+        // the crowns' baked relief: halved everywhere (thickets read as bubble wrap from the air), and on desktop most of
+        // it gone from a lone crown, where a 3D tree of the view stands
+        float cpEdge = smoothstep(0.3, 1.4, cpCast) * cmLand * cmHiFade;
+        if (cpEdge > 0.0) {
+          float cpFlat = 0.5;
+          #ifndef CM_LOW
+          vec2 o = vec2(0.008, 0.0);                                          // 8 m across a 1 km tile
+          float cpN = step(1.6, texture2D(uN, vMapUv + o.xy).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.xy).b * 25.5)
+                    + step(1.6, texture2D(uN, vMapUv + o.yx).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.yx).b * 25.5);
+          cpFlat = mix(0.5, 0.85, 1.0 - smoothstep(0.5, 2.5, cpN));
+          #endif
+          normal = normalize(mix(normal, nonPerturbedNormal, cpFlat * cpEdge));
+        }
+        // steep banks: tilted 40-70 degrees or more from the vertical at the lidar's metre (the 10 m ground stays as it is)
+        float cpSteep = (1.0 - smoothstep(0.35, 0.75, (vec4(normal, 0.0) * viewMatrix).y)) * cmLand * cmHiFade;
+        if (cpSteep > 0.0) {
+          normal = normalize(mix(normal, nonPerturbedNormal, 0.5 * cpSteep));
+          #if NUM_DIR_LIGHTS > 0
+          // and the light the sunlit ground and the far bank throw into a narrow cut: 30% of the sun's from overhead
+          float cpLit = smoothstep(0.0, 0.5, dot(normal, normalize((viewMatrix * vec4(uSun, 0.0)).xyz)));   // a sunlit bank needs none
+          totalEmissiveRadiance += diffuseColor.rgb * directionalLights[0].color * (RECIPROCAL_PI * 0.3 * cpSteep * (1.0 - cpLit) * smoothstep(0.0, 0.2, uSun.y));
+          #endif
+        }
+      }
+      #endif
+`;
+// ---- canopy and steep banks, a viewer stopgap (end) ---------------------------------------------------------------
 
 async function fetchBinary(url) {
   // a host that serves no binary types gets the same bytes as base64 text (scripts/build_artifact.py)

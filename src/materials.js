@@ -94,3 +94,51 @@ export function mat(name) {
 
 // Emissive lamp shade / bulb material, brightened at night.
 export const glow = once('glow', () => new THREE.MeshStandardMaterial({ name: 'glow', color: '#fff4e0', emissive: '#ffd9a0', emissiveIntensity: 0.4, roughness: 0.9 }));
+
+// ---- the community view's finishes (src/community.js applies them on entering that view; restore() puts every one back) ----
+// From the air a modelled Nā Hiku home is a few pixels across: the standing seams' ribs and caps (sub-pixel metal) alias
+// into white speckle, so they are hidden and the roof pans go matt, their seam normal map eased and their metal off;
+// gutters, flashing, fascia and gable vents lose their metal too; the pools take a deeper aqua and reflect less sky. The
+// one modelled home (ours: the base finishes; the copies carry '<finish>.<lot>' variants, src/neighborhood.js) takes a
+// warm light on its roof by day (update(day), 0 at night), and the copies' roofs sit a little darker, so ours reads first
+// under its pin. Nothing is drawn on the ground: no outline, no glow.
+const CM_WARM = new THREE.Color(1.13, 1.03, 0.84), CM_GLOW = new THREE.Color('#ffc58a'), CM_TMP = new THREE.Color();
+export function aerialFinishes(scene) {
+  const saved = [], hidden = [], seen = new Set();
+  let ours = null;
+  const keep = (m, keys) => saved.push([m, Object.fromEntries(keys.map(k => [k, m[k]?.clone ? m[k].clone() : m[k]]))]);
+  scene.traverse(o => {
+    if (!o.isMesh) return;
+    const mats = [].concat(o.material), fam = m => (m?.name ?? '').replace(/\.\d+$/, '');
+    if (mats.length === 1 && fam(mats[0]) === 'roofSeam') { if (o.visible) { hidden.push(o); o.visible = false; } return; }
+    for (const m of mats) {
+      if (!m || seen.has(m)) continue;
+      seen.add(m);
+      const f = fam(m);
+      if (f === 'roof') {
+        keep(m, ['roughness', 'metalness', 'envMapIntensity', 'normalScale', 'color', 'emissive', 'emissiveIntensity']);
+        m.roughness = 1.7; m.metalness = 0; m.envMapIntensity *= 0.6; m.normalScale?.multiplyScalar(0.35);
+        if (m.name === 'roof') ours = { m, base: m.color.clone() }; else m.color.multiplyScalar(0.82);
+      } else if (/^(pool|spa|basin) water$/.test(m.name)) {
+        keep(m, ['color', 'envMapIntensity', 'opacity']);
+        m.color.set('#1d7f93'); m.envMapIntensity = 0.9; m.opacity = Math.max(m.opacity, 0.9);
+      } else if (/^(gutter|flashing|fascia|gableLouver)$/.test(f)) {
+        keep(m, ['roughness', 'metalness']);
+        m.roughness = Math.max(m.roughness, 0.7); m.metalness = 0;
+      }
+    }
+  });
+  return {
+    update(day) {
+      if (!ours) return;
+      const k = Math.max(0, Math.min(1, day));
+      ours.m.color.copy(ours.base).multiply(CM_TMP.setRGB(1, 1, 1).lerp(CM_WARM, k));
+      ours.m.emissive.copy(CM_GLOW); ours.m.emissiveIntensity = 0.05 * k;
+    },
+    restore() {
+      for (const o of hidden) o.visible = true;
+      for (const [m, v] of saved) for (const [k, x] of Object.entries(v)) { if (x && typeof x === 'object' && m[k]?.copy) m[k].copy(x); else m[k] = x; }
+      hidden.length = saved.length = 0;
+    },
+  };
+}
