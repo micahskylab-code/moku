@@ -860,6 +860,9 @@ function tileMaterial(U, flat, low) {
       vec3 cmPg = diffuseColor.rgb * vec3(1.07, 1.10, 0.92);
       float cmPl = dot(cmPg, vec3(0.2126, 0.7152, 0.0722));
       diffuseColor.rgb = mix(diffuseColor.rgb, max(vec3(0.0), cmPl + (cmPg - cmPl) * 1.05), cmPh);
+      // bright, pale ground in the photo (bunkers, beaches, dry paths) is sand, not grey: warmed
+      float cmPs = smoothstep(0.16, 0.32, cmPl) * (1.0 - smoothstep(0.15, 0.35, (max(cmPg.r, max(cmPg.g, cmPg.b)) - min(cmPg.r, min(cmPg.g, cmPg.b))) / max(cmPg.g, 1e-3)));
+      diffuseColor.rgb *= mix(vec3(1.0), vec3(1.09, 1.0, 0.82), cmPs * cmPh);
       diffuseColor.rgb *= mix(1.0, 1.12, cmLand);
       float cmDn = cmNoise(vCmWorld.xz / 2.3) * 0.4 + cmNoise(vCmWorld.xz / 7.0 + 1.7) * 0.35 + cmNoise(vCmWorld.xz / 23.0 + 5.1) * 0.25;
       diffuseColor.rgb *= mix(1.0, 0.82 + 0.36 * cmDn, cmLand * (1.0 - 0.75 * cmPh) * (1.0 - smoothstep(500.0, 4000.0, cmDist)));
@@ -927,7 +930,7 @@ function tileMaterial(U, flat, low) {
       }`);
     sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_COVER + '\n#include <emissivemap_fragment>');   // land cover close up
   };
-  m.customProgramCacheKey = () => 'community-tile-6';
+  m.customProgramCacheKey = () => 'community-tile-7';
   return m;
 }
 
