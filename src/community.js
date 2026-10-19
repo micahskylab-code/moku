@@ -287,6 +287,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const rowR = (kp ? Math.hypot(kp[2] - kp[0], kp[3] - kp[1]) / 2 : 300) + 140;      // + the long shadows of a low sun
   const SHADOW_D = rowR + 900;                                                         // the light's distance from the row
   let finishes = null, shadowSaved = null, aoSaved = null;
+  const aoBox = new THREE.Box3();                                                      // contact shadows only round the target
   function subjectOn() {
     if (finishes) return;                                                              // already on
     finishes = aerialFinishes(scene);
@@ -301,7 +302,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     }
     if (aoPass && !low) {
       const u = aoPass.gtaoMaterial.uniforms;
-      aoSaved = { radius: u.radius.value, distanceExponent: u.distanceExponent.value, thickness: u.thickness.value, scale: u.scale.value };
+      aoSaved = { radius: u.radius.value, distanceExponent: u.distanceExponent.value, thickness: u.thickness.value, scale: u.scale.value, clip: aoPass.gtaoMaterial.defines.SCENE_CLIP_BOX };
       aoPass.updateGtaoMaterial({ radius: 22, distanceExponent: 1.2, thickness: 30, scale: 1.0 });
     }
   }
@@ -316,7 +317,12 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       if (daylight?.state) daylight.state.dirty = true;                                  // daylight.js puts the light back
       shadowSaved = null;
     }
-    if (aoPass && aoSaved) { aoPass.updateGtaoMaterial(aoSaved); aoSaved = null; }
+    if (aoPass && aoSaved) {
+      const { clip, ...p } = aoSaved;
+      aoPass.updateGtaoMaterial(p);
+      aoPass.gtaoMaterial.defines.SCENE_CLIP_BOX = clip ?? 0; aoPass.gtaoMaterial.needsUpdate = true;
+      aoSaved = null;
+    }
   }
   function subjectFrame() {
     const L = daylight?.light;
@@ -325,7 +331,13 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       keyL.position.set(rowC.x + d[0] * SHADOW_D, rowC.y + d[1] * SHADOW_D, rowC.z + d[2] * SHADOW_D);
     }
     finishes?.update(ss(-1, 12, L?.sun?.alt ?? 30));                                    // the warm light fades with the sun
-    if (aoSaved && !aoPass.enabled) aoPass.enabled = true;                             // main.js turns it off for this view
+    if (aoSaved) {
+      if (!aoPass.enabled) aoPass.enabled = true;                                      // main.js turns it off for this view
+      // within 4000 ft of the target: farther out the radius is under a pixel, and the depth's steps drew a faint hatch
+      const t = orbit.target;
+      aoBox.min.set(t.x - 4000, t.y - 800, t.z - 4000); aoBox.max.set(t.x + 4000, t.y + 1500, t.z + 4000);
+      aoPass.setSceneClipBox(aoBox);
+    }
   }
   // ---- the subject and its surroundings (end) --------------------------------------------------------------------
 
@@ -680,15 +692,17 @@ function tileMaterial(U, flat, low) {
 // on land) are lifted 40% toward a sunlit leaf green and floored at about 6% reflectance, so tree-filled ground reads as
 // leaves, not near-black felt; and on desktop a lone crown (little canopy 8 m round it: a 3D tree of the view stands on
 // it) loses most of its baked relief in the normals, so it is not also a shaded molehill under its tree. And the lidar's
-// steepest metre-scale walls (a ditch's banks, a metre or two across, tilted 60-80 degrees from the 10 m ground) have
-// their tilt eased by about half: from the air their shaded bank read as a black, beaded crack. Mild on purpose; to drop
-// it, delete this block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
+// steepest metre-scale walls (a ditch's or gulch's banks, tilted 40-70 degrees or more from the vertical) have their tilt
+// eased by half toward the 10 m ground's and, in shade, take the light the sunlit ground throws into a narrow cut (30% of
+// the sun's, by day): from the air a shaded bank read as a black, beaded crack. Mild on purpose; to drop it, delete this
+// block and the one line in tileMaterial that inserts it (or define CM_NO_CANOPY_LIFT).
 // Inserted ahead of emissivemap_fragment: the albedo and the normal are final there and the lights have not read them.
 const CM_CANOPY = `
       #ifndef CM_NO_CANOPY_LIFT
       if (uHasN > 0.5 && cmLand > 0.01 && cmHiFade > 0.0) {
         float cpCast = texture2D(uN, vMapUv).b * 25.5;                      // m
-        float cpCrown = smoothstep(1.2, 2.6, cpCast) * cmLand * cmHiFade;
+        // leaves only: green over red (a roof's eaves, under its 3D building, and the bake's beige teeth keep their colour)
+        float cpCrown = smoothstep(1.2, 2.6, cpCast) * cmLand * cmHiFade * smoothstep(-0.02, 0.08, (diffuseColor.g - diffuseColor.r) / max(diffuseColor.g, 1e-3));
         if (cpCrown > 0.0) {
           float cpL = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
           vec3 cpC = mix(diffuseColor.rgb, vec3(0.058, 0.094, 0.030) * clamp(cpL / 0.075, 0.7, 1.3), 0.4);
@@ -704,8 +718,16 @@ const CM_CANOPY = `
           normal = normalize(mix(normal, nonPerturbedNormal, 0.7 * (1.0 - smoothstep(0.5, 2.5, cpN)) * cpEdge));
         }
         #endif
-        float cpSteep = (1.0 - smoothstep(0.3, 0.7, dot(normal, nonPerturbedNormal))) * cmLand * cmHiFade;
-        if (cpSteep > 0.0) normal = normalize(mix(normal, nonPerturbedNormal, 0.55 * cpSteep));
+        // steep banks: tilted 40-70 degrees or more from the vertical at the lidar's metre (the 10 m ground stays as it is)
+        float cpSteep = (1.0 - smoothstep(0.35, 0.75, (vec4(normal, 0.0) * viewMatrix).y)) * cmLand * cmHiFade;
+        if (cpSteep > 0.0) {
+          normal = normalize(mix(normal, nonPerturbedNormal, 0.5 * cpSteep));
+          #if NUM_DIR_LIGHTS > 0
+          // and the light the sunlit ground and the far bank throw into a narrow cut: 30% of the sun's from overhead
+          float cpLit = smoothstep(0.0, 0.5, dot(normal, normalize((viewMatrix * vec4(uSun, 0.0)).xyz)));   // a sunlit bank needs none
+          totalEmissiveRadiance += diffuseColor.rgb * directionalLights[0].color * (RECIPROCAL_PI * 0.3 * cpSteep * (1.0 - cpLit) * smoothstep(0.0, 0.2, uSun.y));
+          #endif
+        }
       }
       #endif
 `;
