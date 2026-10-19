@@ -187,6 +187,42 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const x of t.hiTex) x.dispose(); t.hiTex = null; t.hi = 0;
     edges();
   }
+  // the ground the tiles draw at world (x, z): their own triangles (vertices every tile_m / S on the UTM grid), NaN off them
+  function surfaceAt(x, z) {
+    const [E, N] = toUTM(x, z), c = Math.floor((E - E0) / meta.tile_m), r = Math.floor((N1 - N) / meta.tile_m), t = tileAt.get(`${c},${r}`);
+    if (!t) return NaN;
+    const step = meta.tile_m / S, u = (E - E0 - c * meta.tile_m) / step, v = (N1 - r * meta.tile_m - N) / step;
+    const i = Math.max(0, Math.min(S - 1, Math.floor(u))), j = Math.max(0, Math.min(S - 1, Math.floor(v))), fu = u - i, fv = v - j;
+    const p = t.mesh.geometry.attributes.position.array, y = k => p[3 * k + 1], a = j * (S + 1) + i, b = a + 1, d = a + S + 1, e = d + 1;
+    return fu + fv <= 1 ? y(a) + (y(b) - y(a)) * fu + (y(d) - y(a)) * fv : y(e) + (y(d) - y(e)) * (1 - fu) + (y(b) - y(e)) * (1 - fv);
+  }
+  // The walkthrough's 3D trees (realsite.js trees()) stand on its own ground, real.ground() from the near lidar grid.
+  // Over the tiles the ground drawn is the community bake's (h.bin, whose voids are filled its own way, and drawn as
+  // 10 m triangles): while the view is on, each tree over a tile stands on the tile surface beneath it. Its matrices
+  // are kept and given back on exit, so the walkthrough's trees are exactly as before.
+  let treesSaved = null;
+  function treesOnTiles() {
+    treesSaved = [];
+    if (!real) return;
+    const v = new THREE.Vector3(), inv = new THREE.Matrix4();
+    scene.traverse(o => {
+      if (!o.isInstancedMesh || !o.userData.realsite || o.parent?.name !== 'realsite trees') return;
+      o.updateWorldMatrix(true, false); inv.copy(o.matrixWorld).invert();
+      const arr = o.instanceMatrix.array, keepArr = arr.slice();
+      let moved = false;
+      for (let k = 0; k < o.count; k++) {
+        v.fromArray(arr, 16 * k + 12).applyMatrix4(o.matrixWorld);
+        const s = surfaceAt(v.x, v.z); if (Number.isNaN(s)) continue;
+        const dy = s - real.ground(v.x, v.z); if (Math.abs(dy) < 0.01) continue;
+        v.y += dy; v.applyMatrix4(inv); v.toArray(arr, 16 * k + 12); moved = true;
+      }
+      if (moved) { treesSaved.push([o, keepArr]); o.instanceMatrix.needsUpdate = true; }
+    });
+  }
+  function treesBack() {
+    for (const [o, a] of treesSaved ?? []) { o.instanceMatrix.array.set(a); o.instanceMatrix.needsUpdate = true; }
+    treesSaved = null;
+  }
 
   // ---- places
   const places = await fetch(base + 'places.json').then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
@@ -263,6 +299,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     orbit.enabled = true;
     group.visible = true; ui.show(true);
     for (const m of modelGround) { m.userData.cmVisible = m.visible; m.visible = false; }
+    if (!treesSaved) treesOnTiles();
     SEA_LIFT.value = 1; SINK.value = 120;                     // realsite.js: glint off its sea; sunk under the tiles in the box
     for (const m of realMats) { m.userData.cmEnv = m.envMapIntensity; m.envMapIntensity = 1; }
     for (const o of roadMeshes) { o.userData.cmMat = o.material; o.material = darkRoad; }
@@ -288,6 +325,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     Object.assign(orbit, { minDistance: saved.minD, maxDistance: saved.maxD, maxPolarAngle: saved.maxP, screenSpacePanning: saved.ssp });
     group.visible = false; ui.show(false);
     for (const m of modelGround) m.visible = m.userData.cmVisible ?? true;
+    treesBack();
     SEA_LIFT.value = 0; SINK.value = 0;
     for (const m of realMats) m.envMapIntensity = m.userData.cmEnv ?? 1;
     for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
@@ -328,7 +366,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   }
 
   const jump = p => { fly = null; userMoved = true; orbit.target.copy(p.target); camera.position.copy(p.pos); camera.lookAt(p.target); };
-  window.__community = { groundAt, toWorld, toUTM, fromLatLon, tiles, pins, flyTo, jump, pose, establishing, overview, northAz, settled: () => !fly && tiles.every(t => !t.busy && (!t.want || t.hi || (t.fails ?? 0) >= 3)) };
+  window.__community = { groundAt, surfaceAt, toWorld, toUTM, fromLatLon, tiles, pins, flyTo, jump, pose, establishing, overview, northAz, settled: () => !fly && tiles.every(t => !t.busy && (!t.want || t.hi || (t.fails ?? 0) >= 3)) };
   // compile the tile shader and upload the small textures now, not in the first frame of the view (a long stall)
   try {
     // the composer draws into a half-float target: compile that variant, not the screen's
@@ -503,7 +541,7 @@ const CM_COVER = `
           ivec2 o = ivec2(k & 1, k >> 1);
           vec4 tx = texelFetch(uW, clamp(lcI + o, ivec2(0), lcN - 1), 0);
           float wt = mix(1.0 - lcF.x, lcF.x, float(o.x)) * mix(1.0 - lcF.y, lcF.y, float(o.y));
-          wt *= step((tx.r * 255.0 - 128.0) / uSdfK, -4.0) * step(tx.g * 255.0, 7.5);   // only where the bake wrote a class
+          wt *= step((tx.r * 255.0 - 128.0) / uSdfK, -4.01) * step(tx.g * 255.0, 7.5);   // only where the bake wrote a class (R < 124, G < 8)
           int code = int(tx.b * 255.0 + 0.5);
           ivec4 cls = ivec4(code >> 4);
           lcA += wt * vec4(equal(cls, ivec4(1, 2, 3, 4)));   // turf, grass, scrub, canopy
@@ -654,7 +692,7 @@ function tileMaterial(U, flat, low) {
       }`);
     sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_COVER + '\n#include <emissivemap_fragment>');   // land cover close up
   };
-  m.customProgramCacheKey = () => 'community-tile-3';
+  m.customProgramCacheKey = () => 'community-tile-4';
   return m;
 }
 
