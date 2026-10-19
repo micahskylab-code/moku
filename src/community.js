@@ -690,8 +690,9 @@ function tileMaterial(U, flat, low) {
 // Until the re-bake's crown colour (scripts/geo_community.py: a leaf palette, lone crowns without a shaded mound) is on
 // every tile, the crowns drawn in the full-detail tiles' albedo (where the cast height in n_*.webp B is over about 1.6 m,
 // on land) are lifted 40% toward a sunlit leaf green and floored at about 6% reflectance, so tree-filled ground reads as
-// leaves, not near-black felt; and on desktop a lone crown (little canopy 8 m round it: a 3D tree of the view stands on
-// it) loses most of its baked relief in the normals, so it is not also a shaded molehill under its tree. And the lidar's
+// leaves, not near-black felt; the crowns' baked relief in the normals is halved (thickets read as bubble wrap) and, on
+// desktop, a lone crown (little canopy 8 m round it: a 3D tree of the view stands on it) loses most of it, so it is not
+// also a shaded molehill under its tree. And the lidar's
 // steepest metre-scale walls (a ditch's or gulch's banks, tilted 40-70 degrees or more from the vertical) have their tilt
 // eased by half toward the 10 m ground's and, in shade, take the light the sunlit ground throws into a narrow cut (30% of
 // the sun's, by day): from the air a shaded bank read as a black, beaded crack. Mild on purpose; to drop it, delete this
@@ -709,15 +710,19 @@ const CM_CANOPY = `
           cpC *= clamp(0.062 / max(dot(cpC, vec3(0.2126, 0.7152, 0.0722)), 1e-4), 1.0, 1.8);
           diffuseColor.rgb = mix(diffuseColor.rgb, cpC, cpCrown);
         }
-        #ifndef CM_LOW
+        // the crowns' baked relief: halved everywhere (thickets read as bubble wrap from the air), and on desktop most of
+        // it gone from a lone crown, where a 3D tree of the view stands
         float cpEdge = smoothstep(0.3, 1.4, cpCast) * cmLand * cmHiFade;
         if (cpEdge > 0.0) {
+          float cpFlat = 0.5;
+          #ifndef CM_LOW
           vec2 o = vec2(0.008, 0.0);                                          // 8 m across a 1 km tile
           float cpN = step(1.6, texture2D(uN, vMapUv + o.xy).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.xy).b * 25.5)
                     + step(1.6, texture2D(uN, vMapUv + o.yx).b * 25.5) + step(1.6, texture2D(uN, vMapUv - o.yx).b * 25.5);
-          normal = normalize(mix(normal, nonPerturbedNormal, 0.7 * (1.0 - smoothstep(0.5, 2.5, cpN)) * cpEdge));
+          cpFlat = mix(0.5, 0.85, 1.0 - smoothstep(0.5, 2.5, cpN));
+          #endif
+          normal = normalize(mix(normal, nonPerturbedNormal, cpFlat * cpEdge));
         }
-        #endif
         // steep banks: tilted 40-70 degrees or more from the vertical at the lidar's metre (the 10 m ground stays as it is)
         float cpSteep = (1.0 - smoothstep(0.35, 0.75, (vec4(normal, 0.0) * viewMatrix).y)) * cmLand * cmHiFade;
         if (cpSteep > 0.0) {
