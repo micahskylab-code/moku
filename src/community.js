@@ -570,11 +570,11 @@ function tileMaterial(U, flat, low) {
       // about 4 m, four taps, on pond pixels only), and a teal-grey margin where the water meets its bank
       float cmPondEdge = smoothstep(0.08, 0.3, cmW.g) * (1.0 - smoothstep(0.5, 0.85, cmW.g));
       diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15 + vec3(0.004, 0.01, 0.012), cmPond);
-      if (cmPond > 0.0) {
+      if (cmPond > 0.0 && cmDist < 4000.0) {   // close up only: further off the shelf is under a pixel and only greys the pond
         vec2 cmO = vec2(2.0 / 512.0);
         float cmGb = 0.25 * (textureLod(uW, vMapUv + cmO, 0.0).g + textureLod(uW, vMapUv - cmO, 0.0).g
                            + textureLod(uW, vMapUv + vec2(cmO.x, -cmO.y), 0.0).g + textureLod(uW, vMapUv - vec2(cmO.x, -cmO.y), 0.0).g);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.06, 0.105, 0.09), 0.4 * cmPond * (1.0 - smoothstep(0.7, 1.0, cmGb)));
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.06, 0.105, 0.09), 0.4 * cmPond * (1.0 - smoothstep(0.7, 1.0, cmGb)) * (1.0 - smoothstep(1500.0, 4000.0, cmDist)));
       }
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.085, 0.12, 0.105), 0.55 * cmPondEdge);
       if (cmSea > 0.0) {
