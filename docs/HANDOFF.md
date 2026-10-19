@@ -12,6 +12,8 @@ This branch carries the whole Nā Hiku walkthrough project, so a new session can
 ## Next task: real aerial photos for the community tiles
 The owner allowed `coastalimagery.blob.core.windows.net` and `imagery.geoplatform.gov` for this environment. The change only applies to new sessions.
 
+**Still blocked (19 Oct 2026, later session):** the egress proxy refused CONNECT (403, policy denial) to `coastalimagery.blob.core.windows.net`, `imagery.geoplatform.gov` and `www.fisheries.noaa.gov` (the InPort licence page), as well as `planetarycomputer.microsoft.com` and `naipeuwest.blob.core.windows.net`. The AWS S3 hosts the bake uses (`prd-tnm`, `noaa-nos-coastal-lidar-pds`, `sentinel-cogs`, `dataforgood-fb-data`) answered 200. Nothing was downloaded, baked or changed. Before the next try, check the environment's Network access setting (Allowed domains) holds both NAIP hosts, plus `www.fisheries.noaa.gov` for the licence record, and test with `curl -sS -o /dev/null -w '%{http_code}' https://coastalimagery.blob.core.windows.net/digitalcoast/HI_NAIP_2021_9668/index.html` before rebuilding the cache.
+
 **Source:** USDA NAIP 2021–2023 Hawaiʻi, 4-band (RGB + NIR), about 0.6 m. Kauaʻi was mostly flown in 2022. NOAA Digital Coast distributes it:
 - record: https://www.fisheries.noaa.gov/inport/item/69406
 - files: https://coastalimagery.blob.core.windows.net/digitalcoast/HI_NAIP_2021_9668/index.html (tile index `tileindex_HI_NAIP_2021.zip`, plus a wget example)
