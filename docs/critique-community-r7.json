@@ -1,0 +1,427 @@
+{
+ "about": "Blind re-score of the community view after round 7 (19 Oct 2026): three critics (art director, terrain realism, mobile UX), each flaw checked by a skeptic, plus a before/after judge against the round 6 shots.",
+ "scores": {
+  "overall": {
+   "median": 6,
+   "each": [
+    "art-director:6",
+    "terrain-realism:6",
+    "mobile-ux:5"
+   ]
+  },
+  "land": {
+   "median": 5,
+   "each": [
+    "art-director:5",
+    "terrain-realism:5",
+    "mobile-ux:5"
+   ]
+  },
+  "sea": {
+   "median": 6,
+   "each": [
+    "art-director:7",
+    "terrain-realism:6",
+    "mobile-ux:6"
+   ]
+  },
+  "ui": {
+   "median": 7,
+   "each": [
+    "art-director:7",
+    "terrain-realism:7",
+    "mobile-ux:6"
+   ]
+  },
+  "phone": {
+   "median": 6,
+   "each": [
+    "art-director:6",
+    "terrain-realism:6",
+    "mobile-ux:6"
+   ]
+  }
+ },
+ "confirmed_flaws": [
+  {
+   "id": "art-director-hero-composition",
+   "shot": "desk/1-establishing.png",
+   "region": "Whole frame: home row at about x 600-780, y 540-690; empty sky y 0-265; plain grass foreground y 650-900",
+   "issue": "The fly-in ends on a weaker frame than it starts on. The opening/overview camera (desk/0, desk/2) is the best composition in the set. The hero frame instead tilts up to a sky that fills about 30% of the image and a foreground of plain grass that fills about 35%. The subject, the home row, takes up about 2% of the frame at the left of centre. No leading line runs from the reef to the home, and the coast, the most beautiful element, is a thin strip near the horizon.",
+   "fix_idea": "Re-author the end-of-fly-in camera. Shoot from inland looking seaward and lower, with a longer lens (FOV about 35-40 degrees). Put the row on the lower-third line and let the turquoise reef and surf fill the upper third, with the horizon about 12-18% from the top so little sky shows. Alternatively end on a tighter version of the overview angle. Test it as a still before tuning anything else.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-horizon-seam",
+   "shot": "desk/1-establishing.png, phone/1-establishing.png, land/1-establishing.png",
+   "region": "The sky/sea join (desk y about 262-275 across the full width; phone y about 200-210)",
+   "issue": "A hard horizontal seam runs along the horizon. A pale flat band sits under the sky, and below it the sea snaps straight to a saturated navy with no aerial perspective. It reads as two layers stacked, not one atmosphere, and it is the first thing the eye lands on above the coast.",
+   "fix_idea": "Fade the water into the sky's horizon colour with distance-based haze. The last few km of ocean should lighten and desaturate continuously into the sky colour, and the pale band strip should go. Add a faint warm or bright horizon glow on the sun side.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-sprite-clouds",
+   "shot": "desk/1-establishing.png, desk/0-opening.png, desk/2-overview.png, desk/5-golf-oblique.png",
+   "region": "Sky, desk y 0-260 (most visible in 1-establishing)",
+   "issue": "The clouds are small, evenly scattered billboard sprites that all look the same size. Their edges are dithered or pixelated and their shading is dirty grey-brown, especially in desk/0 and desk/2, so they look like stamped confetti rather than Hawaiian trade-wind cumulus. In desk/1 they make up the whole top third of the hero frame.",
+   "fix_idea": "Use fewer, larger, soft-alpha cumulus at high resolution and varied scale. Bunch them toward the mountains and horizon (a trade-wind cloud band over the Kahili ridge) and leave the upper sky as a clean gradient. Alternatively, frame the hero so little sky shows. Remove the grey-brown tint so the sunlit sides are white and the bases soft blue-grey.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-brown-patches",
+   "shot": "desk/1-establishing.png, desk/4-coast.png, desk/5-golf-oblique.png, desk/2-overview.png",
+   "region": "desk/4 right third (x 1100-1600, y 420-900); desk/5 mid-ground (x 300-1000, y 380-700); desk/1 foreground (x 1150-1600, y 650-900)",
+   "issue": "The bare or dry ground class from Sentinel-2 renders as large blobby flat tan-brown stains with soft smeared edges. In a luxury context they read as dirt lots, drought or graded construction pads. They are the least flattering colour in almost every frame and pull the eye away from the fairways and the reef.",
+   "fix_idea": "In the bake, re-grade that class toward a warm, lower-contrast dry-grass ochre or olive and add a grass-noise and micro-relief texture instead of a flat fill. Narrow the hue gap to the surrounding green so it reads as pasture, not bare soil. Keep the honest red dirt only where it is strong in the source data (real ag fields, cut slopes). This is a recolour of existing open data, not new data.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-soft-ground-near-model",
+   "shot": "desk/3-home-close.png, phone/3-home-close.png",
+   "region": "Terrain around the row: left hillside x 0-650, right fairway x 950-1600, y 300-900",
+   "issue": "At close range the 0.49 m/px ground texture smears into mottled green with soft brown blobs, while the modelled row is pin-sharp. The mismatch in detail makes the home look pasted onto a blurry map, which undercuts 'beautiful details' in exactly the shot a buyer studies.",
+   "fix_idea": "Blend in a tiling high-frequency detail texture (turf blades, mowing grain, a subtle normal map) that fades in by camera distance. Add contact ambient occlusion and soft shadow where the row's planting meets the terrain. Feather the model's landscaping edge into the ground with a few extra shrub instances.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-flat-open-ocean",
+   "shot": "desk/4-coast.png, desk/1-establishing.png",
+   "region": "desk/4 top 40% (y 80-330, full width); desk/1 open sea y 270-420 with single-pixel white specks near (1045,290), (1125,320), (1355,340), (1470,307)",
+   "issue": "Deep water is a flat navy gradient: no swell texture, no sky reflection, no sun glitter. In desk/4 it fills nearly half the frame with nothing. In desk/1, isolated white single pixels on the open sea read as dead pixels or noise, not whitecaps.",
+   "fix_idea": "Give the deep water a subtle normal-mapped swell, Fresnel sky reflection and a sun-glitter path on the sun side. Either remove the isolated specks or turn them into clustered, soft-edged whitecaps. Reframe the coast camera so the reef and shore fill more of the frame and open ocean less.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-phone-hero-framing",
+   "shot": "phone/1-establishing.png",
+   "region": "Top y 0-200 (empty sky and seam), bottom y 560-770 (blurry grass and brown patches), row at about x 165-245, y 470-610",
+   "issue": "The portrait hero repeats the desktop composition problem at a worse ratio. The row is a thin grey sliver in the centre, the bottom third is blurry low-quality grass with brown blotches, and the top quarter is hazy sky with the horizon seam. The portrait opening frame (phone/0) is more attractive than the frame it flies to.",
+   "fix_idea": "Give portrait its own end camera: steeper pitch and closer in, with the row in the lower third and the reef and surf filling the upper half, horizon near the top edge. Alternatively end the portrait fly-in nearer the phone/0 framing with a slow push-in on the home.",
+   "impact": 4
+  },
+  {
+   "id": "art-director-label-clutter-hero",
+   "shot": "desk/1-establishing.png",
+   "region": "Upper-left pill cluster x 190-650, y 285-400; right-edge National Tropical Botanical Garden pill x 1340-1585, y 455-480",
+   "issue": "Eight pills in the hero frame. Brennecke, Shopping Center, Baby Beach and Lāwa'i Beach stack on top of the surf line and hide the most beautiful strip of the image. The NTBG pill nearly touches the right edge. The frame reads as a map legend rather than a hero image.",
+   "fix_idea": "In the hero frame show only the home pill and two or three anchors, such as the Club and the beach nearest the home, and reveal the rest after interaction or through the category chips. Add collision-aware placement that pushes labels into empty land, not onto the coastline, with a safe margin from the edge.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-home-pill-occludes",
+   "shot": "desk/3-home-close.png, desk/1-establishing.png, phone/3-home-close.png",
+   "region": "desk/3 'Nā Hiku concept home' pill at x 705-895, y 368-398, covering the northern homes; desk/1 pill at x 580-770, y 522-552",
+   "issue": "The dark home pill is the heaviest graphic in the frame and sits directly over the north end of the row. At close range it hides the subject it labels.",
+   "fix_idea": "Offset the pill into empty grass to the side of the row with a longer leader line. Shrink it or fade it to icon-only when the camera is close (desk/3, phone/3), and bring it back when the camera pulls out.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-massing-buildings",
+   "shot": "desk/1-establishing.png, desk/3-home-close.png, desk/5-golf-oblique.png",
+   "region": "desk/1 left foreground boxes x 100-400, y 490-640; desk/3 top-left x 0-400, y 170-270; desk/5 bottom-left village x 420-620, y 610-870",
+   "issue": "The context buildings are generic grey and salmon hip-roof boxes with flat pale walls. Several look oversized next to the detailed row, and the salmon roofs in particular read as game assets. They draw the eye in the foreground of the hero frame.",
+   "fix_idea": "Unify the massing on a muted palette taken from the home model (soft slate or charcoal roofs, warm ivory walls) and drop the salmon. Add ambient occlusion and contact shadows, check scale against the Overture heights and footprints, and desaturate the massing slightly with distance so the real model stays the hero.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-trees-uniform",
+   "shot": "desk/1-establishing.png, desk/3-home-close.png, desk/5-golf-oblique.png",
+   "region": "Scattered canopy trees across the fairways and rough (for example desk/1 x 0-600, y 540-880)",
+   "issue": "The canopy trees are identical small dark round blobs spread at similar spacing. Outside the modelled row there are no palms or wide monkeypod crowns, so the landscape reads as generic temperate or SimCity rather than tropical Kaua'i.",
+   "fix_idea": "Use three or four tree archetypes chosen from the existing data: coconut or palm silhouettes within a set distance of the coast and along roads, wide flat-crowned monkeypod or kiawe where Meta canopy height is low and wide, and rounded trees elsewhere. Vary scale and hue slightly and let them cluster. No new data is needed.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-golf-definition",
+   "shot": "desk/5-golf-oblique.png, desk/4-coast.png",
+   "region": "desk/5 fairways x 150-1000, y 400-700; desk/4 fairways x 600-1100, y 600-800",
+   "issue": "The mowing stripes show as pale rectangular blocks with soft edges that do not follow the fairway outlines, and the rough is nearly the same green. Fairways lack crisp mown edges, greens do not stand out, and bunkers are faint, so the golf course, a key selling point, looks smudged.",
+   "fix_idea": "Clip the stripe pattern to the OSM fairway polygons with a crisp edge. Darken and texture the rough, give greens a distinct colour and collar ring, and render bunkers as bright cream sand with a soft lip shadow.",
+   "impact": 3
+  },
+  {
+   "id": "art-director-shoreline-stroke-harbor-foam",
+   "shot": "desk/4-coast.png",
+   "region": "Harbour basin x 180-460, y 480-660; shoreline from x 200 to 1300 along y 400-600",
+   "issue": "The rocky shore is a uniform charcoal ribbon edged with a crisp continuous white line that reads like a map stroke rather than wave wash. Inside the breakwater the basin is milky pale turquoise with foam streaks, which looks like surf in a protected boat harbour.",
+   "fix_idea": "Break the shoreline white into irregular, exposure-dependent wash: wider on the points, absent in coves. Add tonal variation and a wet-dark edge to the lava-rock band. Mask foam fully out of the harbour polygon and give the basin a calm, deeper teal.",
+   "impact": 2
+  },
+  {
+   "id": "art-director-ponds-flat",
+   "shot": "desk/5-golf-oblique.png, desk/3-home-close.png",
+   "region": "desk/5 ponds x 270-530, y 640-840 and x 780-1090, y 570-720; desk/3 pond x 840-990, y 290-430",
+   "issue": "The ponds are opaque, uniformly dark-blue cut-outs with hard vector edges. With no reflection and no bank shading they look like map fills next to the 3D-lit terrain.",
+   "fix_idea": "Add Fresnel sky reflection and a faint mirrored tint from trees on the bank, a darker edge fading to a lighter centre, and a thin shaded grass bank so the water sits in the terrain.",
+   "impact": 2
+  },
+  {
+   "id": "art-director-duplicate-lawai-names",
+   "shot": "desk/0-opening.png, desk/2-overview.png, desk/5-golf-oblique.png",
+   "region": "'Lāwa'i Bay beach' pill (desk/2 x 75-215, y 512-538) and 'Lāwa'i Beach' pill (x 1005-1125, y 610-636)",
+   "issue": "Two pins named 'Lāwa'i Bay beach' and 'Lāwa'i Beach', one with a lowercase 'beach', look like a duplicate or a typo to a buyer. Small details like this undermine a premium feel.",
+   "fix_idea": "Use title case consistently and make the names clearly distinct, for example 'Lāwa'i Bay' versus 'Lāwa'i Beach'. Add a one-line descriptor in the pin card if needed.",
+   "impact": 2
+  },
+  {
+   "id": "terrain-realism-massing-clay",
+   "shot": "desk/1-establishing.png, desk/3-home-close.png, desk/5-golf-oblique.png",
+   "region": "1-establishing left half (x 0-420, y 480-650); 3-home-close top-left (x 0-420, y 160-270); 5-golf-oblique Club buildings (x 420-620, y 620-870) and houses right (x 1250-1560, y 540-700)",
+   "issue": "The simple massing buildings are untextured hip-roof boxes in flat cool grey or salmon. They are oversized against the trees, have no driveways or contact shadow, and sit on open grass like Monopoly pieces. In the foreground they read as a video-game placeholder, and they clash with the detailed model row.",
+   "fix_idea": "Give massing roofs a baked roof texture: ridge and hip lines, eave shadow, and a tone sampled from Sentinel-2 at the footprint, or a muted warm-grey or terracotta palette with per-building variation. Add an AO and contact-shadow skirt and reduce wall contrast. Stage the close and establishing cameras so foreground massing is not the nearest object.",
+   "impact": 4
+  },
+  {
+   "id": "terrain-realism-ground-smear-closeup",
+   "shot": "desk/3-home-close.png, desk/5-golf-oblique.png, phone/3-home-close.png",
+   "region": "3-home-close bottom-left quadrant (x 0-680, y 430-900); 5-golf-oblique right (x 1100-1600, y 450-750)",
+   "issue": "At close range the ground falls apart into a soft, blurry, painted green with directional smear streaks from the hillshade or stretched texels. There is no grass, soil or scrub micro-texture. It betrays the bake resolution exactly where a buyer looks hardest, around the home.",
+   "fix_idea": "Blend a land-cover-keyed detail texture by camera distance (turf blades, pasture, red soil, scrub) using world-space UVs with multi-scale noise. Pull the close camera up or back slightly so texel density stays above about 1.5 px per texel. Sharpen the hillshade normal for the near tiles.",
+   "impact": 4
+  },
+  {
+   "id": "terrain-realism-ocean-flat-horizon",
+   "shot": "desk/1-establishing.png, desk/4-coast.png, phone/1-establishing.png",
+   "region": "1-establishing horizon (y ~265) and sea above y 300; 4-coast top third (y 80-330); phone/1-establishing y ~200-260",
+   "issue": "The open ocean is a flat, uniform blue plane with no wave normals, sun-glint path or Fresnel sky reflection. It meets the sky at a ruler-straight hard edge with a pale stripe. In 4-coast it fills about 35% of the frame, so the frame feels empty and synthetic.",
+   "fix_idea": "Add a tiled wave normal map with slow animation and a sun-glint lobe for the 9:15 am ESE sun. Blend in a Fresnel reflection of the sky gradient and fade the horizon into haze with no hard step. Reframe 4-coast lower so the reef fills the frame.",
+   "impact": 4
+  },
+  {
+   "id": "terrain-realism-green-cast",
+   "shot": "all desktop shots",
+   "region": "Pasture, rough and fairway everywhere, e.g. 1-establishing whole lower half, 2-overview mid-band",
+   "issue": "Pasture, scrub, rough and fairway all sit in the same saturated yellow-lime green, with only the stripes to tell them apart. The south shore of Kaua'i reads drier and more olive and tan in reality. The uniform saturation is the main reason the land reads as a game map rather than an aerial render.",
+   "fix_idea": "Grade each land-cover class separately. Keep fairways and greens clean emerald, take pasture toward olive or khaki (lower saturation, warmer hue), make scrub and kiawe darker and bluer, and pull more of the Sentinel-2 true-colour variance into the pasture.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-golf-stripes-procedural",
+   "shot": "desk/2-overview.png, desk/4-coast.png, desk/5-golf-oblique.png, desk/1-establishing.png",
+   "region": "5-golf-oblique left (x 0-450, y 380-700); 4-coast fairways (x 300-1100, y 560-900); 1-establishing (x 80-500, y 560-760)",
+   "issue": "Mowing stripes are one uniform-width, uniform-contrast pattern on every fairway. They stay visible from kilometres away and in places run past the fairway into rough, which gives away a texture overlay. There is no tee, green or rough hierarchy.",
+   "fix_idea": "Clip the stripes to the fairway polygons with a feathered edge and align them to each hole's centreline. Fade the stripe amplitude with distance. Add darker greens with a lighter fringe, a distinct first cut and rough, and a slight lift of the bunker lips.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-trees-uniform",
+   "shot": "desk/1-establishing.png, desk/3-home-close.png, desk/5-golf-oblique.png, phone/1-establishing.png",
+   "region": "3-home-close right (x 1000-1600, y 440-800), detached-shadow tree near (945,400) to (990,470); 1-establishing midground everywhere",
+   "issue": "The trees are one or two blob or lollipop meshes, evenly scattered at similar sizes across pasture. On the phone at low quality they become uniform dark dots. There are no palms or monkeypod or kiawe silhouettes outside the model row, and at least one tree near the home shows its shadow detached from a thin stalk.",
+   "fix_idea": "Use 3-4 species variants (monkeypod umbrella, coconut palm, kiawe or haole koa scrub) chosen by canopy height and land cover. Vary scale and hue per instance, cluster from canopy density instead of even scatter, and fix the shadow offset or trunk height on that instance.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-harbour-pool",
+   "shot": "desk/4-coast.png, desk/1-establishing.png",
+   "region": "4-coast harbour basin (x 190-450, y 480-660); 1-establishing (x 1040-1120, y 440-475)",
+   "issue": "Inside the breakwater, Kukui'ula Small Boat Harbor is swimming-pool cyan with a bright white foam rim along its inner shore. A sheltered harbour is calm and darker green-blue, so this reads as a rendering error.",
+   "fix_idea": "Use the OSM harbour or breakwater polygon as a mask that zeroes foam and caps brightness inside the basin. Colour it from depth with a darker teal and add only a faint ripple normal.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-foam-overdone",
+   "shot": "desk/2-overview.png, desk/0-opening.png",
+   "region": "2-overview Lawa'i to Baby Beach reef flats (x 950-1600, y 620-790) and milky patch (x 1400-1600, y 700-800)",
+   "issue": "Broad white foam fields cover the whole reef flat and look like snow or smeared paint rather than breaker lines. A milky, hazy sheen sits over the water at bottom right and reads as fog or dirty water.",
+   "fix_idea": "Confine foam to the reef crest and break zones from the bathymetry gradient, drawn as thin streaky lines with falloff behind them. Lower foam opacity on shallow flats and remove or retune the milky patch, which is likely a bloom or haze term over the sea.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-clouds-dithered",
+   "shot": "desk/1-establishing.png, desk/5-golf-oblique.png, desk/0-opening.png",
+   "region": "1-establishing sky (x 300-1600, y 60-230)",
+   "issue": "Cloud sprites show visible dither or checker noise and dark smudge tails. Their cotton-puff shapes are cartoonish, and they sit in an otherwise empty sky that takes up about 30% of the hero frame.",
+   "fix_idea": "Use higher-resolution, undithered cloud alpha with soft gradients and flat shaded bases, fewer and flatter trade-wind cumulus near the horizon, and a gentle sky gradient. Lower the establishing camera's horizon so the land fills more of the frame.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-model-seams",
+   "shot": "desk/3-home-close.png, phone/3-home-close.png, desk/1-establishing.png",
+   "region": "3-home-close road end (x 740-790, y 780-830) and row plinth edges (x 700-1000, y 290-800); phone/3-home-close (x 140-185, y 690-760)",
+   "issue": "The asphalt strip beside the model row runs past the homes and ends square in the grass. The model's own lighter ground sits on a rectangular pad with a hard edge against the baked terrain. Both show where the model was pasted into the map.",
+   "fix_idea": "Trim or taper the road end to its real extent with a feathered alpha. Feather the model ground skirt into the baked tile and add a contact AO band. Sample the terrain colour at the boundary to match tone.",
+   "impact": 3
+  },
+  {
+   "id": "terrain-realism-red-dirt-blobs",
+   "shot": "desk/1-establishing.png, desk/4-coast.png, desk/5-golf-oblique.png",
+   "region": "1-establishing bottom (x 550-820, y 760-900; x 1150-1500, y 640-860); 4-coast right (x 1200-1600, y 420-800)",
+   "issue": "Fallow red-soil fields are flat pinkish-terracotta blobs with soft halos and almost no internal structure, so they read as painted shapes rather than tilled or eroded Kaua'i red dirt.",
+   "fix_idea": "Shift the hue to a deeper iron-oxide red-brown with lower lightness. Add soil grain, faint furrows and sparse grass mottle. Tighten the boundary using a Sentinel-2 NDVI threshold so the edge is crisp, not haloed.",
+   "impact": 2
+  },
+  {
+   "id": "mobile-ux-pin-style-map-poi",
+   "shot": "desk/0-opening.png, desk/2-overview.png, desk/1-establishing.png",
+   "region": "all public-place pins across the mid-ground (9-11 per frame)",
+   "issue": "Every pin is an opaque white pill with a coloured icon disc, all at the same weight and spaced evenly. The layer reads as a Google/Apple Maps POI overlay or a game HUD. That is what pulls the frames toward the '5 = technical map' anchor rather than a commissioned render. At the hero framing 9 pins compete with the home.",
+   "fix_idea": "Tier the pins. At the hero show the home plus 3-4 primary places; show the rest on zoom-in or when a category chip is tapped. Restyle secondary pins as lighter labels: 11-12 px medium text on a frosted, translucent dark or white pill (or text with a soft halo), a small coloured dot instead of the icon disc, and fading with distance. Keep the solid dark pill only for the home.",
+   "impact": 3
+  },
+  {
+   "id": "mobile-ux-home-label-occludes-model",
+   "shot": "phone/3-home-close.png, desk/3-home-close.png, desk/1-establishing.png",
+   "region": "dark 'Nā Hiku concept home' pill over the modelled row",
+   "issue": "The only real 3D model is partly hidden by its own label. On phone 3-home-close the pill is about 190 px wide (half the screen) and covers roughly 3 lots directly north of the home. On desk 3-home-close and 1-establishing it sits over the north end of the row.",
+   "fix_idea": "Move the label sideways onto open ground (the field west of the access road) with an elbow leader. Close up, collapse it to a compact badge (house icon plus 'Lot 25 concept') or let it fade as the camera gets near. Keep the gold halo on the lot, which already marks it well.",
+   "impact": 3
+  },
+  {
+   "id": "mobile-ux-hero-composition",
+   "shot": "desk/1-establishing.png, phone/1-establishing.png, land/1-establishing.png",
+   "region": "upper 25-30% of frame (sky) and lower third (foreground)",
+   "issue": "The hero spends its top quarter to third on empty sky with puffy, game-like cloud sprites and a hard straight sky/sea seam (desk y≈265). On the phone the bottom 40% is soft, low-detail green. The home row is a small object in the middle. The first impression is 'flight-sim terrain', not 'coastal estate'.",
+   "fix_idea": "On the phone, lower the pitch and tighten the framing so the coastline and the home row fill the middle and lower frame, and the horizon sits just under the header (the sky then becomes the header's backdrop). Soften the horizon with a wider haze ramp. Replace the cloud puffs with thin, low-contrast cirrus or none.",
+   "impact": 3
+  },
+  {
+   "id": "mobile-ux-landscape-clutter",
+   "shot": "land/0-opening.png, land/1-establishing.png",
+   "region": "whole 844x390 viewport",
+   "issue": "Landscape phone shows 6-7 full pins, a two-line header, a 340 px bottom bar and two-line credits, so about 28% of a 390 px-tall screen is chrome. In 1-establishing the 'Kukuiʻula Golf Course' label sits between the Boat Harbor and Botanical Garden leaders, and the home pill nearly touches the left edge pill. It feels crowded and busy.",
+   "fix_idea": "Add a landscape breakpoint. Cap pins at home plus 2, put the header on one line (title only, short notice), collapse credits to '© OSM · Credits' on one line, and shrink the bottom bar to an icon-led chip.",
+   "impact": 3
+  },
+  {
+   "id": "mobile-ux-type-system-split",
+   "shot": "desk/0-opening.png, phone/0-opening.png",
+   "region": "page title vs card title",
+   "issue": "The page title 'Kukuiʻula · community view' is a generic bold sans with lowercase 'community view'. The elegant serif appears only inside the card ('Around the home'). The premium voice is buried and the headline looks like a utility app.",
+   "fix_idea": "Set the page title in the same serif at 26-30 px on desktop and 22 px on the phone, as just 'Kukuiʻula'. Move 'Community view' to the small tracked eyebrow above it. Sans stays for pins, chips and controls.",
+   "impact": 3
+  },
+  {
+   "id": "mobile-ux-place-name-inconsistency",
+   "shot": "desk/0-opening.png, desk/2-overview.png, desk/5-golf-oblique.png",
+   "region": "west coast pin 'Lāwaʻi Bay beach' vs east pin 'Lāwaʻi Beach'",
+   "issue": "Two near-identical names appear on screen together. One uses a lowercase 'beach' while every other pin is Title Case. It looks like a typo and confuses which is which.",
+   "fix_idea": "Use Title Case throughout and make the two names clearly distinct (e.g. 'Lāwaʻi Bay' vs 'Lāwaʻi Beach'). Lint the place list for casing.",
+   "impact": 2
+  },
+  {
+   "id": "mobile-ux-chip-state-and-contrast",
+   "shot": "desk/0-opening.png",
+   "region": "category chips in the expanded card",
+   "issue": "All six chips look identical, so it is unclear whether they are filters, a legend, or which are active. The light-grey counts on the grey chip fill are about 2.5:1 contrast.",
+   "fix_idea": "Show a clear on/off state (tinted fill plus coloured dot when active, outline when off) and darken the counts to at least 4.5:1. Optionally drop the counts on the phone.",
+   "impact": 1
+  }
+ ],
+ "critics": [
+  {
+   "lens": "art-director",
+   "verdict": "This is a tasteful, competent premium map. It sits nearer Apple Maps Flyover than a commissioned aerial render. The reef and the opening/overview frames can be shown to a buyer as they are, and the UI is polished and honest. The fly-in has an art-direction problem: it starts on its best composition and ends on a weaker hero frame. That frame has an empty sky of sprite clouds, a hard sky/sea seam, flat neutral morning light, a tiny grey home row and tan dirt blotches across the fairways. At close range the sharp home model sits on blurry ground, and the context massing and identical blob trees look game-like. In priority order, the biggest gains are: (1) re-frame the hero and phone end cameras so the reef sits behind the home and little sky shows; (2) move the default light to warm late afternoon and fix the horizon haze and clouds; (3) re-grade the bare-ground class and add close-range ground detail around the model; (4) cut the pins in the hero frame. With those four changes this could move from about 6 to a solid 7-8 without new data.",
+   "strengths": [
+    "The topobathy reef is the best thing on the page. In desk/2-overview, desk/0-opening and the lower half of desk/4-coast, the reef shows real structure: dark coral heads, turquoise sand channels and broken white surf. It reads like the real south shore, and a buyer would stop on it.",
+    "The overview and opening frames (desk/0, desk/2, phone/0) are composed well. Reef across the bottom, the community in the middle and hazed mountains behind give the frame depth and a clear sense of place.",
+    "The lidar terrain gives believable relief: ridgelines, gulches and the soft blue haze on the Hoary Head and Kahili ridges in desk/5-golf-oblique and desk/0.",
+    "The modelled home row in desk/3-home-close and phone/3 is crisp: hip roofs, private pools, palms and tropical planting. The Lot 25 home is picked out quietly with a lighter roof rather than a boundary line, which keeps to the constraints.",
+    "The UI is restrained and premium. The serif 'Around the home' card, colour-coded category chips with counts, white pill labels with icon and leader dot, the dark pill for the home, and a sun-position chip that looks like jewellery.",
+    "The honesty line (INDEPENDENT CONCEPT · NOT BY THE DEVELOPER · VIEWS NOT SHOWN OR VERIFIED) is styled as part of the header rather than a warning banner. It stays honest without cheapening the page.",
+    "The phone portrait layout shows editorial restraint: only two pins in the opening frame, plus a single bottom sheet that combines the card and the sun control.",
+    "The golf mowing stripes add life and a sense of scale at middle distance in desk/1 and desk/4."
+   ]
+  },
+  {
+   "lens": "terrain-realism",
+   "verdict": "Not yet at the bar for showing buyers. It is competent and often attractive, but it reads as a polished game map, not an aerial render. The sea and reef are the best part: lidar bathymetry gives real turquoise shallows and reef structure (sea 6). The open ocean is a flat plane with a ruler-straight horizon and stray white specks, the harbour is pool-cyan with foam inside it, and the foam on the Poipu flats is painted on too broadly. The land is weakest (5). Uniform saturated lime green covers golf, pasture and scrub. Clay massing boxes look like Monopoly pieces, and identical lollipop trees are evenly scattered. Procedural mowing stripes show from kilometres away, the ground turns into blurry smears in the close-up, and the model row aliases into glitter at distance and shows a pasted-in road and pad edge up close. No tile seams or LOD cracks are visible, and the UI is clean and compliant (7). The phone layout works, though low quality turns trees into dots and the landscape view is label-crowded (6). The biggest gains, all from existing data: grade each land-cover class separately, texture the massing roofs and add contact shadows, add a close-range ground detail texture, and add ocean wave normals with sun glint and a softened horizon. Together these would likely lift the overall score from 6 to 7.",
+   "strengths": [
+    "The lidar reef and shallows are the best part of every shot. The topobathy gives turquoise shallows, dark reef ridges and a convincing drop to deep blue (2-overview bottom, 4-coast left half). It reads as a real place and is the most buyer-worthy element.",
+    "The basalt shoreline shelf (dark grey-brown rock bench along the Spouting Horn and Poipu coast in 4-coast) is drawn correctly and makes the land-sea edge believable.",
+    "The 1 m lidar hillshade with cast shadows gives real form to Ha'upu ridge, the gulches and the golf-course undulations. Haze on the distant mountains (2-overview, 5-golf-oblique) gives a correct sense of depth.",
+    "The home row model is rich: individual roofs, pools and palm planting (3-home-close). It is clearly the hero and is easy to find from every distance.",
+    "The labels are clean, consistent and legible. The pills have icons and leader lines, and the concept notice is present on every frame including the phone. The open card is restrained and well typeset.",
+    "Lighting is consistent: one morning sun direction across terrain, trees and massing, with soft ambient light and no obvious shadow-cascade seams in these frames.",
+    "No obvious tile seams, LOD cracks or tile-boundary colour steps are visible in any shot. The 0.49 m bake holds up at the overview and establishing distances."
+   ]
+  },
+  {
+   "lens": "mobile-ux",
+   "verdict": "The UI is clean, legible and internally consistent. Portrait phone shows real restraint: two pins at the hero, one compact bottom bar and short credits. The embedded honesty ('Nā Hiku concept home', the plain card note) is well judged. But the screen as a whole still reads as a capable map app layered over flight-sim terrain, not a premium estate render. Three things drive that: the white POI pills at equal weight, the loud gold all-caps run of negations under the title, and a generic sans headline while the elegant serif is hidden in the card. The scene has the same problem: puffy cloud sprites, a hard horizon, grey box massing and soft phone foregrounds. The reef and coast colour is the standout. Landscape phone is the weakest layout, with crowded pins and about 28% chrome. The biggest UI wins are tiering and lightening the pins, rewriting the notice as one calm line, moving the home label off the model, and reframing the phone hero around the coast and the home. Those changes could lift the UI to about 7.5 and make the honesty read as confident rather than apologetic. Overall it sits at 5 against the owner's 'ultra realistic' bar.",
+   "strengths": [
+    "The controls look like one family. Pills share one corner radius, buttons share one weight, and touch targets are 40-44 px ('The home', the '...' button, the bottom bar). Nothing looks bolted on.",
+    "The home pin clearly ranks above the others. It is a dark pill with a gold house icon and a halo ring on the dot, and the white public-place pins sit below it. Putting 'concept' in the label itself ('Nā Hiku concept home') is the most elegant honesty device on the screen.",
+    "Portrait phone is restrained. The hero and opening frames show only 2 pins. One bottom bar holds both the card toggle and the sun control, and the credits shrink to a short line with a 'Credits' button.",
+    "The card copy is plain and confident. 'A map rendering of open public data, not an aerial photograph' sets expectations without sounding defensive. 'How this was made' is a good progressive-disclosure hook.",
+    "The serif 'Around the home' with a tracked small-caps eyebrow ('KUKUIʻULA · KŌLOA, KAUAʻI') is the most premium type on the page.",
+    "Hawaiian diacritics (ā, ō, ʻokina) render correctly in pins, card and title.",
+    "Desktop leader lines and dots anchor places precisely with no label collisions in the overview (2-overview).",
+    "The reef and coast colour from the topobathy data (0-opening, 4-coast) is the most beautiful part of the scene: turquoise flats, surf lines, deep-blue falloff."
+   ]
+  }
+ ],
+ "before_after": {
+  "per_view": [
+   {
+    "view": "desk/0-opening",
+    "better": "after",
+    "why": "The map area is larger: the toolbar of six buttons is now one '< The home' button plus a More menu, the card is shorter, and the long credits block is one line with a Credits button. The terrain, reefs and mountains read about the same, and the sky has lost its vertical cloud streaks. A Lāwaʻi Bay beach pin now shows on the far-left coast. The subject home sits on a soft gold lot tint instead of a ring. One cost: the card note no longer says that the other Nā Hiku homes are modelled copies on graded, unbuilt land. That text is now behind 'How this was made'."
+   },
+   {
+    "view": "desk/1-establishing",
+    "better": "after",
+    "why": "The card opens folded, so the whole left half of the frame is map. The shot shows 9 places against 7 before (adding Baby Beach, Brennecke Beach and the National Tropical Botanical Garden) and the ocean horizon. The Nā Hiku row and its ponds are clearer. Downsides: about 30% of the frame is now sky, with soft, blurry cloud puffs (a few have grey smudged edges). Poʻipū Beach Park, the best-known nearby beach and labelled before, is gone. Brennecke Beach, a priority-1 place, is labelled in its spot."
+   },
+   {
+    "view": "desk/2-overview",
+    "better": "after",
+    "why": "With the card folded, the west coast shows (Lāwaʻi Bay beach, and Spouting Horn no longer crowded by the card). All the earlier pins are still there and none overlap. The home pin and the row under it read clearly, and the haze toward the mountains is a little cleaner. The only drawback is the same disclosure loss: on screen there is just the gold notice line and the pin."
+   },
+   {
+    "view": "desk/3-home-close",
+    "better": "after",
+    "why": "This view gains the most. Before, the open card covered the left third, including part of the grassland next to the row. Now the row is centred and unobstructed. The subject home is picked out by a warm gold lot tint, and houses, pools and trees render more cleanly with less aliasing. The breakwater, ponds and The Club read well. Baby Beach's pin, at the top edge before, has dropped out of frame. That is a small loss. Because the frame looks more convincing as a built neighbourhood, the missing on-screen disclosure matters most here."
+   },
+   {
+    "view": "desk/4-coast",
+    "better": "after",
+    "why": "The card no longer covers the harbour beach, and a Spouting Horn pin is added. The sea inside the harbour is now calm. Before, surf whitewash ran inside the breakwater, which was physically wrong. Now the surf sits only on the exposed shore, and the breakwater reads as a grey mole. The reef colours are as good as before. Fairway striping is a bit stronger."
+   },
+   {
+    "view": "desk/5-golf-oblique",
+    "better": "after",
+    "why": "Nothing covers the left side, and Lāwaʻi Bay beach adds a place on the western edge. The ponds read as water (blue rather than near-black navy). The mountains and town are clearer, and the home row and golf course sit well. The clouds are better than before's streaky ones, but still soft, low-resolution blobs."
+   },
+   {
+    "view": "phone/0-opening",
+    "better": "after",
+    "why": "The header is compact and the toolbar is one button plus More. The card and sun panel are merged into one bottom bar, so roughly 100 px more of the map shows, and the pins are the same. The new shot is at real low quality, so it looks a bit softer, but nothing is broken. However, the visible credits line no longer says 'Map rendering of open data, not an aerial photograph; the Nā Hiku homes are modelled'. It also shortens the Copernicus credit and drops the date from the sun pill."
+   },
+   {
+    "view": "phone/1-establishing",
+    "better": "before",
+    "why": "Before labelled four places: Lāwaʻi Beach, The Club at Kukuiʻula, the home and Kukuiʻula Golf Course. After labels only two: Kukuiʻula Village Shopping Center and the home. The Club's buildings, the beaches and the golf course are all in frame but unnamed. The home row is smaller and the top quarter of the screen is sky. The after chrome is cleaner, and the rendering difference is only the quality setting. Even so, a buyer gets less context about what is near the home from this frame."
+   },
+   {
+    "view": "phone/3-home-close",
+    "better": "after",
+    "why": "Both frames are nearly the same. After uses less screen for chrome (a 70 px bottom bar against about 170 px of card and credits). It marks the subject home with the gold lot tint, which is clearer than the old ring on a small screen. It is slightly softer from the low quality setting, but the houses, pools and ponds all read."
+   },
+   {
+    "view": "land/0-opening",
+    "better": "after",
+    "why": "This is the clearest improvement. Before, the card and toolbar took the top third and only 3 places were labelled. After labels 7 (adding Lāwaʻi Bay beach, Lāwaʻi Beach and Old Kōloa Town) with no overlaps. The controls are one button plus More, and the card and sun panel sit in one bottom-left bar. The credits stay at two lines, with the full Copernicus wording."
+   },
+   {
+    "view": "land/1-establishing",
+    "better": "after",
+    "why": "After labels 5 places (adding Kukuiʻula Village Shopping Center and Kukuiʻula Small Boat Harbor) against 3 before. The top-left card no longer covers the row, and the header is lighter. The low quality setting makes the terrain softer and the row smaller, but it stays legible."
+   }
+  ],
+  "regressions": [
+   "The disclosure is now hidden in every frame except the open desktop card. Before, the card note always said the other Nā Hiku homes are 'assumed copies of this design, on a strip that is graded, unbuilt land … a concept model'. The credits line also said 'Map rendering of open data, not an aerial photograph; the Nā Hiku homes are modelled'. Now that text sits behind 'How this was made' (src/community.js:520-524) or the home pin's note. The credits line no longer says it. In desk 1-5 and every phone and landscape shot, the only on-screen caveats are the gold notice line and the pin name. The row now looks more real (gold lot, pools, landscaping), so a screenshot of 3-home-close reads as a finished neighbourhood.",
+   "The notice lost 'not construction documentation', and the home pin lost '(modelled)': 'Concept home (modelled)' is now 'Nā Hiku concept home'.",
+   "The notice used to be a solid dark pill. It is now gold small caps of about 11 px with no background. It is still legible in these shots, but contrast is lower over busy rooftops (desk 3-home-close) and bright clouds.",
+   "On phone 1-establishing, only 2 places are labelled (Shopping Center and the home) against 4 before. Lāwaʻi Beach, The Club at Kukuiʻula and Kukuiʻula Golf Course are in frame but unnamed. The home is smaller, and about 25% of the screen is sky.",
+   "On desk 1-establishing, the Poʻipū Beach Park label (priority 3, and labelled before) is gone. Brennecke Beach, a priority-1 place 150 m east of it, is labelled in its place, probably because of a label collision.",
+   "Lāwaʻi Bay beach is newly visible now that the card is folded (the data is unchanged). It sits on the same screen as 'Lāwaʻi Beach' in desk 0, desk 2 and land 0, and the names are easy to confuse. Nothing says it lies at the foot of the Allerton/NTBG garden grounds. Shown under 'Beaches', a buyer may read it as an easy public beach.",
+   "The phone's short credits line says only 'Copernicus Sentinel', not 'Contains modified Copernicus Sentinel data 2023–26'. Microsoft, TomTom, Overture, USGS and USACE/NOAA appear only behind the Credits button, while desktop and landscape keep the fuller line.",
+   "The phone sun pill drops the date (it reads just '9:15 am'), so the sun position is no longer tied to 21 June. The 81°F reading is gone on all sizes. That is neutral: it is less information, but also one less unverified claim.",
+   "On desktop, the establishing shot now gives about 30% of the frame to sky. The clouds there are soft, low-resolution puffs, and a few have grey smudged edges. They are still an improvement on the old vertical streaks.",
+   "Not visible to buyers: artifact-test2.mjs now fails because #model is hidden in the community view (an outdated test, not a page fault). The page also makes a new Google Fonts request (Newsreader, src/community.js:509)."
+  ],
+  "ship": true,
+  "summary": "The after version should replace the before. It is better in 10 of the 11 view pairs. The phone establishing shot is the one exception, where the before version is better because it labels more places.\n\n**What improved**\n- **Toolbar:** the six-button toolbar is now one '< The home' button plus a More menu.\n- **Card:** it folds out of the way on desktop and joins the sun panel in one bottom bar on phones. The card used to cover a third of the frame.\n- **Credits:** they shrink to one line with a Credits button.\n- **More places shown:** desktop establishing and landscape opening gain more labelled places, and no labels overlap.\n- **Rendering:** the subject home stands out on a gold lot tint. The harbour no longer has surf inside the breakwater. The ponds read as water, and the sky has lost its streaks.\n\nAll QA checks pass: tree grounding, no page errors, and the model view at 24/24. The only failure is the outdated hosted test (artifact-test2.mjs).\n\n**What got worse**\n- **Disclosure:** this is the main regression. The statement that the neighbouring Nā Hiku homes, pools and lawns are modelled on graded, unbuilt land, and that the image is a map rendering rather than a photo, used to be on screen in every shot. Now it sits behind 'How this was made' and the home's pin. The row now looks more real, which raises the risk.\n- **Smaller issues:** the notice is now unbacked gold text, and 'not construction documentation' and '(modelled)' were dropped. Poʻipū Beach Park lost its label, and the phone establishing shot lost three labels. Lāwaʻi Bay beach now shows on the same screen as Lāwaʻi Beach, and the names are easy to confuse. The phone's credits line and sun pill are shorter.\n\n**Suggested follow-ups before or soon after shipping**\n- Put one short line back where it is always visible, in the credits or under the notice, e.g. 'Rendering, not a photo; the Nā Hiku homes shown are modelled on unbuilt land'.\n- Make sure Poʻipū Beach Park wins its label collision.\n- Check how the phone establishing pose frames the shot and labels places.\n\nThe dusk shot's near-white horizon band, noted in the QA run, had no before shot to compare against and was not judged here."
+ }
+}

@@ -1,5 +1,7 @@
 # Project overview (start here)
 
+> Picking this up in a new session? Read `docs/HANDOFF.md` first: where things stand and the next task (aerial photos for the community view).
+
 The Nā Hiku walkthrough is a three.js model of the Nā Hiku spec home (the brochure's "Lot 25" design) at Kukuiʻula, Kauaʻi. It has:
 - a walkable house on its site, with the neighbourhood and the real terrain;
 - the real sun, moon and stars for any date, with weather;
