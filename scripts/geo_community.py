@@ -25,7 +25,8 @@ Outputs (geodata/community/):
   n_<c>_<r>.webp   1024 px, lossless: R, G = surface normal east / north (lidar ground + canopy), B = height of
                    what casts shadow (canopy, buildings), 0.1 m per step
   w_<c>_<r>.png    512 px: R = signed distance to the sea's edge (128 + 1 per m, sea positive, +-127 m), G = pond
-                   water, B = sea depth (10 per m)
+                   water (land) or the harbour's calm (sea, CALM_G per unit), B = sea depth (10 per m), or on land more
+                   than LC_SHORE_M from the sea: 16 x land-cover class (LC_NAMES) + dryness 0-15
   h.bin            Uint16 ground heights over the whole box, 5 m, world feet (as geodata/realsite.json)
   community.json   box, tiles, transforms, attribution
     python3 scripts/geo_community.py [--only "c,r;c,r"]
@@ -64,6 +65,20 @@ def vnoise(E, N, s, seed):
     a, b = _hash(ix, iy, seed), _hash(ix + 1, iy, seed)
     c, d = _hash(ix, iy + 1, seed), _hash(ix + 1, iy + 1, seed)
     return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
+
+
+def cells(E, N, s, seed):
+    """Id (0-1) of the nearest point of a jittered grid s m apart (Worley cells): patches about the size of a crown."""
+    x, y = E / s, N / s
+    ix, iy = np.floor(x), np.floor(y)
+    best = np.full(x.shape, 9.0, np.float32); bid = np.zeros(x.shape, np.float32)
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            cx, cy = ix + dx, iy + dy
+            d = (cx + _hash(cx, cy, seed) - x) ** 2 + (cy + _hash(cx, cy, seed + 7) - y) ** 2
+            m = d < best
+            best = np.where(m, d, best); bid = np.where(m, _hash(cx, cy, seed + 13), bid)
+    return bid
 
 
 def fbm(E, N, s, octaves, seed, gain=0.5):
@@ -203,8 +218,43 @@ class Inputs:
             if still.any():
                 idx = ndi.distance_transform_edt(np.isnan(d), return_distances=False, return_indices=True)
                 d[still] = d[idx[0][still], idx[1][still]]
+            self._seamless(d, fill & ~tb)
             print(f'  filled {fill.mean():.1%} of the box (inland lidar voids)', flush=True)
         d[np.isnan(d)] = 0.0
+
+    @staticmethod
+    def _seamless(d, hole, sigma=14.0):
+        """The 2 m merged DEM carries its own seams inside the 1 m lidar's voids (a ridge or a trench a metre or two in
+        from the rim, 10 m blocks inside), which drew a black, jagged 'crack' and a row of pale teeth beside the Nā Hiku
+        strip. Inside each void only its broad shape is kept (smoothed over 14 m), and the difference to the lidar along
+        the void's rim is spread inward as a membrane (Laplace), so the fill meets the lidar with no step."""
+        from scipy.sparse import coo_matrix
+        from scipy.sparse.linalg import spsolve
+        lab, nl = ndi.label(hole)
+        done = 0
+        for k, sl in enumerate(ndi.find_objects(lab)):
+            r0, r1 = max(sl[0].start - 14, 0), min(sl[0].stop + 14, d.shape[0])
+            c0, c1 = max(sl[1].start - 14, 0), min(sl[1].stop + 14, d.shape[1])
+            sub = d[r0:r1, c0:c1]; m = lab[r0:r1, c0:c1] == k + 1
+            if m.sum() < 4: continue
+            nan = np.isnan(sub); full = sub
+            if nan.any():                                                    # the sea beside it (no ground): its nearest land
+                full = sub[tuple(ndi.distance_transform_edt(nan, return_distances=False, return_indices=True))]
+            sm = ndi.gaussian_filter(full, sigma)
+            res = (full - sm).astype(np.float64)                            # outside the void: the lidar's difference
+            m[0, :] = m[-1, :] = m[:, 0] = m[:, -1] = False                  # (the box keeps a known border)
+            ii = -np.ones(m.shape, np.int64); ii[m] = np.arange(m.sum())
+            rr, cc = np.nonzero(m)
+            rows, cols, vals = [np.arange(len(rr))], [np.arange(len(rr))], [np.full(len(rr), 4.0)]
+            b = np.zeros(len(rr))
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                j = ii[rr + dr, cc + dc]; inn = j >= 0
+                rows.append(np.nonzero(inn)[0]); cols.append(j[inn]); vals.append(-np.ones(inn.sum()))
+                b[~inn] += res[rr[~inn] + dr, cc[~inn] + dc]
+            A = coo_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))), shape=(len(rr),) * 2).tocsr()
+            sub[m] = sm[m] + spsolve(A, b)
+            done += int(m.sum())
+        if done: print(f'  {done} m2 of inland voids blended into the lidar around them', flush=True)
 
     def s2_at(self, E, N, order=1):
         r = (self.s2box[3] - N) / self.s2res - 0.5; c = (E - self.s2box[0]) / self.s2res - 0.5
@@ -282,7 +332,7 @@ class Inputs:
         cv = Canvas(E0, N1, nc, R, nr)
         courses = cv.polys(self.courses, ss=1) > 0.5
         bld = cv.polys([[P] for P, h, r in self.blds], ss=1) > 0.5
-        paved = cv.lines([(ROAD_W[c], L) for c, L in self.roads if c in PAVED], ss=1) > 0.5
+        paved = cv.lines([(ROAD_W[c], L) for c, L, k in self.roads if c in PAVED and k == 'road'], ss=1) > 0.5
         water = cv.polys(self.ponds, ss=1) > 0.5
         sea = self.sea2[:nr, :nc]
         turf = (chm < 1.2) & (ndvi > 0.42) & ~bld & ~paved & ~water & ~sea
@@ -366,11 +416,7 @@ class Inputs:
             for P in polys(g):
                 if not inbox(P[0]): continue
                 (self.pools if r.get('class') == 'swimming_pool' else self.ponds).append(P)
-        for r in json.load(open(f'{C}/ov_segment.json')):
-            if r.get('subtype') != 'road': continue
-            g = wkb.loads(bytes.fromhex(r['geometry']))
-            for L in lines(g):
-                if inbox(L) and r.get('class') in ROAD_W: self.roads.append((r.get('class'), L))
+        self._roads([r for r in json.load(open(f'{C}/ov_segment.json')) if r.get('subtype') == 'road'], lines, inbox)
         # buildings: world-feet footprints with eave height and roof colour (geodata/features.json)
         F = json.load(open(os.path.join(ROOT, 'geodata', 'features.json')))
         self.blds = []
@@ -383,9 +429,91 @@ class Inputs:
         k = keep_rect()
         kx, kz = [k[0], k[2], k[2], k[0]], [k[1], k[1], k[3], k[3]]
         self.keep = [np.stack(world_to_utm(np.array(kx, float), np.array(kz, float)), 1)]
+        self._harbour()
         print(f'  beaches {len(self.beaches)} rock {len(self.rocks)}')
         print(f'  golf {len(self.golf)} courses {len(self.courses)} ponds {len(self.ponds)} pools {len(self.pools)} '
               f'roads {len(self.roads)} buildings {len(self.blds)}', flush=True)
+
+    def _roads(self, segs, lines, inbox):
+        """self.roads: (class, polyline, kind) for the drawn road segments. kind is 'road' (asphalt by class), 'drive'
+        (a mapped driveway: pale concrete), 'cart' (a service road, track or path lying mostly inside a golf course
+        outline: a narrow concrete cart path) or 'walk' (footways, paths, steps). Dead-end stubs are dropped: a chain
+        of service, track or unknown segments (residential ones too, under 30 m) that ends in nothing and is shorter
+        than 40 m in all, up to the first junction; driveways stay. Junctions are Overture's shared connectors."""
+        from shapely import wkb
+        from shapely.geometry import LineString, Polygon
+        from shapely.ops import unary_union
+        from collections import Counter, defaultdict
+        n_at = Counter(c['connector_id'] for r in segs for c in r.get('connectors', []))
+        S = {}
+        for r in segs:
+            g = wkb.loads(bytes.fromhex(r['geometry']))
+            if g.geom_type != 'LineString' or r.get('class') not in ROAD_W: continue
+            L = next(lines(g))
+            cn = r.get('connectors') or []
+            S[r['id']] = dict(cls=r['class'], sub=r.get('subclass'), L=L, len=float(np.hypot(*np.diff(L, axis=0).T).sum()),
+                              a=cn[0]['connector_id'] if cn and cn[0]['at'] < 1e-6 else None,
+                              b=cn[-1]['connector_id'] if cn and cn[-1]['at'] > 1 - 1e-6 else None)
+        at = defaultdict(list)
+        for k, s in S.items():
+            for c in (s['a'], s['b']):
+                if c: at[c].append(k)
+        stub_ok = lambda s, tot: s['sub'] != 'driveway' and (s['cls'] in ('service', 'track', 'unknown', 'unclassified') or
+                                                              (s['cls'] in ('residential', 'living_street') and tot < 30))
+        drop = set()
+        for k, s in S.items():
+            for end, other in (('a', 'b'), ('b', 'a')):
+                if s[end] is not None and n_at[s[end]] > 1: continue          # this end meets another segment
+                chain, tot, cur, nxt = [k], s['len'], k, s[other]
+                while nxt is not None and n_at[nxt] == 2 and tot < 40:       # on through plain joins, up to a junction
+                    ks = [x for x in at[nxt] if x != cur]
+                    if not ks: break
+                    cur = ks[0]; chain.append(cur); tot += S[cur]['len']
+                    nxt = S[cur]['b'] if S[cur]['a'] == nxt else S[cur]['a']
+                if tot < 40 and all(stub_ok(S[x], tot) for x in chain): drop.update(chain)
+        golf = unary_union([Polygon(P[0], P[1:]).buffer(0) for P in self.courses]) if self.courses else None
+        kinds = Counter()
+        for k, s in S.items():
+            if k in drop or not inbox(s['L']): continue
+            c = s['cls']
+            if s['sub'] == 'driveway': kind = 'drive'
+            elif c in ('footway', 'path', 'steps', 'pedestrian', 'track', 'service', 'unknown') and golf is not None and \
+                    s['sub'] != 'parking_aisle' and len(s['L']) > 1 and \
+                    LineString(s['L']).intersection(golf).length > 0.5 * max(s['len'], 1e-3):
+                kind = 'cart'
+            elif c in ('footway', 'path', 'steps', 'pedestrian'): kind = 'walk'
+            else: kind = 'road'
+            kinds[kind] += 1
+            self.roads.append((c, s['L'], kind))
+        n_drop = sum(1 for k in drop if inbox(S[k]['L']))
+        print(f'  roads: {dict(kinds)}; {n_drop} dead-end stubs dropped '
+              f'({sum(S[k]["len"] for k in drop if inbox(S[k]["L"])):.0f} m)', flush=True)
+
+    def _harbour(self):
+        """The water the Kukuiʻula Small Boat Harbor's breakwater shelters: no breaking surf drawn there. Sea within
+        about 380 m of the harbour (OSM / Overture place, HARBOUR_UTM) whose line of sight toward the south swell
+        (from 165-240 degrees, out to 400 m) runs into land, the breakwater; soft-edged. self.calm2: 0-1 on the 2 m
+        grid; written into w_*.png G on sea pixels for the view's moving surf."""
+        sea = self.sea2; E0, N0, E1, N1 = self.box; R = 2.0
+        self.calm2 = np.zeros(sea.shape, np.float32)
+        r0, c0 = int((N1 - HARBOUR_UTM[1]) / R), int((HARBOUR_UTM[0] - E0) / R)
+        W = 250                                                                  # half window, cells (500 m)
+        if not (W <= r0 < sea.shape[0] - W and W <= c0 < sea.shape[1] - W): return
+        win = sea[r0 - W:r0 + W, c0 - W:c0 + W]; land = ~win
+        rr, cc = np.mgrid[-W:W, -W:W].astype(np.float32)
+        blocked = np.zeros(win.shape, np.float32); dirs = np.radians(np.linspace(165, 240, 11))
+        for az in dirs:                                                          # compass direction the swell comes from
+            dE, dN = np.sin(az), np.cos(az); hit = np.zeros(win.shape, bool)
+            for s in np.arange(4, 400, R):
+                r = np.clip(np.round(rr + W - dN * s / R).astype(int), 0, 2 * W - 1)
+                c = np.clip(np.round(cc + W + dE * s / R).astype(int), 0, 2 * W - 1)
+                hit |= land[r, c]
+            blocked += hit
+        blocked /= len(dirs)
+        calm = blocked * win * np.clip((380 - np.hypot(rr, cc) * R) / 80, 0, 1)
+        calm = ndi.gaussian_filter(np.clip((calm - 0.35) / 0.4, 0, 1), 3.0)
+        self.calm2[r0 - W:r0 + W, c0 - W:c0 + W] = calm
+        print(f'  harbour: {float((calm > 0.5).sum()) * 4:.0f} m2 of sheltered water', flush=True)
 
 
 # ------------------------------------------------------------------ rasterising (2x supersampled)
@@ -422,10 +550,19 @@ class Canvas:
         return np.asarray(im, np.float32).reshape(self.ny, ss, self.n, ss).mean((1, 3)) / 255
 
 
-ROAD_W = {'primary': 10.5, 'secondary': 9.5, 'tertiary': 8.5, 'residential': 7.2, 'living_street': 6.0, 'unclassified': 6.5,
-          'unknown': 5.5, 'service': 4.2, 'pedestrian': 4.0, 'track': 3.0, 'footway': 1.7, 'path': 1.5, 'steps': 1.7}
+# drawn widths, m: the carriageway (a soft verge is added outside it), driveways and cart paths narrower (bake_tile)
+ROAD_W = {'primary': 9.8, 'secondary': 9.0, 'tertiary': 8.0, 'residential': 6.8, 'living_street': 5.6, 'unclassified': 6.0,
+          'unknown': 5.0, 'service': 4.0, 'pedestrian': 3.5, 'track': 3.0, 'footway': 1.6, 'path': 1.4, 'steps': 1.6}
+DRIVE_W, CART_W = 3.2, 2.2
 PAVED = ('primary', 'secondary', 'tertiary', 'residential', 'living_street', 'unclassified', 'unknown', 'service')
 LINED = ('primary', 'secondary', 'tertiary')
+HARBOUR_UTM = (449599, 2420102)   # Kukuiʻula Small Boat Harbor (OSM, via Overture places; geodata/community/places.json)
+CALM_G = 80                       # w_*.png G on sea pixels: 80 x the harbour's calm (under the view's pond threshold, 0.4)
+# w_*.png B on land, well inside it (LC_SHORE_M from the sea's edge) and off the ponds: 16 x the land-cover class + the
+# dryness (0-15, from the 10 m NDVI: 0 at 0.62 and over, 15 at 0.22 and under); elsewhere B is the sea depth, as before
+LC_NONE, LC_TURF, LC_GRASS, LC_SCRUB, LC_CANOPY, LC_SOIL, LC_ROCK, LC_SAND, LC_PAVED = range(9)
+LC_NAMES = ['none', 'turf', 'grass', 'scrub', 'canopy', 'soil', 'rock', 'sand', 'paved']
+LC_SHORE_M = 4.0
 
 
 # ------------------------------------------------------------------ one tile
@@ -452,20 +589,38 @@ def bake_tile(I, col, row, out):
     E, N = np.meshgrid(e, nn)
     Eo = (E - I.box[0]).astype(np.float32); No = (N - I.box[1]).astype(np.float32)   # local metres: noise, stripes
     f32 = lambda a: np.asarray(a, np.float32)
-    over = lambda a, c, m: a * (1 - m[..., None]) + c * m[..., None]
+    sl = (slice(MARGIN, MARGIN + TEX), slice(MARGIN, MARGIN + TEX))
+    # land cover for w_*.png B (LANDCOVER): what each layer covers, in drawing order, reduced to the 512 px grid
+    to_w = lambda m: np.asarray(Image.fromarray(np.ascontiguousarray(np.broadcast_to(f32(m), (n, n))[sl]), mode='F').resize((512, 512), Image.BOX))
+    cover = []
+    def over(a, c, m, cls=None):
+        if cls is not None: cover.append((cls, to_w(m)))
+        return a * (1 - m[..., None]) + c * m[..., None]
 
     # ---- measured layers
     dem = f32(I.grid_at(I.dem, 1.0, E, N))
     sdf = f32(I.grid_at(I.sdf2, 2.0, E, N, cval=-50.0))
     sea = np.clip(sdf / 1.2 + 0.5, 0, 1)                                    # soft sea coverage at the edge
     land = 1 - sea
-    chm = np.where(sdf > 0, 0, f32(I.chm_at(E, N))).astype(np.float32)
     rf = I.s2_at(E, N, order=3)
     rf_s = np.stack([ndi.gaussian_filter(rf[..., k], 4) for k in range(4)], -1)   # the 10 m pixels, unblocked
     base = np.clip(rf_s[..., :3] * 1.18, 0, 1)
     ndvi = (rf_s[..., 3] - rf_s[..., 0]) / (rf_s[..., 3] + rf_s[..., 0] + 1e-6)          # bands: B04 B03 B02 B08
     redness = rf_s[..., 0] / (rf_s[..., 1] + 1e-4)
     lumS = lum(base)
+    # canopy: the 1 m map rounded off over 0.5 m (no stair-stepped crown edges); thin lines of 'canopy' on bare ground
+    # (under ~3 m across, over 6 m long, NDVI under 0.25: fences, walls, pad edges read as trees) are dropped
+    chm = ndi.gaussian_filter(np.where(sdf > 0, 0, f32(I.chm_at(E, N))), 0.5 / PX).astype(np.float32)
+    tall = chm > 1.6
+    thin = tall & ~ndi.binary_opening(tall, iterations=int(round(1.5 / PX)))
+    lab, nl = ndi.label(thin)
+    if nl:
+        objs = ndi.find_objects(lab)
+        ext = np.array([0] + [max(s[0].stop - s[0].start, s[1].stop - s[1].start) * PX for s in objs])
+        dry = np.asarray(ndi.mean(ndvi, lab, np.arange(1, nl + 1))) < 0.25
+        line = np.zeros(nl + 1, bool); line[1:] = (ext[1:] > 6.0) & dry
+        chm = np.where(ndi.binary_dilation(line[lab], iterations=2) & tall, 0, chm).astype(np.float32)
+    del tall, thin, lab
 
     # ---- vector layers
     x1, y0 = E0 + n * PX, N1 - n * PX
@@ -476,12 +631,18 @@ def bake_tile(I, col, row, out):
     gl = [(c, P) for c, P in I.golf if near(P[0])]
     G = {k: cv.polys([P for c, P in gl if c == k]) for k in ('fairway', 'green', 'tee', 'bunker', 'driving_range')}
     manicured = cv.polys([P for c, P in I.landuse if near(P[0])])
-    rd = [(c, L) for c, L in I.roads if near(L)]
-    paved = cv.lines([(ROAD_W[c], L) for c, L in rd if c in PAVED])
-    curb = np.clip(cv.lines([(ROAD_W[c] + 0.9, L) for c, L in rd if c in PAVED]) - paved, 0, 1)
-    walks = np.clip(cv.lines([(ROAD_W[c], L) for c, L in rd if c in ('footway', 'path', 'steps', 'pedestrian')]) - paved, 0, 1)
-    tracks = np.clip(cv.lines([(ROAD_W['track'], L) for c, L in rd if c == 'track']) - paved, 0, 1)
-    cline = cv.lines([(0.45, L) for c, L in rd if c in LINED])
+    rd = [(c, L, k) for c, L, k in I.roads if near(L)]
+    carriage = [(c, L) for c, L, k in rd if k == 'road' and c in PAVED]
+    paved = ndi.gaussian_filter(cv.lines([(ROAD_W[c], L) for c, L in carriage]), 0.6)   # edge softened a little
+    mains = cv.lines([(ROAD_W[c], L) for c, L in carriage if c in LINED])
+    lanes = blur(cv.lines([(ROAD_W[c] * 0.55, L) for c, L in carriage if ROAD_W[c] >= 6]), 0.6 / PX)   # where the wheels run
+    verge = np.clip(blur(cv.lines([(ROAD_W[c] + 2.4, L) for c, L in carriage]), 0.5 / PX) - paved, 0, 1)
+    drives = np.clip(cv.lines([(DRIVE_W, L) for c, L, k in rd if k == 'drive']) - paved, 0, 1)
+    carts = np.clip(cv.lines([(CART_W, L) for c, L, k in rd if k == 'cart']) - paved, 0, 1)
+    walks = np.clip(cv.lines([(ROAD_W[c], L) for c, L, k in rd if k == 'walk' and c != 'path']) - paved - carts, 0, 1)
+    trails = np.clip(cv.lines([(ROAD_W[c], L) for c, L, k in rd if k == 'walk' and c == 'path']) - paved - carts - walks, 0, 1)
+    tracks = np.clip(cv.lines([(ROAD_W['track'], L) for c, L, k in rd if k == 'road' and c == 'track']) - paved, 0, 1)
+    cline = cv.lines([(0.45, L) for c, L in carriage if c in LINED])
     bl = [(P, h, r) for P, h, r in I.blds if near(P)]
     bmask = cv.polys([[P] for P, h, r in bl])
     bh = cv.polys([(int(min(255, h * 10)), [P]) for P, h, r in bl], ss=1, value=True) / 10.0     # eave height, m
@@ -490,15 +651,30 @@ def bake_tile(I, col, row, out):
         if bl: broof[..., k] = cv.polys([(int(r[k] * 255), [P]) for P, h, r in bl], ss=1, value=True) / 255
     water = np.maximum(sea, ponds)
     chm = np.where(ponds > 0.5, 0, chm).astype(np.float32)                 # no crowns standing in the water (AO, normals, shadow)
-    keep = blur(cv.polys([I.keep]), 4.0 / PX)                              # the modelled row of lots
+    # the modelled row of lots: one lawn under the 3D homes, feathered into the ground around it over about 8 m with
+    # an edge broken up at the metre scale (no rectangle, and no edge per lot)
+    kin = cv.polys([I.keep]) > 0.5
+    if kin.any():
+        kd = (ndi.distance_transform_edt(~kin) - ndi.distance_transform_edt(kin)) * PX        # m, + outside
+        keep = np.clip(0.5 - (kd + 6.0 * (fbm(Eo, No, 3.0, 3, 161) - 0.5)) / 8.0, 0, 1).astype(np.float32)
+        del kd
+    else:                   # not in this window (the EDT of an all-True array measures from a phantom corner point)
+        keep = np.zeros(kin.shape, np.float32)
+    del kin
 
     # ---- golf. Where a course has (almost) no mapped fairways (Kukui'ula's), turf is inferred: bright, mown, tree-free
     # grass inside the course outline, lighter than the course around it in the 10 m colour
     turf_c = (chm < 1.2) & (ndvi > 0.42) & (bmask < 0.5) & (paved < 0.5) & (water < 0.5)
+    turf_s = ndi.gaussian_filter(turf_c.astype(np.float32), 0.6)
     fair_inf = f32(I.grid_at(I.fair_inf2, 2.0, E, N, cval=0.0))             # inferred over the whole box (Inputs._golf_global)
-    fair_inf = np.clip((fair_inf - 0.5) * 6 + 0.5, 0, 1) * turf_c
-    fairway = np.clip(np.maximum(G['fairway'] + G['driving_range'], fair_inf) - G['green'] - G['tee'] - G['bunker'], 0, 1)
-    rough = np.clip(((courses > 0.5) & turf_c).astype(np.float32) - fairway - G['green'] - G['tee'] - G['bunker'], 0, 1)
+    fair_inf = np.clip((fair_inf - 0.5) * 12 + 0.5, 0, 1) * turf_s          # a crisp, anti-aliased mown edge (about 0.8 m)
+    others = np.clip(G['green'] + G['tee'] + G['bunker'], 0, 1)
+    fairway = np.clip(np.maximum(G['fairway'] + G['driving_range'], fair_inf) - others, 0, 1)
+    # first cut: a ring of slightly longer grass, about 2.5 m wide, around every fairway
+    disk = np.hypot(*np.mgrid[-5:6, -5:6]) <= 2.5 / PX
+    first_cut = np.clip(ndi.grey_dilation(fairway, footprint=disk) - fairway - others, 0, 1) * turf_s
+    first_cut = ndi.gaussian_filter(first_cut, 0.7)
+    rough = np.clip(((courses > 0.5) & turf_c).astype(np.float32) - fairway - first_cut - others, 0, 1)
     collar = np.clip(ndi.maximum_filter(G['green'], size=int(3 / PX)) - G['green'], 0, 1)
     lip = np.clip(ndi.maximum_filter(G['bunker'], size=int(1.6 / PX)) - G['bunker'], 0, 1)
 
@@ -519,7 +695,6 @@ def bake_tile(I, col, row, out):
     scrub = np.clip((0.075 - lumS) / 0.02, 0, 1) * np.clip((ndvi - 0.4) / 0.15, 0, 1) * (1 - tended) * (1 - trees) * land
     scrub = blur(scrub, 2.0 / PX)
     h_scrub = scrub * (0.5 * fbm(Eo, No, 2.2, 3, 141) + 0.5 * fbm(Eo, No, 0.9, 2, 143)) * 1.4
-    soil = np.clip((0.30 - ndvi) / 0.1, 0, 1) * np.clip((redness - 1.05) / 0.15, 0, 1) * land * (1 - sand) * (1 - rock)
 
     g_fine = fbm(Eo, No, 1.1, 3, 11)[..., None]       # blades, clumps
     g_mid = fbm(Eo, No, 7.0, 3, 23)[..., None]        # patches
@@ -530,69 +705,91 @@ def bake_tile(I, col, row, out):
     # satellite's own boundary, roughened at the metre scale, and each cover has its own surface. The colour of
     # each follows the measured colour around it (25 m), so dry, green and red country stay where they are.
     reg = np.stack([blur(base[..., k], 25 / PX) for k in range(3)], -1)
-    def follow(c, ref):                                   # a cover colour, tinted by how the place differs from it
-        return c * np.clip(reg / np.maximum(ref, 1e-3), 0.7, 1.35) ** 0.6
+    def follow(c, ref, k=0.6):                            # a cover colour, tinted by how the place differs from it
+        return c * np.clip(reg / np.maximum(ref, 1e-3), 0.7, 1.35) ** k
     edge_n = 0.7 * (fbm(Eo, No, 3.0, 3, 151) - 0.5) + 0.3 * (fbm(Eo, No, 0.8, 2, 153) - 0.5)
     crisp = lambda score, w=0.10: np.clip((score + 0.24 * edge_n) / w + 0.5, 0, 1)
     pasture = np.array([0.070, 0.112, 0.038], np.float32)
+    lawn_c = np.array([0.066, 0.135, 0.040], np.float32)
     a = follow(pasture, pasture) * (0.84 + 0.30 * g_fine) * (0.90 + 0.20 * g_mid)
     lawn = (manicured > 0.5).astype(np.float32)
-    a = over(a, follow(np.array([0.066, 0.135, 0.040], np.float32), pasture) * (0.93 + 0.12 * g_fine), lawn)
-    # soil (Kaua'i red earth, graded pads): clods, tyre-track streaks, a dry crust
+    a = over(a, follow(lawn_c, pasture) * (0.93 + 0.12 * g_fine), lawn, LC_TURF)
+    # soil (Kaua'i red earth, graded pads): clods, tyre-track streaks, a dry crust; a weathered ochre-red, not rust
     soil_m = crisp(np.clip((0.36 - ndvi) / 0.1, -1, 1) * 0.5 + np.clip((redness - 1.05) / 0.15, -1, 1) * 0.5 - 0.35) * land * (1 - sand) * (1 - rock) * (1 - lawn)
     # softened by 2 m and broken up where it meets the grass (grass thinning into dirt), so a patch does not read as paint
     soil_m = blur(soil_m, 2.0 / PX)
     soil_m = np.clip(soil_m + 10.0 * (fbm(Eo, No, 0.9, 3, 57) - 0.5) * soil_m * (1 - soil_m), 0, 1)
-    red = np.array([0.175, 0.090, 0.058], np.float32)
+    red = np.array([0.158, 0.100, 0.066], np.float32)
     clods = fbm(Eo, No, 0.6, 3, 51)[..., None]
-    a = over(a, follow(red, red) * (0.80 + 0.36 * clods) * (0.94 + 0.12 * g_mid), soil_m)
+    a = over(a, follow(red, red, 0.45) * (0.80 + 0.36 * clods) * (0.94 + 0.12 * g_mid), soil_m, LC_SOIL)
+    # a band of dry grass where the dirt thins into the grass
+    straw = follow(np.array([0.150, 0.125, 0.062], np.float32), pasture, 0.4) * (0.85 + 0.3 * g_fine)
+    a = over(a, straw, 4 * soil_m * (1 - soil_m) * 0.4 * np.clip(fbm(Eo, No, 1.6, 2, 59) * 2 - 0.5, 0, 1))
     # scrub: a dark, lumpy thicket surface (lit live by the normals below)
     scrub_m = crisp(scrub - 0.45, 0.08)
     thicket = np.array([0.034, 0.052, 0.022], np.float32)
-    a = over(a, follow(thicket, thicket) * (0.62 + 0.62 * fbm(Eo, No, 1.3, 3, 95)[..., None]), np.maximum(shrub * 0.8, scrub_m))
-    # golf turf: rough darker, fairways richer with mower stripes, greens finer with a collar, white sand
-    a = over(a, follow(np.array([0.058, 0.112, 0.034], np.float32), pasture) * (0.86 + 0.26 * g_fine), rough)
-    fair_c = follow(np.array([0.086, 0.170, 0.044], np.float32), pasture) * (0.96 + 0.08 * g_fine) * (0.93 + 0.14 * g_mid)
+    a = over(a, follow(thicket, thicket) * (0.62 + 0.62 * fbm(Eo, No, 1.3, 3, 95)[..., None]), np.maximum(shrub * 0.8, scrub_m), LC_SCRUB)
+    # golf turf: rough darker, a first cut, fairways with mower stripes (a natural green, not lime), greens finer with a
+    # collar, white sand
+    a = over(a, follow(np.array([0.058, 0.112, 0.034], np.float32), pasture) * (0.86 + 0.26 * g_fine), rough, LC_TURF)   # mown: turf up close
+    fair_c = follow(np.array([0.074, 0.160, 0.050], np.float32), pasture)          # was lime (0.086, 0.170, 0.044) * (0.96 + 0.08 * g_fine) * (0.93 + 0.14 * g_mid)
+    a = over(a, fair_c * np.array([0.90, 0.86, 0.88], np.float32) * (0.95 + 0.1 * g_fine), first_cut, LC_TURF)
     st = I.stripes_at(E, N, Eo, No, 6.0)
-    a = over(a, fair_c * (1 + 0.10 * st[..., None]), fairway)
-    a = over(a, fair_c * 1.03 * (1 + 0.08 * st[..., None]), G['tee'])
+    a = over(a, fair_c * (1 + 0.10 * st[..., None]), fairway, LC_TURF)
+    a = over(a, fair_c * 1.03 * (1 + 0.08 * st[..., None]), G['tee'], LC_TURF)
     green_diag = ndi.gaussian_filter(np.sign(np.sin((Eo + No) * np.pi / 3.0)).astype(np.float32), 0.7)   # diagonal passes, 3 m
-    green_c = np.array([0.105, 0.235, 0.060], np.float32) * (1 + 0.035 * green_diag[..., None]) * (0.97 + 0.06 * g_fine)
-    a = over(a, green_c * 0.86, collar)
-    a = over(a, green_c, G['green'])
+    green_c = sat(np.array([0.105, 0.235, 0.060], np.float32), 0.9) * (1 + 0.035 * green_diag[..., None]) * (0.97 + 0.06 * g_fine)
+    a = over(a, green_c * 0.86, collar, LC_TURF)
+    a = over(a, green_c, G['green'], LC_TURF)
     bunker_c = np.array([0.72, 0.66, 0.53], np.float32) * (0.93 + 0.1 * fbm(Eo, No, 0.5, 2, 101)[..., None])
-    a = over(a, bunker_c * 0.62, lip)
-    a = over(a, bunker_c, G['bunker'])
+    a = over(a, bunker_c * 0.62, lip, LC_SAND)
+    a = over(a, bunker_c, G['bunker'], LC_SAND)
     # sand: warm, bright, wind ripples, darker where wet at the water's edge
     rip = 0.5 + 0.5 * np.sin((Eo * 0.8 + No * 0.6) * 2.2 + 3 * fbm(Eo, No, 6, 2, 61))
     sand_c = np.array([0.52, 0.45, 0.33], np.float32) * (0.92 + 0.08 * rip[..., None]) * (0.94 + 0.12 * g_fine)
     sand_c = sand_c * (1 - 0.38 * np.clip(1 - (-sdf) / 5, 0, 1))[..., None]
-    a = over(a, sand_c, sand)
+    a = over(a, sand_c, sand, LC_SAND)
     # rock: dark basalt shelf, rough, wet near the sea
     rock_c = np.array([0.075, 0.068, 0.060], np.float32) * (0.7 + 0.6 * fbm(Eo, No, 0.9, 4, 71)[..., None])
-    a = over(a, rock_c * (1 - 0.35 * np.clip(1 - (-sdf) / 6, 0, 1))[..., None], rock)
-    # the modelled lots: their lawns (the homes, drives and pools are 3D in the view)
-    a = over(a, np.array([0.066, 0.135, 0.040], np.float32) * (0.94 + 0.10 * g_fine) * (1 + 0.04 * np.sign(np.sin((Eo * 0.7 + No * 0.7) * np.pi / 4.0)))[..., None], keep * land)
-    # tracks, paths, roads
-    a = over(a, sat(base, 0.8) * 1.15 * (0.9 + 0.2 * g_fine), tracks * 0.7)
-    a = over(a, np.array([0.30, 0.29, 0.27], np.float32) * (0.92 + 0.12 * g_fine), walks)
-    a = over(a, np.array([0.27, 0.26, 0.24], np.float32), curb)
-    asphalt = np.array([0.050, 0.050, 0.052], np.float32) * (0.86 + 0.28 * fbm(Eo, No, 0.35, 2, 121)[..., None]) * (0.95 + 0.1 * g_big)
-    a = over(a, asphalt, paved)
-    a = over(a, np.array([0.42, 0.33, 0.10], np.float32), cline * paved * 0.55)
+    a = over(a, rock_c * (1 - 0.35 * np.clip(1 - (-sdf) / 6, 0, 1))[..., None], rock, LC_ROCK)
+    # the modelled lots: one lawn (the homes, drives and pools are 3D in the view), tinted like the grass around it,
+    # its mowing stripes fading out toward the feathered edge
+    kst = np.sign(np.sin((Eo * 0.7 + No * 0.7) * np.pi / 4.0)) * keep ** 2
+    a = over(a, follow(lawn_c, pasture, 0.3) * (0.94 + 0.10 * g_fine) * (1 + 0.04 * kst)[..., None], keep * land, LC_TURF)
+    # roads, drives, cart paths and paths: a soft verge (worn grass and dust) instead of a kerb line, a light weathered
+    # asphalt (patched, the main roads a little darker and fresher), pale concrete drives, narrow cart paths shaded
+    # under the trees beside them, and paths that read as worn ground rather than white strokes
+    vn = np.clip(fbm(Eo, No, 1.5, 2, 171) * 1.8 - 0.4, 0, 1)
+    a = over(a, sat(a, 0.55) * 1.22 * (0.9 + 0.2 * g_fine), verge * 0.32 * vn)
+    a = over(a, sat(base, 0.8) * 1.15 * (0.9 + 0.2 * g_fine), tracks * 0.7, LC_SOIL)
+    a = over(a, sat(reg, 0.55) * 1.35 * (0.9 + 0.2 * g_fine), trails * 0.6, LC_SOIL)
+    a = over(a, np.array([0.200, 0.192, 0.176], np.float32) * (0.92 + 0.12 * g_fine), walks * 0.75, LC_PAVED)
+    shade = 1 - 0.45 * np.clip(blur(trees, 1.5 / PX) * 2, 0, 1)
+    a = over(a, np.array([0.186, 0.176, 0.152], np.float32) * (0.92 + 0.12 * g_fine) * shade[..., None], carts * 0.8, LC_PAVED)
+    a = over(a, np.array([0.235, 0.226, 0.206], np.float32) * (0.92 + 0.12 * g_fine), drives * 0.9, LC_PAVED)
+    asphalt = np.array([0.105, 0.099, 0.092], np.float32) * (0.86 + 0.28 * fbm(Eo, No, 0.35, 2, 121)[..., None]) \
+        * (0.90 + 0.20 * fbm(Eo, No, 6.0, 2, 125)[..., None]) * (0.95 + 0.1 * g_big) * (1 - 0.14 * mains - 0.07 * lanes)[..., None]
+    a = over(a, asphalt, paved, LC_PAVED)
+    a = over(a, np.array([0.42, 0.33, 0.10], np.float32), cline * paved * 0.5)
     # pools with their coping, roofs (the 3D buildings stand on these), crowns, ponds
-    a = over(a, np.array([0.10, 0.42, 0.50], np.float32) * (0.85 + 0.3 * g_big), pools)
-    a = over(a, np.array([0.62, 0.60, 0.55], np.float32), np.clip(ndi.maximum_filter(pools, size=int(1.0 / PX)) - pools, 0, 1))
-    a = over(a, broof * (0.92 + 0.12 * g_fine), bmask)
-    tint = (0.85 + 0.3 * fbm(Eo, No, 9, 2, 81))[..., None]
-    canopy = np.array([0.030, 0.058, 0.022], np.float32)
-    leaf = fbm(Eo, No, 0.8, 3, 91)
-    crown = canopy * 0.6 + sat(base, 1.15) * 0.3
+    a = over(a, np.array([0.10, 0.42, 0.50], np.float32) * (0.85 + 0.3 * g_big), pools, LC_PAVED)
+    a = over(a, np.array([0.62, 0.60, 0.55], np.float32), np.clip(ndi.maximum_filter(pools, size=int(1.0 / PX)) - pools, 0, 1), LC_PAVED)
+    a = over(a, broof * (0.92 + 0.12 * g_fine), bmask, LC_PAVED)
+    # crowns: a leaf palette (monkeypod and Java plum deep green, kiawe and koa haole olive, ironwood grey-green, a
+    # fresher green), one blend per crown-sized cell with jitter and only a light pull toward the place's own tint, not
+    # the 10 m ground colour under them (which drew pasture-green and soil-coloured crowns)
+    pal = np.array([[0.032, 0.063, 0.021], [0.047, 0.066, 0.023], [0.042, 0.062, 0.027], [0.040, 0.080, 0.024],
+                    [0.030, 0.056, 0.021]], np.float32)
+    crown = pal[np.minimum((cells(Eo, No, 5.0, 97) * len(pal)).astype(np.int32), len(pal) - 1)]
+    crown = np.stack([ndi.gaussian_filter(crown[..., k], 0.5 / PX) for k in range(3)], -1)     # soft where crowns meet
+    crown = crown * np.clip(reg / pasture, 0.8, 1.25) ** 0.3 * (0.88 + 0.24 * vnoise(Eo, No, 3.5, 99))[..., None]
     crown = crown * (1 + (0.045 / np.maximum(crown[..., 1:2], 1e-4)) ** 4) ** 0.25   # floored at about 0.045 in green
+    tint = (0.85 + 0.3 * fbm(Eo, No, 9, 2, 81))[..., None]
+    leaf = fbm(Eo, No, 0.8, 3, 91)
     tree_c = crown * tint * (0.72 + 0.5 * leaf[..., None])
     tree_c[..., 0] *= (0.9 + 0.25 * vnoise(Eo, No, 11, 93))               # some crowns warmer (monkeypod, kiawe), some cooler
-    a = over(a, tree_c, trees)
-    del tree_c, sand_c, rock_c, asphalt, fair_c
+    a = over(a, tree_c, trees, LC_CANOPY)
+    del tree_c, crown, sand_c, rock_c, asphalt, fair_c, straw
     a = over(a, np.array([0.028, 0.062, 0.058], np.float32) * (0.9 + 0.2 * g_big), ponds * land)
 
     # sea: coloured by its real depth (USACE 2013 topobathy). Light crosses the water to the bottom and back:
@@ -610,10 +807,12 @@ def bake_tile(I, col, row, out):
     sandb_c = np.array([0.55, 0.50, 0.38], np.float32) * (0.9 + 0.2 * fbm(Eo, No, 3, 2, 133))[..., None]
     T = np.exp(-2 * np.array([0.42, 0.075, 0.048], np.float32) * depth[..., None])
     sea_c = (reef_c * (1 - sandy) + sandb_c * sandy) * T + I.deep_rgb * (1 - T)
-    # waves breaking on the reef crests, and the swash at the shore
-    crest = np.clip((2.6 - depth) / 1.6, 0, 1) * np.clip(depth / 0.4, 0, 1) * (sdf > 3)
+    # waves breaking on the reef crests, and the swash at the shore; none breaking inside the harbour's breakwater
+    # (Inputs._harbour), only a little lapping at its shore
+    calm = f32(I.grid_at(I.calm2, 2.0, E, N, cval=0.0)) if hasattr(I, 'calm2') else np.zeros_like(sdf)
+    crest = np.clip((2.6 - depth) / 1.6, 0, 1) * np.clip(depth / 0.4, 0, 1) * (sdf > 3) * (1 - calm)
     foam = crest * np.clip(fbm(Eo, No, 4, 3, 113) * 2.2 - 0.9, 0, 1)
-    foam = np.maximum(foam, np.clip(1 - sdf / 4, 0, 1) * (sdf > -0.5) * np.clip(fbm(Eo, No, 2.0, 3, 111) * 1.8 - 0.45, 0, 1))
+    foam = np.maximum(foam, np.clip(1 - sdf / 4, 0, 1) * (sdf > -0.5) * np.clip(fbm(Eo, No, 2.0, 3, 111) * 1.8 - 0.45, 0, 1) * (1 - 0.7 * calm))
     sea_c = sea_c * (1 - 0.85 * foam[..., None]) + 0.7 * 0.85 * foam[..., None]
     # land grade: the 10 m median mosaic is flatter than any one clear morning
     a = over(a, sat(a, 1.15) * 1.05, land)
@@ -624,15 +823,24 @@ def bake_tile(I, col, row, out):
     # under woody cover (crowns, thickets) the broad term is softened, so tree-filled gullies keep their shape but are
     # not crushed black under the live shadows; the crown-scale terms keep the gaps between crowns
     woody = np.clip(trees + np.maximum(shrub * 0.8, scrub_m) * (1 - trees), 0, 1) * land
-    hs = np.where(sea > 0.5, 0, dem) + chm * 0.9 + bh * (bmask > 0.5) + h_scrub
+    # lone crowns (canopy patches under 150 m2): the view stands a 3D tree on each (realsite trees), so the ground is
+    # not also raised into a shaded mound under it: a fifth of their relief stays in the normals, 40% in the
+    # occlusion; their traced shadow (cast height) stays. Woods keep their full rounded canopy.
+    lab, nl = ndi.label(chm > 2.0)
+    lone = np.zeros_like(chm)
+    if nl:
+        small = np.bincount(lab.ravel(), minlength=nl + 1) * PX * PX < 150; small[0] = False
+        lone = blur(ndi.binary_dilation(small[lab], iterations=int(2.5 / PX)).astype(np.float32), 0.8 / PX)   # over the crown's whole edge
+    del lab
+    hs = np.where(sea > 0.5, 0, dem) + chm * 0.9 * (1 - 0.6 * lone) + bh * (bmask > 0.5) + h_scrub
     ao = np.ones_like(hs)
     for r, k in ((1.2, 0.20), (3.5, 0.10), (9.0, 0.045)):
         d = blur(hs, r / PX) - hs
         ao *= np.clip(1 - k * np.clip(d, 0, None), 0.45, 1) ** (1 - 0.6 * woody if r > 5 else 1)
     ao = np.where(bmask > 0.5, 1, ao)                                     # roofs are 3D, lit live
     a = a * (land * ao + (1 - land))[..., None]
-    # and nothing woody ends darker than about 0.032 in green (a smooth floor that follows the leaf texture)
-    floor = 0.032 * (0.86 + 0.28 * leaf)
+    # and nothing woody ends darker than about 0.045 in green (a smooth floor that follows the leaf texture)
+    floor = 0.045 * (0.86 + 0.28 * leaf)
     lift = np.minimum((1 + (floor / np.maximum(a[..., 1], 1e-4)) ** 4) ** 0.25, 3.0)
     a = a * (1 + (lift - 1) * woody)[..., None]
     del leaf, floor, lift
@@ -647,7 +855,6 @@ def bake_tile(I, col, row, out):
     del rf_c
 
     # ---- crop and write
-    sl = (slice(MARGIN, MARGIN + TEX), slice(MARGIN, MARGIN + TEX))
     img = Image.fromarray((lin2srgb(a[sl]) * 255 + 0.5).astype(np.uint8))
     tag = f'{col}_{row}'
     img.save(f'{out}/a_{tag}.webp', quality=84, method=5)
@@ -657,12 +864,12 @@ def bake_tile(I, col, row, out):
     # under thick vegetation the lidar found little ground and drew big flat facets: soften them there
     veg = np.clip(scrub + trees + shrub, 0, 1)
     dem_l = dem + (blur(dem, 2.0 / PX) - dem) * veg
-    hl = np.where(sea > 0.5, 0, dem_l) + ndi.gaussian_filter(chm, 0.6 / PX) * (chm > 1.0) + h_scrub
+    hl = np.where(sea > 0.5, 0, dem_l) + ndi.gaussian_filter(chm, 0.6 / PX) * (chm > 1.0) * (1 - 0.8 * lone) + h_scrub
     hl = ndi.gaussian_filter(hl, 0.5)
     dE = ndi.sobel(hl, 1) / (8 * PX); dN = -ndi.sobel(hl, 0) / (8 * PX)    # rows run south
     nz = 1 / np.sqrt(1 + dE ** 2 + dN ** 2)
-    flat = np.maximum(water > 0.5, keep > 0.5)                            # water; the modelled lots stand on their own levels
-    nE = np.where(flat, 0, -dE * nz); nN = np.where(flat, 0, -dN * nz)
+    # water is flat; the modelled lots stand on their own levels, and their lawn's feathered edge eases into the lidar
+    nE = np.where(water > 0.5, 0, -dE * nz) * (1 - keep); nN = np.where(water > 0.5, 0, -dN * nz) * (1 - keep)
     cast = np.clip(np.maximum.reduce([chm * (chm > 1.0), bh * (bmask > 0.5), h_scrub]) * 10, 0, 255)
     nrm = np.stack([128 + 127 * nE, 128 + 127 * nN, cast], -1)
     # halved with its margin, then cropped (border texels filtered from both sides, so neighbours meet); lossless:
@@ -671,11 +878,22 @@ def bake_tile(I, col, row, out):
     m2, t2 = MARGIN // 2, TEX // 2
     Image.fromarray(np.clip(nrm, 0, 255).astype(np.uint8)).resize((n // 2, n // 2), Image.BILINEAR).crop((m2, m2, m2 + t2, m2 + t2)) \
         .save(f'{out}/n_{tag}.webp', lossless=True, quality=100, method=6)
-    wimg = np.stack([np.clip(128 + SDF_PER_M * sdf, 0, 255), ponds * 255, np.clip(depth * 10, 0, 255) * sea], -1)[sl]
+    # water data: R sea distance, G pond water (land) or the harbour's calm (sea), B sea depth; then, on land well away
+    # from the sea and the ponds, B carries the land cover (LANDCOVER) for the view's close-range ground detail
+    wimg = np.stack([np.clip(128 + SDF_PER_M * sdf, 0, 255), np.maximum(ponds * 255, calm * CALM_G * sea),
+                     np.clip(depth * 10, 0, 255) * sea], -1)[sl]
     if os.environ.get('COMM_DEBUG'):
         dbg = np.stack([ponds, courses, manicured], -1)[sl]
         Image.fromarray((dbg * 255).astype(np.uint8)).resize((1024, 1024)).save(f'{out}/../dbg_{col}_{row}.png')
-    Image.fromarray(wimg.astype(np.uint8)).resize((512, 512), Image.BILINEAR).save(f'{out}/w_{tag}.png', optimize=True)
+    w = np.array(Image.fromarray(wimg.astype(np.uint8)).resize((512, 512), Image.BILINEAR))
+    wc = np.zeros((512, 512, 9), np.float32); wc[..., LC_GRASS] = 1                # the pasture everything is drawn over
+    for cls, m in cover:
+        wc *= (1 - m)[..., None]; wc[..., cls] += m
+    dryness = np.clip(np.round((0.62 - to_w(ndvi)) / 0.4 * 15), 0, 15)
+    code = (wc.argmax(-1) * 16 + dryness).astype(np.uint8)
+    inland = ((w[..., 0].astype(np.float32) - 128) / SDF_PER_M < -LC_SHORE_M) & (w[..., 1] < 8)
+    w[..., 2] = np.where(inland, code, w[..., 2])
+    Image.fromarray(w).save(f'{out}/w_{tag}.png', optimize=True)
     return {'c': col, 'r': row, 'sea': round(float(sea[sl].mean()), 3)}
 
 
@@ -738,7 +956,11 @@ def main():
         'heights': hgrid,
         'tiles': tiles,
         'encoding': {'n': 'R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless',
-                     'w': 'R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water; B = 10 * sea depth (m)'},
+                     'w': 'R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); '
+                          f'G = 255 in ponds drawn as water, and on the sea {CALM_G} * calm (0-1) inside the harbour breakwater (no breaking surf); '
+                          f'B = 10 * sea depth (m), except on land more than {LC_SHORE_M:g} m from the sea and off the ponds (R < {128 - LC_SHORE_M * SDF_PER_M:g}, G < 8), '
+                          'where B = 16 * landCover + dryness (0-15, from NDVI: 0 at 0.62 and over, 15 at 0.22 and under)',
+                     'landCover': LC_NAMES},
         'sdfPerM': SDF_PER_M,                                   # w_*.png R steps per metre of sea distance
         'deepSea': [round(float(v), 4) for v in I.deep_rgb],   # linear albedo of the open sea in the tiles (glint taken off)
         # one line each, for the view's credits (with places.json's own attribution)
