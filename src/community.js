@@ -567,8 +567,10 @@ function tileMaterial(U, flat, low) {
       // streaks run on below that); over the box's last 300 m the whole sea takes it
       diffuseColor.rgb = mix(diffuseColor.rgb, uDeep, cmSea * max(smoothstep(10.0, 24.0, cmDepth), 1.0 - smoothstep(0.0, 300.0, cmEdgeM)));
       // ponds: the water a shade lighter, a narrow shelf of lighter, greener water along the bank (the pond mask blurred over
-      // about 4 m, four taps, on pond pixels only), and a teal-grey margin where the water meets its bank
-      float cmPondEdge = smoothstep(0.08, 0.3, cmW.g) * (1.0 - smoothstep(0.5, 0.85, cmW.g));
+      // about 4 m, four taps, on pond pixels only), and a teal-grey margin where the water meets its bank. The margin is held
+      // off the sea and its last 3 m of shore: the sea's G carries the harbour's calm (up to 80), which sits in this band
+      // (ponds lie more than 80 m inland)
+      float cmPondEdge = (1.0 - smoothstep(-3.0, -1.0, cmSdf)) * smoothstep(0.08, 0.3, cmW.g) * (1.0 - smoothstep(0.5, 0.85, cmW.g));
       diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15 + vec3(0.004, 0.01, 0.012), cmPond);
       if (cmPond > 0.0 && cmDist < 4000.0) {   // close up only: further off the shelf is under a pixel and only greys the pond
         vec2 cmO = vec2(2.0 / 512.0);
