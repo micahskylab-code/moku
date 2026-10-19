@@ -855,6 +855,11 @@ function tileMaterial(U, flat, low) {
       // the aerial photo's weight (the bake writes 7 x it in G on land, under the ponds' threshold): the photo holds the
       // flight's own sun and shadows, so the live sun's relief, traced shadows and grain are eased there (no doubled shade)
       float cmPh = clamp(cmW.g * 255.0 / 7.0, 0.0, 1.0) * (1.0 - smoothstep(7.5, 12.0, cmW.g * 255.0)) * cmLand;
+      // and the photo, matched to the satellite's median, reads a little dark, grey and blue beside the sea and sky: a
+      // warmer, greener and brighter grade on its pixels (about the drawn ground's level, a little less colourful)
+      vec3 cmPg = diffuseColor.rgb * vec3(1.07, 1.10, 0.92);
+      float cmPl = dot(cmPg, vec3(0.2126, 0.7152, 0.0722));
+      diffuseColor.rgb = mix(diffuseColor.rgb, max(vec3(0.0), cmPl + (cmPg - cmPl) * 1.05), cmPh);
       diffuseColor.rgb *= mix(1.0, 1.12, cmLand);
       float cmDn = cmNoise(vCmWorld.xz / 2.3) * 0.4 + cmNoise(vCmWorld.xz / 7.0 + 1.7) * 0.35 + cmNoise(vCmWorld.xz / 23.0 + 5.1) * 0.25;
       diffuseColor.rgb *= mix(1.0, 0.82 + 0.36 * cmDn, cmLand * (1.0 - 0.75 * cmPh) * (1.0 - smoothstep(500.0, 4000.0, cmDist)));
@@ -922,7 +927,7 @@ function tileMaterial(U, flat, low) {
       }`);
     sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', CM_COVER + '\n#include <emissivemap_fragment>');   // land cover close up
   };
-  m.customProgramCacheKey = () => 'community-tile-5';
+  m.customProgramCacheKey = () => 'community-tile-6';
   return m;
 }
 
