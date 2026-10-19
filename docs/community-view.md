@@ -72,7 +72,7 @@ The tiles are north-up UTM 4N squares of 1 km over E 447 500–453 500, N 2 418 
   - the haze thinned to 55% from the air, and by day tinted a light sky blue (at the haze's own brightness) instead of the horizon's grey; the low sky (within about 15° of the horizon) takes the same hue, so distant land fades into a sky of its own colour instead of standing out as a blue cut-out against a grey band;
   - the exposure raised by 40% by day (18% at night): an eye adapted to a bright sea and sky;
   - by day the sun a touch warmer (luminance kept), twice the sky's hemisphere fill, and a little bloom on highlights (not on low quality);
-  - a display grade after the tone mapping (`src/grade.js`): darks lifted a little, vibrance (dull colours gain saturation, vivid ones hardly any), olive greens pulled a few degrees toward yellow-green with a little more colour and light;
+  - a display grade after the tone mapping (`src/grade.js`): darks lifted a little, vibrance (dull colours gain saturation, vivid ones hardly any), olive greens pulled a few degrees toward yellow-green with a little more colour and light, pale blues (sky, haze, sea) a little deeper;
   - the sky: rounder cumulus tops (`uDome` 0.3 against 0.06), each ray marched at most 4.5 km into the deck (low rays marched whole smeared each cloud into a column), no cirrus, at most about a quarter of the sky in cloud unless it is overcast, and no cloud bank over the mountains (its flat top read as a flat-topped mountain).
   
   The daytime parts fade out as the sun goes down (from 14° above the horizon to 1° below), so dusk, night and the night sky look as they do elsewhere.
