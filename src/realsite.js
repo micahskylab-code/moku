@@ -203,8 +203,9 @@ const NOISE = `
 // tiles' deep colour. SINK lowers this terrain under the tiles inside their box (no clipped edge to see through).
 // Also while SEA_LIFT is on: the deep water here takes the tiles' open-sea colour too, the water is a little rougher with
 // its sun highlights capped (no white speckles), and, inland only, the far terrain's outer 4 km and the sea skirt fade into
-// the sky behind them (the sky texture and this frame's cumulus, src/skydome.js SKY_U): no edge of the world, no flat sea
-// plane where the island goes on; seaward the skirt keeps a crisp sea horizon.
+// what is behind them: above the horizon the sky (the sky texture and this frame's cumulus), below it the haze's own
+// colour (src/skydome.js SKY_U): no edge of the world, no flat bright plane where the island goes on; seaward the skirt
+// keeps a crisp sea horizon.
 export const SEA_LIFT = { value: 0 }, SEA_DEEP = { value: new THREE.Vector3(0.0026, 0.0089, 0.0248) }, SEA_Y = { value: -58 };
 export const SINK = { value: 0 }, SINK_BOX = { value: new THREE.Vector4() }, SINK_FRAME = { lot: { value: new THREE.Vector2() }, origin: { value: new THREE.Vector2() },
   east: { value: new THREE.Vector2(1, 0) }, north: { value: new THREE.Vector2(0, 1) }, ft: { value: 0.3048 } };
@@ -215,7 +216,7 @@ function rippleShader(m, all = false) {
   const centre = { value: new THREE.Vector2(b ? (b[0] + b[2]) / 2 : 0, b ? (b[1] + b[3]) / 2 : 0) };
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, { rsSeaLift: SEA_LIFT, rsDeep: SEA_DEEP, rsSeaY: SEA_Y, rsLiftLod: m.userData.liftLod ?? { value: 0 },
-      rsSkyLut: SKY_U.lut, rsSkyClouds: SKY_U.clouds, rsSkyTexel: SKY_U.texel, rsSkyTint: SKY_U.tint, rsEdge: edge, rsCentre: centre,
+      rsSkyLut: SKY_U.lut, rsSkyClouds: SKY_U.clouds, rsSkyTexel: SKY_U.texel, rsSkyTint: SKY_U.tint, rsHaze: SKY_U.haze, rsEdge: edge, rsCentre: centre,
       rsSink: SINK, rsBox: SINK_BOX, rsLot: SINK_FRAME.lot, rsOrigin: SINK_FRAME.origin, rsEast: SINK_FRAME.east, rsNorth: SINK_FRAME.north, rsFt: SINK_FRAME.ft });
     sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
       varying vec3 vRsWorld; uniform float rsSink, rsFt; uniform vec4 rsBox; uniform vec2 rsLot, rsOrigin, rsEast, rsNorth;`)
@@ -232,14 +233,14 @@ function rippleShader(m, all = false) {
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), rsWetG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
       varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift, rsSeaY, rsLiftLod, rsEdge; uniform vec3 rsDeep;${NOISE}
-      uniform sampler2D rsSkyLut, rsSkyClouds; uniform vec2 rsSkyTexel, rsCentre, rsNorth; uniform vec3 rsSkyTint;
+      uniform sampler2D rsSkyLut, rsSkyClouds; uniform vec2 rsSkyTexel, rsCentre, rsNorth; uniform vec3 rsSkyTint, rsHaze;
       ${SKY_TINT_GLSL('rsSkyTint')}
-      // what the sky dome draws behind this pixel (community view: haze below the horizon, the cumulus above it)
+      // what the sky dome draws behind this pixel (community view: the haze below the horizon, the cumulus above it)
       vec3 rsSkyBehind(vec3 d) {
         vec3 e = d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d;
         vec3 c = texture2D(rsSkyLut, vec2(atan(e.z, e.x) * 0.15915494 + 0.5, asin(clamp(e.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb * skyTint(d);
         if (d.y > 0.003) { vec4 cl = texture2D(rsSkyClouds, gl_FragCoord.xy * rsSkyTexel * 0.5); c = c * (1.0 - cl.a) + cl.rgb; }
-        return c;
+        return mix(c, rsHaze, 1.0 - smoothstep(-0.02, 0.0, d.y));
       }`)
       .replace('#include <envmap_physical_pars_fragment>', ibl)
       .replace('#include <map_fragment>', `#include <map_fragment>
@@ -288,7 +289,7 @@ function rippleShader(m, all = false) {
         if (k > 0.0) gl_FragColor.rgb = mix(gl_FragColor.rgb, rsSkyBehind(normalize(vRsWorld - cameraPosition)), k);
       }`);
   };
-  m.customProgramCacheKey = () => 'realsite-ground7' + (all ? '-sea' : '');
+  m.customProgramCacheKey = () => 'realsite-ground8' + (all ? '-sea' : '');
 }
 
 // ---------------------------------------------------------------------------------------------

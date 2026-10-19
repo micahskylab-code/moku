@@ -48,8 +48,8 @@ const exposureFor = E => lerp(0.58, 1.25, smooth(Math.log10(3e4), Math.log10(3),
 // seen from the air: by day the sun a little warmer, twice the sky fill, the exposure up by 40% (18% at night), a
 // light sky-blue haze instead of the horizon's grey, a touch of bloom on highlights and the display grade
 // (src/grade.js); rounder trade cumulus, no cirrus, at most about a quarter of the sky in cloud unless it is overcast,
-// and no cloud bank over the mountains (its flat top read as a flat-topped mountain). Everything daytime fades out with
-// the sun's altitude, so dusk and night stay as they are.
+// none in the last few degrees above the horizon, and no cloud bank over the mountains (its flat top read as a
+// flat-topped mountain). Everything daytime fades out with the sun's altitude, so dusk and night stay as they are.
 const CM_SUN = [1.06, 1.0, 0.9];                    // the key light's tint by day (luminance kept)
 const CM_HAZE = [0.42, 0.62, 0.94];                  // haze colour (linear, scaled to the haze's own luminance)
 
@@ -349,6 +349,9 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     sky.cloudU.uCirrus.value = w.cloud > 0.9 || look ? 0.0 : 0.12 + 0.25 * smooth(0.1, 0.7, w.cloud);
     sky.cloudU.uDome.value = look ? 0.3 : 0.06;
     sky.cloudU.uMarchKm.value = look ? 4.5 : 1e4;
+    // and in that view the deck thins out by about 40 km: the far cumulus, squeezed into a grey band just above the sea
+    // horizon, gone, so the sky is palest at the horizon
+    sky.cloudU.uCloudFade.value.set(...(look ? [16, 42] : [70, 125]));
 
     // aerial haze in the colour of the horizon
     const hz = night(wb([0, 1, 2].map(c => (L.sv.hor[c] * E0 * SKY_GAIN * 0.75 + L.mv.hor[c] * L.Emoon0 * SKY_GAIN * moonSkyLift + FLOOR_L * 2.5 * [0.55, 0.7, 1][c]) * U)));
@@ -358,6 +361,7 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     const hl = luminance(fogc) / luminance(CM_HAZE), tint = fogc.map((x, i) => lerp(1, CM_HAZE[i] * hl / Math.max(x, 1e-9), cdSun));
     SKY_U.tint.value.set(...tint);
     if (cdSun > 0) fogc = fogc.map((x, i) => lerp(x, CM_HAZE[i] * hl, cdSun));
+    SKY_U.haze.value.set(...fogc);   // the haze's colour, for what distant land fades into (skydome.js, realsite.js)
     if (!scene.fog) scene.fog = new THREE.FogExp2('#c9dbe8', 0.000045);
     scene.fog.color.setRGB(...fogc);
     // from the air (the community view) a clear trade-wind day sees farther: the haze set for looking across the lot thinned
