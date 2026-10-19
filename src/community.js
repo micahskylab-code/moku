@@ -260,8 +260,8 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   // the home (degrees); d, its distance to the target (ft); pol, its polar angle; sx, sy, where the home sits in the free
   // area (fractions). Phones in portrait come closer, with the home near the middle.
   const HERO = {
-    wide: { b: 345, d: 4000, pol: 1.29, sx: 0.4, sy: 0.66 },
-    landscape: { b: 355, d: 3800, pol: 1.33, sx: 0.45, sy: 0.64 },   // flatter: the header takes a quarter of the height
+    wide: { b: 345, d: 4000, pol: 1.29, sx: 0.4, sy: 0.69 },
+    landscape: { b: 355, d: 3300, pol: 1.33, sx: 0.45, sy: 0.64 },   // flatter: the header takes a quarter of the height
     portrait: { b: 318, d: 3000, pol: 1.22, sx: 0.5, sy: 0.64 },     // a narrow view: from the north-west, over the fairways
   };
   const probeCam = new THREE.PerspectiveCamera();
