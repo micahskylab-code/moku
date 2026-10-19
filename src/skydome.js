@@ -50,9 +50,18 @@ function makeNoise() {
 }
 
 export const CLOUD_H = 1.1, CLOUD_TOP = 2.0, CIRRUS_H = 8.5, TILE_KM = 9.0;   // trade cumulus: base ~1.1 km, tops ~2 km under the trade inversion; a noise tile spans 9 km
-const DOME = 0.06, SIGMA = 9.0;                                // tops narrower than bases; extinction per km of cloud (soft edges, opaque cores)
+const SIGMA = 9.0;                                             // extinction per km of cloud (soft edges, opaque cores)
+// The sky's textures, shared with shaders that fade into it (src/realsite.js: the community view's far terrain and its sea
+// skirt inland): the sky texture (scene units), the half-resolution cumulus pass of this frame (premultiplied), and a tint
+// of the low sky (1 everywhere but in the community view by day, where src/daylight.js gives the sky near the horizon the
+// hue of that view's haze, so distant land fades into a sky of its own colour; SKY_TINT_GLSL), and the haze's own colour
+// (the scene's fog, src/daylight.js): what land fades into with distance, so below the horizon the community view's dome
+// and the far land's fade end in it, as the sea beyond does, not in the brighter sky just above the horizon.
+export const SKY_U = { lut: { value: null }, clouds: { value: null }, texel: { value: new THREE.Vector2(1, 1) }, tint: { value: new THREE.Vector3(1, 1, 1) },
+  haze: { value: new THREE.Vector3(0.5, 0.6, 0.7) } };
+export const SKY_TINT_GLSL = (u = 'uSkyTint') => `vec3 skyTint(vec3 d) { return mix(vec3(1.0), ${u}, exp(-max(d.y, 0.0) / 0.12)); }`;
 export const CLOUD_GLSL = /* glsl */`
-uniform sampler2D uNoise; uniform vec2 uCloudOff, uCirrusOff; uniform float uCloudThr, uCloudSoft, uCirrus, uMountain; uniform vec2 uNorth;
+uniform sampler2D uNoise; uniform vec2 uCloudOff, uCirrusOff; uniform float uCloudThr, uCloudSoft, uCirrus, uMountain, uDome, uMarchKm; uniform vec2 uNorth, uCloudFade;
 float nz(vec2 p) { return texture(uNoise, p).r; }
 // smooth fbm (R) for where clouds gather, billowy Worley fbm (G) for their cauliflower edges
 float cloudShape(vec2 p) {
@@ -62,17 +71,21 @@ float cloudShape(vec2 p) {
 // distance (km) along a view direction to a layer at height h, on the curved earth
 float layerDist(float mu, float h) { float r = ${RE.toFixed(1)} + ${H0}, R = ${RE.toFixed(1)} + h; return -r * mu + sqrt(max(0.0, r * r * (mu * mu - 1.0) + R * R)); }
 float inlandAt(vec3 dir, float t) { return uMountain * max(0.0, dot(normalize(dir.xz + 1e-6), uNorth)) * smoothstep(8.0, 40.0, t); }
-// cumulus density 0..1 at a point (km from the eye), hf = height in the deck, 0 (flat base) .. 1 (top)
+// cumulus density 0..1 at a point (km from the eye), hf = height in the deck, 0 (flat base) .. 1 (top); uDome narrows the
+// tops (0.06: tall, nearly straight sides; the community view's 0.3: rounded tops, the weaker cells shallow)
 float cumulusAt(vec2 km, float inland, float hf) {
-  float thr = uCloudThr - inland + ${DOME} * hf * sqrt(hf);
+  float thr = uCloudThr - inland + uDome * hf * sqrt(hf);
   return smoothstep(thr, thr + uCloudSoft, cloudShape(km / ${TILE_KM.toFixed(2)} + uCloudOff));
 }
+// the stretch of a ray through the deck that is marched: base to top, or at most uMarchKm past the base (low rays cross
+// many kilometres of deck; marched whole they smear each cloud into a tall column)
+float marchEnd(float tb, float tt) { return min(tt, tb + uMarchKm); }
 // opacity of the deck along a direction (a short march, for stars and the Milky Way)
 float cloudCover(vec3 dir) {
   if (dir.y < 0.003) return 0.0;
-  float tb = layerDist(dir.y, ${CLOUD_H.toFixed(2)}), tt = layerDist(dir.y, ${CLOUD_TOP.toFixed(2)}), inland = inlandAt(dir, tb), od = 0.0;
-  for (int k = 0; k < 4; k++) { float f = (float(k) + 0.5) / 4.0; od += cumulusAt(dir.xz * mix(tb, tt, f), inland, f); }
-  return (1.0 - exp(-od * ${SIGMA.toFixed(1)} * (tt - tb) / 4.0)) * (1.0 - smoothstep(70.0, 125.0, tb));
+  float tb = layerDist(dir.y, ${CLOUD_H.toFixed(2)}), tt = layerDist(dir.y, ${CLOUD_TOP.toFixed(2)}), te = marchEnd(tb, tt), hk = (te - tb) / max(tt - tb, 1e-3), inland = inlandAt(dir, tb), od = 0.0;
+  for (int k = 0; k < 4; k++) { float f = (float(k) + 0.5) / 4.0; od += cumulusAt(dir.xz * mix(tb, te, f), inland, f * hk); }
+  return (1.0 - exp(-od * ${SIGMA.toFixed(1)} * (te - tb) / 4.0)) * (1.0 - smoothstep(uCloudFade.x, uCloudFade.y, tb));
 }
 `;
 
@@ -138,17 +151,20 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
   const cloudU = {
     uNoise: { value: noise.tex }, uCloudOff: { value: new THREE.Vector2(0.31, 0.77) }, uCirrusOff: { value: new THREE.Vector2(0.5, 0.2) },
     uCloudThr: { value: 0.6 }, uCloudSoft: { value: 0.11 }, uCirrus: { value: 0.25 }, uMountain: { value: 0.1 }, uNorth: { value: new THREE.Vector2(north[0], north[1]) },
+    uDome: { value: 0.06 }, uMarchKm: { value: 1e4 },          // src/daylight.js: rounder, shorter-marched cumulus in the community view
+    uCloudFade: { value: new THREE.Vector2(70, 125) },          // km over which the deck fades out with distance (src/daylight.js: nearer in the community view)
   };
   const lightU = {
     uCloudLight: { value: new THREE.Vector3() }, uCloudLightDir: { value: new THREE.Vector3(0, 1, 0) }, uCloudAmb: { value: new THREE.Vector3() },
     uCloudDark: { value: 0 }, uCloudThick: { value: 1 },
   };
   const domeU = {
-    ...cloudU, ...lightU, uLUT: { value: lutRT.texture },
+    ...cloudU, ...lightU, uLUT: SKY_U.lut,
     uSunDir: lutU.uSunDir, uSunDisc: { value: new THREE.Vector3() }, uSunR: { value: 0.00465 },
     uMoonDir: lutU.uMoonDir, uMoonDisc: { value: new THREE.Vector3() }, uMoonR: { value: 0.0045 }, uEarthshine: { value: 0.0 }, uPole: { value: new THREE.Vector3(0, 1, 0) },
-    uClouds: { value: null }, uCloudTexel: { value: new THREE.Vector2() },
+    uClouds: SKY_U.clouds, uCloudTexel: SKY_U.texel,
     uNoGround: { value: 0 },          // 1: below the horizon the horizon's haze, not the ground (the community view's sea runs out there)
+    uSkyTint: SKY_U.tint, uHaze: SKY_U.haze,
   };
   const domeMat = new THREE.ShaderMaterial({
     uniforms: domeU, side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
@@ -157,8 +173,9 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
       uniform sampler2D uLUT; uniform float uNoGround;
       uniform vec3 uSunDir, uSunDisc, uMoonDir, uMoonDisc, uPole, uCloudLight, uCloudLightDir, uCloudAmb;
       uniform float uSunR, uMoonR, uEarthshine, uCloudDark, uCloudThick;
-      uniform sampler2D uClouds; uniform vec2 uCloudTexel;
+      uniform sampler2D uClouds; uniform vec2 uCloudTexel; uniform vec3 uSkyTint, uHaze;
       ${CLOUD_GLSL}
+      ${SKY_TINT_GLSL()}
       vec3 sky(vec3 d) { return texture(uLUT, vec2(atan(d.z, d.x) * 0.15915494 + 0.5, asin(clamp(d.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb; }
       // the moon's near side: maria and bright highlands, lunar north toward the celestial pole
       float maria(vec2 p) {
@@ -178,7 +195,9 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
       }
       void main() {
         vec3 d = normalize(vD);
-        vec3 c = sky(uNoGround > 0.5 && d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d);
+        vec3 c = sky(uNoGround > 0.5 && d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d) * skyTint(d);
+        // no ground (the community view): below the horizon the haze, as distant land or sea would be (src/realsite.js)
+        if (uNoGround > 0.5) c = mix(c, uHaze, 1.0 - smoothstep(-0.02, 0.0, d.y));
         // sun's disc, limb-darkened; a little glare round it
         float sa = length(cross(d, uSunDir)), sd = dot(d, uSunDir);
         if (sd > 0.0) {
@@ -225,42 +244,43 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
   domeMat.extensions = { derivatives: true };
   // ---------- cumulus: a half-resolution pass, marched with per-pixel jitter, blurred into the dome ----------
   const cloudRT = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, depthBuffer: false, magFilter: THREE.LinearFilter, minFilter: THREE.LinearFilter });
-  const passU = { ...cloudU, ...lightU, uLUT: domeU.uLUT, uProjInv: { value: new THREE.Matrix4() }, uCamWorld: { value: new THREE.Matrix4() } };
+  const passU = { ...cloudU, ...lightU, uLUT: domeU.uLUT, uSkyTint: SKY_U.tint, uProjInv: { value: new THREE.Matrix4() }, uCamWorld: { value: new THREE.Matrix4() } };
   const cloudMat = new THREE.ShaderMaterial({
     uniforms: passU, depthTest: false, depthWrite: false,
     defines: { CLOUD_STEPS: quality === 'low' ? 8 : 14 },
     vertexShader: 'varying vec2 vNdc; void main(){ vNdc = position.xy; gl_Position = vec4(position.xy, 0.0, 1.0); }',
     fragmentShader: `varying vec2 vNdc;
       uniform sampler2D uLUT; uniform mat4 uProjInv, uCamWorld;
-      uniform vec3 uCloudLight, uCloudLightDir, uCloudAmb; uniform float uCloudDark, uCloudThick;
+      uniform vec3 uCloudLight, uCloudLightDir, uCloudAmb, uSkyTint; uniform float uCloudDark, uCloudThick;
       ${CLOUD_GLSL}
+      ${SKY_TINT_GLSL()}
       vec3 sky(vec3 d) { return texture(uLUT, vec2(atan(d.z, d.x) * 0.15915494 + 0.5, asin(clamp(d.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb; }
       void main() {
         vec4 v = uProjInv * vec4(vNdc, 1.0, 1.0); v /= v.w;
         vec3 d = normalize((uCamWorld * vec4(v.xyz, 0.0)).xyz);
         vec3 acc = vec3(0.0); float tr = 1.0;
-        float tb = layerDist(d.y, ${CLOUD_H.toFixed(2)}), tt = layerDist(d.y, ${CLOUD_TOP.toFixed(2)});
-        float fade = 1.0 - smoothstep(70.0, 125.0, tb);
+        float tb = layerDist(d.y, ${CLOUD_H.toFixed(2)}), tt0 = layerDist(d.y, ${CLOUD_TOP.toFixed(2)}), tt = marchEnd(tb, tt0), hk = (tt - tb) / max(tt0 - tb, 1e-3);
+        float fade = 1.0 - smoothstep(uCloudFade.x, uCloudFade.y, tb);
         if (d.y > 0.003 && fade > 0.0) {
           vec2 ld = uCloudLightDir.xz / max(length(uCloudLightDir.xz), 1e-3);
           float lift = clamp(uCloudLightDir.y, -0.1, 1.0);
           float g = 0.6, cs = dot(d, uCloudLightDir);
           float hg = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * cs, 1.5) / 12.566;
           float inland = inlandAt(d, tb), ds = (tt - tb) / float(CLOUD_STEPS);
-          vec3 hazeSky = sky(vec3(d.x, max(d.y, 0.02), d.z));
+          vec3 hazeSky = sky(vec3(d.x, max(d.y, 0.02), d.z)) * skyTint(d);
           float haze = (1.0 - exp(-tb / 50.0)) * 0.8;                       // distant clouds sink into the haze over the sea
           vec2 sh = ld * 0.35 / max(0.3, lift + 0.2);                          // toward the light, further when it is low
           float jit = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);    // white-noise jitter: no pattern left after the blur
           for (int k = 0; k < CLOUD_STEPS; k++) {
             if (tr < 0.02) break;
-            float f = (float(k) + jit) / float(CLOUD_STEPS);
+            float f = (float(k) + jit) / float(CLOUD_STEPS), hf = f * hk;   // hf: height in the deck
             vec2 p = d.xz * mix(tb, tt, f);
-            float den = cumulusAt(p, inland, f);
+            float den = cumulusAt(p, inland, hf);
             if (den < 0.003) continue;
-            float occ = cumulusAt(p + sh, inland, min(1.0, f + 0.25 * max(lift, 0.0)));
-            float shade = exp(-occ * 2.4 * uCloudThick) * mix(0.5, 1.0, f);  // shadowed by its own body; tops in the light
+            float occ = cumulusAt(p + sh, inland, min(1.0, hf + 0.25 * max(lift, 0.0)));
+            float shade = exp(-occ * 2.4 * uCloudThick) * mix(0.5, 1.0, hf);  // shadowed by its own body; tops in the light
             vec3 lit = uCloudLight * (0.05 + 0.95 * shade) * (0.6 + 3.0 * hg * (1.0 - den * 0.6));
-            vec3 amb = uCloudAmb * mix(0.55, 1.05, f) * (1.0 - 0.45 * uCloudDark);
+            vec3 amb = uCloudAmb * mix(0.55, 1.05, hf) * (1.0 - 0.45 * uCloudDark);
             vec3 cl = mix(lit * (1.0 - 0.75 * uCloudDark) + amb, hazeSky, haze);
             float al = (1.0 - exp(-den * ${SIGMA.toFixed(1)} * ds * uCloudThick)) * fade;
             acc += tr * al * cl; tr *= 1.0 - al;
@@ -279,8 +299,8 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
     camera.updateMatrixWorld();
     passU.uProjInv.value.copy(camera.projectionMatrixInverse);
     passU.uCamWorld.value.copy(camera.matrixWorld);
-    domeU.uClouds.value = cloudRT.texture;
-    domeU.uCloudTexel.value.set(1 / w, 1 / h);
+    SKY_U.clouds.value = cloudRT.texture;
+    SKY_U.texel.value.set(1 / w, 1 / h);
     const prev = renderer.getRenderTarget();
     renderer.setRenderTarget(cloudRT); renderer.render(cloudScene, lutCam); renderer.setRenderTarget(prev);
   }
@@ -292,6 +312,7 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
   dome.onBeforeRender = (r, s, cam) => dome.position.copy(cam.position);
   scene.add(dome);
 
+  SKY_U.lut.value = lutRT.texture;
   // ---------- image-based light from the sky texture ----------
   const pmrem = new THREE.PMREMGenerator(renderer);
   let envRT = null;
@@ -308,13 +329,14 @@ export function createSky(renderer, scene, { quality = 'high', north = [1, 0] } 
   function coverAt(dir) {
     if (dir[1] < 0.003) return 0;
     const h = Math.hypot(dir[0], dir[2]) || 1, ndot = Math.max(0, (dir[0] * north[0] + dir[2] * north[1]) / h);
-    const tb = layerDist(dir[1], CLOUD_H), tt = layerDist(dir[1], CLOUD_TOP), inland = cloudU.uMountain.value * ndot * smooth(8, 40, tb);
+    const tb = layerDist(dir[1], CLOUD_H), tt0 = layerDist(dir[1], CLOUD_TOP), tt = Math.min(tt0, tb + cloudU.uMarchKm.value), hk = (tt - tb) / Math.max(tt0 - tb, 1e-3);
+    const inland = cloudU.uMountain.value * ndot * smooth(8, 40, tb), dome = cloudU.uDome.value;
     let od = 0;
     for (let k = 0; k < 4; k++) {
-      const f = (k + 0.5) / 4, t = tb + (tt - tb) * f, thr = cloudU.uCloudThr.value - inland + DOME * f * Math.sqrt(f);
+      const f = (k + 0.5) / 4, hf = f * hk, t = tb + (tt - tb) * f, thr = cloudU.uCloudThr.value - inland + dome * hf * Math.sqrt(hf);
       od += smooth(thr, thr + cloudU.uCloudSoft.value, cc.shape(dir[0] * t / TILE_KM + cloudU.uCloudOff.value.x, dir[2] * t / TILE_KM + cloudU.uCloudOff.value.y));
     }
-    return (1 - Math.exp(-od * SIGMA * (tt - tb) / 4)) * (1 - smooth(70, 125, tb));
+    return (1 - Math.exp(-od * SIGMA * (tt - tb) / 4)) * (1 - smooth(cloudU.uCloudFade.value.x, cloudU.uCloudFade.value.y, tb));
   }
 
   return { dome, lutU, domeU, cloudU, render, renderClouds, coverAt, threshold: cover => cc.quantile(1 - cover), lut: lutRT, get env() { return envRT?.texture; } };

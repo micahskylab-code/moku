@@ -12,6 +12,7 @@
 // Also here: real buildings (OSM + Microsoft footprints) and trees (Meta/WRI canopy height), and the
 // colour hand-over of the modelled ground. Sources and licences: geodata/realsite.json, scripts/geo_*.py.
 import * as THREE from 'three';
+import { SKY_U, SKY_TINT_GLSL } from './skydome.js';
 
 const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -174,6 +175,7 @@ class RealSite {
     g.rotateX(-Math.PI / 2);
     // linear albedo of the deep water off Po'ipū in the mosaic
     const m = new THREE.MeshStandardMaterial({ name: 'realsite ocean', color: new THREE.Color().setRGB(0.021, 0.042, 0.075), roughness: 0.07, metalness: 0 });
+    m.userData.box = this.far.box;                              // its centre: which side is inland (the community view)
     rippleShader(m, true);
     const mesh = new THREE.Mesh(g, m);
     const c = [(this.far.box[0] + this.far.box[2]) / 2, (this.far.box[1] + this.far.box[3]) / 2];
@@ -199,13 +201,22 @@ const NOISE = `
 // The community view (src/community.js) switches SEA_LIFT on: this terrain's water near sea level loses the offset, read
 // from its own red averaged over ~260 m, so the sea beyond the tiles meets the sea in them; the open-sea skirt takes the
 // tiles' deep colour. SINK lowers this terrain under the tiles inside their box (no clipped edge to see through).
+// Also while SEA_LIFT is on: the deep water here takes the tiles' open-sea colour too, the water is a little rougher with
+// its sun highlights capped (no white speckles), and, inland only, the far terrain's outer 4 km and the sea skirt fade into
+// what is behind them: above the horizon the sky (the sky texture and this frame's cumulus), below it the haze's own
+// colour (src/skydome.js SKY_U): no edge of the world, no flat bright plane where the island goes on; seaward the skirt
+// keeps a crisp sea horizon.
 export const SEA_LIFT = { value: 0 }, SEA_DEEP = { value: new THREE.Vector3(0.0026, 0.0089, 0.0248) }, SEA_Y = { value: -58 };
 export const SINK = { value: 0 }, SINK_BOX = { value: new THREE.Vector4() }, SINK_FRAME = { lot: { value: new THREE.Vector2() }, origin: { value: new THREE.Vector2() },
   east: { value: new THREE.Vector2(1, 0) }, north: { value: new THREE.Vector2(0, 1) }, ft: { value: 0.3048 } };
 
 function rippleShader(m, all = false) {
+  // the far box the terrain rings fill (centred on it; they stop 1000 ft inside it) and how far out they reach
+  const b = m.userData.box, edge = { value: m.name === 'realsite far' && b ? (b[2] - b[0]) / 2 - 1000 : 0 };
+  const centre = { value: new THREE.Vector2(b ? (b[0] + b[2]) / 2 : 0, b ? (b[1] + b[3]) / 2 : 0) };
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, { rsSeaLift: SEA_LIFT, rsDeep: SEA_DEEP, rsSeaY: SEA_Y, rsLiftLod: m.userData.liftLod ?? { value: 0 },
+      rsSkyLut: SKY_U.lut, rsSkyClouds: SKY_U.clouds, rsSkyTexel: SKY_U.texel, rsSkyTint: SKY_U.tint, rsHaze: SKY_U.haze, rsEdge: edge, rsCentre: centre,
       rsSink: SINK, rsBox: SINK_BOX, rsLot: SINK_FRAME.lot, rsOrigin: SINK_FRAME.origin, rsEast: SINK_FRAME.east, rsNorth: SINK_FRAME.north, rsFt: SINK_FRAME.ft });
     sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
       varying vec3 vRsWorld; uniform float rsSink, rsFt; uniform vec4 rsBox; uniform vec2 rsLot, rsOrigin, rsEast, rsNorth;`)
@@ -221,7 +232,16 @@ function rippleShader(m, all = false) {
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), rsWetG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift, rsSeaY, rsLiftLod; uniform vec3 rsDeep;${NOISE}`)
+      varying vec3 vRsWorld; float rsWetG = 0.0; uniform float rsSeaLift, rsSeaY, rsLiftLod, rsEdge; uniform vec3 rsDeep;${NOISE}
+      uniform sampler2D rsSkyLut, rsSkyClouds; uniform vec2 rsSkyTexel, rsCentre, rsNorth; uniform vec3 rsSkyTint, rsHaze;
+      ${SKY_TINT_GLSL('rsSkyTint')}
+      // what the sky dome draws behind this pixel (community view: the haze below the horizon, the cumulus above it)
+      vec3 rsSkyBehind(vec3 d) {
+        vec3 e = d.y < 0.01 ? normalize(vec3(d.x, 0.01, d.z)) : d;
+        vec3 c = texture2D(rsSkyLut, vec2(atan(e.z, e.x) * 0.15915494 + 0.5, asin(clamp(e.y, -1.0, 1.0)) * 0.31830989 + 0.5)).rgb * skyTint(d);
+        if (d.y > 0.003) { vec4 cl = texture2D(rsSkyClouds, gl_FragCoord.xy * rsSkyTexel * 0.5); c = c * (1.0 - cl.a) + cl.rgb; }
+        return mix(c, rsHaze, 1.0 - smoothstep(-0.02, 0.0, d.y));
+      }`)
       .replace('#include <envmap_physical_pars_fragment>', ibl)
       .replace('#include <map_fragment>', `#include <map_fragment>
       float rsDist = length(vRsWorld - cameraPosition);
@@ -229,8 +249,10 @@ function rippleShader(m, all = false) {
         ${all ? 'diffuseColor.rgb = mix(diffuseColor.rgb, rsDeep, rsSeaLift);' : `
         float rsSeaW = 1.0 - smoothstep(rsSeaY + 20.0, rsSeaY + 60.0, vRsWorld.y);                        // the sea, not a reservoir
         float wl = 1.0 - smoothstep(0.2, 0.6, textureLod(roughnessMap, vRoughnessMapUv, 2.0).g);        // the mask, its holes filled
-        float off = clamp(textureLod(map, vMapUv, rsLiftLod).r - rsDeep.r, 0.0, 0.065);                // the glint field, not waves
-        diffuseColor.rgb = mix(diffuseColor.rgb, max(diffuseColor.rgb - off, vec3(0.002)), wl * rsSeaW * rsSeaLift);`}
+        float off = clamp(textureLod(map, vMapUv, rsLiftLod).r - 0.0026, 0.0, 0.065);                 // the glint field, not waves
+        vec3 sea = max(diffuseColor.rgb - off, vec3(0.002));
+        sea = mix(sea, rsDeep, 1.0 - smoothstep(0.025, 0.065, sea.g));                                  // all but the bright shallows: the tiles' open sea
+        diffuseColor.rgb = mix(diffuseColor.rgb, sea, wl * rsSeaW * rsSeaLift);`}
       }
       ${all ? '' : `{
         float wet0 = 1.0 - smoothstep(0.2, 0.6, texture2D(roughnessMap, vRoughnessMapUv).g);
@@ -243,7 +265,7 @@ function rippleShader(m, all = false) {
       }`}`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
       float rsWet = ${all ? '1.0' : '1.0 - smoothstep(0.2, 0.6, roughnessFactor)'};
-      roughnessFactor = mix(roughnessFactor, mix(0.06, 0.42, smoothstep(300.0, 9000.0, rsDist)), rsWet);`)
+      roughnessFactor = mix(roughnessFactor, mix(0.06 + 0.06 * rsSeaLift, 0.42 + 0.08 * rsSeaLift, smoothstep(300.0, 9000.0, rsDist)), rsWet);`)
       .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
       rsWetG = rsWet;
       if (rsWet > 0.0) {
@@ -256,9 +278,18 @@ function rippleShader(m, all = false) {
         g += vec2(Hx - H0, Hz - H0) / E * 0.18 * far;
         vec3 wn = normalize(vec3(-g.x, 1.0, -g.y));
         normal = normalize(mix(normal, normalize((viewMatrix * vec4(wn, 0.0)).xyz), rsWet));
+      }`)
+      .replace('#include <aomap_fragment>', `#include <aomap_fragment>
+      if (rsSeaLift > 0.0) reflectedLight.directSpecular = mix(reflectedLight.directSpecular, min(reflectedLight.directSpecular, vec3(0.45)), rsWetG * rsSeaLift);`)
+      .replace('#include <fog_fragment>', `#include <fog_fragment>
+      if (rsSeaLift > 0.0 && ${all ? 'true' : 'rsEdge > 0.0'}) {
+        vec2 rel = vRsWorld.xz - rsCentre;
+        float inland = smoothstep(0.0, 0.4, dot(normalize(rel + 1e-3), rsNorth));
+        float k = inland * rsSeaLift${all ? '' : ' * smoothstep(rsEdge - 13000.0, rsEdge - 600.0, max(abs(rel.x), abs(rel.y)))'};
+        if (k > 0.0) gl_FragColor.rgb = mix(gl_FragColor.rgb, rsSkyBehind(normalize(vRsWorld - cameraPosition)), k);
       }`);
   };
-  m.customProgramCacheKey = () => 'realsite-ground6' + (all ? '-sea' : '');
+  m.customProgramCacheKey = () => 'realsite-ground8' + (all ? '-sea' : '');
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 import * as THREE from 'three';
 import * as EPH from './ephemeris.js';
 import { airParams, transmittance, skySurvey, luminance } from './atmosphere.js';
-import { createSky, CLOUD_GLSL, CLOUD_H, TILE_KM } from './skydome.js';
+import { createSky, CLOUD_GLSL, CLOUD_H, TILE_KM, SKY_U } from './skydome.js';
 import { makeNightSky, SITE as SKY_SITE } from './sky.js';
 import { createWind } from './wind.js';
 import { createRain } from './rain.js';
@@ -44,6 +44,14 @@ function key(E) {
   return KEY[KEY.length - 1][1];
 }
 const exposureFor = E => lerp(0.58, 1.25, smooth(Math.log10(3e4), Math.log10(3), Math.log10(E)));
+// The community view's look (src/community.js, switched on by main.js while that view is open), a sunny Kauaʻi day
+// seen from the air: by day the sun a little warmer, twice the sky fill, the exposure up by 40% (18% at night), a
+// light sky-blue haze instead of the horizon's grey, a touch of bloom on highlights and the display grade
+// (src/grade.js); rounder trade cumulus, no cirrus, at most about a quarter of the sky in cloud unless it is overcast,
+// none in the last few degrees above the horizon, and no cloud bank over the mountains (its flat top read as a
+// flat-topped mountain). Everything daytime fades out with the sun's altitude, so dusk and night stay as they are.
+const CM_SUN = [1.06, 1.0, 0.9];                    // the key light's tint by day (luminance kept)
+const CM_HAZE = [0.42, 0.62, 0.94];                  // haze colour (linear, scaled to the haze's own luminance)
 
 export async function createDaylight({ scene, renderer, camera, plan, quality, north, center, terrainH, ceilingAt, lamps, glow, mat, params, bloom = null, shot }) {
   const [cx, cz] = center;
@@ -229,7 +237,7 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     const P = airParams({ aod: w.aod });
     const sDir = EPH.worldDir(sun.alt, sun.az, north), mDir = EPH.worldDir(moon.alt, moon.az, north);
     const overcast = smooth(0.75, 1.0, w.cloud) * (w.rainMmH > 0.2 ? 1 : 0.85);
-    const cumulus = Math.min(0.85, w.cloud * 0.95);
+    const cumulus = Math.min(look ? lerp(0.25, 0.85, overcast) : 0.85, w.cloud * 0.95);
     sky.cloudU.uCloudThr.value = sky.threshold(cumulus);
     // sun
     const Ts = transmittance(Math.max(sun.alt, -0.27), P), Tcloud = transmittance(Math.max(sun.alt, -1.2), P, CLOUD_H);
@@ -264,9 +272,11 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     const sunK = (1 - 0.88 * occ) * (1 - 0.86 * overcast) * (1 - 0.5 * smooth(0.5, 4, w.rainMmH));
     const useSun = sun.alt > -2 || L.EmoonDir <= 0;
     const lightDir = useSun ? sDir : mDir;
+    const cd = look ? smooth(-1, 14, sun.alt) : 0;                    // the community view's daytime look, faded by the sun's altitude
+    const cdSun = cd * (1 - overcast);
     keyLight.position.set(cx + lightDir[0] * 400, lightDir[1] * 400, cz + lightDir[2] * 400);
     if (useSun) {
-      const c = wb(norm(L.Ts));
+      const c0 = wb(norm(L.Ts)), c = cdSun > 0 ? norm(c0.map((x, i) => x * lerp(1, CM_SUN[i], cdSun))) : c0;
       keyLight.color.setRGB(c[0], c[1], c[2]);
       keyLight.intensity = L.EsunDir > 0 ? L.EsunDir * U * sunK / luminance(c) : 0;   // the light's illuminance is intensity x colour
     } else {
@@ -278,7 +288,7 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     // sky light: hemisphere fill, the interiors' room light
     const EskyU = (L.EsunSky + L.EmoonSky + FLOOR_LUX) * U * (1 - 0.35 * overcast);
     const skyCol = night(wb(norm([L.sv.E[0] * L.EsunSky + L.mv.E[0] * L.EmoonSky + 1e-9, L.sv.E[1] * L.EsunSky + L.mv.E[1] * L.EmoonSky + 1e-9, L.sv.E[2] * L.EsunSky + L.mv.E[2] * L.EmoonSky + 1.5e-9])));
-    hemi.color.setRGB(...norm(skyCol)); hemi.intensity = 0.12 * EskyU / 1.0;
+    hemi.color.setRGB(...norm(skyCol)); hemi.intensity = 0.12 * EskyU / 1.0 * (1 + cd);
     const day = Math.min(1.2, (EskyU + keyLight.intensity * 0.12) / 1.5);
     for (const [m, base] of interiors) m.envMapIntensity = base * Math.max(0.03, day);
 
@@ -293,8 +303,9 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     for (const m of hoodWin) m.emissiveIntensity = 0.9 * on;
     for (const m of hoodPool) m.emissiveIntensity = 0.8 * on;
     const rs = window.__realsite; if (rs?.windowMaterial) rs.windowMaterial.emissiveIntensity = 0.8 * on;   // the real neighbourhood's houses
-    if (bloom) { bloom.strength = 0.55 * Math.sqrt(on) + 0.25 * smooth(-4, -10, sun.alt) * moon.illum * (moon.alt > 0 ? 1 : 0); bloom.enabled = bloom.strength > 0.02; }
-    renderer.toneMappingExposure = L.e;
+    if (bloom) { bloom.strength = 0.55 * Math.sqrt(on) + 0.25 * smooth(-4, -10, sun.alt) * moon.illum * (moon.alt > 0 ? 1 : 0) + (quality === 'low' ? 0 : 0.12 * cdSun); bloom.enabled = bloom.strength > 0.02; }
+    renderer.toneMappingExposure = L.e * (look ? lerp(1.18, 1.4, cd) : 1);
+    if (grade) { grade.uniforms.uAmount.value = cd; grade.enabled = cd > 0.004; }
 
     // sky texture uniforms (in scene units)
     const u = sky.lutU, sunE = E0 * U, wbs = wb([1, 1, 1]);
@@ -334,16 +345,27 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     d.uCloudAmb.value.set(amb[0], amb[1], amb[2]).multiplyScalar(EskyU * 0.75 / Math.PI + FLOOR_L * U * 2);
     d.uCloudDark.value = Math.min(1, overcast * 0.35 + smooth(0.2, 4, w.rainMmH) * 0.65);
     d.uCloudThick.value = 1 + smooth(0.2, 4, w.rainMmH) * 0.6;
-    sky.cloudU.uMountain.value = 0.1 + 0.05 * w.cloud;
-    sky.cloudU.uCirrus.value = w.cloud > 0.9 ? 0.0 : 0.12 + 0.25 * smooth(0.1, 0.7, w.cloud);
+    sky.cloudU.uMountain.value = look ? 0 : 0.1 + 0.05 * w.cloud;
+    sky.cloudU.uCirrus.value = w.cloud > 0.9 || look ? 0.0 : 0.12 + 0.25 * smooth(0.1, 0.7, w.cloud);
+    sky.cloudU.uDome.value = look ? 0.3 : 0.06;
+    sky.cloudU.uMarchKm.value = look ? 4.5 : 1e4;
+    // and in that view the deck thins out by about 40 km: the far cumulus, squeezed into a grey band just above the sea
+    // horizon, gone, so the sky is palest at the horizon
+    sky.cloudU.uCloudFade.value.set(...(look ? [16, 42] : [70, 125]));
 
     // aerial haze in the colour of the horizon
     const hz = night(wb([0, 1, 2].map(c => (L.sv.hor[c] * E0 * SKY_GAIN * 0.75 + L.mv.hor[c] * L.Emoon0 * SKY_GAIN * moonSkyLift + FLOOR_L * 2.5 * [0.55, 0.7, 1][c]) * U)));
     const hzOver = [0.62, 0.66, 0.7].map(x => x * oc * 2.4);
-    const fogc = hz.map((x, i) => lerp(x, hzOver[i], overcast));
+    let fogc = hz.map((x, i) => lerp(x, hzOver[i], overcast));
+    // the community view by day: the haze, and the low sky with it, in a light sky blue (each at its own brightness)
+    const hl = luminance(fogc) / luminance(CM_HAZE), tint = fogc.map((x, i) => lerp(1, CM_HAZE[i] * hl / Math.max(x, 1e-9), cdSun));
+    SKY_U.tint.value.set(...tint);
+    if (cdSun > 0) fogc = fogc.map((x, i) => lerp(x, CM_HAZE[i] * hl, cdSun));
+    SKY_U.haze.value.set(...fogc);   // the haze's colour, for what distant land fades into (skydome.js, realsite.js)
     if (!scene.fog) scene.fog = new THREE.FogExp2('#c9dbe8', 0.000045);
     scene.fog.color.setRGB(...fogc);
-    scene.fog.density = 0.000045 * (1 + 3 * smooth(0.2, 5, w.rainMmH) + (w.fog ? 8 : 0) + Math.max(0, (w.aod - 0.05) * 12));
+    // from the air (the community view) a clear trade-wind day sees farther: the haze set for looking across the lot thinned
+    scene.fog.density = 0.000045 * (1 + 3 * smooth(0.2, 5, w.rainMmH) + (w.fog ? 8 : 0) + Math.max(0, (w.aod - 0.05) * 12)) * (look ? 0.55 : 1);
 
     // stars
     if (stars) {
@@ -368,7 +390,7 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
   }
 
   // ---------- per frame ----------
-  let liveTick = 0, occTick = 0, age = 0;
+  let liveTick = 0, occTick = 0, age = 0, look = null, grade = null;
   const windDir = [0, 0];
   function update(dt) {
     if (!prewarmed && (age += dt) > 2.5) prewarm();
@@ -425,6 +447,9 @@ export async function createDaylight({ scene, renderer, camera, plan, quality, n
     update, beforeRender, state: S, get light() { return L; }, keyLight, sky, sunPath, panel, wind, rain,
     set onPreset(f) { onPresetHook = f; },
     set bloom(p) { bloom = p; S.dirty = true; },
+    set grade(p) { grade = p; S.dirty = true; },
+    // 'community' while the community view is open, null otherwise (main.js): its look, applied from the next frame
+    setLook(id) { if ((id ?? null) !== look) { look = id ?? null; S.dirty = true; } },
     // the sun path shows itself in the fly-over, unless the viewer has switched it on or off
     autoSunPath(v) { if (!S.sunPathUser) { sunPath.visible = v; S.dirty = true; } },
     toDay() { const p = EPH.hstParts(S.date); S.live = false; S.preset = null; goTo(EPH.fromHST(p.year, p.doy, 10 * 60 + 30)); },

@@ -7,6 +7,8 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { CommunityGrade } from './grade.js';
 import { buildHouse } from './house.js';
 import { buildSite } from './site.js';
 import { makeDaySky, makeNightSky, dirFromAltAz } from './sky.js';
@@ -149,6 +151,8 @@ if (quality !== 'low' && !(night && (params.get('video') || params.has('starpass
 if (night) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.5, 0.82));
 else if (daylight) { const b = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0, 0.5, 0.82); composer.addPass(b); daylight.bloom = b; }
 composer.addPass(new OutputPass());
+// the community view's display grade (src/grade.js), off everywhere else: daylight.js sets its strength and switches it
+if (daylight) { const g = new ShaderPass(CommunityGrade); g.enabled = false; composer.addPass(g); daylight.grade = g; }
 composer.addPass(new SMAAPass(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio()));
 
 function render() {
@@ -253,6 +257,7 @@ async function startInteractive() {
     mode = m; btn.textContent = m === 'fly' ? 'Walk in' : 'Fly over'; modelBtn.textContent = m === 'model' ? 'Exit model' : 'Model';
     commBtn.textContent = m === 'community' ? 'Exit community' : 'Community';
     document.body.classList.toggle('community-mode', m === 'community');
+    daylight?.setLook(m === 'community' ? 'community' : null);     // that view's sunny-day look (src/daylight.js), off in the others
     orbit.enabled = m !== 'walk'; overlay.hidden = m !== 'walk';
     if (m === 'fly') { look.unlock(); orbit.target.set(cx, 0, cz); camera.position.set(cx - 160, 140, cz + 120); }
     else if (m === 'model') { look.unlock(); inspector.enter(); }
