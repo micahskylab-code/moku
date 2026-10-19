@@ -102,7 +102,7 @@ export const glow = once('glow', () => new THREE.MeshStandardMaterial({ name: 'g
 // one modelled home (ours: the base finishes; the copies carry '<finish>.<lot>' variants, src/neighborhood.js) takes a
 // warm light on its roof by day (update(day), 0 at night), and the copies' roofs sit a little darker, so ours reads first
 // under its pin. Nothing is drawn on the ground: no outline, no glow.
-const CM_WARM = new THREE.Color(1.13, 1.03, 0.84), CM_GLOW = new THREE.Color('#ffc58a');
+const CM_WARM = new THREE.Color(1.13, 1.03, 0.84), CM_GLOW = new THREE.Color('#ffc58a'), CM_TMP = new THREE.Color();
 export function aerialFinishes(scene) {
   const saved = [], hidden = [], seen = new Set();
   let ours = null;
@@ -132,7 +132,7 @@ export function aerialFinishes(scene) {
     update(day) {
       if (!ours) return;
       const k = Math.max(0, Math.min(1, day));
-      ours.m.color.copy(ours.base).multiply(new THREE.Color(1, 1, 1).lerp(CM_WARM, k));
+      ours.m.color.copy(ours.base).multiply(CM_TMP.setRGB(1, 1, 1).lerp(CM_WARM, k));
       ours.m.emissive.copy(CM_GLOW); ours.m.emissiveIntensity = 0.05 * k;
     },
     restore() {

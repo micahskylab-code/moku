@@ -385,7 +385,7 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = mesh.receiveShadow = true; mesh.name = name;
     // the community view's colours (communityLook): the roof palette below; walls a warm off-white a little below paper white
-    mesh.userData.cmColor = new THREE.BufferAttribute(P.uv ? Float32Array.from(P.col, (v, i) => v * [0.8, 0.78, 0.74][i % 3]) : cmRoofColours(P.col), 3);
+    mesh.userData.cmColor = new THREE.BufferAttribute(P.uv ? Float32Array.from(P.col, (v, i) => v * [0.76, 0.73, 0.68][i % 3]) : cmRoofColours(P.col), 3);
     this.buildingMeshes.push(mesh);
     g.add(mesh);
   }
@@ -395,13 +395,14 @@ RealSite.prototype.buildings = function ({ maxDist = Infinity, centre = [0, 0] }
 
 // The community view's roof palette: the five snapped satellite finishes, mapped by brightness into a muted range (dark
 // grey, warm grey, a light warm grey; never pitch black, never white) and, for the red ones, a weathered terracotta. A
-// quarter of each finish's own hue is kept (the red ones keep about half), so the roofs still differ as they do.
+// quarter of each finish's own hue is kept (the red ones keep about half; the green-grey one, mostly a crown's colour
+// snapped onto a roof, a tenth), so the roofs still differ as they do without a teal or salmon toy roof.
 function cmRoofColours(col) {
   const out = new Float32Array(col.length);
   for (let i = 0; i < col.length; i += 3) {
     const r = col[i], g = col[i + 1], b = col[i + 2], L = Math.max(1e-4, 0.2126 * r + 0.7152 * g + 0.0722 * b);
-    const Lt = Math.min(0.26, Math.max(0.085, 0.085 + (L - 0.1) * 0.55));
-    const keep = r > 1.6 * g ? 0.55 : 0.25, warm = [1.05, 1.0, 0.93];
+    const Lt = Math.min(0.26, 0.11 + Math.max(0, L - 0.1) * 0.5);
+    const keep = r > 1.6 * g ? 0.55 : g > 1.15 * r ? 0.1 : 0.25, warm = [1.05, 1.0, 0.93];
     for (let k = 0; k < 3; k++) out[i + k] = Lt * warm[k] * (1 + ([r, g, b][k] / L - 1) * keep);
   }
   return out;
@@ -521,7 +522,7 @@ RealSite.prototype.communityTrees = function ({ low = this.low, ground = (x, z) 
   }
   const g = new THREE.Group(); g.name = 'community trees';
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), V = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
-  const forms = [[cmUmbrella(2), cmUmbrella(1)], [crownCluster(2), cmDome(low)], [cmUneven(2), cmUneven(1)]];
+  const forms = [[cmUmbrella(2), cmUmbrella(low ? 0 : 1)], [crownCluster(2), cmDome(low)], [cmUneven(2), cmUneven(1)]];   // phones: lighter far crowns
   for (let f = 0; f < 3; f++) for (const near of [true, false]) {
     const list = pick[f].filter(t => t.near === near); if (!list.length) continue;
     const crown = new THREE.InstancedMesh(forms[f][near ? 0 : 1], crownMat, list.length);
@@ -543,7 +544,7 @@ function cmUmbrella(lod) {
   const parts = lod >= 2
     ? [[0, 0.62, 0, 0.62, 0.36], ...[0, 1, 2, 3, 4].map(k => { const a = k * 1.2566 + 0.4; return [0.5 * Math.cos(a), 0.5 + 0.06 * (k % 2), 0.5 * Math.sin(a), 0.52, 0.42]; })]
     : [[0, 0.5, 0, 1, 0.5]];
-  return mergeIndexed(parts.map(([x, y, z, r, ry], k) => { const g = lumpyCrown(1, k + 3); g.scale(r, ry, r); g.translate(x, y, z); return g; }));
+  return mergeIndexed(parts.map(([x, y, z, r, ry], k) => { const g = lumpyCrown(Math.min(1, lod), k + 3); g.scale(r, ry, r); g.translate(x, y, z); return g; }));
 }
 // Dome, far: one lump at the walkthrough's middle detail (its single 20-triangle lump reads faceted from the air).
 function cmDome(low) { const g = lumpyCrown(low ? 0 : 1, 0); g.scale(1, 0.5, 1); g.translate(0, 0.5, 0); return mergeIndexed([g]); }

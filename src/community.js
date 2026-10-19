@@ -188,7 +188,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
             if (!a || !n) { t.fails = (t.fails ?? 0) + 1; t.failUntil = performance.now() + 2000 * 2 ** t.fails; console.warn('[community] tile', t.c, t.r, (ra.reason ?? rn.reason)?.message); }
             return;
           }
-          t.hiTex = [a, n]; t.hi = 1; t.mat.map = a; t.mat.userData.u.uN.value = n; t.mat.userData.u.uHasN.value = 1; t.mat.needsUpdate = true;
+          t.hiTex = [a, n]; t.hi = 1; t.mat.map = a; t.mat.userData.u.uN.value = n; t.mat.userData.u.uHasN.value = 1; t.mat.userData.u.uLow.value = t.low; t.mat.needsUpdate = true;
           edges();
         })
         .finally(() => { t.busy = false; inflight--; if (active) pump(); });
@@ -201,7 +201,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const t of tiles) t.mat.userData.u.uEdgeLo.value.set(lo(t.c, t.r - 1), lo(t.c + 1, t.r), lo(t.c, t.r + 1), lo(t.c - 1, t.r));
   }
   function dropHi(t) {
-    t.mat.map = t.low; t.mat.userData.u.uN.value = flat; t.mat.userData.u.uHasN.value = 0; t.mat.needsUpdate = true;
+    t.mat.map = t.low; t.mat.userData.u.uN.value = flat; t.mat.userData.u.uHasN.value = 0; t.mat.userData.u.uLow.value = flat; t.mat.needsUpdate = true;
     for (const x of t.hiTex) x.dispose(); t.hiTex = null; t.hi = 0;
     edges();
   }
@@ -325,8 +325,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       keyL.position.set(rowC.x + d[0] * SHADOW_D, rowC.y + d[1] * SHADOW_D, rowC.z + d[2] * SHADOW_D);
     }
     finishes?.update(ss(-1, 12, L?.sun?.alt ?? 30));                                    // the warm light fades with the sun
-    if (aoSaved && !aoPass.enabled && !window.__TEMPNOAO) aoPass.enabled = true;                               // main.js turns it off for this view
-    if (window.__TEMPNOAO && aoPass) aoPass.enabled = false; // TEMP
+    if (aoSaved && !aoPass.enabled) aoPass.enabled = true;                             // main.js turns it off for this view
   }
   // ---- the subject and its surroundings (end) --------------------------------------------------------------------
 
@@ -557,7 +556,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
 
 // ---------------------------------------------------------------------------------------------
 function tileMaterial(U, flat, low) {
-  const u = { uN: { value: flat }, uW: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
+  const u = { uN: { value: flat }, uW: { value: flat }, uLow: { value: flat }, uHasN: { value: 0 }, uTileCR: { value: new THREE.Vector2() }, uEdgeLo: { value: new THREE.Vector4(1, 1, 1, 1) } };
   const m = new THREE.MeshStandardMaterial({ name: 'community tile', roughness: 0.93, metalness: 0, envMapIntensity: 1 });   // as the real-site terrain
   if (low) m.defines = { CM_LOW: '' };                 // phones: a shorter shadow trace, nearer
   m.userData.u = u;
@@ -570,7 +569,7 @@ function tileMaterial(U, flat, low) {
     const ibl = THREE.ShaderChunk.envmap_physical_pars_fragment.replace('reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );\n\t\t\treflectVec.y = mix( reflectVec.y, max( reflectVec.y, 0.06 + 0.5 * roughness ), cmWaterG );\n\t\t\treflectVec = normalize( reflectVec );');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
-      uniform sampler2D uN, uW; uniform float uHasN, uTime, uShadowK, uTileM, uSdfK; uniform vec3 uSun, uDeep; uniform vec2 uEast, uNorth, uGrid, uTileCR, uLotC, uLotH; uniform vec4 uEdgeLo;
+      uniform sampler2D uN, uW, uLow; uniform float uHasN, uTime, uShadowK, uTileM, uSdfK; uniform vec3 uSun, uDeep; uniform vec2 uEast, uNorth, uGrid, uTileCR, uLotC, uLotH; uniform vec4 uEdgeLo;
       varying vec3 vCmWorld; float cmWaterG = 0.0;
       float cmHash(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
       float cmNoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -589,8 +588,9 @@ function tileMaterial(U, flat, low) {
       vec2 cmUv = vMapUv;
       float cmHiFade = uHasN * min(min(mix(1.0, smoothstep(0.0, 0.22, cmUv.y), uEdgeLo.x), mix(1.0, smoothstep(0.0, 0.22, 1.0 - cmUv.x), uEdgeLo.y)),
                                    min(mix(1.0, smoothstep(0.0, 0.22, 1.0 - cmUv.y), uEdgeLo.z), mix(1.0, smoothstep(0.0, 0.22, cmUv.x), uEdgeLo.w)));
-      // and over the same 220 m the albedo eases to the 2 m tile's sharpness (its 512 px level): a gradient, not a seam
-      if (uHasN > 0.5 && cmHiFade < 0.999) diffuseColor.rgb = mix(diffuse * texture2D(map, vMapUv, 2.0).rgb, diffuseColor.rgb, cmHiFade);
+      // and over the same 220 m the albedo eases into the tile's own 2 m albedo (s_*.webp, still on the GPU), the very
+      // texture the neighbour shows: at the shared edge both sides draw the same pixels, so no seam in colour or sharpness
+      if (uHasN > 0.5 && cmHiFade < 0.999) diffuseColor.rgb = mix(diffuse * texture2D(uLow, vMapUv).rgb, diffuseColor.rgb, cmHiFade);
       // metres to the box's edge: over its last 300 m the sea takes the open-sea colour the view's outer sea is drawn in
       vec2 cmBoxM = vec2((uTileCR.x + cmUv.x) * uTileM, (uTileCR.y + cmUv.y) * uTileM);
       float cmEdgeM = min(min(cmBoxM.x, uGrid.x * uTileM - cmBoxM.x), min(cmBoxM.y, uGrid.y * uTileM - cmBoxM.y));
