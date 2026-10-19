@@ -654,9 +654,13 @@ def bake_tile(I, col, row, out):
     # the modelled row of lots: one lawn under the 3D homes, feathered into the ground around it over about 8 m with
     # an edge broken up at the metre scale (no rectangle, and no edge per lot)
     kin = cv.polys([I.keep]) > 0.5
-    kd = (ndi.distance_transform_edt(~kin) - ndi.distance_transform_edt(kin)) * PX            # m, + outside
-    keep = np.clip(0.5 - (kd + 6.0 * (fbm(Eo, No, 3.0, 3, 161) - 0.5)) / 8.0, 0, 1).astype(np.float32)
-    del kin, kd
+    if kin.any():
+        kd = (ndi.distance_transform_edt(~kin) - ndi.distance_transform_edt(kin)) * PX        # m, + outside
+        keep = np.clip(0.5 - (kd + 6.0 * (fbm(Eo, No, 3.0, 3, 161) - 0.5)) / 8.0, 0, 1).astype(np.float32)
+        del kd
+    else:                   # not in this window (the EDT of an all-True array measures from a phantom corner point)
+        keep = np.zeros(kin.shape, np.float32)
+    del kin
 
     # ---- golf. Where a course has (almost) no mapped fairways (Kukui'ula's), turf is inferred: bright, mown, tree-free
     # grass inside the course outline, lighter than the course around it in the 10 m colour
