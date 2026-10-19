@@ -203,14 +203,16 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   const boxW = [toWorld(E0, N0), toWorld(E1, N0), toWorld(E1, N1), toWorld(E0, N1)];
   const inBoxW = (x, z) => { const [E, N] = toUTM(x, z); return E > E0 + 300 && E < E1 - 300 && N > N0 + 300 && N < N1 - 300; };
   const clampW = (x, z) => { const [E, N] = toUTM(x, z); return toWorld(Math.max(E0 + 300, Math.min(E1 - 300, E)), Math.max(N0 + 300, Math.min(N1 - 300, N))); };
-  let fly = null, active = false, fogBase = null, fogSet = null, expBase = null, expSet = null, viewOff = null;
+  let fly = null, active = false, viewOff = null;
+  let cardEl = null;                                   // looked up once (frame() asks every frame on a landscape phone)
+  const cardOf = () => (cardEl?.isConnected ? cardEl : (cardEl = document.querySelector('#community .cm-card')));
   // where the card stands as a column on the left (wide screens, where it is docked, and phones held in landscape, where
   // it folds to its title at the top left), the view is centred in the space to its right, at the same scale: the
   // place a flight aims at is never under the card
   function cardDock() {
     const c = ui.dock();
     if (c > 0 || innerWidth <= innerHeight) return c;
-    const card = document.querySelector('#community .cm-card'), b = card && !card.closest('[hidden]') ? card.getBoundingClientRect() : null;
+    const card = cardOf(), b = card && !card.closest('[hidden]') ? card.getBoundingClientRect() : null;
     return b && b.width && b.left < 40 && b.right < innerWidth * 0.5 ? Math.round(b.right + 12) : 0;
   }
   function frame() {
@@ -269,7 +271,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   function freeRect() {
     const W = innerWidth, H = innerHeight, r = [0, 0, W, H];
     for (const id of ['hud', 'buttons']) { const e = document.getElementById(id); if (e && !e.hidden) { const b = e.getBoundingClientRect(); if (b.height && b.top < H * 0.3) r[1] = Math.max(r[1], b.bottom); } }
-    for (const el of [document.querySelector('#community .cm-card'), document.querySelector('#community .cm-attr'), document.getElementById('skypanel')]) {
+    for (const el of [cardOf(), document.querySelector('#community .cm-attr'), document.getElementById('skypanel')]) {
       if (!el || el.closest('[hidden]')) continue;
       const b = el.getBoundingClientRect();
       if (b.height && b.top > H * 0.5 && (b.width > W * 0.6 || el.id === 'skypanel')) r[3] = Math.min(r[3], b.top);
@@ -331,12 +333,10 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     } else {
       const e = establishing(); orbit.target.copy(e.target); camera.position.copy(e.pos);
     }
-    userMoved = false; fogSet = null; expSet = null;
+    userMoved = false;
   }
   function exit() {
     active = false; fly = null;
-    if (scene.fog && fogBase != null && scene.fog.density === fogSet) scene.fog.density = fogBase;
-    if (expBase != null && renderer.toneMappingExposure === expSet) renderer.toneMappingExposure = expBase;
     camera.near = saved.near; camera.far = saved.far; camera.updateProjectionMatrix();
     Object.assign(orbit, { minDistance: saved.minD, maxDistance: saved.maxD, maxPolarAngle: saved.maxP, screenSpacePanning: saved.ssp });
     group.visible = false; ui.show(false);
