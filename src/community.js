@@ -293,7 +293,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     for (const o of roadMeshes) if (o.userData.cmMat) o.material = o.userData.cmMat;
     const dome = daylight?.sky?.domeU; if (dome?.uNoGround) dome.uNoGround.value = 0;
     camera.clearViewOffset(); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); viewOff = null;
-    document.body.style.removeProperty('--cm-glow'); glowSet = 0;
+    document.body.style.removeProperty('--cm-scrim'); glowSet = 0;
     // give the full-size tiles back to the GPU; the 2 m ones stay for next time
     for (const t of tiles) { t.want = 0; if (t.hi) dropHi(t); }
   }
@@ -327,7 +327,11 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     const wx = daylight?.state?.weather?.source === 'live'; if (wx !== ui.wx) ui.setWx(wx);
     // golden hour and dusk light the sky behind the header: its scrim deepens so the notice line stays legible (index.html)
     const alt = daylight?.light?.sun?.alt, glow = alt == null ? 0 : Math.round(ss(16, 5, alt) * ss(-10, -4, alt) * 20) / 20;
-    if (glow !== glowSet) { glowSet = glow; if (glow) document.body.style.setProperty('--cm-glow', glow); else document.body.style.removeProperty('--cm-glow'); }
+    if (glow !== glowSet) {
+      glowSet = glow; const a = (base, more) => (base + more * glow).toFixed(3);
+      if (glow) document.body.style.setProperty('--cm-scrim', `linear-gradient(rgba(6,12,20,${a(.52, .1)}), rgba(6,12,20,${a(.36, .12)}) 42%, rgba(6,12,20,${a(.12, .08)}) 75%, rgba(6,12,20,0))`);
+      else document.body.style.removeProperty('--cm-scrim');
+    }
     ui.place(camera, renderer);
   }
   let glowSet = 0;

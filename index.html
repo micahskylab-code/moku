@@ -128,9 +128,8 @@
   body.community-mode #minimap { display: none; }
   /* a soft scrim under the header and a lighter one under the credits line: their text reads over any sky or ground */
   body.community-mode::before, body.community-mode::after { content: ''; position: fixed; left: 0; right: 0; z-index: 2; pointer-events: none; }
-  /* --cm-glow (0-1, src/community.js): the bright low sky of golden hour and dusk behind the header, which deepens the scrim */
-  body.community-mode::before { top: 0; height: calc(150px + env(safe-area-inset-top, 0px));
-    background: linear-gradient(rgba(6,12,20,calc(.52 + .1 * var(--cm-glow, 0))), rgba(6,12,20,calc(.36 + .12 * var(--cm-glow, 0))) 42%, rgba(6,12,20,calc(.12 + .08 * var(--cm-glow, 0))) 75%, rgba(6,12,20,0)); }
+  /* --cm-scrim (src/community.js): the same gradient, deeper at golden hour and dusk, when the low sky behind the header is bright */
+  body.community-mode::before { top: 0; height: calc(150px + env(safe-area-inset-top, 0px)); background: var(--cm-scrim, linear-gradient(rgba(6,12,20,.52), rgba(6,12,20,.36) 42%, rgba(6,12,20,.12) 75%, rgba(6,12,20,0))); }
   body.community-mode::after { bottom: 0; height: calc(72px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(rgba(6,12,20,0), rgba(6,12,20,.34)); }
   /* header: eyebrow, title and the one disclosure line, in gold small caps */
   body.community-mode #hud { z-index: 4; top: calc(14px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
