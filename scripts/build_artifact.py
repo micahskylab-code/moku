@@ -8,7 +8,8 @@ CDNs, and passes no query string to the page. So the copy:
   - loads three.js r160 (three@0.160.0, byte-identical to vendor/, checked against the npm package) and
     astronomy-engine 2.1.19 (esm/astronomy.js, which vendor/ holds minified) from jsDelivr instead of publishing vendor/;
   - opens in the community view (window.__NAHIKU_MODE; the model view if that cannot load), since ?mode= cannot reach the page;
-  - hides the Ultra button (it reloads with a query string) and the 360 tour link (its panoramas are not built);
+  - hides the Ultra button and the community view's Quality menu item (both reload with a query string) and drops the
+    360 tour link and its menu item (its panoramas are not built); src/main.js openMenu() hides both items there too;
   - copies only what the viewer loads: src/, plans/, data/, geodata/ (top-level files) and geodata/community/ (the
     community view's tiles), with the height grids as base64 text, since the host serves no binary types.
 Everything stays labelled as an independent concept visualization.
@@ -40,8 +41,13 @@ def build(out: Path):
     html = html.replace(imap, '{ "imports": { "three": "%sbuild/three.module.js", "three/addons/": "%sexamples/jsm/",\n'
                               '  "./vendor/three.module.js": "%sbuild/three.module.js", "./vendor/astronomy.module.min.js": "%s" } }'
                         % (THREE, THREE, THREE, ASTRONOMY))
-    html = html.replace('<a href="tour.html">360° tour</a>', '')
-    html = html.replace('</style>', '  #quality { display: none !important; }\n</style>', 1)
+    tour = '<a href="tour.html">360° tour</a>'
+    assert html.count(tour) == 1, 'toolbar tour link changed'
+    html = html.replace(tour, '')
+    html, n = re.subn(r'\s*<a role="menuitem" href="tour\.html">.*?</a>', '', html)
+    assert n == 1, 'menu tour item changed'
+    assert 'tour.html' not in html, 'a tour link is left'
+    html = html.replace('</style>', '  #quality, #more-menu [data-for="quality"] { display: none !important; }\n</style>', 1)
     main = '<script type="module" src="src/main.js"></script>'
     assert main in html
     html = html.replace(main, '<script>window.__NAHIKU_MODE = \'community\'; window.__NAHIKU_HOSTED = true;</script>\n' + main)   # hosted: no file download offered

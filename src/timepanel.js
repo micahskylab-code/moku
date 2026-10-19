@@ -1,6 +1,6 @@
 // The sun & sky panel: any day of the year and any minute, Live (Hawaii time now + live weather),
 // presets, the day's sun and moon times, and the weather. Compact pill; collapses on phones.
-import { MONTHS, daysInYear, fmtTime, fmtDate, sunAltAz, fromHST } from './ephemeris.js';
+import { MONTHS, daysInYear, fmtTime, fmtDate, hstParts, sunAltAz, fromHST } from './ephemeris.js';
 import { describe } from './weather.js';
 
 export const PRESETS = [
@@ -9,6 +9,9 @@ export const PRESETS = [
   ['winter', 'Dec 21 sunset', 'winter-solstice sunset: furthest south'], ['summer', 'Jun 21 sunset', 'summer-solstice sunset: furthest north'],
 ];
 const WX = [['live', 'Live'], ['clear', 'Clear'], ['partly', 'Trades'], ['cloudy', 'Cloudy'], ['rain', 'Showers'], ['windy', 'Windy']];
+// the community view's date, US style as the rest of its copy: "Sun, Jun 21" (the other views keep fmtDate's "Sun 21 Jun")
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const fmtDay = d => { const p = hstParts(d); return `${DAYS[p.weekday]}, ${MONTHS[p.month]} ${p.day}`; };
 
 // a small drawing of the moon at its phase (lit side toward the sun as seen from Hawai'i: right when waxing)
 export function moonIcon(cv, phaseDeg, size = 18) {
@@ -35,7 +38,7 @@ export function createPanel(handlers) {
   const el = document.createElement('div'); el.id = 'skypanel';
   el.innerHTML = `
     <button class="sp-head" type="button" aria-expanded="true">
-      <canvas class="sp-icon"></canvas><span class="sp-when"></span><span class="sp-live">LIVE</span><span class="sp-temp"></span><span class="sp-chev">▾</span>
+      <canvas class="sp-icon"></canvas><span class="sp-when"><span class="sp-cap">Sun position</span><span class="sp-d0"></span><span class="sp-day"></span><span class="sp-dot"> · </span><span class="sp-hm"></span></span><span class="sp-live">LIVE</span><span class="sp-temp"></span><span class="sp-chev">▾</span>
     </button>
     <div class="sp-body">
       <label class="sp-row"><span class="sp-k">Day</span><input class="sp-date" type="range" min="1" max="365" step="1"></label>
@@ -88,7 +91,8 @@ export function createPanel(handlers) {
     if (k !== dayKey) { dayKey = k; paintTrack(parts); }
     const night = sun.alt < -4;
     if (night) moonIcon($('.sp-icon'), moon.phase); else sunIcon($('.sp-icon'));
-    $('.sp-when').textContent = `${fmtDate(d)} · ${fmtTime(d)}`;
+    $('.sp-d0').textContent = `${fmtDate(d)} · ${fmtTime(d)}`;   // the other views' line, as it was
+    $('.sp-day').textContent = fmtDay(d); $('.sp-hm').textContent = fmtTime(d);   // the community view's (index.html shows one or the other)
     $('.sp-live').hidden = !live;
     $('.sp-temp').textContent = weather ? `${Math.round(weather.tempF)}°F` : '';
     $('.sp-path').classList.toggle('on', !!sunPath);

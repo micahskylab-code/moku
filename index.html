@@ -31,6 +31,7 @@
   #skypanel button { font: inherit; color: inherit; cursor: pointer; }
   #skypanel .sp-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; border: 0; background: none; text-align: left; font-size: 13px; }
   #skypanel .sp-when { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  #skypanel .sp-cap, #skypanel .sp-day, #skypanel .sp-dot, #skypanel .sp-hm { display: none; }
   #skypanel .sp-live { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: #fff; background: #d0452f; border-radius: 999px; padding: 2px 6px; }
   #skypanel .sp-temp { opacity: .75; }
   #skypanel .sp-chev { opacity: .6; transition: transform .2s; }
@@ -119,96 +120,208 @@
   }
   @media (max-width: 380px) { #buttons { gap: 5px; } #buttons button, #buttons a { padding: 6px 7px; font-size: 11.5px; } }
   @media (max-width: 600px) { #skypanel { left: 10px; bottom: 10px; max-width: calc(100vw - 156px); font-size: 12px; } #skypanel .sp-chip, #skypanel .sp-toggle { padding: 6px 9px; } }
-  /* community view (src/community.js) */
-  body.community-mode #concept { display: inline-block; opacity: 1; margin-top: 4px; padding: 2px 8px; border-radius: 8px; background: rgba(14,20,28,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); text-shadow: none; }
+  /* community view (src/community.js). Everything here is scoped to body.community-mode or #community, so the
+     walkthrough, fly-over and model views keep their own chrome. Tokens: ink #17202b, gold #7d5c22 on white, #f3d595 on
+     the header scrim. */
+  #concept .cc-cm, #more, #more-menu { display: none; }
   #community[hidden] { display: none; }
   body.community-mode #minimap { display: none; }
-  #community .cm-card { position: fixed; left: calc(16px + env(safe-area-inset-left, 0px)); top: calc(112px + env(safe-area-inset-top, 0px)); z-index: 5; width: 292px; box-sizing: border-box; padding: 14px 16px 12px;
-    max-height: calc(100vh - 124px - env(safe-area-inset-top, 0px)); overflow-y: auto;
-    color: #17202b; background: rgba(255,255,255,.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; box-shadow: 0 6px 28px rgba(10,20,30,.22); }
-  #community .cm-fold { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: default; position: relative; }
+  /* a soft scrim under the header and a lighter one under the credits line: their text reads over any sky or ground */
+  body.community-mode::before, body.community-mode::after { content: ''; position: fixed; left: 0; right: 0; z-index: 2; pointer-events: none; }
+  /* --cm-scrim (src/community.js): the same gradient, deeper at golden hour and dusk, when the low sky behind the header is bright */
+  body.community-mode::before { top: 0; height: calc(150px + env(safe-area-inset-top, 0px)); background: var(--cm-scrim, linear-gradient(rgba(6,12,20,.52), rgba(6,12,20,.36) 42%, rgba(6,12,20,.12) 75%, rgba(6,12,20,0))); }
+  body.community-mode::after { bottom: 0; height: calc(72px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(rgba(6,12,20,0), rgba(6,12,20,.34)); }
+  /* header: eyebrow, title and the one disclosure line, in gold small caps */
+  body.community-mode #hud { z-index: 4; top: calc(14px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+  body.community-mode #plan-name { opacity: 1; color: rgba(255,255,255,.86); font-size: 12px; letter-spacing: .03em; }
+  body.community-mode #room { font-size: 21px; line-height: 1.3; letter-spacing: .003em; }
+  body.community-mode #concept { opacity: 1; margin-top: 4px; font-size: 10.5px; line-height: 1.35; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; color: #f3d595; text-shadow: 0 1px 2px rgba(0,0,0,.65), 0 0 8px rgba(0,0,0,.35); text-wrap: balance; }
+  body.community-mode #concept .cc-walk { display: none; }
+  body.community-mode #concept .cc-cm { display: inline; }
+  /* toolbar: one way back to the home, and the rest in a menu */
+  body.community-mode #buttons { z-index: 8; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); flex-wrap: nowrap; align-items: center; gap: 8px; }   /* its menu opens over the panels */
+  body.community-mode #buttons > :not(#community-btn):not(#more):not(#more-menu) { display: none; }
+  body.community-mode #community-btn, body.community-mode #more { position: relative; box-sizing: border-box; height: 40px; }
+  body.community-mode #community-btn { display: inline-flex; align-items: center; gap: 4px; padding: 0 16px 0 10px; font-size: 14px; font-weight: 600; color: #17202b; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.2); }
+  body.community-mode #community-btn svg { flex: none; }
+  body.community-mode #more { display: grid; place-items: center; width: 40px; padding: 0; color: #fff; background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  body.community-mode #more[aria-expanded="true"] { color: #17202b; background: #fff; }
+  body.community-mode #community-btn::after, body.community-mode #more::after { content: ''; position: absolute; inset: -2px -3px; }   /* 44 px to tap */
+  body.community-mode #more-menu:not([hidden]) { display: flex; flex-direction: column; position: absolute; top: calc(100% + 8px); right: 0; width: 264px; padding: 6px; box-sizing: border-box;
+    border-radius: 16px; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 12px 36px rgba(10,20,30,.3); }
+  #buttons #more-menu button, #buttons #more-menu a { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1px; min-height: 50px; padding: 6px 12px; box-sizing: border-box;
+    border-radius: 11px; background: none; color: #17202b; font-size: 14px; text-align: left; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  #buttons #more-menu button:hover, #buttons #more-menu a:hover, #buttons #more-menu :focus-visible { background: rgba(23,32,43,.06); outline: none; }
+  #buttons #more-menu [hidden] { display: none; }
+  #more-menu b { font-weight: 600; }
+  #more-menu small { font-size: 11.5px; line-height: 1.3; opacity: .62; }
+  #more-menu .mm-sep { height: 1px; margin: 4px 10px; background: rgba(23,32,43,.1); }
+  /* the card: a short note and the place filters; it folds to its title */
+  #community .cm-card { position: fixed; left: calc(20px + env(safe-area-inset-left, 0px)); top: calc(100px + env(safe-area-inset-top, 0px)); z-index: 5; width: 300px; box-sizing: border-box; padding: 14px 16px 14px;
+    max-height: calc(100vh - 190px - env(safe-area-inset-top, 0px)); overflow-y: auto; overscroll-behavior: contain;
+    color: #17202b; background: rgba(255,255,255,.93); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-radius: 18px; box-shadow: 0 8px 30px rgba(10,20,30,.22); }
+  #community .cm-card.cm-folded { width: auto; padding: 10px 16px 10px; }
+  #community .cm-fold { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
   #community .cm-kicker { display: block; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7d5c22; }
-  #community .cm-title { display: block; margin-top: 3px; font: 500 19px/1.22 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; letter-spacing: .005em; }
-  #community .cm-chev { display: none; position: absolute; right: 2px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); opacity: .55; transition: transform .2s; }
-  #community .cm-attr-short, #community .cm-credits { display: none; }
-  #community .cm-credits { font: inherit; font-weight: 600; color: inherit; background: none; border: 0; padding: 0 0 0 4px; text-decoration: underline; cursor: pointer; pointer-events: auto; }
-  @media (max-width: 600px), (max-height: 480px) {
-    #community .cm-fold { cursor: pointer; padding-right: 22px; }
-    #community .cm-chev { display: block; }
-    #community .cm-folded .cm-chev { transform: rotate(-135deg); margin-top: -2px; }
-    #community .cm-folded .cm-chips, #community .cm-folded .cm-actions, #community .cm-folded .cm-fine { display: none; }
-    #community .cm-attr-full { display: none; }
-    #community .cm-attr-short, #community .cm-credits { display: inline; }
-    #community .cm-attr-open .cm-attr-full { display: inline; }
-    #community .cm-attr-open .cm-attr-short { display: none; }
-    #community .cm-attr { pointer-events: auto; }
-  }
-  #community .cm-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 11px 0 9px; }
-  #community .cm-chip { flex: none; white-space: nowrap; font: inherit; font-size: 11.5px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 5px 9px 5px 8px; background: rgba(23,32,43,.06); color: inherit; cursor: pointer; transition: opacity .2s, background .2s; }
+  #community .cm-title { display: block; margin-top: 3px; font: 500 22px/1.18 Newsreader, 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; letter-spacing: .003em; text-wrap: balance; }
+  #community .cm-chev { display: inline-block; width: 7px; height: 7px; margin: 0 2px 0 9px; vertical-align: .22em; border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-135deg); opacity: .5; transition: transform .2s; }
+  #community .cm-folded .cm-fold .cm-chev { transform: rotate(45deg); vertical-align: .32em; }   /* a top card opens downward */
+  #community .cm-folded #cm-body { display: none; }
+  #community .cm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
+  #community .cm-chip { position: relative; flex: none; white-space: nowrap; font: inherit; font-size: 11.5px; display: inline-flex; align-items: center; gap: 6px; min-height: 28px; box-sizing: border-box; border: 0; border-radius: 999px; padding: 4px 10px 4px 9px; background: rgba(23,32,43,.06); color: inherit; cursor: pointer; transition: opacity .2s, background .2s; }
   #community .cm-chip:hover { background: rgba(23,32,43,.1); }
   #community .cm-chip[aria-pressed="false"] { opacity: .42; }
   #community .cm-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
   #community .cm-n { opacity: .5; font-variant-numeric: tabular-nums; }
   #community .cm-actions { display: flex; gap: 6px; }
-  #community .cm-btn { font: inherit; font-size: 12px; border: 0; border-radius: 999px; padding: 6px 11px; background: #17202b; color: #fff; cursor: pointer; }
+  #community .cm-btn { position: relative; font: inherit; font-size: 12.5px; font-weight: 600; min-height: 34px; border: 0; border-radius: 999px; padding: 6px 13px; background: #17202b; color: #fff; cursor: pointer; }
   #community .cm-btn + .cm-btn { background: rgba(23,32,43,.08); color: inherit; }
-  #community .cm-fine { margin-top: 10px; font-size: 10.5px; line-height: 1.4; opacity: .74; }
+  #community .cm-fine { margin: 12px 0 0; font-size: 12px; line-height: 1.45; color: rgba(23,32,43,.74); }
+  #community .cm-how { display: inline-flex; align-items: center; min-height: 32px; margin-top: 4px; padding: 0; border: 0; background: none; color: #7d5c22; font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+  #community .cm-how .cm-chev { margin-left: 7px; transform: rotate(45deg); vertical-align: 0; margin-top: -3px; }
+  #community .cm-how[aria-expanded="true"] .cm-chev { transform: rotate(-135deg); margin-top: 3px; }
+  #community .cm-howtext { font-size: 11.5px; line-height: 1.5; color: rgba(23,32,43,.78); }
+  #community .cm-howtext p { margin: 4px 0 8px; }
+  #community .cm-howtext[hidden] { display: none; }
+  /* wide screens: the title stays at the top as the card scrolls, opaque and over a hairline once it has scrolled */
+  @media (min-width: 601px) and (min-height: 481px) {
+    #community .cm-card { padding-top: 0; }
+    #community .cm-fold { position: sticky; top: 0; z-index: 1; margin: 0 -16px; padding: 14px 16px 8px; width: calc(100% + 32px); box-sizing: border-box; }
+    #community .cm-chips { margin-top: 4px; }
+    #community .cm-card.cm-folded { padding: 0 16px; }
+    #community .cm-folded .cm-fold { margin: 0; padding: 10px 0; width: 100%; }
+    #community .cm-scrolled:not(.cm-folded) .cm-fold { background: #fff; box-shadow: 0 1px 0 rgba(23,32,43,.09); }
+  }
+  @media (pointer: coarse) {
+    #community .cm-chip { min-height: 34px; }
+    #community .cm-btn { min-height: 40px; }
+    #community .cm-chip::after, #community .cm-btn::after { content: ''; position: absolute; inset: -4px -2px; }
+  }
+  /* pins */
   #community .cm-pins { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
   #community .cm-pin { position: absolute; left: 0; top: 0; width: 0; height: 0; padding: 0; border: 0; background: none; pointer-events: none; will-change: transform; }
-  #community .cm-pin::after { content: ''; position: absolute; left: -3.5px; top: -3.5px; width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 1px 4px rgba(0,0,0,.4); transition: opacity .3s; }
-  #community .cm-stem { position: absolute; left: -.5px; bottom: 0; width: 1px; height: var(--stem); background: linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.95)); transition: opacity .3s; }
+  #community .cm-pin::after { content: ''; position: absolute; left: -3.5px; top: -3.5px; width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px rgba(255,255,255,.92), 0 1px 4px rgba(0,0,0,.4); transition: opacity .3s; }
+  #community .cm-stem { position: absolute; left: -.5px; bottom: 0; width: 1px; height: var(--stem); background: linear-gradient(to top, rgba(255,255,255,.25), rgba(255,255,255,.95)); box-shadow: 0 0 2px rgba(0,0,0,.28); transition: opacity .3s, height .25s; }
   #community .cm-label { position: absolute; left: var(--dx, 0px); bottom: var(--stem); transform: translate(-50%, 0); display: flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; white-space: nowrap;
     font-size: 12px; font-weight: 600; letter-spacing: .01em; color: #17202b; background: rgba(255,255,255,.96);
-    box-shadow: 0 2px 10px rgba(10,20,30,.22); pointer-events: auto; cursor: pointer; transition: opacity .3s, transform .3s; }
+    box-shadow: 0 2px 10px rgba(10,20,30,.22); pointer-events: auto; cursor: pointer; transition: opacity .3s, transform .3s, bottom .25s; }
   #community .cm-label:hover { transform: translate(-50%, -2px); }
   #community .cm-ico { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--c); color: #fff; flex: none; }
   #community .cm-off .cm-label, #community .cm-off .cm-stem, #community .cm-off::after { opacity: 0; pointer-events: none; }
   #community .cm-off::before { opacity: 0; animation: none; }
   #community .cm-sel .cm-label { box-shadow: 0 0 0 2px var(--c), 0 2px 12px rgba(10,20,30,.3); }
-  #community .cm-hero .cm-label { padding: 5px 13px 5px 5px; font-size: 13px; color: #fff; background: rgba(23,32,43,.92); }
+  #community .cm-hero .cm-label { padding: 5px 14px 5px 5px; font-size: 13px; color: #fff; background: rgba(23,32,43,.92); }
   #community .cm-hero .cm-ico { width: 24px; height: 24px; }
   #community .cm-hero::before { content: ''; position: absolute; left: -14px; top: -14px; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--c); animation: cm-pulse 2.4s ease-out infinite; }
   @keyframes cm-pulse { from { transform: scale(.4); opacity: .95; } to { transform: scale(1.6); opacity: 0; } }
-  #community .cm-info { position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); top: calc(60px + env(safe-area-inset-top, 0px)); z-index: 5; width: 290px; box-sizing: border-box; padding: 14px 16px 12px;
-    color: #17202b; background: rgba(255,255,255,.93); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; box-shadow: 0 6px 28px rgba(10,20,30,.22); }
-  #community .cm-info[hidden] { display: none; }
-  #community .cm-x { position: absolute; top: 8px; right: 10px; border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: inherit; padding: 2px 6px; }
+  /* a place's card, and the full credits */
+  #community .cm-info, #community .cm-cred { position: fixed; z-index: 7; box-sizing: border-box; padding: 14px 16px 12px; overflow-y: auto; overscroll-behavior: contain;
+    color: #17202b; background: rgba(255,255,255,.95); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-radius: 18px; box-shadow: 0 8px 30px rgba(10,20,30,.24); }
+  #community .cm-info { right: calc(20px + env(safe-area-inset-right, 0px)); top: calc(66px + env(safe-area-inset-top, 0px)); width: 300px; max-height: calc(100vh - 150px); }
+  #community .cm-cred { right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(44px + env(safe-area-inset-bottom, 0px)); width: 420px; max-width: calc(100vw - 40px); max-height: calc(100vh - 170px); font-size: 11.5px; line-height: 1.45; }
+  #community .cm-info[hidden], #community .cm-cred[hidden] { display: none; }
+  #community .cm-cred ul { margin: 6px 0 0; padding: 0; list-style: none; }
+  #community .cm-cred li { padding: 6px 0; border-top: 1px solid rgba(23,32,43,.08); }
+  #community .cm-cred li[hidden] { display: none; }
+  #community .cm-cred a, #community .cm-info a { color: inherit; text-decoration: underline; text-decoration-thickness: from-font; }
+  #community .cm-x { position: absolute; top: 4px; right: 4px; min-width: 40px; min-height: 40px; border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: inherit; padding: 0; border-radius: 50%; }
   #community .cm-ikick { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-  #community .cm-iname { margin: 3px 22px 2px 0; font: 500 18px/1.25 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; }
+  #community .cm-info .cm-ikick { filter: brightness(.74) saturate(1.15); }   /* the category colours, dark enough to read on white */
+  #community .cm-iname { margin: 3px 30px 2px 0; font: 500 20px/1.2 Newsreader, 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; text-wrap: balance; }
   #community .cm-isub { font-size: 12px; opacity: .7; }
   #community .cm-imeta { margin-top: 8px; font-size: 12px; }
   #community .cm-inote { margin-top: 6px; font-size: 12px; line-height: 1.45; opacity: .85; }
   #community .cm-isrc { margin-top: 8px; font-size: 10px; opacity: .55; }
-  #community .cm-attr { position: fixed; right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 6; max-width: min(640px, 56vw, calc(100vw - 380px)); text-align: right;
-    font-size: 9.5px; line-height: 1.35; color: rgba(255,255,255,.9); text-shadow: 0 1px 3px rgba(0,0,0,.75); pointer-events: none; }
-  #community .cm-attr b { font-weight: 600; }
-  #community .cm-attr a { color: inherit; text-decoration: underline; text-decoration-thickness: from-font; pointer-events: auto; }
-  @media (pointer: coarse) { #community .cm-x { min-width: 44px; min-height: 44px; top: 2px; right: 2px; } }
-  @media (max-width: 600px) {
-    #community .cm-card { top: auto; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); left: 10px; right: 10px; width: auto; padding: 10px 12px; }
-    #community .cm-title { font-size: 16px; }
-    #community .cm-chips { flex-wrap: nowrap; overflow-x: auto; margin: 8px -12px 6px; padding: 0 12px; scrollbar-width: none; }
-    #community .cm-fine { margin-top: 6px; font-size: 9.5px; }
-    #community.cm-info-open .cm-card { display: none; }
-    body.community-mode #buttons a[href="tour.html"], body.community-mode #buttons #mode { display: none; }
-    #community .cm-info { top: auto; bottom: 0; left: 10px; right: 10px; width: auto; max-height: 50vh; overflow-y: auto; border-radius: 18px; padding-bottom: 12px; }
-    #community .cm-attr { left: 10px; right: 10px; max-width: none; bottom: calc(46px + env(safe-area-inset-bottom, 0px)); text-align: left; font-size: 9.5px; }
+  /* the short credits line, with the full list a tap away */
+  #community .cm-attr { position: fixed; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 6; max-width: calc(100vw - 440px); text-align: right;
+    font-size: 10.5px; line-height: 1.4; color: rgba(255,255,255,.88); text-shadow: 0 1px 2px rgba(0,0,0,.75); }
+  #community .cm-attr a { color: inherit; text-decoration: underline; text-decoration-thickness: from-font; text-underline-offset: 1.5px; }
+  #community .cm-credits { position: relative; margin-left: 6px; padding: 2px 9px; border: 0; border-radius: 999px; font: inherit; font-weight: 650; color: #17202b; background: rgba(255,255,255,.88); text-shadow: none; cursor: pointer; }
+  #community .cm-credits::after { content: ''; position: absolute; inset: -12px -6px; }
+  /* the sun & sky panel, while the view is open: clearly the sun's position, no temperature (it is not a forecast) */
+  body.community-mode #skypanel { z-index: 6; left: calc(20px + env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: auto; }
+  body.community-mode #skypanel.open { width: 330px; }
+  body.community-mode #skypanel .sp-temp { display: none; }
+  body.community-mode #skypanel .sp-head { min-height: 44px; padding: 5px 14px 5px 12px; gap: 9px; }
+  body.community-mode #skypanel .sp-when { line-height: 1.25; }
+  body.community-mode #skypanel .sp-cap { display: block; font-size: 8.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .55; }
+  body.community-mode #skypanel .sp-day, body.community-mode #skypanel .sp-dot, body.community-mode #skypanel .sp-hm { display: inline; }
+  body.community-mode #skypanel .sp-d0 { display: none; }
+  /* small screens (phones, either way up): the card is a sheet at the bottom with the sun control in its title row */
+  @media (max-width: 600px), (max-height: 480px) {
+    #community .cm-card, #community .cm-card.cm-folded { top: auto; bottom: var(--cm-sheet-b, calc(26px + env(safe-area-inset-bottom, 0px))); left: calc(10px + env(safe-area-inset-left, 0px)); right: calc(10px + env(safe-area-inset-right, 0px));
+      width: auto; padding: 0 14px; max-height: min(64vh, calc(100vh - 120px)); border-radius: 16px; }
+    #community .cm-fold { display: flex; flex-direction: column; justify-content: center; min-height: 46px; padding: 6px 14px; margin: 0 -14px; width: calc(100% + 28px); box-sizing: border-box;
+      position: sticky; top: 0; z-index: 1; background: rgba(255,255,255,.97); border-radius: 16px 16px 0 0; }   /* the title stays as the sheet scrolls */
+    #community .cm-folded .cm-fold { background: none; }
+    #community .cm-folded .cm-fold { padding-right: 164px; }
+    #community .cm-folded .cm-kicker { display: none; }
+    #community .cm-title { font-size: 17px; margin-top: 1px; }
+    #community .cm-fold .cm-chev { transform: rotate(45deg); vertical-align: .3em; }          /* a sheet opens upward */
+    #community .cm-folded .cm-fold .cm-chev { transform: rotate(-135deg); vertical-align: .05em; }
+    #community #cm-body { padding-bottom: 12px; }
+    #community .cm-chips { flex-wrap: nowrap; overflow-x: auto; margin: 6px -14px 8px; padding: 0 14px; scrollbar-width: none; }
+    #community .cm-chips::-webkit-scrollbar { display: none; }
+    #community .cm-fine { margin-top: 10px; }
+    #community .cm-info, #community .cm-cred { top: auto; bottom: var(--cm-sheet-b, calc(26px + env(safe-area-inset-bottom, 0px))); left: calc(10px + env(safe-area-inset-left, 0px)); right: calc(10px + env(safe-area-inset-right, 0px));
+      width: auto; max-width: none; max-height: min(56vh, calc(100vh - 110px)); border-radius: 16px; }
+    #community .cm-attr { left: calc(10px + env(safe-area-inset-left, 0px)); right: calc(10px + env(safe-area-inset-right, 0px)); bottom: calc(6px + env(safe-area-inset-bottom, 0px)); max-width: none; text-align: center; font-size: 9.5px; }
+    #community .cm-credits { margin-left: 4px; padding: 1px 7px; }
+    /* the sun control sits at the right end of the folded card's row, part of the same surface */
+    body.community-mode #skypanel { left: auto; right: calc(10px + env(safe-area-inset-right, 0px)); bottom: var(--cm-sheet-b, calc(26px + env(safe-area-inset-bottom, 0px))); max-width: none;
+      background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    body.community-mode #skypanel .sp-head { min-height: 46px; padding: 4px 12px 4px 11px; border-left: 1px solid rgba(23,32,43,.1); border-radius: 0; }
+    body.community-mode #skypanel .sp-day, body.community-mode #skypanel .sp-dot { display: none; }
+    body.community-mode #skypanel.open { left: calc(10px + env(safe-area-inset-left, 0px)); width: auto; background: rgba(255,255,255,.96); box-shadow: 0 8px 30px rgba(10,20,30,.24); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    body.community-mode #skypanel.open .sp-head { border-left: 0; }
+    body.community-mode #skypanel.open .sp-day, body.community-mode #skypanel.open .sp-dot { display: inline; }
+    body.community-mode.cm-sheet-open #skypanel { display: none; }
     #community .cm-label { font-size: 11px; }
   }
-  /* landscape phones: a compact card that fits above the sky panel */
-  @media (max-height: 480px) and (min-width: 601px) {
-    #community .cm-card { top: calc(84px + env(safe-area-inset-top, 0px)); width: 284px; max-height: calc(100vh - 136px); padding: 10px 12px; }
-    #community .cm-folded .cm-chev { transform: rotate(45deg); margin-top: -6px; }   /* a top card opens downward */
-    #community .cm-title { font-size: 16px; }
-    #community .cm-chips { flex-wrap: nowrap; overflow-x: auto; margin: 8px -12px 6px; padding: 0 12px; scrollbar-width: none; }
-    #community .cm-info { max-height: calc(100vh - 104px); overflow-y: auto; }
+  @media (max-width: 600px) {
+    body.community-mode #hud { top: calc(10px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); }
+    body.community-mode #room { display: flex; align-items: center; min-height: 40px; padding-right: 166px; font-size: 16.5px; line-height: 1.2; white-space: pre-line; text-wrap: balance; }
+    body.community-mode #concept { margin-top: 6px; font-size: 9.5px; letter-spacing: .1em; }
+    body.community-mode #buttons { top: calc(10px + env(safe-area-inset-top, 0px)); right: calc(10px + env(safe-area-inset-right, 0px)); }
+    body.community-mode #community-btn { padding: 0 14px 0 8px; font-size: 13.5px; }
+    body.community-mode #more-menu:not([hidden]) { top: calc(100% + 40px); }   /* below the notice, which stays in view */
+    body.community-mode::before { height: calc(130px + env(safe-area-inset-top, 0px)); }
+    body.community-mode::after { height: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    #community.cm-info-open .cm-card { display: none; }
+    #community .cm-attr .cm-w { display: none; }
+    #community .cm-attr-short { white-space: nowrap; }
   }
-  .shot #community .cm-card, .shot #community .cm-info { display: none !important; }
+  @media (max-width: 400px) { #community .cm-attr { font-size: 9px; } #community .cm-credits { margin-left: 3px; padding: 1px 6px; } }
+  /* landscape phones: a short header, the card and sun control bottom left, the credits bottom right */
+  @media (max-height: 480px) and (min-width: 601px) {
+    body.community-mode #hud { top: calc(10px + env(safe-area-inset-top, 0px)); left: calc(16px + env(safe-area-inset-left, 0px)); }
+    body.community-mode #plan-name { display: none; }
+    body.community-mode #room { font-size: 17px; }
+    body.community-mode #concept { margin-top: 2px; font-size: 9.5px; }
+    body.community-mode #buttons { top: calc(10px + env(safe-area-inset-top, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); }
+    body.community-mode::before { height: calc(100px + env(safe-area-inset-top, 0px)); }
+    body.community-mode::after { height: calc(64px + env(safe-area-inset-bottom, 0px)); }
+    #community .cm-card, #community .cm-card.cm-folded { left: calc(16px + env(safe-area-inset-left, 0px)); right: auto; width: 340px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-height: calc(100vh - 84px); }
+    body.community-mode #skypanel { right: auto; left: calc(16px + 340px + env(safe-area-inset-left, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: translateX(-100%); }
+    body.community-mode #skypanel.open { left: calc(16px + env(safe-area-inset-left, 0px)); width: 340px; transform: none; max-height: calc(100vh - 84px); }
+    #community .cm-info { top: calc(62px + env(safe-area-inset-top, 0px)); bottom: auto; left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); width: 300px; max-height: calc(100vh - 110px); }
+    #community .cm-cred { left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); width: 420px; bottom: calc(36px + env(safe-area-inset-bottom, 0px)); max-height: calc(100vh - 100px); }
+    #community .cm-attr { left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-width: calc(100vw - 400px); text-align: right; }
+  }
+  .shot #community .cm-card, .shot #community .cm-info, .shot #community .cm-cred { display: none !important; }
 </style>
 </head>
 <body>
-<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept">Independent concept visualization · not by the developer · not construction documentation · views not verified</div></div>
-<div id="buttons"><button id="quality">Ultra</button><button id="time">Night sky</button><button id="model" hidden>Model</button><button id="community-btn">Community</button><button id="mode">Fly over</button><a href="tour.html">360° tour</a></div>
+<div id="hud"><div id="plan-name"></div><div id="room"></div><div id="concept"><span class="cc-walk">Independent concept visualization · not by the developer · not construction documentation · views not verified</span><span class="cc-cm">Independent&nbsp;concept&nbsp;· not&nbsp;by&nbsp;the&nbsp;developer&nbsp;· views&nbsp;not&nbsp;shown&nbsp;or&nbsp;verified</span></div></div>
+<div id="buttons"><button id="quality">Ultra</button><button id="time">Night sky</button><button id="model" hidden>Model</button><button id="community-btn">Community</button><button id="mode">Fly over</button><a href="tour.html">360° tour</a><button id="more" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="More views and settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/></svg></button>
+  <div id="more-menu" role="menu" aria-label="More views and settings" hidden>
+    <button type="button" role="menuitem" data-for="time"><b>Night sky</b><small>Stars over the home</small></button>
+    <button type="button" role="menuitem" data-for="mode"><b>Fly over</b><small>Circle the home up close</small></button>
+    <button type="button" role="menuitem" data-for="model"><b>Model</b><small>Look inside the home</small></button>
+    <a role="menuitem" href="tour.html"><b>360° tour</b><small>Panoramas inside the home</small></a>
+    <div class="mm-sep" data-for="quality" aria-hidden="true"></div>
+    <button type="button" role="menuitem" data-for="quality"><b>Quality</b><small>Standard · switch to Ultra (reloads)</small></button>
+  </div></div>
 <canvas id="minimap" width="340" height="300"></canvas>
 <div id="caption"></div>
 <div id="overlay"><div>
