@@ -19,7 +19,7 @@ const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 export const CATEGORIES = {
-  home:    { label: 'The modelled home', color: '#c8963e' },
+  home:    { label: 'The concept home', color: '#c8963e' },
   beach:   { label: 'Beaches', color: '#1f95a8' },
   ocean:   { label: 'Harbor & coast', color: '#2c5e8f' },
   garden:  { label: 'Gardens & culture', color: '#7a5aa6' },
@@ -190,8 +190,8 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
 
   // ---- places
   const places = await fetch(base + 'places.json').then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
-  const home = { id: 'home', name: 'Concept home (modelled)', sub: 'The brochure’s “Lot 25” spec design, modelled on an assumed Nā Hiku lot', cat: 'home', world: [center[0], center[1]], prio: 10,
-    note: 'This walkthrough’s concept model. The soft gold patch is its modelled lot (61.5 × 184.4 ft, an assumed size); the brochure gives no lot lines, and the position is registered to ±25 m. The other Nā Hiku homes shown are assumed copies of this design; in 2025–26 imagery the Nā Hiku strip is graded, unbuilt land, and the homes, pools and lawns on it are modelled. Views from the home are not shown or verified.' };
+  const home = { id: 'home', name: 'Nā Hiku concept home', sub: 'The brochure’s “Lot 25” spec design, modeled on an assumed Nā Hiku lot', cat: 'home', world: [center[0], center[1]], prio: 10,
+    note: 'This walkthrough’s concept model. The soft gold patch is its modeled lot (61.5 × 184.4 ft, an assumed size); the brochure gives no lot lines, and the position is registered to ±25 m. The other Nā Hiku homes shown are assumed copies of this design; in 2025–26 imagery the Nā Hiku strip is graded, unbuilt land, and the homes, pools and lawns on it are modeled. Views from the home are not shown or verified.' };
   const pins = [home, ...(places.places ?? []).map(p => ({ ...p, world: fromLatLon(p.lat, p.lon) }))];
   for (const p of pins) p.ground = new THREE.Vector3(p.world[0], groundAt(p.world[0], p.world[1]), p.world[1]);
   const ui = buildUI(pins, places, meta.attribution ?? []);
@@ -340,55 +340,86 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
   return { enter, exit, update, group, flyTo, establishing, title: () => ui.title(), get active() { return active; } };
 
   // ---------------------------------------------------------------------------------------------
+  // The view's own chrome (styles in index.html): a card that folds to its title, the pins, a place's card, the short
+  // credits line and the full credits. The one-line notice under the title ("Independent concept · not by the
+  // developer · views not shown or verified") is index.html's #concept; it stays on screen.
   function buildUI(pins, data, credits) {
     const root = document.createElement('div'); root.id = 'community'; root.hidden = true;
+    const full = [...credits, data.attribution].filter(Boolean).map(s => (s[0].toUpperCase() + s.slice(1)).replace(/\bcolour\b/g, 'color'));
+    const wxCredit = 'Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>)';
     root.innerHTML = `
       <div class="cm-card">
-        <button class="cm-fold" type="button" aria-controls="cm-body"><span class="cm-kicker">Kukuiʻula · Kōloa, Kauaʻi</span>
-          <span class="cm-title">The neighbourhood around the home</span><span class="cm-chev" aria-hidden="true"></span></button>
+        <button class="cm-fold" type="button" aria-controls="cm-body" aria-expanded="true"><span class="cm-kicker">Kukuiʻula · Kōloa, Kauaʻi</span><span class="cm-title">Around the home<span class="cm-chev" aria-hidden="true"></span></span></button>
         <div id="cm-body">
-        <div class="cm-chips"></div>
-        <div class="cm-actions"><button class="cm-btn" data-a="home">Back to the home</button><button class="cm-btn" data-a="overview">Whole community</button></div>
-        <div class="cm-fine">A map rendering of open public data, not an aerial photograph or the developer's map. Places and distances are approximate. The home, its lot and the other Nā Hiku homes (assumed copies of this design, on a strip that is graded, unbuilt land in 2025–26 imagery) are a concept model; views are not shown or verified.</div>
+          <div class="cm-chips"></div>
+          <div class="cm-actions"><button class="cm-btn" type="button" data-a="home">Center on home</button><button class="cm-btn" type="button" data-a="overview">Whole community</button></div>
+          <p class="cm-fine">A map rendering of open public data, not an aerial photograph. Places and distances are approximate; views from the home are not shown or verified.</p>
+          <button class="cm-how" type="button" aria-expanded="false" aria-controls="cm-howtext">How this was made<span class="cm-chev" aria-hidden="true"></span></button>
+          <div class="cm-howtext" id="cm-howtext" hidden>
+            <p>An independent concept visualization. It is not by the developer, it is not the developer’s map, nothing in it is copied from the developer’s maps, and it is not construction documentation.</p>
+            <p>The ground is drawn from open data, not photographed: its shape from USGS lidar, the reef from the 2013 USACE survey, its color from Copernicus Sentinel-2, the roads, paths, water, golf features and building footprints from OpenStreetMap (building heights are mostly estimated), and the trees from the Meta/WRI canopy map. Where Kukuiʻula’s fairways are not mapped, they are inferred from the satellite color.</p>
+            <p>The home is this walkthrough’s concept model of the brochure’s “Lot 25” spec design, placed to about ±25 m on a lot of assumed size; no lot lines are drawn. The other Nā Hiku homes are assumed copies of this design: in 2025–26 imagery their strip is graded, unbuilt land, and the homes, pools and lawns on it are modeled.</p>
+          </div>
         </div>
       </div>
       <div class="cm-pins"></div>
       <div class="cm-info" hidden></div>
-      <div class="cm-attr"><b>Map rendering of open data, not an aerial photograph; the Nā Hiku homes are modelled.</b>
-        <span class="cm-attr-full">${[...credits, data.attribution].filter(Boolean).map(linkify).join(' · ')}</span>
-        <span class="cm-attr-short">${linkify('© OpenStreetMap contributors, Microsoft, TomTom (ODbL)')}, via Overture · Contains modified Copernicus Sentinel data 2023–26 · USGS · USACE/NOAA · Meta/WRI (${linkify('CC BY 4.0')}, modified)</span>
-        <span class="cm-wx" hidden> · Weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>)</span>
-        <button class="cm-credits" type="button" aria-expanded="false">Credits</button></div>`;
+      <div class="cm-cred" id="cm-cred" role="dialog" aria-label="Credits" hidden>
+        <button class="cm-x" type="button" aria-label="Close credits">×</button>
+        <div class="cm-ikick">Credits</div>
+        <ul>${full.map(s => `<li>${linkify(s)}</li>`).join('')}<li class="cm-wx" hidden>${wxCredit}</li></ul>
+      </div>
+      <div class="cm-attr"><span class="cm-attr-short">© ${linkify('OpenStreetMap contributors')}<span class="cm-w">, Microsoft, TomTom (${linkify('ODbL')}) via Overture</span> · <span class="cm-w">Contains modified </span>Copernicus Sentinel<span class="cm-w"> data 2023–26 · USGS · USACE/NOAA</span> · Meta/WRI <span class="cm-w">canopy </span>${linkify('CC BY 4.0')}</span><span class="cm-wx cm-w" hidden> · ${wxCredit}</span><button class="cm-credits" type="button" aria-expanded="false" aria-controls="cm-cred">Credits</button></div>`;
     document.body.appendChild(root);
     const card = root.querySelector('.cm-card'), chips = root.querySelector('.cm-chips'), layer = root.querySelector('.cm-pins'), info = root.querySelector('.cm-info');
-    // phones: the card sits above the credits, however many lines they take (they must stay readable)
-    const attr = root.querySelector('.cm-attr'), phone = matchMedia('(max-width: 600px)'), small = matchMedia('(max-width: 600px), (max-height: 480px)');
-    // small screens: the card folds to its title (tap to open) and the credits to one line (Credits for the full list)
-    const fold = root.querySelector('.cm-fold');
-    const setFold = f => {
-      card.classList.toggle('cm-folded', f);
-      if (small.matches) { fold.setAttribute('aria-expanded', String(!f)); fold.tabIndex = 0; } else { fold.removeAttribute('aria-expanded'); fold.tabIndex = -1; }
-      fitCard?.();
+    const attr = root.querySelector('.cm-attr'), cred = root.querySelector('.cm-cred'), credBtn = root.querySelector('.cm-credits');
+    const phone = matchMedia('(max-width: 600px)'), small = matchMedia('(max-width: 600px), (max-height: 480px)');
+    // small screens: the card, a place's card and the credits are sheets at the bottom; the sun control hides while one is open
+    const sheets = () => document.body.classList.toggle('cm-sheet-open', !root.hidden && small.matches && (!card.classList.contains('cm-folded') || !info.hidden || !cred.hidden));
+    var fitCard = () => {
+      // a phone's sheets sit above the credits line, however many lines it takes (it must stay readable)
+      if (root.hidden || !small.matches) document.body.style.removeProperty('--cm-sheet-b');
+      else document.body.style.setProperty('--cm-sheet-b', `calc(${phone.matches ? attr.offsetHeight + 12 : 12}px + env(safe-area-inset-bottom, 0px))`);
     };
-    fold.addEventListener('click', e => { e.stopPropagation(); if (small.matches) setFold(!card.classList.contains('cm-folded')); });
+    // the card folds to its title everywhere: folded from the start on small screens, and on wide ones once the flight in
+    // ends or the viewer takes the map, unless they have opened or closed it themselves
+    const fold = root.querySelector('.cm-fold');
+    let autoFold = false, sawFly = false, shown = false;
+    const setFold = (f, byUser = false) => {
+      card.classList.toggle('cm-folded', f); fold.setAttribute('aria-expanded', String(!f));
+      if (byUser) autoFold = false;
+      sheets(); fitCard();
+    };
+    fold.addEventListener('click', e => { e.stopPropagation(); setFold(!card.classList.contains('cm-folded'), true); });
     setFold(small.matches);
     small.addEventListener?.('change', () => setFold(small.matches));
-    const credBtn = root.querySelector('.cm-credits');
-    credBtn.addEventListener('click', e => { e.stopPropagation(); const o = !attr.classList.contains('cm-attr-open'); attr.classList.toggle('cm-attr-open', o); credBtn.setAttribute('aria-expanded', String(o)); credBtn.textContent = o ? 'Less' : 'Credits'; });
-    var fitCard = () => { const lift = phone.matches && attr.offsetHeight ? `calc(${attr.offsetHeight + 54}px + env(safe-area-inset-bottom, 0px))` : ''; card.style.bottom = lift; info.style.bottom = lift; };
+    const how = root.querySelector('.cm-how'), howText = root.querySelector('.cm-howtext');
+    how.addEventListener('click', e => {
+      e.stopPropagation(); const o = howText.hidden; howText.hidden = !o; how.setAttribute('aria-expanded', String(o));
+      // a card too short for the full text scrolls it up under its title, the toggle at the top
+      if (o && card.scrollHeight > card.clientHeight) card.scrollTo?.({ top: how.offsetTop - (small.matches ? fold.offsetHeight : 0) - 6, behavior: 'smooth' });
+    });
+    const setCred = o => {
+      cred.hidden = !o; credBtn.setAttribute('aria-expanded', String(o));
+      if (o && small.matches) setInfo(false);
+      sheets();
+    };
+    credBtn.addEventListener('click', e => { e.stopPropagation(); setCred(cred.hidden); });
+    cred.querySelector('.cm-x').addEventListener('click', e => { e.stopPropagation(); setCred(false); credBtn.focus(); });
     if (typeof ResizeObserver === 'function') new ResizeObserver(fitCard).observe(attr);
     phone.addEventListener?.('change', fitCard);
     addEventListener('resize', () => { for (const p of pins) { p.w = undefined; p.stem = undefined; } });
     const setInfo = open => {
       info.hidden = !open; root.classList.toggle('cm-info-open', open);
-      if (open && small.matches) { attr.classList.remove('cm-attr-open'); credBtn.setAttribute('aria-expanded', 'false'); credBtn.textContent = 'Credits'; }
-      fitCard();
+      if (open && small.matches && !cred.hidden) setCred(false);
+      sheets(); fitCard();
     };
+    addEventListener('keydown', e => { if (e.key === 'Escape' && !root.hidden) { if (!cred.hidden) setCred(false); else if (!info.hidden) { setInfo(false); sel = null; } } });
     const on = Object.fromEntries(Object.keys(CATEGORIES).map(k => [k, true]));
     const counts = {}; for (const p of pins) counts[p.cat] = (counts[p.cat] ?? 0) + 1;
     for (const [k, c] of Object.entries(CATEGORIES)) {
       if (!counts[k] || k === 'home') continue;
-      const b = document.createElement('button'); b.className = 'cm-chip'; b.dataset.cat = k; b.setAttribute('aria-pressed', 'true');
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cm-chip'; b.dataset.cat = k; b.setAttribute('aria-pressed', 'true');
       b.innerHTML = `<span class="cm-dot" style="background:${c.color}"></span>${c.label}<span class="cm-n">${counts[k]}</span>`;
       b.addEventListener('click', e => { e.stopPropagation(); on[k] = !on[k]; b.setAttribute('aria-pressed', String(on[k])); });
       chips.appendChild(b);
@@ -408,10 +439,10 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       sel = p; userMoved = true;
       const d = homeG.distanceTo(p.ground) * FT / 1609.34;
       const c = CATEGORIES[p.cat] ?? CATEGORIES.club;
-      info.innerHTML = `<button class="cm-x" aria-label="Close">×</button><div class="cm-ikick" style="color:${c.color}">${c.label}</div><div class="cm-iname">${esc(p.name)}</div>` +
-        (p.sub ? `<div class="cm-isub">${esc(p.sub)}</div>` : '') +
+      info.innerHTML = `<button class="cm-x" type="button" aria-label="Close">×</button><div class="cm-ikick" style="color:${c.color}">${c.label}</div><div class="cm-iname">${esc(p.name)}</div>` +
+        (p.sub ? `<div class="cm-isub">${esc(usSpelling(p.sub))}</div>` : '') +
         (p.cat !== 'home' ? `<div class="cm-imeta">≈ ${d < 0.1 ? (d * 5280).toFixed(0) + ' ft' : d.toFixed(1) + ' mi'} from the home, in a straight line</div>` : '') +
-        (p.note ? `<div class="cm-inote">${esc(p.note)}</div>` : '') + (p.src ? `<div class="cm-isrc">${esc(p.src)}</div>` : '');
+        (p.note ? `<div class="cm-inote">${esc(usSpelling(p.note))}</div>` : '') + (p.src ? `<div class="cm-isrc">${esc(p.src)}</div>` : '');
       setInfo(true);
       info.querySelector('.cm-x').addEventListener('click', e => { e.stopPropagation(); setInfo(false); sel = null; });
       // aim where the camera may rest (the target is kept 300 m inside the box)
@@ -419,24 +450,66 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
       const near = p.cat === 'home' ? establishing() : pose(aim, 1500, 0.92, Math.atan2(camera.position.z - aim.z, camera.position.x - aim.x));
       flyTo(near, 2.8);
     }
+    // the view is framed beside the open card on wide screens; when the card folds or opens the frame glides over
+    let dockX = 0, dockFrom = 0, dockTo = 0, dockT0 = 0, dockSnap = true;
+    // pins keep 16 px off the screen's edges and the panels, 6 px off each other and 12 px off the home's label
+    const EDGE = 16, PANEL = 16, GAP = 6, HERO_GAP = 12;
     const v = new THREE.Vector3(), rects = [];
+    const hit = (R, o, m) => R[0] < o[2] + m && R[2] > o[0] - m && R[1] < o[3] + m && R[3] > o[1] - m;
+    function fit(q, w, h, stem, hero, W, ui0) {
+      const R = [q.x - w / 2, q.y - stem - h, q.x + w / 2, q.y - stem], S2 = [q.x - 5, q.y - stem, q.x + 5, q.y + 6];
+      // at the screen's edge the label slides in along its stem rather than being cut off
+      let dx = R[0] < EDGE ? EDGE - R[0] : R[2] > W - EDGE ? W - EDGE - R[2] : 0;
+      if (Math.abs(dx) > w / 2 - 14) return null;
+      R[0] += dx; R[2] += dx;
+      for (let k = 0, slides = 0; k < rects.length; k++) {
+        const o = rects[k], ui = k < ui0, m = ui ? PANEL : o.hero ? HERO_GAP : GAP;
+        if (hit(S2, o, ui ? 4 : 2)) return null;           // the place itself is under a panel or another label
+        if (!hit(R, o, m)) continue;
+        // the home's label slides sideways off a side panel (not off the header band), then is checked again
+        if (hero && ui && !o.band && slides < 2) {
+          const ndx = q.x >= o[2] ? (o[2] + m) - (R[0] - dx) : (o[0] - m) - (R[2] - dx);
+          R[0] += ndx - dx; R[2] += ndx - dx; dx = ndx; slides++;
+          if (Math.abs(dx) > w - 14 || R[0] < EDGE || R[2] > W - EDGE) return null;
+          k = -1; continue;
+        }
+        return null;
+      }
+      return { R, S2, dx, stem };
+    }
     return {
-      show(s) { root.hidden = !s; if (!s) { setInfo(false); sel = null; } else fitCard(); },
-      // width of the docked card (wide screens), for framing the view beside it
-      dock: () => (!root.hidden && !small.matches && !phone.matches) ? Math.round(card.getBoundingClientRect().right + 16) : 0,
+      show(s) {
+        root.hidden = !s;
+        if (!s) { setInfo(false); setCred(false); sel = null; document.body.classList.remove('cm-sheet-open'); document.body.style.removeProperty('--cm-sheet-b'); return; }
+        if (!shown) { shown = true; if (!small.matches) { setFold(false); autoFold = true; sawFly = false; } }
+        dockSnap = true; fitCard(); sheets();
+      },
+      // width the view leaves free on the left for the open card (wide screens), eased when the card folds or opens
+      dock() {
+        const want = (!root.hidden && !small.matches && !card.classList.contains('cm-folded')) ? Math.round(card.getBoundingClientRect().right + 16) : 0;
+        const now = performance.now();
+        if (dockSnap) { dockSnap = false; dockX = dockFrom = dockTo = want; }
+        else if (want !== dockTo) { dockFrom = dockX; dockTo = want; dockT0 = now; }
+        dockX = Math.round(dockFrom + (dockTo - dockFrom) * ease(Math.min(1, (now - dockT0) / 450)));
+        return dockX;
+      },
       wx: false,
-      setWx(v) { this.wx = v; root.querySelector('.cm-wx').hidden = !v; },
-      title: () => sel ? sel.name : 'Kukuiʻula · community view',
-      place(cam, rend) {
+      setWx(v) { this.wx = v; for (const el of root.querySelectorAll('.cm-wx')) el.hidden = !v; },
+      title: () => sel ? sel.name : phone.matches ? 'Kukuiʻula\ncommunity view' : 'Kukuiʻula · community view',   // a phone sets it on two lines beside the toolbar
+      place(cam) {
+        if (autoFold) { if (fly) sawFly = true; else if (sawFly || userMoved) { autoFold = false; if (!small.matches) setFold(true); } }
         cam.updateMatrixWorld();                         // this frame's camera, not last frame's (no lag in flights)
         const W = innerWidth, H = innerHeight;
-        rects.length = 0; let ui0 = 0;
-        for (const el of [card, info, attr, document.getElementById('hud'), document.getElementById('buttons'), document.getElementById('skypanel')]) {
+        rects.length = 0;
+        // keep-outs: the header band across the whole width (title, notice, toolbar), then every panel on screen
+        let band = 0;
+        for (const id of ['hud', 'buttons']) { const el = document.getElementById(id); const b = el?.getBoundingClientRect(); if (b?.height) band = Math.max(band, b.bottom); }
+        if (band) { const B = [-1e4, -1e4, 1e4, band]; B.band = true; rects.push(B); }
+        for (const el of [card, info, cred, attr, document.getElementById('skypanel'), document.getElementById('more-menu')]) {
           if (!el || el.hidden) continue;
-          const b = el.getBoundingClientRect(); if (b.width) rects.push([b.left, b.top, b.right, b.bottom]);
+          const b = el.getBoundingClientRect(); if (b.width && b.height) rects.push([b.left, b.top, b.right, b.bottom]);
         }
-        ui0 = rects.length;
-        const hit = (R, o, m = 4) => R[0] < o[2] + m && R[2] > o[0] - m && R[1] < o[3] + 3 && R[3] > o[1] - 3;
+        const ui0 = rects.length;
         const list = pins.map(p => {
           v.copy(p.ground); v.y += 6;
           const dist = v.distanceTo(cam.position);
@@ -444,32 +517,20 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
           return { p, x: (v.x * 0.5 + 0.5) * W, y: (-v.y * 0.5 + 0.5) * H, front: v.z < 1, dist };
         }).sort((a, b) => (b.p.prio ?? 1) - (a.p.prio ?? 1) || a.dist - b.dist);
         for (const q of list) {
-          const { p } = q;
-          const stem = Math.max(14, Math.min(70, 70 * 2500 / q.dist));
-          let show = q.front && on[p.cat] !== false && q.x > -40 && q.x < W + 40 && q.y > 0 && q.y < H + 20;
-          const w = p.w ??= (p.el.querySelector('.cm-label').offsetWidth || 120), h = p.cat === 'home' ? 34 : 26;
-          const R = [q.x - w / 2, q.y - stem - h, q.x + w / 2, q.y - stem], S2 = [q.x - 5, q.y - stem, q.x + 5, q.y + 6];
-          // at the screen's edge the label slides in along its stem rather than being cut off
-          let dx = R[0] < 8 ? 8 - R[0] : R[2] > W - 8 ? W - 8 - R[2] : 0;
-          if (Math.abs(dx) > w / 2 - 14) show = false;
-          R[0] += dx; R[2] += dx;
-          if (show) for (let k = 0; k < rects.length; k++) {
-            const o = rects[k];
-            if (!hit(R, o) && !hit(S2, o, 2)) continue;
-            // the home's label slides sideways off a panel, unless its spot is under the panel itself
-            if (p.cat === 'home' && k < ui0 && !(q.x > o[0] && q.x < o[2] && q.y > o[1] && q.y < o[3])) {
-              const ndx = q.x >= o[2] ? (o[2] + 8) - (R[0] - dx) : (o[0] - 8) - (R[2] - dx);
-              R[0] += ndx - dx; R[2] += ndx - dx; dx = ndx;
-              if (Math.abs(dx) > w - 14) { show = false; break; }
-              continue;
-            }
-            show = false; break;
-          }
-          if (show) rects.push(R, S2);                    // later labels keep off this label, its stem and its dot
+          const { p } = q, hero = p.cat === 'home';
+          const w = p.w ??= (p.el.querySelector('.cm-label').offsetWidth || 120), h = hero ? 34 : 26;
+          // leaders come in two lengths, 48 px for nearer places and 24 px for farther ones (with some hysteresis), and
+          // take the other length when theirs would collide
+          const near = hero || q.dist < (p.stem === 48 ? 5400 : 4600);
+          let got = null;
+          if (q.front && on[p.cat] !== false && q.x > -40 && q.x < W + 40 && q.y > 0 && q.y < H + 20)
+            for (const stem of near ? [48, 24] : [24, 48]) if ((got = fit(q, w, h, stem, hero, W, ui0))) break;
+          if (got) { const R = got.R; R.hero = hero; rects.push(R, got.S2); }   // later labels keep off this label, its stem and its dot
+          const dx = got ? got.dx : (p.dx ?? 0), stem = got ? got.stem : (p.stem ?? (near ? 48 : 24));
           if (Math.round(dx) !== p.dx) { p.dx = Math.round(dx); p.el.style.setProperty('--dx', p.dx + 'px'); }
           p.el.style.transform = `translate(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px)`;
-          if (Math.round(stem) !== p.stem) { p.stem = Math.round(stem); p.el.style.setProperty('--stem', p.stem + 'px'); }
-          p.el.classList.toggle('cm-off', !show);
+          if (stem !== p.stem) { p.stem = stem; p.el.style.setProperty('--stem', stem + 'px'); }
+          p.el.classList.toggle('cm-off', !got);
           p.el.classList.toggle('cm-sel', p === sel);
         }
       },
@@ -648,6 +709,8 @@ function utmFromLatLon(lat, lon) {
   return [E, Nn];
 }
 
+// the UI's copy is US English; places.json's hand-written notes are shown the same way
+const usSpelling = s => String(s).replace(/\bcolour/g, 'color').replace(/\bcentre\b/g, 'center').replace(/\bmodell(ed|ing)\b/g, 'model$1');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // a credit line with its licence linked (the licences ask for a link or a notice)
 const LICENCES = [[/ODbL/, 'https://opendatacommons.org/licenses/odbl/1-0/'], [/CC BY 4\.0/, 'https://creativecommons.org/licenses/by/4.0/'],

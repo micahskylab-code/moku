@@ -235,8 +235,10 @@ async function startInteractive() {
   const btn = document.getElementById('mode'), modelBtn = document.getElementById('model'), commBtn = document.getElementById('community-btn');
   modelBtn.hidden = !inspector;
   let modeReq = 0;
+  const BACK_HOME = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>The home';
   const setMode = async m => {
     const req = ++modeReq;
+    openMenu(false);
     if (m === 'community' && !community) {
       commBtn.textContent = 'Loading…'; commBtn.disabled = true;
       await loadCommunity(); commBtn.disabled = false;
@@ -251,7 +253,9 @@ async function startInteractive() {
     if (mode === 'model' && m !== 'model') inspector.exit();
     if (mode === 'community' && m !== 'community') community?.exit();
     mode = m; btn.textContent = m === 'fly' ? 'Walk in' : 'Fly over'; modelBtn.textContent = m === 'model' ? 'Exit model' : 'Model';
-    commBtn.textContent = m === 'community' ? 'Exit community' : 'Community';
+    // in the community view this is its one primary action, back to the home (index.html styles it)
+    if (m === 'community') { commBtn.innerHTML = BACK_HOME; commBtn.setAttribute('aria-label', 'Back to the home: leave the community view'); }
+    else { commBtn.textContent = 'Community'; commBtn.removeAttribute('aria-label'); }
     document.body.classList.toggle('community-mode', m === 'community');
     orbit.enabled = m !== 'walk'; overlay.hidden = m !== 'walk';
     if (m === 'fly') { look.unlock(); orbit.target.set(cx, 0, cz); camera.position.set(cx - 160, 140, cz + 120); }
@@ -275,6 +279,28 @@ async function startInteractive() {
   }
   const qb = document.getElementById('quality'); qb.textContent = ultra ? 'Standard' : 'Ultra';
   qb.addEventListener('click', e => { e.stopPropagation(); const p = new URLSearchParams(location.search); p.set('q', ultra ? 'high' : 'ultra'); location.search = p; });
+  // The community view's toolbar is one way back to the home and a menu (index.html #more-menu) for the rest. Each
+  // menu item presses the toolbar button it stands for; those are hidden while the view is open.
+  const moreBtn = document.getElementById('more'), menu = document.getElementById('more-menu');
+  function openMenu(o) {
+    menu.hidden = !o; moreBtn.setAttribute('aria-expanded', String(o));
+    if (!o) return;
+    for (const it of menu.querySelectorAll('[data-for]')) {
+      const src = document.getElementById(it.dataset.for);
+      it.hidden = !src || src.hidden || (it.dataset.for === 'quality' && matchMedia('(max-width: 600px)').matches);   // as the toolbar
+    }
+    menu.querySelector('[data-for="time"]').innerHTML = timeBtn.textContent === 'Day' ? '<b>Daylight</b><small>Back to daytime</small>' : '<b>Night sky</b><small>Stars over the home</small>';
+    menu.querySelector('button[data-for="quality"] small').textContent = ultra ? 'Ultra · switch to Standard (reloads)' : 'Standard · switch to Ultra (reloads)';
+  }
+  moreBtn.addEventListener('click', e => { e.stopPropagation(); openMenu(menu.hidden); });
+  menu.addEventListener('click', e => {
+    e.stopPropagation();
+    const it = e.target.closest('button[data-for]');
+    if (!it) return;                                 // the 360° tour is a link
+    openMenu(false); document.getElementById(it.dataset.for)?.click();
+  });
+  addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && !moreBtn.contains(e.target)) openMenu(false); }, true);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { openMenu(false); moreBtn.focus(); } });
   overlay.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) look.lock(); else overlay.hidden = true; });
   look.addEventListener('lock', () => (overlay.hidden = true));
   look.addEventListener('unlock', () => (overlay.hidden = mode !== 'walk'));
