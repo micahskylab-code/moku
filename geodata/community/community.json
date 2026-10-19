@@ -1,5 +1,5 @@
 {
- "about": "Kukui'ula community map tiles: a map rendering of open data (not an aerial photograph). North-up UTM 4N tiles, 1 km, row 0 at the north edge.",
+ "about": "Kukui'ula community map tiles: a USDA NAIP aerial photo (11 Feb 2022) over lidar ground, with the reef, sea and modelled row drawn from open data. North-up UTM 4N tiles, 1 km, row 0 at the north edge.",
  "crs": "EPSG:32604",
  "box": [
   447500,
@@ -162,7 +162,7 @@
  ],
  "encoding": {
   "n": "R,G = 128 + 127 * normal (east, north); B = 10 * height of canopy or eave (m); lossless",
-  "w": "R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water, and on the sea 80 * calm (0-1) inside the harbour breakwater (no breaking surf); B = 10 * sea depth (m), except on land more than 4 m from the sea and off the ponds (R < 124, G < 8), where B = 16 * landCover + dryness (0-15, from NDVI: 0 at 0.62 and over, 15 at 0.22 and under)",
+  "w": "R = 128 + sdfPerM * signed distance to the sea edge (m, sea positive; 1 per m, +-127 m); G = 255 in ponds drawn as water, and on the sea 80 * calm (0-1) inside the harbour breakwater (no breaking surf); on other land G = 7 * the aerial photo's weight (0-1: the view eases its live shading there); B = 10 * sea depth (m), except on land more than 4 m from the sea and off the ponds (R < 124, G < 8), where B = 16 * landCover + dryness (0-15, from NDVI: 0 at 0.62 and over, 15 at 0.22 and under)",
   "landCover": [
    "none",
    "turf",
@@ -177,14 +177,15 @@
  },
  "sdfPerM": 1,
  "deepSea": [
-  0.0026,
-  0.0089,
-  0.0248
+  0.0024,
+  0.0093,
+  0.0259
  ],
  "attribution": [
   "Ground: U.S. Geological Survey 3DEP 1 m lidar DEM (2019\u201321), public domain",
   "Seafloor: USACE NCMP 2013 Kaua\u02bbi topobathy lidar, via NOAA Digital Coast, public domain",
-  "Contains modified Copernicus Sentinel data 2023\u20132026 (colour)",
+  "Aerial photo: USDA Farm Service Agency, National Agriculture Imagery Program (NAIP), flown 11 Feb 2022, via NOAA Digital Coast, public domain; colour-matched to Sentinel-2 and corrected under thin cloud",
+  "Contains modified Copernicus Sentinel data 2023\u20132026 (colour matching, box edges, open sea)",
   "Trees: Meta and World Resources Institute, High Resolution Canopy Height Maps (Tolan et al. 2024), CC BY 4.0, modified (resampled and drawn as crowns, shading and shadows)",
   "Roads, paths, water, beaches, golf: \u00a9 OpenStreetMap contributors, and some roads \u00a9 TomTom (ODbL), via Overture Maps Foundation",
   "Buildings: \u00a9 OpenStreetMap contributors, Microsoft ML Building Footprints (ODbL), via Overture Maps Foundation"
