@@ -598,7 +598,7 @@ export async function createCommunity({ scene, camera, renderer, orbit, daylight
     root.querySelector('[data-a="home"]').addEventListener('click', e => { e.stopPropagation(); userMoved = true; flyTo(establishing()); });
     root.querySelector('[data-a="overview"]').addEventListener('click', e => { e.stopPropagation(); userMoved = true; flyTo(overview(), 3.6); });
     for (const p of pins) {
-      const el = document.createElement('button'); el.className = 'cm-pin' + (p.cat === 'home' ? ' cm-hero' : ''); el.type = 'button';
+      const el = document.createElement('button'); el.className = 'cm-pin cm-off' + (p.cat === 'home' ? ' cm-hero' : '');   // hidden until the first layout pass (place) has kept them apart el.type = 'button';
       const c = CATEGORIES[p.cat] ?? CATEGORIES.club;
       el.style.setProperty('--c', c.color);
       el.innerHTML = `<span class="cm-stem"></span><span class="cm-label"><span class="cm-ico">${ICONS[p.cat] ?? ICONS.club}</span><span class="cm-name">${esc(p.name)}</span></span>`;
